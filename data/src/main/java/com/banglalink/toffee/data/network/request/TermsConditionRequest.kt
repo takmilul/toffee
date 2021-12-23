@@ -8,4 +8,4 @@ data class TermsConditionRequest(
     var customerId: Int,
     @SerializedName("password")
     var password: String
-) : BaseRequest(ApiNames.GET_UGC_TERMS_AND_CONDITIONS)
+) : BaseRequest(ApiNames.GET_TERMS_AND_CONDITIONS)

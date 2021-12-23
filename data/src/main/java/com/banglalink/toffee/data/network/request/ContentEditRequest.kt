@@ -30,4 +30,4 @@ data class ContentEditRequest(
     val oldContentBanner: String? = null,
     @SerializedName("contentBanner")
     val contentBanner: String? = null,
-) : BaseRequest(ApiNames.UGC_CONTENT_UPLOAD_EDIT)
+) : BaseRequest(ApiNames.EDIT_CONTENT_UPLOAD)

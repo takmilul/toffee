@@ -17,4 +17,4 @@ data class ViewingContentRequest(
     val lat: String,
     @SerializedName("lon")
     val lon: String
-) : BaseRequest(ApiNames.VIEWING_CONTENT)
+) : BaseRequest(ApiNames.SEND_VIEWING_CONTENT)

@@ -16,4 +16,4 @@ data class UpdateProfileRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.UPDATE_PROFILE)
+) : BaseRequest(ApiNames.UPDATE_USER_PROFILE)

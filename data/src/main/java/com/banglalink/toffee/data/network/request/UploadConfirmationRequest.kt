@@ -14,4 +14,4 @@ data class UploadConfirmationRequest(
     val isConfirm: String,
     @SerializedName("isCopyrightUploaded")
     val isCopyrightUploaded: Int
-) : BaseRequest(ApiNames.UGC_CONTENT_UPLOAD_CONFIRMATION)
+) : BaseRequest(ApiNames.CONFIRM_CONTENT_UPLOAD)

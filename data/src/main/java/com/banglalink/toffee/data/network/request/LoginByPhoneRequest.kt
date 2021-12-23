@@ -18,4 +18,4 @@ data class LoginByPhoneRequest(
     val serviceOperatorType: String = "TELCO",
     @SerializedName("referralCode")
     val referralCode: String = ""
-) : BaseRequest(ApiNames.RE_REGISTATION)
+) : BaseRequest(ApiNames.LOGIN_BY_PHONE_NO)

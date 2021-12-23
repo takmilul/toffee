@@ -8,4 +8,4 @@ data class MostPopularPlaylistsRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_POPULAR_PLAYLIST_NAMES)
+) : BaseRequest(ApiNames.GET_POPULAR_PLAYLIST_NAMES)

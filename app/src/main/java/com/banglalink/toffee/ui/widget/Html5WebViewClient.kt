@@ -6,7 +6,10 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.os.bundleOf
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.extension.openUrlToExternalApp
 import java.net.URISyntaxException
 
@@ -15,6 +18,11 @@ open class Html5WebViewClient: WebViewClient() {
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         if (view != null) {
             request?.url?.toString()?.let {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.SCREEN_VIEW,
+                    bundleOf("firebase_screen" to it)
+                )
+
                 val context = view.context
                 return when {
                     it.startsWith("intent://") -> {

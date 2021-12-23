@@ -20,4 +20,4 @@ data class RelativeContentRequest(
     val offset: Int,
     @SerializedName("limit")
     val limit: Int = 30
-) : BaseRequest(ApiNames.GET_UGC_RELATIVE_CONTENTS_EXT)
+) : BaseRequest(ApiNames.GET_RELATIVE_CONTENTS)

@@ -12,4 +12,4 @@ data class FavoriteRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.SET_UGC_FAVORITES)
+) : BaseRequest(ApiNames.SET_FAVORITES)

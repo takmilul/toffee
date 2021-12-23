@@ -42,4 +42,4 @@ data class MyChannelEditRequest(
     val isBillingInfoUpdated: Boolean = false,
     @SerializedName("isChannelInfoUpdate")
     val isChannelInfoUpdate: Boolean = false
-) : BaseRequest(ApiNames.Edit_CHANNEL_EDIT)
+) : BaseRequest(ApiNames.EDIT_MY_CHANNEL)

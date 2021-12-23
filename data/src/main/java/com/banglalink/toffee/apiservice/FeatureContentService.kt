@@ -27,7 +27,7 @@ class FeatureContentService @Inject constructor(
                 type,
                 pageType.value,
                 categoryId,
-                preference.getDBVersionByApiName(ApiNames.GET_UGC_FEATURE_CATEGORY_CONTENTS),
+                preference.getDBVersionByApiName(ApiNames.GET_FEATURED_CONTENTS),
                 request
             )
         }

@@ -8,4 +8,4 @@ data class DramaSeriesContentRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
-) : BaseRequest(ApiNames.GET_DRAMA_SERIAL_CONTENT)
+) : BaseRequest(ApiNames.GET_WEB_SERIES_CONTENT)

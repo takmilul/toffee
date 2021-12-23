@@ -8,4 +8,4 @@ data class PopularChannelsRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_POPULAR_TV_CHANNEL)
+) : BaseRequest(ApiNames.GET_POPULAR_TV_CHANNEL)

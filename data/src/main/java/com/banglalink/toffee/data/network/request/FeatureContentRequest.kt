@@ -8,4 +8,4 @@ data class FeatureContentRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_FEATURE_CATEGORY_CONTENTS)
+) : BaseRequest(ApiNames.GET_FEATURED_CONTENTS)

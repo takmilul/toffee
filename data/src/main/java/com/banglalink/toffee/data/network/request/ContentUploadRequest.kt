@@ -36,4 +36,4 @@ data class ContentUploadRequest(
     val isHorizontal: Int = 1,
     @SerializedName("msisdn")
     val msisdn: String? = null,
-) : BaseRequest(ApiNames.UGC_CONTENT_UPLOAD)
+) : BaseRequest(ApiNames.UPLOAD_CONTENT)

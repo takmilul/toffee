@@ -74,7 +74,7 @@ class ViewProfileFragment : BaseFragment() {
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.GET_SUBSCRIPTION_PROFILE,
+                            "api_name" to ApiNames.GET_USER_PROFILE,
                             "browser_screen" to "Profile Screen",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)

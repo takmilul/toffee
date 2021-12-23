@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,8 +21,10 @@ import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.ApiRoutes.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
@@ -148,6 +151,14 @@ class EditProfileFragment : BaseFragment() {
                             findNavController().popBackStack()
                         }
                         is Resource.Failure -> {
+                            ToffeeAnalytics.logEvent(
+                                ToffeeEvents.EXCEPTION,
+                                bundleOf(
+                                    "api_name" to ApiNames.UPDATE_USER_PROFILE,
+                                    "browser_screen" to BrowsingScreens.PROFILE,
+                                    "error_code" to it.error.code.toString(),
+                                    "error_description" to it.error.msg)
+                            )
                             requireContext().showToast(it.error.msg)
                         }
                     }
@@ -171,6 +182,14 @@ class EditProfileFragment : BaseFragment() {
                         requireContext().showToast(getString(R.string.photo_update_success))
                     }
                     is Resource.Failure -> {
+                        ToffeeAnalytics.logEvent(
+                            ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.UPDATE_USER_PROFILE_PHOTO,
+                                "browser_screen" to BrowsingScreens.PROFILE,
+                                "error_code" to it.error.code.toString(),
+                                "error_description" to it.error.msg)
+                        )
                         requireContext().showToast(it.error.msg)
                     }
                 }

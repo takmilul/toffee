@@ -16,7 +16,7 @@ class GetContentCategories @Inject constructor(
         
         val response = tryIO2 {
             toffeeApi.getUgcContentCategoryList(
-                preference.getDBVersionByApiName(ApiNames.GET_UGC_ACTIVE_INACTIVE_CATEGORIES),
+                preference.getDBVersionByApiName(ApiNames.GET_ACTIVE_INACTIVE_CATEGORIES),
                 ContentCategoryRequest()
             )
         }

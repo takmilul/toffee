@@ -14,4 +14,4 @@ data class DrmTokenRequest(
     val drmType: String = "Widevine",
     @SerializedName("licenseDuration")
     val licenseDuration: Int = 0
-) : BaseRequest(ApiNames.DRM_TOKEN)
+) : BaseRequest(ApiNames.GET_DRM_TOKEN)

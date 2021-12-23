@@ -10,4 +10,4 @@ data class MostPopularContentRequest(
     val password: String,
     @SerializedName("telcoId")
     val telcoId: Int = 1
-) : BaseRequest(ApiNames.GET_UGC_MOST_POPULAR_CONTENTS)
+) : BaseRequest(ApiNames.GET_MOST_POPULAR_CONTENTS)

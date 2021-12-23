@@ -13,4 +13,4 @@ data class HistoryContentRequest(
     val offset: Int,
     @SerializedName("limit")
     val limit: Int = 30
-) : BaseRequest(ApiNames.GET_HISTORY_CONTENT)
+) : BaseRequest(ApiNames.GET_HISTORY_CONTENTS)

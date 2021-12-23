@@ -8,4 +8,4 @@ data class MyChannelDetailRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_MY_CHANNEL_DETAILS)
+) : BaseRequest(ApiNames.GET_MY_CHANNEL_DETAILS)

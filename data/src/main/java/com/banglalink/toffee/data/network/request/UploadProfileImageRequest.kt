@@ -12,4 +12,4 @@ data class UploadProfileImageRequest(
     val password: String,
     @SerializedName("isDeletePhoto")
     val isDeletePhoto: Boolean = false
-) : BaseRequest(ApiNames.UPDATE_PROFILE_PHOTO)
+) : BaseRequest(ApiNames.UPDATE_USER_PROFILE_PHOTO)

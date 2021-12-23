@@ -18,4 +18,4 @@ data class MyChannelAddToPlaylistRequest(
     val password: String,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest(ApiNames.UGC_APP_TO_MY_PLAYLIST)
+) : BaseRequest(ApiNames.ADD_CONTENT_TO_PLAYLIST)

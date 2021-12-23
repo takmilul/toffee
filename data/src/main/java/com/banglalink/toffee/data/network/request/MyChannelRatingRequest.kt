@@ -14,4 +14,4 @@ data class MyChannelRatingRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.UGC_RATING_MY_CHANNEL)
+) : BaseRequest(ApiNames.RATE_CHANNEL)

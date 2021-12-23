@@ -12,4 +12,4 @@ data class FavoriteContentRequest(
     val offset: Int,
     @SerializedName("limit")
     val limit: Int = 30
-) : BaseRequest(ApiNames.GET_FAVORITE_CONTENT)
+) : BaseRequest(ApiNames.GET_FAVORITE_CONTENTS)

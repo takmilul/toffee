@@ -14,4 +14,4 @@ data class MyChannelPlaylistVideoDeleteRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.UGC_DELETE_MY_PLAYLIST_VODEO)
+) : BaseRequest(ApiNames.DELETE_MY_CHANNEL_VIDEO)

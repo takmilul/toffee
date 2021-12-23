@@ -8,4 +8,4 @@ data class MqttRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
-) : BaseRequest(ApiNames.MQTT_CREDENTIAL)
+) : BaseRequest(ApiNames.GET_MQTT_CREDENTIAL)

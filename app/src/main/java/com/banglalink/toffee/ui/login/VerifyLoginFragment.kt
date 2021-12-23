@@ -109,7 +109,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
 
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.RE_REGISTATION,
+                            "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                             "browser_screen" to "Enter OTP",
                             "error_code" to it.error.code.toString(),
                             "error_description" to it.error.msg))
@@ -140,7 +140,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.RE_REGISTATION,
+                            "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                             "browser_screen" to "Enter OTP",
                             "error_code" to it.error.code.toString(),
                             "error_description" to it.error.msg))

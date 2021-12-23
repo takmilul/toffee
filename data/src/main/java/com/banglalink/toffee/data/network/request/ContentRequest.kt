@@ -10,4 +10,4 @@ data class ContentRequest(
     val password: String,
     @SerializedName("telcoId")
     val telcoId: Int = 1,
-) : BaseRequest(ApiNames.GET_CATEGORIES_V5)
+) : BaseRequest(ApiNames.GET_CATEGORIES)

@@ -8,4 +8,4 @@ data class PaymentMethodRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_PAYMENT_METHOD_LIST)
+) : BaseRequest(ApiNames.GET_PAYMENT_METHOD_LIST)

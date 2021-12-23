@@ -14,4 +14,4 @@ data class MyChannelSubscribeRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.UGC_SUBSCRIBE_ON_CHANNEL)
+) : BaseRequest(ApiNames.SUBSCRIBE_CHANNEL)

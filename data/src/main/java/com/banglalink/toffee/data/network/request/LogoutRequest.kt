@@ -8,4 +8,4 @@ data class LogoutRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
-) : BaseRequest(ApiNames.USER_UNVERIFIED)
+) : BaseRequest(ApiNames.UN_VERIFY_USER)

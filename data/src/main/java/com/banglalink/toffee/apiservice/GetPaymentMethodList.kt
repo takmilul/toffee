@@ -17,7 +17,7 @@ class GetPaymentMethodList @Inject constructor(
             toffeeApi.getPaymentMethodList(
                 limit,
                 offset,
-                preference.getDBVersionByApiName(ApiNames.GET_UGC_PAYMENT_METHOD_LIST),
+                preference.getDBVersionByApiName(ApiNames.GET_PAYMENT_METHOD_LIST),
                 PaymentMethodRequest(preference.customerId,preference.password)
             )
         }

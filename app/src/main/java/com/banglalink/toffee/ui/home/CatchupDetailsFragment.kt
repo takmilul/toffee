@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -15,6 +16,10 @@ import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback

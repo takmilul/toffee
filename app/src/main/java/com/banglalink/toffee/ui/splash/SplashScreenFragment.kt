@@ -9,10 +9,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -148,6 +152,14 @@ class SplashScreenFragment : BaseFragment() {
                     }
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to "HeaderEnrichment",
+                            "browser_screen" to "Splash Screen",
+                            "error_code" to response.error.code.toString(),
+                            "error_description" to response.error.msg)
+                    )
                     mPref.hePhoneNumber = ""
                     mPref.isHeBanglalinkNumber = false
                 }
@@ -177,6 +189,15 @@ class SplashScreenFragment : BaseFragment() {
                     isOperationCompleted = true
                 }
                 is Resource.Failure -> {
+
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.API_LOGIN_V2,
+                            "browser_screen" to "Splash Screen",
+                            "error_code" to it.error.code.toString(),
+                            "error_description" to it.error.msg)
+                    )
                     when (it.error) {
                         is AppDeprecatedError -> {
                             (it.error as AppDeprecatedError).let { ade->

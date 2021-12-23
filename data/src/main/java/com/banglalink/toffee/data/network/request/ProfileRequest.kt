@@ -8,4 +8,4 @@ data class ProfileRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_SUBSCRIPTION_PROFILE)
+) : BaseRequest(ApiNames.GET_USER_PROFILE)

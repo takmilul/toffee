@@ -16,4 +16,7 @@ object BrowsingScreens {
     const val SEARCH_PAGE = "SEARCH_PAGE"
     const val SUBSCRIBED_CHANNELS_PAGE = "SUBSCRIBED_CHANNELS_PAGE"
     const val REPORT_PAGE = "REPORT_PAGE"
+    const val EDIT_VIDEO_DETAILS = "EDIT_VIDEO_DETAILS_PAGE"
+    const val MY_CHANNEL = "MY_CHANNEL_PAGE"
+    const val PROFILE = "MY_CHANNEL_PAGE"
 }

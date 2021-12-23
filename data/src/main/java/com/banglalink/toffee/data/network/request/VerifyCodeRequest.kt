@@ -19,4 +19,4 @@ data class VerifyCodeRequest(
     val lon: String,
     @SerializedName("parentId")
     val parentId: Int = 1
-) : BaseRequest(ApiNames.CONFIRM_CODEV2)
+) : BaseRequest(ApiNames.VERIFY_OTP)

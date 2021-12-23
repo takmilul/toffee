@@ -18,7 +18,7 @@ class GetMostPopularPlaylists @Inject constructor(
         
         val response = tryIO2 {
             toffeeApi.getMostPopularPlaylists(
-                preference.getDBVersionByApiName(ApiNames.GET_UGC_POPULAR_PLAYLIST_NAMES),
+                preference.getDBVersionByApiName(ApiNames.GET_POPULAR_PLAYLIST_NAMES),
                 MostPopularPlaylistsRequest(
                     preference.customerId,
                     preference.password

@@ -12,4 +12,4 @@ data class MyChannelVideosRequest(
     val offset: Int,
     @SerializedName("limit")
     val limit: Int = 10
-) : BaseRequest(ApiNames.GET_UGC_CHANNEL_ALL_CONTENT)
+) : BaseRequest(ApiNames.GET_MY_CHANNEL_ALL_VIDEOS)

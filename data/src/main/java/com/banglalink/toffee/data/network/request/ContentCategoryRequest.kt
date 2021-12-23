@@ -6,4 +6,4 @@ import com.google.gson.annotations.SerializedName
 data class ContentCategoryRequest(
     @SerializedName("telcoId")
     val telcoId: Int = 1
-) : BaseRequest(ApiNames.GET_UGC_ACTIVE_INACTIVE_CATEGORIES)
+) : BaseRequest(ApiNames.GET_ACTIVE_INACTIVE_CATEGORIES)

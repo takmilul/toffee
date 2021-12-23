@@ -8,4 +8,4 @@ data class AllUserChannelsEditorsChoiceRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_UGC_CATEGORY_EDITOR_CHOICE)
+) : BaseRequest(ApiNames.GET_EDITOR_CHOICE)

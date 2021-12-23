@@ -1,7 +1,11 @@
 package com.banglalink.toffee.common.paging
 
+import androidx.core.os.bundleOf
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BaseApiService
 import com.banglalink.toffee.util.getError
 
@@ -25,6 +29,14 @@ class BaseNetworkPagingSource<T: Any>(
             )
         } catch (ex: Exception) {
             val error = getError(ex)
+            ToffeeAnalytics.logEvent(
+                ToffeeEvents.EXCEPTION,
+                bundleOf(
+                    "api_name" to apiName,
+                    "browser_screen" to screenName,
+                    "error_code" to error.code.toString(),
+                    "error_description" to error.msg)
+            )
             ex.printStackTrace()
             LoadResult.Error(ex)
         }

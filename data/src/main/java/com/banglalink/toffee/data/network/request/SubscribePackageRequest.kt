@@ -12,4 +12,4 @@ data class SubscribePackageRequest(
     val password: String,
     @SerializedName("isAutoRenew")
     val isAutoRenew: String = "false"
-) : BaseRequest(ApiNames.SUBSCRIBER_A_PACKAGE)
+) : BaseRequest(ApiNames.SUBSCRIBE_PACKAGE)

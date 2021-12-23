@@ -20,8 +20,13 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentReferAFriendBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -76,6 +81,14 @@ class ReferAFriendFragment : BaseFragment() {
                     setShareBtnClick(it.data.shareableString)
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.GET_REFERRAL_CODE,
+                            "browser_screen" to "Refer A Friend",
+                            "error_code" to it.error.code.toString(),
+                            "error_description" to it.error.msg)
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }

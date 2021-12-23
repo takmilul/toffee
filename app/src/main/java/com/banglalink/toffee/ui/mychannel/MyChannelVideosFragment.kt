@@ -17,7 +17,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.filter
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -247,7 +251,17 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     reloadVideosList()
                     videosReloadViewModel.reloadPlaylist.value = true
                 }
-                is Failure -> requireContext().showToast(it.error.msg)
+                is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
+                            "browser_screen" to BrowsingScreens.MY_CHANNEL,
+                            "error_code" to it.error.code.toString(),
+                            "error_description" to it.error.msg)
+                    )
+                    requireContext().showToast(it.error.msg)
+                }
             }
         }
     }

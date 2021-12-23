@@ -54,6 +54,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -373,7 +374,7 @@ class HomeActivity :
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
                         ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                             bundleOf(
-                                "api_name" to ApiNames.RE_REGISTATION,
+                                "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                                 "browser_screen" to "Enter OTP",
                                 "error_code" to it.error.code.toString(),
                                 "error_description" to it.error.msg))
@@ -433,7 +434,15 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                    is Failure -> showToast(getString(R.string.unable_to_load_data))
+                    is Failure -> {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
+                                "browser_screen" to "My Channel page",
+                                "error_code" to it.error.code.toString(),
+                                "error_description" to it.error.msg))
+                        showToast(getString(R.string.unable_to_load_data))
+                    }
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
@@ -1414,6 +1423,12 @@ class HomeActivity :
                     }
                 }
                 is Failure -> {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.UN_VERIFY_USER,
+                            "browser_screen" to BrowsingScreens.HOME_PAGE,
+                            "error_code" to it.error.code.toString(),
+                            "error_description" to it.error.msg))
                     showToast(it.error.msg)
                 }
             }

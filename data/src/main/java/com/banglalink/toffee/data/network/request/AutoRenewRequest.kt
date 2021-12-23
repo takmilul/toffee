@@ -12,4 +12,4 @@ data class AutoRenewRequest(
     val password: String,
     @SerializedName("isAutoRenew")
     val isAutoRenew: String
-) : BaseRequest(ApiNames.SET_AUTORENEW)
+) : BaseRequest(ApiNames.SET_AUTO_RENEW)

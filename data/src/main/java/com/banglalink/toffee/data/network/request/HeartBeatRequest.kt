@@ -20,4 +20,4 @@ data class HeartBeatRequest(
     val isNetworkSwitch: Boolean = false,
     @SerializedName("type")
     val type: String = "FOREGROUND"
-) : BaseRequest(ApiNames.HEART_BEAT)
+) : BaseRequest(ApiNames.SEND_HEART_BEAT)
