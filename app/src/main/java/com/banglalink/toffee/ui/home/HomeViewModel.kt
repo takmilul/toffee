@@ -1,12 +1,14 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -115,7 +117,15 @@ class HomeViewModel @Inject constructor(
             try {
                 setFcmToken.execute(token)
             } catch (e: Exception) {
-                getError(e)
+                val error =getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SET_FCM_TOKEN,
+                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.code,
+                        "error_description" to error.msg)
+                )
             }
         }
     }
@@ -157,11 +167,21 @@ class HomeViewModel @Inject constructor(
 
     private fun getProfile() {
         viewModelScope.launch {
-            try {
+            val respoense =resultFromResponse {
                 profileApi()
-            } catch (e: Exception) {
-                ToffeeAnalytics.logException(e)
             }
+            if (respoense is Resource.Failure)
+            {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_USER_PROFILE,
+                        "browser_screen" to "Profile Screen",
+                        "error_code" to respoense.error.code,
+                        "error_description" to respoense.error.msg)
+                )
+            }
+
         }
     }
 
@@ -246,6 +266,16 @@ class HomeViewModel @Inject constructor(
             val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
             if (response is Success) {
                 cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
+            } else {
+                val error = response as Resource.Failure
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SUBSCRIBE_CHANNEL,
+                        "browser_screen" to "Users Channels",
+                        "error_code" to error.error.code,
+                        "error_description" to error.error.msg)
+                )
             }
             subscriptionLiveData.value = response
         }
@@ -267,7 +297,20 @@ class HomeViewModel @Inject constructor(
     fun getMqttCredential() {
         viewModelScope.launch {
             val response = resultFromResponse { mqttCredentialService.execute() }
-            mqttCredentialLiveData.postValue(response)
+
+            if(response is Resource.Success){
+                mqttCredentialLiveData.postValue(response)
+            } else{
+                val error = response as Resource.Failure
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_MQTT_CREDENTIAL,
+                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.error.code,
+                        "error_description" to error.error.msg)
+                )
+            }
         }
     }
     
@@ -302,6 +345,15 @@ class HomeViewModel @Inject constructor(
                 vastTagsMutableLiveData.value = vastTagService.execute().response.tags
             } catch (e: Exception) {
                 e.printStackTrace()
+                val error = getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_VAST_TAG_LIST,
+                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.code,
+                        "error_description" to error.msg)
+                )
             }
         }
     }

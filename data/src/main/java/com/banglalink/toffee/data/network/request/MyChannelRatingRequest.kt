@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelRatingRequest(
@@ -13,4 +14,4 @@ data class MyChannelRatingRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("ugcRatingOnChannel")
+) : BaseRequest(ApiNames.RATE_CHANNEL)

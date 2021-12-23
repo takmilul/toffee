@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class ContentShareLogRequest(
@@ -13,4 +14,4 @@ data class ContentShareLogRequest(
     val sharedUrl: String? = null,
     @SerializedName("contentType")
     val contentType: String = "VOD",
-) : BaseRequest("contentShareLog")
+) : BaseRequest(ApiNames.SEND_CONTENT_SHARE_LOG)

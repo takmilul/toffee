@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
@@ -218,6 +219,7 @@ class EditUploadInfoFragment : BaseFragment() {
     
     private val fileResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            ToffeeAnalytics.logEvent(ToffeeEvents.UGC_CHANNEL_FORM_SUBMIT)
             val uri = it.data!!.data!!
             checkFileValidity(uri)
         } else {

@@ -29,7 +29,7 @@ class GetPopularUserChannels @AssistedInject constructor(
                 requestParams.categoryId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcPopularChennel"),
+                preference.getDBVersionByApiName(ApiNames.GET_POPULAR_TV_CHANNEL),
                 request
             )
         }

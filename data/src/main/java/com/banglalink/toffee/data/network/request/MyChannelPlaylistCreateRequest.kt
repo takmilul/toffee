@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelPlaylistCreateRequest(
@@ -15,4 +16,4 @@ data class MyChannelPlaylistCreateRequest(
     val playlistName: String?,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest("ugcCreatePlaylistName")
+) : BaseRequest(ApiNames.CREATE_MY_CHANNEL_PLAYLIST)

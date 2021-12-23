@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
@@ -54,6 +57,12 @@ class UserInterestFragment : ChildDialogFragment() {
                     homeViewModel.sendUserInterestData(userInterestList)
                     cPref.setUserInterestSubmitted(mPref.phoneNumber)
                     reloadContent()
+
+                    val interestListAnalytics = userInterestList.filterValues {
+                        it == 1
+                    }.keys.joinToString("|")
+
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SELECT_INTEREST,  bundleOf("interest" to interestListAnalytics))
                 }
                 else {
                    // requireContext().showToast("Please select at least 3 interest or press skip to sign in")

@@ -31,7 +31,7 @@ class GetDramaEpisodesBySeason @AssistedInject constructor(
                 requestParams.seasonNo,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcDramaSerialBySeason"),
+                preference.getDBVersionByApiName(ApiNames.GET_DRAMA_SERIAL_BY_SEASON),
                 DramaEpisodesBySeasonRequest(
                     preference.customerId,
                     preference.password

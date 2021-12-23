@@ -11,7 +11,7 @@ class TermsConditionService @Inject constructor(private val preference: SessionP
 
     suspend fun execute(): TermsAndCondition {
         val response = tryIO2 {
-            toffeeApi.getVideoTermsAndCondition(preference.getDBVersionByApiName("getUgcTermsAndConditions"),
+            toffeeApi.getVideoTermsAndCondition(preference.getDBVersionByApiName(ApiNames.GET_TERMS_AND_CONDITIONS),
                 TermsConditionRequest(preference.customerId,preference.password)
             )
         }

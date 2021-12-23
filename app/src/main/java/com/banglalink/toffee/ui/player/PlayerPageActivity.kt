@@ -7,9 +7,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
@@ -32,6 +36,7 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
+import com.banglalink.toffee.util.getError
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
@@ -542,8 +547,23 @@ abstract class PlayerPageActivity :
         var offlineLicenseHelper: OfflineLicenseHelper? = null
         try {
             val drmCid = if(mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
-            val token =
-                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) ?: return null
+            val token = try{
+                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) }
+            catch (e:Exception){
+                val error = getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_DRM_TOKEN,
+                        "browser_screen" to "Player Page",
+                        "error_code" to error.code,
+                        "error_description" to error.msg)
+                )
+                    null
+                }
+            if(token==null){
+                return null
+            }
             Log.i("DRM_T", "Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
@@ -584,7 +604,7 @@ abstract class PlayerPageActivity :
             Log.i("DRM_T", "Saving offline license")
             val newDrmLicense = DrmLicenseEntity(
                 if(mPref.isGlobalCidActive) -1 else channelInfo.id.toLong(),
-                drmCid,
+                drmCid!!,
                 licenseData,
                 licenseExpiration
             )

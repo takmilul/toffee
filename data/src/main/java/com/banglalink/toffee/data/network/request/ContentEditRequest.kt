@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class ContentEditRequest(
@@ -29,4 +30,4 @@ data class ContentEditRequest(
     val oldContentBanner: String? = null,
     @SerializedName("contentBanner")
     val contentBanner: String? = null,
-) : BaseRequest("ugcContentUpdate")
+) : BaseRequest(ApiNames.EDIT_CONTENT_UPLOAD)

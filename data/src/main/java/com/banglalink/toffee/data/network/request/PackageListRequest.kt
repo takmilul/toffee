@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class PackageListRequest(
@@ -11,4 +12,4 @@ data class PackageListRequest(
     val offset: Int = 0,
     @SerializedName("limit")
     val limit: Int = 100
-) : BaseRequest("getPackagesWithSubscription")
+) : BaseRequest(ApiNames.GET_PACKAGE_WITH_SUBSCRIPTION)

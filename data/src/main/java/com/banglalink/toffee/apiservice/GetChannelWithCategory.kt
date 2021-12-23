@@ -18,7 +18,7 @@ class GetChannelWithCategory @Inject constructor(
     suspend operator fun invoke(subcategoryId: Int) {
         val response = tryIO2 {
             toffeeApi.getChannels(
-                preference.getDBVersionByApiName("getUgcAppHomePageContentTofeeV2"),
+                preference.getDBVersionByApiName(ApiNames.GET_APP_HOME_PAGE_CONTENT_V2),
                 AllChannelRequest(
                     subcategoryId,
                     preference.customerId,

@@ -26,7 +26,7 @@ class MyChannelGetDetailService @Inject constructor(
                 isOwner,
                 isOwner.xor(1),
                 channelOwnerId,
-                preference.getDBVersionByApiName("getUgcChannelDetails"),
+                preference.getDBVersionByApiName(ApiNames.GET_MY_CHANNEL_DETAILS),
                 MyChannelDetailRequest(
                     preference.customerId,
                     preference.password

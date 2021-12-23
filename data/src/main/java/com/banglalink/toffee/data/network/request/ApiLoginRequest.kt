@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class ApiLoginRequest(
@@ -15,4 +16,4 @@ data class ApiLoginRequest(
     val lon: String,
     @SerializedName("fcmToken")
     val fcmToken: String
-) : BaseRequest("apiLoginV2")
+) : BaseRequest(ApiNames.API_LOGIN_V2)

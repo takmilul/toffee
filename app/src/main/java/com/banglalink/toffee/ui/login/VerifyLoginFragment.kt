@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.observe
@@ -89,6 +90,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 1))
                     ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
@@ -104,6 +106,13 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "0"))
                     ToffeeAnalytics.logEvent("login", bundleOf("login_failure_reason" to it.error.msg))
+
+                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
+                            "browser_screen" to "Enter OTP",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg))
                 }
             }
         }
@@ -129,6 +138,13 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
+                            "browser_screen" to "Enter OTP",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg))
+
                     requireContext().showToast(it.error.msg)
                 }
             }

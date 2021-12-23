@@ -24,7 +24,7 @@ class MovieCategoryDetailService @Inject constructor(
                 categoryId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcMovieCategoryDetails"),
+                preference.getDBVersionByApiName(ApiNames.GET_MOVIE_CATEGORY_DETAILS),
                 request
             )
         }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class PaymentMethodRequest(
@@ -7,4 +8,4 @@ data class PaymentMethodRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("getUgcPaymentMethodList")
+) : BaseRequest(ApiNames.GET_PAYMENT_METHOD_LIST)

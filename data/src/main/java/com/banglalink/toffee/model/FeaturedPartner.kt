@@ -1,5 +1,6 @@
 package com.banglalink.toffee.model
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.google.gson.annotations.SerializedName
@@ -26,7 +27,7 @@ data class FeaturedPartnerRequest(
     val customerId:Int,
     @SerializedName("password")
     val password:String,
-): BaseRequest("getUgcFeaturePartnerList")
+): BaseRequest(ApiNames.GET_FEATURED_PARTNERS)
 
 data class FeaturedPartnerResponse(
     @SerializedName("response")

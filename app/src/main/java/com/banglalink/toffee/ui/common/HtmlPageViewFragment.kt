@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
 import com.banglalink.toffee.ui.widget.Html5WebViewClient
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -84,6 +87,10 @@ class HtmlPageViewFragment : BaseFragment() {
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
+        ToffeeAnalytics.logEvent(
+            ToffeeEvents.SCREEN_VIEW,
+            bundleOf("firebase_screen" to htmlUrl)
+        )
     }
     
     private fun listenBackStack() {

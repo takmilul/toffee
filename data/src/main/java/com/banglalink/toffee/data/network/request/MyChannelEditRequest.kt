@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelEditRequest(
@@ -41,4 +42,4 @@ data class MyChannelEditRequest(
     val isBillingInfoUpdated: Boolean = false,
     @SerializedName("isChannelInfoUpdate")
     val isChannelInfoUpdate: Boolean = false
-) : BaseRequest("ugcChannelEdit")
+) : BaseRequest(ApiNames.EDIT_MY_CHANNEL)

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class SubscribePackageRequest(
@@ -11,4 +12,4 @@ data class SubscribePackageRequest(
     val password: String,
     @SerializedName("isAutoRenew")
     val isAutoRenew: String = "false"
-) : BaseRequest("subscribeAPackage")
+) : BaseRequest(ApiNames.SUBSCRIBE_PACKAGE)

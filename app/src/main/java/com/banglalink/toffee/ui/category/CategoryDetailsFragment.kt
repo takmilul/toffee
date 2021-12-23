@@ -1,11 +1,15 @@
 package com.banglalink.toffee.ui.category
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -45,5 +49,7 @@ class CategoryDetailsFragment : BaseFragment() {
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to "category",
+                "category_type" to category.categoryName))
     }
 }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class AutoRenewRequest(
@@ -11,4 +12,4 @@ data class AutoRenewRequest(
     val password: String,
     @SerializedName("isAutoRenew")
     val isAutoRenew: String
-) : BaseRequest("setAutoRenew")
+) : BaseRequest(ApiNames.SET_AUTO_RENEW)

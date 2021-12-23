@@ -25,7 +25,7 @@ class AllUserChannelsService @Inject constructor(
             toffeeApi.getAllUserChannels(
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcAllUserChannel"),
+                preference.getDBVersionByApiName(ApiNames.GET_ALL_USER_CHANNEL),
                 request
             )
         }

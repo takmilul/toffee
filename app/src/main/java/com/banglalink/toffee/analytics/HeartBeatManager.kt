@@ -3,10 +3,13 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -115,6 +118,16 @@ class HeartBeatManager @Inject constructor(
                             }
                         }
                         is Resource.Failure -> {
+
+                            ToffeeAnalytics.logEvent(
+                                ToffeeEvents.EXCEPTION,
+                                bundleOf(
+                                    "api_name" to "Header Enrichment",
+                                    "browser_screen" to "Splash Screen",
+                                    "error_code" to response.error.code,
+                                    "error_description" to response.error.msg)
+                            )
+
                             mPref.hePhoneNumber = ""
                             mPref.isHeBanglalinkNumber = false
                         }
@@ -144,7 +157,16 @@ class HeartBeatManager @Inject constructor(
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
-                getError(e)
+                val error =getError(e)
+
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SEND_HEART_BEAT,
+                        "browser_screen" to "Splash Screen",
+                        "error_code" to error.code,
+                        "error_description" to error.msg)
+                )
             }
         }
     }

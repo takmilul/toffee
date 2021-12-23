@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
@@ -67,7 +70,7 @@ class LandingPageFragment : HomeBaseFragment() {
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
         observe(mPref.isFireworkInitialized) { isInitialized ->
-            val isActive = mPref.isFireworkActive == "true" && isInitialized //false
+            val isActive = /*mPref.isFireworkActive == "true" && isInitialized*/ false
             if (isActive) {
                 _binding?.fireworkFragment?.isVisible = isActive
                 try {
@@ -81,6 +84,7 @@ class LandingPageFragment : HomeBaseFragment() {
                 }
             }
         }
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to "home"))
     }
     
     override fun onDestroyView() {

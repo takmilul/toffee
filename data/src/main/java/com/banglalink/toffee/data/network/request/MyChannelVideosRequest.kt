@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelVideosRequest(
@@ -11,4 +12,4 @@ data class MyChannelVideosRequest(
     val offset: Int,
     @SerializedName("limit")
     val limit: Int = 10
-) : BaseRequest("getUgcChannelAllContent")
+) : BaseRequest(ApiNames.GET_MY_CHANNEL_ALL_VIDEOS)
