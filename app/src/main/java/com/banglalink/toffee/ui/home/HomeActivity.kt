@@ -194,6 +194,14 @@ class HomeActivity :
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
+        ToffeeAnalytics.logUserProperty(
+            mapOf(
+                "user_id" to mPref.customerId.toString(),
+                "user_type" to mPref.isBanglalinkNumber,
+                "app_version" to BuildConfig.VERSION_CODE.toString()
+            )
+        )
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
