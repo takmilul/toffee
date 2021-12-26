@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.BottomSheetPartnershipBinding
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -30,6 +32,7 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
     }
 
     private fun navigateToCreatorsPolicy() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.UGC_LEARN_MORE)
         val args = Bundle().apply {
             putString("myTitle", "Creators Policy")
             putString("url", mPref.creatorsPolicyUrl)

@@ -1,3 +1,5 @@
 package com.banglalink.toffee.data.network.request
 
-class NavCategoryRequest : BaseRequest("getCategoriesV2")
+import com.banglalink.toffee.apiservice.ApiNames
+
+class NavCategoryRequest : BaseRequest(ApiNames.GET_CATEGORIES_V2)

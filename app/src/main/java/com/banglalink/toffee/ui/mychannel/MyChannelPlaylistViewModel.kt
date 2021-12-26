@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.mychannel
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.MyChannelPlaylistService
 import com.banglalink.toffee.apiservice.MyChannelUserPlaylistService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
@@ -20,7 +22,7 @@ class MyChannelPlaylistViewModel @Inject constructor(
     fun getMyChannelPlaylists(channelOwnerId: Int): Flow<PagingData<MyChannelPlaylist>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                apiService.create(channelOwnerId)
+                apiService.create(channelOwnerId), ApiNames.GET_MY_CHANNEL_PLAYLISTS, BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE
             )
         }).getList()
     }
@@ -28,7 +30,7 @@ class MyChannelPlaylistViewModel @Inject constructor(
     fun getMyChannelUserPlaylists(channelOwnerId: Int): Flow<PagingData<MyChannelPlaylist>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                userPlaylistService.create(channelOwnerId)
+                userPlaylistService.create(channelOwnerId), ApiNames.GET_MY_CHANNEL_USER_PLAYLISTS, BrowsingScreens.USER_PLAYLIST_PAGE
             )
         }).getList()
     }

@@ -1,8 +1,10 @@
-package com.banglalink.toffee.ui.category.drama
+package com.banglalink.toffee.ui.category.webseries
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.apiservice.GetDramaEpisodesBySeason
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
@@ -21,9 +23,9 @@ class EpisodeListViewModel @Inject constructor(
 
     fun getEpisodesBySeason(params: DramaSeasonRequestParam): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(episodeListApi.create(
-                params
-            ))
+            BaseNetworkPagingSource(
+                episodeListApi.create(params), ApiNames.GET_DRAMA_SERIAL_BY_SEASON, BrowsingScreens.WEB_SERIES_EPISODE_LIST_PAGE
+            )
         }).getList()
     }
 }

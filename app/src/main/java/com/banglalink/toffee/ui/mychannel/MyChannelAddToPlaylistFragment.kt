@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -15,7 +16,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
@@ -153,6 +158,14 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                     addToPlaylist(true)
                 }
                 is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.CREATE_MY_CHANNEL_PLAYLIST,
+                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }
@@ -197,6 +210,14 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                     playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.ADD_CONTENT_TO_PLAYLIST,
+                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                     alertDialog.dismiss()
                     requireContext().showToast(it.error.msg)
                 }

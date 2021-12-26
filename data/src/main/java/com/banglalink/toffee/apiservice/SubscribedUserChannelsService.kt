@@ -25,7 +25,7 @@ class SubscribedUserChannelsService @Inject constructor(
             toffeeApi.getSubscribedUserChannels(
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcChannelSubscriptionList"),
+                preference.getDBVersionByApiName(ApiNames.GET_SUBSCRIBED_USER_CHANNEL),
                 request
             )
         }

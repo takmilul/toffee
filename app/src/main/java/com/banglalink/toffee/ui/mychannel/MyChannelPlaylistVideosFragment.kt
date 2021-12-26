@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
@@ -19,7 +20,11 @@ import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
@@ -236,6 +241,14 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     reloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
+                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }

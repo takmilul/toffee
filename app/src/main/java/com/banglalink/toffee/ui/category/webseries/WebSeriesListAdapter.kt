@@ -1,11 +1,11 @@
-package com.banglalink.toffee.ui.category.drama
+package com.banglalink.toffee.ui.category.webseries
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 
-class DramaSeriesListAdapter<T : Any>(
+class WebSeriesListAdapter<T : Any>(
     listener: ProviderIconCallback<T>,
 ) : BasePagingDataAdapter<T>(listener, ItemComparator()) {
 

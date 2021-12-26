@@ -16,7 +16,7 @@ class GetCategories @Inject constructor(
         
         val response = tryIO2 {
             toffeeApi.getUgcCategoryList(
-                preference.getDBVersionByApiName("getUgcCategories"),
+                preference.getDBVersionByApiName(ApiNames.GET_CATEGORIES),
                 CategoryRequest()
             )
         }

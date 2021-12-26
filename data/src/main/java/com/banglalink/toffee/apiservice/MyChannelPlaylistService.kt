@@ -24,16 +24,11 @@ class MyChannelPlaylistService @AssistedInject constructor(
                 channelOwnerId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcPlaylistNames"),
+                preference.getDBVersionByApiName(ApiNames.GET_MY_CHANNEL_PLAYLISTS),
                 MyChannelPlaylistRequest(preference.customerId, preference.password)
             )
         }
-
-        if (response.response.channelPlaylist != null) {
-//            response.response.channelPlaylist.map { it.totalContent = getFormattedViewsText(it.totalContent) }
-            return response.response.channelPlaylist
-        }
-        return emptyList()
+        return response.response.channelPlaylist ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory

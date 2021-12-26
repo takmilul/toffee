@@ -1,8 +1,12 @@
 package com.banglalink.toffee.ui.mychannel
 
+import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.apiservice.MyChannelRatingService
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -36,7 +40,19 @@ class MyChannelHomeViewModel @Inject constructor(
     fun rateMyChannel(channelOwnerId: Int, rating: Float) {
         viewModelScope.launch {
             val response = resultFromResponse { ratingService.execute(channelOwnerId, rating) }
-            _ratingData.postValue(response)
+           if(response is Resource.Success){
+               _ratingData.postValue(response)
+           } else{
+               val error = response as Resource.Failure
+               ToffeeAnalytics.logEvent(
+                   ToffeeEvents.EXCEPTION,
+                   bundleOf(
+                       "api_name" to ApiNames.RATE_CHANNEL,
+                       "browser_screen" to "User Channel Details",
+                       "error_code" to error.error.code,
+                       "error_description" to error.error.msg)
+               )
+           }
         }
     }
 }

@@ -25,7 +25,7 @@ class MoviesComingSoonService @Inject constructor(
                 subCategoryId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcComingSoon"),
+                preference.getDBVersionByApiName(ApiNames.GET_COMING_SOON_POSTER),
                 request
             )
         }

@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -113,8 +114,16 @@ class LoginContentFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 0))
                     ToffeeAnalytics.logApiError("reRegistration", it.error.msg, phoneNo)
                     requireActivity().showToast(it.error.msg)
+
+                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
+                            "browser_screen" to "Login With Phone",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg))
                 }
             }
         }

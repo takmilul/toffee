@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelPlaylistEditRequest(
@@ -17,4 +18,4 @@ data class MyChannelPlaylistEditRequest(
     val isChannelOwner: Int,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest("ugcEditPlaylistName")
+) : BaseRequest(ApiNames.EDIT_MY_CHANNEL_PLAYLIST)

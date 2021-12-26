@@ -10,7 +10,7 @@ data class MyChannelPlaylist (
     @SerializedName("channel_creator_id")
     val channelCreatorId: Int,
     @SerializedName("is_channel_owner")
-    val isOwner: Int,
+    val isChannelOwner: String,
     @SerializedName("channel_id")
     val channelId: Int,
     @SerializedName("playlist_table_id")
@@ -39,7 +39,11 @@ data class MyChannelPlaylist (
     val landscape_ratio_1280_720: String? = null,
     @SerializedName("created_at")
     val created_at: String? = null,
-)
+) {
+    fun isOwner(): Boolean {
+        return isChannelOwner == "1"
+    }
+}
 
 data class MyChannelPlaylistContentId(
     @SerializedName("content_id")

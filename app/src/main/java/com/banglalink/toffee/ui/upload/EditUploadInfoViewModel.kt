@@ -3,10 +3,11 @@ package com.banglalink.toffee.ui.upload
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.lifecycle.*
-import com.banglalink.toffee.apiservice.ContentUpload
-import com.banglalink.toffee.apiservice.GetContentCategories
-import com.banglalink.toffee.apiservice.UploadSignedUrlService
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -228,6 +229,15 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             resultLiveData.value = Resource.Failure(Error(-1, "Unknown error occured"))
         } catch (ex: Exception) {
             resultLiveData.value = Resource.Failure(getError(ex))
+            val error = getError(ex)
+            ToffeeAnalytics.logEvent(
+                ToffeeEvents.EXCEPTION,
+                bundleOf(
+                    "api_name" to ApiNames.UPLOAD_CONTENT,
+                    "browser_screen" to "Edit Upload",
+                    "error_code" to error.code,
+                    "error_description" to error.msg)
+            )
         }
         progressDialog.value = false
     }

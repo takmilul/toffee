@@ -28,7 +28,7 @@ class MoviesPreviewService @Inject constructor(
                 subCategoryId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcMoviePreview"),
+                preference.getDBVersionByApiName(ApiNames.GET_MOVIE_PREVIEW),
                 request
             )
         }

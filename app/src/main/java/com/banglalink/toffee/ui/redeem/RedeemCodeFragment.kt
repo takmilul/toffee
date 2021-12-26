@@ -5,8 +5,13 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentRedeemCodeBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
@@ -65,6 +70,14 @@ class RedeemCodeFragment : BaseFragment() {
                     }
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.REDEEM_REFERRAL_CODE,
+                            "browser_screen" to "Enter Referral code page",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                     if (it.error.code == 100) {
                         showDisplayMessageDialog(requireContext(), it.error.msg)
                     } else {

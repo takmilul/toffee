@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 class RedeemReferralCodeRequest(
@@ -9,4 +10,4 @@ class RedeemReferralCodeRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(apiName = "redeemReferralCode")
+) : BaseRequest(apiName = ApiNames.REDEEM_REFERRAL_CODE)

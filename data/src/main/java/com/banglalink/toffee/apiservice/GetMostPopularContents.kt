@@ -31,7 +31,7 @@ class GetMostPopularContents @AssistedInject constructor(
                 requestParams.subCategoryId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcMostPopularContents"),
+                preference.getDBVersionByApiName(ApiNames.GET_MOST_POPULAR_CONTENTS),
                 MostPopularContentRequest(
                     preference.customerId,
                     preference.password

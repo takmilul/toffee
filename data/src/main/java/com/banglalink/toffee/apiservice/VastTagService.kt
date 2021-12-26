@@ -13,7 +13,7 @@ class VastTagService  @Inject constructor(private val pref: SessionPreference, p
     suspend fun execute(): VastTagResponse {
         return tryIO2 {
             api.getVastTagLists(
-                pref.getDBVersionByApiName("vastTagsList"), VastTagRequest(
+                pref.getDBVersionByApiName(ApiNames.GET_VAST_TAG_LIST), VastTagRequest(
                     pref.customerId,
                     pref.password
                 )

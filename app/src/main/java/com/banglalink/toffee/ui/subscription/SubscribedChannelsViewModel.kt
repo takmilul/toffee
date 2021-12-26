@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.SubscribedUserChannelsService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -36,7 +38,7 @@ class SubscribedChannelsViewModel @Inject constructor(
     private val userChannelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                subscribeChannelApiService
+                subscribeChannelApiService, ApiNames.GET_SUBSCRIBED_USER_CHANNEL, BrowsingScreens.SUBSCRIBED_CHANNELS_PAGE
             )
         })
     }

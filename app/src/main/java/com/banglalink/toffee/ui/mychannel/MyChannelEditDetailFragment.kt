@@ -16,7 +16,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -249,6 +253,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     requireContext().showToast(it.data.message)
                 }
                 is Failure -> {
+
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.EDIT_MY_CHANNEL,
+                            "browser_screen" to "Edit Details",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
+
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     println(it.error)

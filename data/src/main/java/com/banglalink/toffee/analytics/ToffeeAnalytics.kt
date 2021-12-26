@@ -78,10 +78,16 @@ object ToffeeAnalytics {
             firebaseAnalytics.logEvent(event, params)
         }
         if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
-            appEventsLogger.logEvent(event)
+            appEventsLogger.logEvent(event, params)
         }
     }
 
+    fun logUserProperty(propertyMap: Map<String, String>) {
+        propertyMap.forEach { 
+            firebaseAnalytics.setUserProperty(it.key, it.value)
+        }
+    }
+    
     class ApiFailData(
         @SerializedName("apiName")
         val apiName: String,

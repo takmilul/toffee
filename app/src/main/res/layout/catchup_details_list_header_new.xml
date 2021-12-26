@@ -14,7 +14,7 @@
             type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
         <variable
             name="viewmodel"
-            type="com.banglalink.toffee.ui.category.drama.EpisodeListViewModel" />
+            type="com.banglalink.toffee.ui.category.webseries.EpisodeListViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

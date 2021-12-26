@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class ContentRequest(
@@ -9,4 +10,4 @@ data class ContentRequest(
     val password: String,
     @SerializedName("telcoId")
     val telcoId: Int = 1,
-) : BaseRequest("getUgcContentsV5")
+) : BaseRequest(ApiNames.GET_CATEGORIES)

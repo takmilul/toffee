@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.apiservice.GetRelativeContents
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
@@ -18,7 +20,7 @@ class CatchupDetailsViewModel @Inject constructor(
     
     fun loadRelativeContent(catchupParams: CatchupParams): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(relativeContentsFactory.create(catchupParams))
+            BaseNetworkPagingSource(relativeContentsFactory.create(catchupParams), ApiNames.GET_RELATIVE_CONTENTS, BrowsingScreens.PLAYER_PAGE)
         }).getList()
     }
 }

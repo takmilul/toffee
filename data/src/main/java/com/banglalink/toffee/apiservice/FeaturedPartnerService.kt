@@ -20,7 +20,7 @@ class FeaturedPartnerService @AssistedInject constructor(
                 type,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcFeaturePartnerList"),
+                preference.getDBVersionByApiName(ApiNames.GET_FEATURED_PARTNERS),
                 FeaturedPartnerRequest(
                     preference.customerId,
                     preference.password,

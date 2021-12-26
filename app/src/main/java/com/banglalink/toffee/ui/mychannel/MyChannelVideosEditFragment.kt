@@ -19,6 +19,10 @@ import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -312,6 +316,14 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     videosReloadViewModel.reloadVideos.value = true
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.EDIT_CONTENT_UPLOAD,
+                            "browser_screen" to BrowsingScreens.EDIT_VIDEO_DETAILS,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                     progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
                 }

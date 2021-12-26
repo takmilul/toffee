@@ -1,5 +1,7 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
+import com.facebook.internal.gatekeeper.AppID
 import com.google.gson.annotations.SerializedName
 
 data class SubscribedUserChannelsRequest(
@@ -7,4 +9,4 @@ data class SubscribedUserChannelsRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("getUgcChannelSubscriptionList")
+) : BaseRequest(ApiNames.GET_SUBSCRIBED_USER_CHANNEL)

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class LoginByPhoneRequest(
@@ -17,4 +18,4 @@ data class LoginByPhoneRequest(
     val serviceOperatorType: String = "TELCO",
     @SerializedName("referralCode")
     val referralCode: String = ""
-) : BaseRequest("reRegistrationV2")
+) : BaseRequest(ApiNames.LOGIN_BY_PHONE_NO)

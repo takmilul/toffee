@@ -14,6 +14,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Path
 import android.graphics.Point
 import android.net.ConnectivityManager
@@ -34,6 +35,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -50,7 +52,9 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -63,7 +67,7 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.*
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
-import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
+import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
@@ -195,6 +199,14 @@ class HomeActivity :
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
+        ToffeeAnalytics.logUserProperty(
+            mapOf(
+                "user_id" to mPref.customerId.toString(),
+                "user_type" to mPref.isBanglalinkNumber,
+                "app_version" to BuildConfig.VERSION_CODE.toString()
+            )
+        )
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -369,6 +381,12 @@ class HomeActivity :
                     }
                     is Failure -> {
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
+                                "browser_screen" to "Enter OTP",
+                                "error_code" to it.error.code,
+                                "error_description" to it.error.msg))
                     }
                 }
             }
@@ -425,7 +443,15 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                    is Failure -> showToast(getString(R.string.unable_to_load_data))
+                    is Failure -> {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
+                                "browser_screen" to "My Channel page",
+                                "error_code" to it.error.code,
+                                "error_description" to it.error.msg))
+                        showToast(getString(R.string.unable_to_load_data))
+                    }
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
@@ -868,6 +894,9 @@ class HomeActivity :
     }
 
     private fun navigateToSearch(query: String?) {
+        ToffeeAnalytics.logEvent(ToffeeEvents.SEARCH,
+            bundleOf("search_query" to query)
+        )
         navController.popBackStack(R.id.searchFragment, true)
 //        navController.navigate(Uri.parse("app.toffee://search/$query"))
         navController.navigate(R.id.searchFragment, Bundle().apply {
@@ -955,6 +984,13 @@ class HomeActivity :
     }
     
     private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
+        ToffeeAnalytics.logEvent(ToffeeEvents.CONTENT_CLICK,
+            bundleOf("content_id" to it.id,
+                "content_title" to it.program_name,
+                "content_category" to it.category,
+                "content_partner" to it.content_provider_name,
+            )
+        )
         if (player is CastPlayer) {
             maximizePlayer()
         }
@@ -1396,6 +1432,12 @@ class HomeActivity :
                     }
                 }
                 is Failure -> {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.UN_VERIFY_USER,
+                            "browser_screen" to BrowsingScreens.HOME_PAGE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg))
                     showToast(it.error.msg)
                 }
             }
