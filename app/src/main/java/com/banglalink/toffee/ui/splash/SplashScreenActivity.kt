@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.splash
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : BaseAppCompatActivity() {
     
     private var _binding: ActivitySplashScreenBinding? = null

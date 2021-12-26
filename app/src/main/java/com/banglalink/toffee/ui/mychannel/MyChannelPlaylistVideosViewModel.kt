@@ -45,7 +45,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     fun getMyChannelUserPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                userPlaylistService.create(requestParams), ApiNames.GET_MY_CHANNEL_USER_PLAYLIST_VIDEOS, BrowsingScreens.USER_PLAYLIST_VIDEOS_PAGE
+                userPlaylistService.create(requestParams), ApiNames.GET_USER_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.USER_PLAYLIST_VIDEOS_PAGE
             )
         }).getList()
     }

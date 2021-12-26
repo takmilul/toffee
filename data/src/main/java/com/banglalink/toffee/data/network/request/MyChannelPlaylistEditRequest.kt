@@ -18,4 +18,4 @@ data class MyChannelPlaylistEditRequest(
     val isChannelOwner: Int,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest(ApiNames.EDIT_MY_CHANNEL_PLAYLIST)
+) : BaseRequest(ApiNames.EDIT_PLAYLIST)

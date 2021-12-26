@@ -8,4 +8,4 @@ data class MyChannelUserPlaylistRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(ApiNames.GET_MY_CHANNEL_USER_PLAYLISTS)
+) : BaseRequest(ApiNames.GET_USER_CHANNEL_PLAYLISTS)

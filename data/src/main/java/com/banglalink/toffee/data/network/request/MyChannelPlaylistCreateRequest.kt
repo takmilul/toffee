@@ -16,4 +16,4 @@ data class MyChannelPlaylistCreateRequest(
     val playlistName: String?,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest(ApiNames.CREATE_MY_CHANNEL_PLAYLIST)
+) : BaseRequest(ApiNames.CREATE_PLAYLIST)

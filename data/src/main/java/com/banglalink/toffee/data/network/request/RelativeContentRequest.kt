@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class RelativeContentRequest(
     @SerializedName("contentId")
-    val contentId: String,
+    val contentId: String = "0",
     @SerializedName("videoTag")
     val videoTag: String,
     @SerializedName("customerId")

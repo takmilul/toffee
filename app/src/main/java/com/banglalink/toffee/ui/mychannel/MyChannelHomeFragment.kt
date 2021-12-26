@@ -381,7 +381,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.CREATE_MY_CHANNEL_PLAYLIST,
+                            "api_name" to ApiNames.CREATE_PLAYLIST,
                             "browser_screen" to BrowsingScreens.ALL_USER_CHANNELS_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)

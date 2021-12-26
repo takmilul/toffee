@@ -17,7 +17,7 @@ data class ApiCategoryRequestParams(
     val categoryId: Int,
 )
 
-class GetUgcTrendingNowContents @AssistedInject constructor(
+class GetEditorsChoiceContents @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
@@ -57,6 +57,6 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
 
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(requestParams: EditorsChoiceFeaturedRequestParams): GetUgcTrendingNowContents
+        fun create(requestParams: EditorsChoiceFeaturedRequestParams): GetEditorsChoiceContents
     }
 }

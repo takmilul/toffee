@@ -12,4 +12,4 @@ data class MyChannelPlaylistDeleteRequest(
     val playlistId: Int,
     @SerializedName("isUserPlaylist")
     val isUserPlaylist: Int = 0
-) : BaseRequest(ApiNames.DELETE_MY_PLAYLIST_NAME)
+) : BaseRequest(ApiNames.DELETE_PLAYLIST)

@@ -24,7 +24,7 @@ class EpisodeListViewModel @Inject constructor(
     fun getEpisodesBySeason(params: DramaSeasonRequestParam): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                episodeListApi.create(params), ApiNames.GET_DRAMA_SERIAL_BY_SEASON, BrowsingScreens.WEB_SERIES_EPISODE_LIST_PAGE
+                episodeListApi.create(params), ApiNames.GET_WEB_SERIES_BY_SEASON, BrowsingScreens.WEB_SERIES_EPISODE_LIST_PAGE
             )
         }).getList()
     }

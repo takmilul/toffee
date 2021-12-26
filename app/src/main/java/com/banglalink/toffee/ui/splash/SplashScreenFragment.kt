@@ -1,11 +1,13 @@
 package com.banglalink.toffee.ui.splash
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +18,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
+@SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
     private val binding get() = _binding !!
@@ -57,6 +59,7 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.reportAppLaunch()
+        Log.i("APi_", "onCreateView: ")
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -73,7 +76,7 @@ class SplashScreenFragment : BaseFragment() {
         observeApiLogin()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
-        
+        Log.i("APi_", "onViewCreated: ")
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {

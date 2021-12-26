@@ -38,7 +38,7 @@ class LandingPageViewModel @Inject constructor(
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
     private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
     private val featuredPartnerAssistedFactory: FeaturedPartnerService.AssistedFactory,
-    private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+    private val editorsChoiceAssistedFactory: GetEditorsChoiceContents.AssistedFactory,
 ) : ViewModel() {
     var featuredJob: Job? = null
     val categoryId = SingleLiveEvent<Int>()

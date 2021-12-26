@@ -188,7 +188,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.EDIT_MY_CHANNEL_PLAYLIST,
+                            "api_name" to ApiNames.EDIT_PLAYLIST,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
@@ -247,7 +247,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
-                            "api_name" to ApiNames.DELETE_MY_PLAYLIST_NAME,
+                            "api_name" to ApiNames.DELETE_PLAYLIST,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)

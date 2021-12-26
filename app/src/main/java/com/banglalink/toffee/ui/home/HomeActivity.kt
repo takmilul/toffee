@@ -14,7 +14,6 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Path
 import android.graphics.Point
 import android.net.ConnectivityManager
@@ -595,10 +594,9 @@ class HomeActivity :
                 .className
                 .substringAfterLast(".")
 
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
-            FirebaseAnalytics.getInstance(this@HomeActivity)
-                .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+            ToffeeAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
+                FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
+            ))
         }
 
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)

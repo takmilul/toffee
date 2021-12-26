@@ -8,4 +8,4 @@ data class DramaEpisodesBySeasonRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
-) : BaseRequest(ApiNames.GET_DRAMA_SERIAL_BY_SEASON)
+) : BaseRequest(ApiNames.GET_WEB_SERIES_BY_SEASON)
