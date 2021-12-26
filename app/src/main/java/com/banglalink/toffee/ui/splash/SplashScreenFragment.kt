@@ -40,7 +40,6 @@ import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
-@SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
     private val binding get() = _binding !!
@@ -59,7 +58,6 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.reportAppLaunch()
-        Log.i("APi_", "onCreateView: ")
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,7 +74,6 @@ class SplashScreenFragment : BaseFragment() {
         observeApiLogin()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
-        Log.i("APi_", "onViewCreated: ")
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {

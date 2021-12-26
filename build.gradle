@@ -5,20 +5,28 @@ buildscript {
         appVersionCode = 71
         appVersionName = '2.1.4'
         kotlinVersion = '1.6.10'
-        kotlinCoroutineVersion = "1.5.2"
+        kotlinCoroutineVersion = '1.5.2'
         composeVersion = '1.0.5'
-        exoVersion = "2.16.1"
-        firebaseCoreVersion = "19.0.2"
-        firebaseMessagingVersion = "23.0.0"
-        firebaseAnalyticsVersion = "20.0.2"
-        firebaseCrashlyticsVersion = "18.2.6"
-        lifecycleVersion = "2.4.0"
-        roomDbVersion = "2.3.0"
+        exoVersion = '2.16.0'
+        firebaseCoreVersion = '19.0.2'
+        firebaseMessagingVersion = '23.0.0'
+        firebaseAnalyticsVersion = '20.0.2'
+        firebaseCrashlyticsVersion = '18.2.6'
+        lifecycleVersion = '2.3.1'
+        roomDbVersion = '2.3.0'
         hiltAndroidVersion = '2.40.5'
-        hiltVersion = "1.0.0"
-        retrofitVersion = "2.9.0"
-        okHttpVersion = "4.9.0"
+        hiltVersion = '1.0.0'
+        retrofitVersion = '2.9.0'
+        okHttpVersion = '4.9.0'
         facebookSdkVersion = '12.2.0'
+        pagingVersion = '3.0.1'
+        gsonVersion = '2.8.8'
+        pubsubVersion = 'v1-rev452-1.25.0'
+        googleApiClientVersion = '1.32.2'
+        googleHttpClientGsonVersion = '1.40.1'
+        pahoClientVersion = '1.2.5'
+        pahoAndroidServiceVersion = '1.1.1'
+        espressoVersion = '3.4.0'
     }
     repositories {
         google()

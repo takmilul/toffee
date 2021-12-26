@@ -8,12 +8,12 @@ apply plugin: 'kotlin-parcelize'
 
 android {
     
-    compileSdkVersion 31
+    compileSdkVersion 30
     
     defaultConfig {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode rootProject.appVersionCode
         versionName rootProject.appVersionName
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
@@ -84,9 +84,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation "androidx.fragment:fragment-ktx:1.4.0"
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation "androidx.fragment:fragment-ktx:1.3.6"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'net.gotev:uploadservice:4.7.0'
     implementation 'net.gotev:uploadservice-okhttp:4.7.0'
@@ -114,7 +114,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
 //    implementation "android.arch.lifecycle:extensions:2.1.0"
     
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+//    implementation 'androidx.work:work-runtime-ktx:2.7.1'
     
     implementation 'com.google.android.material:material:1.4.0'
     //Switch Lib
@@ -162,7 +162,7 @@ dependencies {
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     // Paging
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.0'
+    implementation "androidx.paging:paging-runtime-ktx:$rootProject.pagingVersion"
 
     // Hilt
     def hilt_android_ver = rootProject.hiltAndroidVersion
@@ -196,7 +196,7 @@ dependencies {
     //Permission extension
 //    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
     //Facebook SDK
-    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
+//    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -212,7 +212,7 @@ dependencies {
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
     implementation "com.github.loopsocial:AndroidFireworkPlayer:$fireworkExoPlayerVersion"
 
-    implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
+    implementation ("com.google.apis:google-api-services-pubsub:$rootProject.pubsubVersion") {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.json'
@@ -220,13 +220,13 @@ dependencies {
         exclude group: 'com.google.guava'
 //        exclude module: 'google-http-client-jackson2'
     }
-    implementation ('com.google.api-client:google-api-client-android:1.32.2') {
+    implementation ("com.google.api-client:google-api-client-android:$rootProject.googleApiClientVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-    implementation ('com.google.http-client:google-http-client-gson:1.40.1') {
+    implementation ("com.google.http-client:google-http-client-gson:$rootProject.googleHttpClientGsonVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
@@ -238,8 +238,8 @@ dependencies {
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //mqtt library
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$rootProject.pahoClientVersion"
+    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$rootProject.pahoAndroidServiceVersion"
 
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.0'
 //    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
@@ -247,7 +247,7 @@ dependencies {
     //medallia
     implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
     
-    def espresso_version = '3.4.0'
+    def espresso_version = rootProject.espressoVersion
     def test_core = '1.4.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
@@ -274,7 +274,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espresso_version")
 
     // Fragment testing
-    debugImplementation("androidx.fragment:fragment-testing:1.4.0")
+    debugImplementation("androidx.fragment:fragment-testing:1.3.6")
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
 
 //    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
