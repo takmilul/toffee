@@ -107,7 +107,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         if(mPref.isVerifiedUser || !isOwner) {
             progressDialog.show()
             observeChannelDetail()
-    //        observeSubscribeChannel()
+            observeSubscribeChannel()
             viewModel.getChannelDetail(channelOwnerId)
         } else {
             setBindingData()
@@ -139,21 +139,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
+                binding.channelDetailView.subscriptionButton.isEnabled = false
                 if (isSubscribed == 0) {
-                    binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
-                    isSubscribed = 1
-                    binding.isSubscribed = isSubscribed
-                    binding.subscriberCount = ++subscriberCount
-                    binding.channelDetailView.subscriptionButton.isEnabled = true
                 } else {
                     UnSubscribeDialog.show(requireContext()) {
-                        binding.channelDetailView.subscriptionButton.isEnabled = false
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), -1)
-                        isSubscribed = 0
-                        binding.subscriberCount = --subscriberCount
-                        binding.isSubscribed = isSubscribed
-                        binding.channelDetailView.subscriptionButton.isEnabled = true
                     }
                 }
             }
@@ -324,25 +315,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Success -> {
-                    val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                    if (response.data.isSubscribed == 1) {
-                        isSubscribed = 1
-                        binding.isSubscribed = isSubscribed
-                        binding.subscriberCount = ++subscriberCount
-                    }
-                    else {
-                        isSubscribed = 0
-                        binding.isSubscribed = isSubscribed
-                        binding.subscriberCount = --subscriberCount
-                    }
-                    binding.channelDetailView.subscriptionButton.isEnabled = true
-                    homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, channelOwnerId, mPref.customerId), status)
+                    isSubscribed = response.data.isSubscribed
+                    subscriberCount = response.data.subscriberCount
+                    binding.isSubscribed = isSubscribed
+                    binding.subscriberCount = subscriberCount
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)
-                    binding.channelDetailView.subscriptionButton.isEnabled = true
                 }
             }
+            binding.channelDetailView.subscriptionButton.isEnabled = true
         }
     }
     

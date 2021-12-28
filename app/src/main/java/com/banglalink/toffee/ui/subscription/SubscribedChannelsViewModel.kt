@@ -32,14 +32,10 @@ class SubscribedChannelsViewModel @Inject constructor(
     }
     
     fun loadSubscribedChannels(): Flow<PagingData<UserChannelInfo>> {
-        return userChannelRepo.getList()
-    }
-    
-    private val userChannelRepo by lazy {
-        BaseListRepositoryImpl({
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 subscribeChannelApiService, ApiNames.GET_SUBSCRIBED_USER_CHANNEL, BrowsingScreens.SUBSCRIBED_CHANNELS_PAGE
             )
-        })
+        }).getList()
     }
 }

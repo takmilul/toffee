@@ -94,7 +94,7 @@ data class ChannelInfo(
     @SerializedName("isSubscribed")
     var isSubscribed: Int = 0,
     @SerializedName("subscriberCount")
-    var subscriberCount: Int = 0,
+    var subscriberCount: Long = 0,
     
     @SerializedName("serial_name")
     val seriesName: String? = null,

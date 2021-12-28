@@ -12,6 +12,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
@@ -34,10 +35,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AllUserChannelsListFragment : HomeBaseFragment() {
+class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCallback<UserChannelInfo> {
     private var top = -1
     private var index = -1
+    @Inject lateinit var localSync: LocalSync
     private var categoryInfo: Category? = null
+    private var subscribedItemPosition: Int = -1
     @Inject lateinit var cacheManager: CacheManager
     private var trendingChannelInfo: UserChannelInfo? = null
     private lateinit var mAdapter: AllUserChannelsListAdapter
@@ -45,7 +48,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by viewModels<AllUserChannelsListViewModel>()
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAllUserChannelsListBinding.inflate(inflater, container, false)
         return binding.root    
@@ -60,34 +63,8 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         landingViewModel.categoryId.value = 0
         
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
-        mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
-            override fun onItemClicked(item: UserChannelInfo) {
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
-            }
-
-            override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-                requireActivity().checkVerification {
-                    if (info.isSubscribed == 0) {
-                        trendingChannelInfo = info.also {
-                            it.isSubscribed = 1
-                            it.subscriberCount++
-                        }
-                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-                    } else {
-                        UnSubscribeDialog.show(requireContext()) {
-                            trendingChannelInfo = info.also {
-                                it.isSubscribed = 0
-                                it.subscriberCount--
-                            }
-                            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
-                        }
-                    }
-                }
-            }
-        })
-
+        mAdapter = AllUserChannelsListAdapter(this)
+        
         with(binding) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
@@ -105,9 +82,9 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             userChannelList.adapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
         observeList(index)
-//        observeSubscribeChannel()
+        observeSubscribeChannel()
     }
-
+    
     override fun onPause() {
         super.onPause()
         index = (binding.userChannelList.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
@@ -134,19 +111,11 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    trendingChannelInfo?.let {
-                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                        if(response.data.isSubscribed == 1) {
-                            it.isSubscribed = 1
-                            ++ it.subscriberCount
-                        }
-                        else {
-                            it.isSubscribed = 0
-                            -- it.subscriberCount
-                        }
-                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, it)
-                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channelOwnerId, mPref.customerId), status)
+                    trendingChannelInfo?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
                     }
+                    mAdapter.notifyItemChanged(subscribedItemPosition, trendingChannelInfo)
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -154,7 +123,27 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
         }
     }
-
+    
+    override fun onItemClicked(item: UserChannelInfo) {
+        super.onItemClicked(item)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
+    }
+    
+    override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        requireActivity().checkVerification {
+            trendingChannelInfo = info
+            subscribedItemPosition = position
+            
+            if (info.isSubscribed == 0) {
+                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
+            } else {
+                UnSubscribeDialog.show(requireContext()) {
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
+                }
+            }
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

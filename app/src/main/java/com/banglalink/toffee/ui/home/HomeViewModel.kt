@@ -65,47 +65,47 @@ class HomeViewModel @Inject constructor(
     private val sendContentReportEvent: SendContentReportEvent,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
+    private val subscribeChannelApiService: SubscribeChannelService,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) : ViewModel() {
-
+    
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-//    val viewAllCategories = MutableLiveData<Boolean>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     private var _playlistManager = PlaylistManager()
-    val subscriptionLiveData = SingleLiveEvent<Resource<MyChannelSubscribeBean>>()
+    val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-
+    
     fun getPlaylistManager() = _playlistManager
-
+    
     init {
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-
+        
         // Disable this in production.
-        if(mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
+        if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
             FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
         } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic("beta-user-detection")
         }
-
+        
         FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
         FirebaseMessaging.getInstance().subscribeToTopic("clear_cache")
         FirebaseMessaging.getInstance().subscribeToTopic("content_refresh")
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if(task.isSuccessful) {
+            if (task.isSuccessful) {
                 val token = task.result
                 setFcmToken(token)
             }
@@ -117,96 +117,92 @@ class HomeViewModel @Inject constructor(
             try {
                 setFcmToken.execute(token)
             } catch (e: Exception) {
-                val error =getError(e)
+                val error = getError(e)
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.SET_FCM_TOKEN,
                         "browser_screen" to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.code,
-                        "error_description" to error.msg)
+                        "error_description" to error.msg
+                    )
                 )
             }
         }
     }
-
+    
     fun populateViewCountDb(url: String) {
         appScope.launch {
-            DownloadViewCountDb(dbApi, viewCountRepository)
-                .execute(mContext, url)
+            DownloadViewCountDb(dbApi, viewCountRepository).execute(mContext, url)
         }
     }
-
+    
     fun populateReactionDb(url: String) {
         appScope.launch {
-            DownloadReactionDb(dbApi, reactionDao, mPref)
-                .execute(mContext, url)
+            DownloadReactionDb(dbApi, reactionDao, mPref).execute(mContext, url)
         }
     }
-
+    
     fun populateReactionStatusDb(url: String) {
         appScope.launch {
-            DownloadReactionStatusDb(dbApi, reactionStatusRepository)
-                .execute(mContext, url)
+            DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
         }
     }
-
+    
     fun populateSubscriptionCountDb(url: String) {
         appScope.launch {
             DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
                 .execute(mContext, url)
         }
     }
-
+    
     fun populateShareCountDb(url: String) {
         appScope.launch {
             DownloadShareCountDb(dbApi, shareCountRepository)
                 .execute(mContext, url)
         }
     }
-
+    
     private fun getProfile() {
         viewModelScope.launch {
-            val respoense =resultFromResponse {
+            val respoense = resultFromResponse {
                 profileApi()
             }
-            if (respoense is Resource.Failure)
-            {
+            if (respoense is Resource.Failure) {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.GET_USER_PROFILE,
                         "browser_screen" to "Profile Screen",
                         "error_code" to respoense.error.code,
-                        "error_description" to respoense.error.msg)
+                        "error_description" to respoense.error.msg
+                    )
                 )
             }
-
         }
     }
-
+    
     suspend fun fetchRedirectedDeepLink(url: String?): String? {
-        if(url == null) return url
+        if (url == null) return url
         return withContext(Dispatchers.IO + Job()) {
             try {
                 val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
                 val redirUrl = resp.request.url
                 if (redirUrl.host == "toffeelive.com") redirUrl.toString()
                 else null
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 null
             }
         }
     }
-
+    
     fun getShareableContent(shareUrl: String): LiveData<Resource<ChannelInfo?>> {
         return resultLiveData {
             contentFromShareableUrl.execute(shareUrl)
         }
     }
-
+    
     fun sendViewContentEvent(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             try {
@@ -216,7 +212,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
+    
     fun addTvChannelToRecent(it: ChannelInfo) {
         viewModelScope.launch {
             tvChannelRepo.insertRecentItems(
@@ -231,11 +227,11 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-
+    
     fun getChannelDetail(channelOwnerId: Int) {
         viewModelScope.launch {
             val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
-
+            
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
@@ -254,18 +250,20 @@ class HomeViewModel @Inject constructor(
             myChannelDetailResponse.value = result
         }
     }
-
+    
     fun sendShareLog(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             sendShareCountEvent.execute(channelInfo)
         }
     }
-
+    
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
-            val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
+            val response = resultFromResponse { subscribeChannelApiService.execute(subscriptionInfo, status) }
             if (response is Success) {
+                sendSubscribeEvent.sendToPubSub(subscriptionInfo, status)
                 cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
+                ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION, bundleOf("isSubscribed" to status))
             } else {
                 val error = response as Resource.Failure
                 ToffeeAnalytics.logEvent(
@@ -274,16 +272,11 @@ class HomeViewModel @Inject constructor(
                         "api_name" to ApiNames.SUBSCRIBE_CHANNEL,
                         "browser_screen" to "Users Channels",
                         "error_code" to error.error.code,
-                        "error_description" to error.error.msg)
+                        "error_description" to error.error.msg
+                    )
                 )
             }
             subscriptionLiveData.value = response
-        }
-    }
-
-    fun updateSubscriptionCountTable(subscriptionInfo: SubscriptionInfo, status: Int) {
-        viewModelScope.launch {
-            sendSubscribeEvent.updateSubscriptionCountDb(subscriptionInfo, status)
         }
     }
     
@@ -297,10 +290,10 @@ class HomeViewModel @Inject constructor(
     fun getMqttCredential() {
         viewModelScope.launch {
             val response = resultFromResponse { mqttCredentialService.execute() }
-
-            if(response is Resource.Success){
+            
+            if (response is Resource.Success) {
                 mqttCredentialLiveData.postValue(response)
-            } else{
+            } else {
                 val error = response as Resource.Failure
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
@@ -308,14 +301,15 @@ class HomeViewModel @Inject constructor(
                         "api_name" to ApiNames.GET_MQTT_CREDENTIAL,
                         "browser_screen" to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.error.code,
-                        "error_description" to error.error.msg)
+                        "error_description" to error.error.msg
+                    )
                 )
             }
         }
     }
     
     fun sendReportData(reportInfo: ReportInfo) {
-        viewModelScope.launch { 
+        viewModelScope.launch {
             sendContentReportEvent.execute(reportInfo)
         }
     }
@@ -340,7 +334,7 @@ class HomeViewModel @Inject constructor(
     }
     
     fun getVastTags() {
-        viewModelScope.launch { 
+        viewModelScope.launch {
             try {
                 vastTagsMutableLiveData.value = vastTagService.execute().response.tags
             } catch (e: Exception) {
@@ -352,7 +346,8 @@ class HomeViewModel @Inject constructor(
                         "api_name" to ApiNames.GET_VAST_TAG_LIST,
                         "browser_screen" to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.code,
-                        "error_description" to error.msg)
+                        "error_description" to error.msg
+                    )
                 )
             }
         }

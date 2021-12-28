@@ -41,6 +41,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     
     @Inject lateinit var localSync: LocalSync
     private var categoryInfo: Category? = null
+    private var subscribedItemPosition: Int = -1
     @Inject lateinit var cacheManager: CacheManager
     private var channelInfo: UserChannelInfo? = null
     private lateinit var mAdapter: LandingUserChannelsListAdapter
@@ -103,7 +104,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
             setHasFixedSize(true)
         }
         observeSubscribedChannels()
-//        observeSubscribeChannel()
+        observeSubscribeChannel()
     }
     
     private fun observeSubscribedChannels() {
@@ -140,19 +141,11 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    channelInfo?.let {
-                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                        if(response.data.isSubscribed == 1) {
-                            it.isSubscribed = 1
-                            ++ it.subscriberCount
-                        }
-                        else {
-                            it.isSubscribed = 0
-                            -- it.subscriberCount
-                        }
-                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
-                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channelOwnerId, mPref.customerId), status)
+                    channelInfo?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
                     }
+                    mAdapter.notifyItemChanged(subscribedItemPosition, channelInfo)
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -165,38 +158,15 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
     }
     
-    override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
+    override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
         requireActivity().checkVerification {
-//                channelInfo = info
+            channelInfo = info
+            subscribedItemPosition = position
             if (info.isSubscribed == 0) {
-                channelInfo = info.also { userChannelInfo ->
-                    userChannelInfo.isSubscribed = 1
-                    userChannelInfo.subscriberCount++
-                }
-//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
-                homeViewModel.sendSubscriptionStatus(
-                    SubscriptionInfo(
-                        null,
-                        info.channelOwnerId,
-                        mPref.customerId
-                    ), 1
-                )
-                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
             } else {
                 UnSubscribeDialog.show(requireContext()) {
-                    channelInfo = info.also { userChannelInfo ->
-                        userChannelInfo.isSubscribed = 0
-                        userChannelInfo.subscriberCount--
-                    }
-//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                    homeViewModel.sendSubscriptionStatus(
-                        SubscriptionInfo(
-                            null,
-                            info.channelOwnerId,
-                            mPref.customerId
-                        ), -1
-                    )
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
                 }
             }
         }

@@ -55,8 +55,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     private val mViewModel by viewModels<EpisodeListViewModel>()
-
-
+    
     companion object {
         const val SERIES_INFO = "series-info"
 
@@ -94,19 +93,15 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         setupHeader()
         setupList()
 //        observeListState()
-//        observeSubscribeChannel()
+        observeSubscribeChannel()
     }
 
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
                 localSync.syncData(it)
-//                isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-//                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
-                detailsAdapter?.notifyDataSetChanged()
             }
+            detailsAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -153,26 +148,10 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 requireActivity().checkVerification { 
                     if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-                        currentItem?.apply { 
-                            isSubscribed = 1
-                            subscriberCount++
-                        }
-//                        isSubscribed = 1
-//                        currentItem?.isSubscribed = isSubscribed
-//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
-                        detailsAdapter?.notifyDataSetChanged()
                     }
                     else {
                         UnSubscribeDialog.show(requireContext()){
                             homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                            currentItem?.apply {
-                                isSubscribed = 0
-                                subscriberCount--
-                            }
-//                            isSubscribed = 0
-//                            currentItem?.isSubscribed = isSubscribed
-//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
-                            detailsAdapter?.notifyDataSetChanged()
                         }
                     }
                 }
@@ -260,19 +239,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    currentItem?.let {
-                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                        if (response.data.isSubscribed == 1) {
-                            it.isSubscribed = 1
-                            ++ it.subscriberCount
-                        }
-                        else {
-                            it.isSubscribed = 0
-                            -- it.subscriberCount
-                        }
-                        mAdapter.notifyDataSetChanged()
-                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    currentItem?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
                     }
+                    mAdapter.notifyDataSetChanged()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

@@ -11,6 +11,10 @@
         <variable
             name="callback"
             type="com.banglalink.toffee.listeners.LandingPopularChannelCallback" />
+        
+        <variable
+            name="position"
+            type="Integer" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,7 +75,7 @@
             android:clickable="true"
             android:focusable="true"
             android:layout_marginTop="4dp"
-            app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}"
+            app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data, position)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text" />

@@ -102,7 +102,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         observeVideoList()
         observeListReload()
         setSubscriptionStatus()
-//        observeSubscribeChannel()
+        observeSubscribeChannel()
 
         currentItem?.let {
             binding.backButton.hide()
@@ -154,24 +154,10 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
-                        homeViewModel.sendSubscriptionStatus(
-                            SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1
-                        )
-                        currentItem?.let {
-                            it.isSubscribed = 1
-                            it.subscriberCount++
-                        }
-                        detailsAdapter.notifyDataSetChanged()
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
-                            homeViewModel.sendSubscriptionStatus(
-                                SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1
-                            )
-                            currentItem?.let {
-                                it.isSubscribed = 0
-                                it.subscriberCount--
-                            }
-                            detailsAdapter.notifyDataSetChanged()
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
                         }
                     }
                 }
@@ -216,16 +202,9 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         observe(homeViewModel.subscriptionLiveData) { response ->
             when (response) {
                 is Resource.Success -> {
-                    currentItem?.let {
-                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                        if (response.data.isSubscribed == 1) {
-                            it.isSubscribed = 1
-                            ++it.subscriberCount
-                        } else {
-                            it.isSubscribed = 0
-                            --it.subscriberCount
-                        }
-                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    currentItem?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
                     }
                     detailsAdapter.notifyDataSetChanged()
                 }

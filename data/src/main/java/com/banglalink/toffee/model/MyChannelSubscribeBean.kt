@@ -8,7 +8,7 @@ data class MyChannelSubscribeBean(
     @SerializedName("isSubscribed")
     val isSubscribed: Int,
     @SerializedName("subscriberCount")
-    val subscriberCount: Int,
+    var subscriberCount: Long,
     @SerializedName("message")
     val message: String,
     @SerializedName("messageType")

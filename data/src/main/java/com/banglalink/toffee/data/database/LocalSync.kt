@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UserChannelInfo
 import javax.inject.Inject
@@ -33,12 +34,10 @@ class LocalSync @Inject constructor(
         // We always need to capture viewProgress
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
         if(syncFlag and SYNC_FLAG_SUB_COUNT == SYNC_FLAG_SUB_COUNT) {
-            channelInfo.subscriberCount =
-                subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id).toInt()
+            channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id)
         }
         if(syncFlag and SYNC_FLAG_SHARE_COUNT == SYNC_FLAG_SHARE_COUNT) {
-            channelInfo.shareCount =
-                shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: channelInfo.shareCount
+            channelInfo.shareCount = shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: channelInfo.shareCount
         }
         if(syncFlag and SYNC_FLAG_REACT == SYNC_FLAG_REACT) {
             val reactionList =
@@ -80,23 +79,49 @@ class LocalSync @Inject constructor(
         else {
             userChannel.isSubscribed = 0
         }
-        userChannel.subscriberCount = maxOf(subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId), userChannel.subscriberCount)
+        userChannel.subscriberCount = syncSubscriberCount(userChannel.channelOwnerId, userChannel.isSubscribed, userChannel.subscriberCount)
     }
     
     suspend fun syncSubscribedUserChannels(userChannel: UserChannelInfo){
-        if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) == null) {
-            if (userChannel.isSubscribed == 1) {
-                subscriptionInfoRepository.insert(SubscriptionInfo(null, userChannel.channelOwnerId, preference.customerId))
-            }
-        } else {
-            if (userChannel.isSubscribed == 0) {
-                subscriptionInfoRepository.delete(SubscriptionInfo(null, userChannel.channelOwnerId, preference.customerId))
-            }
-        }
-        userChannel.subscriberCount = maxOf(subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId), userChannel.subscriberCount)
+        userChannel.subscriberCount = syncSubscriptionStatus(userChannel.channelOwnerId, userChannel.isSubscribed, userChannel.subscriberCount)
     }
     
-    private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus? {
+    suspend fun updateOnSubscribeChannel(subscriptionInfo: MyChannelSubscribeBean){
+        subscriptionInfo.subscriberCount = syncSubscriptionStatus(subscriptionInfo.channelId, subscriptionInfo.isSubscribed, subscriptionInfo
+            .subscriberCount, true)
+    }
+    
+    private suspend fun syncSubscriptionStatus(channelId: Int, isSubscribed: Int, subscriberCount: Long, isSubscriptionAction: Boolean = false): Long {
+        if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelId, preference.customerId) == null) {
+            if (isSubscribed == 1) {
+                subscriptionInfoRepository.insert(SubscriptionInfo(null, channelId, preference.customerId))
+            }
+        } else {
+            if (isSubscribed == 0) {
+                subscriptionInfoRepository.deleteSubscriptionInfo(channelId, preference.customerId)
+            }
+        }
+        return syncSubscriberCount(channelId, isSubscribed, subscriberCount, isSubscriptionAction)
+    }
+    
+    private suspend fun syncSubscriberCount(channelId: Int, isSubscribed: Int, subscriberCount: Long, isSubscriptionAction: Boolean = false): Long {
+        val dbSubscriberCount = subscriptionCountRepository.getSubscriberCount(channelId)
+        var status = 0
+        if (isSubscriptionAction) {
+            status = if (isSubscribed == 0) -1 else isSubscribed
+        }
+//        compare api result with binary file result and update local db with updated value
+//        if (subscriberCount > dbSubscriberCount) {
+//            status += (subscriberCount - dbSubscriberCount).toInt()
+//        }
+        if (status != 0) {
+            subscriptionCountRepository.updateSubscriptionCount(channelId, status)
+        }
+//        return subscriberCount + status // return this if above comparison code is applied
+        return dbSubscriberCount + status
+    }
+    
+    private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus {
         val reactionStatus = ReactionStatus(0, channelInfo.id.toLong())
         rl.forEach {
             when(it.reactionType) {

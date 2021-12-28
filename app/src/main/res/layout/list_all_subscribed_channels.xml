@@ -12,6 +12,10 @@
         <variable
             name="callback"
             type="com.banglalink.toffee.listeners.LandingPopularChannelCallback" />
+        
+        <variable
+            name="position"
+            type="Integer" />
     </data>
     
     <androidx.cardview.widget.CardView
@@ -86,7 +90,7 @@
                 app:layout_constraintStart_toStartOf="@id/channel_name"
                 app:layout_constraintTop_toBottomOf="@+id/channel_name"
                 app:layout_constraintBottom_toTopOf="@id/channelCreateTime"
-                app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}" />
+                app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data, position)}" />
             
             <TextView
                 android:id="@+id/subscribe_count"

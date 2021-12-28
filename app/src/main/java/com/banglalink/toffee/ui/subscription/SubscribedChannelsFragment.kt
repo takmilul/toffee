@@ -15,8 +15,11 @@ import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -27,11 +30,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SubscribedChannelsFragment : HomeBaseFragment() {
+class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCallback<UserChannelInfo> {
 
     @Inject lateinit var cacheManager: CacheManager
-    private lateinit var mAdapter: AllSubscribedChannelAdapter
     private var subscribedChannelInfo: UserChannelInfo? = null
+    private lateinit var mAdapter: AllSubscribedChannelAdapter
     private var _binding: FragmentSubscribedChannelsBinding ? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<SubscribedChannelsViewModel>()
@@ -45,37 +48,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST)
-        mAdapter = AllSubscribedChannelAdapter(object :
-            LandingPopularChannelCallback<UserChannelInfo> {
-            override fun onItemClicked(item: UserChannelInfo) {
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
-            }
-
-            override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-                requireActivity().checkVerification {
-                    if (info.isSubscribed == 0) {
-                        subscribedChannelInfo = info.also {
-                            it.isSubscribed = 1
-                            it.subscriberCount ++
-                        }
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
-                        mAdapter.refresh()
-                    }
-                    else {
-                        UnSubscribeDialog.show(requireContext()) {
-                            subscribedChannelInfo = info.also {
-                                it.isSubscribed = 0
-                                it.subscriberCount --
-                            }
-                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), - 1)
-                            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
-                            mAdapter.refresh()
-                        }
-                    }
-                }
-            }
-        })
+        mAdapter = AllSubscribedChannelAdapter(this)
     
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             var isInitialized = false
@@ -91,20 +64,59 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
                 isInitialized = true
             }
         }
-
+        
         with(binding.subscribedChannelList) {
             addItemDecoration(MarginItemDecoration(12))
             adapter = mAdapter
         }
         observeList()
+        observeSubscribeChannel()
     }
-
+    
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadSubscribedChannels().collectLatest {
-                mAdapter.submitData(it.filter { item -> item.isSubscribed==1 })
+                mAdapter.submitData(it.filter { item -> item.isSubscribed == 1 })
             }
             binding.totalSubscriptionsTextView.setText(mAdapter.itemCount)
+        }
+    }
+    
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Resource.Success -> {
+                    subscribedChannelInfo?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
+                    }
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
+                    mAdapter.refresh()
+                }
+                is Resource.Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
+    override fun onItemClicked(item: UserChannelInfo) {
+        super.onItemClicked(item)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
+    }
+    
+    override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        requireActivity().checkVerification {
+            subscribedChannelInfo = info
+            
+            if (info.isSubscribed == 0) {
+                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
+            }
+            else {
+                UnSubscribeDialog.show(requireContext()) {
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), - 1)
+                }
+            }
         }
     }
     

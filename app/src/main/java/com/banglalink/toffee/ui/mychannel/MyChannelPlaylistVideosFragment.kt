@@ -101,7 +101,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observeVideoList()
         observeListReload()
         setSubscriptionStatus()
-//        observeSubscribeChannel()
+        observeSubscribeChannel()
         
         currentItem?.let { 
             binding.backButton.hide()
@@ -153,24 +153,10 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
-                        homeViewModel.sendSubscriptionStatus(
-                            SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1
-                        )
-                        currentItem?.let { 
-                            it.isSubscribed = 1
-                            it.subscriberCount++
-                        }
-                        detailsAdapter.notifyDataSetChanged()
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
-                            homeViewModel.sendSubscriptionStatus(
-                                SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1
-                            )
-                            currentItem?.let {
-                                it.isSubscribed = 0
-                                it.subscriberCount--
-                            }
-                            detailsAdapter.notifyDataSetChanged()
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
                         }
                     }
                 }
@@ -236,7 +222,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             when (it) {
                 is Success -> {
                     requireContext().showToast(it.data.message)
-                    reloadPlaylistVideos()
                     reloadViewModel.reloadVideos.value = true
                     reloadViewModel.reloadPlaylist.value = true
                 }
@@ -265,7 +250,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
 
     private fun reloadPlaylistVideos() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
-        playlistAdapter.refresh()
         playlistAdapter.refresh().let {
             lifecycleScope.launch {
                 playlistAdapter.loadStateFlow.collectLatest {
@@ -282,17 +266,9 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Success -> {
-                    currentItem?.let {
-                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
-                        if (response.data.isSubscribed == 1){
-                            it.isSubscribed = 1
-                            ++ it.subscriberCount
-                        }
-                        else {
-                            it.isSubscribed = 0
-                            -- it.subscriberCount
-                        }
-                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    currentItem?.apply {
+                        isSubscribed = response.data.isSubscribed
+                        subscriberCount = response.data.subscriberCount
                     }
                     detailsAdapter.notifyDataSetChanged()
                 }
