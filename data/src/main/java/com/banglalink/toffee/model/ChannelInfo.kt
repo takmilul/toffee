@@ -69,7 +69,7 @@ data class ChannelInfo(
     
     @SerializedName("channel_logo")
     var channel_logo: String? = null,
-    @SerializedName("category")
+    @SerializedName("categoryName")
     var category: String? = null,
     @SerializedName("subCategory")
     var subCategory: String? = null,
