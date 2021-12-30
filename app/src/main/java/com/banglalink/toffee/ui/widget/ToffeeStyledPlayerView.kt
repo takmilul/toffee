@@ -47,15 +47,15 @@ import kotlin.math.max
 import kotlin.math.min
 
 @AndroidEntryPoint
-open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    :StyledPlayerView(context, attrs, defStyleAttr),
+open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    StyledPlayerView(context, attrs, defStyleAttr),
     View.OnClickListener,
     Player.Listener,
     DraggerLayout.OnPositionChangedListener {
-
+    
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     private var mPlayListListener: PlaylistListener? = null
-
+    
     private val screenWidth = UtilsKt.getScreenWidth()
     private val screenHeight = UtilsKt.getScreenHeight()
     private var videoWidth = -1
@@ -82,23 +82,26 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var playPrev: ImageView
     private lateinit var playPause: ImageView
     private lateinit var previewImage: ImageView
-
+    
     private lateinit var exoPosition: TextView
     private lateinit var exoTimeSeperator: TextView
     private lateinit var exoDuration: TextView
     private lateinit var exoProgress: DefaultTimeBar
-
+    
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
-
-    @Inject lateinit var cPref: CommonPreference
-    @Inject lateinit var mPref: SessionPreference
-    @Inject lateinit var bindingUtil: BindingUtil
-
+    
+    @Inject
+    lateinit var cPref: CommonPreference
+    @Inject
+    lateinit var mPref: SessionPreference
+    @Inject
+    lateinit var bindingUtil: BindingUtil
+    
     init {
         initView()
     }
-
+    
     private fun initView() {
         playerControlView = findViewById(R.id.exo_controller)
         drawerButton = findViewById(R.id.drawer)
@@ -111,12 +114,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         } else {
             rotateButton.setImageResource(R.mipmap.rotation_off)
         }
-
+        
         setShowNextButton(false)
         setShowPreviousButton(false)
         setShowFastForwardButton(false)
         setShowRewindButton(false)
-
+        
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerOverlay = findViewById(R.id.playerOverlay)
@@ -128,15 +131,15 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         controllerBg = findViewById(R.id.controller_bg)
         playPause = findViewById(R.id.exo_play_pause)
         previewImage = findViewById(R.id.exo_shutter)
-
+        
         playNext = findViewById(R.id.play_next)
         playPrev = findViewById(R.id.play_prev)
-
+        
         exoDuration = findViewById(R.id.exo_duration)
         exoTimeSeperator = findViewById(R.id.time_seperator)
         exoPosition = findViewById(R.id.exo_position)
         exoProgress = findViewById(R.id.exo_progress)
-
+        
         drawerButton.setOnClickListener(this)
         videoOption.setOnClickListener(this)
         shareButton.setOnClickListener(this)
@@ -144,17 +147,17 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         minimizeButton.setOnClickListener(this)
         doubleTapInterceptor.setOnClickListener(this)
         fullscreenButton.setOnClickListener(this)
-
+        
         playNext.setOnClickListener(this)
         playPrev.setOnClickListener(this)
-
+        
         playerControlView.isAnimationEnabled = false
-
+        
         controllerShowTimeoutMs = 3000
-
-        setControllerVisibilityListener { ctrlVisibility->
-            when(ctrlVisibility) {
-                View.VISIBLE-> {
+        
+        setControllerVisibilityListener { ctrlVisibility ->
+            when (ctrlVisibility) {
+                View.VISIBLE -> {
                     val isLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
                     changeTimerVisibility(isLive)
 //                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
@@ -162,8 +165,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                         it.onControllerVisible()
                     }
                 }
-                View.GONE-> {
-                    if(textCasting.visibility != View.VISIBLE) {
+                View.GONE -> {
+                    if (textCasting.visibility != View.VISIBLE) {
                         controllerBg.visibility = View.GONE
                     }
                     onPlayerControllerChangedListeners.forEach {
@@ -172,34 +175,37 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 }
             }
         }
-
+        
         setupOverlay()
         setupCastButton()
-
+        
         videoSurfaceView?.let {
-            if(it is SurfaceView) {
+            if (it is SurfaceView) {
 //                it.holder.setFixedSize()
-                val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
+                val isDisableScreenshot =
+                    !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
+                        mPref.phoneNumber
+                    ))
                 //disable screen capture
-                if (! BuildConfig.DEBUG && isDisableScreenshot) {
+                if (!BuildConfig.DEBUG && isDisableScreenshot) {
                     it.setSecure(true)
                 }
             }
         }
     }
-
+    
     fun addPlayerControllerChangeListener(listener: OnPlayerControllerChangedListener) {
         onPlayerControllerChangedListeners.add(listener)
     }
-
+    
     fun setPlaylistListener(listener: PlaylistListener?) {
         mPlayListListener = listener
     }
-
+    
     fun clearListeners() {
         onPlayerControllerChangedListeners.clear()
     }
-
+    
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 //        setupRotationObserver()
@@ -212,67 +218,66 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
 //        }
 //    }
-
+    
     private fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
-        rotateButton.visibility = if(status && !isVideoPortrait) View.VISIBLE else View.GONE
+        rotateButton.visibility = if (status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
         rotateButton.setImageResource(if (!isAutoRotationEnabled) R.mipmap.rotation_off else R.drawable.ic_screen_rotate)
-        if(invokeListener) {
+        if (invokeListener) {
             onPlayerControllerChangedListeners.forEach {
                 it.onRotationLock(isAutoRotationEnabled)
             }
         }
     }
-
+    
     override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.video_option-> {
-                if(videoOption.isEnabled) {
+        when (v?.id) {
+            R.id.video_option -> {
+                if (videoOption.isEnabled) {
                     onPlayerControllerChangedListeners.forEach {
                         it.onOptionMenuPressed()
                     }
                 }
             }
-            R.id.share-> {
+            R.id.share -> {
                 onPlayerControllerChangedListeners.forEach {
                     it.onShareButtonPressed()
                 }
             }
-            R.id.minimize-> {
+            R.id.minimize -> {
                 onPlayerControllerChangedListeners.forEach {
                     it.onMinimizeButtonPressed()
                 }
             }
-            R.id.play_next-> {
+            R.id.play_next -> {
                 mPlayListListener?.playNext()
             }
-            R.id.play_prev-> {
+            R.id.play_prev -> {
                 mPlayListListener?.playPrevious()
             }
-            R.id.drawer-> {
+            R.id.drawer -> {
                 onPlayerControllerChangedListeners.forEach {
                     it.onDrawerButtonPressed()
                 }
             }
-            R.id.fullscreen-> {
+            R.id.fullscreen -> {
                 isFullScreen = isFullScreen.not()
                 onPlayerControllerChangedListeners.forEach {
                     it.onFullScreenButtonPressed()
                 }
             }
-            R.id.dtInterceptor-> {
-                if(!isControllerFullyVisible) {
+            R.id.dtInterceptor -> {
+                if (!isControllerFullyVisible) {
                     showController()
                 } else {
                     hideController()
                 }
             }
-            R.id.rotation-> {
+            R.id.rotation -> {
                 if (isAutoRotationEnabled) {
                     isAutoRotationEnabled = false
                     rotateButton.setImageResource(R.mipmap.rotation_off)
-                }
-                else {
+                } else {
                     isAutoRotationEnabled = true
                     rotateButton.setImageResource(R.drawable.ic_screen_rotate)
                 }
@@ -290,21 +295,21 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //            rotationObserver
 //        )
 //    }
-
+    
     override fun showController() {
-        if(!isControllerFullyVisible && !isMinimize) {
+        if (!isControllerFullyVisible && !isMinimize) {
             super.showController()
             controllerBg.visibility = View.VISIBLE
             updateControllerUI()
         }
     }
-
+    
     private fun updateControllerUI() {
         val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
         changeTimerVisibility(isChannelLive)
-
+        
         player?.let {
-            if(it.duration > 0 && !isChannelLive) {
+            if (it.duration > 0 && !isChannelLive) {
                 nextButtonVisibility(player?.playbackState == Player.STATE_READY)
                 prevButtonVisibility(player?.playbackState == Player.STATE_READY)
             } else {
@@ -313,9 +318,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
         }
     }
-
+    
     private fun changeTimerVisibility(state: Boolean) {
-        when(state) {
+        when (state) {
             false -> {
                 exoPosition.visibility = View.VISIBLE
                 exoDuration.visibility = View.VISIBLE
@@ -330,45 +335,45 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
         }
     }
-
+    
     fun showCastingText(show: Boolean, deviceName: String? = null) {
-        if(show) {
+        if (show) {
             controllerBg.visibility = View.VISIBLE
             textCasting.visibility = View.VISIBLE
-            textCasting.text = if(deviceName != null) "Playing on $deviceName" else "Casting..."
+            textCasting.text = if (deviceName != null) "Playing on $deviceName" else "Casting..."
         } else {
             textCasting.visibility = View.GONE
-            if(!isControllerFullyVisible) {
+            if (!isControllerFullyVisible) {
                 controllerBg.visibility = View.GONE
             }
         }
     }
-
+    
     fun showDebugOverlay(data: PlayerOverlayData, cid: String) {
         clearDebugWindow()
-        if(!isMinimize) {
+        if (!isMinimize) {
             debugContainer.addView(DebugOverlayView(context).apply {
                 setPlayerOverlayData(data, cid)
             }, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
-
+            
             debugJob = coroutineScope.launch {
                 delay(data.params.duration * 1000)
                 clearDebugWindow()
             }
         }
     }
-
+    
     fun getDebugOverLay(): View? {
-        if(debugContainer.childCount > 0) return debugContainer.getChildAt(0)
+        if (debugContainer.childCount > 0) return debugContainer.getChildAt(0)
         return null
     }
-
+    
     fun clearDebugWindow() {
-        if(debugContainer.childCount > 0) {
+        if (debugContainer.childCount > 0) {
             debugContainer.removeAllViews()
         }
     }
-
+    
     override fun onDetachedFromWindow() {
         debugJob?.cancel()
         clearDebugWindow()
@@ -380,50 +385,50 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //    private fun removeRotationObserver() {
 //        context.contentResolver.unregisterContentObserver(rotationObserver)
 //    }
-
+    
     private fun setupOverlay() {
         playerOverlay.performListener(object : PlayerOverlayView.PerformListener {
             override fun onAnimationStart() {
                 // Do UI changes when circle scaling animation starts (e.g. hide controller views)
                 playerOverlay.visibility = View.VISIBLE
             }
-
+            
             override fun onAnimationEnd() {
                 // Do UI changes when circle scaling animation starts (e.g. show controller views)
                 playerOverlay.visibility = View.GONE
             }
         })
     }
-
+    
     private fun setupCastButton() {
-        if(mPref.isCastEnabled) {
+        if (mPref.isCastEnabled) {
             CastButtonFactory.setUpMediaRouteButton(context.applicationContext, castButton)
         } else {
             castButton.visibility = View.GONE
         }
     }
-
+    
     private fun nextButtonVisibility(visible: Boolean) {
-        playNext.visibility = if(!visible) View.INVISIBLE else {
-            if(mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+        playNext.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
         }
     }
-
+    
     private fun prevButtonVisibility(visible: Boolean) {
-        playPrev.visibility = if(!visible) View.INVISIBLE else {
-            if(mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
+        playPrev.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
-
+    
     private var timer: CountDownTimer? = null
-
+    
     private fun startAutoPlayTimer() {
         timer?.cancel()
         autoplayProgress.progress = 0f
         autoplayProgress.setProgressWithAnimation(1000f, AUTOPLAY_INTERVAL)
         timer = object : CountDownTimer(AUTOPLAY_INTERVAL, AUTOPLAY_INTERVAL) {
-            override fun onTick(millisUntilFinished: Long) { }
-
+            override fun onTick(millisUntilFinished: Long) {}
+            
             override fun onFinish() {
                 if (mPlayListListener?.hasNext() == true) {
                     mPlayListListener?.playNext()
@@ -432,61 +437,62 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
         timer?.start()
     }
-
+    
     private fun stopAutoplayTimer() {
         timer?.cancel()
     }
-
+    
     fun isClamped(): Boolean {
         return layoutParams.height <= minBound
     }
-
+    
     fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
-
+    
     private val minVideoHeight: Int = screenWidth * 9 / 16
     private val maxVideoHeight: Int = screenHeight * 2 / 3
-
+    
     val minBound = minVideoHeight
     val maxBound: Int
         get() {
-            if(channelType == "LIVE" || !isUgc) return minBound
-            if(videoWidth > 0 && videoHeight > 0) {
+            if (channelType == "LIVE" || !isUgc) return minBound
+            if (videoWidth > 0 && videoHeight > 0) {
                 return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
             }
-            return if(isVideoPortrait) {
+            return if (isVideoPortrait) {
                 maxVideoHeight
             } else {
                 minBound
             }
         }
-
+    
     fun clampOrFullHeight() {
-        if(layoutParams.height <= minBound || layoutParams.height >= maxBound) return
-        val isInTop = layoutParams.height in minBound .. (minBound + ((maxBound - minBound) / 2))
-        setHeightWithAnim(if(isInTop) minBound else maxBound)
+        if (layoutParams.height <= minBound || layoutParams.height >= maxBound) return
+        val isInTop = layoutParams.height in minBound..(minBound + ((maxBound - minBound) / 2))
+        setHeightWithAnim(if (isInTop) minBound else maxBound)
     }
+    
     var isVideoScalable = false
     var isVideoPortrait = false
-
+    
     fun setHeightWithAnim(height: Int, animDuration: Long = 100L) {
-        if(height == layoutParams.height) return
+        if (height == layoutParams.height) return
         heightAnim?.cancel()
         heightAnim = ValueAnimator.ofInt(layoutParams.height, height)
         heightAnim?.duration = animDuration
         heightAnim?.addUpdateListener {
-            if(isAttachedToWindow) setLayoutHeight(it.animatedValue as Int)
+            if (isAttachedToWindow) setLayoutHeight(it.animatedValue as Int)
         }
         heightAnim?.start()
     }
-
+    
     private var heightAnim: ValueAnimator? = null
-
-    fun setLayoutHeight(h: Int){
+    
+    fun setLayoutHeight(h: Int) {
         layoutParams = layoutParams.also {
             it.height = h
         }
     }
-
+    
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
     private var mLastTouchY: Float = 0f
@@ -494,7 +500,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private var mPosY: Float = 0f
     private var startX: Float = 0f
     private var startY: Float = 0f
-
+    
     fun handleTouchDown2(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
@@ -508,30 +514,30 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         // Save the ID of this pointer (for dragging)
         mActivePointerId = ev.getPointerId(0)
     }
-
+    
     fun handleTouchEvent(ev: MotionEvent): Boolean {
-
+        
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 handleTouchDown2(ev)
             }
-
+            
             MotionEvent.ACTION_MOVE -> {
                 // Find the index of the active pointer and fetch its position
                 val (x: Float, y: Float) = ev.findPointerIndex(mActivePointerId).let { pointerIndex ->
                     // Calculate the distance moved
                     ev.getX(pointerIndex) to
-                            ev.getY(pointerIndex)
+                        ev.getY(pointerIndex)
                 }
-
+                
                 mPosX += x - mLastTouchX
                 mPosY += y - mLastTouchY
                 val distanceY = y - mLastTouchY
-
+                
                 setLayoutHeight(min(max(height + distanceY.toInt(), minBound), maxBound))
-
+                
                 invalidate()
-
+                
                 // Remember this touch position for the next move event
                 mLastTouchX = x
                 mLastTouchY = y
@@ -559,15 +565,15 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 }
             }
         }
-
+        
         return true
     }
-
+    
     override fun onViewMinimize() {
         isMinimize = true
         hideController()
     }
-
+    
     override fun onViewMaximize() {
         isMinimize = false
 //        binding.textureView.setOnClickListener(this)
@@ -579,25 +585,25 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //            showController()
 //        }
     }
-
+    
     override fun onViewDestroy() {
         MedalliaDigital.enableIntercept()
-        if(player !is CastPlayer) {
+        if (player !is CastPlayer) {
             player?.stop()
         }
     }
-
+    
     fun resizeView(size: Point, forceFullScreen: Boolean = false) {
         val playerWidth: Int = size.x
         val playerHeight: Int = if (size.x > size.y) { //landscape
             size.y
         } else {
-            if(!forceFullScreen) maxBound else size.y
+            if (!forceFullScreen) maxBound else size.y
         }
-
+        
         isFullScreen = forceFullScreen || size.x > size.y
-
-        if(!isFullScreen && playerWidth == layoutParams.width) {
+        
+        if (!isFullScreen && playerWidth == layoutParams.width) {
             setHeightWithAnim(playerHeight)
         } else {
             layoutParams = layoutParams.apply {
@@ -607,22 +613,22 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
         resizeMode = scaleType
     }
-
+    
     fun showWifiOnlyMessage() {
         bindingUtil.loadImageFromResource(previewImage, R.drawable.watch_wifi_only_msg)
         hideController()
         doubleTapInterceptor.setOnClickListener(null)
     }
-
+    
     fun showContentExpiredMessage() {
         bindingUtil.loadImageFromResource(previewImage, R.drawable.content_expired)
         hideController()
         doubleTapInterceptor.setOnClickListener(null)
     }
-
+    
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        when(playbackState) {
-            Player.STATE_BUFFERING-> {
+        when (playbackState) {
+            Player.STATE_BUFFERING -> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.GONE
                 doubleTapInterceptor.setOnClickListener(this)
@@ -631,7 +637,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
             }
-            Player.STATE_IDLE-> {
+            Player.STATE_IDLE -> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
                 nextButtonVisibility(false)
@@ -639,7 +645,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
             }
-            Player.STATE_READY-> {
+            Player.STATE_READY -> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
                 val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
@@ -648,84 +654,73 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
             }
-            Player.STATE_ENDED-> {
+            Player.STATE_ENDED -> {
                 playPause.visibility = View.VISIBLE
                 playNext.visibility = if (mPlayListListener?.hasNext() == false) View.INVISIBLE else View.VISIBLE
                 playPrev.visibility = if (mPlayListListener?.hasPrevious() == false) View.INVISIBLE else VISIBLE
-
+                
                 if (mPlayListListener?.isAutoplayEnabled() == true &&
                     mPlayListListener?.hasNext() == true
                 ) {
                     autoplayProgress.visibility = VISIBLE
                     startAutoPlayTimer()
-                }
-                else {
+                } else {
                     autoplayProgress.visibility = GONE
                 }
             }
         }
     }
-
+    
     fun moveController(offset: Float) {
         val intOffset = if (offset < 0.0f) {
             (48.px * (1.0f + offset)).toInt()
-        }
-        else {
+        } else {
             ((104 - 48).px * offset).toInt() + 48.px
         }
         playerBottomSpace.minimumHeight = intOffset
     }
-
+    
     fun onFullScreen(state: Boolean) {
         if (state) { //fullscreen
             minimizeButton.visibility = GONE
             drawerButton.visibility = INVISIBLE
             fullscreenButton.setImageResource(R.drawable.exo_styled_controls_fullscreen_exit)
-        }
-        else {
+        } else {
             minimizeButton.visibility = VISIBLE
             drawerButton.visibility = VISIBLE
             fullscreenButton.setImageResource(R.drawable.exo_styled_controls_fullscreen_enter)
         }
     }
-
+    
     var isFullScreen = false
     var isAutoRotationEnabled = true
-
+    
     override fun onVideoSizeChanged(videoSize: VideoSize) {
         super.onVideoSizeChanged(videoSize)
         videoWidth = (width * videoSize.pixelWidthHeightRatio).toInt()
         videoHeight = height
-
+        
         Log.i("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
-
+        
         isVideoScalable = minBound != maxBound
-
-        if(!isFullScreen) setHeightWithAnim(maxBound)
-
+        
+        if (!isFullScreen) setHeightWithAnim(maxBound)
+        
         resizeMode = scaleType
 //        binding.playerContainer.setAspectRatio(videoWidth/videoHeight.toFloat())
 //        Log.e("CONTROL_T", "Aspect ratio -> ${binding.playerContainer.getAspectRatio()}")
     }
-
+    
     private val scaleType: Int
         get() {
-            if(channelType == "LIVE" || !isUgc) return AspectRatioFrameLayout.RESIZE_MODE_FILL
-            if(!mPref.keepAspectRatio/* && maxBound == minBound*/) {
-                if(videoWidth > 0 && videoHeight > 0) {
-                    if(isFullScreen && videoWidth > videoHeight) {
-                        return AspectRatioFrameLayout.RESIZE_MODE_FILL
-                    }
-                } else if(isFullScreen && !isVideoPortrait) {
-                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
-                }
-            }
-            return if (isFullScreen)
+            return if (channelType == "LIVE" || !isUgc)
+                AspectRatioFrameLayout.RESIZE_MODE_FILL
+            else if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
             else
                 AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
         }
-
+    
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
         videoWidth = -1
@@ -737,11 +732,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             channelType = channelInfo.type
             changeTimerVisibility(channelType == "LIVE")
             isUgc = channelInfo.is_ugc == 1
-
-            if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen =
-                false
+            
+            if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(UtilsKt.getRealScreenSize(context))
-
+            
             rotateButton.visibility =
                 if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
@@ -750,21 +744,21 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             it.onMediaItemChanged()
         }
     }
-
+    
     override fun setPlayer(newPlayer: Player?) {
         val oldPlayer = this.player //get reference of old player which attached previously
         super.setPlayer(newPlayer)
         playerOverlay.player(newPlayer)
         oldPlayer?.removeListener(this)
         this.player?.addListener(this)
-
+        
         player?.currentMediaItem?.getChannelMetadata(player)?.let {
             isVideoPortrait = it.isHorizontal != 1
-            rotateButton.visibility = if(isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
-            shareButton.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
+            rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
+            shareButton.visibility = if (it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
-
+    
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000

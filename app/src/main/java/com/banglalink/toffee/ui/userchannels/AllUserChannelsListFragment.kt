@@ -12,6 +12,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -36,8 +37,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCallback<UserChannelInfo> {
-    private var top = -1
     private var index = -1
+    private var initialPage = 0
     @Inject lateinit var localSync: LocalSync
     private var categoryInfo: Category? = null
     private var subscribedItemPosition: Int = -1
@@ -77,31 +78,39 @@ class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCal
                     isInitialized = true
                 }
             }
+            val gridLayoutManager = object : GridLayoutManager(context, 3, VERTICAL, false) { 
+                override fun onLayoutCompleted(state: RecyclerView.State?) { 
+                    super.onLayoutCompleted(state)
+                    if (index != -1) {
+                        binding.userChannelList.smoothScrollToPosition(index)
+                        index = -1
+                    }
+                }
+            }
+            userChannelList.layoutManager = gridLayoutManager
             userChannelList.adapter = mAdapter
             userChannelList.setHasFixedSize(true)
             userChannelList.adapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
-        observeList(index)
+        observeList()
         observeSubscribeChannel()
     }
     
     override fun onPause() {
         super.onPause()
-        index = (binding.userChannelList.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
-//        val topView: View = binding.userChannelList.getChildAt(0)
-//        top = topView.top - binding.userChannelList.paddingTop
+        // calculate the visible item position and page to show the proper item visible when navigating back from other individual item detail page
+        index = (binding.userChannelList.layoutManager as GridLayoutManager).findFirstCompletelyVisibleItemPosition()
+        if (initialPage > 0) {
+            initialPage += index.div(BaseListRepositoryImpl.PAGE_SIZE) - 1
+            index = index.rem(BaseListRepositoryImpl.PAGE_SIZE).plus(initialPage * BaseListRepositoryImpl.PAGE_SIZE)
+        } else {
+            initialPage = index.div(BaseListRepositoryImpl.PAGE_SIZE)
+        }
     }
     
-//    override fun onResume() {
-//        super.onResume()
-//        if (index != -1) {
-//            binding.userChannelList.smoothScrollToPosition(index)
-//        }
-//    }
-    
-    private fun observeList(index: Int) {
+    private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadUserChannels(index.div(30)).collectLatest {
+            viewModel.loadUserChannels(initialPage).collectLatest {
                 mAdapter.submitData(it)
             }
         }

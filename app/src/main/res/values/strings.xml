@@ -426,4 +426,5 @@
     <string name="update">Update</string>
     <string name="copyright_confirmation_mandatory">Copyright Confirmation*</string>
     <string name="web_error_text"><![CDATA[<p style="margin:auto; width:95%; text-align: center;"><b>Something went wrong! Please try again later.</b></p>]]></string>
+    <string name="clear_search_history">Clear Search History</string>
 </resources>

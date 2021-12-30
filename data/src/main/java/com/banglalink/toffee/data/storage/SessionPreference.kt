@@ -404,10 +404,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
         }
     
-    var keepAspectRatio: Boolean
-        get() = !pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
-        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, !value) }
-
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_UPLOAD_STATUS, value) }
@@ -729,7 +725,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_NAME = "channel_name"
         private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
-        private const val PREF_KEEP_ASPECT_RATIO = "pref_keep_aspect_ratio"
         private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
         private const val PREF_MQTT_IS_ACTIVE = "pref_mqtt_is_active"
         private const val PREF_MQTT_HOST = "pref_mqtt_host"
