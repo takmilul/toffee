@@ -200,7 +200,7 @@ class HomeActivity :
 
         ToffeeAnalytics.logUserProperty(
             mapOf(
-                "user_id" to mPref.customerId.toString(),
+                "userId" to mPref.customerId.toString(),
                 "user_type" to mPref.isBanglalinkNumber,
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )

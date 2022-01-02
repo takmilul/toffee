@@ -278,8 +278,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }*/
 
     @BindingAdapter("bindActivityType")
-    fun bindActivityType(view: TextView, item: UserActivities) {
-        view.text = when (item.activityType) {
+    fun bindActivityType(view: TextView, item: UserActivities?) {
+        view.text = when (item?.activityType) {
             ActivityType.REACTED.value -> "Reacted"
             ActivityType.REACTION_CHANGED.value -> "Reaction Changed"
             ActivityType.REACTION_REMOVED.value -> "Reaction Removed"

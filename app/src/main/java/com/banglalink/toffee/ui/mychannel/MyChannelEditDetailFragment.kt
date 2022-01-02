@@ -20,7 +20,6 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -63,11 +62,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: FragmentMyChannelEditDetailBinding? = null
     private val binding get() = _binding!!
-    @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
+    @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> {
-        MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory,
-            myChannelDetail)
+        MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail)
     }
     
     companion object {
@@ -191,10 +189,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.categoryList) { categories ->
             if (!categories.isNullOrEmpty()) {
                 categoryAdapter.setData(categories)
-                viewModel.selectedCategory =
-                    categories.find { it.id == myChannelDetail?.categoryId } ?: categories.first()
-                viewModel.selectedCategoryPosition.value =
-                    (categories.indexOf(viewModel.selectedCategory).takeIf { it > 0 } ?: 0) + 1
+                viewModel.selectedCategory = categories.find { it.id == myChannelDetail?.categoryId } ?: categories.first()
+                viewModel.selectedCategoryPosition.value = (categories.indexOf(viewModel.selectedCategory).takeIf { it > 0 } ?: 0) + 1
             }
         }
         
@@ -249,8 +245,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
-                    findNavController().navigateUp()
                     requireContext().showToast(it.data.message)
+                    findNavController().navigateUp()
                 }
                 is Failure -> {
 
