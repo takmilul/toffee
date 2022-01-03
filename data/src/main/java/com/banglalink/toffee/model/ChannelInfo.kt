@@ -223,10 +223,10 @@ data class ChannelInfo(
 
     fun getHlsLink(): String? = hlsLinks?.get(0)?.hls_url_mobile
     
-    fun getPlayUrl(isDataConnection: Boolean) = if (isDataConnection) {
-        drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrl
+    fun getDrmUrl(isDataConnection: Boolean) = if (isDataConnection) {
+        drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrl?.takeIf { it.isNotBlank() }
     } else {
-        drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrl
+        drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull()?.takeIf { it.isNotBlank() } ?: drmDashUrl?.takeIf { it.isNotBlank() }
     }
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())

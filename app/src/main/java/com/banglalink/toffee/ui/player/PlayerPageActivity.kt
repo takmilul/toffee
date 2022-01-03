@@ -13,7 +13,6 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
@@ -303,7 +302,7 @@ abstract class PlayerPageActivity :
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
-        (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList().isNullOrEmpty()) &&
+        (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty()) &&
         !mPref.drmWidevineLicenseUrl.isNullOrBlank() //&&
 //        player is SimpleExoPlayer
 
@@ -629,7 +628,7 @@ abstract class PlayerPageActivity :
         val license = getLicense(channelInfo)
         
         val isDataConnection = connectionWatcher.isOverCellular
-        val drmUrl = channelInfo.getPlayUrl(isDataConnection)
+        val drmUrl = channelInfo.getDrmUrl(isDataConnection) ?: return null
         
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
