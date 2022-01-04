@@ -547,8 +547,7 @@ abstract class PlayerPageActivity :
         try {
             val drmCid = if(mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             val token = try{
-                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) }
-            catch (e:Exception){
+                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) } catch (e:Exception){
                 val error = getError(e)
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
@@ -558,11 +557,8 @@ abstract class PlayerPageActivity :
                         "error_code" to error.code,
                         "error_description" to error.msg)
                 )
-                    null
-                }
-            if(token==null){
-                return null
-            }
+                null
+            } ?: return null
             Log.i("DRM_T", "Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient

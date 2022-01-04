@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 
-class ChannelFragmentFractory(private val args: Bundle?): FragmentFactory() {
+class ChannelFragmentFactory(private val args: Bundle?): FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when(className) {
             ChannelFragment::class.java.name -> {

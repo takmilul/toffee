@@ -43,7 +43,7 @@ interface ToffeeApi {
     @POST("ugc-favorite-contents")
     suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):FavoriteContentResponse
 
-    @POST("ugc-app-home-page-content-toffee-v2/${Constants.DEVICE_TYPE}/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
+    @POST("ugc-app-home-page-content-toffee-v2/${Constants.DEVICE_TYPE}/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telcoId/limit/dbVesion
     suspend fun getChannels(
         @Path("dbVersion") dbVersion: Int,
         @Body allChannelRequest: AllChannelRequest
