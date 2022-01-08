@@ -17,6 +17,7 @@ import com.banglalink.toffee.databinding.*
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.ChannelAdapter
@@ -31,7 +32,7 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: ChannelAdapter
     private  var _binding: FragmentStingrayBinding?=null
     private val binding get() = _binding!!
-    val viewModel by activityViewModels<LandingPageViewModel>()
+    val viewModel by activityViewModels<StingrayViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         _binding = FragmentStingrayBinding.inflate(layoutInflater)
@@ -48,6 +49,7 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
         mAdapter = ChannelAdapter(this)
+        observeList()
 
         with(binding.placeholder) {
             val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 5)) / 4.5    // 16dp margin
@@ -81,20 +83,21 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
 //            parentFragment?.findNavController()?.navigate(R.id.menu_tv)
 //        }
 
-        observeList()
     }
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadChannels().collectLatest {
+            viewModel.loadReportList().collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
+
 
     override fun onItemClicked(item: ChannelInfo) {
         if (item.id.isNotBlank()) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         }
     }
+
 }
