@@ -206,7 +206,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
     
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {

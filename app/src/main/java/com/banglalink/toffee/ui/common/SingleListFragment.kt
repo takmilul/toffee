@@ -122,7 +122,7 @@ abstract class SingleListFragment<T: Any> : Fragment() {
 
     fun playVideoChannel(T: Any) {
         if(T is ChannelInfo) {
-            mHomeViewModel.fragmentDetailsMutableLiveData.postValue(T)
+            mHomeViewModel.playContentLiveData.postValue(T)
         }
     }
 

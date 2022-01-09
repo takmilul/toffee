@@ -28,7 +28,10 @@ import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
@@ -38,7 +41,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -63,7 +66,8 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.model.Resource.*
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
@@ -85,6 +89,8 @@ import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
+import com.conviva.sdk.ConvivaAnalytics
+import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -111,7 +117,6 @@ import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.net.URLDecoder
-import java.util.*
 import javax.inject.Inject
 
 const val NON_PAYMENT = 0
@@ -126,7 +131,7 @@ class HomeActivity :
     PlayerPageActivity(),
     SearchView.OnQueryTextListener,
     DraggerLayout.OnPositionChangedListener,
-    FragmentManager.OnBackStackChangedListener
+    OnBackStackChangedListener
 {
     private var channelOwnerId: Int = 0
     private var searchView: SearchView? = null
@@ -220,7 +225,7 @@ class HomeActivity :
             mPref.mqttUserName = ""
             mPref.mqttPassword = ""
         }
-        observe(viewModel.fragmentDetailsMutableLiveData) {
+        observe(viewModel.playContentLiveData) {
             onDetailsFragmentLoad(it)
         }
         observe(mPref.sessionTokenLiveData){
@@ -321,7 +326,21 @@ class HomeActivity :
         observe(mPref.shareableHashLiveData) {
             it?.let { observeShareableContent(it) }
         }
+        initConvivaSdk()
 //        showDeviceId()
+    }
+    
+    private fun initConvivaSdk() {
+        if(BuildConfig.DEBUG) {
+            val settings: Map<String, Any> = mutableMapOf(
+                ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+                ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+            )
+            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+        }/* else {
+            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
+        }*/
+        ConvivaFactory.init(applicationContext, true)
     }
     
     private fun showDeviceId() {
@@ -675,6 +694,7 @@ class HomeActivity :
     override fun onStart() {
         super.onStart()
         if(playlistManager.getCurrentChannel() != null) {
+            ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
                 if(playlistManager.playlistId >= 0) {
@@ -696,6 +716,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.player = null
         }
+        ConvivaAnalytics.reportAppBackgrounded()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -983,7 +1004,8 @@ class HomeActivity :
     
     private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
         ToffeeAnalytics.logEvent(ToffeeEvents.CONTENT_CLICK,
-            bundleOf("content_id" to it.id,
+            bundleOf(
+                "content_id" to it.id,
                 "content_title" to it.program_name,
                 "content_category" to it.category,
                 "content_partner" to it.content_provider_name,
@@ -992,14 +1014,21 @@ class HomeActivity :
         if (player is CastPlayer) {
             maximizePlayer()
         }
+        if (isSessionStarted) {
+            ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackEnded()
+        }
+        
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
+                setConvivaMetadata(detailsInfo.currentItem!!)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
+                setConvivaMetadata(detailsInfo.currentItem!!, detailsInfo.serialName, detailsInfo.seasonNo.toString())
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
+                setConvivaMetadata(it)
                 loadChannel(it)
             }
         }
@@ -1034,10 +1063,37 @@ class HomeActivity :
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     
+    private fun setConvivaMetadata(info: ChannelInfo, seriesName: String? = null, seasonNumber: String? = null) {
+        val contentInfo = mapOf(
+            ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
+            ConvivaSdkConstants.IS_LIVE to info.isLive,
+            ConvivaSdkConstants.PLAYER_NAME to "Android Exoplayer",
+            ConvivaSdkConstants.VIEWER_ID to mPref.customerId.toString(),
+            ConvivaSdkConstants.DURATION to info.durationInSeconds(),
+            ConvivaConstants.APP_VERSION to BuildConfig.VERSION_NAME,
+            ConvivaConstants.CONTENT_TYPE to (info.type ?: "N/A"),
+            ConvivaConstants.CHANNEL to (info.content_provider_name ?: "N/A"),
+            ConvivaConstants.BRAND to "N/A",
+            ConvivaConstants.AFFILIATE to "N/A",
+            ConvivaConstants.CATEGORY_TYPE to (info.category ?: "N/A"),
+            ConvivaConstants.NAME to "CMS",
+            ConvivaConstants.ID to info.id,
+            ConvivaConstants.SERIES_NAME to (seriesName ?: "N/A"),
+            ConvivaConstants.SEASON_NUMBER to (seasonNumber ?: "N/A"),
+            ConvivaConstants.SHOW_TITLE to "N/A",
+            ConvivaConstants.EPISODE_NUMBER to (if(info.episodeNo==0) "N/A" else info.episodeNo.toString()),
+            ConvivaConstants.GENRE to "N/A",
+            ConvivaConstants.GENRE_LIST to "N/A",
+            ConvivaConstants.UTM_TRACKING_URL to "N/A"
+        )
+        ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackRequested(contentInfo)
+        isSessionStarted = true
+    }
+    
     override fun playNext() {
         super.playNext()
         if(playlistManager.playlistId == -1L) {
-            viewModel.fragmentDetailsMutableLiveData.postValue(playlistManager.getCurrentChannel())
+            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
         loadDetailFragment(
@@ -1240,7 +1296,7 @@ class HomeActivity :
         }
     }
 
-    override fun onViewMinimize() {
+    override fun onPlayerMinimize() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding.playerView.clearDebugWindow()
@@ -1261,7 +1317,7 @@ class HomeActivity :
         }
     }
 
-    override fun onViewMaximize() {
+    override fun onPlayerMaximize() {
         MedalliaDigital.disableIntercept()
         requestedOrientation = if(binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait)
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1362,7 +1418,8 @@ class HomeActivity :
         }
     }
 
-    override fun onViewDestroy() {
+    override fun onPlayerDestroy() {
+        ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackEnded()
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
         heartBeatManager.triggerEventViewingContentStop()
@@ -1383,6 +1440,9 @@ class HomeActivity :
         } catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
+        ConvivaFactory.getConvivaAdAnalytics()?.release()
+        ConvivaFactory.getConvivaVideoAnalytics()?.release()
+        ConvivaAnalytics.release()
         super.onDestroy()
     }
     
@@ -1638,7 +1698,7 @@ class HomeActivity :
     override fun onMediaItemChanged() {
         super.onMediaItemChanged()
         maximizePlayer()
-        onViewMaximize()
+        onPlayerMaximize()
         if(binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }

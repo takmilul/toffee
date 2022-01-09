@@ -291,7 +291,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         homeViewModel.addToPlayListMutableLiveData.postValue(
             AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
         )
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(args.playlistInfo.copy(
+        homeViewModel.playContentLiveData.postValue(args.playlistInfo.copy(
             playIndex = position,
             currentItem = item
         ))

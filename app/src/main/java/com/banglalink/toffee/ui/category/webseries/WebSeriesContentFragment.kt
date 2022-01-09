@@ -154,7 +154,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
                 listOf(item)
             )
         )
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(
+        homeViewModel.playContentLiveData.postValue(
             seriesData
         )
     }

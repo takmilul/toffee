@@ -95,7 +95,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     
     override fun onItemClicked(item: ChannelInfo) {
         if (item.id.isNotBlank()) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            homeViewModel.playContentLiveData.postValue(item)
         }
     }
 }

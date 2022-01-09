@@ -46,7 +46,7 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
     }
     
     override fun onItemClicked(item: T) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 
     override fun onOpenMenu(view: View, item: T) {

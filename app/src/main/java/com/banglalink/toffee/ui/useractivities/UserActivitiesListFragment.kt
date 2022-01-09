@@ -61,7 +61,7 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
         lifecycleScope.launch {
             item.channelInfo?.let {
                 localSync.syncData(it)
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
+                homeViewModel.playContentLiveData.postValue(item.channelInfo)
             }
         }
     }

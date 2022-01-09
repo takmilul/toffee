@@ -27,6 +27,9 @@ buildscript {
         pahoClientVersion = '1.2.5'
         pahoAndroidServiceVersion = '1.1.1'
         espressoVersion = '3.4.0'
+        convivaSdkVersion = '4.0.18'
+        convivaExoPlayerVersion = '4.0.10'
+        convivaImaVersion = '4.0.3'
     }
     repositories {
         google()

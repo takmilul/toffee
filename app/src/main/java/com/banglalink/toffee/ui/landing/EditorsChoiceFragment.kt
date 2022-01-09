@@ -75,7 +75,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

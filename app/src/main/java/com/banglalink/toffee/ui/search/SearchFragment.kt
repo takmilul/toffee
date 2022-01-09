@@ -57,7 +57,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

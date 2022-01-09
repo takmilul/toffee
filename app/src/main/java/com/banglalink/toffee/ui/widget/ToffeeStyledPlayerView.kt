@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Point
 import android.os.CountDownTimer
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
@@ -47,56 +46,50 @@ import kotlin.math.max
 import kotlin.math.min
 
 @AndroidEntryPoint
-open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    StyledPlayerView(context, attrs, defStyleAttr),
+open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : 
     View.OnClickListener,
     Player.Listener,
-    DraggerLayout.OnPositionChangedListener {
+    DraggerLayout.OnPositionChangedListener,
+    StyledPlayerView(context, attrs, defStyleAttr) 
+{
     
-    private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
-    private var mPlayListListener: PlaylistListener? = null
-    
-    private val screenWidth = UtilsKt.getScreenWidth()
-    private val screenHeight = UtilsKt.getScreenHeight()
+    private var isUgc = false
     private var videoWidth = -1
     private var videoHeight = -1
-    private var isUgc = false
     protected var isMinimize = false
+    private var debugJob: Job? = null
     private var channelType: String? = null
-    private lateinit var drawerButton: ImageView
-    private lateinit var videoOption: ImageView
-    private lateinit var shareButton: ImageView
-    private lateinit var autoplayProgress: CircularProgressBar
-    private lateinit var rotateButton: ImageView
-    private lateinit var minimizeButton: ImageView
-    protected lateinit var playerOverlay: PlayerOverlayView
-    private lateinit var castButton: MediaRouteButton
-    private lateinit var textCasting: AppCompatTextView
-    private lateinit var debugContainer: FrameLayout
-    private lateinit var playerBottomSpace: Space
-    protected lateinit var doubleTapInterceptor: PlayerPreview
-    private lateinit var playerControlView: StyledPlayerControlView
-    private lateinit var fullscreenButton: ImageView
     private lateinit var controllerBg: View
     private lateinit var playNext: ImageView
     private lateinit var playPrev: ImageView
     private lateinit var playPause: ImageView
-    private lateinit var previewImage: ImageView
-    
     private lateinit var exoPosition: TextView
-    private lateinit var exoTimeSeperator: TextView
     private lateinit var exoDuration: TextView
+    private lateinit var videoOption: ImageView
+    private lateinit var shareButton: ImageView
+    @Inject lateinit var cPref: CommonPreference
+    private lateinit var previewImage: ImageView
+    private lateinit var rotateButton: ImageView
+    private lateinit var drawerButton: ImageView
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var bindingUtil: BindingUtil
+    private lateinit var playerBottomSpace: Space
+    private lateinit var minimizeButton: ImageView
+    private lateinit var exoTimeSeparator: TextView
     private lateinit var exoProgress: DefaultTimeBar
-    
+    private lateinit var fullscreenButton: ImageView
+    private lateinit var debugContainer: FrameLayout
+    private lateinit var castButton: MediaRouteButton
+    private lateinit var textCasting: AppCompatTextView
+    private val screenWidth = UtilsKt.getScreenWidth()
+    private var mPlayListListener: PlaylistListener? = null
+    protected lateinit var playerOverlay: PlayerOverlayView
+    private val screenHeight = UtilsKt.getScreenHeight()
+    private lateinit var autoplayProgress: CircularProgressBar
+    protected lateinit var doubleTapInterceptor: PlayerPreview
+    private lateinit var playerControlView: StyledPlayerControlView
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private var debugJob: Job? = null
-    
-    @Inject
-    lateinit var cPref: CommonPreference
-    @Inject
-    lateinit var mPref: SessionPreference
-    @Inject
-    lateinit var bindingUtil: BindingUtil
+    private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     
     init {
         initView()
@@ -136,7 +129,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         playPrev = findViewById(R.id.play_prev)
         
         exoDuration = findViewById(R.id.exo_duration)
-        exoTimeSeperator = findViewById(R.id.time_seperator)
+        exoTimeSeparator = findViewById(R.id.time_seperator)
         exoPosition = findViewById(R.id.exo_position)
         exoProgress = findViewById(R.id.exo_progress)
         
@@ -324,13 +317,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             false -> {
                 exoPosition.visibility = View.VISIBLE
                 exoDuration.visibility = View.VISIBLE
-                exoTimeSeperator.visibility = View.VISIBLE
+                exoTimeSeparator.visibility = View.VISIBLE
                 exoProgress.visibility = View.VISIBLE
             }
             else -> {
                 exoPosition.visibility = View.INVISIBLE
                 exoDuration.visibility = View.INVISIBLE
-                exoTimeSeperator.visibility = View.INVISIBLE
+                exoTimeSeparator.visibility = View.INVISIBLE
                 exoProgress.visibility = View.GONE
             }
         }
@@ -569,12 +562,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         return true
     }
     
-    override fun onViewMinimize() {
+    override fun onPlayerMinimize() {
         isMinimize = true
         hideController()
     }
     
-    override fun onViewMaximize() {
+    override fun onPlayerMaximize() {
         isMinimize = false
 //        binding.textureView.setOnClickListener(this)
         if (player?.isPlaying == true) {
@@ -586,7 +579,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //        }
     }
     
-    override fun onViewDestroy() {
+    override fun onPlayerDestroy() {
         MedalliaDigital.enableIntercept()
         if (player !is CastPlayer) {
             player?.stop()
@@ -700,7 +693,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         videoWidth = (width * videoSize.pixelWidthHeightRatio).toInt()
         videoHeight = height
         
-        Log.i("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
+//        Log.i("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
         
         isVideoScalable = minBound != maxBound
         

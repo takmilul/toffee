@@ -35,19 +35,28 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
+import com.banglalink.toffee.util.ConvivaFactory
 import com.banglalink.toffee.util.getError
+import com.conviva.sdk.ConvivaSdkConstants
+import com.google.ads.interactivemedia.v3.api.AdEvent
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
-import com.google.android.exoplayer2.drm.*
-import com.google.android.exoplayer2.drm.DrmSession.*
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
+import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException
+import com.google.android.exoplayer2.drm.DrmSessionEventListener
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
-import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.source.ads.AdsLoader
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.LoadEventInfo
+import com.google.android.exoplayer2.source.MediaLoadData
+import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -58,13 +67,19 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
-import com.google.android.gms.cast.framework.*
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
-import java.net.*
+import java.net.CookieHandler
+import java.net.CookieManager
+import java.net.CookiePolicy
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
@@ -80,33 +95,34 @@ abstract class PlayerPageActivity :
 {
     private var startWindow = 0
     private var playCounter: Int = -1
-    private var reloadCounter: Int = 0
     private var startAutoPlay = false
+    private var reloadCounter: Int = 0
     private var startPosition: Long = 0
     protected var player: Player? = null
-    private var adsLoader: AdsLoader? = null
+    protected var isSessionStarted = false
+    private var adsLoader: ImaAdsLoader? = null
     private var castPlayer: CastPlayer? = null
     private var exoPlayer: ExoPlayer? = null
     protected var castContext: CastContext? = null
     private var currentlyPlayingVastUrl: String = ""
+    @Inject lateinit var drmTokenApi: DrmTokenService
     private var defaultCookieManager = CookieManager()
-    private var trackSelectorParameters: Parameters? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    private var trackSelectorParameters: Parameters? = null
+    @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
+    @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
     private var defaultTrackSelector: DefaultTrackSelector? = null
+    @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
+    private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val homeViewModel by viewModels<HomeViewModel>()
-    private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
-    @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
-    @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
-    @ToffeeHeader @Inject lateinit var toffeeHeader: String
-    @Inject lateinit var drmTokenApi: DrmTokenService
-    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -151,9 +167,9 @@ abstract class PlayerPageActivity :
         }
         heartBeatManager.heartBeatEventLiveData.observe(this) {
                 //In each heartbeat we are checking channel's expire date. Seriously??
-                val cinfo = playlistManager.getCurrentChannel()
-                if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-                    ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
+                val channelInfo = playlistManager.getCurrentChannel()
+                if (channelInfo?.isExpired(mPref.getSystemTime()) == true) {
+                    ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${channelInfo.expireTime}"))
 //                    player?.stop(true)
 //                    onContentExpired() //content is expired. Notify the subclass
                 }
@@ -168,11 +184,30 @@ abstract class PlayerPageActivity :
                 }
             }
 
-        adsLoader = ImaAdsLoader.Builder(this)
+        adsLoader = ImaAdsLoader
+            .Builder(this)
+//            .setAdEventListener {
+//                adEventListener(it)
+//            }
+//            .setAdErrorListener { 
+//                val error = it.error.errorType
+//                ConvivaFactory.getConvivaAdAnalytics().reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
+//            }
 //            .setAdMediaMimeTypes(listOf(MimeTypes.VIDEO_MP4))
             .build()
     }
-
+    
+    private fun adEventListener(it: AdEvent) {
+        when (it.type) {
+            ALL_ADS_COMPLETED -> ConvivaFactory.getConvivaAdAnalytics().reportAdEnded()
+            COMPLETED -> ConvivaFactory.getConvivaAdAnalytics().reportAdEnded()
+            SKIPPED -> ConvivaFactory.getConvivaAdAnalytics().reportAdSkipped()
+            STARTED -> ConvivaFactory.getConvivaAdAnalytics().reportAdStarted()
+            LOADED -> ConvivaFactory.getConvivaAdAnalytics().reportAdLoaded()
+            else -> {}
+        }
+    }
+    
     abstract val playlistManager: PlaylistManager
     abstract fun getPlayerView(): StyledPlayerView
 
@@ -294,6 +329,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             adsLoader?.setPlayer(exoPlayer)
+            ConvivaFactory.getConvivaVideoAnalytics().setPlayer(exoPlayer)
         }
     }
 
@@ -376,7 +412,7 @@ abstract class PlayerPageActivity :
         castContext?.let {
             it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
 
-            Log.i("CAST_T", "Castplayer init")
+            Log.i("CAST_T", "CastPlayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter(mPref, connectionWatcher.isOverWifi)).apply {
                 addListener(playerEventListener)
                 playWhenReady = true
@@ -625,7 +661,9 @@ abstract class PlayerPageActivity :
         
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection) ?: return null
-        
+        ConvivaFactory.getConvivaVideoAnalytics().setContentInfo(mapOf(
+            ConvivaSdkConstants.STREAM_URL to drmUrl
+        ))
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
@@ -648,7 +686,9 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
         }
-
+        ConvivaFactory.getConvivaVideoAnalytics().setContentInfo(mapOf(
+            ConvivaSdkConstants.STREAM_URL to uri
+        ))
         return MediaItem.Builder().apply {
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
@@ -698,6 +738,11 @@ abstract class PlayerPageActivity :
                         .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
                         .build()
                 if (!isReload) currentlyPlayingVastUrl = tag.url
+                val adInfo = mapOf(
+                    ConvivaSdkConstants.AD_TAG_URL to vastTag,
+                    ConvivaSdkConstants.AD_PLAYER to ConvivaSdkConstants.AdPlayer.CONTENT.toString()
+                )
+                ConvivaFactory.getConvivaAdAnalytics().setAdListener(adsLoader?.adsLoader, adInfo)
             }
         }
         
@@ -818,40 +863,40 @@ abstract class PlayerPageActivity :
 
     //This will be called due to session token change while playing content or after init of player
     protected fun reloadChannel() {
-        val cinfo = playlistManager.getCurrentChannel()
-        if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-            ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
+        val channelInfo = playlistManager.getCurrentChannel()
+        if (channelInfo?.isExpired(mPref.getSystemTime()) == true) {
+            ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${channelInfo.expireTime}"))
             //channel is expired. Stop the player and notify hook/subclass
 //            player?.stop(true)
 //            onContentExpired()
 //            return
         }
-        if (cinfo != null) {
+        if (channelInfo != null) {
             playChannel(true)
         }
     }
 
-    private fun insertContentViewProgress(cinfo: ChannelInfo, progress: Long) {
+    private fun insertContentViewProgress(channelInfo: ChannelInfo, progress: Long) {
         lifecycleScope.launch {
-            Log.i("PLAYBACK_STATE", "Saving state - ${cinfo.id} -> $progress")
-            if(!cinfo.isLive && progress > 0L) {
-                cinfo.viewProgress = progress
+            Log.i("PLAYBACK_STATE", "Saving state - ${channelInfo.id} -> $progress")
+            if(!channelInfo.isLive && progress > 0L) {
+                channelInfo.viewProgress = progress
                 contentViewRepo.insert(
                     ContentViewProgress(
                         customerId = mPref.customerId,
-                        contentId = cinfo.id.toLong(),
+                        contentId = channelInfo.id.toLong(),
                         progress = progress
                     )
                 )
-                Log.i("TOFFEE", "Category - ${cinfo.categoryId}")
-                if(cinfo.categoryId == 1 && cinfo.viewProgressPercent() < 970) {
+                Log.i("TOFFEE", "Category - ${channelInfo.categoryId}")
+                if(channelInfo.categoryId == 1 && channelInfo.viewProgressPercent() < 970) {
                     continueWatchingRepo.insertItem(
                         ContinueWatchingItem(
                             mPref.customerId,
-                            cinfo.id.toLong(),
-                            cinfo.type ?: "VOD",
-                            cinfo.categoryId,
-                            Gson().toJson(cinfo),
+                            channelInfo.id.toLong(),
+                            channelInfo.type ?: "VOD",
+                            channelInfo.categoryId,
+                            Gson().toJson(channelInfo),
                             progress
                         )
                     )
@@ -1073,5 +1118,4 @@ abstract class PlayerPageActivity :
             initialTimeStamp = 0
         }
     }
-
 }

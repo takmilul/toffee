@@ -68,7 +68,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     }
     
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
     
     private fun startPageScroll() {

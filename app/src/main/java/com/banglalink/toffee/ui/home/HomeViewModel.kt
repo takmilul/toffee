@@ -71,7 +71,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
+    val playContentLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity

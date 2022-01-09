@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentMoviesPreviewItemBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -52,6 +50,6 @@ class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelIn
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 }

@@ -70,7 +70,7 @@ class RecentChannelsFragment: BaseFragment() {
 
         mAdapter = RecentChannelsAdapter(object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
+                homeViewModel.playContentLiveData.postValue(item.channelInfo)
             }
         })
 

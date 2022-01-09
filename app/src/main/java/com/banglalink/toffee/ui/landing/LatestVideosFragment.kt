@@ -208,7 +208,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     }
     
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {

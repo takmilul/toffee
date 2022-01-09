@@ -117,7 +117,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private fun initAdapter() {
         catchupAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                homeViewModel.playContentLiveData.postValue(item)
             }
 
             override fun onOpenMenu(view: View, item: ChannelInfo) {

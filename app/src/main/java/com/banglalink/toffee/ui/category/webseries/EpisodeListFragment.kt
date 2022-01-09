@@ -185,7 +185,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 homeViewModel.addToPlayListMutableLiveData.postValue(
                     AddToPlaylistData(getPlaylistId(), mAdapter.snapshot().items)
                 )
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(
+                homeViewModel.playContentLiveData.postValue(
                     seriesInfo
                 )
             }

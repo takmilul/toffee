@@ -50,7 +50,7 @@ class PopularMovieChannelFragment : BaseFragment() {
         binding.channelList.show()
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                homeViewModel.playContentLiveData.postValue(item)
             }
         })
 

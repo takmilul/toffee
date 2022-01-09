@@ -12,6 +12,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
 import java.util.*
 
 @KeepName
@@ -245,7 +246,17 @@ data class ChannelInfo(
             true
         }
     }
-
+    
+    fun durationInSeconds(): Int {
+        val time = try {
+            val format = SimpleDateFormat("HH:mm:ss", Locale.US)
+            format.parse(duration ?: "00:00:00")?.seconds ?: 0
+        } catch (e: Exception) {
+            0
+        }
+        return time
+    }
+    
     fun formattedViewCount(): String = getFormattedViewsText(view_count)
     fun formattedDuration(): String = discardZeroFromDuration(duration)
     fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"

@@ -16,7 +16,6 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.px
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
@@ -33,7 +32,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var lastAction = 0
     private val bottomMargin = (52 + 72).px
     private lateinit var viewDragHelper: ViewDragHelper
-    private lateinit var dragableViewCallback: DraggableViewCallback
+    private lateinit var draggableViewCallback: DraggableViewCallback
     private var mVerticalDragRange = 0
     private var mHorizontalDragRange = 0
     private var mTop = 0
@@ -62,20 +61,20 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     private fun initializeViewDragHelper() {
-        dragableViewCallback = DraggableViewCallback(this)
-        viewDragHelper = ViewDragHelper.create(this, 1f, dragableViewCallback)
+        draggableViewCallback = DraggableViewCallback(this)
+        viewDragHelper = ViewDragHelper.create(this, 1f, draggableViewCallback)
     }
 
     fun minimize() {
         if(smoothSlideTo(1f)) {
             onPositionChangedListenerList.forEach {
-                it.onViewMinimize()
+                it.onPlayerMinimize()
             }
         }
     }
 
     fun resetImmediately() {
-        dragableViewCallback.onViewPositionChanged(dragView, 0, 0, 0, 0)
+        draggableViewCallback.onViewPositionChanged(dragView, 0, 0, 0, 0)
         dragView.setBackgroundColor(Color.BLACK)
         requestLayout()
     }
@@ -83,7 +82,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     fun maximize() {
         if(smoothSlideTo(0f)) {
             onPositionChangedListenerList.forEach {
-                it.onViewMaximize()
+                it.onPlayerMaximize()
             }
         }
     }
@@ -298,7 +297,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             }
         }
         onPositionChangedListenerList.forEach {
-            it.onViewDestroy()
+            it.onPlayerDestroy()
         }
         dragView.scaleX = getMaxScale()
         dragView.scaleY = getMaxScale()
@@ -320,7 +319,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                         ViewCompat.postInvalidateOnAnimation(parent)
                     }
                     onPositionChangedListenerList.forEach {
-                        it.onViewDestroy()
+                        it.onPlayerDestroy()
                     }
                     dragView.scaleX = getMinScale()
                     dragView.scaleY = getMinScale()
@@ -439,9 +438,9 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
     private var capturedEnd: Int? = null
 
-    fun onScaleToBoundary(bscale: Float) {
+    fun onScaleToBoundary(scale: Float) {
         if(dragView.isVideoScalable
-            && bscale == getMaxScale()
+            && scale == getMaxScale()
             && dragView.layoutParams.height != dragView.maxBound
         ) {
 //            dragView.setLayoutHeight(dragView.maxBound)
@@ -454,8 +453,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     interface OnPositionChangedListener {
-        fun onViewMinimize()
-        fun onViewMaximize()
-        fun onViewDestroy()
+        fun onPlayerMinimize()
+        fun onPlayerMaximize()
+        fun onPlayerDestroy()
     }
 }

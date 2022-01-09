@@ -211,7 +211,12 @@ dependencies {
     }
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
     implementation "com.github.loopsocial:AndroidFireworkPlayer:$fireworkExoPlayerVersion"
-
+    
+    //conviva sdk
+    implementation "com.conviva.sdk:conviva-core-sdk:$rootProject.convivaSdkVersion"
+    implementation "com.conviva.sdk:conviva-exoplayer-sdk:$rootProject.convivaExoPlayerVersion"
+    implementation "com.conviva.sdk:conviva-ima-sdk:$rootProject.convivaImaVersion"
+    
     implementation ("com.google.apis:google-api-services-pubsub:$rootProject.pubsubVersion") {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'

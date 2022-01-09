@@ -139,7 +139,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     }
     
     override fun onItemClicked(channelInfo: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(channelInfo)
+        homeViewModel.playContentLiveData.postValue(channelInfo)
     }
     
     private fun getEmptyViewInfo(): Pair<Int, String?> {

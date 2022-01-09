@@ -69,6 +69,6 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        homeViewModel.playContentLiveData.postValue(item)
     }
 }
