@@ -341,6 +341,8 @@ class HomeActivity :
             ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
         }*/
         ConvivaFactory.init(applicationContext, true)
+        convivaAdAnalytics = ConvivaFactory.instance.convivaAdAnalytics
+        convivaVideoAnalytics = ConvivaFactory.instance.convivaVideoAnalytics
     }
     
     private fun showDeviceId() {
@@ -1014,21 +1016,20 @@ class HomeActivity :
         if (player is CastPlayer) {
             maximizePlayer()
         }
-        if (isSessionStarted) {
-            ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackEnded()
-        }
+        ConvivaFactory.endPlayerSession()
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                setConvivaMetadata(detailsInfo.currentItem!!)
+                ConvivaFactory.setConvivaMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
+                    detailsInfo.currentItem!!.seasonNo)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
-                setConvivaMetadata(detailsInfo.currentItem!!, detailsInfo.serialName, detailsInfo.seasonNo.toString())
+                ConvivaFactory.setConvivaMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
-                setConvivaMetadata(it)
+                ConvivaFactory.setConvivaMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                 loadChannel(it)
             }
         }
@@ -1063,39 +1064,15 @@ class HomeActivity :
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     
-    private fun setConvivaMetadata(info: ChannelInfo, seriesName: String? = null, seasonNumber: String? = null) {
-        val contentInfo = mapOf(
-            ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
-            ConvivaSdkConstants.IS_LIVE to info.isLive,
-            ConvivaSdkConstants.PLAYER_NAME to "Android Exoplayer",
-            ConvivaSdkConstants.VIEWER_ID to mPref.customerId.toString(),
-            ConvivaSdkConstants.DURATION to info.durationInSeconds(),
-            ConvivaConstants.APP_VERSION to BuildConfig.VERSION_NAME,
-            ConvivaConstants.CONTENT_TYPE to (info.type ?: "N/A"),
-            ConvivaConstants.CHANNEL to (info.content_provider_name ?: "N/A"),
-            ConvivaConstants.BRAND to "N/A",
-            ConvivaConstants.AFFILIATE to "N/A",
-            ConvivaConstants.CATEGORY_TYPE to (info.category ?: "N/A"),
-            ConvivaConstants.NAME to "CMS",
-            ConvivaConstants.ID to info.id,
-            ConvivaConstants.SERIES_NAME to (seriesName ?: "N/A"),
-            ConvivaConstants.SEASON_NUMBER to (seasonNumber ?: "N/A"),
-            ConvivaConstants.SHOW_TITLE to "N/A",
-            ConvivaConstants.EPISODE_NUMBER to (if(info.episodeNo==0) "N/A" else info.episodeNo.toString()),
-            ConvivaConstants.GENRE to "N/A",
-            ConvivaConstants.GENRE_LIST to "N/A",
-            ConvivaConstants.UTM_TRACKING_URL to "N/A"
-        )
-        ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackRequested(contentInfo)
-        isSessionStarted = true
-    }
-    
     override fun playNext() {
         super.playNext()
         if(playlistManager.playlistId == -1L) {
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
+        ConvivaFactory.endPlayerSession()
+        val info = playlistManager.getCurrentChannel()
+        ConvivaFactory.setConvivaMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1103,6 +1080,9 @@ class HomeActivity :
 
     override fun playPrevious() {
         super.playPrevious()
+        ConvivaFactory.endPlayerSession()
+        val info = playlistManager.getCurrentChannel()
+        ConvivaFactory.setConvivaMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1269,6 +1249,7 @@ class HomeActivity :
     }
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
+        ConvivaFactory.endPlayerSession()
         ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
         if (isDarkEnabled) {
             cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
@@ -1419,7 +1400,7 @@ class HomeActivity :
     }
 
     override fun onPlayerDestroy() {
-        ConvivaFactory.getConvivaVideoAnalytics().reportPlaybackEnded()
+        ConvivaFactory.endPlayerSession()
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
         heartBeatManager.triggerEventViewingContentStop()
@@ -1440,9 +1421,7 @@ class HomeActivity :
         } catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
-        ConvivaFactory.getConvivaAdAnalytics()?.release()
-        ConvivaFactory.getConvivaVideoAnalytics()?.release()
-        ConvivaAnalytics.release()
+        ConvivaFactory.release()
         super.onDestroy()
     }
     

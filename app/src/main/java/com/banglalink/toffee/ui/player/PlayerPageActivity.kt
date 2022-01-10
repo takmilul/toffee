@@ -35,9 +35,10 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
-import com.banglalink.toffee.util.ConvivaFactory
 import com.banglalink.toffee.util.getError
+import com.conviva.sdk.ConvivaAdAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
+import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
 import com.google.android.exoplayer2.*
@@ -112,10 +113,12 @@ abstract class PlayerPageActivity :
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    protected var convivaAdAnalytics: ConvivaAdAnalytics? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
     @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
+    protected var convivaVideoAnalytics: ConvivaVideoAnalytics? = null
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
@@ -191,7 +194,7 @@ abstract class PlayerPageActivity :
 //            }
 //            .setAdErrorListener { 
 //                val error = it.error.errorType
-//                ConvivaFactory.getConvivaAdAnalytics().reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
+//                convivaAdAnalytics?.reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
 //            }
 //            .setAdMediaMimeTypes(listOf(MimeTypes.VIDEO_MP4))
             .build()
@@ -199,11 +202,11 @@ abstract class PlayerPageActivity :
     
     private fun adEventListener(it: AdEvent) {
         when (it.type) {
-            ALL_ADS_COMPLETED -> ConvivaFactory.getConvivaAdAnalytics().reportAdEnded()
-            COMPLETED -> ConvivaFactory.getConvivaAdAnalytics().reportAdEnded()
-            SKIPPED -> ConvivaFactory.getConvivaAdAnalytics().reportAdSkipped()
-            STARTED -> ConvivaFactory.getConvivaAdAnalytics().reportAdStarted()
-            LOADED -> ConvivaFactory.getConvivaAdAnalytics().reportAdLoaded()
+            ALL_ADS_COMPLETED -> convivaAdAnalytics?.reportAdEnded()
+            COMPLETED -> convivaAdAnalytics?.reportAdEnded()
+            SKIPPED -> convivaAdAnalytics?.reportAdSkipped()
+            STARTED -> convivaAdAnalytics?.reportAdStarted()
+            LOADED -> convivaAdAnalytics?.reportAdLoaded()
             else -> {}
         }
     }
@@ -329,7 +332,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             adsLoader?.setPlayer(exoPlayer)
-            ConvivaFactory.getConvivaVideoAnalytics().setPlayer(exoPlayer)
+            convivaVideoAnalytics?.setPlayer(exoPlayer)
         }
     }
 
@@ -661,7 +664,7 @@ abstract class PlayerPageActivity :
         
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection) ?: return null
-        ConvivaFactory.getConvivaVideoAnalytics().setContentInfo(mapOf(
+        convivaVideoAnalytics?.setContentInfo(mapOf(
             ConvivaSdkConstants.STREAM_URL to drmUrl
         ))
         return MediaItem.Builder().apply {
@@ -686,7 +689,7 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
         }
-        ConvivaFactory.getConvivaVideoAnalytics().setContentInfo(mapOf(
+        convivaVideoAnalytics?.setContentInfo(mapOf(
             ConvivaSdkConstants.STREAM_URL to uri
         ))
         return MediaItem.Builder().apply {
@@ -742,7 +745,7 @@ abstract class PlayerPageActivity :
                     ConvivaSdkConstants.AD_TAG_URL to vastTag,
                     ConvivaSdkConstants.AD_PLAYER to ConvivaSdkConstants.AdPlayer.CONTENT.toString()
                 )
-                ConvivaFactory.getConvivaAdAnalytics().setAdListener(adsLoader?.adsLoader, adInfo)
+                convivaAdAnalytics?.setAdListener(adsLoader?.adsLoader, adInfo)
             }
         }
         

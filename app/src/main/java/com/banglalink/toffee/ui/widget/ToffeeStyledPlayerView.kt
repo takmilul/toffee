@@ -27,6 +27,7 @@ import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.player.PlayerPreview
 import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.ConvivaFactory
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -56,12 +57,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private var isUgc = false
     private var videoWidth = -1
     private var videoHeight = -1
+    private var tickTime: Long = 0
     protected var isMinimize = false
     private var debugJob: Job? = null
     private var channelType: String? = null
     private lateinit var controllerBg: View
     private lateinit var playNext: ImageView
     private lateinit var playPrev: ImageView
+    private var timer: CountDownTimer? = null
     private lateinit var playPause: ImageView
     private lateinit var exoPosition: TextView
     private lateinit var exoDuration: TextView
@@ -413,17 +416,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
     }
     
-    private var timer: CountDownTimer? = null
-    
     private fun startAutoPlayTimer() {
         timer?.cancel()
         autoplayProgress.progress = 0f
-        autoplayProgress.setProgressWithAnimation(1000f, AUTOPLAY_INTERVAL)
+        autoplayProgress.setProgressWithAnimation(AUTOPLAY_PROGRESS_TIME, AUTOPLAY_INTERVAL)
         timer = object : CountDownTimer(AUTOPLAY_INTERVAL, AUTOPLAY_INTERVAL) {
-            override fun onTick(millisUntilFinished: Long) {}
+            override fun onTick(millisUntilFinished: Long) {
+                tickTime = millisUntilFinished
+            }
             
             override fun onFinish() {
                 if (mPlayListListener?.hasNext() == true) {
+                    tickTime = 0
                     mPlayListListener?.playNext()
                 }
             }
@@ -432,6 +436,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     private fun stopAutoplayTimer() {
+        tickTime = 0
         timer?.cancel()
     }
     
@@ -509,7 +514,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     fun handleTouchEvent(ev: MotionEvent): Boolean {
-        
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 handleTouchDown2(ev)
@@ -628,7 +632,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
                 autoplayProgress.visibility = View.GONE
+                val progressTime = tickTime
                 stopAutoplayTimer()
+                if (progressTime in 1 until AUTOPLAY_INTERVAL) {
+                    ConvivaFactory.endPlayerSession()
+                    player?.currentMediaItem?.getChannelMetadata(player)?.let {
+                        ConvivaFactory.setConvivaMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                    }
+                }
             }
             Player.STATE_IDLE -> {
                 previewImage.setImageResource(0)
@@ -755,6 +766,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
+        private const val AUTOPLAY_PROGRESS_TIME = 1000F
         private const val AUTOPLAY_INTERVAL = 5000L
     }
 }
