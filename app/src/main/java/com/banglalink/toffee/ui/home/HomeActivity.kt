@@ -120,6 +120,7 @@ const val PLAY_IN_NATIVE_PLAYER = 0
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
+const val STINGRAY_CONTENT = 10
 
 @AndroidEntryPoint
 class HomeActivity :
@@ -975,6 +976,9 @@ class HomeActivity :
                     openInExternalBrowser(it)
                 }
                 it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
+                    playInNativePlayer(detailsInfo, it)
+                }
+                it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PAYMENT ->{
                     playInNativePlayer(detailsInfo, it)
                 }
             }

@@ -192,11 +192,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }
 
-    var isFireworkActive: String
-        get() = pref.getString(PREF_FIREWORK_ACTIVE, "false") ?: "false"
-        set(isActive) {
-            pref.edit().putString(PREF_FIREWORK_ACTIVE, isActive).apply()
-        }
+
 
     var isFeaturePartnerActive: String
         get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "false") ?: "false"
@@ -590,6 +586,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isPaidUser: Boolean
         get() = pref.getBoolean(PREF_PAYMENT_STATUS, false)
         set(value) = pref.edit { putBoolean(PREF_PAYMENT_STATUS, value) }
+    var isFireworkActive: Boolean
+        get() = pref.getBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, value) }
+    var isStingrayActive: Boolean
+        get() = pref.getBoolean(PREF_IS_STINGRAY_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_STINGRAY_ACTIVE, value) }
+    var isMedalliaActive: Boolean
+        get() = pref.getBoolean(PREF_IS_MEDALLIA_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_MEDALLIA_ACTIVE, value) }
+    var isConvivaActive: Boolean
+        get() = pref.getBoolean(PREF_IS_CONVIVA_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CONVIVA_ACTIVE, value) }
     
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
@@ -623,7 +631,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
         shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
         isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
-        isFireworkActive = customerInfoLogin.isFireworkActive ?: "false"
         isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "false"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
@@ -662,6 +669,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         globalCidName = customerInfoLogin.globalCidName
         betaVersionCodes = customerInfoLogin.androidBetaVersionCode
         isPaidUser = customerInfoLogin.paymentStatus
+        isFireworkActive = customerInfoLogin.isFireworkActiveForAndroid
+        isStingrayActive = customerInfoLogin.isStingrayActive
+        isMedalliaActive = customerInfoLogin.isMedalliaActive
+        isConvivaActive = customerInfoLogin.isConvivaActive
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -767,6 +778,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"
         private const val PREF_BETA_VERSION_CODES = "pref_beta_version_codes"
         private const val PREF_PAYMENT_STATUS = "pref_payment_status"
+        private const val PREF_IS_FIREWORK_ACTIVE_ANDROID = "pref_firework_active_status_android"
+        private const val PREF_IS_STINGRAY_ACTIVE = "pref_stingray_active"
+        private const val PREF_IS_MEDALLIA_ACTIVE = "pref_medallia_active"
+        private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
 
         private var instance: SessionPreference? = null
 

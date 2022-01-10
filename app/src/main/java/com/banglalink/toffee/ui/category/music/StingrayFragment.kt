@@ -17,10 +17,7 @@ import com.banglalink.toffee.databinding.*
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,7 +26,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
 
-    private lateinit var mAdapter: ChannelAdapter
+    private lateinit var mAdapter: StingrayChannelAdapter
     private  var _binding: FragmentStingrayBinding?=null
     private val binding get() = _binding!!
     val viewModel by activityViewModels<StingrayViewModel>()
@@ -48,7 +45,7 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
-        mAdapter = ChannelAdapter(this)
+        mAdapter = StingrayChannelAdapter(this)
         observeList()
 
         with(binding.placeholder) {
