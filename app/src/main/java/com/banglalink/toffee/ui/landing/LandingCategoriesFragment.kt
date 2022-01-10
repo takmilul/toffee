@@ -134,10 +134,18 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
                     findNavController().navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
                 }
             }
+            2 ->{
+                if (findNavController().currentDestination?.id != R.id.musicFragment && findNavController().currentDestination?.id==
+                    R.id.menu_feed)
+                {
+                    findNavController().navigate(R.id.action_menu_feed_to_musicDetailsFragmant, args)
+                }
+            }
             else -> {
                 if (findNavController().currentDestination?.id != R.id.categoryDetailsFragment && findNavController().currentDestination?.id==
                     R.id.menu_feed){
-                    findNavController().navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)}
+                    findNavController().navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+                   }
             }
         }
     }

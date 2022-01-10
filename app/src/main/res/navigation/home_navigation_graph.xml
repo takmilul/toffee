@@ -129,6 +129,10 @@
         <action
             android:id="@+id/action_landingCategoriesFragment_to_dramaSeriesFragment"
             app:destination="@id/dramaSeriesFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
+            app:destination="@id/musicDetailsFragmant" />
+
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -456,4 +460,22 @@
         android:id="@+id/myChannelAddToPlaylistFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment"
         android:label="Add To Playlist" />
+    <fragment
+        android:id="@+id/musicFragment"
+        android:name="com.banglalink.toffee.ui.category.music.MusicInfoFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Music Videos"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/musicDetailsFragmant"
+        android:name="com.banglalink.toffee.ui.category.music.MusicDetailsFragmant"
+        android:label="{title}">
+    <argument
+        android:name="title"
+        android:defaultValue="Category"
+        app:argType="string" />
+    </fragment>
 </navigation>

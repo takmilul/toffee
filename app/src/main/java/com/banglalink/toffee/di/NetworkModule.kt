@@ -20,10 +20,10 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
-    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
+    //private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //    const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
 //    const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-//    const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
+   const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
 
     @Provides
     @Singleton

@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -170,6 +173,12 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             && mPref.phoneNumber.isNotBlank()
             && validNID) {
             saveChannelInfo()
+
+            ToffeeAnalytics.logEvent(
+                ToffeeEvents.UGC_UPLOAD,
+                bundleOf("tnc_status" to 1)
+            )
+
         } else {
             progressDialog.dismiss()
         }

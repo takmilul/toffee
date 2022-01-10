@@ -36,4 +36,5 @@ object ToffeeEvents {
     const val UGC_CHANNEL_IMAGE = "ugc_channel_image"
     const val SELECT_INTEREST = "select_interest"
     const val EXCEPTION ="exception"
+    const val UGC_UPLOAD ="ugc_upload"
 }

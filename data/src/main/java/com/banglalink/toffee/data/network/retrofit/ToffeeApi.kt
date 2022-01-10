@@ -37,6 +37,22 @@ interface ToffeeApi {
         @Body contentRequest: ContentRequest
     ): ContentResponse
 
+    @POST("stingray-contents/${Constants.DEVICE_TYPE}/{type}/1/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
+    suspend fun getStingrayContents(
+        @Path("type") type: String,
+        @Path("subcategoryId") subCategoryId: Int,
+        @Path("offset") offset: Int,
+        @Path("limit") limit: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body contentRequest: StingrayConetntRequest
+    ): ContentResponse
+
+    @POST("ugc-fireworks-list/${Constants.DEVICE_TYPE}/NULL/NULL/10/0/{dbVersion}")  //{BaseUrl}/ugc-fireworks-list/deviceType/channel_id/playlist_id/limit/offset/dbVersion
+    suspend fun getFireworks(
+        @Path("dbVersion") dbVersion: Int,
+        @Body fireworkRequest: FireworkRequest
+    ): FireworkResponse
+
     @POST("history-contents")
     suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):HistoryContentResponse
 

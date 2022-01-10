@@ -111,11 +111,12 @@ class LoginContentFragment : ChildDialogFragment() {
                                 putString(REG_SESSION_TOKEN_ARG, regSessionToken)
                             }
                         )
+                        ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
                     }
                 }
                 is Resource.Failure -> {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 0))
-                    ToffeeAnalytics.logApiError("reRegistration", it.error.msg, phoneNo)
+                    ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "0"))
+                    ToffeeAnalytics.logEvent("login", bundleOf("login_failure_reason" to it.error.msg))
                     requireActivity().showToast(it.error.msg)
 
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,

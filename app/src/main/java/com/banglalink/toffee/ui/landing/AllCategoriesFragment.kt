@@ -80,6 +80,9 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
             9 -> {
                 parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
             }
+            2 -> {
+                parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant, args)
+            }
             else -> {
                 parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment, args)
             }

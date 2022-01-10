@@ -427,6 +427,7 @@
     <string name="copyright_confirmation_mandatory">Copyright Confirmation*</string>
     <string name="web_error_text"><![CDATA[<p style="margin:auto; width:95%; text-align: center;"><b>Something went wrong! Please try again later.</b></p>]]></string>
     <string name="clear_search_history">Clear Search History</string>
+    <string name="karaoke_stingrary">Karaoke - Stingrary</string>
     <string name="convivaCustomerKeyTest">4d18565c4eff1d51ace324803225906a124fd756</string>
     <string name="convivaCustomerKeyProd">b5657a3f90fac1a580f7ad4920e9830923077b55</string>
     <string name="convivaGatewayUrl">https://banglalink-test.testonly.conviva.com</string>

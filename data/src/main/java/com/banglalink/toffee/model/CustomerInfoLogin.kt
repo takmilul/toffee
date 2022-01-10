@@ -137,4 +137,12 @@ class CustomerInfoLogin(
     val androidBetaVersionCode: String? = null,
     @SerializedName("paymentStatus")
     var paymentStatus: Boolean = false,
+    @SerializedName("isFireworksActiveForAndroid")
+    var isFireworkActiveForAndroid:Boolean = false,
+    @SerializedName("isStingrayActive")
+    var isStingrayActive:Boolean = false,
+    @SerializedName("isMedalliaActiveForAndroid")
+    var isMedalliaActive:Boolean = false,
+    @SerializedName("isConvivaActiveForAndroid")
+    var isConvivaActive:Boolean = false
 ) : BodyResponse(), Parcelable
