@@ -736,7 +736,6 @@ abstract class PlayerPageActivity :
             return@launch
         }
         val isExpired = try {
-            channelInfo.contentExpiryTime = "2022-01-11 03:40:00"
             Utils.getDate(channelInfo.contentExpiryTime).before(mPref.getSystemTime())
         } catch (e: Exception) {
             false
