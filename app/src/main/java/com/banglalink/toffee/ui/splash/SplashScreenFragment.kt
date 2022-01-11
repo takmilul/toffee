@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
-import java.security.NoSuchAlgorithmException
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
@@ -106,10 +104,12 @@ class SplashScreenFragment : BaseFragment() {
     private fun detectTlsVersion() {
         try {
             val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
-            Log.i("TLS_", "detectTlsVersion: ${protocols?.contentToString()}")
-        } catch (e: NoSuchAlgorithmException) {
-            // ...
-        }
+            protocols?.let { 
+                ToffeeAnalytics.logEvent(ToffeeEvents.SUPPORTED_TLS, bundleOf(
+                    "supported_tls_versions" to protocols.contentToString()
+                ))
+            }
+        } catch (e: Exception) { }
     }
     
     private fun sendAdIdLog() {
