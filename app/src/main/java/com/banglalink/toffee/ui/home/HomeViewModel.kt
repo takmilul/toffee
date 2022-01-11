@@ -222,7 +222,8 @@ class HomeViewModel @Inject constructor(
                     0,
                     "Recent",
                     Gson().toJson(it),
-                    it.view_count?.toLong() ?: 0L
+                    it.view_count?.toLong() ?: 0L,
+                    it.isStingray
                 )
             )
         }

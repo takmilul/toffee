@@ -146,10 +146,10 @@
             android:name="category"
             app:argType="string" />
         <argument
-            android:name="sub-category"
+            android:name="sub_category"
             app:argType="string" />
         <argument
-            android:name="sub-category-id"
+            android:name="sub_category_id"
             android:defaultValue="0"
             app:argType="integer" />
     </fragment>

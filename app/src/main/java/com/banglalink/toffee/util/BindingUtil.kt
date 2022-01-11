@@ -146,10 +146,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             }
         } else {
             if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
-                view.scaleType = ImageView.ScaleType.FIT_XY
+//                view.scaleType = ImageView.ScaleType.FIT_XY
                 view.setImageResource(R.drawable.placeholder)
             } else {
-                view.scaleType = ImageView.ScaleType.FIT_XY
+//                view.scaleType = ImageView.ScaleType.FIT_XY
                 view.load(channelInfo.landscape_ratio_1280_720)
                 {
                     diskCachePolicy(CachePolicy.ENABLED)

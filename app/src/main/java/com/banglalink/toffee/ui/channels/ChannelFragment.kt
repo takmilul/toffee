@@ -21,7 +21,10 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +35,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     private var subCategoryID: Int = 0
     private var category: String? = null
     private var subCategory: String? = null
+    private var isStingray: Boolean = false
     private var _binding: FragmentChannelListBinding ? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
@@ -39,23 +43,26 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     var channelList = mutableListOf<String>()
     
     companion object{
-        fun createInstance(subCategoryID: Int, subCategory: String, category: String, showSelected: Boolean = false): ChannelFragment {
+        fun createInstance(subCategoryID: Int, subCategory: String, category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
             val channelListFragment = ChannelFragment()
-            val bundle = Bundle()
-            bundle.putInt("sub-category-id", subCategoryID)
-            bundle.putString("sub-category", subCategory)
-            bundle.putString("category", category)
-            bundle.putString("title", "TV Channels")
-            bundle.putBoolean("show_selected", showSelected)
+            val bundle = Bundle().apply {
+                putInt("sub_category_id", subCategoryID)
+                putString("sub_category", subCategory)
+                putString("category", category)
+                putString("title", "TV Channels")
+                putBoolean("show_selected", showSelected)
+                putBoolean("is_stingray", isStingray)
+            }
             channelListFragment.arguments = bundle
             return channelListFragment
         }
 
-        fun createInstance(category: String, showSelected: Boolean = false): ChannelFragment {
+        fun createInstance(category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
             bundle.putBoolean("show_selected", showSelected)
+            bundle.putBoolean("is_stingray", isStingray)
             instance.arguments = bundle
             return instance
         }
@@ -63,11 +70,11 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         this.title = requireArguments().getString("title")
         this.category = requireArguments().getString("category")
-        this.subCategory = requireArguments().getString("sub-category")
-        this.subCategoryID = requireArguments().getInt("sub-category-id")
+        this.subCategory = requireArguments().getString("sub_category")
+        this.subCategoryID = requireArguments().getInt("sub_category_id")
+        this.isStingray = requireArguments().getBoolean("is_stingray")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -103,7 +110,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
 
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel(0)){
+            with(channelViewModel(0, isStingray)){
                 map {
                     it.filter { it.channelInfo?.isExpired == false }
                 }

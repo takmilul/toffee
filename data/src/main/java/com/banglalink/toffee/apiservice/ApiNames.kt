@@ -10,7 +10,7 @@ object ApiNames {
     const val GET_FEATURED_CONTENTS = "getUgcFeatureCategoryContents"
     const val GET_HISTORY_CONTENTS = "getHistoryContents"
     const val GET_FAVORITE_CONTENTS = "getUgcFavoriteContents"
-    const val GET_APP_HOME_PAGE_CONTENT_V2 = "getUgcAppHomePageContentTofeeV2"
+    const val GET_ALL_TV_CHANNELS = "getUgcAppHomePageContentTofeeV2"
     const val GET_RELATIVE_CONTENTS = "getUgcRelativeContentsExt"
     const val SEND_VIEWING_CONTENT = "viewingContent"
     const val SET_FAVORITES = "setUgcFavorites"

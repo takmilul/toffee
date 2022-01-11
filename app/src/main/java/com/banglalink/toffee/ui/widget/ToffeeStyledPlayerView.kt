@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.widget
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Point
 import android.os.CountDownTimer
 import android.util.AttributeSet
@@ -618,7 +619,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     fun showContentExpiredMessage() {
-        bindingUtil.loadImageFromResource(previewImage, R.drawable.content_expired)
+        previewImage.setBackgroundColor(Color.BLACK)
+        previewImage.setPadding(24.px, 0, 24.px, 0)
+        bindingUtil.loadImageFromResource(previewImage, R.drawable.ic_content_expired)
         hideController()
         doubleTapInterceptor.setOnClickListener(null)
     }

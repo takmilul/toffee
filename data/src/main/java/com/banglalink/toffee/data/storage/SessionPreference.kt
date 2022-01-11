@@ -669,7 +669,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         globalCidName = customerInfoLogin.globalCidName
         betaVersionCodes = customerInfoLogin.androidBetaVersionCode
         isPaidUser = customerInfoLogin.paymentStatus
-        isFireworkActive = customerInfoLogin.isFireworkActiveForAndroid
+        isFireworkActive = customerInfoLogin.isFireworkActive
         isStingrayActive = customerInfoLogin.isStingrayActive
         isMedalliaActive = customerInfoLogin.isMedalliaActive
         isConvivaActive = customerInfoLogin.isConvivaActive

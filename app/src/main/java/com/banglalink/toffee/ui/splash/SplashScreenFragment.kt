@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.splash
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -38,7 +37,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
+import java.security.NoSuchAlgorithmException
 import javax.inject.Inject
+import javax.net.ssl.SSLContext
 
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
@@ -99,6 +100,16 @@ class SplashScreenFragment : BaseFragment() {
             viewModel.deletePreviousDatabase()
         }
         ToffeeAnalytics.logEvent("app_launch")
+        detectTlsVersion()
+    }
+    
+    private fun detectTlsVersion() {
+        try {
+            val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
+            Log.i("TLS_", "detectTlsVersion: ${protocols?.contentToString()}")
+        } catch (e: NoSuchAlgorithmException) {
+            // ...
+        }
     }
     
     private fun sendAdIdLog() {

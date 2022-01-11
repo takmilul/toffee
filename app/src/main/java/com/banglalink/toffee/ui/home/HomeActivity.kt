@@ -70,6 +70,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
+import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
@@ -327,7 +328,12 @@ class HomeActivity :
         observe(mPref.shareableHashLiveData) {
             it?.let { observeShareableContent(it) }
         }
-        initConvivaSdk()
+        if (!mPref.isMedalliaActive) {
+            MedalliaDigital.disableIntercept()
+        }
+        if (mPref.isConvivaActive) {
+            initConvivaSdk()
+        }
 //        showDeviceId()
     }
     
@@ -946,7 +952,7 @@ class HomeActivity :
 
     private fun loadChannel(channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
-        if(channelInfo.isLive) {
+        if(channelInfo.isLive || channelInfo.isStingray) {
             viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
         }
@@ -1107,9 +1113,15 @@ class HomeActivity :
     }
 
     private fun loadDetailFragment(info: Any?){
+        val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
         if(info is ChannelInfo) {
-            if (info.isLive) {
-                val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if (info.isStingray) {
+                if (fragment !is StingrayChannelFragmentNew) {
+                    loadFragmentById(
+                        R.id.details_viewer, StingrayChannelFragmentNew()
+                    )
+                }
+            } else if (info.isLive) {
                 if (fragment !is ChannelFragmentNew) {
                     loadFragmentById(
                         R.id.details_viewer, ChannelFragmentNew()
@@ -1122,7 +1134,6 @@ class HomeActivity :
                 )
             }
         } else if(info is PlaylistPlaybackInfo) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
             when {
                 (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && !info.isUserPlaylist -> {
                     loadFragmentById(
@@ -1142,7 +1153,7 @@ class HomeActivity :
                 }
             }
         } else if(info is PlaylistItem) {
-            when (val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)) {
+            when (fragment) {
                 is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.channelInfo)
                 }
@@ -1154,7 +1165,6 @@ class HomeActivity :
                 }
             }
         } else if(info is SeriesPlaybackInfo) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
             if(fragment !is EpisodeListFragment
                 || fragment.getSeriesId() != info.seriesId) {
                 loadFragmentById(

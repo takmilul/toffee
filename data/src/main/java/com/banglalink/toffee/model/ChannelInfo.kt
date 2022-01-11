@@ -173,6 +173,10 @@ data class ChannelInfo(
     val isVOD: Boolean
         get() = "VOD".equals(type, ignoreCase = true)
     
+    @get:SerializedName("isStingray")
+    val isStingray: Boolean
+        get() = "stingray".equals(type, ignoreCase = true)
+    
     @get:SerializedName("isCatchup")
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)

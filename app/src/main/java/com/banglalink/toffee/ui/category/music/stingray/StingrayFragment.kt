@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.category.music
+package com.banglalink.toffee.ui.category.music.stingray
 
 import android.content.res.Resources
 import android.os.Bundle
@@ -13,7 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.databinding.*
+import com.banglalink.toffee.databinding.FragmentStingrayBinding
+import com.banglalink.toffee.databinding.PlaceholderStingrayItemBinding
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.ChannelInfo
@@ -22,32 +23,30 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
-
-    private lateinit var mAdapter: StingrayChannelAdapter
-    private  var _binding: FragmentStingrayBinding?=null
+    
     private val binding get() = _binding!!
+    private lateinit var mAdapter: StingrayChannelAdapter
+    private var _binding: FragmentStingrayBinding? = null
     val viewModel by activityViewModels<StingrayViewModel>()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStingrayBinding.inflate(layoutInflater)
         return binding.root
     }
-
+    
     override fun onDestroyView() {
         binding.channelList.adapter = null
         super.onDestroyView()
         _binding = null
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
         mAdapter = StingrayChannelAdapter(this)
-        observeList()
-
+        
         with(binding.placeholder) {
             val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 5)) / 4.5    // 16dp margin
             this.forEach { placeholderView ->
@@ -60,14 +59,14 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
                 }
             }
         }
-
+        
         with(binding.channelList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
-                    binding.channelList.isVisible = ! isEmpty
+                    binding.channelList.isVisible = !isEmpty
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
@@ -75,26 +74,22 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
             adapter = mAdapter
             setHasFixedSize(true)
         }
-
-//        binding.viewAllButton.setOnClickListener {
-//            parentFragment?.findNavController()?.navigate(R.id.menu_tv)
-//        }
-
+        if (mPref.isStingrayActive) {
+            observeList()
+        }
     }
-
+    
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadReportList().collectLatest {
+            viewModel.loadStingrayList().collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
-
-
+    
     override fun onItemClicked(item: ChannelInfo) {
         if (item.id.isNotBlank()) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            homeViewModel.playContentLiveData.postValue(item)
         }
     }
-
 }

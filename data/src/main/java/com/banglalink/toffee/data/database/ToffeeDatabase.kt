@@ -25,7 +25,7 @@ import com.banglalink.toffee.data.database.entities.*
         DrmLicenseEntity::class,
         SessionPrefData::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {

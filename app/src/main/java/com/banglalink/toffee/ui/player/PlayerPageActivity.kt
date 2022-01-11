@@ -35,12 +35,14 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.getError
 import com.conviva.sdk.ConvivaAdAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
 import com.conviva.sdk.ConvivaVideoAnalytics
+import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
-import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.AD_PROGRESS
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
@@ -189,26 +191,34 @@ abstract class PlayerPageActivity :
 
         adsLoader = ImaAdsLoader
             .Builder(this)
-//            .setAdEventListener {
-//                adEventListener(it)
-//            }
-//            .setAdErrorListener { 
-//                val error = it.error.errorType
-//                convivaAdAnalytics?.reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
-//            }
+            .setAdEventListener {
+                adEventListener(it)
+            }
+            .setAdErrorListener { 
+                adErrorListener(it)
+            }
 //            .setAdMediaMimeTypes(listOf(MimeTypes.VIDEO_MP4))
             .build()
     }
     
-    private fun adEventListener(it: AdEvent) {
-        when (it.type) {
-            ALL_ADS_COMPLETED -> convivaAdAnalytics?.reportAdEnded()
-            COMPLETED -> convivaAdAnalytics?.reportAdEnded()
-            SKIPPED -> convivaAdAnalytics?.reportAdSkipped()
-            STARTED -> convivaAdAnalytics?.reportAdStarted()
-            LOADED -> convivaAdAnalytics?.reportAdLoaded()
-            else -> {}
+    private fun adEventListener(it: AdEvent?) {
+        when (it?.type) {
+//            ALL_ADS_COMPLETED -> convivaAdAnalytics?.reportAdEnded()
+//            COMPLETED -> convivaAdAnalytics?.reportAdEnded()
+//            SKIPPED -> convivaAdAnalytics?.reportAdSkipped()
+//            STARTED -> convivaAdAnalytics?.reportAdStarted()
+//            LOADED -> convivaAdAnalytics?.reportAdLoaded()
+            AD_PROGRESS -> {}
+            else -> {
+                Log.i("ADs_", "adEventListener: Type-> ${it?.type} \nTitle-> ${it?.ad?.title} \nSize-> ${it?.adData?.size}")
+            }
         }
+    }
+    
+    private fun adErrorListener(it: AdErrorEvent?) {
+        val error = it?.error?.message
+        Log.i("ADs_", "onAdError: $error")
+//        convivaAdAnalytics?.reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
     }
     
     abstract val playlistManager: PlaylistManager
@@ -311,14 +321,14 @@ abstract class PlayerPageActivity :
                 )
                 .setUserAgent(toffeeHeader)
 //                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
-
+            
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setAdsLoaderProvider{
                     adsLoader
                 }
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setAdViewProvider(getPlayerView())
-
+            
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
@@ -684,7 +694,7 @@ abstract class PlayerPageActivity :
     private fun getHlsMediaItem(channelInfo: ChannelInfo, isWifiConnected: Boolean): MediaItem? {
         val hlsUrl = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: return null
 
-        val uri = if (channelInfo.isBucketUrl) {
+        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
             hlsUrl
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
@@ -693,7 +703,11 @@ abstract class PlayerPageActivity :
             ConvivaSdkConstants.STREAM_URL to uri
         ))
         return MediaItem.Builder().apply {
-            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+            if (channelInfo.isStingray) {
+                httpDataSourceFactory?.setUserAgent("")
+            } else {
+                httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+            }
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
             setUri(uri)
             setTag(channelInfo)
@@ -721,6 +735,16 @@ abstract class PlayerPageActivity :
             showPlayerError()
             return@launch
         }
+        val isExpired = try {
+            channelInfo.contentExpiryTime = "2022-01-11 03:40:00"
+            Utils.getDate(channelInfo.contentExpiryTime).before(mPref.getSystemTime())
+        } catch (e: Exception) {
+            false
+        }
+        if (isExpired) {
+            onContentExpired()
+            return@launch
+        }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
         var mediaItem = if(isDrmActive) {
             getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
@@ -734,7 +758,7 @@ abstract class PlayerPageActivity :
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive && !channelInfo.isStingray
             val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
             if (shouldPlayAd && vastTag.isNotBlank()) {
                 mediaItem = mediaItem.buildUpon()

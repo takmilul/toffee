@@ -67,8 +67,6 @@ class CustomerInfoLogin(
     var geoLocation: String? = null,
     @SerializedName("user_ip")
     var userIp: String? = null,
-    @SerializedName("isFireworkActive")
-    var isFireworkActive: String? = "false",
     @SerializedName("isFeaturePartnerActive")
     val isFeaturePartnerActive: String? = "false",
     @SerializedName("mqttIsActive")
@@ -138,7 +136,7 @@ class CustomerInfoLogin(
     @SerializedName("paymentStatus")
     var paymentStatus: Boolean = false,
     @SerializedName("isFireworksActiveForAndroid")
-    var isFireworkActiveForAndroid:Boolean = false,
+    var isFireworkActive:Boolean = false,
     @SerializedName("isStingrayActive")
     var isStingrayActive:Boolean = false,
     @SerializedName("isMedalliaActiveForAndroid")

@@ -21,7 +21,7 @@ object MigrationProvider {
         }
     }
 
-    private val MIGRAION_3_4 = object: Migration(3,4) {
+    private val MIGRATION_3_4 = object: Migration(3,4) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `DrmLicenseEntity` (`channelId` INTEGER NOT NULL, `contentId` TEXT NOT NULL, `data` BLOB NOT NULL, `expiryTime` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)")
             database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_DrmLicenseEntity_channelId` ON `DrmLicenseEntity` (`channelId`)")
@@ -29,7 +29,13 @@ object MigrationProvider {
         }
     }
     
+    private val MIGRATION_4_5 = object: Migration(4,5) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `TVChannelItem` ADD COLUMN `isStingray` INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRAION_3_4)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
     }
 }

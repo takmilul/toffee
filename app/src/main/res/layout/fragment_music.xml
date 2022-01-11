@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="isStingray"
+            type="Boolean" />
+        <import type="android.view.View" />
+    </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -21,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="10dp"
+            android:visibility="@{isStingray ? View.VISIBLE : View.GONE}"
             android:background="@drawable/bottom_round_white_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +39,20 @@
             android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:padding="10dp"
+            android:visibility="@{isStingray ? View.GONE : View.VISIBLE}"
+            android:background="@drawable/bottom_round_white_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/categoryListPager"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
+
+        <View
+            android:id="@+id/cardView3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_marginTop="10dp"
+            android:visibility="@{isStingray ? View.VISIBLE : View.GONE}"
             android:background="@drawable/bottom_round_white_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,13 +90,13 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/stingrayFragment"
-            android:name="com.banglalink.toffee.ui.category.music.StingrayFragment"
+            android:name="com.banglalink.toffee.ui.category.music.stingray.StingrayFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="@{isStingray ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryIcon"
-            />
+            app:layout_constraintTop_toBottomOf="@id/categoryIcon" />
 
         <HorizontalScrollView
             android:id="@+id/subCategoryChipGroupHolder"
@@ -87,7 +108,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stingrayFragment"
-            app:layout_constraintBottom_toBottomOf="@id/cardView2">
+            app:layout_constraintBottom_toTopOf="@id/hashTagChipGroupHolder">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/subCategoryChipGroup"
@@ -98,6 +119,7 @@
                 app:selectionRequired="true"
                 app:singleLine="true"
                 app:singleSelection="true" />
+            
         </HorizontalScrollView>
 
         <HorizontalScrollView

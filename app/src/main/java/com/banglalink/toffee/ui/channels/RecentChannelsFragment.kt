@@ -23,16 +23,19 @@ class RecentChannelsFragment: BaseFragment() {
     val homeViewModel by activityViewModels<HomeViewModel>()
 
     private var showSelected = false
+    private var isStingray = false
 
     private var _binding: FragmentRecentTvChannelsBinding ? = null
     private val binding get() = _binding!!
 
     companion object {
         const val SHOW_SELECTED = "SHOW_SELECTED"
+        const val IS_STINGRAY = "is_stingray"
 
-        fun newInstance(showSelected: Boolean): RecentChannelsFragment {
+        fun newInstance(showSelected: Boolean, isStingray: Boolean): RecentChannelsFragment {
             val args = Bundle()
             args.putBoolean(SHOW_SELECTED, showSelected)
+            args.putBoolean(IS_STINGRAY, isStingray)
             val fragment = RecentChannelsFragment()
             fragment.arguments = args
             return fragment
@@ -42,6 +45,7 @@ class RecentChannelsFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showSelected = arguments?.getBoolean(SHOW_SELECTED, false) ?: false
+        isStingray = arguments?.getBoolean(IS_STINGRAY, false) ?: false
     }
 
     override fun onCreateView(
@@ -84,7 +88,7 @@ class RecentChannelsFragment: BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadRecentTvChannels().map {
+            viewModel.loadRecentTvChannels(isStingray).map {
                 it.filter { it.channelInfo?.isExpired == false }
             }.collectLatest {
                 val newList = if(it.isNotEmpty()) {

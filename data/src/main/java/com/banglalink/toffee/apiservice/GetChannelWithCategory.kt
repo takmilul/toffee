@@ -18,7 +18,7 @@ class GetChannelWithCategory @Inject constructor(
     suspend operator fun invoke(subcategoryId: Int) {
         val response = tryIO2 {
             toffeeApi.getChannels(
-                preference.getDBVersionByApiName(ApiNames.GET_APP_HOME_PAGE_CONTENT_V2),
+                preference.getDBVersionByApiName(ApiNames.GET_ALL_TV_CHANNELS),
                 AllChannelRequest(
                     subcategoryId,
                     preference.customerId,
@@ -42,7 +42,8 @@ class GetChannelWithCategory @Inject constructor(
                     index + 1,
                     channelCategory.categoryName,
                     Gson().toJson(channelInfo),
-                    channelInfo.view_count?.toLong() ?: 0L
+                    channelInfo.view_count?.toLong() ?: 0L,
+                    channelInfo.isStingray
                 ).apply {
                     updateTime = upTime
                 })

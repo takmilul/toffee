@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.category.music
+package com.banglalink.toffee.ui.category.music.stingray
 
 import android.content.res.Resources
 import androidx.databinding.ViewDataBinding
@@ -7,7 +7,6 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.databinding.ItemStingrayContentBinding
-import com.banglalink.toffee.databinding.LiveTvItemNewBinding
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 

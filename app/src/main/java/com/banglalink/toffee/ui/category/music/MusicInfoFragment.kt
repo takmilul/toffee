@@ -10,11 +10,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.databinding.FragmentMusicBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -29,8 +27,7 @@ import javax.inject.Inject
 class MusicInfoFragment: HomeBaseFragment() {
     private var selectedSubCategoryId: Int = 0
     private lateinit var categoryInfo: Category
-    @Inject
-    lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentMusicBinding? = null
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
@@ -40,8 +37,9 @@ class MusicInfoFragment: HomeBaseFragment() {
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMusicBinding.inflate(inflater, container, false)
+        binding.isStingray = mPref.isStingrayActive
         return binding.root
     }
 
