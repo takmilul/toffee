@@ -640,7 +640,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 if (progressTime in 1 until AUTOPLAY_INTERVAL) {
                     ConvivaFactory.endPlayerSession()
                     player?.currentMediaItem?.getChannelMetadata(player)?.let {
-                        ConvivaFactory.setConvivaMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                        ConvivaFactory.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                     }
                 }
             }

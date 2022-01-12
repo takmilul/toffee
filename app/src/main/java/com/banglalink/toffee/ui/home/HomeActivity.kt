@@ -1030,16 +1030,16 @@ class HomeActivity :
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                ConvivaFactory.setConvivaMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
+                ConvivaFactory.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
                     detailsInfo.currentItem!!.seasonNo)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
-                ConvivaFactory.setConvivaMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
+                ConvivaFactory.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
-                ConvivaFactory.setConvivaMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                ConvivaFactory.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                 loadChannel(it)
             }
         }
@@ -1082,7 +1082,7 @@ class HomeActivity :
         }
         ConvivaFactory.endPlayerSession()
         val info = playlistManager.getCurrentChannel()
-        ConvivaFactory.setConvivaMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaFactory.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1092,7 +1092,7 @@ class HomeActivity :
         super.playPrevious()
         ConvivaFactory.endPlayerSession()
         val info = playlistManager.getCurrentChannel()
-        ConvivaFactory.setConvivaMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaFactory.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )

@@ -35,6 +35,7 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
+import com.banglalink.toffee.util.ConvivaFactory
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.getError
 import com.conviva.sdk.ConvivaAdAnalytics
@@ -42,7 +43,7 @@ import com.conviva.sdk.ConvivaSdkConstants
 import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
-import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.AD_PROGRESS
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
@@ -60,6 +61,7 @@ import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
 import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -102,10 +104,10 @@ abstract class PlayerPageActivity :
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
     protected var player: Player? = null
-    protected var isSessionStarted = false
-    private var adsLoader: ImaAdsLoader? = null
-    private var castPlayer: CastPlayer? = null
+    private var isAdBreakStarted = false
+    private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
+    private var castPlayer: CastPlayer? = null
     protected var castContext: CastContext? = null
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
@@ -192,33 +194,12 @@ abstract class PlayerPageActivity :
         adsLoader = ImaAdsLoader
             .Builder(this)
             .setAdEventListener {
-                adEventListener(it)
+                onAdEventListener(it)
             }
             .setAdErrorListener { 
-                adErrorListener(it)
+                onAdErrorListener(it)
             }
-//            .setAdMediaMimeTypes(listOf(MimeTypes.VIDEO_MP4))
             .build()
-    }
-    
-    private fun adEventListener(it: AdEvent?) {
-        when (it?.type) {
-//            ALL_ADS_COMPLETED -> convivaAdAnalytics?.reportAdEnded()
-//            COMPLETED -> convivaAdAnalytics?.reportAdEnded()
-//            SKIPPED -> convivaAdAnalytics?.reportAdSkipped()
-//            STARTED -> convivaAdAnalytics?.reportAdStarted()
-//            LOADED -> convivaAdAnalytics?.reportAdLoaded()
-            AD_PROGRESS -> {}
-            else -> {
-                Log.i("ADs_", "adEventListener: Type-> ${it?.type} \nTitle-> ${it?.ad?.title} \nSize-> ${it?.adData?.size}")
-            }
-        }
-    }
-    
-    private fun adErrorListener(it: AdErrorEvent?) {
-        val error = it?.error?.message
-        Log.i("ADs_", "onAdError: $error")
-//        convivaAdAnalytics?.reportAdError(it.error.message, ConvivaSdkConstants.ErrorSeverity.WARNING)
     }
     
     abstract val playlistManager: PlaylistManager
@@ -768,7 +749,7 @@ abstract class PlayerPageActivity :
                     ConvivaSdkConstants.AD_TAG_URL to vastTag,
                     ConvivaSdkConstants.AD_PLAYER to ConvivaSdkConstants.AdPlayer.CONTENT.toString()
                 )
-                convivaAdAnalytics?.setAdListener(adsLoader?.adsLoader, adInfo)
+                convivaAdAnalytics?.setAdListener(adsLoader, adInfo)
             }
         }
         
@@ -1143,5 +1124,63 @@ abstract class PlayerPageActivity :
             durationInMillis = 0
             initialTimeStamp = 0
         }
+    }
+    
+    private fun onAdEventListener(it: AdEvent?) {
+        when (it?.type) {
+            LOG -> {
+                if (!isAdBreakStarted) {
+                    isAdBreakStarted = true
+                    convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
+                        ConvivaFactory.getConvivaAdMetadata(it.ad))
+                    val message = it.adData["errorMessage"]
+                    message?.let { msg->
+                        convivaAdAnalytics?.reportAdFailed(msg, ConvivaFactory.getConvivaAdMetadata(it.ad))
+                    }
+                }
+            }
+            LOADED -> {
+                if (!isAdBreakStarted) {
+                    isAdBreakStarted = true
+                    convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
+                        ConvivaFactory.getConvivaAdMetadata(it.ad))
+                }
+                convivaAdAnalytics?.reportAdLoaded(ConvivaFactory.getConvivaAdMetadata(it.ad))
+            }
+            STARTED -> {
+                convivaAdAnalytics?.reportAdStarted(ConvivaFactory.getConvivaAdMetadata(it.ad))
+//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate)
+            }
+            SKIPPED -> {
+                convivaAdAnalytics?.reportAdSkipped()
+            }
+            COMPLETED -> {
+                convivaAdAnalytics?.reportAdEnded()
+            }
+            ALL_ADS_COMPLETED -> {
+                convivaVideoAnalytics?.reportAdBreakEnded()
+                isAdBreakStarted = false
+            }
+            AD_PROGRESS -> {
+//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Playing")
+//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition)
+            }
+//            AD_BUFFERING -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Buffering")
+//            PAUSED -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Paused")
+//            RESUMED -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Resumed")
+            else -> {
+                val keys = it?.adData?.keys?.joinToString(",")
+                val values = it?.adData?.values?.joinToString(",")
+//                Log.i("ADs_", "adEventListener: Type-> ${it?.type}")
+//                Log.i("ADs_", "adEventListener: keys-> $keys")
+//                Log.i("ADs_", "adEventListener: values-> $values")
+            }
+        }
+    }
+    
+    private fun onAdErrorListener(it: AdErrorEvent?) {
+        val errorMessage = it?.error?.message
+        convivaAdAnalytics?.reportAdFailed(errorMessage, ConvivaFactory.getConvivaAdMetadata(null))
+        convivaAdAnalytics?.reportAdError(errorMessage, ConvivaSdkConstants.ErrorSeverity.WARNING)
     }
 }

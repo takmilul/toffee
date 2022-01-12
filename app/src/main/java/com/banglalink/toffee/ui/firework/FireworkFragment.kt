@@ -29,7 +29,7 @@ class FireworkFragment : HomeBaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (mPref.isFireworkActive) {
+        if (false /*mPref.isFireworkActive*/) {
             observeFirework()
             viewModel.getFireworks()
         }

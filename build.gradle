@@ -3,7 +3,7 @@
 buildscript {
     ext {
         appVersionCode = 71
-        appVersionName = '2.1.4'
+        appVersionName = '2.2.0'
         kotlinVersion = '1.6.10'
         kotlinCoroutineVersion = '1.5.2'
         composeVersion = '1.0.5'

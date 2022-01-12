@@ -7,6 +7,8 @@ import com.conviva.sdk.ConvivaAdAnalytics
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
 import com.conviva.sdk.ConvivaVideoAnalytics
+import com.google.ads.interactivemedia.v3.api.Ad
+import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
 class ConvivaFactory private constructor() {
     var convivaVideoAnalytics: ConvivaVideoAnalytics? = null
@@ -25,7 +27,7 @@ class ConvivaFactory private constructor() {
             }
         }
         
-        fun setConvivaMetadata(info: ChannelInfo, customerId: Int, seriesName: String? = null, seasonNumber: Int? = 0) {
+        fun setConvivaVideoMetadata(info: ChannelInfo, customerId: Int, seriesName: String? = null, seasonNumber: Int? = 0) {
             val contentInfo = mapOf(
                 ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
                 ConvivaSdkConstants.IS_LIVE to info.isLive,
@@ -50,6 +52,30 @@ class ConvivaFactory private constructor() {
             )
             instance.convivaVideoAnalytics?.reportPlaybackRequested(contentInfo)
             isSessionActive = true
+        }
+        
+        fun getConvivaAdMetadata(ad: Ad?): Map<String, Any> {
+            return mapOf(
+                    ConvivaSdkConstants.ASSET_NAME to "[${ad?.adId ?: "N/A"}] ${ad?.title ?: "N/A"}",
+                    ConvivaSdkConstants.IS_LIVE to (ad?.isLinear?.toString() ?: "false"),
+                    ConvivaSdkConstants.DEFAULT_RESOURCE to "N/A",
+                    ConvivaSdkConstants.DURATION to (ad?.duration?.toInt() ?: 0),
+                    ConvivaSdkConstants.ENCODED_FRAMERATE to 0,
+                    ConvivaSdkConstants.FRAMEWORK_NAME to "ExoPlayer",
+                    ConvivaSdkConstants.FRAMEWORK_VERSION to ExoPlayerLibraryInfo.VERSION,
+                    ConvivaConstants.APP_VERSION to BuildConfig.VERSION_NAME,
+                    ConvivaConstants.AD_TECHNOLOGY to "Client Side",
+                    ConvivaConstants.AD_ID to (ad?.adId ?: "N/A"),
+                    ConvivaConstants.AD_SYSTEM to (ad?.adWrapperSystems?.contentToString() ?: "N/A"),
+                    ConvivaConstants.AD_POSITION to "N/A",
+                    ConvivaConstants.AD_STITCHER to "N/A",
+                    ConvivaConstants.AD_IS_SLATE to false.toString(),
+                    ConvivaConstants.AD_MEDIA_FILE_API_FRAMEWORK to "N/A",
+                    ConvivaConstants.AD_FIRST_AD_SYSTEM to (ad?.adWrapperSystems?.firstOrNull()?.toString() ?: "N/A"),
+                    ConvivaConstants.AD_FIRST_AD_ID to (ad?.adWrapperIds?.firstOrNull()?.toString() ?: "N/A"),
+                    ConvivaConstants.AD_FIRST_CREATIVE_ID to (ad?.adWrapperCreativeIds?.firstOrNull()?.toString() ?: "N/A"),
+                    ConvivaConstants.AD_CREATIVE_ID to (ad?.creativeId ?: "N/A")
+                )
         }
         
         fun endPlayerSession() {

@@ -206,7 +206,7 @@ dependencies {
     
     //firework sdk
     def fireworkExoPlayerVersion = '2.15.1.1' //player-15-debug-SNAPSHOT
-    implementation ('com.github.loopsocial:firework_sdk:v5.6.4') {
+    implementation ('com.github.loopsocial:firework_sdk:v5.7.1') {
         exclude module: "picasso-transformations"
     }
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
