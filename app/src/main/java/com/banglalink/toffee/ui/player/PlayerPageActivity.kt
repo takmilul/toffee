@@ -33,7 +33,7 @@ import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
-import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.banglalink.toffee.util.ConvivaFactory
 import com.banglalink.toffee.util.Utils
@@ -673,8 +673,15 @@ abstract class PlayerPageActivity :
     }
 
     private fun getHlsMediaItem(channelInfo: ChannelInfo, isWifiConnected: Boolean): MediaItem? {
-        val hlsUrl = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: return null
-
+        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+            channelInfo.paidPlainHlsUrl
+        } else if (channelInfo.urlTypeExt == NON_PAYMENT && channelInfo.urlType == PLAY_IN_NATIVE_PLAYER) {
+            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+        } else {
+            null
+        }
+        hlsUrl ?: return null
+        
         val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
             hlsUrl
         } else {
@@ -738,7 +745,7 @@ abstract class PlayerPageActivity :
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive && !channelInfo.isStingray
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive && !channelInfo.isStingray && channelInfo.urlTypeExt != PAYMENT
             val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
             if (shouldPlayAd && vastTag.isNotBlank()) {
                 mediaItem = mediaItem.buildUpon()

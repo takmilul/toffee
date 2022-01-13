@@ -101,7 +101,7 @@ class ToffeeApplication : Application() {
         
         initCoil()
         initFireworkSdk()
-//        initMedalliaSdk()
+        initMedalliaSdk()
         mUploadObserver.start()
     }
     
@@ -142,7 +142,7 @@ class ToffeeApplication : Application() {
     private fun initMedalliaSdk() {
         MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
             override fun onSuccess() {
-                Log.e("MED_", "onSuccess: Medallia initialized")
+                Log.i("MED_", "onSuccess: Medallia initialized")
             }
 
             override fun onError(error: MDExternalError?) {
