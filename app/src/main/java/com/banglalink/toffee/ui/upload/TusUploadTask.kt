@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.upload
 
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.UploadTask
 import net.gotev.uploadservice.data.NameValue

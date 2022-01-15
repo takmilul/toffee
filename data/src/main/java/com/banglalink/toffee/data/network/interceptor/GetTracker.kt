@@ -1,6 +1,6 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.Constants
 import okhttp3.internal.immutableListOf
 import javax.inject.Inject

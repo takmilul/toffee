@@ -21,6 +21,7 @@ import kotlin.system.exitProcess
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
     private var htmlUrl: String? = null
+    private var shareableUrl: String? = null
     private lateinit var mWebView: HTML5WebView
     private val progressDialog by lazy {
         VelBoxProgressDialog(this)
@@ -29,6 +30,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
     companion object {
         const val CONTENT_URL = "content_url"
+        const val SHAREABLE_URL = "shareable_url"
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             htmlUrl = extras.getString(CONTENT_URL)!!
+            shareableUrl = extras.getString(SHAREABLE_URL)
         }
         mWebView = HTML5WebView(this)
 
@@ -81,9 +84,9 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
                 }
             }
             PLAY_CONTENT.value -> {
-                url?.let {
-                    mPref.isPaidUser = true
-                    mPref.shareableUrlLiveData.postValue(it)
+                mPref.isPaidUser = true
+                shareableUrl?.run {
+                    mPref.shareableUrlLiveData.postValue(this)
                 }
             }
             DEEP_LINK.value -> {

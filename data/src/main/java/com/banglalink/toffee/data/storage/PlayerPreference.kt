@@ -2,7 +2,7 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.model.PlayerSessionDetails
 import com.banglalink.toffee.util.Utils
 import java.text.SimpleDateFormat

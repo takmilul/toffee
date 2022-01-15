@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.*
 import com.banglalink.toffee.analytics.ToffeeAnalytics

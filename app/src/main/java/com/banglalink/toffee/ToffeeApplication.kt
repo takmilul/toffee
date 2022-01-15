@@ -1,7 +1,6 @@
 package com.banglalink.toffee
 
 import android.app.Application
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
@@ -20,6 +19,7 @@ import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
+import com.banglalink.toffee.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus

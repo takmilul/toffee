@@ -93,7 +93,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             activity?.title = it
         }
         binding.progressBar.show()
-        
+        homeViewModel.isStingray.postValue(isStingray)
         setupEmptyView()
         
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)

@@ -23,7 +23,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -338,15 +337,15 @@ class HomeActivity :
     }
     
     private fun initConvivaSdk() {
-        if(BuildConfig.DEBUG) {
+//        if(BuildConfig.DEBUG) {
             val settings: Map<String, Any> = mutableMapOf(
                 ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
                 ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
             )
             ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
-        }/* else {
-            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
-        }*/
+//        }/* else {
+//            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
+//        }*/
         ConvivaFactory.init(applicationContext, true)
         convivaAdAnalytics = ConvivaFactory.instance.convivaAdAnalytics
         convivaVideoAnalytics = ConvivaFactory.instance.convivaVideoAnalytics
@@ -737,7 +736,7 @@ class HomeActivity :
         so player can't reset scale completely. Manually resetting player scale value
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(playlistManager.getCurrentChannel()?.isLive == true) {
+            if(playlistManager.getCurrentChannel()?.isLive == true || playlistManager.getCurrentChannel()?.isStingray == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
@@ -879,7 +878,6 @@ class HomeActivity :
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
                     val hash = url.substring(url.lastIndexOf("/") + 1)
                     mPref.shareableHashLiveData.value = hash
-                    observeShareableContent(hash)
                 }
             }catch (e: Exception){
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
@@ -986,7 +984,7 @@ class HomeActivity :
             }
             else -> null
         }
-
+        MedalliaDigital.disableIntercept()
         channelInfo?.let {
             when {
                 it.urlTypeExt == PAYMENT -> {
@@ -1065,11 +1063,13 @@ class HomeActivity :
         it.getHlsLink()?.let { url ->
             heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
             viewModel.sendViewContentEvent(it)
+            val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT)
+                it.video_share_url
+            else
+                null
             launchActivity<Html5PlayerViewActivity> {
-                putExtra(
-                    Html5PlayerViewActivity.CONTENT_URL,
-                    url
-                )
+                putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
+                putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)
             }
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
@@ -1298,7 +1298,7 @@ class HomeActivity :
     }
 
     override fun onControllerVisible() {
-        if(playlistManager.getCurrentChannel()?.isLive == true &&
+        if((playlistManager.getCurrentChannel()?.isLive == true || playlistManager.getCurrentChannel()?.isStingray == true) &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
@@ -1415,6 +1415,9 @@ class HomeActivity :
 
     override fun onPlayerDestroy() {
         ConvivaFactory.endPlayerSession()
+        if (mPref.isMedalliaActive) {
+            MedalliaDigital.enableIntercept()
+        }
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
         heartBeatManager.triggerEventViewingContentStop()

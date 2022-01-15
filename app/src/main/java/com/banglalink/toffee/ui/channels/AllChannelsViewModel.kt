@@ -21,13 +21,6 @@ class AllChannelsViewModel @Inject constructor(
 ): ViewModel() {
     val selectedChannel = MutableLiveData<ChannelInfo?>()
 
-    val repo by lazy {
-        BaseListRepositoryImpl({
-                tvChannelsRepo.getAllChannels()
-            }
-        )
-    }
-
     operator fun invoke(subcategoryId: Int, isStingray: Boolean = false): Flow<List<TVChannelItem>> {
         viewModelScope.launch {
             if (!isStingray) {
@@ -41,8 +34,11 @@ class AllChannelsViewModel @Inject constructor(
         return if(isStingray) tvChannelsRepo.getStingrayItems() else tvChannelsRepo.getAllItems()
     }
 
-    fun loadAllChannels(): Flow<PagingData<TVChannelItem>> {
-        return repo.getList()
+    fun loadAllChannels(isStingray: Boolean): Flow<PagingData<TVChannelItem>> {
+        return BaseListRepositoryImpl({
+            tvChannelsRepo.getAllChannels(isStingray)
+        }
+        ).getList()
     }
 
     fun loadRecentTvChannels(isStingray: Boolean = false): Flow<List<TVChannelItem>> {

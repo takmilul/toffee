@@ -20,7 +20,7 @@
 
         <ImageView
             android:id="@+id/icon"
-            loadImageFromUrlRounded="@{data.landscape_ratio_1280_720}"
+            loadImageFromUrlRounded="@{data.channel_logo}"
             android:layout_width="@dimen/stingray_content_width"
             android:layout_height="@dimen/stingray_content_hight"
             android:layout_margin="8dp"

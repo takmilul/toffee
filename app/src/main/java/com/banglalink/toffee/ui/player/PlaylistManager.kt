@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.player
 
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.model.ChannelInfo
 
 class PlaylistManager {

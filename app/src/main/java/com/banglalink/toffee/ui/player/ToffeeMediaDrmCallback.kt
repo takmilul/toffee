@@ -1,7 +1,7 @@
 package com.banglalink.toffee.ui.player
 
 import android.net.Uri
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.google.android.exoplayer2.drm.ExoMediaDrm
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback

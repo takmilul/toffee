@@ -1,11 +1,11 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import android.util.Log
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
 import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.util.EncryptionUtil
+import com.banglalink.toffee.util.Log
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.RequestBody

@@ -11,6 +11,7 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
@@ -74,6 +75,7 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
     }
     
     private fun observeList() {
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadSubscribedChannels().collectLatest {
                 mAdapter.submitData(it.filter { item -> item.isSubscribed == 1 })
@@ -90,8 +92,7 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
                         isSubscribed = response.data.isSubscribed
                         subscriberCount = response.data.subscriberCount
                     }
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
-                    mAdapter.refresh()
+                    observeList()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

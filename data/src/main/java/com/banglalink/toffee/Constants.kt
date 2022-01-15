@@ -6,6 +6,7 @@ object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
 
     const val LOGIN_ERROR = 103
+    const val SHOULD_LOG = false
     const val USER_ACTIVITIES_LIMIT = 150
     const val DEVICE_ID_HEADER = "DEVICE-ID"
     const val OUTSIDE_OF_BD_ERROR_CODE = 403
@@ -14,8 +15,8 @@ object Constants {
     const val UN_ETHICAL_ACTIVITIES_ERROR_CODE = 402
     const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
     const val HE_SESSION_TOKEN_HEADER = "ENRICHMENT-SESSION-TOKEN"
-
-
+    
+    
     //    https://github.com/shamanland/simple-string-obfuscator
     val TOFFEE_KEY = object : Any() {
         var t = 0

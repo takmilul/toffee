@@ -31,8 +31,8 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
         return dao.getStingrayRecentItemsFlow()
     }
     
-    override fun getAllChannels(): PagingSource<Int, TVChannelItem> {
-        return dao.getAllChannels()
+    override fun getAllChannels(isStingray: Boolean): PagingSource<Int, TVChannelItem> {
+        return if (isStingray) dao.getStingrayChannels() else dao.getAllChannels()
     }
 
     override fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem> {

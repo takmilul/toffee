@@ -1,7 +1,7 @@
 package com.banglalink.toffee.ui.player
 
 import android.net.Uri
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.C

@@ -53,12 +53,15 @@ class BottomChannelFragment: BaseFragment() {
             adapter = mAdapter
         }
 
-        observeList()
+        observeList(false)
+        observe(homeViewModel.isStingray) {
+            observeList(it)
+        }
     }
 
-    private fun observeList() {
+    private fun observeList(isStingray: Boolean) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadAllChannels().collectLatest {
+            viewModel.loadAllChannels(isStingray).collectLatest {
                 mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false })
             }
         }

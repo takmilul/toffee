@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -40,7 +41,7 @@ object NetworkModuleLib {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG && Constants.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })

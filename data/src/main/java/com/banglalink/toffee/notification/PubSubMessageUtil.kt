@@ -1,7 +1,7 @@
 package com.banglalink.toffee.notification
 
 import android.content.Context
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
@@ -68,7 +68,7 @@ object PubSubMessageUtil {
             withContext(Dispatchers.IO) {
                 try {
                     val batch = client.batch()
-//                    Log.i("PUBSUB - $topic", jsonMessage)
+                    Log.i("PUBSUB - $topic", jsonMessage)
                     val pubsubMessage = PubsubMessage()
                     pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
                     val publishRequest = PublishRequest()

@@ -85,6 +85,7 @@ class HomeViewModel @Inject constructor(
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val isStingray = MutableLiveData<Boolean>()
     
     fun getPlaylistManager() = _playlistManager
     

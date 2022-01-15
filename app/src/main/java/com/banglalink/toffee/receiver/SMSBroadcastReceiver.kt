@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.util.SingleLiveEvent

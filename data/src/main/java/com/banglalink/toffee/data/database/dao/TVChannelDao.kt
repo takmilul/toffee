@@ -19,8 +19,11 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getStingrayItems(): Flow<List<TVChannelItem>>
 
-    @Query("SELECT * FROM TVChannelItem WHERE categoryName NOT IN (\"Recent\") ORDER BY priority")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
     abstract fun getAllChannels(): PagingSource<Int, TVChannelItem>
+
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
+    abstract fun getStingrayChannels(): PagingSource<Int, TVChannelItem>
 
     @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\")")
     abstract suspend fun deleteAllTvItems()
