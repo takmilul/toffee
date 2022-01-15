@@ -300,7 +300,7 @@ abstract class PlayerPageActivity :
 //                    )
 //                    .build()
                 )
-                .setUserAgent(toffeeHeader)
+//                .setUserAgent(toffeeHeader)
 //                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
             
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
@@ -675,7 +675,7 @@ abstract class PlayerPageActivity :
     private fun getHlsMediaItem(channelInfo: ChannelInfo, isWifiConnected: Boolean): MediaItem? {
         val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
             channelInfo.paidPlainHlsUrl
-        } else if (channelInfo.urlTypeExt == NON_PAYMENT && channelInfo.urlType == PLAY_IN_NATIVE_PLAYER) {
+        } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
             channelInfo.hlsLinks?.get(0)?.hls_url_mobile
         } else {
             null
@@ -691,9 +691,8 @@ abstract class PlayerPageActivity :
             ConvivaSdkConstants.STREAM_URL to uri
         ))
         return MediaItem.Builder().apply {
-            if (channelInfo.isStingray) {
-                httpDataSourceFactory?.setUserAgent("")
-            } else {
+            if (! channelInfo.isStingray) {
+                httpDataSourceFactory?.setUserAgent(toffeeHeader)
                 httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
             }
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
