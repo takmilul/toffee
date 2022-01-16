@@ -6,7 +6,7 @@ object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
 
     const val LOGIN_ERROR = 103
-    const val SHOULD_LOG = false
+    const val SHOULD_LOG = true
     const val USER_ACTIVITIES_LIMIT = 150
     const val DEVICE_ID_HEADER = "DEVICE-ID"
     const val OUTSIDE_OF_BD_ERROR_CODE = 403
