@@ -46,7 +46,7 @@ class GetStingrayContentService @Inject constructor(
             dbList.add(
                 TVChannelItem(
                     it.id.toLong(),
-                    it.type ?: "LIVE",
+                    it.type ?: "Stingray",
                     1,
                     "Karaoke - Stingray",
                     Gson().toJson(it),

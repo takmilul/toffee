@@ -70,24 +70,21 @@ class HomeViewModel @Inject constructor(
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) : ViewModel() {
     
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
+    val isStingray = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
-    val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
-    val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
+    private var _playlistManager = PlaylistManager()
+    val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
+    val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
+    private val _channelDetail = MutableLiveData<MyChannelDetail>()
+    val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
-    private val _channelDetail = MutableLiveData<MyChannelDetail>()
+    val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
-    private var _playlistManager = PlaylistManager()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
-    val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val isStingray = MutableLiveData<Boolean>()
-    
-    fun getPlaylistManager() = _playlistManager
     
     init {
         getProfile()
@@ -112,6 +109,8 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+    
+    fun getPlaylistManager() = _playlistManager
     
     private fun setFcmToken(token: String) {
         viewModelScope.launch {

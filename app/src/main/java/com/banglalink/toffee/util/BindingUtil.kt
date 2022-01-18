@@ -130,7 +130,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 
     @BindingAdapter("loadChannelImage")
     fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
-        if (channelInfo.isLive || channelInfo.isStingray) {
+        if (channelInfo.isLinear) {
             if (channelInfo.channel_logo.isNullOrBlank()) {
                 view.setImageResource(R.drawable.ic_profile)
             } else {

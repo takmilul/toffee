@@ -17,7 +17,6 @@ data class HistoryItem(
     @SerializedName("payload")
     val payload: String = ""
 ) : BaseEntity() {
-    fun isLive() = type.equals("LIVE", ignoreCase = true)
     
     @Ignore
     @SerializedName("channelInfo")

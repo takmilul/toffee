@@ -1,9 +1,9 @@
 package com.banglalink.toffee.ui.player
 
 import android.net.Uri
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Log
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaItem.DrmConfiguration
@@ -78,7 +78,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     private fun getMediaInfo(mediaItem: MediaItem, info: ChannelInfo): MediaQueueItem {
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
-        if(info.isLive) {
+        if(info.isLinear) {
             mediaMetadata.addImage(WebImage(Uri.parse(info.channel_logo)))
         }
         else {

@@ -12,7 +12,7 @@ class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
     BasePagingDataAdapter<UserActivities>(callback, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        if(getItem(position)?.channelInfo?.isLive == true){
+        if(getItem(position)?.channelInfo?.isLinear == true){
             return R.layout.list_item_recent_live_new
         }
         return R.layout.list_item_activities

@@ -5,10 +5,10 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import com.banglalink.toffee.util.Log
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -36,6 +36,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.banglalink.toffee.util.ConvivaFactory
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.getError
 import com.conviva.sdk.ConvivaAdAnalytics
@@ -744,7 +745,7 @@ abstract class PlayerPageActivity :
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive && !channelInfo.isStingray && channelInfo.urlTypeExt != PAYMENT
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLinear && channelInfo.urlTypeExt != PAYMENT
             val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
             if (shouldPlayAd && vastTag.isNotBlank()) {
                 mediaItem = mediaItem.buildUpon()
@@ -785,7 +786,7 @@ abstract class PlayerPageActivity :
                     }
                 }
                 val haveStartPosition = startWindow != C.INDEX_UNSET
-                if (haveStartPosition && !channelInfo.isLive) {
+                if (haveStartPosition && !channelInfo.isLinear) {
                     if(it is ExoPlayer) {
 //                        getPlayerView().adViewGroup.removeAllViews()
                         it.setMediaItem(mediaItem, false)
@@ -892,7 +893,7 @@ abstract class PlayerPageActivity :
     private fun insertContentViewProgress(channelInfo: ChannelInfo, progress: Long) {
         lifecycleScope.launch {
             Log.i("PLAYBACK_STATE", "Saving state - ${channelInfo.id} -> $progress")
-            if(!channelInfo.isLive && progress > 0L) {
+            if(!channelInfo.isLinear && progress > 0L) {
                 channelInfo.viewProgress = progress
                 contentViewRepo.insert(
                     ContentViewProgress(
@@ -1021,7 +1022,7 @@ abstract class PlayerPageActivity :
             }
             
             getCurrentChannelInfo()?.let { cinfo->
-                if(!cinfo.isLive) {
+                if(!cinfo.isLinear) {
                     insertContentViewProgress(cinfo, player?.duration ?: -1)
                 }
             }

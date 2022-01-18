@@ -9,7 +9,7 @@ import com.banglalink.toffee.model.ChannelInfo
 class SearchAdapter(listener: ProviderIconCallback<ChannelInfo>) : BasePagingDataAdapter<ChannelInfo>(listener, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        if (getItem(position)!!.isLive) {
+        if (getItem(position)!!.isLinear) {
             return R.layout.list_item_live_new
         }
         return R.layout.list_item_relative

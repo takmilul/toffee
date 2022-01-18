@@ -15,7 +15,6 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.mediarouter.app.MediaRouteButton
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -61,7 +60,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private var tickTime: Long = 0
     protected var isMinimize = false
     private var debugJob: Job? = null
-    private var channelType: String? = null
     private lateinit var controllerBg: View
     private lateinit var playNext: ImageView
     private lateinit var playPrev: ImageView
@@ -71,6 +69,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var exoDuration: TextView
     private lateinit var videoOption: ImageView
     private lateinit var shareButton: ImageView
+    private var isLinearChannel: Boolean = false
     @Inject lateinit var cPref: CommonPreference
     private lateinit var previewImage: ImageView
     private lateinit var rotateButton: ImageView
@@ -155,7 +154,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setControllerVisibilityListener { ctrlVisibility ->
             when (ctrlVisibility) {
                 View.VISIBLE -> {
-                    val isLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE" || channelType.equals("Stingray", true)
+                    val isLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                     changeTimerVisibility(isLive)
 //                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
                     onPlayerControllerChangedListeners.forEach {
@@ -179,12 +178,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         videoSurfaceView?.let {
             if (it is SurfaceView) {
 //                it.holder.setFixedSize()
-                val isDisableScreenshot =
-                    !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
-                        mPref.phoneNumber
-                    ))
+                val isDisableScreenshot = (
+                    mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
+                    || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
+                    || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
+                ).not()
+                
                 //disable screen capture
-                if (!BuildConfig.DEBUG && isDisableScreenshot) {
+                if (isDisableScreenshot) {
                     it.setSecure(true)
                 }
             }
@@ -302,7 +303,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     private fun updateControllerUI() {
-        val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE" || channelType.equals("Stingray", true)
+        val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
         changeTimerVisibility(isChannelLive)
         
         player?.let {
@@ -453,7 +454,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     val minBound = minVideoHeight
     val maxBound: Int
         get() {
-            if (channelType == "LIVE" || channelType.equals("Stingray", true) || !isUgc) return minBound
+            if (isLinearChannel || !isUgc) return minBound
             if (videoWidth > 0 && videoHeight > 0) {
                 return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
             }
@@ -655,7 +656,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             Player.STATE_READY -> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
-                val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE" || channelType.equals("Stingray", true)
+                val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                 nextButtonVisibility(!isChannelLive)
                 prevButtonVisibility(!isChannelLive)
                 autoplayProgress.visibility = View.GONE
@@ -720,7 +721,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     
     private val scaleType: Int
         get() {
-            return if (channelType == "LIVE" || channelType.equals("Stingray", true) || !isUgc)
+            return if (isLinearChannel || !isUgc)
                 AspectRatioFrameLayout.RESIZE_MODE_FILL
             else if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -736,8 +737,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         if (channelInfo is ChannelInfo) {
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
-            channelType = channelInfo.type
-            changeTimerVisibility(channelType == "LIVE" || channelType.equals("Stingray", true))
+            isLinearChannel = channelInfo.isLinear
+            changeTimerVisibility(isLinearChannel)
             isUgc = channelInfo.is_ugc == 1
             
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false

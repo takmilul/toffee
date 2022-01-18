@@ -30,7 +30,7 @@ class ConvivaFactory private constructor() {
         fun setConvivaVideoMetadata(info: ChannelInfo, customerId: Int, seriesName: String? = null, seasonNumber: Int? = 0) {
             val contentInfo = mapOf(
                 ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
-                ConvivaSdkConstants.IS_LIVE to info.isLive,
+                ConvivaSdkConstants.IS_LIVE to info.isLinear,
                 ConvivaSdkConstants.PLAYER_NAME to "Android Exoplayer",
                 ConvivaSdkConstants.VIEWER_ID to customerId.toString(),
                 ConvivaSdkConstants.DURATION to info.durationInSeconds(),

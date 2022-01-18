@@ -183,9 +183,14 @@ class HomeActivity :
         } catch (e: Exception) {
             Log.e("CONN_", "Connectivity registration failed: ${e.message}")
         }
-        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
+        val isDisableScreenshot = (
+            mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
+            || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
+            || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
+        ).not()
+        
         //disable screen capture
-        if (! BuildConfig.DEBUG && isDisableScreenshot) {
+        if (isDisableScreenshot) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -326,6 +331,9 @@ class HomeActivity :
         viewModel.getVastTags()
         observe(mPref.shareableHashLiveData) {
             it?.let { observeShareableContent(it) }
+        }
+        if (mPref.isFireworkActive) {
+            viewModel.isFireworkActive.postValue(true)
         }
         if (!mPref.isMedalliaActive) {
             MedalliaDigital.disableIntercept()
@@ -736,7 +744,7 @@ class HomeActivity :
         so player can't reset scale completely. Manually resetting player scale value
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(playlistManager.getCurrentChannel()?.isLive == true || playlistManager.getCurrentChannel()?.isStingray == true) {
+            if(playlistManager.getCurrentChannel()?.isLinear == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
@@ -950,7 +958,7 @@ class HomeActivity :
 
     private fun loadChannel(channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
-        if(channelInfo.isLive || channelInfo.isStingray) {
+        if(channelInfo.isLinear) {
             viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
         }
@@ -1298,8 +1306,7 @@ class HomeActivity :
     }
 
     override fun onControllerVisible() {
-        if((playlistManager.getCurrentChannel()?.isLive == true || playlistManager.getCurrentChannel()?.isStingray == true) &&
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if(playlistManager.getCurrentChannel()?.isLinear == true && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN

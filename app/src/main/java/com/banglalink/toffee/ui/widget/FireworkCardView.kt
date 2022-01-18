@@ -15,7 +15,11 @@ import kotlin.math.roundToInt
 
 const val visibleItemCount = 4.5
 
-class FireworkCardView(context: Context, attrs: AttributeSet? = null, defAttrStyle: Int = 0): ConstraintLayout(context, attrs, defAttrStyle) {
+class FireworkCardView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defAttrStyle: Int = 0
+): ConstraintLayout(context, attrs, defAttrStyle) {
     
     private var titleTextView: TextView? = null
     private var feedView: VideoFeedView? = null

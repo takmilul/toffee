@@ -10,7 +10,7 @@ class FavoriteAdapter(callback: ProviderIconCallback<ChannelInfo>):
     BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        if(getItem(position)?.isLive == true){
+        if(getItem(position)?.isLinear == true){
             return R.layout.list_item_live_new
         }
         return R.layout.list_item_catchup_new

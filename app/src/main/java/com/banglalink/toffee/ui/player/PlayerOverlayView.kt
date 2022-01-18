@@ -14,7 +14,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
 import com.google.android.exoplayer2.Player
 
 
@@ -313,7 +312,7 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
 
     override fun onDoubleTapProgressUp(posX: Float, posY: Float) {
         // Check first whether forwarding/rewinding is "valid"
-        if(getCurrentChannel()?.isLive == true) return
+        if(getCurrentChannel()?.isLinear == true) return
         if (player?.currentPosition == null || playerView?.width == null) return
         player?.currentPosition?.let { current ->
             // Rewind and start of the video (+ 0.5 sec tolerance)

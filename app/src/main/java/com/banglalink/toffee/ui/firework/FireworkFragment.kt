@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -13,13 +14,14 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.FragmentFireworkBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.FireworkCardView
 
-class FireworkFragment : HomeBaseFragment() {
+class FireworkFragment : Fragment() {
     
     private var _binding: FragmentFireworkBinding? = null
     private val binding get() = _binding!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<FireworkViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -29,9 +31,11 @@ class FireworkFragment : HomeBaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (false /*mPref.isFireworkActive*/) {
-            observeFirework()
-            viewModel.getFireworks()
+        observe(homeViewModel.isFireworkActive) {
+            if (it) {
+                observeFirework()
+                viewModel.getFireworks()
+            }
         }
     }
     

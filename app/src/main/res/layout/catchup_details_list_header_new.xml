@@ -329,7 +329,7 @@ Day 21 - AUS vs IND" />
             android:id="@+id/tvExcludeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
+            android:visibility="@{data.linear ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="options,program_name,reactionButton,reactionCountLayout,shareCount,channelSubCount,subscribe_button,video_description,uploadTime,viewCount,cardView"
             tools:visibility="visible" />
 
@@ -337,7 +337,7 @@ Day 21 - AUS vs IND" />
             android:id="@+id/viewShareReactionGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{data.isApproved == 1 &amp;&amp; !data.live ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isApproved == 1 &amp;&amp; !data.linear ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="shareCount,reactionCountLayout,reactionButton,viewCount" />
 
         <com.banglalink.toffee.ui.widget.ReadMoreTextView
