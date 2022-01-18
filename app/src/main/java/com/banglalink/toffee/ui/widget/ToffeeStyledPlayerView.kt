@@ -746,7 +746,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             
             rotateButton.visibility =
                 if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
-            shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+            shareButton.visibility = if (channelInfo.isApproved == 1 && !channelInfo.isStingray) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()
@@ -763,7 +763,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         player?.currentMediaItem?.getChannelMetadata(player)?.let {
             isVideoPortrait = it.isHorizontal != 1
             rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
-            shareButton.visibility = if (it.isApproved == 1) View.VISIBLE else View.GONE
+            shareButton.visibility = if (it.isApproved == 1 && !it.isStingray) View.VISIBLE else View.GONE
         }
     }
     
