@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         minSdk 21
@@ -66,8 +66,8 @@ dependencies {
 
     // Room database
     implementation "androidx.room:room-runtime:$rootProject.roomDbVersion"
-//    annotationProcessor "androidx.room:room-compiler:$room_version"
-//    implementation "androidx.room:room-paging:$room_version"
+//    annotationProcessor "androidx.room:room-compiler:rootProject.roomDbVersion"
+    implementation "androidx.room:room-paging:$rootProject.roomDbVersion"
     implementation "androidx.room:room-ktx:$rootProject.roomDbVersion"
     kapt "androidx.room:room-compiler:$rootProject.roomDbVersion"
 

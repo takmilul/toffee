@@ -2,7 +2,6 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
-import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -13,6 +12,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.util.Log
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +41,7 @@ object NetworkModuleLib {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
-            if (BuildConfig.DEBUG && Constants.SHOULD_LOG) {
+            if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })

@@ -67,3 +67,4 @@
 
 -keep class com.medallia.** { *; } 
 -dontwarn com.medallia.**
+-keep class com.conviva.** {*;}

@@ -44,6 +44,7 @@ class FireworkFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     val data = it.data.response
+                    binding.fireworkContainer.removeAllViews()
                     data.fireworkModels?.forEach {
                         if (!it.playlistName.isNullOrBlank() && !it.playlistId.isNullOrBlank() && !it.channelId.isNullOrBlank() && it.isEnabled == 1) {
                             binding.fireworkContainer.addView(FireworkCardView(requireContext()).apply {

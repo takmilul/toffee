@@ -158,25 +158,5 @@
             android:name="Firework:AppID"
             android:value="@string/firework_oauth_id" />
         
-        <activity 
-            android:name="com.medallia.digital.mobilesdk.MedalliaFullFormActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <activity 
-            android:name="com.medallia.digital.mobilesdk.MedalliaModalFormActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
-            android:exported="true"
-            tools:node="merge" />
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
-            android:exported="true"
-            tools:node="merge" />
     </application>
 </manifest>

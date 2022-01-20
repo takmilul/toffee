@@ -54,6 +54,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     StyledPlayerView(context, attrs, defStyleAttr) 
 {
     
+    var isVideoScalable = false
+    var isVideoPortrait = false
+    
     private var isUgc = false
     private var videoWidth = -1
     private var videoHeight = -1
@@ -93,6 +96,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var playerControlView: StyledPlayerControlView
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
+    
+    companion object {
+        private const val UPDATE_PROGRESS = 21
+        private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
+        private const val AUTOPLAY_PROGRESS_TIME = 1000F
+        private const val AUTOPLAY_INTERVAL = 5000L
+    }
     
     init {
         initView()
@@ -471,9 +481,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setHeightWithAnim(if (isInTop) minBound else maxBound)
     }
     
-    var isVideoScalable = false
-    var isVideoPortrait = false
-    
     fun setHeightWithAnim(height: Int, animDuration: Long = 100L) {
         if (height == layoutParams.height) return
         heightAnim?.cancel()
@@ -493,13 +500,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
     }
     
-    private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
-    private var mLastTouchX: Float = 0f
-    private var mLastTouchY: Float = 0f
     private var mPosX: Float = 0f
     private var mPosY: Float = 0f
     private var startX: Float = 0f
     private var startY: Float = 0f
+    private var mLastTouchX: Float = 0f
+    private var mLastTouchY: Float = 0f
+    private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     
     fun handleTouchDown2(ev: MotionEvent) {
         heightAnim?.cancel()
@@ -667,9 +674,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 playNext.visibility = if (mPlayListListener?.hasNext() == false) View.INVISIBLE else View.VISIBLE
                 playPrev.visibility = if (mPlayListListener?.hasPrevious() == false) View.INVISIBLE else VISIBLE
                 
-                if (mPlayListListener?.isAutoplayEnabled() == true &&
-                    mPlayListListener?.hasNext() == true
-                ) {
+                if (mPlayListListener?.isAutoplayEnabled() == true && mPlayListListener?.hasNext() == true) {
                     autoplayProgress.visibility = VISIBLE
                     startAutoPlayTimer()
                 } else {
@@ -765,12 +770,5 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (it.isApproved == 1 && !it.isStingray) View.VISIBLE else View.GONE
         }
-    }
-    
-    companion object {
-        private const val UPDATE_PROGRESS = 21
-        private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
-        private const val AUTOPLAY_PROGRESS_TIME = 1000F
-        private const val AUTOPLAY_INTERVAL = 5000L
     }
 }

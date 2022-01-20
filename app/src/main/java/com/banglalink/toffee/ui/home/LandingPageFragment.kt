@@ -70,7 +70,7 @@ class LandingPageFragment : HomeBaseFragment() {
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
         observe(mPref.isFireworkInitialized) { isInitialized ->
-            val isActive = /*mPref.isFireworkActive == "true" && isInitialized*/ false
+            val isActive = mPref.isFireworkActive && isInitialized
             if (isActive) {
                 _binding?.fireworkFragment?.isVisible = isActive
                 try {

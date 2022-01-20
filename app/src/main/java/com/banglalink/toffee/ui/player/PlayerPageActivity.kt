@@ -715,12 +715,12 @@ abstract class PlayerPageActivity :
         maximizePlayer()
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && mPref.watchOnlyWifi()) {
-            showPlayerError(true)
+            showPlayerError("Please connect to WiFi or change your default data or video quality settings", true)
             return@launch
         }
 //        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)
         val channelInfo = playlistManager.getCurrentChannel() ?: run{
-            showPlayerError()
+            showPlayerError("Content not found")
             return@launch
         }
         val isExpired = try {
@@ -738,7 +738,7 @@ abstract class PlayerPageActivity :
         } else {
             getHlsMediaItem(channelInfo, isWifiConnected)
         } ?: run {
-            showPlayerError()
+            showPlayerError("Content url is null")
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
@@ -864,10 +864,12 @@ abstract class PlayerPageActivity :
         }
     }
 
-    private fun showPlayerError(showMessage: Boolean = false) {
+    private fun showPlayerError(errorMessage: String, showMessage: Boolean = false) {
         player?.stop()
         player?.clearMediaItems()
         getPlayerView().adViewGroup.removeAllViews()
+        convivaVideoAnalytics?.reportPlaybackError(errorMessage, 
+            ConvivaSdkConstants.ErrorSeverity.WARNING)
         if(showMessage) {
             channelCannotBePlayedDueToSettings() //notify hook/subclass
         }
