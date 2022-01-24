@@ -4,7 +4,7 @@ import android.util.Log
 
 object Log {
     
-    const val SHOULD_LOG = false
+    const val SHOULD_LOG = true
     private const val TAG = "TAG"
     private const val EMPTY_MSG = "Log message is empty."
     

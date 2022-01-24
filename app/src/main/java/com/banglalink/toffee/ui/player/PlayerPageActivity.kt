@@ -105,7 +105,6 @@ abstract class PlayerPageActivity :
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
     protected var player: Player? = null
-    private var isAdBreakStarted = false
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -1138,27 +1137,17 @@ abstract class PlayerPageActivity :
     private fun onAdEventListener(it: AdEvent?) {
         when (it?.type) {
             LOG -> {
-                if (!isAdBreakStarted) {
-                    isAdBreakStarted = true
-                    convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
-                        ConvivaFactory.getConvivaAdMetadata(it.ad))
-                    val message = it.adData["errorMessage"]
-                    message?.let { msg->
-                        convivaAdAnalytics?.reportAdFailed(msg, ConvivaFactory.getConvivaAdMetadata(it.ad))
-                    }
-                }
+                convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(it.ad))
+                val message = it.adData["errorMessage"] ?: "Unknown error occurred."
+                convivaAdAnalytics?.reportAdFailed(message, ConvivaFactory.getConvivaAdMetadata(it.ad))
             }
             LOADED -> {
-                if (!isAdBreakStarted) {
-                    isAdBreakStarted = true
-                    convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
-                        ConvivaFactory.getConvivaAdMetadata(it.ad))
-                }
+                convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(it.ad))
                 convivaAdAnalytics?.reportAdLoaded(ConvivaFactory.getConvivaAdMetadata(it.ad))
             }
             STARTED -> {
                 convivaAdAnalytics?.reportAdStarted(ConvivaFactory.getConvivaAdMetadata(it.ad))
-//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate)
             }
             SKIPPED -> {
                 convivaAdAnalytics?.reportAdSkipped()
@@ -1166,30 +1155,32 @@ abstract class PlayerPageActivity :
             COMPLETED -> {
                 convivaAdAnalytics?.reportAdEnded()
             }
-            ALL_ADS_COMPLETED -> {
-                convivaVideoAnalytics?.reportAdBreakEnded()
-                isAdBreakStarted = false
-            }
             AD_PROGRESS -> {
-//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Playing")
-//                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
             }
-//            AD_BUFFERING -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Buffering")
-//            PAUSED -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Paused")
-//            RESUMED -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, "Resumed")
+            CONTENT_PAUSE_REQUESTED -> {
+                
+            }
+            CONTENT_RESUME_REQUESTED -> {
+                convivaVideoAnalytics?.reportAdBreakEnded()
+            }
+            ALL_ADS_COMPLETED -> {
+                
+            }
             else -> {
-                val keys = it?.adData?.keys?.joinToString(",")
-                val values = it?.adData?.values?.joinToString(",")
-//                Log.i("ADs_", "adEventListener: Type-> ${it?.type}")
-//                Log.i("ADs_", "adEventListener: keys-> $keys")
-//                Log.i("ADs_", "adEventListener: values-> $values")
+//                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
+//                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
             }
         }
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
-        val errorMessage = it?.error?.message
+        val errorMessage = it?.error?.message ?: "Unknown error occurred."
+//        Log.i("ADs_", "adEventListener: EventType-> AdError, ErrorMessage-> $errorMessage")
+        convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(null))
         convivaAdAnalytics?.reportAdFailed(errorMessage, ConvivaFactory.getConvivaAdMetadata(null))
         convivaAdAnalytics?.reportAdError(errorMessage, ConvivaSdkConstants.ErrorSeverity.WARNING)
+        convivaVideoAnalytics?.reportAdBreakEnded()
     }
 }
