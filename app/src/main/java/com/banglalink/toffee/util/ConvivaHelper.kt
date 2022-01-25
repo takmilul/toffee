@@ -10,15 +10,16 @@ import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
-class ConvivaFactory private constructor() {
+class ConvivaHelper private constructor() {
     var convivaVideoAnalytics: ConvivaVideoAnalytics? = null
         private set
     var convivaAdAnalytics: ConvivaAdAnalytics? = null
         private set
     
     companion object {
-        val instance = ConvivaFactory()
-        private var isSessionActive = false
+        val instance = ConvivaHelper()
+        private var isAdSessionActive = false
+        private var isVideoSessionActive = false
         
         fun init(context: Context?, isActive: Boolean) {
             if (isActive) {
@@ -28,6 +29,9 @@ class ConvivaFactory private constructor() {
         }
         
         fun setConvivaVideoMetadata(info: ChannelInfo, customerId: Int, seriesName: String? = null, seasonNumber: Int? = 0) {
+            if (isVideoSessionActive) {
+                endPlayerSession()
+            }
             val contentInfo = mapOf(
                 ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
                 ConvivaSdkConstants.IS_LIVE to info.isLinear,
@@ -45,18 +49,19 @@ class ConvivaFactory private constructor() {
                 ConvivaConstants.SERIES_NAME to (seriesName ?: "N/A"),
                 ConvivaConstants.SEASON_NUMBER to (seasonNumber?.toString() ?: "N/A"),
                 ConvivaConstants.SHOW_TITLE to "N/A",
-                ConvivaConstants.EPISODE_NUMBER to (if(info.episodeNo==0) "N/A" else info.episodeNo.toString()),
+                ConvivaConstants.EPISODE_NUMBER to (if (info.episodeNo == 0) "N/A" else info.episodeNo.toString()),
                 ConvivaConstants.GENRE to "N/A",
                 ConvivaConstants.GENRE_LIST to "N/A",
                 ConvivaConstants.UTM_TRACKING_URL to "N/A"
             )
             instance.convivaVideoAnalytics?.reportPlaybackRequested(contentInfo)
-            isSessionActive = true
+            isVideoSessionActive = true
         }
         
-        fun getConvivaAdMetadata(ad: Ad?): Map<String, Any> {
+        fun getConvivaAdMetadata(ad: Ad?, vastTag: String?): Map<String, Any> {
             return mapOf(
                     ConvivaSdkConstants.ASSET_NAME to "[${ad?.adId ?: "N/A"}] ${ad?.title ?: "N/A"}",
+                    ConvivaSdkConstants.STREAM_URL to (vastTag ?: "N/A"),
                     ConvivaSdkConstants.IS_LIVE to (ad?.isLinear?.toString() ?: "false"),
                     ConvivaSdkConstants.DEFAULT_RESOURCE to "N/A",
                     ConvivaSdkConstants.DURATION to (ad?.duration?.toInt() ?: 0),
@@ -78,15 +83,35 @@ class ConvivaFactory private constructor() {
                 )
         }
         
-        fun endPlayerSession() {
-            if (isSessionActive) {
+        fun startAdBreak(ad: Ad?, vastTag: String?) {
+            if (isAdSessionActive) {
+                endAdBreak()
+            }
+            instance.convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
+                getConvivaAdMetadata(ad, vastTag))
+            isAdSessionActive = true
+        }
+        
+        fun endAdBreak(isForceClosed: Boolean = false) {
+            if (isAdSessionActive) {
+                if (isForceClosed) {
+                    instance.convivaAdAnalytics?.reportAdSkipped()
+                }
+                instance.convivaVideoAnalytics?.reportAdBreakEnded()
+                isAdSessionActive = false
+            }
+        }
+        
+        fun endPlayerSession(isForceClosed: Boolean = false) {
+            if (isVideoSessionActive) {
+                endAdBreak(isForceClosed)
                 instance.convivaVideoAnalytics?.reportPlaybackEnded()
-                isSessionActive = false
+                isVideoSessionActive = false
             }
         }
         
         fun release() {
-            endPlayerSession()
+            endPlayerSession(true)
             instance.convivaAdAnalytics?.release()
             instance.convivaVideoAnalytics?.release()
             ConvivaAnalytics.release()

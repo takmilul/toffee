@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -106,7 +107,7 @@ class SplashScreenFragment : BaseFragment() {
             val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
             protocols?.let { 
                 ToffeeAnalytics.logEvent(ToffeeEvents.SUPPORTED_TLS, bundleOf(
-                    "supported_tls_versions" to protocols.contentToString()
+                    "TLS_version" to protocols.contentToString()
                 ))
             }
         } catch (e: Exception) { }
@@ -167,7 +168,7 @@ class SplashScreenFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to "HeaderEnrichment",
-                            "browser_screen" to "Splash Screen",
+                            FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                             "error_code" to response.error.code,
                             "error_description" to response.error.msg)
                     )
@@ -205,7 +206,7 @@ class SplashScreenFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.API_LOGIN_V2,
-                            "browser_screen" to "Splash Screen",
+                            FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

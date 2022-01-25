@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -85,7 +86,7 @@ class ReferAFriendFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.GET_REFERRAL_CODE,
-                            "browser_screen" to "Refer A Friend",
+                            FirebaseParams.BROWSER_SCREEN to "Refer A Friend",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

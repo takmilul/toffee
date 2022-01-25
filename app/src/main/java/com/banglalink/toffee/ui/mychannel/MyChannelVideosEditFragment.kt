@@ -1,9 +1,7 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.text.InputType
 import android.text.TextWatcher
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +17,7 @@ import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -320,7 +319,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.EDIT_CONTENT_UPLOAD,
-                            "browser_screen" to BrowsingScreens.EDIT_VIDEO_DETAILS,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.EDIT_VIDEO_DETAILS,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

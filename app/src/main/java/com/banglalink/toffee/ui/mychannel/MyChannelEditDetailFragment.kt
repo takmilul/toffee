@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -254,7 +255,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.EDIT_MY_CHANNEL,
-                            "browser_screen" to "Edit Details",
+                            FirebaseParams.BROWSER_SCREEN to "Edit Details",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

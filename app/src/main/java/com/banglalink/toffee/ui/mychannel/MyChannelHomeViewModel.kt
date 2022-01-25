@@ -4,6 +4,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -47,7 +48,7 @@ class MyChannelHomeViewModel @Inject constructor(
                    ToffeeEvents.EXCEPTION,
                    bundleOf(
                        "api_name" to ApiNames.RATE_CHANNEL,
-                       "browser_screen" to "User Channel Details",
+                       FirebaseParams.BROWSER_SCREEN to "User Channel Details",
                        "error_code" to error.error.code,
                        "error_description" to error.error.msg)
                )

@@ -37,5 +37,5 @@ object ToffeeEvents {
     const val SELECT_INTEREST = "select_interest"
     const val EXCEPTION ="exception"
     const val UGC_UPLOAD ="ugc_upload"
-    const val SUPPORTED_TLS = "supported_tls"
+    const val SUPPORTED_TLS = "supported_TLS"
 }

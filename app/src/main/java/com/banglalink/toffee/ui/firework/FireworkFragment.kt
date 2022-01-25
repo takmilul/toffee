@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -58,7 +59,7 @@ class FireworkFragment : Fragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.GET_FIREWORK_LIST,
-                            "browser_screen" to "Firework Screen",
+                            FirebaseParams.BROWSER_SCREEN to "Firework Screen",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg
                         )

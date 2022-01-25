@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import android.os.Bundle
 import android.webkit.JavascriptInterface
 import androidx.core.os.bundleOf
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -51,7 +52,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
             htmlUrl?.let {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.SCREEN_VIEW,
-                    bundleOf("firebase_screen" to it))
+                    bundleOf(FirebaseParams.BROWSER_SCREEN to it))
                 mWebView.loadUrl(htmlUrl!!, headerMap)
 
             }

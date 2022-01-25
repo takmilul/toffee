@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -162,7 +163,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.CREATE_PLAYLIST,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
@@ -214,7 +215,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.ADD_CONTENT_TO_PLAYLIST,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

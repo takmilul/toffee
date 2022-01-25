@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -133,7 +134,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.CREATE_PLAYLIST,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
@@ -180,7 +181,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.EDIT_PLAYLIST,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
@@ -240,7 +241,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.DELETE_PLAYLIST,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

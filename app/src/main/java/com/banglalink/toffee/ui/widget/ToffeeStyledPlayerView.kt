@@ -27,7 +27,7 @@ import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.player.PlayerPreview
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.ConvivaFactory
+import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -646,9 +646,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 val progressTime = tickTime
                 stopAutoplayTimer()
                 if (progressTime in 1 until AUTOPLAY_INTERVAL) {
-                    ConvivaFactory.endPlayerSession()
+                    ConvivaHelper.endPlayerSession()
                     player?.currentMediaItem?.getChannelMetadata(player)?.let {
-                        ConvivaFactory.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                        ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                     }
                 }
             }

@@ -13,6 +13,7 @@ import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -75,7 +76,7 @@ class ViewProfileFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.GET_USER_PROFILE,
-                            "browser_screen" to "Profile Screen",
+                            FirebaseParams.BROWSER_SCREEN to "Profile Screen",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

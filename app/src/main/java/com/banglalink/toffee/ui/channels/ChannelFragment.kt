@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentChannelListBinding
@@ -142,7 +143,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         }
         ToffeeAnalytics.logEvent(
             ToffeeEvents.SCREEN_VIEW,
-            bundleOf("firebase_screen" to "channel_list"))
+            bundleOf(FirebaseParams.BROWSER_SCREEN to "channel_list"))
     }
     
     override fun onItemClicked(channelInfo: ChannelInfo) {

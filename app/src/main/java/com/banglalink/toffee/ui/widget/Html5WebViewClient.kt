@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.extension.openUrlToExternalApp
@@ -20,7 +21,7 @@ open class Html5WebViewClient: WebViewClient() {
             request?.url?.toString()?.let {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.SCREEN_VIEW,
-                    bundleOf("firebase_screen" to it)
+                    bundleOf(FirebaseParams.BROWSER_SCREEN to it)
                 )
 
                 val context = view.context

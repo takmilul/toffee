@@ -20,6 +20,7 @@ import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -230,7 +231,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
-                            "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )

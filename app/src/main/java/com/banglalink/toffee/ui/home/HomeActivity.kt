@@ -51,6 +51,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -354,9 +355,9 @@ class HomeActivity :
 //        }/* else {
 //            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
 //        }*/
-        ConvivaFactory.init(applicationContext, true)
-        convivaAdAnalytics = ConvivaFactory.instance.convivaAdAnalytics
-        convivaVideoAnalytics = ConvivaFactory.instance.convivaVideoAnalytics
+        ConvivaHelper.init(applicationContext, true)
+        convivaAdAnalytics = ConvivaHelper.instance.convivaAdAnalytics
+        convivaVideoAnalytics = ConvivaHelper.instance.convivaVideoAnalytics
     }
     
     private fun showDeviceId() {
@@ -418,7 +419,7 @@ class HomeActivity :
                         ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                             bundleOf(
                                 "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
-                                "browser_screen" to "Enter OTP",
+                                FirebaseParams.BROWSER_SCREEN to "Enter OTP",
                                 "error_code" to it.error.code,
                                 "error_description" to it.error.msg))
                     }
@@ -481,7 +482,7 @@ class HomeActivity :
                         ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                             bundleOf(
                                 "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
-                                "browser_screen" to "My Channel page",
+                                FirebaseParams.BROWSER_SCREEN to "My Channel page",
                                 "error_code" to it.error.code,
                                 "error_description" to it.error.msg))
                         showToast(getString(R.string.unable_to_load_data))
@@ -1032,20 +1033,20 @@ class HomeActivity :
         if (player is CastPlayer) {
             maximizePlayer()
         }
-        ConvivaFactory.endPlayerSession()
+        ConvivaHelper.endPlayerSession()
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                ConvivaFactory.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
                     detailsInfo.currentItem!!.seasonNo)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
-                ConvivaFactory.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
-                ConvivaFactory.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                 loadChannel(it)
             }
         }
@@ -1088,9 +1089,9 @@ class HomeActivity :
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
-        ConvivaFactory.endPlayerSession()
+        ConvivaHelper.endPlayerSession()
         val info = playlistManager.getCurrentChannel()
-        ConvivaFactory.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1098,9 +1099,9 @@ class HomeActivity :
 
     override fun playPrevious() {
         super.playPrevious()
-        ConvivaFactory.endPlayerSession()
+        ConvivaHelper.endPlayerSession()
         val info = playlistManager.getCurrentChannel()
-        ConvivaFactory.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1271,7 +1272,7 @@ class HomeActivity :
     }
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
-        ConvivaFactory.endPlayerSession()
+        ConvivaHelper.endPlayerSession()
         ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
         if (isDarkEnabled) {
             cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
@@ -1421,7 +1422,7 @@ class HomeActivity :
     }
 
     override fun onPlayerDestroy() {
-        ConvivaFactory.endPlayerSession()
+        ConvivaHelper.endPlayerSession()
         if (mPref.isMedalliaActive) {
             MedalliaDigital.enableIntercept()
         }
@@ -1445,7 +1446,7 @@ class HomeActivity :
         } catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
-        ConvivaFactory.release()
+        ConvivaHelper.release()
         super.onDestroy()
     }
     
@@ -1496,7 +1497,7 @@ class HomeActivity :
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.UN_VERIFY_USER,
-                            "browser_screen" to BrowsingScreens.HOME_PAGE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                     showToast(it.error.msg)

@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -122,7 +123,7 @@ class LoginContentFragment : ChildDialogFragment() {
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
-                            "browser_screen" to "Login With Phone",
+                            FirebaseParams.BROWSER_SCREEN to "Login With Phone",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                 }

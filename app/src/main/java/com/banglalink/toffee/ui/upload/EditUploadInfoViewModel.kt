@@ -2,16 +2,16 @@ package com.banglalink.toffee.ui.upload
 
 import android.content.Context
 import android.net.Uri
-import com.banglalink.toffee.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.*
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
@@ -234,7 +234,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 ToffeeEvents.EXCEPTION,
                 bundleOf(
                     "api_name" to ApiNames.UPLOAD_CONTENT,
-                    "browser_screen" to "Edit Upload",
+                    FirebaseParams.BROWSER_SCREEN to "Edit Upload",
                     "error_code" to error.code,
                     "error_description" to error.msg)
             )

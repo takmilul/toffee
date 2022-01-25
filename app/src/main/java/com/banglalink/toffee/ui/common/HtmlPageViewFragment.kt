@@ -3,17 +3,18 @@ package com.banglalink.toffee.ui.common
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
-import com.banglalink.toffee.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
 import com.banglalink.toffee.ui.widget.Html5WebViewClient
+import com.banglalink.toffee.util.Log
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -89,7 +90,7 @@ class HtmlPageViewFragment : BaseFragment() {
         }
         ToffeeAnalytics.logEvent(
             ToffeeEvents.SCREEN_VIEW,
-            bundleOf("firebase_screen" to htmlUrl)
+            bundleOf(FirebaseParams.BROWSER_SCREEN to htmlUrl)
         )
     }
     

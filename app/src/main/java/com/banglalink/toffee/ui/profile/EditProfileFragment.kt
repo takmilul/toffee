@@ -19,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -155,7 +156,7 @@ class EditProfileFragment : BaseFragment() {
                                 ToffeeEvents.EXCEPTION,
                                 bundleOf(
                                     "api_name" to ApiNames.UPDATE_USER_PROFILE,
-                                    "browser_screen" to BrowsingScreens.PROFILE,
+                                    FirebaseParams.BROWSER_SCREEN to BrowsingScreens.PROFILE,
                                     "error_code" to it.error.code,
                                     "error_description" to it.error.msg)
                             )
@@ -186,7 +187,7 @@ class EditProfileFragment : BaseFragment() {
                             ToffeeEvents.EXCEPTION,
                             bundleOf(
                                 "api_name" to ApiNames.UPDATE_USER_PROFILE_PHOTO,
-                                "browser_screen" to BrowsingScreens.PROFILE,
+                                FirebaseParams.BROWSER_SCREEN to BrowsingScreens.PROFILE,
                                 "error_code" to it.error.code,
                                 "error_description" to it.error.msg)
                         )

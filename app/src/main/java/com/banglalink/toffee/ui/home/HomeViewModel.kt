@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
@@ -122,7 +123,7 @@ class HomeViewModel @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.SET_FCM_TOKEN,
-                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.code,
                         "error_description" to error.msg
                     )
@@ -173,7 +174,7 @@ class HomeViewModel @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.GET_USER_PROFILE,
-                        "browser_screen" to "Profile Screen",
+                        FirebaseParams.BROWSER_SCREEN to "Profile Screen",
                         "error_code" to respoense.error.code,
                         "error_description" to respoense.error.msg
                     )
@@ -271,7 +272,7 @@ class HomeViewModel @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.SUBSCRIBE_CHANNEL,
-                        "browser_screen" to "Users Channels",
+                        FirebaseParams.BROWSER_SCREEN to "Users Channels",
                         "error_code" to error.error.code,
                         "error_description" to error.error.msg
                     )
@@ -300,7 +301,7 @@ class HomeViewModel @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.GET_MQTT_CREDENTIAL,
-                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.error.code,
                         "error_description" to error.error.msg
                     )
@@ -345,7 +346,7 @@ class HomeViewModel @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.GET_VAST_TAG_LIST,
-                        "browser_screen" to BrowsingScreens.HOME_PAGE,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.code,
                         "error_description" to error.msg
                     )

@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -35,7 +36,7 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
-import com.banglalink.toffee.util.ConvivaFactory
+import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.getError
@@ -104,6 +105,7 @@ abstract class PlayerPageActivity :
     private var startAutoPlay = false
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
+    private var vastTag: String? = null
     protected var player: Player? = null
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -326,19 +328,17 @@ abstract class PlayerPageActivity :
             convivaVideoAnalytics?.setPlayer(exoPlayer)
         }
     }
-
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
-        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE &&
-        mPref.isDrmActive &&
-        channelInfo.isDrmActive &&
-//        !channelInfo.drmCid.isNullOrBlank() &&
-        (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty()) &&
-        !mPref.drmWidevineLicenseUrl.isNullOrBlank() //&&
-//        player is SimpleExoPlayer
-
+    
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
+        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
+        && mPref.isDrmActive && channelInfo.isDrmActive
+        && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty())
+        && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+    //&& !channelInfo.drmCid.isNullOrBlank()
+    // && player is SimpleExoPlayer
+    
     private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
         val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
-
         val isDrmActive = isDrmActiveForChannel(channelInfo)
 
         if(!isDrmActive) {
@@ -583,7 +583,7 @@ abstract class PlayerPageActivity :
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.GET_DRM_TOKEN,
-                        "browser_screen" to "Player Page",
+                        FirebaseParams.BROWSER_SCREEN to "Player Page",
                         "error_code" to error.code,
                         "error_description" to error.msg)
                 )
@@ -660,6 +660,9 @@ abstract class PlayerPageActivity :
         ))
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
+            if (! channelInfo.isStingray) {
+                httpDataSourceFactory?.setUserAgent(toffeeHeader)
+            }
             setMimeType(MimeTypes.APPLICATION_MPD)
             setUri(drmUrl)
             setTag(channelInfo)
@@ -733,7 +736,7 @@ abstract class PlayerPageActivity :
         }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
         var mediaItem = if(isDrmActive) {
-            getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
+            getDrmMediaItem(channelInfo)
         } else {
             getHlsMediaItem(channelInfo, isWifiConnected)
         } ?: run {
@@ -745,8 +748,8 @@ abstract class PlayerPageActivity :
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
             val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLinear && channelInfo.urlTypeExt != PAYMENT
-            val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
-            if (shouldPlayAd && vastTag.isNotBlank()) {
+            vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+            if (shouldPlayAd && !vastTag.isNullOrBlank()) {
                 mediaItem = mediaItem.buildUpon()
                         .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
                         .build()
@@ -1137,17 +1140,23 @@ abstract class PlayerPageActivity :
     private fun onAdEventListener(it: AdEvent?) {
         when (it?.type) {
             LOG -> {
-                convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(it.ad))
+                ConvivaHelper.startAdBreak(it.ad, vastTag)
                 val message = it.adData["errorMessage"] ?: "Unknown error occurred."
-                convivaAdAnalytics?.reportAdFailed(message, ConvivaFactory.getConvivaAdMetadata(it.ad))
+                convivaAdAnalytics?.reportAdFailed(message, ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
             }
             LOADED -> {
-                convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(it.ad))
-                convivaAdAnalytics?.reportAdLoaded(ConvivaFactory.getConvivaAdMetadata(it.ad))
+                ConvivaHelper.startAdBreak(it.ad, vastTag)
+                convivaAdAnalytics?.reportAdLoaded(ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
             }
+            AD_BUFFERING -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.BUFFERING)
             STARTED -> {
-                convivaAdAnalytics?.reportAdStarted(ConvivaFactory.getConvivaAdMetadata(it.ad))
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate)
+                convivaAdAnalytics?.reportAdStarted(ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
+            }
+            AD_PROGRESS -> {
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate ?: 0)
+                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.RESOLUTION,it.ad?.vastMediaWidth ?: 0, it.ad?.vastMediaHeight ?: 0)
             }
             SKIPPED -> {
                 convivaAdAnalytics?.reportAdSkipped()
@@ -1155,18 +1164,8 @@ abstract class PlayerPageActivity :
             COMPLETED -> {
                 convivaAdAnalytics?.reportAdEnded()
             }
-            AD_PROGRESS -> {
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
-            }
-            CONTENT_PAUSE_REQUESTED -> {
-                
-            }
             CONTENT_RESUME_REQUESTED -> {
-                convivaVideoAnalytics?.reportAdBreakEnded()
-            }
-            ALL_ADS_COMPLETED -> {
-                
+                ConvivaHelper.endAdBreak()
             }
             else -> {
 //                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
@@ -1178,9 +1177,9 @@ abstract class PlayerPageActivity :
     private fun onAdErrorListener(it: AdErrorEvent?) {
         val errorMessage = it?.error?.message ?: "Unknown error occurred."
 //        Log.i("ADs_", "adEventListener: EventType-> AdError, ErrorMessage-> $errorMessage")
-        convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE, ConvivaFactory.getConvivaAdMetadata(null))
-        convivaAdAnalytics?.reportAdFailed(errorMessage, ConvivaFactory.getConvivaAdMetadata(null))
+        ConvivaHelper.startAdBreak(null, vastTag)
+        convivaAdAnalytics?.reportAdFailed(errorMessage, ConvivaHelper.getConvivaAdMetadata(null, vastTag))
         convivaAdAnalytics?.reportAdError(errorMessage, ConvivaSdkConstants.ErrorSeverity.WARNING)
-        convivaVideoAnalytics?.reportAdBreakEnded()
+        ConvivaHelper.endAdBreak()
     }
 }

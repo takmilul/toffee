@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
@@ -104,13 +105,14 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
-                    ToffeeAnalytics.logEvent("confirm_otp", bundleOf("confirm_otp_status" to "0"))
-                  //  ToffeeAnalytics.logEvent("login", bundleOf("login_failure_reason" to it.error.msg))
-
+                    ToffeeAnalytics.logEvent("confirm_otp", bundleOf(
+                        "confirm_otp_status" to "0",
+                        "confirm_otp_failure_reason" to it.error.msg
+                    ))
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
-                            "browser_screen" to "Enter OTP",
+                            FirebaseParams.BROWSER_SCREEN to "Enter OTP",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                 }
@@ -141,7 +143,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
-                            "browser_screen" to "Enter OTP",
+                            FirebaseParams.BROWSER_SCREEN to "Enter OTP",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg))
 

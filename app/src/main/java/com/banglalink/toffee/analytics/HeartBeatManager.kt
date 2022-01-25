@@ -9,7 +9,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -123,7 +122,7 @@ class HeartBeatManager @Inject constructor(
                                 ToffeeEvents.EXCEPTION,
                                 bundleOf(
                                     "api_name" to "Header Enrichment",
-                                    "browser_screen" to "Splash Screen",
+                                    FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                                     "error_code" to response.error.code,
                                     "error_description" to response.error.msg)
                             )
@@ -163,7 +162,7 @@ class HeartBeatManager @Inject constructor(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
                         "api_name" to ApiNames.SEND_HEART_BEAT,
-                        "browser_screen" to "Splash Screen",
+                        FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                         "error_code" to error.code,
                         "error_description" to error.msg)
                 )

@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentRedeemCodeBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
@@ -74,7 +74,7 @@ class RedeemCodeFragment : BaseFragment() {
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
                             "api_name" to ApiNames.REDEEM_REFERRAL_CODE,
-                            "browser_screen" to "Enter Referral code page",
+                            FirebaseParams.BROWSER_SCREEN to "Enter Referral code page",
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
