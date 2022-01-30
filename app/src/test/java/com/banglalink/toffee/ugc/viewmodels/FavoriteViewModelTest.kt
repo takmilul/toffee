@@ -1,25 +1,22 @@
 package com.banglalink.toffee.ugc.viewmodels
 
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.banglalink.toffee.MainCoroutineRule
 import com.banglalink.toffee.apiservice.GetFavoriteContents
 import com.banglalink.toffee.getDummyChannelList
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.favorite.FavoriteViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.AllOf
 import org.hamcrest.core.Is
+import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsInstanceOf
 import org.junit.Before
 import org.junit.Rule
-import org.hamcrest.MatcherAssert.*
-import org.hamcrest.core.IsEqual
-
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -32,6 +29,7 @@ class FavoriteViewModelTest {
 
     @ExperimentalCoroutinesApi
     @get:Rule val mainCoRule = MainCoroutineRule()
+//    @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {

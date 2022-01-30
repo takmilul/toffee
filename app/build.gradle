@@ -263,6 +263,7 @@ dependencies {
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation("androidx.test:runner:$test_core")
     testImplementation 'org.robolectric:robolectric:4.7.3'
+//    testImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation("androidx.test:rules:$test_core")
 
     // Assertions

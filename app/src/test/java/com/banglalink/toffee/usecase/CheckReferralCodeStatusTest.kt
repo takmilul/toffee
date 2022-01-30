@@ -1,11 +1,11 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.Constants.INVALID_REFERRAL_ERROR_CODE
+import com.banglalink.toffee.apiservice.CheckReferralCodeStatus
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.network.request.ReferralCodeStatusRequest
 import com.banglalink.toffee.data.network.response.ReferralCodeStatusResponse
-import com.banglalink.toffee.data.exception.ApiException
-import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.ReferralCodeStatusBean
-import com.banglalink.toffee.apiservice.CheckReferralCodeStatus
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.Assert.assertEquals

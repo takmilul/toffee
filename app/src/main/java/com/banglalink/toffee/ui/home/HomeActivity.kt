@@ -356,8 +356,6 @@ class HomeActivity :
 //            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
 //        }*/
         ConvivaHelper.init(applicationContext, true)
-        convivaAdAnalytics = ConvivaHelper.instance.convivaAdAnalytics
-        convivaVideoAnalytics = ConvivaHelper.instance.convivaVideoAnalytics
     }
     
     private fun showDeviceId() {

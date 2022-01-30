@@ -6,7 +6,10 @@ import com.banglalink.toffee.data.network.response.ContentResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.check
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.runBlocking
@@ -32,7 +35,7 @@ class GetContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009",
             ))
 
-            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock(), mock())
+            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock())
             Mockito.`when`(mockToffeeApi.getContents(any(), any(), any(), any(), any(), any(), any<ContentRequest>())).thenReturn(
                 Response.success(ContentResponse(
                     ContentBean(channelInfoList,1,1)
@@ -72,7 +75,7 @@ class GetContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009",
             ))
 
-            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock(), mock())
+            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock())
             Mockito.`when`(mockToffeeApi.getContents(any(), any(), any(), any(), any(), any(), any<ContentRequest>())).thenReturn(
                 Response.success(ContentResponse(
                     ContentBean(channelInfoList,1,1)
@@ -94,7 +97,7 @@ class GetContentsTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock(), mock())
+            val getContents = GetContents(SessionPreference.getInstance(), mockToffeeApi, mock())
             Mockito.`when`(mockToffeeApi.getContents(any(), any(), any(), any(), any(), any(), any<ContentRequest>())).thenReturn(
                 Response.success(ContentResponse(
                     ContentBean(null,0,10)

@@ -40,9 +40,6 @@ import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.getError
-import com.conviva.sdk.ConvivaAdAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
-import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
@@ -105,7 +102,6 @@ abstract class PlayerPageActivity :
     private var startAutoPlay = false
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
-    private var vastTag: String? = null
     protected var player: Player? = null
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -119,12 +115,10 @@ abstract class PlayerPageActivity :
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
-    protected var convivaAdAnalytics: ConvivaAdAnalytics? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
     @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
-    protected var convivaVideoAnalytics: ConvivaVideoAnalytics? = null
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
@@ -325,7 +319,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             adsLoader?.setPlayer(exoPlayer)
-            convivaVideoAnalytics?.setPlayer(exoPlayer)
+            ConvivaHelper.setPlayer(exoPlayer)
         }
     }
     
@@ -655,9 +649,7 @@ abstract class PlayerPageActivity :
         
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection) ?: return null
-        convivaVideoAnalytics?.setContentInfo(mapOf(
-            ConvivaSdkConstants.STREAM_URL to drmUrl
-        ))
+        ConvivaHelper.updateStreamUrl(drmUrl)
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             if (! channelInfo.isStingray) {
@@ -690,9 +682,7 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
         }
-        convivaVideoAnalytics?.setContentInfo(mapOf(
-            ConvivaSdkConstants.STREAM_URL to uri
-        ))
+        ConvivaHelper.updateStreamUrl(uri)
         return MediaItem.Builder().apply {
             if (! channelInfo.isStingray) {
                 httpDataSourceFactory?.setUserAgent(toffeeHeader)
@@ -748,17 +738,13 @@ abstract class PlayerPageActivity :
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
             val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLinear && channelInfo.urlTypeExt != PAYMENT
-            vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
-            if (shouldPlayAd && !vastTag.isNullOrBlank()) {
+            val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+            ConvivaHelper.setVastTagUrl(vastTag)
+            if (shouldPlayAd && vastTag.isNotBlank()) {
                 mediaItem = mediaItem.buildUpon()
                         .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
                         .build()
                 if (!isReload) currentlyPlayingVastUrl = tag.url
-                val adInfo = mapOf(
-                    ConvivaSdkConstants.AD_TAG_URL to vastTag,
-                    ConvivaSdkConstants.AD_PLAYER to ConvivaSdkConstants.AdPlayer.CONTENT.toString()
-                )
-                convivaAdAnalytics?.setAdListener(adsLoader, adInfo)
             }
         }
         
@@ -870,8 +856,7 @@ abstract class PlayerPageActivity :
         player?.stop()
         player?.clearMediaItems()
         getPlayerView().adViewGroup.removeAllViews()
-        convivaVideoAnalytics?.reportPlaybackError(errorMessage, 
-            ConvivaSdkConstants.ErrorSeverity.WARNING)
+        ConvivaHelper.onPlaybackError(errorMessage)
         if(showMessage) {
             channelCannotBePlayedDueToSettings() //notify hook/subclass
         }
@@ -994,12 +979,12 @@ abstract class PlayerPageActivity :
     private inner class PlayerEventListener : Player.Listener {
         override fun onPlayerError(e: PlaybackException) {
             e.printStackTrace()
-            ToffeeAnalytics.logException(e)
-            if (isBehindLiveWindow(e)) {
+            if (isBehindLiveWindow(e) && reloadCounter < 3) {
                 clearStartPosition()
                 reloadChannel()
+                reloadCounter++
             }
-
+            
 //            if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
 //                playlistManager.getCurrentChannel()?.is_drm_active = 0
 //                reloadChannel()
@@ -1023,11 +1008,13 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
                 reloadCounter++
+            } else {
+                ToffeeAnalytics.logException(e)
             }
             
-            getCurrentChannelInfo()?.let { cinfo->
-                if(!cinfo.isLinear) {
-                    insertContentViewProgress(cinfo, player?.duration ?: -1)
+            getCurrentChannelInfo()?.let { channelInfo->
+                if(!channelInfo.isLinear) {
+                    insertContentViewProgress(channelInfo, player?.duration ?: -1)
                 }
             }
         }
@@ -1139,34 +1126,14 @@ abstract class PlayerPageActivity :
     
     private fun onAdEventListener(it: AdEvent?) {
         when (it?.type) {
-            LOG -> {
-                ConvivaHelper.startAdBreak(it.ad, vastTag)
-                val message = it.adData["errorMessage"] ?: "Unknown error occurred."
-                convivaAdAnalytics?.reportAdFailed(message, ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
-            }
-            LOADED -> {
-                ConvivaHelper.startAdBreak(it.ad, vastTag)
-                convivaAdAnalytics?.reportAdLoaded(ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
-            }
-            AD_BUFFERING -> convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.BUFFERING)
-            STARTED -> {
-                convivaAdAnalytics?.reportAdStarted(ConvivaHelper.getConvivaAdMetadata(it.ad, vastTag))
-            }
-            AD_PROGRESS -> {
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, it.ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, it.ad?.vastMediaBitrate ?: 0)
-                convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.RESOLUTION,it.ad?.vastMediaWidth ?: 0, it.ad?.vastMediaHeight ?: 0)
-            }
-            SKIPPED -> {
-                convivaAdAnalytics?.reportAdSkipped()
-            }
-            COMPLETED -> {
-                convivaAdAnalytics?.reportAdEnded()
-            }
-            CONTENT_RESUME_REQUESTED -> {
-                ConvivaHelper.endAdBreak()
-            }
+            LOG -> ConvivaHelper.onAdFailed(it.adData["errorMessage"] ?: "Unknown error occurred.", it.ad)
+            LOADED -> ConvivaHelper.onAdLoaded(it.ad)
+            AD_BUFFERING -> ConvivaHelper.onAdBuffering(it.ad)
+            STARTED -> ConvivaHelper.onAdStarted(it.ad)
+            AD_PROGRESS -> ConvivaHelper.onAdProgress(it.ad)
+            SKIPPED -> ConvivaHelper.onAdSkipped()
+            COMPLETED -> ConvivaHelper.onAdEnded()
+            CONTENT_RESUME_REQUESTED -> ConvivaHelper.onAdBreakEnded()
             else -> {
 //                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
 //                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
@@ -1175,11 +1142,6 @@ abstract class PlayerPageActivity :
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
-        val errorMessage = it?.error?.message ?: "Unknown error occurred."
-//        Log.i("ADs_", "adEventListener: EventType-> AdError, ErrorMessage-> $errorMessage")
-        ConvivaHelper.startAdBreak(null, vastTag)
-        convivaAdAnalytics?.reportAdFailed(errorMessage, ConvivaHelper.getConvivaAdMetadata(null, vastTag))
-        convivaAdAnalytics?.reportAdError(errorMessage, ConvivaSdkConstants.ErrorSeverity.WARNING)
-        ConvivaHelper.endAdBreak()
+        ConvivaHelper.onAdError(it)
     }
 }
