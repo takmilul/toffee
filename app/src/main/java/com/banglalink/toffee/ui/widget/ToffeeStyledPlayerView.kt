@@ -62,6 +62,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private var videoHeight = -1
     private var tickTime: Long = 0
     protected var isMinimize = false
+    private var isStateEnded = false
     private var debugJob: Job? = null
     private lateinit var controllerBg: View
     private lateinit var playNext: ImageView
@@ -645,12 +646,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 autoplayProgress.visibility = View.GONE
                 val progressTime = tickTime
                 stopAutoplayTimer()
-                if (progressTime in 1 until AUTOPLAY_INTERVAL) {
-                    ConvivaHelper.endPlayerSession()
+                if((mPlayListListener?.isAutoplayEnabled() == false && isStateEnded) || progressTime in 1 until AUTOPLAY_INTERVAL) {
+                    ConvivaHelper.endPlayerSession(true)
                     player?.currentMediaItem?.getChannelMetadata(player)?.let {
                         ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
                     }
                 }
+                isStateEnded = false
             }
             Player.STATE_IDLE -> {
                 previewImage.setImageResource(0)
@@ -679,6 +681,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     startAutoPlayTimer()
                 } else {
                     autoplayProgress.visibility = GONE
+                    ConvivaHelper.endPlayerSession(true)
+                    isStateEnded = true
                 }
             }
         }

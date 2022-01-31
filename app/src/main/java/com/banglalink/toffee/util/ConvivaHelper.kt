@@ -6,6 +6,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.conviva.sdk.ConvivaAdAnalytics
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
+import com.conviva.sdk.ConvivaSdkConstants.AdPosition.*
 import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -23,6 +24,8 @@ class ConvivaHelper private constructor() {
     
     companion object {
         val instance = ConvivaHelper()
+        private var isAdPaused = false
+        private var isAdFailureActive = false
         private var isAdSessionActive = false
         private var isVideoSessionActive = false
         
@@ -92,7 +95,7 @@ class ConvivaHelper private constructor() {
                     ConvivaConstants.AD_TECHNOLOGY to "Client Side",
                     ConvivaConstants.AD_ID to (ad?.adId ?: "N/A"),
                     ConvivaConstants.AD_SYSTEM to (ad?.adWrapperSystems?.contentToString() ?: "N/A"),
-                    ConvivaConstants.AD_POSITION to "N/A",
+                    ConvivaConstants.AD_POSITION to (ad?.adPodInfo?.podIndex?.let { if (it == 0) PREROLL.toString() else if (it == -1) POSTROLL.toString() else MIDROLL.toString() } ?: "N/A"),
                     ConvivaConstants.AD_STITCHER to "N/A",
                     ConvivaConstants.AD_IS_SLATE to false.toString(),
                     ConvivaConstants.AD_MEDIA_FILE_API_FRAMEWORK to "N/A",
@@ -103,18 +106,13 @@ class ConvivaHelper private constructor() {
                 )
         }
         
-        private fun onAdBreakStarted(ad: Ad?) {
+        fun onAdBreakStarted(ad: Ad?) {
             if (isAdSessionActive) {
                 onAdBreakEnded()
             }
             instance.convivaVideoAnalytics?.reportAdBreakStarted(ConvivaSdkConstants.AdPlayer.CONTENT, ConvivaSdkConstants.AdType.CLIENT_SIDE,
                 getConvivaAdMetadata(ad))
             isAdSessionActive = true
-        }
-        
-        fun onAdLoaded(ad: Ad?) {
-            onAdBreakStarted(ad)
-            instance.convivaAdAnalytics?.reportAdLoaded(getConvivaAdMetadata(ad))
         }
         
         fun onAdBuffering(ad: Ad?) {
@@ -126,40 +124,76 @@ class ConvivaHelper private constructor() {
             reportAdMetrics(ad)
         }
         
+        fun onAdPaused(ad: Ad?) {
+            isAdPaused = true
+            reportAdMetrics(ad, isPaused = true)
+        }
+        
+        fun onAdResumed(ad: Ad?) {
+            isAdPaused = false
+            reportAdMetrics(ad, isResumed = true)
+        }
+        
         fun onAdProgress(ad: Ad?) {
             reportAdMetrics(ad, isPlaying = true)
         }
         
         fun onAdSkipped() {
+            isAdPaused = false
             instance.convivaAdAnalytics?.reportAdSkipped()
-            onAdEnded()
         }
         
         fun onAdEnded() {
+            isAdPaused = false
+            isAdFailureActive = false
             instance.convivaAdAnalytics?.reportAdEnded()
         }
         
+        fun onAllAdEnded() {
+            isAdPaused = false
+            isAdFailureActive = false
+        }
+        
         fun onAdFailed(errorMessage: String, ad: Ad? = null) {
-            onAdBreakStarted(ad)
-            instance.convivaAdAnalytics?.reportAdFailed(errorMessage, getConvivaAdMetadata(ad))
+            if (!isAdFailureActive) {
+                isAdFailureActive = true
+                onAdBreakStarted(ad)
+                instance.convivaAdAnalytics?.reportAdFailed(errorMessage, getConvivaAdMetadata(ad))
+            }
         }
         
         fun onAdError(adErrorEvent: AdErrorEvent?) {
             val errorMessage = adErrorEvent?.error?.message ?: "Unknown error occurred."
             onAdFailed(errorMessage)
             onAdBreakEnded()
+            isAdFailureActive = false
         }
         
-        private fun reportAdMetrics(ad: Ad?, isBuffering: Boolean = false, isPlaying: Boolean = false) {
-            if (isBuffering) {
-                instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.BUFFERING)
-            } else {
-                if (isPlaying) {
-                    instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
-                    instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
+        private fun reportAdMetrics(ad: Ad?, isBuffering: Boolean = false, isPlaying: Boolean = false, isPaused: Boolean = false, isResumed: Boolean = 
+            false) {
+            if (isAdSessionActive) {
+                when {
+                    isBuffering -> {
+                        instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.BUFFERING)
+                    }
+                    isPaused -> {
+                        instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PAUSED)
+                    }
+                    isResumed -> {
+                        instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
+                        instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, ad?.vastMediaBitrate ?: 0)
+                    }
+                    isPlaying -> {
+                        if (! isAdPaused) {
+                            instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAYER_STATE, ConvivaSdkConstants.PlayerState.PLAYING)
+                            instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, ad?.vastMediaBitrate ?: 0)
+                            instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.PLAY_HEAD_TIME, ad?.adPodInfo?.adPosition?.toLong() ?: 0L)
+                        }
+                    }
+                    else -> {
+                        instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.RESOLUTION, ad?.vastMediaWidth ?: 0, ad?.vastMediaHeight ?: 0)
+                    }
                 }
-                instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.BITRATE, ad?.vastMediaBitrate ?: 0)
-                instance.convivaAdAnalytics?.reportAdMetric(ConvivaSdkConstants.PLAYBACK.RESOLUTION, ad?.vastMediaWidth ?: 0, ad?.vastMediaHeight ?: 0)
             }
         }
         
@@ -177,6 +211,8 @@ class ConvivaHelper private constructor() {
             if (isVideoSessionActive) {
                 onAdBreakEnded(isForceClosed)
                 instance.convivaVideoAnalytics?.reportPlaybackEnded()
+                isAdFailureActive = false
+                isAdSessionActive = false
                 isVideoSessionActive = false
             }
         }

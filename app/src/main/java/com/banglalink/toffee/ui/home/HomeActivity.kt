@@ -1031,7 +1031,7 @@ class HomeActivity :
         if (player is CastPlayer) {
             maximizePlayer()
         }
-        ConvivaHelper.endPlayerSession()
+        ConvivaHelper.endPlayerSession(true)
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {

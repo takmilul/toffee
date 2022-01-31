@@ -1127,13 +1127,16 @@ abstract class PlayerPageActivity :
     private fun onAdEventListener(it: AdEvent?) {
         when (it?.type) {
             LOG -> ConvivaHelper.onAdFailed(it.adData["errorMessage"] ?: "Unknown error occurred.", it.ad)
-            LOADED -> ConvivaHelper.onAdLoaded(it.ad)
             AD_BUFFERING -> ConvivaHelper.onAdBuffering(it.ad)
             STARTED -> ConvivaHelper.onAdStarted(it.ad)
+            PAUSED -> ConvivaHelper.onAdPaused(it.ad)
+            RESUMED -> ConvivaHelper.onAdResumed(it.ad)
             AD_PROGRESS -> ConvivaHelper.onAdProgress(it.ad)
             SKIPPED -> ConvivaHelper.onAdSkipped()
             COMPLETED -> ConvivaHelper.onAdEnded()
+            CONTENT_PAUSE_REQUESTED -> ConvivaHelper.onAdBreakStarted(it.ad)
             CONTENT_RESUME_REQUESTED -> ConvivaHelper.onAdBreakEnded()
+            ALL_ADS_COMPLETED -> ConvivaHelper.onAllAdEnded()
             else -> {
 //                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
 //                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
@@ -1142,6 +1145,8 @@ abstract class PlayerPageActivity :
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
+//        val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
+//        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
         ConvivaHelper.onAdError(it)
     }
 }
