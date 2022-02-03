@@ -1,10 +1,9 @@
 package com.banglalink.toffee.ui.splash
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.medallia.digital.mobilesdk.MedalliaDigital
 
 class SplashScreenActivity : BaseAppCompatActivity() {
     
@@ -16,6 +15,7 @@ class SplashScreenActivity : BaseAppCompatActivity() {
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(true)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        MedalliaDigital.disableIntercept()
     }
     
     override fun onDetachedFromWindow() {

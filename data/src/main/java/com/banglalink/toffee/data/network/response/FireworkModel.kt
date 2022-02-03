@@ -1,6 +1,4 @@
 package com.banglalink.toffee.data.network.response
-import com.banglalink.toffee.model.FeatureContentBean
-import com.banglalink.toffee.model.FollowCategoryBean
 import com.google.gson.annotations.SerializedName
 data class FireworkModel(
     @SerializedName("playlist_name")
@@ -11,4 +9,8 @@ data class FireworkModel(
     val playlistId: String?,
     @SerializedName("is_active")
     val isEnabled: Int = 0
-)
+) {
+    @get:SerializedName("isActive")
+    val isActive: Boolean
+        get() = isEnabled ==1
+}

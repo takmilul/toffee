@@ -48,7 +48,7 @@ class GetStingrayContentService @Inject constructor(
                     it.id.toLong(),
                     it.type ?: "Stingray",
                     1,
-                    "Karaoke - Stingray",
+                    "Music Playlist",
                     Gson().toJson(it),
                     it.view_count?.toLong() ?: 0L,
                     it.isStingray

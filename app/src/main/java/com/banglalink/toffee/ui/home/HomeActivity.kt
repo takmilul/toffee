@@ -336,8 +336,8 @@ class HomeActivity :
         if (mPref.isFireworkActive) {
             viewModel.isFireworkActive.postValue(true)
         }
-        if (!mPref.isMedalliaActive) {
-            MedalliaDigital.disableIntercept()
+        if (mPref.isMedalliaActive) {
+            MedalliaDigital.enableIntercept()
         }
         if (mPref.isConvivaActive) {
             initConvivaSdk()
@@ -346,15 +346,15 @@ class HomeActivity :
     }
     
     private fun initConvivaSdk() {
-//        if(BuildConfig.DEBUG) {
+        if(BuildConfig.DEBUG) {
             val settings: Map<String, Any> = mutableMapOf(
                 ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
                 ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
             )
             ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
-//        }/* else {
-//            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
-//        }*/
+        } else {
+            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
+        }
         ConvivaHelper.init(applicationContext, true)
     }
     
