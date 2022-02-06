@@ -320,8 +320,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     }
                     return@setOnMenuItemClickListener true
                 }
-                show()
-            }
+            }.show()
         } else {
             openMenu(view, item)
         }
@@ -331,9 +330,9 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         MyPopupWindow(requireContext(), anchor).apply {
             inflate(R.menu.menu_catchup_item)
             if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-                menu.getItem(0).title = "Add to Favorites"
+                menu.findItem(R.id.menu_fav).title = "Add to Favorites"
             } else {
-                menu.getItem(0).title = "Remove from Favorites"
+                menu.findItem(R.id.menu_fav).title = "Remove from Favorites"
             }
             menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
             menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
@@ -354,8 +353,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 }
                 return@setOnMenuItemClickListener true
             }
-            show()
-        }
+        }.show()
     }
 
     override fun onDestroyView() {

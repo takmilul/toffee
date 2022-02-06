@@ -128,6 +128,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 createPlaylistButton.visibility = View.GONE
                 emptyViewLabel.text = getString(string.empty_playlist_msg_user)
             }
+            emptyView.isVisible = true
         }
     }
     

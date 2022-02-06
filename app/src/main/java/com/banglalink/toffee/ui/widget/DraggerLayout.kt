@@ -21,26 +21,26 @@ import kotlin.math.max
 import kotlin.math.min
 
 @AndroidEntryPoint
-class DraggerLayout @JvmOverloads constructor(context: Context?,
-                    attrs: AttributeSet? = null,
-                    defStyle: Int = 0
+class DraggerLayout @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
 ):RelativeLayout(context, attrs, defStyle) {
-    private var dragViewId = 0
-    private var bottomViewId = 0
-    private lateinit var dragView: ToffeeStyledPlayerView
-    private lateinit var bottomView: View
-    private var lastAction = 0
-    private val bottomMargin = (52 + 72).px
-    private lateinit var viewDragHelper: ViewDragHelper
-    private lateinit var draggableViewCallback: DraggableViewCallback
-    private var mVerticalDragRange = 0
-    private var mHorizontalDragRange = 0
+    
     private var mTop = 0
     private var mLeft = 0
-    private var isClamped = 0
+    private var lastAction = 0
+    private var dragViewId = 0
+    private var bottomViewId = 0
+    private var mVerticalDragRange = 0
+    private var mHorizontalDragRange = 0
+    private lateinit var bottomView: View
+    private val bottomMargin = (52 + 72).px
+    @Inject lateinit var mPref: SessionPreference
+    private lateinit var viewDragHelper: ViewDragHelper
+    private lateinit var dragView: ToffeeStyledPlayerView
+    private lateinit var draggableViewCallback: DraggableViewCallback
     private val onPositionChangedListenerList: MutableList<OnPositionChangedListener> = ArrayList()
-    @Inject
-    lateinit var mPref: SessionPreference
 
     init {
         initializeAttributes(attrs)
@@ -175,11 +175,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             if(isViewHit(it, ev.x.toInt(), ev.y.toInt())) return false
         }
 
-        if (mPref.isEnableFloatingWindow && viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
-                dragView, ev.x
-                    .toInt(), ev.y.toInt()
-            )
-        ) {
+        if (mPref.isEnableFloatingWindow && viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(dragView, ev.x.toInt(), ev.y.toInt())) {
             return true
         }
 
@@ -199,12 +195,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 //                if(ev.actionMasked == MotionEvent.ACTION_UP) Log.e("SCROLL", "ACTION_UP2")
                 return dragView.handleTouchEvent(ev)
             }
-            if (isViewHit(
-                    dragView,
-                    ev.x.toInt(),
-                    ev.y.toInt()
-                ) || !isMaximized() && !isMinimize() || isHorizontalDragged()
-            ) {
+            if (isViewHit(dragView, ev.x.toInt(), ev.y.toInt()) || !isMaximized() && !isMinimize() || isHorizontalDragged()) {
                 when (ev.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
                         lastAction = MotionEvent.ACTION_DOWN
@@ -265,18 +256,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
         //        super.onLayout(changed,l,t,r,b);
-        dragView.layout(
-            mLeft,
-            mTop,
-            mLeft + dragView.measuredWidth,
-            mTop + dragView.measuredHeight
-        )
-        bottomView.layout(
-            mLeft,
-            mTop + dragView.measuredHeight,
-            mLeft + bottomView.measuredWidth,
-            mTop + b
-        )
+        dragView.layout(mLeft, mTop, mLeft + dragView.measuredWidth, mTop + dragView.measuredHeight)
+        bottomView.layout(mLeft, mTop + dragView.measuredHeight, mLeft + bottomView.measuredWidth, mTop + b)
     }
 
     override fun computeScroll() {
@@ -286,12 +267,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun destroyView() {
-        if (viewDragHelper.smoothSlideViewTo(
-                dragView,
-                0 - (right - paddingRight),
-                0
-            )
-        ) {
+        if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (right - paddingRight), 0)) {
             parent?.let {
                 if(it is View) ViewCompat.postInvalidateOnAnimation(it)
             }
@@ -310,12 +286,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             super.onViewReleased(releasedChild, xvel, yvel)
             if (isHorizontalDragged()) {
                 if (right - paddingRight - dragView.right > right / 5) {
-                    if (viewDragHelper.smoothSlideViewTo(
-                            dragView,
-                            0 - (right - paddingRight),
-                            parent.height - dragView.height
-                        )
-                    ) {
+                    if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (right - paddingRight), parent.height - dragView.height)) {
                         ViewCompat.postInvalidateOnAnimation(parent)
                     }
                     onPositionChangedListenerList.forEach {
@@ -343,13 +314,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             return mHorizontalDragRange
         }
 
-        override fun onViewPositionChanged(
-            changedView: View,
-            left: Int,
-            top: Int,
-            dx: Int,
-            dy: Int
-        ) {
+        override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             mTop = top
             mLeft = left
             if (!isHorizontalDragged()) {

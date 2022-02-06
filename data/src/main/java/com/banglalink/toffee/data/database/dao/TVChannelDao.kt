@@ -79,4 +79,7 @@ abstract class TVChannelDao {
 
     @Query("SELECT * FROM TVChannelItem where categoryName=\"Movies\" ORDER BY viewCount DESC")
     abstract fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
+
+    @Query("SELECT COUNT(channelId) FROM TVChannelItem where categoryName=\"Movies\" ORDER BY viewCount DESC")
+    abstract suspend fun getPopularMovieChannelsCount(): Int
 }

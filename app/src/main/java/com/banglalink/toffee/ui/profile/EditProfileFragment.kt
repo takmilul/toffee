@@ -23,14 +23,16 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.ApiRoutes.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
@@ -98,14 +100,13 @@ class EditProfileFragment : BaseFragment() {
 
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
-            ?.observe(viewLifecycleOwner, {
+            ?.observe(viewLifecycleOwner) {
                 it?.let { photoData ->
                     ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
                     ToffeeAnalytics.logBreadCrumb("Handling crop image")
                     handleUploadImage(photoData.toUri())
-
                 }
-            })
+            }
     }
 
     private fun handleSaveButton() {
@@ -138,31 +139,37 @@ class EditProfileFragment : BaseFragment() {
                     email = email.trim()
                     address = address.trim()
                 }
-                observe(viewModel.updateProfile(form)) {
-                    progressDialog.dismiss()
-                    when (it) {
-                        is Resource.Success -> {
-                            if (previousEmail != form.email) ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED)
-                            if(form.address.isNotBlank() && previousAddress != form.address){
-                                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED)
-                            }
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
-                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
-                            requireContext().showToast("Profile updated successfully")
-                            findNavController().popBackStack()
-                        }
-                        is Resource.Failure -> {
-                            ToffeeAnalytics.logEvent(
-                                ToffeeEvents.EXCEPTION,
-                                bundleOf(
-                                    "api_name" to ApiNames.UPDATE_USER_PROFILE,
-                                    FirebaseParams.BROWSER_SCREEN to BrowsingScreens.PROFILE,
-                                    "error_code" to it.error.code,
-                                    "error_description" to it.error.msg)
-                            )
-                            requireContext().showToast(it.error.msg)
-                        }
+                observeEditProfile(form)
+                viewModel.updateProfile(form)
+            }
+        }
+    }
+    
+    private fun observeEditProfile(form: EditProfileForm) {
+        observe(viewModel.editProfileLiveData) {
+            progressDialog.dismiss()
+            when (it) {
+                is Success -> {
+                    mPref.customerName = form.fullName
+                    if (previousEmail != form.email) ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED)
+                    if (form.address.isNotBlank() && previousAddress != form.address) {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED)
                     }
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                    requireContext().showToast("Profile updated successfully")
+                    findNavController().popBackStack()
+                }
+                is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.UPDATE_USER_PROFILE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.PROFILE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg
+                        )
+                    )
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

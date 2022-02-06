@@ -128,16 +128,18 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
     checkVerification {
         ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {
-            getHomeViewModel().updateFavorite(item).observe(this, {
+            getHomeViewModel().updateFavorite(item).observe(this) {
                 when (it) {
                     is Resource.Success -> {
                         val isFavorite = it.data.isFavorite
-                        item.favorite = if(isFavorite == 1) "1" else "0"
+                        item.favorite = if (isFavorite == 1) "1" else "0"
                         lifecycleScope.launch {
-                            favoriteDao.insert(FavoriteItem(
-                                channelId = item.id.toLong(),
-                                isFavorite = isFavorite
-                            ))
+                            favoriteDao.insert(
+                                FavoriteItem(
+                                    channelId = item.id.toLong(),
+                                    isFavorite = isFavorite
+                                )
+                            )
                         }
                         when (isFavorite) {
                             0 -> {
@@ -154,7 +156,7 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
                         showToast(it.error.msg)
                     }
                 }
-            })
+            }
         }
     }
 }

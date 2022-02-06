@@ -33,7 +33,10 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -95,11 +98,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                    mAdapter.apply {
-                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                        binding.emptyView.isVisible = showEmpty
-                        binding.myChannelVideos.isVisible = !showEmpty
-                    }
+                    val showEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
+                    binding.myChannelVideos.isVisible = !showEmpty
                 }
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
@@ -144,6 +145,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 emptyViewLabel.text = getString(R.string.public_video_empty_msg)
                 (emptyViewIcon.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 32.px
             }
+            emptyView.isVisible = true
         }
     }
     
@@ -154,8 +156,16 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 inflate(R.menu.menu_channel_owner_videos)
             } else {
                 inflate(R.menu.menu_channel_videos)
+                menu.findItem(R.id.menu_report).isVisible = mPref.customerId != item.channel_owner_id
+                menu.findItem(R.id.menu_fav).isVisible = item.isApproved == 1
+                if (item.favorite == null || item.favorite == "0" || !mPref.isVerifiedUser) {
+                    menu.findItem(R.id.menu_fav).title = "Add to Favorites"
+                } else {
+                    menu.findItem(R.id.menu_fav).title = "Remove from Favorites"
+                }
             }
-            this.menu.removeItem(R.id.menu_share)
+            menu.findItem(R.id.menu_share).isVisible = item.isApproved == 1
+            
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
@@ -187,8 +197,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 }
                 return@setOnMenuItemClickListener true
             }
-            show()
-        }
+        }.show()
     }
     
     private fun showDeleteVideoDialog(contentId: Int) {

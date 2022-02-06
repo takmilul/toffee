@@ -4,6 +4,8 @@ import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.model.EditProfileForm
+import com.banglalink.toffee.model.ProfileResponseBean
 import javax.inject.Inject
 
 class UpdateProfile @Inject constructor(
@@ -11,20 +13,19 @@ class UpdateProfile @Inject constructor(
     private val toffeeApi: ToffeeApi,
 ) {
 
-    suspend fun execute(fullName: String, email: String, address: String, phoneNo: String, ): Boolean {
-        tryIO2 {
+    suspend fun execute(editProfileForm: EditProfileForm): ProfileResponseBean {
+        val response = tryIO2 {
             toffeeApi.updateProfile(
                 UpdateProfileRequest(
-                    fullName,
-                    email,
-                    phoneNo,
-                    address,
+                    editProfileForm.fullName,
+                    editProfileForm.email,
+                    editProfileForm.phoneNo,
+                    editProfileForm.address,
                     preference.customerId,
                     preference.password
                 )
             )
         }
-        preference.customerName = fullName
-        return true
+        return response.response
     }
 }

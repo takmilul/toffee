@@ -9,11 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetContentCategories
 import com.banglalink.toffee.apiservice.UpdateProfile
 import com.banglalink.toffee.apiservice.UploadProfileImage
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.EditProfileForm
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.SubscriberPhotoBean
+import com.banglalink.toffee.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -28,6 +26,7 @@ class EditProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val categories = MutableLiveData<List<Category>>()
+    val editProfileLiveData = MutableLiveData<Resource<ProfileResponseBean>>()
 
     init {
         viewModelScope.launch {
@@ -42,14 +41,12 @@ class EditProfileViewModel @Inject constructor(
     }
 
     
-    fun updateProfile(editProfileForm: EditProfileForm): LiveData<Resource<Boolean>> {
-        return resultLiveData {
-            updateProfile.execute(
-                editProfileForm.fullName,
-                editProfileForm.email,
-                editProfileForm.address,
-                editProfileForm.phoneNo
-            )
+    fun updateProfile(editProfileForm: EditProfileForm) {
+        viewModelScope.launch { 
+            val response = resultFromResponse  {
+                updateProfile.execute(editProfileForm)
+            }
+            editProfileLiveData.postValue(response)
         }
     }
 

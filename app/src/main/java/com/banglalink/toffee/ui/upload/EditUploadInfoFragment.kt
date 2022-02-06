@@ -286,9 +286,9 @@ class EditUploadInfoFragment : BaseFragment() {
     
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
-            ?.observe(viewLifecycleOwner, {
+            ?.observe(viewLifecycleOwner) {
                 viewModel.saveThumbnail(it)
-            })
+            }
     }
     
     private fun setupAgeSpinner() {

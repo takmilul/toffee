@@ -240,7 +240,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun observeThumbnailChange() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.observe(viewLifecycleOwner, {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.observe(viewLifecycleOwner) {
             it?.let {
                 binding.bannerImageView.load(it) {
                     memoryCachePolicy(CachePolicy.DISABLED)
@@ -249,7 +249,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 }
             }
             viewModel.saveThumbnail(it)
-        })
+        }
     }
 
     private fun setupTagView() {
@@ -313,6 +313,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     requireContext().showToast(it.data.message)
                     findNavController().navigateUp()
                     videosReloadViewModel.reloadVideos.value = true
+                    videosReloadViewModel.reloadPlaylist.value = true
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(

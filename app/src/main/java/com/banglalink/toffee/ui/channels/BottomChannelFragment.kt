@@ -51,7 +51,6 @@ class BottomChannelFragment: BaseFragment() {
             adapter = mAdapter
         }
 
-        observeList(false)
         observe(homeViewModel.isStingray) {
             observeList(it)
         }
