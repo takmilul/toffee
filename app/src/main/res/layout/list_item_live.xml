@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.listeners.OptionCallBack" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,6 +31,7 @@
 
 
             <ImageView
+                android:contentDescription="@string/txt_channel"
                 android:id="@+id/channel"
                 android:layout_width="@dimen/channel_width"
                 android:layout_height="@dimen/channel_height"
@@ -55,17 +56,18 @@
 
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:paddingTop="8dp"
-            android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
+            android:onClick="@{(v)->callback.onOptionClicked(v, data)}"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
-            app:srcCompat="@drawable/ic_more" />
+            app:srcCompat="@drawable/ic_menu_more" />
 
         <TextView
             android:id="@+id/name"
@@ -124,13 +126,13 @@
             android:textSize="16sp"
             bindViewCount="@{data}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/eyeIV"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/duration"
             tools:text="18K" />
 
         <TextView
-            android:id="@+id/eyeIV"
+            android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

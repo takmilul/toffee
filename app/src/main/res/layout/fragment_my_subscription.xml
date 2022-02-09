@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.banglalink.toffee.ui.widget.SmartNestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movieLatestScroller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/subscribedChannels"
+        android:name="com.banglalink.toffee.ui.subscription.SubscribedChannelsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+</com.banglalink.toffee.ui.widget.SmartNestedScrollView>

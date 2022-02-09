@@ -16,36 +16,41 @@
         xmlns:tools="http://schemas.android.com/tools">
 
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+        <ImageView
+            android:contentDescription="@string/txt_channel"
+            android:id="@+id/icon"
+            android:layout_width="@dimen/channel_width"
+            android:layout_height="@dimen/channel_height"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
+            loadChannelImage="@{data}"
+            android:background="@drawable/circular_white_bg"
+            android:src="@mipmap/ic_menu_channel"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="@dimen/channel_width"
-                android:layout_height="@dimen/channel_height"
-                android:layout_marginBottom="8dp"
-                loadChannelImage="@{data}"
-                android:background="@drawable/circular_white_bg"
-                android:src="@mipmap/ic_menu_channel"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-            <ImageView
-                android:id="@+id/premium_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom|center_horizontal"
-                togglePremiumIcon="@{data}"
-                android:src="@drawable/ic_vip_badge"/>
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"/>
 
+        <TextView
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:gravity="center|top"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:lines="2"
+            android:ellipsize="end"
+            tools:text="@{data.program_name}"
+            android:textColor="#7990AC"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/icon"
+            app:layout_constraintStart_toStartOf="@+id/icon"
+            app:layout_constraintTop_toBottomOf="@+id/icon"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

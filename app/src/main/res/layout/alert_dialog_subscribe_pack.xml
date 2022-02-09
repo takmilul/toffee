@@ -23,9 +23,8 @@
 
     <Button
         android:id="@+id/ok_button"
-        style="@style/Button1Style"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        style="@style/ButtonStyleSolidPink"
+        android:layout_width="@dimen/button_accent_width"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
@@ -48,7 +47,8 @@
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/close" />
+        app:srcCompat="@drawable/ic_close"
+        android:contentDescription="@string/txt_close" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -58,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_vip_badge" />
+        app:srcCompat="@drawable/ic_vip_badge"
+        android:contentDescription="@string/txt_badge" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,10 +6,16 @@
         android:title="Search"
         android:actionLayout="@layout/custom_searchview_layout"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_menu_search"
         android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
         app:showAsAction="always" />
 
+
+    <item
+        android:id="@+id/action_notification"
+        android:title="Notification"
+        app:actionLayout="@layout/notification_action_layout"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_avatar"
         android:title="Avatar"

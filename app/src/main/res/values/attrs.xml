@@ -60,4 +60,38 @@
         </attr>
 
     </declare-styleable>
+
+    <declare-styleable name="ReadMoreTextView">
+        <attr name="readMoreExpandedText" format="string" />
+        <attr name="readMoreCollapsedText" format="string" />
+        <attr name="readMoreLength" format="integer" />
+        <attr name="showReadMoreExpandedText" format="boolean" />
+        <attr name="readMoreColorClickableText" format="color" />
+        <attr name="readMoreTextLines" format="integer" />
+        <attr name="readMoreTextSize" format="dimension" />
+        <attr name="readMoreFontFamily" format="reference" />
+        <attr name="readMoreMode">
+            <enum name="readMoreModeLine" value="0"/>
+            <enum name="readMoreModeLength" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="PlayerOverlayView">
+        <attr name="playerView" format="reference" />
+        <attr name="seekSeconds" format="integer" />
+        <attr name="animationDuration" format="integer" />
+        <attr name="iconAnimationDuration" format="integer" />
+        <attr name="arcSize" format="dimension" />
+        <attr name="tapCircleColor" format="color" />
+        <attr name="backgroundCircleColor" format="color" />
+
+        <attr name="textAppearance" format="reference" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MultiTextButton">
+        <attr name="multitext_layout_width" format="dimension" />
+        <attr name="multitext_layout_height" format="dimension" />
+        <attr name="multitext_textSize" format="dimension" />
+    </declare-styleable>
 </resources>

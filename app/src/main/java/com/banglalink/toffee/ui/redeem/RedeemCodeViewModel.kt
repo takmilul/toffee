@@ -1,24 +1,20 @@
 package com.banglalink.toffee.ui.redeem
 
-import android.app.Application
-import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import androidx.lifecycle.ViewModel
+import com.banglalink.toffee.apiservice.RedeemReferralCode
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.RedeemReferralCodeBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.RedeemReferralCode
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RedeemCodeViewModel(@NonNull application: Application) : BaseViewModel(application) {
+@HiltViewModel
+class RedeemCodeViewModel @Inject constructor(
+    private val redeemReferralCode: RedeemReferralCode,
+) : ViewModel() {
 
-    private val redeemReferralCode by unsafeLazy {
-        RedeemReferralCode(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    fun redeemReferralCode(referralCode: String):LiveData<Resource<RedeemReferralCodeBean>>{
+    fun redeemReferralCode(referralCode: String): LiveData<Resource<RedeemReferralCodeBean>> {
         return resultLiveData {
             redeemReferralCode.execute(referralCode)
         }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.banglalink.toffee.ui.player.PlayerPreview
+        android:id="@+id/dtInterceptor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+        android:id="@id/exo_content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/exo_shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@null" />
+
+    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+    <FrameLayout android:id="@id/exo_ad_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout android:id="@id/exo_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:id="@+id/controller_bg"
+        android:background="#40000000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/debug_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_casting"
+        tools:text="Casting on KDL-W800C"
+        tools:visibility="visible"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="48dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.banglalink.toffee.ui.player.PlayerOverlayView
+        android:id="@+id/playerOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/exo_buffering"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@drawable/gif_round_border"
+        android:src="@drawable/player_loader"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/exo_controller_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</FrameLayout>

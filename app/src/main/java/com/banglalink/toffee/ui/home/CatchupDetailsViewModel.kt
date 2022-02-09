@@ -1,30 +1,26 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Application
-import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.AppDatabase
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.apiservice.CatchupParams
+import com.banglalink.toffee.apiservice.GetRelativeContents
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.GetRelativeContents
-import com.banglalink.toffee.usecase.GetViewCount
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CatchupDetailsViewModel(application: Application):BaseViewModel(application) {
-
-
-    private val getRelativeContents by unsafeLazy {
-        GetRelativeContents(Preference.getInstance(),RetrofitApiClient.toffeeApi, GetViewCount(
-            AppDatabase.getDatabase().viewCountDAO())
-        )
-    }
-
-    fun getContents(channelInfo: ChannelInfo):LiveData<Resource<List<ChannelInfo>>>{
-        return resultLiveData {
-            getRelativeContents.execute(channelInfo)
-        }
+@HiltViewModel
+class CatchupDetailsViewModel @Inject constructor(
+    private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
+) : ViewModel() {
+    
+    fun loadRelativeContent(catchupParams: CatchupParams): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(relativeContentsFactory.create(catchupParams), ApiNames.GET_RELATIVE_CONTENTS, BrowsingScreens.PLAYER_PAGE)
+        }).getList()
     }
 }

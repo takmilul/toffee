@@ -1,27 +1,40 @@
 package com.banglalink.toffee.ui.search
 
-import android.app.Application
-import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.AppDatabase
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.apiservice.SearchContentService
+import com.banglalink.toffee.common.paging.BaseListRepository
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.GetViewCount
-import com.banglalink.toffee.usecase.SearchContent
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class SearchViewModel(application: Application):BaseViewModel(application) {
+class SearchViewModel @AssistedInject constructor(
+    private val searchApiService: SearchContentService.AssistedFactory,
+    @Assisted private val keyword: String,
+) : BasePagingViewModel<ChannelInfo>() {
 
-    private val searchContent by unsafeLazy {
-        SearchContent(Preference.getInstance(),RetrofitApiClient.toffeeApi, GetViewCount(AppDatabase.getDatabase().viewCountDAO()))
+    override val repo: BaseListRepository<ChannelInfo> by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(searchApiService.create(keyword), ApiNames.GET_SEARCH_CONTENTS, BrowsingScreens.SEARCH_PAGE)
+        })
     }
 
-    fun searchContent(searchKey:String):LiveData<Resource<List<ChannelInfo>>>{
-        return resultLiveData {
-            searchContent.execute(searchKey)
-        }
+    @dagger.assisted.AssistedFactory
+    interface AssistedFactory {
+        fun create(keyword: String): SearchViewModel
+    }
+
+    companion object {
+        fun provideFactory(assistedFactory: AssistedFactory, keyword: String): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return assistedFactory.create(keyword) as T
+                }
+            }
     }
 }

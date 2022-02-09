@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.data.database.entities.TVChannelItem" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/recent_channels_margin"
+        android:background="?selectableItemBackgroundBorderless"
+        android:onClick="@{(v) -> callback.onItemClicked(data)}">
+    
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:contentDescription="@string/txt_channel"
+            android:layout_gravity="center"
+            loadChannelImage="@{data.channelInfo}"
+            app:civ_border_color="@color/colorAccent"
+            android:background="@drawable/circular_white_bg"
+            tools:src="@mipmap/ic_menu_channel" />
+    
+        <ImageView
+            android:contentDescription="@string/txt_badge_icon"
+            android:id="@+id/premium_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            android:layout_gravity="bottom|center_horizontal"
+            android:src="@drawable/ic_vip_badge" />
+        
+    </FrameLayout>
+</layout>

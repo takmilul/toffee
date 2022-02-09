@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/transparent"
+    android:background="@color/cardBgColor"
     android:orientation="vertical">
 
     <LinearLayout
@@ -20,9 +20,9 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             tools:text="Profile Updated"
-            android:textStyle="bold"
-            android:textColor="@color/main_text_color"
-            android:textSize="20sp"/>
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/message_tv"
@@ -33,13 +33,14 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="10dp"
             tools:text="Your profile has been updated."
-            android:textColor="@color/second_text_color"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/cardTitleColor"
             android:textSize="16sp"/>
 
 
-        <TextView
+        <Button
             android:id="@+id/ok_button"
-            style="@style/Button1Style"
+            style="@style/ButtonStyleSolidPink"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -49,7 +50,7 @@
             android:textAllCaps="true"
             android:clickable="true"
             android:textSize="16sp">
-        </TextView>
+        </Button>
 
     </LinearLayout>
 

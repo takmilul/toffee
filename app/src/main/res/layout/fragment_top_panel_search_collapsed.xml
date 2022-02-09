@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/list_status_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/search_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/search_text">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3,560 Channels" />
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/filter_list"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="12dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@+id/search_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/search_list"
+        app:srcCompat="@drawable/ic_filter_items" />
+
+    <EditText
+        android:id="@+id/search_text"
+        style="@style/editTextSearch"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/search_list"
+        app:layout_constraintEnd_toEndOf="@+id/search_list"
+        app:layout_constraintTop_toTopOf="@+id/search_list" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/search_list"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/filter_list"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="24dp"
+        app:srcCompat="@drawable/ic_menu_search" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/back_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:visibility="gone"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@+id/search_text"
+        app:layout_constraintEnd_toStartOf="@+id/search_text"
+        app:layout_constraintTop_toTopOf="@+id/search_text"
+        app:layout_goneMarginStart="16dp"
+        app:srcCompat="@drawable/ic_arrow_back" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

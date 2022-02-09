@@ -6,24 +6,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackgroundBorderless"
    >
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon"
-        loadChannelImage="@{data}"
         android:layout_width="@dimen/channel_width"
         android:layout_height="@dimen/channel_height"
         android:layout_gravity="center"
+        android:contentDescription="@string/txt_channel"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        app:civ_border_color="@color/colorAccent"
         android:background="@drawable/circular_white_bg"
         android:src="@mipmap/ic_menu_channel" />
 
     <ImageView
+        android:contentDescription="@string/txt_icon"
         android:id="@+id/premium_icon"
-        togglePremiumIcon="@{data}"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:visibility="gone"
         android:layout_gravity="bottom|center_horizontal"
         android:src="@drawable/ic_vip_badge" />
 </FrameLayout>

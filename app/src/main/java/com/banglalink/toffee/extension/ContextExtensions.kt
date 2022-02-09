@@ -2,15 +2,17 @@ package com.banglalink.toffee.extension
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
+import android.view.View
 import android.widget.Toast
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.ui.common.BaseViewModel
+import androidx.fragment.app.FragmentManager
 
-fun Context.showToast(message: String, length: Int = Toast.LENGTH_LONG) {
-    if(message.isNotBlank())
+fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
+    if(!message.isNullOrBlank())
         Toast.makeText(this, message, length).show()
 }
 
@@ -23,18 +25,10 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
     intent.init()
     when (requestCode) {
         -1 -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                startActivity(intent, options)
-            } else {
-                startActivity(intent)
-            }
+            startActivity(intent, options)
         }
         else -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                startActivityForResult(intent, requestCode, options)
-            } else {
-                startActivityForResult(intent, requestCode)
-            }
+            startActivityForResult(intent, requestCode, options)
         }
     }
 }
@@ -42,6 +36,44 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
 inline fun <reified T : Any> newIntent(context: Context): Intent =
     Intent(context, T::class.java)
 
-inline fun <reified T: BaseViewModel> FragmentActivity.getViewModel():T{
-    return ViewModelProviders.of(this).get(T::class.java)
+fun View.setVisibility(isVisible: Boolean){
+    this.visibility = if(isVisible) View.VISIBLE else View.GONE
 }
+
+fun MotionLayout.onTransitionCompletedListener(onCompleted:(transitionId: Int) -> Unit){
+    this.addTransitionListener(object : MotionLayout.TransitionListener{
+        override fun onTransitionStarted(motion: MotionLayout?, startId: Int, endId: Int) {
+
+        }
+
+        override fun onTransitionChange(motion: MotionLayout?, startId: Int, endId: Int, progress: Float) {
+
+        }
+
+        override fun onTransitionCompleted(motion: MotionLayout?, transitionId: Int) {
+            onCompleted(transitionId)
+        }
+
+        override fun onTransitionTrigger(motion: MotionLayout?, startId: Int, endId: Boolean, progress: Float) {
+
+        }
+    })
+}
+
+fun View.safeClick(action: View.OnClickListener, debounceTime: Long = 1000L) {
+    this.setOnClickListener(object : View.OnClickListener {
+        private var lastClickTime: Long = 0
+
+        override fun onClick(v: View) {
+            if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) {
+                return
+            }
+            else action.onClick(v)
+
+            lastClickTime = SystemClock.elapsedRealtime()
+        }
+    })
+}
+
+val FragmentManager.currentNavigationFragment: Fragment?
+    get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()

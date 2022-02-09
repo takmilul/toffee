@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation_graph"
+    app:startDestination="@id/menu_feed">
+    <fragment
+        android:id="@+id/menu_explore"
+        android:name="com.banglalink.toffee.ui.explore.ExploreFragment"
+        android:label="Explore">
+        
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_dramaSeriesFragment"
+            app:destination="@id/dramaSeriesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu_activities"
+        android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesListFragment"
+        android:label="Activities" />
+    <fragment
+        android:id="@+id/menu_playlist"
+        android:name="com.banglalink.toffee.ui.userplaylist.UserPlaylistFragment"
+        android:label="Playlists" />
+    <fragment
+        android:id="@+id/userPlaylistVideos"
+        android:name="com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment"
+        android:label="Playlists">
+        <argument
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu_favorites"
+        android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
+        android:label="Favorites" />
+    <fragment
+        android:id="@+id/upload_minimize"
+        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
+        android:label="Upload Video" />
+    <fragment
+        android:id="@+id/upload_bottom"
+        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
+        android:label="Upload Video" />
+    <fragment
+        android:id="@+id/menu_settings"
+        android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_SettingsFragment_to_PrivacyPolicy"
+            app:destination="@id/privacyPolicyFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_TermsAndConditions"
+            app:destination="@id/termsAndConditionFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_AboutFragment"
+            app:destination="@id/AboutFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/menu_subscriptions"
+        android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
+        android:label="Subscriptions" />
+    <fragment
+        android:id="@+id/menu_redeem"
+        android:name="com.banglalink.toffee.ui.redeem.RedeemCodeFragment"
+        android:label="Enter Referral Code" />
+    
+    <fragment
+        android:id="@+id/menu_invite"
+        android:name="com.banglalink.toffee.ui.refer.ReferAFriendFragment"
+        android:label="Refer A Friend" />
+    
+    <fragment
+        android:id="@+id/menu_creators_policy"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            android:defaultValue="Creators Policy"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            android:defaultValue="https://toffeelive.com/policies.php"
+            app:argType="string" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/menu_feed"
+        android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
+        android:label="Toffee">
+        <action
+            android:id="@+id/action_landingPageFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_menu_tv"
+            app:destination="@id/menu_tv" />
+        <action
+            android:id="@+id/action_menu_feed_to_menu_activities"
+            app:destination="@id/menu_explore" />
+        <!--        <action-->
+        <!--            android:id="@+id/action_menu_feed_to_menu_channel"-->
+        <!--            app:destination="@id/menu_channel" />-->
+        <action
+            android:id="@+id/action_menu_feed_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+        <action
+            android:id="@+id/action_landingCategoriesFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
+            app:destination="@id/catchupDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_trendingChannelsFragment"
+            app:destination="@id/allUserChannelsFragment" />
+        <action
+            android:id="@+id/action_landingCategoriesFragment_to_movieFragment"
+            app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_landingCategoriesFragment_to_dramaSeriesFragment"
+            app:destination="@id/dramaSeriesFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
+            app:destination="@id/musicDetailsFragmant" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/menu_tv"
+        android:name="com.banglalink.toffee.ui.channels.ChannelFragmentNew"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Tv Channels"
+            app:argType="string" />
+        <argument
+            android:name="category"
+            app:argType="string" />
+        <argument
+            android:name="sub_category"
+            app:argType="string" />
+        <argument
+            android:name="sub_category_id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <!--    <fragment-->
+    <!--        android:id="@+id/menu_channel"-->
+    <!--        android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"-->
+    <!--        android:label="My Channel">-->
+    <!--&lt;!&ndash;        <argument&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:name="channelOwnerId"&ndash;&gt;-->
+    <!--&lt;!&ndash;            app:argType="integer"&ndash;&gt;-->
+    <!--&lt;!&ndash;            app:nullable="true" />&ndash;&gt;-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_menu_channel_to_myChannelEditFragment"-->
+    <!--            app:destination="@id/myChannelEditDetailFragment" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_menu_channel_to_challengesFragment"-->
+    <!--            app:destination="@id/challengesFragment" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"-->
+    <!--            app:destination="@id/myChannelPlaylistVideosFragment" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_menu_channel_to_myChannelVideosEditFragment"-->
+    <!--            app:destination="@id/myChannelVideosEditFragment" />-->
+    
+    <!--&lt;!&ndash;        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />&ndash;&gt;-->
+    <!--    </fragment>-->
+    <fragment
+        android:id="@+id/htmlPageViewFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.banglalink.toffee.ui.profile.ViewProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_EditProfileFragment"
+            app:destination="@id/EditProfileFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/EditProfileFragment"
+        android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
+        android:label="Edit-Profile"
+        >
+        <argument
+            android:name="data"
+            app:argType="com.banglalink.toffee.model.EditProfileForm"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    
+    </fragment>
+    
+    <fragment
+        android:id="@+id/termsAndConditionFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/AboutFragment"
+        android:name="com.banglalink.toffee.ui.about.AboutFragment"
+        android:label="About">
+        <action
+            android:id="@+id/action_AboutFragment_to_PrivacyPolicy"
+            app:destination="@id/privacyPolicyFragment"
+            />
+        <action
+            android:id="@+id/action_AboutFragment_to_TermsAndConditons"
+            app:destination="@id/termsAndConditionFragment"
+            />
+    </fragment>
+    
+    <dialog
+        android:id="@+id/uploadMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.UploadMethodFragment"
+        android:label="Upload">
+        <action
+            android:id="@+id/action_uploadMethodFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment"
+            app:popUpTo="@id/uploadMethodFragment"
+            app:popUpToInclusive="true"
+            />
+    </dialog>
+    <dialog
+        android:id="@+id/bottomSheetUploadFragment"
+        android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
+        android:label="BottomUpload">
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
+            app:destination="@id/newUploadMethodFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </dialog>
+    
+    <dialog
+        android:id="@+id/newUploadMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.NewUploadMethodFragment"
+        android:label="Update Logo Channel">
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment" />
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+    </dialog>
+    
+    <fragment
+        android:id="@+id/editUploadInfoFragment"
+        android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
+        android:label="Edit Upload">
+        <action
+            android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryDetailsFragment"
+        android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Category"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_categoryDetailsFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+        <action
+            android:id="@+id/action_categoryDetailsFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allUserChannelsFragment"
+        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsListFragment"
+        android:label="User Channels" />
+    <fragment
+        android:id="@+id/myChannelEditDetailFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
+        android:label="Edit Details">
+        <argument
+            android:name="myChannelDetail"
+            app:argType="com.banglalink.toffee.model.MyChannelDetail"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myChannelHomeFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Channel"
+            app:argType="string" />
+        <argument
+            android:name="channelOwnerId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
+            app:destination="@id/myChannelEditDetailFragment" />
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_myChannelVideosEditFragment"
+            app:destination="@id/myChannelVideosEditFragment" />
+        
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />
+    </fragment>
+    <fragment
+        android:id="@+id/myChannelPlaylistVideosFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
+        android:label="Playlist Videos">
+        <argument
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
+    </fragment>
+    <dialog
+        android:id="@+id/thumbnailSelectionMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
+        android:label="Thumbnail">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="isProfileImage"
+            app:argType="boolean"
+            />
+    </dialog>
+    <fragment
+        android:id="@+id/notificationDropdownFragment"
+        android:name="com.banglalink.toffee.ui.notification.NotificationDropdownFragment"
+        android:label="Notification">
+        <action
+            android:id="@+id/action_notificationDropdownFragment_to_notificationDetailFragment"
+            app:destination="@id/notificationDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationDetailFragment"
+        android:name="com.banglalink.toffee.ui.notification.NotificationDetailFragment"
+        android:label="{title}"
+        tools:layout="@layout/fragment_notification_detail">
+        <argument
+            android:name="title"
+            android:defaultValue="Notification"
+            app:argType="string" />
+        <argument
+            android:name="notificationInfo"
+            app:argType="com.banglalink.toffee.data.database.entities.NotificationInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
+        android:label="Favorites" />
+    <fragment
+        android:id="@+id/myChannelVideosEditFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelVideosEditFragment"
+        android:label="Edit Video Details">
+        <argument
+            android:name="channelInfo"
+            app:argType="com.banglalink.toffee.model.ChannelInfo" />
+        <action
+            android:id="@+id/action_myChannelVideosEditFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/catchupDetailsFragment"
+        android:name="com.banglalink.toffee.ui.home.CatchupDetailsFragment"
+        android:label="CatchupDetailsFragment">
+        <action
+            android:id="@+id/action_catchupDetailsFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieFragment"
+        android:name="com.banglalink.toffee.ui.category.movie.MovieFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Movies"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/dramaSeriesFragment"
+        android:name="com.banglalink.toffee.ui.category.webseries.WebSeriesFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Drama Series"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.banglalink.toffee.ui.search.SearchFragment"
+        android:label="Search">
+        <argument
+            android:name="keyword"
+            android:defaultValue=""
+            app:argType="string" />
+        <deepLink app:uri="app.toffee://search/{keyword}" />
+    </fragment>
+    <dialog
+        android:id="@+id/loginDialog"
+        android:name="com.banglalink.toffee.ui.login.LoginFragment"
+        android:label="Login" />
+    <dialog
+        android:id="@+id/myChannelAddToPlaylistFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment"
+        android:label="Add To Playlist" />
+    <fragment
+        android:id="@+id/musicFragment"
+        android:name="com.banglalink.toffee.ui.category.music.MusicInfoFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Music Videos"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/musicDetailsFragmant"
+        android:name="com.banglalink.toffee.ui.category.music.MusicDetailsFragmant"
+        android:label="{title}">
+    <argument
+        android:name="title"
+        android:defaultValue="Category"
+        app:argType="string" />
+    </fragment>
+</navigation>

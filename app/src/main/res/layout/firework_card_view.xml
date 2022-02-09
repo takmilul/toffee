@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:paddingBottom="8dp">
+    
+    <TextView
+        android:id="@+id/fireworkHeader"
+        style="@style/SectionTitleTextStyle"
+        android:layout_marginTop="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/fireworks_section_title"/>
+    
+    <FrameLayout
+        android:id="@+id/feedFrameView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fireworkHeader">
+        
+        <com.loopnow.fireworklibrary.views.VideoFeedView
+            android:id="@+id/feedView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:autoPlayOnComplete="true"
+            app:feedLayout="horizontal"
+            app:feedType="playlist"
+            app:showTitle="true"
+            app:titlePosition="alignBottom"
+            app:imageStyle="@style/fireworkImageStyle"
+            app:textStyle="@style/fireworkVideoTitleStyle" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

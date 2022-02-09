@@ -7,4 +7,7 @@
 /captures
 .externalNativeBuild
 .cxx
-/app/release/
+/app/release
+/app/mobile/debug
+/app/mobile/release
+/app/tv/release

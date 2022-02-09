@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.banglalink.toffee">
-
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.VIDEO_CAPTURE" />
+        </intent>
+    </queries>
+    
     <application
         android:name=".ToffeeApplication"
+        android:allowAudioPlaybackCapture="false"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:fullBackupOnly="false"
@@ -20,71 +36,28 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".ui.subscription.SubscriptionResultActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/subscriptions"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity
-            android:name=".ui.home.ContentPurchaseActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Content Purchase"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.PackageChannelListActivity"
-            android:label="@string/all_channels"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.SubscribePackageActivity"
-            android:label="@string/confirm_purchase"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.PackageListActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/subscriptions"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.MySubscriptionActivity"
-            android:label="@string/subscriptions"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.profile.EditProfileActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/profile_edit"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".ui.profile.ViewProfileActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/profile"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
+        
         <activity
             android:name=".ui.home.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <intent-filter
-                android:label="@string/app_name"
                 android:autoVerify="true"
+                android:label="@string/app_name"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="toffeelive.com"
                     android:scheme="http" />
@@ -92,65 +65,35 @@
                     android:host="toffeelive.com"
                     android:scheme="https" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        
         <activity
-            android:name=".ui.verify.VerifyCodeActivity"
+            android:name=".ui.splash.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.splash.SplashScreen"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.login.SigninByPhoneActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.common.HtmlPageViewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+        
         <activity
             android:name=".ui.common.Html5PlayerViewActivity"
-            android:screenOrientation="fullSensor"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Settings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.about.AboutActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="About"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.refer.ReferAFriendActivity"
-            android:label="@string/refer_a_friend_txt"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.redeem.RedeemCodeActivity"
-            android:label="@string/redeem_code_txt"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -160,33 +103,60 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
+        
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="com.banglalink.toffee.ui.player.CastOptionsProvider" />
+        
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent2" />
+        
+<!--        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"-->
+<!--            android:value="false" />-->
+        
+<!--        <meta-data-->
+<!--            android:name="com.facebook.sdk.AutoInitEnabled"-->
+<!--            android:value="false"/>-->
+        
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
-
-        <service android:name=".notification.ToffeeMessagingService">
+        
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true" />
+        
+        <service android:name=".notification.ToffeeMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <receiver android:name=".receiver.NotificationActionReceiver">
+        
+        <receiver android:name=".receiver.NotificationActionReceiver"
+            android:exported="false">
             <intent-filter android:priority="999">
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
-
-
+        
+        <service android:name="org.eclipse.paho.android.service.MqttService"
+            android:exported="false" />
+        
+        <!-- Activity needed for video playback-->
+        <activity
+            android:name="com.loopnow.fireworklibrary.PlaybackActivity"
+            android:exported="false" />
+        
+        <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
+        <meta-data
+            android:name="Firework:AppID"
+            android:value="@string/firework_oauth_id" />
+        
     </application>
-
 </manifest>

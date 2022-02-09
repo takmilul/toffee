@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/followUsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/follow_us_text"
+        android:textSize="16sp"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/side_menu_color_selector"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
+    <ImageView
+        android:id="@+id/facebookButton"
+        android:contentDescription="@string/txt_menu"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/followUsTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_menu_facebook"/>
+
+    <ImageView
+        android:id="@+id/instagramButton"
+        android:contentDescription="@string/txt_menu"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toEndOf="@id/facebookButton"
+        app:layout_constraintTop_toTopOf="@id/facebookButton"
+        app:layout_constraintBottom_toBottomOf="@id/facebookButton"
+        android:src="@drawable/ic_menu_instagram"/>
+
+    <ImageView
+        android:id="@+id/youtubeButton"
+        android:contentDescription="@string/txt_menu"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toEndOf="@id/instagramButton"
+        app:layout_constraintTop_toTopOf="@id/facebookButton"
+        app:layout_constraintBottom_toBottomOf="@id/facebookButton"
+        android:src="@drawable/ic_menu_youtube"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

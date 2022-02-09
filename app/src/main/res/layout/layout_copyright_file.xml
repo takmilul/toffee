@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="com.banglalink.toffee.ui.upload.EditUploadInfoViewModel" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/multiline_input_text_bg">
+        
+        <TextView
+            android:id="@+id/fileNameTextView"
+            style="@style/programNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLines="2"
+            android:text="@{viewModel.copyrightFileName == null ? @string/copyright_doc : viewModel.copyrightFileName}"
+            android:textColor="@{viewModel.copyrightFileName == null ? @color/main_text_color : @color/cardTitleColor}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/uploadFileButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <Button
+            android:id="@+id/uploadFileButton"
+            style="@style/ButtonStyleRingPurple"
+            android:text="Upload File"
+            app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
+            app:layout_constraintEnd_toStartOf="@id/close_iv"
+            app:layout_constraintTop_toTopOf="@id/fileNameTextView" />
+        
+        <ImageView
+            android:id="@+id/close_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fileNameTextView"
+            app:srcCompat="@drawable/ic_close"
+            tools:visibility="visible" />
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

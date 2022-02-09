@@ -1,11 +1,21 @@
 package com.banglalink.toffee.util
 
 import android.net.Uri
+import android.os.Bundle
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
+import androidx.navigation.navOptions
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.ui.home.*
-import java.lang.Exception
+import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class InAppMessageParser {
+@Singleton
+class InAppMessageParser @Inject constructor(
+    private val categoryListApi: GetCategories
+) {
 
 //    https://toffeelive.com?routing=internal&page=musicvideo&catid=18&catname=Music Video
 //    https://toffeelive.com?routing=internal&page=movie&catid=19&catname=Movie
@@ -16,54 +26,124 @@ class InAppMessageParser {
 //    https://toffeelive.com?routing=internal&page=invite
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
+//    https://toffeelive.com?routing=internal&page=login
+//    https://toffeelive.com?routing=internal&page=search&keyword=natok
+//    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=6417560
+//    https://toffeelive.com?routing=internal&page=categories&catid=1
+//    https://toffeelive.com?routing=internal&page=categories&catid=9
+//    https://toffeelive.com?routing=internal&page=categories&catid=2
+//    https://toffeelive.com?routing=internal&page=playlist&listid=99&ownerid=594383
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
 
-
-    fun parseUrl(url:String):Route?{
+    suspend fun parseUrlV2(url: String): RouteV2? {
         try {
             val link = Uri.parse(url)
             val page = link.getQueryParameter("page")
-            return page?.let {
-                when(it){
-                    "movie"->{
-                        Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname"))
+            page?.let { name ->
+                when(name) {
+                    "ugc_channel" -> {
+                        val channelId = link.getQueryParameter("owner_id") ?: "0"
+                        return RouteV2(
+                            Uri.parse("app.toffee://ugc_channel/${channelId}"),
+                            "Ugc Channel (${channelId})"
+                        )
                     }
-                    "drama"->{
-                        (Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname")))
+                    "categories" -> {
+                        val catId = link.getQueryParameter("catid")?.toLongOrNull() ?: return null
+                        val catList = categoryListApi.loadData(0, 0).filter { it.id ==  catId }
+                        if(catList.isEmpty()) return null
+                        val destId = when(catId) {
+                            1L -> {
+                                R.id.movieFragment
+                            }
+                            9L -> {
+                                R.id.dramaSeriesFragment
+                            }
+                            else -> {
+                                R.id.categoryDetailsFragment
+                            }
+                        }
+                        return RouteV2(
+                            destId,
+                            "Category (${catList[0].categoryName})",
+                            Bundle().also {
+                                it.putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, catList[0])
+                                it.putString(CategoryDetailsFragment.ARG_TITLE, catList[0].categoryName)
+                            }
+                        )
                     }
-                    "musicvideo"->{
-                        (Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname")))
+                    "search" -> {
+                        val keyword = link.getQueryParameter("keyword") ?: return null
+                        return RouteV2(Uri.parse("app.toffee://search/${keyword}"),
+                            "Search (${keyword})")
                     }
-                    "subscription"->{
-                        (Route(it,ID_SUBSCRIPTIONS))
+//                    "playlist" -> {
+//                        val playlistId = link.getQueryParameter("listid") ?: return null
+//                        val ownerId = link.getQueryParameter("ownerid") ?: return null
+//
+//                    }
+//                    "episodelist" -> {
+//
+//                    }
+                    "settings" -> {
+                        return RouteV2(R.id.menu_settings, "Settings")
                     }
-                    "submitvideo"->{
-                        (Route(it,ID_SUB_VIDEO))
+                    "redeem" -> {
+                        return RouteV2(R.id.menu_redeem, "Redeem Code")
                     }
-                    "invite"->{
-                        (Route(it,ID_INVITE_FRIEND))
+                    "tv_channels" -> {
+                        return RouteV2(R.id.menu_tv, "Tv Channels")
                     }
-                    "redeem"->{
-                        (Route(it,ID_REDEEM_CODE))
+                    "explore" -> {
+                        return RouteV2(R.id.menu_explore, "Explore")
                     }
-                    "settings"->{
-                        (Route(it,ID_SETTINGS))
+                    "subscription" -> {
+                        return RouteV2(R.id.menu_subscriptions, "Subscriptions")
                     }
-                    "faq"->{
-                        (Route(it,ID_FAQ))
+                    "invite" -> {
+                        return RouteV2(R.id.menu_invite, "Invite Friends")
                     }
-                    else->{
-                        (Route(it,null))
+                    "favorites" -> {
+                        return RouteV2(R.id.menu_favorites, "Favorites")
                     }
+                    "activities" -> {
+                        return RouteV2(R.id.menu_activities, "Activities")
+                    }
+                    "profile" -> {
+                        return RouteV2(R.id.profileFragment, "Profile")
+                    }
+                    "notification" -> {
+                        return RouteV2(R.id.notificationDropdownFragment, "Notification")
+                    }
+                    "ugc_all_channel" -> {
+                        return RouteV2(R.id.allUserChannelsFragment, "All UGC Channels")
+                    }
+                    "login" -> {
+                        return RouteV2(R.id.loginDialog, "Login")
+                    }
+                    "home" -> {
+                        return RouteV2(R.id.menu_feed, "Home", options = navOptions { 
+                            popUpTo(R.id.menu_feed) {
+                                inclusive = true
+                            }
+                        })
+                    }
+                    else -> null
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception){
+            e.printStackTrace()
             ToffeeAnalytics.logBreadCrumb("Cannot parse deep link url $url")
             ToffeeAnalytics.logException(e)
         }
         return null
-
     }
 
-    data class Route(val url:String, val drawerId:Int?,val categoryId:Int?=null,val categoryName:String?=null)
+    data class RouteV2(
+        val destId: Any,
+        val name: String,
+        val args: Bundle? = null,
+        val options: NavOptions? = null,
+        val navExtra: Navigator.Extras? = null
+    )
 }

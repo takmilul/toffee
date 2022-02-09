@@ -1,28 +1,61 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.72'
+    ext {
+        appVersionCode = 71
+        appVersionName = '2.2.0'
+        
+        kotlinVersion = '1.6.10'
+        kotlinCoroutineVersion = '1.5.2'
+        composeVersion = '1.0.5'
+        exoVersion = '2.16.1'
+        firebaseCoreVersion = '19.0.2'
+        firebaseMessagingVersion = '23.0.0'
+        firebaseAnalyticsVersion = '20.0.2'
+        firebaseCrashlyticsVersion = '18.2.7'
+        lifecycleVersion = '2.4.0'
+        roomDbVersion = '2.4.1'
+        hiltAndroidVersion = '2.40.5'
+        hiltVersion = '1.0.0'
+        retrofitVersion = '2.9.0'
+        okHttpVersion = '4.9.0'
+        facebookSdkVersion = '12.2.0'
+        pagingVersion = '3.1.0'
+        gsonVersion = '2.8.8'
+        pubsubVersion = 'v1-rev452-1.25.0'
+        googleApiClientVersion = '1.32.2'
+        googleHttpClientGsonVersion = '1.40.1'
+        pahoClientVersion = '1.2.5'
+        pahoAndroidServiceVersion = '1.1.1'
+        espressoVersion = '3.4.0'
+        convivaSdkVersion = '4.0.18'
+        convivaExoPlayerVersion = '4.0.10'
+        convivaImaVersion = '4.0.3'
+    }
     repositories {
         google()
-        jcenter()
-
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
-        classpath 'com.google.gms:google-services:4.3.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.google.gms:google-services:4.3.10'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
+        
         // Add the Crashlytics Gradle plugin.
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.37'
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
-
+        maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
+        maven { url "https://repository.medallia.com/digital-maven/" }
+        maven { url "https://maven.google.com" }
     }
 }
 

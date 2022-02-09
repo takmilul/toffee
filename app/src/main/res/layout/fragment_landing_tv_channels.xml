@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/screen_bg">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            android:background="@drawable/fragment_bg_bottom"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/channel_tv"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="17dp"
+            android:text="@string/channel"
+            app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/viewAllButton"
+            style="@style/ViewAllTextView"
+            android:text="@string/view_all"
+            app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+            app:layout_constraintTop_toTopOf="@id/channel_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:clipToPadding="false"
+            tools:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_tv">
+            
+            <include layout="@layout/placeholder_live_tv" />
+            <include layout="@layout/placeholder_live_tv" />
+            <include layout="@layout/placeholder_live_tv" />
+            <include layout="@layout/placeholder_live_tv" />
+            <include layout="@layout/placeholder_live_tv" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/channel_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_tv"
+            app:reverseLayout="false"
+            tools:visibility="visible"
+            tools:listitem="@layout/live_tv_item_new" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,58 +1,143 @@
 package com.banglalink.toffee.analytics
 
+import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.HeaderEnrichmentService
+import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.usecase.SendHeartBeat
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.util.today
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback() {
-
-
-    private const val TIMER_PERIOD = 30000// 30 sec
-    private var INITIAL_DELAY = 0L
-
-    private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
-    val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
-
-    private var isAppForeGround = false
-
-    private val coroutineContext = Dispatchers.Default
-    private val coroutineContext2 = Dispatchers.Main
-
+@Singleton
+class HeartBeatManager @Inject constructor(
+    private val mPref: SessionPreference,
+    private val sendHeartBeat: SendHeartBeat,
+    private var connectionWatcher: ConnectionWatcher,
+    @ApplicationContext private val appContext: Context,
+    private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
+    private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
+    private val headerEnrichmentService: HeaderEnrichmentService
+) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
+    
     private var contentId = 0;
     private var contentType = ""
-
-    private lateinit var  coroutineScope :CoroutineScope
-    private val coroutineScope2 = CoroutineScope(coroutineContext2)
-    private val sendHeartBeat by unsafeLazy {
-        SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    private var isAppForeGround = false
+    private lateinit var coroutineScope :CoroutineScope
+    private lateinit var coroutineScope3 :CoroutineScope
+    private val coroutineScope2 = CoroutineScope(Main)
+    private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
+    val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
+    
+    companion object {
+        private const val INITIAL_DELAY = 0L
+        private const val TIMER_PERIOD = 30000// 30 sec
     }
-
+    
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackGround() {
         isAppForeGround = false
         coroutineScope.cancel()
+        coroutineScope3.cancel()
     }
-
-
+    
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForeGround() {
         isAppForeGround = true
-        coroutineScope = CoroutineScope(coroutineContext)
+        coroutineScope = CoroutineScope(Default)
+        coroutineScope3 = CoroutineScope(IO + Job())
         coroutineScope.launch {
+            sendHeartBeat(sendToPubSub = false)
             execute()
         }
+        sendAdIdLog()
+        sendHeaderEnrichmentLog()
     }
+    
+    private fun sendAdIdLog() {
+        if (mPref.adIdUpdateDate != today) {
+            coroutineScope3.launch {
+                kotlin.runCatching {
+                    val adId = AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
+                    adId?.let {
+                        sendAdIdLogEvent.execute(AdvertisingIdLogData(adId).also {
+                            it.phoneNumber = mPref.phoneNumber
+                            it.isBlNumber = mPref.isBanglalinkNumber
+                        })
+                    }
+                    mPref.heUpdateDate = today
+                }
+            }
+        }
+    }
+    
+    private fun sendHeaderEnrichmentLog() {
+        try {
+            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
+                coroutineScope.launch {
+                    val response = resultFromResponse { headerEnrichmentService.execute() }
+                    when(response) {
+                        is Resource.Success -> {
+                            val data = response.data
+                            mPref.heUpdateDate = today
+                            try {
+                                if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                                    mPref.latitude = data.lat ?: ""
+                                    mPref.longitude = data.lon ?: ""
+                                    mPref.userIp = data.userIp ?: ""
+                                    mPref.geoCity = data.geoCity ?: ""
+                                    mPref.geoLocation = data.geoLocation ?: ""
+                                    mPref.hePhoneNumber = data.phoneNumber
+                                    mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
+                                    sendHeLogEvent.execute(HeaderEnrichmentLogData().also {
+                                        it.phoneNumber = mPref.hePhoneNumber
+                                        it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
+                                    })
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                        is Resource.Failure -> {
 
+                            ToffeeAnalytics.logEvent(
+                                ToffeeEvents.EXCEPTION,
+                                bundleOf(
+                                    "api_name" to "Header Enrichment",
+                                    FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                                    "error_code" to response.error.code,
+                                    "error_description" to response.error.msg)
+                            )
+
+                            mPref.hePhoneNumber = ""
+                            mPref.isHeBanglalinkNumber = false
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    
     private suspend fun execute(){
         delay(INITIAL_DELAY)
         if(isAppForeGround)
@@ -61,20 +146,27 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
             delay(TIMER_PERIOD.toLong())
             if(isAppForeGround)
                 sendHeartBeat()
-
         }
     }
 
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
-        if(Preference.getInstance().customerId!=0){
+        if(mPref.customerId != 0){
             try{
                 sendHeartBeat.execute(contentId, contentType,isNetworkSwitch,sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
-                getError(e)
-            }
+                val error =getError(e)
 
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SEND_HEART_BEAT,
+                        FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                        "error_code" to error.code,
+                        "error_description" to error.msg)
+                )
+            }
         }
     }
 
@@ -96,5 +188,4 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
             sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)
         }
     }
-
 }

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.banglalink.toffee.util.Utils"/>
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="com.banglalink.toffee.data.database.entities.NotificationInfo" />
+
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:clipToPadding="false"
+        loadUnseenCardBgColor="@{data.isSeen}"
+        android:onClick="@{()-> callback.onItemClicked(data)}"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/cardBgColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/thumbnailImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/txt_profile_image"
+                android:src="@drawable/ic_profile"
+                loadImageFromUrlRounded="@{data.thumbnailUrl}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/titleTextView"
+                style="@style/programNameTextView"
+                app:layout_constrainedWidth="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="@{data.title}"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/thumbnailImageView"
+                app:layout_constraintTop_toTopOf="@id/thumbnailImageView"
+                tools:text="Live Now" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:text="@{data.content}"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/fixed_second_text_color"
+                android:fontFamily="@font/roboto_regular"
+                app:layout_constraintEnd_toEndOf="@id/titleTextView"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+                tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
+
+            <TextView
+                android:id="@+id/contentTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:text="@{data.description}"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/fixed_second_text_color"
+                android:fontFamily="@font/roboto_regular"
+                android:visibility="@{data.description==null || data.description.isEmpty() ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="@id/titleTextView"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
+                tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
+
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/fixed_second_text_color"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@{Utils.getDateDiffInDayOrHourOrMinute(data.receiveTime)}"
+                app:layout_constraintEnd_toEndOf="@id/titleTextView"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
+                app:layout_constraintTop_toBottomOf="@id/contentTextView"
+                tools:text="23m" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/learnMoreButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical|start"
+                android:text="Learn More"
+                android:textColor="@color/purple"
+                android:visibility="gone"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconPadding="8dp"
+                app:iconSize="16dp"
+                app:iconTint="@color/purple"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="@id/titleTextView"
+                app:layout_constraintEnd_toStartOf="@id/viewStatusButton"
+                app:layout_constraintTop_toBottomOf="@id/timeTextView"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewStatusButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="View Status"
+                android:textColor="@color/colorAccent2"
+                android:visibility="gone"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconPadding="8dp"
+                app:iconSize="16dp"
+                app:iconTint="@color/colorAccent2"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintStart_toEndOf="@id/learnMoreButton"
+                app:layout_constraintTop_toTopOf="@id/learnMoreButton"
+                app:layout_constraintBottom_toBottomOf="@id/learnMoreButton"/>
+
+            <ImageView
+                android:contentDescription="@string/txt_options"
+                android:id="@+id/options"
+                style="@style/OptionMenuStyle"
+                android:onClick="@{(view) -> callback.onOpenMenu(view, data)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/titleTextView"
+                app:layout_constraintTop_toTopOf="@id/titleTextView"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_menu_more" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

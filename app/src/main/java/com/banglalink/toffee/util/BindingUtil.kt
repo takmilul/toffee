@@ -1,139 +1,435 @@
 package com.banglalink.toffee.util
 
+import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import coil.api.load
+import coil.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.ActivityType
+import com.banglalink.toffee.enums.Reaction
+import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.suke.widget.SwitchButton
+import com.banglalink.toffee.ui.widget.MultiTextButton
+import com.banglalink.toffee.ui.widget.ReadMoreTextView
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.math.min
 
-const val crossFadeDurationInMills = 500
+@Singleton
+class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
+    @BindingAdapter(value = ["loadImageFromUrl", "imageWidth", "imageHeight"], requireAll = false)
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?, width: Int = 0, height: Int = 0) {
+        if (imageUrl.isNullOrEmpty()) {
+            if(android.os.Build.VERSION.SDK_INT < 24) {
+                view.scaleType = ImageView.ScaleType.FIT_XY
+            }
+            view.setImageResource(R.drawable.placeholder)
+        } else {
+            if(android.os.Build.VERSION.SDK_INT < 24) {
+                view.scaleType = ImageView.ScaleType.FIT_XY
+            }
+            view.load(imageUrl) {
+                fallback(R.drawable.placeholder)
+                placeholder(R.drawable.placeholder)
+                error(R.drawable.placeholder)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+//                UtilsKt.getImageSize(view.context, 720).apply {
+//                    size(x, y)
+//                }
 
-@BindingAdapter("imageFromUrl")
-fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
-        view.load(imageUrl) {
-            memoryCachePolicy(CachePolicy.DISABLED)
+                if (width > 0 && height > 0) {
+                    size(width, height)
+                }
+                else {
+                    size(min(360.px, 720), min(202.px, 405))
+                }
+                listener(
+                    onSuccess = { _, _->
+                        view.scaleType = ImageView.ScaleType.CENTER_CROP
+                })
+            }
+        }
+    }
+
+    @BindingAdapter("loadImageFromUrlRounded")
+    fun bindRoundImage(view: ImageView, imageUrl: String?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            view.load(imageUrl) {
+                transformations(CircleCropTransformation())
+                crossfade(false)
+                fallback(R.drawable.ic_profile)
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
+                diskCachePolicy(CachePolicy.ENABLED)
+                size(min(80.px, 150), min(80.px, 150))
+            }
+        } else {
+            view.setImageResource(R.drawable.ic_profile)
+        }
+    }
+
+    @BindingAdapter("loadImageResource")
+    fun loadImageFromResource(view: ImageView, image: Int) {
+        view.load(image) {
+            placeholder(R.drawable.placeholder)
+            fallback(R.drawable.placeholder)
+            error(R.drawable.placeholder)
+            crossfade(false)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            size(min(320.px, 720), min(180.px, 405))
         }
     }
-}
 
-@BindingAdapter("imageFromUrlRounded")
-fun bindRoundImage(view: ImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
-        view.load(imageUrl) {
-            transformations(CircleCropTransformation())
-            crossfade(true)
-            error(R.drawable.ic_home)
-            crossfade(crossFadeDurationInMills)
-        }
-    }
-}
-
-@BindingAdapter("loadChannelImage")
-fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.isLive) {
-        view.load(channelInfo.channel_logo) {
-            transformations(CircleCropTransformation())
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
-            memoryCachePolicy(CachePolicy.DISABLED)
+    @BindingAdapter("loadCategoryBackground")
+    fun bindCategoryBackground(view: ImageView, category: Category) {
+        view.load(category.thumbnailUrl) {
+            crossfade(false)
+            fallback(R.drawable.placeholder)
+            placeholder(R.drawable.placeholder)
+            error(R.drawable.placeholder)
             diskCachePolicy(CachePolicy.ENABLED)
-        }
-    } else {
-        view.load(channelInfo.landscape_ratio_1280_720) {
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
-            size(720, 405)
+            size(min(120.px, 360), min(61.px, 184))
         }
     }
-}
 
-@BindingAdapter("bindDuration")
-fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formattedDuration
-}
-
-@BindingAdapter("bindViewCount")
-fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formatted_view_count
-}
-
-@BindingAdapter("packageExpiryText")
-fun bindPackageExpiryText(view:TextView,mPackage: Package){
-    if(TextUtils.isEmpty(mPackage.expireDate)){
-        view.visibility = View.INVISIBLE
-    }else{
-        view.visibility = View.VISIBLE
+    @BindingAdapter("loadCategoryImage")
+    fun bindCategoryImage(view: ImageView, category: Category) {
+        if (category.categoryIcon.isNullOrBlank()) {
+            view.setImageResource(R.drawable.ic_cat_movie)
+        } else {
+            view.load(category.categoryIcon) {
+                crossfade(false)
+                fallback(R.drawable.ic_cat_movie)
+                placeholder(R.drawable.ic_cat_movie)
+                error(R.drawable.ic_cat_movie)
+                diskCachePolicy(CachePolicy.ENABLED)
+                size(min(30.px, 92), min(30.px, 92))
+            }
+        }
     }
 
-    val days = Utils.getDateDiffInDayOrHour(Utils.getDate(mPackage.expireDate))
-    view.text = "$days left"
-}
-
-@BindingAdapter("autoRenewText")
-fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
-    if (item.isAutoRenewable == 1) {
-        val days = Utils.getDateDiffInDayOrHour(Utils.getDate(item.expireDate))
-        autoRenewTv.text = "Auto renew in $days"
-        autoRenewTv.visibility = View.VISIBLE
-    } else {
-        autoRenewTv.visibility = View.INVISIBLE
+    @BindingAdapter("loadChannelImage")
+    fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
+        if (channelInfo.isLinear) {
+            if (channelInfo.channel_logo.isNullOrBlank()) {
+                view.setImageResource(R.drawable.ic_profile)
+            } else {
+                view.load(channelInfo.channel_logo) {
+                    transformations(CircleCropTransformation())
+                    crossfade(false)
+                    fallback(R.drawable.ic_profile)
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
+                    diskCachePolicy(CachePolicy.ENABLED)
+                    size(min(80.px, 150), min(80.px, 150))
+                }
+            }
+        } else {
+            if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
+//                view.scaleType = ImageView.ScaleType.FIT_XY
+                view.setImageResource(R.drawable.placeholder)
+            } else {
+//                view.scaleType = ImageView.ScaleType.FIT_XY
+                view.load(channelInfo.landscape_ratio_1280_720)
+                {
+                    diskCachePolicy(CachePolicy.ENABLED)
+                    crossfade(false)
+                    fallback(R.drawable.placeholder)
+                    placeholder(R.drawable.placeholder)
+                    error(R.drawable.placeholder)
+//                    UtilsKt.getImageSize(view.context, 720).apply {
+//                        size(x, y)
+//                    }
+                    size(min(360.px, 720), min(202.px, 405))
+                    listener(onSuccess = { _, _->
+                        view.scaleType = ImageView.ScaleType.CENTER_CROP
+                    })
+                }
+            }
+        }
     }
-}
 
-@BindingAdapter("validityText")
-fun bindValidityText(validityTv:TextView,item: Package){
-    val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
-    if (item.isAutoRenewable == 1) {
-        validityTv.text = "Auto renew on $days"
-    } else {
-        validityTv.text = "Expires on $days"
+    @BindingAdapter("bindDuration")
+    fun bindDuration(view: TextView, channelInfo: ChannelInfo?) {
+        try {
+            view.text = channelInfo?.formattedDuration() ?: "00:00"
+        } catch (ex: Exception) {
+            view.text = "00:00"
+            ToffeeAnalytics.logException(NullPointerException("Error getting duration info for id ${channelInfo?.id}, ${channelInfo?.program_name}"))
+        }
     }
-}
 
-@BindingAdapter("discountText")
-fun bindDiscountText(discountTv:TextView,item:Package){
-    if (item.discount == 0) {
-        discountTv.visibility = View.INVISIBLE
-    } else {
-        discountTv.visibility = View.VISIBLE
-        val discountString = discountTv.context.getString(R.string.discount_foramtted_text, item.discount)
-        val str = SpannableStringBuilder(discountString)
-        str.setSpan(
-            StrikethroughSpan(),
-            0,
-            discountString.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    @BindingAdapter("bindButtonState")
+    fun bindButtonState(view: Button, isPressed: Boolean) {
+        view.isPressed = isPressed
+    }
+
+    @BindingAdapter(value = ["bindSubscriptionStatus", "channelOwnerId"], requireAll = false)
+    fun bindSubscriptionStatus(
+        view: MultiTextButton,
+        isSubscribed: Boolean,
+        channelOwnerId: Int = 0
+    ) {
+        view.setSubscriptionInfo(
+            isSubscribed,
+            null
         )
-        discountTv.text = str
+        view.isEnabled = mPref.customerId != channelOwnerId
     }
-}
 
-@BindingAdapter("togglePremiumIcon")
-fun bindPremiumIcon(imageView: ImageView,channelInfo:ChannelInfo){
-    if(!channelInfo.isExpired(Preference.getInstance().getSystemTime())){
-        imageView.visibility = View.INVISIBLE
+    @BindingAdapter("bindViewCount")
+    fun bindViewCount(view: TextView, channelInfo: ChannelInfo?) {
+        view.text = channelInfo?.formattedViewCount() ?: ""
     }
-    else if(channelInfo.isPurchased||channelInfo.subscription){
-        imageView.visibility = View.INVISIBLE
+
+    @BindingAdapter("packageExpiryText")
+    fun bindPackageExpiryText(view: TextView, mPackage: Package) {
+        if (TextUtils.isEmpty(mPackage.expireDate)) {
+            view.visibility = View.INVISIBLE
+        } else {
+            view.visibility = View.VISIBLE
+        }
+
+        val days = Utils.getDateDiffInDayOrHour(Utils.getDate(mPackage.expireDate))
+        view.text = "$days left"
     }
-    else{
-        imageView.visibility = View.VISIBLE
+
+    @BindingAdapter("autoRenewText")
+    fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
+        if (item.isAutoRenewable == 1) {
+            val days = Utils.getDateDiffInDayOrHour(Utils.getDate(item.expireDate))
+            autoRenewTv.text = "Auto renew in $days"
+            autoRenewTv.visibility = View.VISIBLE
+        } else {
+            autoRenewTv.visibility = View.INVISIBLE
+        }
+    }
+
+    @BindingAdapter("bindVideoUploadTime")
+    fun bindVideoUploadTime(tv: TextView, item: ChannelInfo) {
+        if (item.created_at.isNullOrBlank()) {
+            tv.text = "1 year ago"
+        } else {
+            tv.text = Utils.getDateDiffInDayOrHour(Utils.getDate(item.created_at)) + " ago"
+        }
+    }
+
+    @BindingAdapter("validityText")
+    fun bindValidityText(validityTv: TextView, item: Package) {
+        val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
+        if (item.isAutoRenewable == 1) {
+            validityTv.text = "Auto renew on $days"
+        } else {
+            validityTv.text = "Expires on $days"
+        }
+    }
+
+    @BindingAdapter("discountText")
+    fun bindDiscountText(discountTv: TextView, item: Package) {
+        if (item.discount == 0) {
+            discountTv.visibility = View.INVISIBLE
+        } else {
+            discountTv.visibility = View.VISIBLE
+            val discountString = discountTv.context.getString(
+                R.string.discount_foramtted_text,
+                item.discount
+            )
+            val str = SpannableStringBuilder(discountString)
+            str.setSpan(
+                StrikethroughSpan(),
+                0,
+                discountString.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            discountTv.text = str
+        }
+    }
+
+/* TODO: Uncomment for subscription
+    @BindingAdapter("togglePremiumIcon")
+    fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
+        if (!channelInfo.isExpired(mPref.getSystemTime())) {
+            imageView.visibility = View.INVISIBLE
+        } else if (channelInfo.isPurchased || channelInfo.subscription) {
+            imageView.visibility = View.INVISIBLE
+        } else {
+            imageView.visibility = View.VISIBLE
+        }
+    }*/
+
+    @BindingAdapter("bindActivityType")
+    fun bindActivityType(view: TextView, item: UserActivities?) {
+        view.text = when (item?.activityType) {
+            ActivityType.REACTED.value -> "Reacted"
+            ActivityType.REACTION_CHANGED.value -> "Reaction Changed"
+            ActivityType.REACTION_REMOVED.value -> "Reaction Removed"
+            ActivityType.WATCHED.value -> "Watched"
+            ActivityType.PLAYLIST.value -> {
+                when (item.activitySubType) {
+                    Reaction.Add.value -> "Added to PlayList"
+                    Reaction.Delete.value -> "Deleted from Playlist"
+                    else -> ""
+                }
+            }
+            else -> null
+        }
+    }
+
+    @BindingAdapter("bindViewProgress")
+    fun bindViewProgress(view: ProgressBar, item: ChannelInfo?) {
+        if (item != null && item.viewProgressPercent() > 0) {
+            view.visibility = View.VISIBLE
+            view.progress = item.viewProgressPercent()
+        } else {
+            view.visibility = View.GONE
+        }
+    }
+
+    @BindingAdapter("loadReactionEmo")
+    fun loadReactionEmo(view: View, reaction: Int) {
+        var reactionTitle = "React"
+        val reactionIcon = when (reaction) {
+            Like.value -> {
+                reactionTitle = Like.name
+                R.drawable.ic_reaction_like_no_shadow
+            }
+            Love.value -> {
+                reactionTitle = Love.name
+                R.drawable.ic_reaction_love_no_shadow
+            }
+            HaHa.value -> {
+                reactionTitle = HaHa.name
+                R.drawable.ic_reaction_haha_no_shadow
+            }
+            Wow.value -> {
+                reactionTitle = Wow.name
+                R.drawable.ic_reaction_wow_no_shadow
+            }
+            Sad.value -> {
+                reactionTitle = Sad.name
+                R.drawable.ic_reaction_sad_no_shadow
+            }
+            Angry.value -> {
+                reactionTitle = Angry.name
+                R.drawable.ic_reaction_angry_no_shadow
+            }
+            Add.value -> R.drawable.ic_playlist
+            Delete.value -> R.drawable.ic_playlist
+            Watched.value -> R.drawable.ic_view
+            else -> R.drawable.ic_reaction_love_empty
+        }
+        when (view) {
+            is ImageView -> {
+                view.setImageResource(reactionIcon)
+                if (reaction == Add.value || reaction == Delete.value) {
+                    view.setColorFilter(Color.parseColor("#829AB8"))
+                }
+            }
+            is TextView -> {
+                view.text = reactionTitle
+                if (reaction == Love.value) view.setTextColor(Color.parseColor("#ff3988")) else view.setTextColor(
+                    Color.parseColor("#829AB8")
+                )
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+            }
+        }
+    }
+
+    @BindingAdapter("bindEmoCount")
+    fun bindEmoCount(view: TextView, item: ChannelInfo) {
+        var react = item.reaction?.run {
+            like + love + haha + wow + sad + angry
+        } ?: 0L
+        if (item.myReaction > 0) react++
+        view.text = Utils.getFormattedViewsText(react.toString())
+    }
+
+    @BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)
+    fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int) {
+        val reactionCountList = listOf(
+            Like to item.reaction?.like,
+            Love to item.reaction?.love,
+            Wow to item.reaction?.wow,
+            HaHa to item.reaction?.haha,
+            Sad to item.reaction?.sad,
+            Angry to item.reaction?.angry
+        ).sortedByDescending { (_, v) -> v }
+
+        val icon = when (reactionCountList[iconPosition - 1].first) {
+            Like -> R.drawable.ic_reaction_like_no_shadow
+            Love -> R.drawable.ic_reaction_love_no_shadow
+            Wow -> R.drawable.ic_reaction_wow_no_shadow
+            HaHa -> R.drawable.ic_reaction_haha_no_shadow
+            Sad -> R.drawable.ic_reaction_sad_no_shadow
+            Angry -> R.drawable.ic_reaction_angry_no_shadow
+            else -> R.drawable.ic_reactions_emo
+        }
+        view.setImageResource(icon)
+    }
+
+    @BindingAdapter("loadMyReactionBg")
+    fun loadMyReactionBg(view: ImageView, isSetBg: Boolean) {
+        if (isSetBg) {
+            view.setBackgroundResource(R.drawable.reaction_round_bg)
+        }
+    }
+
+    @BindingAdapter("loadUnseenCardBgColor")
+    fun loadUnseenBgColor(view: CardView, isSeen: Boolean) {
+        view.setCardBackgroundColor(
+            ContextCompat.getColor(
+                view.context,
+                if (isSeen) R.color.cardBgColor else R.color.unseenCardColor
+            )
+        )
+    }
+
+    @BindingAdapter("onSafeClick")
+    fun onSafeClick(view: View, listener: View.OnClickListener) {
+        view.safeClick(listener)
+    }
+    
+    @BindingAdapter("setContentDescription")
+    fun setDescription(view: ReadMoreTextView, item: ChannelInfo?) {
+        view.text = ""
+        item?.let {
+            view.text = it.getDescriptionDecoded()
+        }
+    }
+    
+    @BindingAdapter("loadPartnerImageFromUrl")
+    fun bindPartnerImageFromUrl(view: ImageView, imageUrl: String?) {
+        imageUrl?.let {
+            view.load(imageUrl) {
+                fallback(R.drawable.placeholder)
+                placeholder(R.drawable.placeholder)
+                error(R.drawable.placeholder)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+                transformations(
+                    CropCenterEndTransformation(4.1f)
+                )
+            }
+        }
     }
 }

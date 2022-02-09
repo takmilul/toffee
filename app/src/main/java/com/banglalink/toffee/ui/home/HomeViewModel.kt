@@ -1,153 +1,356 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Application
+import android.content.Context
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.ToffeeApplication
+import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.data.network.response.MqttBean
+import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.AppDatabase
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.setError
-import com.banglalink.toffee.extension.setSuccess
+import com.banglalink.toffee.data.repository.*
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.SimpleHttpClient
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.NavCategoryGroup
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.channels.StickyHeaderInfo
-import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.getError
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.InstanceIdResult
-import kotlinx.coroutines.launch
-import java.lang.Exception
+import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
-import com.banglalink.toffee.util.unsafeLazy
-import com.google.firebase.iid.FirebaseInstanceId
+import com.banglalink.toffee.util.SingleLiveEvent
+import com.banglalink.toffee.util.getError
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import javax.inject.Inject
 
-
-class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
-
-    private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
-    val channelLiveData = channelMutableLiveData.toLiveData()
-
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val viewAllChannelLiveData = MutableLiveData<Boolean>()
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val dbApi: DbApi,
+    private val profileApi: GetProfile,
+    private val mPref: SessionPreference,
+    private val setFcmToken: SetFcmToken,
+    private val reactionDao: ReactionDao,
+    private val cacheManager: CacheManager,
+    private val logoutService: LogoutService,
+    private val vastTagService: VastTagService,
+    private val updateFavorite: UpdateFavorite,
+    private val sendOtpLogEvent: SendOTPLogEvent,
+    private val tvChannelRepo: TVChannelRepository,
+    @ApplicationContext private val mContext: Context,
+    private val sendSubscribeEvent: SendSubscribeEvent,
+    private val viewCountRepository: ViewCountRepository,
+    private val sendShareCountEvent: SendShareCountEvent,
+    private val shareCountRepository: ShareCountRepository,
+    private val sendViewContentEvent: SendViewContentEvent,
+    @SimpleHttpClient private val httpClient: OkHttpClient,
+    @AppCoroutineScope private val appScope: CoroutineScope,
+    private val mqttCredentialService: MqttCredentialService,
+    private val sendUserInterestEvent: SendUserInterestEvent,
+    private val sendContentReportEvent: SendContentReportEvent,
+    private val reactionStatusRepository: ReactionStatusRepository,
+    private val contentFromShareableUrl: GetContentFromShareableUrl,
+    private val subscribeChannelApiService: SubscribeChannelService,
+    private val myChannelDetailApiService: MyChannelGetDetailService,
+    private val subscriptionCountRepository: SubscriptionCountRepository,
+) : ViewModel() {
+    
+    val isStingray = MutableLiveData<Boolean>()
+    val playContentLiveData = SingleLiveEvent<Any>()
+    private var _playlistManager = PlaylistManager()
+    val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-
-    private val getCategory by lazy {
-        GetCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val getProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val getChannelWithCategory by unsafeLazy {
-        GetChannelWithCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val getContentFromShareableUrl by unsafeLazy{
-        GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val setFcmToken by unsafeLazy {
-        SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val sendViewContentEvent by unsafeLazy {
-        SendViewContentEvent(Preference.getInstance(),RetrofitApiClient.toffeeApi,channelDAO)
-    }
-
-    private val channelDAO by lazy {
-        AppDatabase.getDatabase().channelDAO()
-    }
-
+    val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
+    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
+    private val _channelDetail = MutableLiveData<MyChannelDetail>()
+    val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
+    val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
+    val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
+    val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
+    val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
+    val myChannelDetailLiveData = _channelDetail.toLiveData()
+    
     init {
-        getCategory()
-        getChannelByCategory(0)
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
-    }
-
-    //overridden function for firebase token
-    override fun onComplete(task: Task<InstanceIdResult>) {
-        if (task.isSuccessful) {
-            val token = task.result?.token
-            if(token!=null){
+        
+        // Disable this in production.
+        if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
+            FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("beta-user-detection")
+        }
+        
+        FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
+        FirebaseMessaging.getInstance().subscribeToTopic("controls")
+        FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
+        FirebaseMessaging.getInstance().subscribeToTopic("clear_cache")
+        FirebaseMessaging.getInstance().subscribeToTopic("content_refresh")
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
                 setFcmToken(token)
             }
         }
-
     }
-
-    private fun setFcmToken(token:String){
+    
+    fun getPlaylistManager() = _playlistManager
+    
+    private fun setFcmToken(token: String) {
         viewModelScope.launch {
-            try{
+            try {
                 setFcmToken.execute(token)
-            }
-            catch (e:Exception){
-                getError(e)
+            } catch (e: Exception) {
+                val error = getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SET_FCM_TOKEN,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.code,
+                        "error_description" to error.msg
+                    )
+                )
             }
         }
     }
-
-    fun populateViewCountDb(url:String){
-        getApplication<ToffeeApplication>().applicationScope.launch {
-            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
+    
+    fun populateViewCountDb(url: String) {
+        appScope.launch {
+            DownloadViewCountDb(dbApi, viewCountRepository).execute(mContext, url)
         }
     }
-
-    fun getCategory():LiveData<Resource<NavCategoryGroup>>{
-        return resultLiveData { getCategory.execute() }
+    
+    fun populateReactionDb(url: String) {
+        appScope.launch {
+            DownloadReactionDb(dbApi, reactionDao, mPref).execute(mContext, url)
+        }
     }
-
-    fun getChannelByCategory(subcategoryId:Int){
+    
+    fun populateReactionStatusDb(url: String) {
+        appScope.launch {
+            DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
+        }
+    }
+    
+    fun populateSubscriptionCountDb(url: String) {
+        appScope.launch {
+            DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
+                .execute(mContext, url)
+        }
+    }
+    
+    fun populateShareCountDb(url: String) {
+        appScope.launch {
+            DownloadShareCountDb(dbApi, shareCountRepository)
+                .execute(mContext, url)
+        }
+    }
+    
+    private fun getProfile() {
         viewModelScope.launch {
-            try{
-                val response = getChannelWithCategory.execute(subcategoryId).map {
-                    StickyHeaderInfo(it.categoryName,it.channels)
-                }
-                channelMutableLiveData.setSuccess(response)
-
-            }catch (e:Exception){
-                channelMutableLiveData.setError(getError(e))
+            val respoense = resultFromResponse {
+                profileApi()
+            }
+            if (respoense is Resource.Failure) {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_USER_PROFILE,
+                        FirebaseParams.BROWSER_SCREEN to "Profile Screen",
+                        "error_code" to respoense.error.code,
+                        "error_description" to respoense.error.msg
+                    )
+                )
             }
         }
     }
-
-    private fun getProfile(){
-        viewModelScope.launch {
-            try{
-                getProfile.execute()
-            }catch (e:Exception){
-                ToffeeAnalytics.logException(e)
+    
+    suspend fun fetchRedirectedDeepLink(url: String?): String? {
+        if (url == null) return url
+        return withContext(Dispatchers.IO + Job()) {
+            try {
+                val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
+                val redirUrl = resp.request.url
+                if (redirUrl.host == "toffeelive.com") redirUrl.toString()
+                else null
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                null
             }
         }
     }
-
-    fun getShareableContent(shareUrl :String):LiveData<Resource<ChannelInfo?>>{
-       return resultLiveData{
-           getContentFromShareableUrl.execute(shareUrl)
-       }
+    
+    fun getShareableContent(shareUrl: String): LiveData<Resource<ChannelInfo?>> {
+        return resultLiveData {
+            contentFromShareableUrl.execute(shareUrl)
+        }
     }
-
-    fun sendViewContentEvent(channelInfo: ChannelInfo){
+    
+    fun sendViewContentEvent(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             try {
                 sendViewContentEvent.execute(channelInfo)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+    
+    fun addTvChannelToRecent(it: ChannelInfo) {
+        viewModelScope.launch {
+            tvChannelRepo.insertRecentItems(
+                TVChannelItem(
+                    it.id.toLong(),
+                    it.type ?: "LIVE",
+                    0,
+                    "Recent",
+                    Gson().toJson(it),
+                    it.view_count?.toLong() ?: 0L,
+                    it.isStingray
+                )
+            )
+        }
+    }
+    
+    fun getChannelDetail(channelOwnerId: Int) {
+        viewModelScope.launch {
+            val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
+            
+            if (result is Success) {
+                val myChannelDetail = result.data.myChannelDetail
+                myChannelDetail?.let {
+                    _channelDetail.value = it
+                    mPref.isChannelDetailChecked = true
+                    mPref.channelId = it.id.toInt()
+                    mPref.customerName = it.name ?: ""
+                    mPref.customerEmail = it.email ?: ""
+                    mPref.customerAddress = it.address ?: ""
+                    mPref.customerDOB = it.dateOfBirth ?: ""
+                    mPref.customerNID = it.nationalIdNo ?: ""
+                    mPref.channelLogo = it.profileUrl ?: ""
+                    mPref.channelName = it.channelName ?: ""
+                }
+            }
+            myChannelDetailResponse.value = result
+        }
+    }
+    
+    fun sendShareLog(channelInfo: ChannelInfo) {
+        viewModelScope.launch {
+            sendShareCountEvent.execute(channelInfo)
+        }
+    }
+    
+    fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
+        viewModelScope.launch {
+            val response = resultFromResponse { subscribeChannelApiService.execute(subscriptionInfo, status) }
+            if (response is Success) {
+                sendSubscribeEvent.sendToPubSub(subscriptionInfo, status)
+                cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
+                ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION, bundleOf("isSubscribed" to status))
+            } else {
+                val error = response as Resource.Failure
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.SUBSCRIBE_CHANNEL,
+                        FirebaseParams.BROWSER_SCREEN to "Users Channels",
+                        "error_code" to error.error.code,
+                        "error_description" to error.error.msg
+                    )
+                )
+            }
+            subscriptionLiveData.value = response
+        }
+    }
+    
+    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean>> {
+        return resultLiveData {
+            val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
+            updateFavorite.execute(channelInfo, favorite)
+        }
+    }
+    
+    fun getMqttCredential() {
+        viewModelScope.launch {
+            val response = resultFromResponse { mqttCredentialService.execute() }
+            
+            if (response is Resource.Success) {
+                mqttCredentialLiveData.postValue(response)
+            } else {
+                val error = response as Resource.Failure
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_MQTT_CREDENTIAL,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.error.code,
+                        "error_description" to error.error.msg
+                    )
+                )
+            }
+        }
+    }
+    
+    fun sendReportData(reportInfo: ReportInfo) {
+        viewModelScope.launch {
+            sendContentReportEvent.execute(reportInfo)
+        }
+    }
+    
+    fun logoutUser() {
+        viewModelScope.launch {
+            val response = resultFromResponse { logoutService.execute() }
+            logoutLiveData.postValue(response)
+        }
+    }
+    
+    fun sendUserInterestData(interestList: Map<String, Int>) {
+        viewModelScope.launch {
+            sendUserInterestEvent.execute(interestList)
+        }
+    }
+    
+    fun sendOtpLogData(otpLogData: OTPLogData, phoneNumber: String) {
+        viewModelScope.launch {
+            sendOtpLogEvent.execute(otpLogData, phoneNumber)
+        }
+    }
+    
+    fun getVastTags() {
+        viewModelScope.launch {
+            try {
+                vastTagsMutableLiveData.value = vastTagService.execute().response.tags
+            } catch (e: Exception) {
+                e.printStackTrace()
+                val error = getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_VAST_TAG_LIST,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.code,
+                        "error_description" to error.msg
+                    )
+                )
             }
         }
     }

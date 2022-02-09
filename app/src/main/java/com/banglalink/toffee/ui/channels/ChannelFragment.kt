@@ -4,54 +4,65 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.databinding.FragmentChannelListBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.util.BindingUtil
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
-
-    private val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
-
-    override fun onItemClicked(channelInfo: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(channelInfo)
-    }
-
-    private var category: String? = null
-    private var subCategory: String? = null
+@AndroidEntryPoint
+class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
+    @Inject lateinit var bindingUtil: BindingUtil
     private var title: String? = null
     private var subCategoryID: Int = 0
-
-
+    private var category: String? = null
+    private var subCategory: String? = null
+    private var isStingray: Boolean = false
+    private var _binding: FragmentChannelListBinding ? = null
+    private val binding get() = _binding!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val channelViewModel by activityViewModels<AllChannelsViewModel>()
+    
     companion object{
-        fun createInstance(
-            subCategoryID: Int,
-            subCategory: String,
-            category: String
-        ): ChannelFragment {
+        fun createInstance(subCategoryID: Int, subCategory: String, category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
             val channelListFragment = ChannelFragment()
-            val bundle = Bundle()
-            bundle.putInt("sub-category-id", subCategoryID)
-            bundle.putString("sub-category", subCategory)
-            bundle.putString("category", category)
-            bundle.putString("title", "TV Channels")
+            val bundle = Bundle().apply {
+                putInt("sub_category_id", subCategoryID)
+                putString("sub_category", subCategory)
+                putString("category", category)
+                putString("title", "TV Channels")
+                putBoolean("show_selected", showSelected)
+                putBoolean("is_stingray", isStingray)
+            }
             channelListFragment.arguments = bundle
             return channelListFragment
         }
 
-        fun createInstance(category: String): ChannelFragment {
+        fun createInstance(category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
+            bundle.putBoolean("show_selected", showSelected)
+            bundle.putBoolean("is_stingray", isStingray)
             instance.arguments = bundle
             return instance
         }
@@ -59,19 +70,21 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        this.title = arguments!!.getString("title")
-        this.category = arguments!!.getString("category")
-        this.subCategory = arguments!!.getString("sub-category")
-        this.subCategoryID = arguments!!.getInt("sub-category-id")
+        this.title = requireArguments().getString("title")
+        this.category = requireArguments().getString("category")
+        this.subCategory = requireArguments().getString("sub_category")
+        this.subCategoryID = requireArguments().getInt("sub_category_id")
+        this.isStingray = requireArguments().getBoolean("is_stingray")
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_channel_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentChannelListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,29 +92,78 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
         title?.let {
             activity?.title = it
         }
-        var channelAdapter: ChannelStickyListAdapter?
-        val gridView: RecyclerView  = view.findViewById(R.id.gridView)
-        gridView.setHasFixedSize(true)
-        val layoutManager = StickyHeaderGridLayoutManager(3)
-        layoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
-        gridView.layoutManager = layoutManager
+        binding.progressBar.show()
+        homeViewModel.isStingray.postValue(isStingray)
+        setupEmptyView()
+        
+        val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
+        
+        with(binding.listview){
+            setHasFixedSize(true)
+            val gridLayoutManager = StickyHeaderGridLayoutManager(3)
+            gridLayoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
+            layoutManager = gridLayoutManager
+            adapter = channelAdapter
+        }
 
-        homeViewModel.getChannelByCategory(0)
+//        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
-        homeViewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
-          when(it){
-              is Resource.Success->{
-                  channelAdapter = ChannelStickyListAdapter(
-                      requireContext(),
-                      it.data.toMutableList(),
-                      this
-                  )
-                  gridView.adapter = channelAdapter
-              }
-              is Resource.Failure->{
-                  context?.showToast(it.error.msg)
-              }
-          }
-        })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            with(channelViewModel(0, isStingray)){
+                map {
+                    it.filter { it.channelInfo?.isExpired == false }
+                }
+                collectLatest { tvList ->
+                    val res = tvList.groupBy { it.categoryName }.map {
+                        val categoryName = it.key
+                        val categoryList = it.value.map { ci -> ci.channelInfo }
+                        StickyHeaderInfo(categoryName, categoryList)
+                    }
+                    binding.progressBar.hide()
+                    channelAdapter.setItems(res)
+                }
+                catch {
+                    binding.progressBar.hide()
+                    binding.emptyView.show()
+                    it.message?.let { errorMessage -> requireContext().showToast(errorMessage) }
+                }
+                onEmpty {
+                    binding.progressBar.hide()
+                    binding.emptyView.show()
+                }
+            }
+        }
+
+        if(arguments?.getBoolean("show_selected") == true) {
+            observe(channelViewModel.selectedChannel) {
+                channelAdapter.setSelected(it)
+            }
+        }
+        ToffeeAnalytics.logEvent(
+            ToffeeEvents.SCREEN_VIEW,
+            bundleOf(FirebaseParams.BROWSER_SCREEN to "channel_list"))
+    }
+    
+    override fun onItemClicked(channelInfo: ChannelInfo) {
+        homeViewModel.playContentLiveData.postValue(channelInfo)
+    }
+    
+    private fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(0, "No item found")
+    }
+    
+    private fun setupEmptyView() {
+        val info = getEmptyViewInfo()
+        if (info.first > 0) {
+            binding.emptyViewIcon.setImageResource(info.first)
+        }
+        else {
+            binding.emptyViewIcon.visibility = View.GONE
+        }
+
+        info.second?.let {
+            binding.emptyViewLabel.text = it
+        }
     }
 }

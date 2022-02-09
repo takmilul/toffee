@@ -1,0 +1,801 @@
+package com.banglalink.toffee.data.storage
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.text.TextUtils
+import androidx.core.content.edit
+import androidx.lifecycle.MutableLiveData
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.model.CustomerInfoLogin
+import com.banglalink.toffee.model.DBVersion
+import com.banglalink.toffee.model.DBVersionV2
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.EncryptionUtil
+import com.banglalink.toffee.util.SingleLiveEvent
+import com.banglalink.toffee.util.Utils
+import java.text.ParseException
+import java.util.*
+
+const val PREF_NAME_IP_TV= "IP_TV"
+
+class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
+    
+    val viewCountDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val subscribeDbUrlLiveData = SingleLiveEvent<String>()
+    val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val shareCountDbUrlLiveData = SingleLiveEvent<String>()
+    val sessionTokenLiveData = MutableLiveData<String>()
+    val profileImageUrlLiveData = MutableLiveData<String>()
+    val customerNameLiveData = MutableLiveData<String>()
+    val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
+    val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
+    val loginDialogLiveData = SingleLiveEvent<Boolean>()
+    val messageDialogLiveData = SingleLiveEvent<String>()
+    val shareableUrlLiveData = SingleLiveEvent<String>()
+    val isFireworkInitialized = MutableLiveData<Boolean>()
+    val shareableHashLiveData = MutableLiveData<String?>()
+    
+    var phoneNumber: String
+        get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
+        set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
+    
+    var hePhoneNumber: String
+        get() = pref.getString(PREF_HE_PHONE_NUMBER, "") ?: ""
+        set(phoneNumber) = pref.edit { putString(PREF_HE_PHONE_NUMBER, phoneNumber) }
+    
+    var customerName: String
+        get() = pref.getString(PREF_CUSTOMER_NAME, "") ?: ""
+        set(customerName) {
+            customerNameLiveData.postValue(customerName)
+            pref.edit { putString(PREF_CUSTOMER_NAME, customerName) }
+        }
+    
+    var customerEmail: String
+        get() = pref.getString(PREF_CUSTOMER_EMAIL, "") ?: ""
+        set(email) = pref.edit { putString(PREF_CUSTOMER_EMAIL, email) }
+
+    var customerAddress: String
+        get() = pref.getString(PREF_CUSTOMER_ADDRESS, "") ?: ""
+        set(address) = pref.edit{ putString(PREF_CUSTOMER_ADDRESS, address) }
+
+    var customerDOB: String
+        get() = pref.getString(PREF_CUSTOMER_DOB, "") ?: ""
+        set(dob) = pref.edit{ putString(PREF_CUSTOMER_DOB, dob) }
+
+    var customerNID: String
+        get() = pref.getString(PREF_CUSTOMER_NID, "") ?: ""
+        set(nidNumber) = pref.edit{ putString(PREF_CUSTOMER_NID, nidNumber) }
+
+    var customerId: Int
+        get() = pref.getInt(PREF_CUSTOMER_ID, 0)
+        set(customerId) {
+            pref.edit{ putInt(PREF_CUSTOMER_ID, customerId) }
+        }
+
+    var password: String
+        get() = pref.getString(PREF_PASSWORD, "") ?: ""
+        set(password) {
+            pref.edit().putString(PREF_PASSWORD, password).apply()
+        }
+
+    var sessionToken: String
+        get() = pref.getString(PREF_SESSION_TOKEN, "") ?: ""
+        set(sessionToken) {
+            val storedToken = pref.getString(PREF_SESSION_TOKEN, "") ?: ""//get stored token
+            pref.edit().putString(PREF_SESSION_TOKEN, sessionToken).apply()//save new session token
+            if (storedToken.isNotEmpty() && !sessionToken.equals(storedToken, true)) {
+                pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()//Update session token change time
+                sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
+            }
+        }
+    
+    var isBanglalinkNumber:String
+        get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
+        set(isBanglalinkNumber){
+            pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
+        }
+
+    var isHeBanglalinkNumber: Boolean
+        get() = pref.getBoolean(PREF_HE_BANGLALINK_NUMBER,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_HE_BANGLALINK_NUMBER,isVerified).apply()
+        }
+    
+    var isVerifiedUser: Boolean
+        get() = pref.getBoolean(PREF_VERIFICATION,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_VERIFICATION,isVerified).apply()
+        }
+    
+    var balance: Int
+        get() = pref.getInt(PREF_BALANCE, 0)
+        set(balance) {
+            pref.edit().putInt(PREF_BALANCE, balance).apply()
+        }
+
+    var latitude: String
+        get() = pref.getString(PREF_LATITUDE, "") ?: ""
+        set(latitude) {
+            pref.edit().putString(PREF_LATITUDE, latitude).apply()
+        }
+
+    var longitude: String
+        get() = pref.getString(PREF_LONGITUDE, "") ?: ""
+        set(Longitude) {
+            pref.edit().putString(PREF_LONGITUDE, Longitude).apply()
+        }
+
+    var wifiProfileStatus: Int
+        get() = pref.getInt(PREF_WIFI_PROFILE_STATUS1, 7)
+        set(value) {
+            pref.edit().putInt(PREF_WIFI_PROFILE_STATUS1, value).apply()
+        }
+
+    var cellularProfileStatus: Int
+        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 7)
+        set(value) {
+            pref.edit().putInt(PREF_CELLULAR_PROFILE_STATUS4, value).apply()
+        }
+
+    var channelDbVersion: Int
+        get() = pref.getInt(PREF_CHANNEL_DB_VERSION, 0)
+        set(version) {
+            pref.edit().putInt(PREF_CHANNEL_DB_VERSION, version).apply()
+        }
+
+    var catchupDbVersion: Int
+        get() = pref.getInt(PREF_CATCHUP_DB_VERSION, 0)
+        set(version) {
+            pref.edit().putInt(PREF_CATCHUP_DB_VERSION, version).apply()
+        }
+
+    var vodDbVersion: Int
+        get() = pref.getInt(PREF_VOD_DB_VERSION, 0)
+        set(version) {
+            pref.edit().putInt(PREF_VOD_DB_VERSION, version).apply()
+        }
+
+    var packageDbVersion: Int
+        get() = pref.getInt(PREF_PACKAGE_DB_VERSION, 0)
+        set(version) {
+            pref.edit().putInt(PREF_PACKAGE_DB_VERSION, version).apply()
+        }
+
+    var categoryDbVersion: Int
+        get() = pref.getInt(PREF_CATEGORY_DB_VERSION, 0)
+        set(version) {
+            pref.edit().putInt(PREF_CATEGORY_DB_VERSION, version).apply()
+        }
+
+    var fcmToken: String
+        get() = pref.getString(PREF_FCM_TOKEN, "") ?: ""
+        set(token) {
+            pref.edit().putString(PREF_FCM_TOKEN, token).apply()
+        }
+
+    var userImageUrl: String?
+        get() = pref.getString(PREF_IMAGE_URL, null)
+        set(userPhoto) {
+            pref.edit().putString(PREF_IMAGE_URL, userPhoto).apply()
+            if (!TextUtils.isEmpty(userPhoto))
+                profileImageUrlLiveData.postValue(userPhoto!!)
+        }
+
+    val netType: String
+        get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
+
+    var isSubscriptionActive: String
+        get() = "false" // TODO: Uncomment for subscription: pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
+        set(phoneNumber) {
+            pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
+        }
+
+
+
+    var isFeaturePartnerActive: String
+        get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "false") ?: "false"
+        set(isActive) {
+            pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
+        }
+
+    fun getFireworkUserId(): String {
+        var userId = pref.getString(PREF_FIREWORK_USER_ID, null)
+        if (userId.isNullOrBlank()) {
+            userId = "${UUID.randomUUID()}_${System.nanoTime()}"
+            pref.edit().putString(PREF_FIREWORK_USER_ID, userId).apply()
+        }
+        return userId
+    }
+
+    var channelId: Int
+        get() = pref.getInt(PREF_CHANNEL_ID, 0)
+        set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
+
+    var channelLogo: String
+        get() = pref.getString(PREF_CHANNEL_LOGO, "") ?: ""
+        set(channelLogoUrl) = pref.edit().putString(PREF_CHANNEL_LOGO, channelLogoUrl).apply()
+    
+    var channelName: String
+        get() = pref.getString(PREF_CHANNEL_NAME, "") ?: ""
+        set(channelName) = pref.edit().putString(PREF_CHANNEL_NAME, channelName).apply()
+    
+    var isChannelDetailChecked: Boolean
+        get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
+        set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
+    
+    fun setSystemTime(systemTime: String) {
+        pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
+    }
+
+    fun getSystemTime(): Date {
+        val dateString = pref.getString(PREF_SYSTEM_TIME, "")
+        val deviceDate = Date()
+        try{
+            dateString?.let {
+                val serverDate =  Utils.getDate(it)
+                if(serverDate!=null){
+                    return  if(deviceDate.after(serverDate)) deviceDate else serverDate//Date is after server date that means server date not updated. In that case use device time
+                }
+            }
+        }catch (pe:ParseException){
+            pe.printStackTrace()
+            ToffeeAnalytics.logException(pe)
+        }
+
+        return deviceDate
+    }
+
+    fun setDBVersion(dbVersion: DBVersion) {
+        pref.edit().putInt(PREF_CHANNEL_DB_VERSION, dbVersion.chanelDbVersion).apply()
+        pref.edit().putInt(PREF_VOD_DB_VERSION, dbVersion.vodDbVersion).apply()
+        pref.edit().putInt(PREF_NOTIFICATION_DB_VERSION, dbVersion.notificationDbVersion).apply()
+        pref.edit().putInt(PREF_CATCHUP_DB_VERSION, dbVersion.catchupDbVersion).apply()
+        pref.edit().putInt(PREF_PACKAGE_DB_VERSION, dbVersion.packageDbVersion).apply()
+    }
+
+    fun setDBVersion(dbVersionList: List<DBVersionV2>) {
+        for(dbVersion in dbVersionList){
+            pref.edit().putInt(dbVersion.apiName,dbVersion.dbVersion).apply()
+        }
+    }
+
+    fun getDBVersionByApiName(apiName:String):Int{
+        return pref.getInt(apiName,0)
+    }
+
+    fun updateDbVersionByApiName(apiName: String){
+        val dbVersion = getDBVersionByApiName(apiName) + 1
+        pref.edit().putInt(apiName, dbVersion).apply()
+    }
+    
+    fun clear() {
+        pref.edit().clear().apply()
+    }
+    
+    fun watchOnlyWifi(): Boolean {
+        return pref.getBoolean(PREF_WATCH_ONLY_WIFI, false)
+    }
+
+    fun setWatchOnlyWifi(value: Boolean) {
+        pref.edit().putBoolean(PREF_WATCH_ONLY_WIFI, value).apply()
+    }
+
+    fun isNotificationEnabled(): Boolean {
+        return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
+    }
+
+    fun setNotificationEnabled(value: Boolean) {
+        pref.edit { putBoolean(PREF_KEY_NOTIFICATION, value) }
+    }
+
+    fun defaultDataQuality(): Boolean {
+        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, true)
+    }
+
+    fun setDefaultDataQuality(value: Boolean) {
+        pref.edit().putBoolean(PREF_DEFAULT_DATA_QUALITY_2, value).apply()
+    }
+
+    fun setHeaderSessionToken(sessionToken: String?) {
+        pref.edit().putString(PREF_SESSION_TOKEN_HEADER, sessionToken).apply()
+    }
+
+    fun getHeaderSessionToken(): String? {
+        return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
+    }
+    
+    fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
+        pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
+    }
+
+    fun getHlsOverrideUrl(): String? {
+        return pref.getString(PREF_HLS_OVERRIDE_URL, "")
+    }
+
+    var shouldOverrideHlsUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
+        set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
+    var isAllTvChannelMenuEnabled: Boolean
+        get() = pref.getBoolean(PREF_ALL_TV_CHANNEL_MENU, false)
+        set(value) = pref.edit{ putBoolean(PREF_ALL_TV_CHANNEL_MENU, value) }
+    
+    fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
+        pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
+        pref.edit().putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
+            .apply() //10 minute cut off for safety. We will request for new token 10 minutes early
+    }
+
+    fun getSessionTokenLifeSpanInMillis(): Long {
+        return pref.getLong(PREF_TOKEN_LIFE_SPAN,  3600000)//default token span set to 1 hour
+    }
+
+    fun getSessionTokenSaveTimeInMillis(): Long {
+        return pref.getLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis())
+    }
+
+//    var uploadId: String?
+//        get() = pref.getString("toffee-upload-id", null)
+//        set(value) = pref.edit { putString("toffee-upload-id", value) }
+
+    var viewCountDbUrl: String
+        get() = pref.getString(PREF_VIEW_COUNT_DB_URL, "") ?: ""
+        set(viewCountDbUrl) {
+            val storedUrl = pref.getString(PREF_VIEW_COUNT_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_VIEW_COUNT_DB_URL, viewCountDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !viewCountDbUrl.equals(storedUrl, true)) {
+                viewCountDbUrlLiveData.postValue(viewCountDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    var reactionDbUrl: String
+        get() = pref.getString(PREF_REACTION_DB_URL, "") ?: ""
+        set(reactionDbUrl) {
+            val storedUrl = pref.getString(PREF_REACTION_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_REACTION_DB_URL, reactionDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !reactionDbUrl.equals(storedUrl, true)) {
+                reactionDbUrlLiveData.postValue(reactionDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    var reactionStatusDbUrl: String
+        get() = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""
+        set(reactionStatusDbUrl) {
+            val storedUrl = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_REACTION_STATUS_DB_URL, reactionStatusDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !reactionStatusDbUrl.equals(storedUrl, true)) {
+                reactionStatusDbUrlLiveData.postValue(reactionStatusDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    var subscribeDbUrl: String
+        get() = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""
+        set(subscribeDbUrl) {
+            val storedUrl = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SUBSCRIBE_DB_URL, subscribeDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !subscribeDbUrl.equals(storedUrl, true)) {
+                subscribeDbUrlLiveData.postValue(subscribeDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    var subscriberStatusDbUrl: String
+        get() = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""
+        set(subscriberStatusDbUrl) {
+            val storedUrl = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SUBSCRIBER_STATUS_DB_URL, subscriberStatusDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !subscriberStatusDbUrl.equals(storedUrl, true)) {
+                subscriberStatusDbUrlLiveData.postValue(subscriberStatusDbUrl)//post if there is mismatch of url
+            }
+        }
+    
+    var shareCountDbUrl: String
+        get() = pref.getString(PREF_SHARE_COUNT_DB_URL, "") ?: ""
+        set(shareCountDbUrl) {
+            val storedUrl = pref.getString(PREF_SHARE_COUNT_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SHARE_COUNT_DB_URL, shareCountDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !shareCountDbUrl.equals(storedUrl, true)) {
+                shareCountDbUrlLiveData.postValue(shareCountDbUrl)//post if there is mismatch of url
+            }
+        }
+    
+    var uploadStatus: Int
+        get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
+        set(value) = pref.edit { putInt(PREF_TOFFEE_UPLOAD_STATUS, value) }
+
+    var isEnableFloatingWindow: Boolean
+        get() = pref.getBoolean(PREF_ENABLE_FLOATING_WINDOW, true)
+        set(value) = pref.edit { putBoolean(PREF_ENABLE_FLOATING_WINDOW, value) }
+
+    var isAutoplayForRecommendedVideos: Boolean
+        get() = pref.getBoolean(PREF_AUTO_PLAY_RECOMMENDED, true)
+        set(value) = pref.edit { putBoolean(PREF_AUTO_PLAY_RECOMMENDED, value) }
+
+    var isPreviousDbDeleted: Boolean
+        get() = pref.getBoolean(PREF_IS_PREVIOUS_DB_DELETED, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_PREVIOUS_DB_DELETED, value) }
+
+    var hasReactionDb: Boolean
+        get() = pref.getBoolean(PREF_HAS_REACTION_DB, false)
+        set(value) = pref.edit { putBoolean(PREF_HAS_REACTION_DB, value) }
+    
+    var mqttIsActive: Boolean
+        get() = pref.getBoolean(PREF_MQTT_IS_ACTIVE, true)
+        set(value) = pref.edit { putBoolean(PREF_MQTT_IS_ACTIVE, value) }
+    
+    var mqttHost: String
+        get() = pref.getString(PREF_MQTT_HOST, "") ?: ""  //ssl://im.toffeelive.com:1883
+        set(value) = pref.edit { putString(PREF_MQTT_HOST, value) }
+    
+    var mqttClientId: String
+        get() = pref.getString(PREF_MQTT_CLIENT_ID, "") ?: ""  //evan-02@im.toffeelive.com
+        set(value) = pref.edit { putString(PREF_MQTT_CLIENT_ID, value) }
+
+    var mqttUserName: String
+        get() = pref.getString(PREF_MQTT_USER_NAME, "") ?: ""  //evan-02@im.toffeelive.com
+        set(value) = pref.edit { putString(PREF_MQTT_USER_NAME, value) }
+
+    var mqttPassword: String
+        get() = pref.getString(PREF_MQTT_PASSWORD, "") ?: ""  //12345678
+        set(value) = pref.edit { putString(PREF_MQTT_PASSWORD, value) }
+
+    var mqttTopic: String
+        get() = pref.getString(PREF_MQTT_TOPIC, "test") ?: ""
+        set(value) = pref.edit { putString(PREF_MQTT_TOPIC, value) }
+
+    var isCastEnabled: Boolean
+        get() = pref.getBoolean(PREF_IS_CAST_ENABLED, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CAST_ENABLED, value) }
+
+    var isCastUrlOverride: Boolean
+        get() = pref.getBoolean(PREF_IS_CAST_URL_OVERRIDE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CAST_URL_OVERRIDE, value) }
+
+    var castOverrideUrl: String
+        get() = pref.getString(PREF_CAST_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CAST_OVERRIDE_URL, value) }
+
+    var castReceiverId: String
+        get() = pref.getString(PREF_CAST_RECEIVER_ID, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CAST_RECEIVER_ID, value) }
+
+    var internetPackUrl: String
+        get() = pref.getString(PREF_INTERNET_PACK_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INTERNET_PACK_URL, value) }
+
+    var tusUploadServerUrl: String
+        get() = pref.getString(PREF_TUS_UPLOAD_SERVER_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TUS_UPLOAD_SERVER_URL, value) }
+
+    var privacyPolicyUrl: String
+        get() = pref.getString(PREF_PRIVACY_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_PRIVACY_POLICY_URL, value) }
+
+    var creatorsPolicyUrl: String
+        get() = pref.getString(PREF_CREATORS_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CREATORS_POLICY_URL, value) }
+
+    var termsAndConditionUrl: String
+        get() = pref.getString(PREF_TERMS_AND_CONDITIONS_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TERMS_AND_CONDITIONS_URL, value) }
+    
+    var facebookPageUrl: String
+        get() = pref.getString(PREF_FACEBOOK_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_FACEBOOK_PAGE_URL, value) }
+    
+    var instagramPageUrl: String
+        get() = pref.getString(PREF_INSTAGRAM_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INSTAGRAM_PAGE_URL, value) }
+    
+    var youtubePageUrl: String
+        get() = pref.getString(PREF_YOUTUBE_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_YOUTUBE_PAGE_URL, value) }
+    
+    var geoCity: String
+        get() = pref.getString(PREF_GEO_CITY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_CITY, value) }
+    
+    var geoLocation: String
+        get() = pref.getString(PREF_GEO_LOCATION, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_LOCATION, value) }
+    
+    var userIp: String
+        get() = pref.getString(PREF_USER_IP, "") ?: ""
+        set(value) = pref.edit { putString(PREF_USER_IP, value) }
+    
+    var screenCaptureEnabledUsers: Set<String>
+        get() = pref.getStringSet(PREF_SCREEN_CAPTURE_USERS, setOf()) ?: setOf()
+        set(value) = pref.edit { putStringSet(PREF_SCREEN_CAPTURE_USERS, value) }
+
+    private var forcedUpdateVersions: String?
+        get() = pref.getString(PREF_FORCE_UPDATE_VERSIONS, null)
+        set(value) = pref.edit { putString(PREF_FORCE_UPDATE_VERSIONS, value) }
+
+    fun shouldForceUpdate(versionCode: Int): Boolean {
+        forcedUpdateVersions?.let {
+            if(versionCode.toString() in it.split(",")) return true
+        }
+        return false
+    }
+
+    var isVastActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
+    
+    var vastFrequency: Int
+        get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
+        set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
+
+    var bucketDirectory: String?
+        get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
+        set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
+    
+    var isFcmEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, value) }
+    
+    var isFbEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, value) }
+    
+    var isDrmActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
+
+    var isGlobalCidActive: Boolean
+        get() = pref.getBoolean(PREF_IS_GLOBAL_CID_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_GLOBAL_CID_ACTIVE, value) }
+    
+    var globalCidName: String?
+        get() = pref.getString(PREF_GLOBAL_CID_NAME, null)
+        set(value) = pref.edit { putString(PREF_GLOBAL_CID_NAME, value) }
+
+    var drmCastReceiver: String?
+        get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
+        set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
+    
+    var drmWidevineLicenseUrl: String?
+        get() = pref.getString(PREF_WIDEVINE_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_WIDEVINE_LICENSE_URL, value) }
+    
+    var drmFpsLicenseUrl: String?
+        get() = pref.getString(PREF_FPS_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_FPS_LICENSE_URL, value) }
+    
+    var drmPlayreadyLicenseUrl: String?
+        get() = pref.getString(PREF_PLAYREADY_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_PLAYREADY_LICENSE_URL, value) }
+    
+    var heUpdateDate: String?
+        get() = pref.getString(PREF_HE_UPDATE_DATE, null)
+        set(value) = pref.edit { putString(PREF_HE_UPDATE_DATE, value) }
+    
+    var adIdUpdateDate: String?
+        get() = pref.getString(PREF_AD_ID_UPDATE_DATE, null)
+        set(value) = pref.edit { putString(PREF_AD_ID_UPDATE_DATE, value) }
+    
+    var drmTokenUrl: String?
+        get() = pref.getString(PREF_DRM_TOKEN_URL, null)
+        set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
+
+    var betaVersionCodes: String?
+        get() = pref.getString(PREF_BETA_VERSION_CODES, null)
+        set(value) = pref.edit { putString(PREF_BETA_VERSION_CODES, value) }
+    
+    var isPaidUser: Boolean
+        get() = pref.getBoolean(PREF_PAYMENT_STATUS, false)
+        set(value) = pref.edit { putBoolean(PREF_PAYMENT_STATUS, value) }
+    var isFireworkActive: Boolean
+        get() = pref.getBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, value) }
+    var isStingrayActive: Boolean
+        get() = pref.getBoolean(PREF_IS_STINGRAY_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_STINGRAY_ACTIVE, value) }
+    var isMedalliaActive: Boolean
+        get() = pref.getBoolean(PREF_IS_MEDALLIA_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_MEDALLIA_ACTIVE, value) }
+    var isConvivaActive: Boolean
+        get() = pref.getBoolean(PREF_IS_CONVIVA_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CONVIVA_ACTIVE, value) }
+    
+    fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
+        balance = customerInfoLogin.balance
+        isVerifiedUser = customerInfoLogin.verified_status
+        customerId = customerInfoLogin.customerId
+        password = customerInfoLogin.password ?: ""
+        if (!customerInfoLogin.customerName.isNullOrBlank()) {
+            customerName = customerInfoLogin.customerName!!
+        }
+        sessionToken = (customerInfoLogin.sessionToken?:"")
+        if (!customerInfoLogin.profileImage.isNullOrBlank()) {
+            userImageUrl = customerInfoLogin.profileImage
+        }
+        setHeaderSessionToken(customerInfoLogin.headerSessionToken)
+        setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
+        shouldOverrideHlsUrl = customerInfoLogin.hlsUrlOverride
+        setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
+        if(customerInfoLogin.isBanglalinkNumber!=null){
+            isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
+        }
+        customerInfoLogin.dbVersionList?.let {
+            setDBVersion(it)
+        }
+        latitude = customerInfoLogin.lat ?: ""
+        longitude = customerInfoLogin.long ?: ""
+        isSubscriptionActive = customerInfoLogin.isSubscriptionActive ?: "false"
+        viewCountDbUrl = customerInfoLogin.viewCountDbUrl ?: ""
+        reactionDbUrl = customerInfoLogin.reactionDbUrl ?: ""
+        reactionStatusDbUrl = customerInfoLogin.reactionStatusDbUrl ?: ""
+        subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
+        subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
+        shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
+        isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
+        isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "false"
+        mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
+        mqttIsActive = customerInfoLogin.mqttIsActive == 1
+
+        isCastEnabled = customerInfoLogin.isCastEnabled == 1
+        isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
+        castReceiverId = customerInfoLogin.castReceiverId ?: ""
+        castOverrideUrl = customerInfoLogin.castOverrideUrl ?: ""
+        
+        internetPackUrl = customerInfoLogin.internetPackUrl ?: ""
+        tusUploadServerUrl = customerInfoLogin.tusUploadServerUrl ?: ""
+        privacyPolicyUrl = customerInfoLogin.privacyPolicyUrl ?: ""
+        creatorsPolicyUrl = customerInfoLogin.creatorsPolicyUrl ?: ""
+        termsAndConditionUrl = customerInfoLogin.termsAndConditionsUrl ?: ""
+        facebookPageUrl = customerInfoLogin.facebookPageUrl
+        instagramPageUrl = customerInfoLogin.instagramPageUrl
+        youtubePageUrl = customerInfoLogin.youtubePageUrl
+        
+        geoCity = customerInfoLogin.geoCity ?: ""
+        geoLocation = customerInfoLogin.geoLocation ?: ""
+        userIp = customerInfoLogin.userIp ?: ""
+
+        forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
+        isVastActive = customerInfoLogin.isVastActive == 1
+        vastFrequency = customerInfoLogin.vastFrequency
+        bucketDirectory = customerInfoLogin.gcpVodBucketDirectory
+        isFcmEventActive = customerInfoLogin.isFcmEventActive == 1
+        isFbEventActive = customerInfoLogin.isFbEventActive == 1
+        isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
+        drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
+        drmWidevineLicenseUrl = customerInfoLogin.widevineLicenseUrl
+        drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
+        drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
+        drmTokenUrl = customerInfoLogin.drmTokenUrl
+        isGlobalCidActive = customerInfoLogin.isGlobalCidActive == 1
+        globalCidName = customerInfoLogin.globalCidName
+        betaVersionCodes = customerInfoLogin.androidBetaVersionCode
+        isPaidUser = customerInfoLogin.paymentStatus
+        isFireworkActive = customerInfoLogin.isFireworkActive
+        isStingrayActive = customerInfoLogin.isStingrayActive
+        isMedalliaActive = customerInfoLogin.isMedalliaActive
+        isConvivaActive = customerInfoLogin.isConvivaActive
+        screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
+        if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
+            ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
+        }
+    }
+
+    companion object {
+        private const val PREF_PHONE_NUMBER = "p_number"
+        private const val PREF_HE_PHONE_NUMBER = "he_p_number"
+        private const val PREF_CUSTOMER_NAME = "customer_name"
+        private const val PREF_CUSTOMER_EMAIL = "customer_email"
+        private const val PREF_CUSTOMER_ADDRESS = "customer_address"
+        private const val PREF_CUSTOMER_DOB = "customer_dob"
+        private const val PREF_CUSTOMER_NID = "customer_nid"
+        private const val PREF_CUSTOMER_ID = "customer_id"
+        private const val PREF_PASSWORD = "passwd"
+        private const val PREF_CHANNEL_ID = "channel_id"
+        private const val PREF_SESSION_TOKEN = "session_token"
+        private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
+        private const val PREF_HE_BANGLALINK_NUMBER = "he_banglalink_number"
+        private const val PREF_VERIFICATION = "VER"
+        private const val PREF_BALANCE = "balance"
+        private const val PREF_LATITUDE= "latitude"
+        private const val PREF_LONGITUDE= "Longitude"
+        private const val PREF_WIFI_PROFILE_STATUS1= "WifiProfileStatus1"
+        private const val PREF_CELLULAR_PROFILE_STATUS4= "CellularProfileStatus4"
+        private const val PREF_CHANNEL_DB_VERSION= "channel_db_version"
+        private const val PREF_CATCHUP_DB_VERSION= "catchup_db_version"
+        private const val PREF_CATEGORY_DB_VERSION= "category_db_version"
+        private const val PREF_VOD_DB_VERSION= "vod_db_version"
+        private const val PREF_PACKAGE_DB_VERSION= "package_db_version"
+        private const val PREF_NOTIFICATION_DB_VERSION= "notification_db_version"
+        private const val PREF_FCM_TOKEN= "FCMToken"
+        private const val PREF_IMAGE_URL= "image_url"
+        private const val PREF_WIFI= "WIFI"
+        private const val PREF_CELLULAR= "CELLULAR"
+        private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
+        private const val PREF_FIREWORK_ACTIVE= "firework_active"
+        private const val PREF_FEATURE_PARTNER_ACTIVE= "is_feature_partner_active"
+        private const val PREF_FIREWORK_USER_ID= "firework_user_id"
+        private const val PREF_SYSTEM_TIME= "systemTime"
+        private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
+        private const val PREF_KEY_NOTIFICATION= "pref_key_notification"
+        private const val PREF_DEFAULT_DATA_QUALITY_2= "DefaultDataQuality2"
+        private const val PREF_SESSION_TOKEN_HEADER= "sessionTokenHeader"
+        private const val PREF_HLS_OVERRIDE_URL= "hlsOverrideUrl"
+        private const val PREF_SHOULD_OVERRIDE= "shouldOverride"
+        private const val PREF_ALL_TV_CHANNEL_MENU= "isAllTvChannelMenuEnabled"
+        private const val PREF_DEVICE_TIME_IN_MILLISECONDS= "deviceTimeInMillis"
+        private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
+        private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
+        private const val PREF_REACTION_DB_URL= "reactionDbUrl"
+        private const val PREF_REACTION_STATUS_DB_URL= "reactionStatusDbUrl"
+        private const val PREF_SUBSCRIBE_DB_URL= "subscribeDbUrl"
+        private const val PREF_SUBSCRIBER_STATUS_DB_URL= "subscriberStatusDbUrl"
+        private const val PREF_SHARE_COUNT_DB_URL= "shareCountDbUrl"
+        private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
+        private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
+        private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
+        private const val PREF_CHANNEL_LOGO = "channel_logo"
+        private const val PREF_CHANNEL_NAME = "channel_name"
+        private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
+        private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
+        private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
+        private const val PREF_MQTT_IS_ACTIVE = "pref_mqtt_is_active"
+        private const val PREF_MQTT_HOST = "pref_mqtt_host"
+        private const val PREF_MQTT_CLIENT_ID = "pref_mqtt_client_id"
+        private const val PREF_MQTT_USER_NAME = "pref_mqtt_user_name"
+        private const val PREF_MQTT_PASSWORD = "pref_mqtt_password"
+        private const val PREF_MQTT_TOPIC = "pref_mqtt_topic"
+        private const val PREF_IS_CAST_ENABLED = "pref_is_cast_enabled"
+        private const val PREF_IS_CAST_URL_OVERRIDE = "pref_is_cast_url_override"
+        private const val PREF_CAST_RECEIVER_ID = "pref_cast_receiver_id"
+        private const val PREF_CAST_OVERRIDE_URL = "pref_cast_override_url"
+        private const val PREF_INTERNET_PACK_URL = "internet_pack_url"
+        private const val PREF_TUS_UPLOAD_SERVER_URL = "tus_upload_server_url"
+        private const val PREF_PRIVACY_POLICY_URL = "privacy_policy_url"
+        private const val PREF_CREATORS_POLICY_URL = "creators_policy_url"
+        private const val PREF_TERMS_AND_CONDITIONS_URL = "terms_and_conditions_url"
+        private const val PREF_FACEBOOK_PAGE_URL = "facebook_page_url"
+        private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
+        private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
+        private const val PREF_GEO_CITY = "geo_city"
+        private const val PREF_GEO_LOCATION = "geo_location"
+        private const val PREF_USER_IP = "user_ip"
+        private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
+        private const val PREF_NAME_IP_TV = "IP_TV"
+        private const val PREF_FORCE_UPDATE_VERSIONS = "pref_force_update_versions"
+        private const val PREF_TOFFEE_IS_VAST_ACTIVE = "pref_is_vast_active"
+        private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE = "pref_is_fcm_event_active"
+        private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE = "pref_is_fb_event_active"
+        private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE = "pref_is_global_drm_active"
+        private const val PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER = "pref_default_drm_cast_receiver"
+        private const val PREF_TOFFEE_VAST_FREQUENCY = "pref_vast_frequency"
+        private const val PREF_BUCKET_DIRECTORY = "pref_bucket_directory"
+        private const val PREF_WIDEVINE_LICENSE_URL = "pref_widevine_license_url"
+        private const val PREF_FPS_LICENSE_URL = "pref_fps_license_url"
+        private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
+        private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
+        private const val PREF_AD_ID_UPDATE_DATE = "pref_ad_id_update_date"
+        private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
+        private const val PREF_IS_GLOBAL_CID_ACTIVE = "pref_is_global_cid_active"
+        private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"
+        private const val PREF_BETA_VERSION_CODES = "pref_beta_version_codes"
+        private const val PREF_PAYMENT_STATUS = "pref_payment_status"
+        private const val PREF_IS_FIREWORK_ACTIVE_ANDROID = "pref_firework_active_status_android"
+        private const val PREF_IS_STINGRAY_ACTIVE = "pref_stingray_active"
+        private const val PREF_IS_MEDALLIA_ACTIVE = "pref_medallia_active"
+        private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
+
+        private var instance: SessionPreference? = null
+
+        fun init(mContext: Context) {
+            if (instance == null) {
+                instance = SessionPreference(mContext.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE), mContext)
+            }
+        }
+
+        fun getInstance(): SessionPreference {
+            if (instance == null) {
+                throw InstantiationException("Instance is null...call init() first")
+            }
+            return instance as SessionPreference
+        }
+    }
+}

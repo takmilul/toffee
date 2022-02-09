@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="8dp"
+    tools:context=".ui.landing.FeaturedPartnerFragment">
+    
+    <TextView
+        android:id="@+id/featuredPartnerHeader"
+        style="@style/SectionTitleTextStyle"
+        android:layout_marginTop="16dp"
+        android:text="@string/featured_partner_title"
+        app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
+    <TextView
+        android:id="@+id/viewAllButton"
+        style="@style/ViewAllTextView"
+        android:text="@string/view_all"
+        android:visibility="gone"
+        app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
+        app:layout_constraintBottom_toBottomOf="@+id/featuredPartnerHeader"
+        app:layout_constraintEnd_toEndOf="parent" />
+    
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="8dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        tools:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/featuredPartnerHeader">
+        
+        <include layout="@layout/placeholder_featured_partner"/>
+    
+    </LinearLayout>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/featuredPartnerList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/featuredPartnerHeader"
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_featured_partner"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

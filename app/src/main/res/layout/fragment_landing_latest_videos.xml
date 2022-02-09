@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/latestVideosHeader"
+        style="@style/SectionTitleTextStyle"
+        android:layout_marginTop="0dp"
+        android:paddingVertical="12dp"
+        android:text="@string/latest_video"
+        app:layout_constraintEnd_toStartOf="@+id/filterButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_filter"
+        app:layout_constraintBottom_toBottomOf="@id/latestVideosHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/latestVideosHeader"
+        android:contentDescription="Filter Button" />
+
+    <HorizontalScrollView
+        android:id="@+id/subCategoryChipGroupHolder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        tools:visibility="visible">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/subCategoryChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+        
+    </HorizontalScrollView>
+    
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
+        tools:visibility="gone">
+        
+        <include layout="@layout/placeholder_latest_videos" />
+        <include layout="@layout/placeholder_latest_videos" />
+        <include layout="@layout/placeholder_latest_videos" />
+        
+    </LinearLayout>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/latestVideosList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_marginTop="4dp"
+        app:layout_goneMarginTop="0dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
+        app:reverseLayout="false"
+        tools:visibility="visible"
+        tools:listitem="@layout/list_item_videos"/>
+    
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/progress_bar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:elevation="2dp"
+        android:visibility="gone"
+        android:contentDescription="@string/txt_content_loader"
+        android:src="@drawable/content_loader"
+        android:background="@drawable/gif_round_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/latestVideosList" />
+
+    <LinearLayout
+        android:id="@+id/empty_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/empty_view_icon"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/txt_empty"
+            android:maxWidth="144dp"
+            app:srcCompat="@drawable/ic_activities_empty" />
+
+        <TextView
+            android:id="@+id/empty_view_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textSize="18sp"
+            android:maxLines="2"
+            android:text="No item found"
+            android:textIsSelectable="false" />
+        
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

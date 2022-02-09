@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.data.database.entities.NotificationInfo" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_white"
+        tools:context=".ui.notification.NotificationDetailFragment">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:padding="10dp"
+            android:contentDescription="@string/txt_back"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintEnd_toStartOf="@id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="8dp"
+            android:maxLines="2"
+            android:text="@{data.title}"
+            app:layout_constraintEnd_toStartOf="@id/options"
+            app:layout_constraintStart_toEndOf="@id/backButton"
+            app:layout_constraintTop_toTopOf="@id/backButton"
+            app:layout_constraintBottom_toBottomOf="@id/backButton"
+            tools:text="Detail Screen Template of Notification Items and a Two Line Example Here" />
+
+        <ImageView
+            android:id="@+id/options"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="0dp"
+            android:visibility="gone"
+
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@+id/title"
+            app:layout_constraintTop_toTopOf="@id/title"
+            app:layout_constraintVertical_bias="0"
+            app:srcCompat="@drawable/ic_menu_more" />
+
+        <ImageView
+            android:id="@+id/posterView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder"
+            imageWidth="@{720}"
+            imageHeight="@{405}"
+            loadImageFromUrl="@{data.imageUrl}"
+            android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backButton" />
+
+        <TextView
+            android:id="@+id/detailTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@{data.content}"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@color/main_text_color"
+            android:fontFamily="@font/roboto_regular"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/posterView"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

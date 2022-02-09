@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}"
+        android:background="?selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/icon"
+            loadImageFromUrlRounded="@{data.channel_logo}"
+            android:layout_width="@dimen/stingray_content_width"
+            android:layout_height="@dimen/stingray_content_hight"
+            android:layout_margin="8dp"
+            android:background="@drawable/circular_white_bg"
+            android:contentDescription="@string/txt_icon"
+            android:src="@drawable/ic_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -28,8 +28,10 @@ import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.banglalink.toffee.R;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -218,8 +220,7 @@ public class TrackSelectionView extends LinearLayout {
                 TextView trackView = (TextView) inflater.inflate(R.layout.list_item_quality, this, false);
                 Format format = group.getFormat(trackIndex);
                 trackView.setText(format.width + "x" + format.height);
-                if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex)
-                        == RendererCapabilities.FORMAT_HANDLED) {
+                if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.setFocusable(true);
                     trackView.setTag(Pair.create(groupIndex, trackIndex));
                     trackView.setOnClickListener(componentListener);
@@ -240,11 +241,14 @@ public class TrackSelectionView extends LinearLayout {
         boolean flag  = !isDisabled && overrides.size() == 0;
         TextView defaultTextView = defaultView.findViewById(R.id.quality_text);
         if(flag){
-            Drawable image = getResources().getDrawable( R.drawable.ic_checkmark_holo_light );
-            int h = image.getIntrinsicHeight();
-            int w = image.getIntrinsicWidth();
-            image.setBounds( 0, 0, w, h );
+            Drawable image = ContextCompat.getDrawable(getContext(), R.drawable.ic_check_video_quality);
+            int h = image != null ? image.getIntrinsicHeight() : 0;
+            int w = image != null ? image.getIntrinsicWidth() : 0;
+            if (image != null) {
+                image.setBounds( 0, 0, w, h );
+            }
             defaultTextView.setCompoundDrawables(image, null, null, null);
+            defaultTextView.setTextColor(ContextCompat.getColor(getContext(),R.color.colorAccent2));
         }else {
             defaultTextView.setCompoundDrawables(null, null, null, null);
         }
@@ -253,11 +257,14 @@ public class TrackSelectionView extends LinearLayout {
             for (int j = 0; j < trackViews[i].length; j++) {
                 flag = override != null && override.containsTrack(j);
                 if(flag){
-                    Drawable image = getResources().getDrawable( R.drawable.ic_checkmark_holo_light );
-                    int h = image.getIntrinsicHeight();
-                    int w = image.getIntrinsicWidth();
-                    image.setBounds( 0, 0, w, h );
+                    Drawable image = ContextCompat.getDrawable(getContext(), R.drawable.ic_check_video_quality);
+                    int h = image != null ? image.getIntrinsicHeight() : 0;
+                    int w = image != null ? image.getIntrinsicWidth() : 0;
+                    if (image != null) {
+                        image.setBounds( 0, 0, w, h );
+                    }
                     trackViews[i][j].setCompoundDrawables(image, null, null, null);
+                    trackViews[i][j].setTextColor(ContextCompat.getColor(getContext(),R.color.colorAccent2));
                 }else {
                     trackViews[i][j].setCompoundDrawables(null, null, null, null);
                 }

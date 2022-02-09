@@ -38,6 +38,49 @@
             {
               "client_id": "487375594964-7eg3dfo3jbbdsmu7una36t8m21rstpjg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "487375594964-967386qs4ojl69121braj7v3ca03v95o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.banglalink.toffee"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487375594964:android:013647d333adc728ae6241",
+        "android_client_info": {
+          "package_name": "com.banglalink.toffeetv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487375594964-7eg3dfo3jbbdsmu7una36t8m21rstpjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIMYa1mPuBBN-jPXXqDXT1uSdKT7vrutU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487375594964-7eg3dfo3jbbdsmu7una36t8m21rstpjg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "487375594964-967386qs4ojl69121braj7v3ca03v95o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.banglalink.toffee"
+              }
             }
           ]
         }

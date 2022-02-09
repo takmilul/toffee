@@ -1,35 +1,30 @@
 package com.banglalink.toffee.ui.home
 
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
+import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.about.AboutActivity
-import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.common.ParentLevelAdapter
-import com.banglalink.toffee.ui.favorite.FavoriteFragment
-import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.recent.RecentFragment
-import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
-import com.banglalink.toffee.ui.refer.ReferAFriendActivity
-import com.banglalink.toffee.ui.settings.SettingsActivity
-import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
-import kotlinx.android.synthetic.main.layout_appbar.view.*
-import java.util.ArrayList
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.suke.widget.SwitchButton
 
-class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBinding): ParentLevelAdapter.OnNavigationItemClickListener{
+class DrawerHelper(
+    private val activity: HomeActivity,
+    private val mPref: SessionPreference,
+    private val binding: ActivityMainMenuBinding,
+) {
 
     lateinit var toggle: ActionBarDrawerToggle
 
@@ -43,355 +38,193 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         )
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
-        toggle.setHomeAsUpIndicator(R.drawable.ic_home)
-        val parentAdapter =
-            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
-        binding.navMenuList.setAdapter(parentAdapter)
+
+//        activity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
+//        val parentAdapter =
+//            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
+//        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         toggle.toolbarNavigationClickListener = View.OnClickListener {
-            if (activity.supportFragmentManager.backStackEntryCount > 1) {
-                activity.supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
+            if (activity.getNavController().currentDestination?.id != R.id.menu_feed) {
+                activity.getNavController().popBackStack(R.id.menu_feed, false)
             }
         }
 
         setProfileInfo()
+        followUsAction()
     }
-
-    private fun setProfileInfo() {
-        val header = binding.navView.getHeaderView(0)
-        val profileName = header.findViewById(R.id.profile_name) as TextView
-        activity.observe(Preference.getInstance().customerNameLiveData){
-            when{
-                it.isBlank()->profileName.text =
-                    activity.getString(R.string.profile)
-                else->{
-                    profileName.text=Preference.getInstance().customerName
-                }
+    
+    private fun followUsAction() {
+        val actionView = binding.sideNavigation.menu.findItem(R.id.menu_follow_us).actionView
+        actionView.findViewById<ImageView>(R.id.facebookButton).setOnClickListener {
+            val fbAppUrl = "fb://page${mPref.facebookPageUrl.replaceBeforeLast("/", "").replace("Toffee.Bangladesh", "100869298504557", true)}"
+            val doesHandledUrl = activity.openUrlToExternalApp(fbAppUrl)
+            if (!doesHandledUrl) {
+                activity.openUrlToExternalApp(mPref.facebookPageUrl)
             }
         }
+        actionView.findViewById<ImageView>(R.id.instagramButton).setOnClickListener {
+            activity.openUrlToExternalApp(mPref.instagramPageUrl)
+        }
+        actionView.findViewById<ImageView>(R.id.youtubeButton).setOnClickListener {
+            activity.openUrlToExternalApp(mPref.youtubePageUrl)
+        }
+    }
+    
+    private fun setProfileInfo() {
+        val header = binding.sideNavigation.getHeaderView(0)
+        val profileName = header.findViewById(R.id.profile_name) as TextView
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
-
-        activity.observe(Preference.getInstance().profileImageUrlLiveData){
-            profilePicture.loadProfileImage(it)
+        
+        if (mPref.isVerifiedUser) {
+            if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
+            if (!mPref.userImageUrl.isNullOrBlank())profilePicture.loadProfileImage(mPref.userImageUrl!!)
+            
+            activity.observe(mPref.customerNameLiveData) {
+                when {
+                    it.isBlank() -> profileName.text =
+                        activity.getString(R.string.profile)
+                    else -> {
+                        profileName.text = mPref.customerName
+                    }
+                }
+            }
+            activity.observe(mPref.profileImageUrlLiveData) {
+                profilePicture.loadProfileImage(it)
+            }
         }
-
-        profilePicture.setOnClickListener{
-            activity.launchActivity<ViewProfileActivity>()
-        }
-        profileName.setOnClickListener{
-            activity.launchActivity<ViewProfileActivity>()
-        }
-
-        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
-        navBarClose.setOnClickListener{
+        header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
+            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to "Profile"))
+            activity.getNavController().let {
+                if(it.currentDestination?.id != R.id.profileFragment) {
+                    it.navigate(R.id.profileFragment)
+                }
+            }
             binding.drawerLayout.closeDrawers()
         }
     }
 
-    private fun generateNavMenu(): List<NavigationMenu> {
-        val navigationMenuList = ArrayList<NavigationMenu>()
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_CHANNEL,
-                "TV Channels",
-                R.mipmap.ic_menu_channels,
-                ArrayList(),
-                true
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_RECENT,
-                "Recent",
-                R.mipmap.ic_menu_recent,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAV,
-                "Favorites",
-                R.mipmap.ic_menu_favorites,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SUB_VIDEO,
-                activity.getString(R.string.menu_create_text),
-                R.mipmap.ic_menu_create,
-                ArrayList(),
-                true
-            )
-        )
-
-        val isSubscriptionActive = Preference.getInstance().isSubscriptionActive
-        if(isSubscriptionActive == "true"){
-            navigationMenuList.add(
-                NavigationMenu(
-                    ID_SUBSCRIPTIONS,
-                    activity.getString(R.string.subscriptions),
-                    R.mipmap.ic_menu_subscriptions,
-                    ArrayList(),
-                    true
-                )
-            )
-        }
-        val isBanglalinkNumber = Preference.getInstance().isBanglalinkNumber
-        if(isBanglalinkNumber == "true"){
-            navigationMenuList.add(
-                NavigationMenu(
-                    ID_INTERNET_PACK,
-                    activity.getString(R.string.menu_internet_pack),
-                    R.mipmap.ic_menu_internet_pack,
-                    ArrayList(),
-                    isSubscriptionActive == "false"
-                )
-            )
-        }
-
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_INVITE_FRIEND,
-                activity.getString(R.string.refer_a_friend_txt),
-                R.mipmap.ic_menu_invite,
-                ArrayList(),
-                isSubscriptionActive == "false" && isBanglalinkNumber == "false"
-            )
-        )
-
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_REDEEM_CODE,
-                activity.getString(R.string.redeem_code_txt),
-                R.mipmap.ic_menu_redeem,
-                ArrayList()
-            )
-        )
-
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SETTINGS,
-                "Settings",
-                R.mipmap.ic_menu_settings,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_ABOUT,
-                "About",
-                R.mipmap.ic_menu_about,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAQ,
-                activity.getString(R.string.menu_faqs_text),
-                R.drawable.ic_menu_faq,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_LOGOUT,
-                "Logout",
-                R.mipmap.ic_menu_exit,
-                ArrayList()
-            )
-        )
-
-
-        return navigationMenuList
-    }
-
-    override fun onMenuClick(menu: NavigationMenu?) {
-       menu?.let {
-           handleMenuItemById(it.id)
-       }
-    }
-
-    fun handleMenuItemById(id:Int){
-        when (id) {
-            ID_VIDEO -> {
-                val currentFragment = getCurrentContentFragment()
-                if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-                    activity.loadFragmentById( R.id.content_viewer,
-                        CatchupFragment.createInstance(0, 0, "", "All Videos", "All Videos", "VOD")
-                        ,CatchupFragment::class.java.name
-                    )
-                } else {
-                    val catchupFragment = currentFragment as CatchupFragment
-                    catchupFragment.updateInfo(0, 0, "", "All Videos", "All Videos", "VOD")
+    fun handleMenuItemById(item: MenuItem): Boolean {
+        when (item.itemId) {
+//            R.id.menu_tv -> {
+//                with(activity.getNavController()) {
+//                    if(currentDestination?.id != R.id.menu_tv) {
+//                        navigate(R.id.menu_tv)
+//                    }
+//                }
+//                binding.drawerLayout.closeDrawers()
+//            }
+            R.id.menu_subscriptions -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_subscriptions)))
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
                 }
-
-                binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
             }
-            ID_RECENT -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is RecentFragment) {
-                    activity.loadFragmentById(
-                        R.id.content_viewer, RecentFragment(),
-                        RecentFragment::class.java.name
-                    )
-                }
-                binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
-            }
-            ID_CHANNEL -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is ChannelFragment) {
-                    activity.loadFragmentById( R.id.content_viewer, ChannelFragment.createInstance(
-                        0,
-                        "",
-                        activity.getString(R.string.menu_channel_text)
-                    ), ChannelFragment::class.java.getName())
-                }
-                binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
-            }
-            ID_FAV -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is FavoriteFragment) {
-                    activity.loadFragmentById(
-                        R.id.content_viewer, FavoriteFragment(),
-                        FavoriteFragment::class.java.getName()
-                    )
-                }
-                binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
-            }
-            ID_SUB_VIDEO -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(
-                        HtmlPageViewActivity.TITLE_KEY,
-                        activity.getString(R.string.menu_create_text)
-                    )
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
-                }
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_SUBSCRIPTIONS->{
-                binding.drawerLayout.closeDrawers()
-                if(Preference.getInstance().isSubscriptionActive == "true"){
-                    activity.launchActivity<PackageListActivity>()
-                }
-                else{
-                    activity.launchActivity<MySubscriptionActivity>()
-                }
-
-            }
-            ID_INTERNET_PACK->{
+            R.id.ic_menu_internet_packs -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_internet_pack)))
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {
-                putExtra(
-                    Html5PlayerViewActivity.CONTENT_URL,
-                    INTERNET_PACK_URL
-                )
-            }
-
-            }
-            ID_SETTINGS -> {
-                activity.launchActivity<SettingsActivity>()
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_ABOUT -> {
-                activity.launchActivity<AboutActivity>()
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_FAQ -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
-                    putExtra(HtmlPageViewActivity.TITLE_KEY, activity.getString(R.string.menu_faqs_text))
+                    putExtra(
+                        Html5PlayerViewActivity.CONTENT_URL,
+                        mPref.internetPackUrl
+                    )
                 }
-                binding.drawerLayout.closeDrawers()
-
+                return true
             }
-            ID_LOGOUT->{
+            R.id.menu_creators_policy -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_creators_policy)))
+//                val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+//                    putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+//                }
+//                activity.startActivity(intent)
+//                return true
+            }
+            R.id.menu_settings -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_settings)))
+//                activity.launchActivity<SettingsActivity>()
+//                binding.drawerLayout.closeDrawers()
+//                return true
+            }
+            R.id.menu_logout -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_log_out)))
+                binding.drawerLayout.closeDrawers()
                 activity.handleExitApp()
+                return true
             }
-            ID_INVITE_FRIEND->{
-                activity.launchActivity<ReferAFriendActivity>()
+            R.id.menu_login -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_sign_in)))
                 binding.drawerLayout.closeDrawers()
+                activity.checkVerification()
+                return true
             }
-            ID_REDEEM_CODE->{
-                activity.launchActivity<RedeemCodeActivity> ()
-                binding.drawerLayout.closeDrawers()
+            R.id.menu_change_theme -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to
+                        activity.getString(R.string.menu_dark_mode)))
+                when (val switch = item.actionView) {
+                    is SwitchButton -> {
+                        switch.isChecked = !switch.isChecked
+                    }
+                    is SwitchMaterial -> {
+                        switch.isChecked = !switch.isChecked
+                    }
+                }
+            }
+            R.id.menu_favorites -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_favorites)))
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
+            R.id.menu_activities -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_activities)))
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
+            R.id.menu_playlist -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_playlists)))
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
+            R.id.menu_invite -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.refer_a_friend_txt)))
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
+            R.id.menu_redeem -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.redeem_code_txt)))
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
             }
         }
-    }
-
-    private fun getCurrentContentFragment(): Fragment? {
-        return activity.supportFragmentManager.findFragmentById(R.id.content_viewer)
-    }
-
-    override fun onSubCategoryClick(
-        subcategory: NavSubcategory?,
-        category: NavCategory?,
-        parent: NavigationMenu?
-    ) {
-        //Do nothing
-    }
-
-    override fun onCategoryClick(category: NavCategory, parent: NavigationMenu) {
-        handleCategoryClick(parent.id,category.id,category.categoryName)
-        binding.drawerLayout.closeDrawers()
-    }
-
-    fun handleCategoryClick(parentId:Int,categoryId:Int,categoryName:String){
-        val currentFragment = getCurrentContentFragment()
-        if (parentId == ID_VIDEO && currentFragment!=null) {
-            if (CatchupFragment::class.java.name != currentFragment.tag) {
-                activity.loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
-                    categoryId,
-                    0,
-                    "",
-                    "",
-                    categoryName,
-                    "VOD"
-                ), CatchupFragment::class.java.name)
-            } else {
-                val catchupFragment = currentFragment as CatchupFragment
-                catchupFragment.updateInfo(
-                   categoryId,
-                    0,
-                    "",
-                    "",
-                    categoryName,
-                    "VOD"
-                )
+        return run {
+            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
+                binding.drawerLayout.closeDrawers()
+                return@run true
             }
-            activity.minimizePlayer()
-        }
-    }
-
-    fun updateAdapter(navCategoryList:List<NavCategory>) {
-        val parentAdapter = ParentLevelAdapter(
-            activity,
-            generateNavMenu(),
-            this,
-            binding.navMenuList
-        )
-        binding.navMenuList.setAdapter(parentAdapter)
-        var menu: NavigationMenu
-        try {
-            menu = NavigationMenu(
-                ID_VIDEO,
-                "All Videos",
-                R.mipmap.ic_menu_vod,
-                navCategoryList
-            )
-            parentAdapter.insert(menu, 1)
-            binding.navMenuList.expandGroup(1)
-        } catch (e: Exception) {
-            menu = NavigationMenu(ID_VOD, "VoD", R.mipmap.ic_menu_vod, ArrayList())
-            parentAdapter.insert(menu, 3)
+            false
         }
     }
 }

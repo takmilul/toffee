@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" >
+
+        <FrameLayout
+            android:id="@+id/iconHolder"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{() -> callback.onItemClicked(data)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:contentDescription="@string/txt_profile_image"
+                android:id="@+id/icon"
+                loadImageFromUrlRounded="@{data.channel_logo}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/ic_menu_profile" />
+            
+        </FrameLayout>
+        
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="28dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@{data.program_name}"
+            android:textColor="@color/fixed_second_main_text_color"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintEnd_toEndOf="@+id/iconHolder"
+            app:layout_constraintStart_toStartOf="@+id/iconHolder"
+            app:layout_constraintTop_toBottomOf="@+id/iconHolder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Abir87" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

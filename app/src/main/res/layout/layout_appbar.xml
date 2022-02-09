@@ -10,8 +10,9 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:titleTextColor="@color/main_text_color"
+        android:layout_height="?attr/actionBarSize"
+        android:paddingEnd="4dp"
+        app:titleTextColor="@color/cardTitleColor"
         android:background="@color/tool_bar_color"
         android:theme="@style/ToolBarStyle"
         app:contentInsetStartWithNavigation="0dp"

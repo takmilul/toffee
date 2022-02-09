@@ -1,104 +1,64 @@
 package com.banglalink.toffee.ui.common
 
-import android.content.Intent
 import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
+import com.banglalink.toffee.extension.handleAddToPlaylist
+import com.banglalink.toffee.extension.handleFavorite
+import com.banglalink.toffee.extension.handleReport
+import com.banglalink.toffee.extension.handleShare
+import com.banglalink.toffee.listeners.OptionCallBack
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.banglalink.toffee.ui.home.OptionCallBack
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-abstract class HomeBaseFragment:Fragment(), OptionCallBack {
-    val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
-
+@AndroidEntryPoint
+abstract class HomeBaseFragment : BaseFragment(), OptionCallBack {
+    
+    @Inject lateinit var favoriteDao: FavoriteItemDao
+    val homeViewModel by activityViewModels<HomeViewModel>()
+    
     override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
-        val popupMenu = MyPopupWindow(context!!, anchor)
-        popupMenu.inflate(R.menu.menu_catchup_item)
-
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-            popupMenu.menu.getItem(0).title = "Add to Favorites"
-        } else {
-            popupMenu.menu.getItem(0).title = "Remove from Favorites"
-        }
-        if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
-            popupMenu.menu.getItem(2).isVisible = false
-        }
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
-                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                    sharingIntent.type = "text/plain"
-                    sharingIntent.putExtra(
-                        Intent.EXTRA_TEXT,
-                        channelInfo.video_share_url
-                    )
-                    activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_fav->{
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, Observer {
-                        handleFavoriteResponse(it)
-                    })
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
-                    removeItemNotInterestedItem(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                else->{
-                    return@setOnMenuItemClickListener false
-                }
+        MyPopupWindow(requireContext(), anchor).apply { 
+            inflate(R.menu.menu_catchup_item)
+            menu.findItem(R.id.menu_fav).isVisible = channelInfo.isApproved == 1
+            menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem() && channelInfo.isApproved == 1
+            menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
+            
+            if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
+                menu.findItem(R.id.menu_fav).title = "Add to Favorites"
+            } else {
+                menu.findItem(R.id.menu_fav).title = "Remove from Favorites"
             }
-        }
-        popupMenu.show()
-    }
-
-    //hook for subclass for to hide Not Interested Menu Item.
-    //In catchup details fragment we need to hide this menu from popup menu for first item
-    open fun hideNotInterestedMenuItem(channelInfo: ChannelInfo):Boolean{
-        return false
-    }
-
-    fun handleFavoriteResponse(it:Resource<ChannelInfo>){
-        when(it){
-            is Resource.Success->{
-                val channelInfo = it.data
-                when(channelInfo.favorite){
-                    "0"->{
-                        context?.showToast("Content successfully removed from favorite list")
-                        handleFavoriteRemovedSuccessFully(channelInfo)
+            
+            setOnMenuItemClickListener {
+                when (it?.itemId) {
+                    R.id.menu_share -> {
+                        activity?.handleShare(channelInfo)
                     }
-                    "1"->{
-                        handleFavoriteAddedSuccessfully(channelInfo)
-                        context?.showToast("Content successfully added to favorite list")
+                    R.id.menu_fav -> {
+                        activity?.handleFavorite(channelInfo, favoriteDao)
+                    }
+                    R.id.menu_add_to_playlist -> {
+                        activity?.handleAddToPlaylist(channelInfo)
+                    }
+                    R.id.menu_report -> {
+                        activity?.handleReport(channelInfo)
                     }
                 }
+                return@setOnMenuItemClickListener true
             }
-            is Resource.Failure->{
-                context?.showToast(it.error.msg)
-            }
-        }
+        }.show()
     }
-
-    open fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
-        //subclass can hook here
+    
+    open fun hideShareMenuItem(hide: Boolean = false): Boolean {
+        return hide
     }
-
-    open fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo){
-        //subclass can hook here
-    }
-
+    
     override fun viewAllVideoClick() {
         homeViewModel.viewAllVideoLiveData.postValue(true)
     }
-
-    abstract fun removeItemNotInterestedItem(channelInfo: ChannelInfo)
 }

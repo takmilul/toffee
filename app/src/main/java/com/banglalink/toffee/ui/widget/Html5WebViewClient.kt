@@ -2,34 +2,80 @@ package com.banglalink.toffee.ui.widget
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.os.bundleOf
+import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.extension.openUrlToExternalApp
 import java.net.URISyntaxException
 
-class Html5WebViewClient:WebViewClient() {
+open class Html5WebViewClient: WebViewClient() {
+    
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        if (view != null) {
+            request?.url?.toString()?.let {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.SCREEN_VIEW,
+                    bundleOf(FirebaseParams.BROWSER_SCREEN to it)
+                )
 
-    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        if (url!!.startsWith("intent://")) {
-            try {
-                val context = view!!.context
-                val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
-                if (intent != null) {
-                    view.stopLoading()
-                    val packageManager: PackageManager = context.getPackageManager()
-                    val info: ResolveInfo =
-                        packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
-                    if (info != null) {
-                        context.startActivity(intent)
+                val context = view.context
+                return when {
+                    it.startsWith("intent://") -> {
+                        try {
+                            val intent = Intent.parseUri(it, Intent.URI_INTENT_SCHEME)
+                            if (intent != null) {
+                                view.stopLoading()
+                                val packageManager: PackageManager = context.packageManager
+                                val info = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+                                if (info != null) {
+                                    context.startActivity(intent)
+                                }
+                            }
+                            true
+                        } catch (e: URISyntaxException) {
+                            e.printStackTrace()
+                            false
+                        }
                     }
-                    return true
+                    it.contains("www.facebook.com", true) -> {
+                        val fbUrl = "fb://page${it.replaceBeforeLast("/", "").replace("Toffee.Bangladesh", "100869298504557", true)}"
+                        context.openUrlToExternalApp(fbUrl)
+                    }
+                    it.contains("www.instagram.com", true) ||
+                    it.contains("www.youtube.com", true) -> {
+                        context.openUrlToExternalApp(it)
+                    }
+                    else -> {
+                        view.loadUrl(it)
+                        true
+                    }
                 }
-            } catch (e: URISyntaxException) {
-                e.printStackTrace()
             }
         }
-
-        return false
+        return super.shouldOverrideUrlLoading(view, request)
+    }
+    
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+        view?.let {
+//            it.loadUrl("about:blank")
+            it.loadDataWithBaseURL(null,
+                it.context.getString(R.string.web_error_text),
+                "text/html",
+                "UTF-8",
+                null)
+//            it.loadUrl("file:///android_asset/error.html") //TODO: load custom error page from asset
+            it.invalidate()
+        }
     }
 }
 

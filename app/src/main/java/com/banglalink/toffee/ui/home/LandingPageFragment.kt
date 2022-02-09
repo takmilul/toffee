@@ -1,209 +1,96 @@
 package com.banglalink.toffee.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.analytics.FirebaseParams
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.databinding.FragmentLandingPageBinding
+import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.unsafeLazy
-import com.daimajia.slider.library.SliderLayout
-import com.daimajia.slider.library.SliderTypes.BaseSliderView
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+import com.google.android.material.appbar.AppBarLayout
+import com.loopnow.fireworklibrary.FwSDK
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListener {
-    override fun onSliderClick(slider: BaseSliderView?) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue((slider as DefaultSliderView).data as ChannelInfo)
-    }
+@AndroidEntryPoint
+class LandingPageFragment : HomeBaseFragment() {
+    private var appbarOffset = 0
+    private var _binding: FragmentLandingPageBinding ? = null
+    @Inject @ApplicationContext lateinit var appContext: Context
+    private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        popularVideoListAdapter.remove(channelInfo)
-    }
-
-    private lateinit var channelAdapter: ChannelAdapter
-    lateinit var popularVideoListAdapter: PopularVideoListAdapter
-    private var imageSlider: SliderLayout?=null
-    private var popularVideoListView: RecyclerView? = null
-    private var channelListView: RecyclerView? = null
-    private var bottomProgress: ProgressBar? = null
-
-    private lateinit var channelScrollListener : EndlessRecyclerViewScrollListener
-
-    private lateinit var popularVideoScrollListener : EndlessRecyclerViewScrollListener
-
-
-    val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        channelAdapter = ChannelAdapter {
-            //handle channel click in adapter. Basically notify livedata to homeactivity to playChannel channel
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+    companion object {
+        fun newInstance(): LandingPageFragment {
+            return LandingPageFragment()
         }
-        popularVideoListAdapter = PopularVideoListAdapter(this) {
-            //handle video click in adapter. Basically notify livedata to homeactivity to playChannel channel
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
-        popularVideoListAdapter.setHasStableIds(true)
-        viewModel.loadPopularVideos()
-        viewModel.loadChannels()
-        viewModel.loadFeatureContents()
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentLandingPageBinding.inflate(inflater, container, false)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isEnabled) {
+                    if (appbarOffset != 0) {
+                        binding.latestVideoScroller.smoothScrollTo(0, 0, 0)
+                        binding.landingAppbar.setExpanded(true, true)
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressed()
+                    }
+                }
+            }
+        })
+        return binding.root
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_page2, container, false)
+    private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+        appbarOffset = verticalOffset
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Home"
-        imageSlider = view.findViewById(R.id.slider)
-
-
-        val listLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
-            layoutManager = listLayoutManager
-            adapter = channelAdapter
-        }
-
-        channelScrollListener =  object:EndlessRecyclerViewScrollListener(listLayoutManager){
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                viewModel.loadChannels()
-            }
-        }
-        channelListView?.addOnScrollListener(channelScrollListener)
-
-        val linearLayoutManager = LinearLayoutManager(context)
-        popularVideoListView = view.findViewById<RecyclerView>(R.id.listview).apply {
-            layoutManager = linearLayoutManager
-            adapter = popularVideoListAdapter
-        }
-        popularVideoListView?.setItemViewCacheSize(10)//We are defining offscreen cache size
-        popularVideoListView?.setHasFixedSize(true)
-
-        popularVideoScrollListener =  object:EndlessRecyclerViewScrollListener(linearLayoutManager){
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                bottomProgress?.visibility = View.VISIBLE
-                viewModel.loadPopularVideos()
-            }
-        }
-        popularVideoListView?.addOnScrollListener(popularVideoScrollListener)
-
-
-        bottomProgress = view.findViewById(R.id.progress_bar)
-        if (popularVideoListAdapter.itemCount == 0)
-            bottomProgress?.visibility = View.VISIBLE
-
-        observeFeatureContentList()
-        observeChannelList()
-        observePopularVideoList()
-
-        view.findViewById<View>(R.id.channel_view_all).setOnClickListener {
-            homeViewModel.viewAllChannelLiveData.postValue(true)
-        }
-
-    }
-
-    private fun observeChannelList() {
-        viewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Success -> {
-                    channelAdapter.addAll(it.data)
-                }
-                is Resource.Failure -> {
-                    channelScrollListener.resetState()
-                    requireActivity().showToast(it.error.msg)
-                }
-            }
-        })
-    }
-
-    private fun observeFeatureContentList() {
-        viewModel.featureContentLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Success -> {
-                  for(channelInfo in it.data){
-                      val textSliderView = DefaultSliderView(activity, channelInfo)
-                      textSliderView
-                          .description(channelInfo.program_name)
-                          .image(channelInfo.feature_image).scaleType = BaseSliderView.ScaleType.Fit
-
-                      //add your extra information
-                      textSliderView.bundle(Bundle())
-                      textSliderView.bundle
-                          .putString("extra", channelInfo.program_name)
-
-                      textSliderView.setOnSliderClickListener(this)
-                      imageSlider?.addSlider<DefaultSliderView>(textSliderView)
-                  }
-                }
-                is Resource.Failure -> {
-                    requireActivity().showToast(it.error.msg)
-                }
-            }
-        })
-    }
-
-    private fun observePopularVideoList() {
-        viewModel.popularVideoLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Success -> {
-                    bottomProgress?.visibility = View.GONE
-                    if (popularVideoListAdapter.itemCount == 0) {
-                        val fakeChannelInfo =
-                            ChannelInfo()//we are adding fake channelinfo because of header in adapter....
-                        fakeChannelInfo.id = System.currentTimeMillis().toString()
-                        popularVideoListAdapter.add(fakeChannelInfo)
+        activity?.title = getString(R.string.app_name_short)
+        landingViewModel.categoryId.value = 0
+        landingViewModel.pageType.value = Landing
+        landingViewModel.pageName.value = BrowsingScreens.HOME_PAGE
+        landingViewModel.isDramaSeries.value = false
+        binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
+        binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
+        observe(mPref.isFireworkInitialized) { isInitialized ->
+            val isActive = mPref.isFireworkActive && isInitialized
+            if (isActive) {
+                _binding?.fireworkFragment?.isVisible = isActive
+                try {
+                    val url = requireActivity().intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+                    url?.let {
+                        FwSDK.play(it)
                     }
-                    if (it.data.isNotEmpty()) {
-                        popularVideoListAdapter.addAll(it.data)
-                    }
-
                 }
-                is Resource.Failure -> {
-                    popularVideoScrollListener.resetState()
-                   context?.showToast(it.error.msg)
+                catch (e: Exception) {
+                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
                 }
             }
-        })
-    }
-
-    fun onBackPressed(): Boolean {
-        if(popularVideoListView!=null && popularVideoListView!!.computeVerticalScrollOffset() > 0){
-            popularVideoListView?.scrollToPosition(0)
-            return true
         }
-        return false
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to "home"))
     }
-
+    
     override fun onDestroyView() {
-        popularVideoListView?.adapter = null
-        channelListView?.adapter = null
-        popularVideoListView?.clearOnScrollListeners()
-        channelListView?.clearOnScrollListeners()
-        popularVideoListView = null
-        channelListView = null
-        imageSlider?.stopAutoCycle()
-        imageSlider?.removeAllSliders()
-        imageSlider = null
-        bottomProgress = null
+        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
         super.onDestroyView()
-
+        _binding = null
     }
 }

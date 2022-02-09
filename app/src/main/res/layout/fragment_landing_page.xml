@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/landing_coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/landing_appbar"
+            app:layout_behavior="com.banglalink.toffee.ui.widget.AppBarLayoutBehavior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <LinearLayout
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/screen_bg">
+                
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/featuredFragment"
+                    android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/popularTvChannelsFragment"
+                    android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/categoriesFragment"
+                    android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+    
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fireworkFragment"
+                    android:name="com.banglalink.toffee.ui.firework.FireworkFragment"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/featuredPartnerFragment"
+                    android:name="com.banglalink.toffee.ui.landing.FeaturedPartnerFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/trendingNowFragment"
+                    android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/userChannelList"
+                    android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+        
+        <com.banglalink.toffee.ui.widget.SmartNestedScrollView
+            android:id="@+id/latestVideoScroller"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/latestVideosFragment"
+                android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            
+        </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

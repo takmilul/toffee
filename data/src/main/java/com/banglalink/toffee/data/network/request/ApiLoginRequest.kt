@@ -1,0 +1,19 @@
+package com.banglalink.toffee.data.network.request
+
+import com.banglalink.toffee.apiservice.ApiNames
+import com.google.gson.annotations.SerializedName
+
+data class ApiLoginRequest(
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+    @SerializedName("msisdn")
+    val phoneNumber: String,
+    @SerializedName("lat")
+    val lat: String,
+    @SerializedName("lon")
+    val lon: String,
+    @SerializedName("fcmToken")
+    val fcmToken: String
+) : BaseRequest(ApiNames.API_LOGIN_V2)

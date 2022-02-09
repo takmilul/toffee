@@ -1,21 +1,20 @@
 package com.banglalink.toffee.ui.common
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import android.view.LayoutInflater
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
+import androidx.recyclerview.widget.RecyclerView
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.model.ChannelInfo
 
-
-abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.Adapter<MyViewHolder>() {
+abstract class MyBaseAdapter<T: Any>(val callback: BaseListItemCallback<T>? = null) :RecyclerView.Adapter<MyViewHolder>() {
 
     protected val values: MutableList<T> = mutableListOf()
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
             layoutInflater, viewType, parent, false
@@ -23,28 +22,19 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
         return MyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(
-        holder: MyViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val obj = getObjForPosition(position)
-
-        holder.itemView.setOnClickListener{callback(obj)}
-
-        holder.bind(obj)
+        holder.bind(obj, callback, position)
     }
 
     override fun getItemViewType(position: Int): Int {
         return getLayoutIdForPosition(position)
     }
 
-    fun getObjForPosition(position: Int): T = values[position]
+    private fun getObjForPosition(position: Int): T = values[position]
 
     protected abstract fun getLayoutIdForPosition(position: Int): Int
-
-
-
-
+    
     override fun getItemCount():Int {
         return values.size
     }
@@ -70,8 +60,16 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
         notifyItemRemoved(position)
     }
 
+    fun reloadItem(item: T) {
+        val idx = values.indexOf(item)
+        notifyItemChanged(idx)
+    }
 
-    fun getItem(position: Int): T? {
+    fun reloadItem(pos: Int) {
+        notifyItemChanged(pos)
+    }
+
+    fun getItem(position: Int): T {
         return values[position]
     }
 

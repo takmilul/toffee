@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/fragment_bg_bottom"
+        app:layout_constraintBottom_toBottomOf="@id/guideline15"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/userChannelsHeader"
+        style="@style/SectionTitleTextStyle"
+        android:text="@string/user_channels"
+        app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewAllButton"
+        style="@style/ViewAllTextView"
+        android:text="@string/view_all"
+        app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+        app:layout_constraintTop_toTopOf="@id/userChannelsHeader"
+        app:layout_constraintBottom_toBottomOf="@+id/userChannelsHeader"
+        app:layout_constraintEnd_toEndOf="parent" />
+    
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:clipToPadding="false"
+        tools:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader">
+        
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userChannelList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:clipToPadding="false"
+        android:paddingHorizontal="8dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader"
+        app:reverseLayout="false"
+        tools:visibility="visible"
+        tools:listitem="@layout/list_item_landing_user_channels"/>
+    
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.48" />
+    
+</androidx.constraintlayout.widget.ConstraintLayout>
