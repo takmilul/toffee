@@ -43,14 +43,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@mipmap/ic_menu_channel" />
 
-            <ImageView
-                android:id="@+id/premium_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom|center_horizontal"
-                togglePremiumIcon="@{data}"
-                android:src="@drawable/ic_vip_badge"/>
-
 
         </FrameLayout>
 
