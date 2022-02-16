@@ -15,7 +15,6 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
@@ -138,12 +137,12 @@ class DrawerHelper(
             }
             R.id.menu_creators_policy -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_creators_policy)))
-//                val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
-//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
-//                    putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
-//                }
-//                activity.startActivity(intent)
-//                return true
+                activity.getNavController().navigate(R.id.menu_creators_policy, bundleOf(
+                    "myTitle" to "Creators Policy",
+                    "url" to mPref.creatorsPolicyUrl
+                ))
+                binding.drawerLayout.closeDrawers()
+                return true
             }
             R.id.menu_settings -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_settings)))

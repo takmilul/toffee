@@ -88,7 +88,7 @@
             app:argType="string" />
         <argument
             android:name="url"
-            android:defaultValue="https://toffeelive.com/policies.php"
+            android:defaultValue=""
             app:argType="string" />
     </fragment>
     
