@@ -103,6 +103,7 @@ abstract class PlayerPageActivity :
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
     protected var player: Player? = null
+    private var isAppBackgrounded = false
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -207,14 +208,14 @@ abstract class PlayerPageActivity :
 
     public override fun onStart() {
         super.onStart()
-        if (Util.SDK_INT > 23) {
+        if (Util.SDK_INT > 23 && isAppBackgrounded) {
             initializePlayer()
         }
     }
 
     public override fun onResume() {
         super.onResume()
-        if (Util.SDK_INT <= 23 || player == null) {
+        if (Util.SDK_INT <= 23 || player == null && isAppBackgrounded) {
             initializePlayer()
         }
     }
@@ -223,6 +224,7 @@ abstract class PlayerPageActivity :
         super.onPause()
         if (Util.SDK_INT <= 23) {
             releasePlayer()
+            isAppBackgrounded = true
         }
     }
 
@@ -230,6 +232,7 @@ abstract class PlayerPageActivity :
         super.onStop()
         if (Util.SDK_INT > 23) {
             releasePlayer()
+            isAppBackgrounded = true
         }
     }
 
@@ -258,7 +261,7 @@ abstract class PlayerPageActivity :
         outState.putBundle(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters?.toBundle())
     }
 
-    private fun initializePlayer() {
+    fun initializePlayer() {
         reloadCounter = 0
         initializeLocalPlayer()
         initializeRemotePlayer()
@@ -340,8 +343,8 @@ abstract class PlayerPageActivity :
         }
         return DefaultDrmSessionManager
             .Builder()
-            .setMultiSession(false)
-            .build(ToffeeMediaDrmCallback2(
+            .setMultiSession(true)
+            .build(ToffeeMediaDrmCallback(
                 mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
             )).apply {
                 mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
@@ -409,7 +412,7 @@ abstract class PlayerPageActivity :
         }
     }
 
-    private fun releasePlayer() {
+    fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
@@ -662,6 +665,7 @@ abstract class PlayerPageActivity :
                 MediaItem
                     .DrmConfiguration
                     .Builder(C.WIDEVINE_UUID)
+                    .forceSessionsForAudioAndVideoTracks(true)
                     .setKeySetId(license)
                     .build())
         }.build()
@@ -1048,7 +1052,7 @@ abstract class PlayerPageActivity :
         return player?.currentMediaItem?.getChannelMetadata(player)
     }
 
-    abstract fun resetPlayer()
+    abstract fun setPlayerInPlayerView()
 
     override fun onCastSessionAvailable() {
         Log.i("CAST_T", "Cast Session available")
@@ -1066,7 +1070,7 @@ abstract class PlayerPageActivity :
         }
         player?.stop()
         player = castPlayer
-        resetPlayer()
+        setPlayerInPlayerView()
         playChannel(true)
     }
 
@@ -1079,7 +1083,7 @@ abstract class PlayerPageActivity :
         }
         player?.stop()
         player = exoPlayer
-        resetPlayer()
+        setPlayerInPlayerView()
         playChannel(true)
     }
 

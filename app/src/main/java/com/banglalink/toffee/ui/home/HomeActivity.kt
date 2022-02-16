@@ -233,6 +233,7 @@ class HomeActivity :
             mPref.mqttPassword = ""
         }
         observe(viewModel.playContentLiveData) {
+            resetPlayer()
             onDetailsFragmentLoad(it)
         }
         observe(mPref.sessionTokenLiveData){
@@ -683,12 +684,12 @@ class HomeActivity :
         super.onResume()
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
-        resetPlayer()
+        setPlayerInPlayerView()
         binding.playerView.resizeView(calculateScreenWidth())
         updateFullScreenState()
     }
 
-    override fun resetPlayer() {
+    override fun setPlayerInPlayerView() {
         binding.playerView.player = player
         if(player is CastPlayer) {
             val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
@@ -1088,6 +1089,7 @@ class HomeActivity :
             return
         }
         ConvivaHelper.endPlayerSession()
+        resetPlayer()
         val info = playlistManager.getCurrentChannel()
         ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
@@ -1098,13 +1100,20 @@ class HomeActivity :
     override fun playPrevious() {
         super.playPrevious()
         ConvivaHelper.endPlayerSession()
+        resetPlayer()
         val info = playlistManager.getCurrentChannel()
         ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
     }
-
+    
+    private fun resetPlayer() {
+        releasePlayer()
+        initializePlayer()
+        setPlayerInPlayerView()
+    }
+    
     override fun playIndex(index: Int) {
         super.playIndex(index)
         loadDetailFragment(
@@ -1421,6 +1430,7 @@ class HomeActivity :
 
     override fun onPlayerDestroy() {
         ConvivaHelper.endPlayerSession()
+        releasePlayer()
         if (mPref.isMedalliaActive) {
             MedalliaDigital.enableIntercept()
         }
