@@ -14,8 +14,7 @@ class BaseNetworkPagingSource<T: Any>(
     private val apiName: String,
     private val screenName: String,
     private val initialPage: Int = 0
-): 
-    PagingSource<Int, T>() {
+): PagingSource<Int, T>() {
     override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
     
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {

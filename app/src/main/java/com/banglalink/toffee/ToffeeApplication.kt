@@ -40,7 +40,7 @@ import javax.inject.Provider
 
 @HiltAndroidApp
 class ToffeeApplication : Application() {
-
+    
     @Inject lateinit var cacheManager: CacheManager
     @Inject @CoilCache lateinit var coilCache: Cache
     @Inject lateinit var mUploadObserver: UploadObserver
@@ -51,51 +51,48 @@ class ToffeeApplication : Application() {
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
-
+    
     override fun onCreate() {
         super.onCreate()
         
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
-
+        
         // (Binding adapter with hilt) https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d
         val dataBindingComponent = bindingComponentProvider.get().build()
         val dataBindingEntryPoint = EntryPoints.get(
             dataBindingComponent, CustomBindingEntryPoint::class.java
         )
         DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
-
+        
         PubSubMessageUtil.init(this)
         SessionPreference.init(this)
         CommonPreference.init(this)
         PlayerPreference.init(this)
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
-        }
-        catch (e: Exception) {
-            coroutineScope.launch { 
+        } catch (e: Exception) {
+            coroutineScope.launch {
                 sendFirebaseConnectionErrorEvent.execute()
             }
         }
-        try{
-            ToffeeAnalytics.initAppEventsLogger(this)
-        }
-        catch (e: Exception) {
+        try {
+            ToffeeAnalytics.initFacebookAnalytics(this)
+        } catch (e: Exception) {
         }
         
         if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
             try {
-                coroutineScope.launch(IO) { 
+                coroutineScope.launch(IO) {
                     cacheManager.clearAllCache()
                     commonPreference.versionCode = BuildConfig.VERSION_CODE
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
             }
         }
-        
+
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
         
@@ -107,9 +104,9 @@ class ToffeeApplication : Application() {
     
     private fun initFireworkSdk() {
         try {
-            FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener{
+            FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
                 override fun currentStatus(status: SdkStatus, extra: String) {
-                    when(status){
+                    when (status) {
                         Initialized -> {
                             Log.e("FwSDK", "Initialized: $extra")
                             VideoPlayerProperties.share = false
@@ -133,23 +130,25 @@ class ToffeeApplication : Application() {
                     }
                 }
             })
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("FwSDK", "onCreate: ${e.message}")
         }
     }
     
     private fun initMedalliaSdk() {
-        MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
-            override fun onSuccess() {
-                Log.i("MED_", "onSuccess: Medallia initialized")
-            }
-
-            override fun onError(error: MDExternalError?) {
-                ToffeeAnalytics.logException(Exception(error?.message))
-                Log.e("MED_", "onError: ${error?.message}")
-            }
-        })
+        try {
+            MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
+                override fun onSuccess() {
+                    Log.i("MED_", "onSuccess: Medallia initialized")
+                }
+                
+                override fun onError(error: MDExternalError?) {
+                    Log.e("MED_", "onError: ${error?.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e("MED_", "onInitialize: ${e.message}")
+        }
     }
     
     private fun initCoil() {
@@ -158,7 +157,8 @@ class ToffeeApplication : Application() {
 //            availableMemoryPercentage(0.2)
 //            bitmapPoolPercentage(0.4)
             okHttpClient {
-                OkHttpClient.Builder()
+                OkHttpClient
+                    .Builder()
                     .cache(coilCache)
                     .addInterceptor(coilInterceptor)
                     .build()

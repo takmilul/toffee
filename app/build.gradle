@@ -10,9 +10,9 @@ android {
     compileSdkVersion 31
     
     defaultConfig {
-        applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 30
+        applicationId "com.banglalink.toffee"
         versionCode rootProject.appVersionCode
         versionName rootProject.appVersionName
         vectorDrawables.useSupportLibrary = true

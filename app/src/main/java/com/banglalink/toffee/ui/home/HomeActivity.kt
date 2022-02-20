@@ -120,13 +120,13 @@ import org.xmlpull.v1.XmlPullParser
 import java.net.URLDecoder
 import javax.inject.Inject
 
-const val NON_PAYMENT = 0
 const val PAYMENT = 1
-const val PLAY_IN_NATIVE_PLAYER = 0
+const val NON_PAYMENT = 0
 const val PLAY_IN_WEB_VIEW = 1
+const val STINGRAY_CONTENT = 10
+const val PLAY_IN_NATIVE_PLAYER = 0
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
-const val STINGRAY_CONTENT = 10
 
 @AndroidEntryPoint
 class HomeActivity :
@@ -193,8 +193,7 @@ class HomeActivity :
         //disable screen capture
         if (isDisableScreenshot) {
             window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
+                WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
         }
         cPref.isAlreadyForceLoggedOut = false
@@ -203,13 +202,13 @@ class HomeActivity :
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        
         setupNavController()
         initializeDraggableView()
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-
+        
         ToffeeAnalytics.logUserProperty(
             mapOf(
                 "userId" to mPref.customerId.toString(),
@@ -225,7 +224,7 @@ class HomeActivity :
             }
         }
         
-        if(mPref.mqttClientId.startsWith("_") || mPref.mqttClientId.substringBefore("_") != mPref.phoneNumber) {
+        if (mPref.mqttClientId.startsWith("_") || mPref.mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttIsActive = false
             mPref.mqttHost = ""
             mPref.mqttClientId = ""
@@ -236,33 +235,33 @@ class HomeActivity :
             resetPlayer()
             onDetailsFragmentLoad(it)
         }
-        observe(mPref.sessionTokenLiveData){
-            if(binding.draggableView.visibility == View.VISIBLE){
+        observe(mPref.sessionTokenLiveData) {
+            if (binding.draggableView.visibility == View.VISIBLE) {
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
             }
         }
-        observe(mPref.viewCountDbUrlLiveData){
-            if(it.isNotEmpty()){
+        observe(mPref.viewCountDbUrlLiveData) {
+            if (it.isNotEmpty()) {
                 viewModel.populateViewCountDb(it)
             }
         }
-        observe(mPref.reactionStatusDbUrlLiveData){
-            if(it.isNotEmpty()){
+        observe(mPref.reactionStatusDbUrlLiveData) {
+            if (it.isNotEmpty()) {
                 viewModel.populateReactionStatusDb(it)
             }
         }
-        observe(mPref.subscriberStatusDbUrlLiveData){
-            if(it.isNotEmpty()){
+        observe(mPref.subscriberStatusDbUrlLiveData) {
+            if (it.isNotEmpty()) {
                 viewModel.populateSubscriptionCountDb(it)
             }
         }
-        observe(mPref.shareCountDbUrlLiveData){
-            if(it.isNotEmpty()){
+        observe(mPref.shareCountDbUrlLiveData) {
+            if (it.isNotEmpty()) {
                 viewModel.populateShareCountDb(it)
             }
         }
-        observe(mPref.forceLogoutUserLiveData){
+        observe(mPref.forceLogoutUserLiveData) {
             if (it) {
                 mPref.clear()
                 UploadService.stopAllUploads()
@@ -278,15 +277,14 @@ class HomeActivity :
         observe(viewModel.addToPlayListMutableLiveData) { item ->
             setPlayList(item)
         }
-        observe(mPref.shareableUrlLiveData){
+        observe(mPref.shareableUrlLiveData) {
             handleDeepLink(it)
         }
         observe(viewModel.shareContentLiveData) { channelInfo ->
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
             sharingIntent.putExtra(
-                Intent.EXTRA_TEXT,
-                channelInfo.video_share_url
+                Intent.EXTRA_TEXT, channelInfo.video_share_url
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
             viewModel.sendShareLog(channelInfo)
@@ -299,7 +297,7 @@ class HomeActivity :
                 }
             }
         }
-        if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
+        if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
         if (mPref.isVerifiedUser) {
@@ -311,14 +309,9 @@ class HomeActivity :
             }
         }
         observe(mPref.messageDialogLiveData) { message ->
-            VelBoxAlertDialogBuilder(
-                this,
-                title = "Notice",
-                text = message,
-                positiveButtonListener = { 
-                    it?.dismiss()
-                }
-            ).create().show()
+            VelBoxAlertDialogBuilder(this, title = "Notice", text = message, positiveButtonListener = {
+                it?.dismiss()
+            }).create().show()
         }
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
@@ -347,16 +340,20 @@ class HomeActivity :
     }
     
     private fun initConvivaSdk() {
-        if(BuildConfig.DEBUG) {
-            val settings: Map<String, Any> = mutableMapOf(
-                ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
-                ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
-            )
-            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
-        } else {
-            ConvivaAnalytics.init (applicationContext, getString(R.string.convivaCustomerKeyProd))
+        try {
+            if (BuildConfig.DEBUG) {
+                val settings: Map<String, Any> = mutableMapOf(
+                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+                )
+                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+            } else {
+                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
+            }
+            ConvivaHelper.init(applicationContext, true)
+        } catch (e: Exception) {
+            Log.e("CON_", "onCreate: ${e.message}")
         }
-        ConvivaHelper.init(applicationContext, true)
     }
     
     private fun showDeviceId() {
@@ -383,7 +380,7 @@ class HomeActivity :
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
     }
-
+    
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -395,7 +392,7 @@ class HomeActivity :
                             mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                        
+                            
                             if (mPref.mqttIsActive) {
                                 appScope.launch {
                                     val mqttDir = withContext(Dispatchers.IO + Job()) {
@@ -406,7 +403,7 @@ class HomeActivity :
                                         }
                                         tempDir
                                     }
-                                    if(mqttDir != null) {
+                                    if (mqttDir != null) {
                                         mqttService.initialize()
                                     }
                                 }
@@ -415,45 +412,42 @@ class HomeActivity :
                     }
                     is Failure -> {
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
-                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
-                            bundleOf(
+                        ToffeeAnalytics.logEvent(
+                            ToffeeEvents.EXCEPTION, bundleOf(
                                 "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                                 FirebaseParams.BROWSER_SCREEN to "Enter OTP",
                                 "error_code" to it.error.code,
-                                "error_description" to it.error.msg))
+                                "error_description" to it.error.msg
+                            )
+                        )
                     }
                 }
             }
             viewModel.getMqttCredential()
-        }
-        else {
+        } else {
             if (mPref.mqttIsActive) {
                 mqttService.initialize()
             }
         }
     }
-
+    
     private val appUpdateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             showToast("Toffee updated successfully")
         }
     }
-
+    
     private fun inAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            val updateType = if(mPref.shouldForceUpdate(BuildConfig.VERSION_CODE))  AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(updateType)) {
+            val updateType = if (mPref.shouldForceUpdate(BuildConfig.VERSION_CODE)) AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(updateType)) {
                 try {
                     appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        updateType,
-                        this,
-                        IN_APP_UPDATE_REQUEST_CODE)
-                }
-                catch (e: SendIntentException) {
+                        appUpdateInfo, updateType, this, IN_APP_UPDATE_REQUEST_CODE
+                    )
+                } catch (e: SendIntentException) {
                     e.printStackTrace()
                     ToffeeAnalytics.logException(e)
                 }
@@ -475,28 +469,29 @@ class HomeActivity :
     fun checkChannelDetailAndUpload() {
         if (!mPref.isChannelDetailChecked) {
             observe(viewModel.myChannelDetailResponse) {
-                when(it) {
+                when (it) {
                     is Success -> showUploadDialog()
                     is Failure -> {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
-                            bundleOf(
+                        ToffeeAnalytics.logEvent(
+                            ToffeeEvents.EXCEPTION, bundleOf(
                                 "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
                                 FirebaseParams.BROWSER_SCREEN to "My Channel page",
                                 "error_code" to it.error.code,
-                                "error_description" to it.error.msg))
+                                "error_description" to it.error.msg
+                            )
+                        )
                         showToast(getString(R.string.unable_to_load_data))
                     }
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
-        }
-        else {
+        } else {
             showUploadDialog()
         }
     }
     
     private fun showUploadDialog(): Boolean {
-        if (isChannelComplete()){
+        if (isChannelComplete()) {
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
                 return true
@@ -507,8 +502,7 @@ class HomeActivity :
                 }
                 navController.navigate(R.id.uploadMethodFragment)
             }
-        }
-        else {
+        } else {
             if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
                 navController.popBackStack()
                 return true
@@ -525,25 +519,25 @@ class HomeActivity :
         }
         return false
     }
-
+    
     private fun watchConnectionChange() {
         lifecycleScope.launch {
             uploadManager.checkUploadStatus(false)
         }
         lifecycleScope.launch {
             connectionWatcher.watchNetwork().collect {
-                if(it) {
+                if (it) {
                     uploadManager.checkUploadStatus(true)
                 }
             }
         }
     }
-
+    
     override fun getPlayerView(): StyledPlayerView = binding.playerView
-
+    
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
-        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             binding.homeBottomSheet.bottomSheet.hide()
         } else {
             binding.homeBottomSheet.bottomSheet.show()
@@ -555,7 +549,7 @@ class HomeActivity :
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
-
+            
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 binding.playerView.moveController(slideOffset)
             }
@@ -581,11 +575,11 @@ class HomeActivity :
 //            }
 //        }
     }
-
+    
     private fun observeNotification() {
         lifecycleScope.launchWhenStarted {
             notificationRepo.getUnseenNotificationCount().collect {
-                if(it > 0) {
+                if (it > 0) {
                     notificationBadge?.visibility = View.VISIBLE
                 } else {
                     notificationBadge?.visibility = View.GONE
@@ -593,54 +587,49 @@ class HomeActivity :
             }
         }
     }
-
+    
     fun rotateFab(isRotate: Boolean) {
-        ViewCompat.animate(binding.uploadButton)
-            .rotation(if (isRotate) 135.0F else 0.0F)
-            .withEndAction {
-                if (isRotate) {
-                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.menuColorSecondaryDark))
-                    binding.uploadButton.backgroundTintList = colorStateList
-                    binding.uploadButton.imageTintList = colorStateList
-                } else {
-                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
-                    binding.uploadButton.backgroundTintList = colorStateList
-                    binding.uploadButton.imageTintList = colorStateList
-                }
+        ViewCompat.animate(binding.uploadButton).rotation(if (isRotate) 135.0F else 0.0F).withEndAction {
+            if (isRotate) {
+                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.menuColorSecondaryDark))
+                binding.uploadButton.backgroundTintList = colorStateList
+                binding.uploadButton.imageTintList = colorStateList
+            } else {
+                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
+                binding.uploadButton.backgroundTintList = colorStateList
+                binding.uploadButton.imageTintList = colorStateList
             }
-            .withLayer()
-            .setDuration(300L)
-            .setInterpolator(AccelerateInterpolator())
-            .start()
+        }.withLayer().setDuration(300L).setInterpolator(AccelerateInterpolator()).start()
     }
-
+    
     fun getNavController() = navController
+    
     fun getHomeViewModel() = viewModel
-
+    
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
         closeSearchBarIfOpen()
-
+        
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination)
-                .className
-                .substringAfterLast(".")
-
-            ToffeeAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
-                FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
-            ))
+            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+            
+            ToffeeAnalytics.logEvent(
+                FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
+                    FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
+                )
+            )
         }
-
+        
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
     }
-
+    
     private fun setupNavController() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
-
+        
         appbarConfig = AppBarConfiguration(
             setOf(
                 R.id.menu_feed,
@@ -654,8 +643,7 @@ class HomeActivity :
                 R.id.menu_invite,
                 R.id.menu_redeem,
                 R.id.menu_creators_policy,
-            ),
-            binding.drawerLayout
+            ), binding.drawerLayout
         )
 //        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
@@ -665,13 +653,13 @@ class HomeActivity :
         binding.tabNavigator.setupWithNavController(navController)
         
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
-             WindowInsetsCompat.CONSUMED
+            WindowInsetsCompat.CONSUMED
         }
-
+        
         binding.sideNavigation.setNavigationItemSelectedListener {
             drawerHelper.handleMenuItemById(it)
         }
-
+        
         navController.addOnDestinationChangedListener(destinationChangeListener)
 
 //        binding.sideNavigation.setNavigationItemSelectedListener {
@@ -679,7 +667,7 @@ class HomeActivity :
 //            return@setNavigationItemSelectedListener false
 //        }
     }
-
+    
     override fun onResume() {
         super.onResume()
         binding.playerView.setPlaylistListener(this)
@@ -688,17 +676,17 @@ class HomeActivity :
         binding.playerView.resizeView(calculateScreenWidth())
         updateFullScreenState()
     }
-
+    
     override fun setPlayerInPlayerView() {
         binding.playerView.player = player
-        if(player is CastPlayer) {
+        if (player is CastPlayer) {
             val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
             binding.playerView.showCastingText(true, deviceName)
         } else {
             binding.playerView.showCastingText(false)
         }
     }
-
+    
     override fun onPause() {
         super.onPause()
         binding.playerView.clearListeners()
@@ -706,14 +694,14 @@ class HomeActivity :
             binding.playerView.player = null
         }
     }
-
+    
     override fun onStart() {
         super.onStart()
-        if(playlistManager.getCurrentChannel() != null) {
+        if (playlistManager.getCurrentChannel() != null) {
             ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
-                if(playlistManager.playlistId >= 0) {
+                if (playlistManager.playlistId >= 0) {
                     PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
                 } else {
                     playlistManager.getCurrentChannel()!!
@@ -721,12 +709,12 @@ class HomeActivity :
             )
         }
     }
-
+    
     override fun resumeCastSession(info: ChannelInfo) {
         maximizePlayer()
         loadDetailFragment(info)
     }
-
+    
     override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
@@ -734,7 +722,7 @@ class HomeActivity :
         }
         ConvivaAnalytics.reportAppBackgrounded()
     }
-
+    
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         /*
@@ -744,7 +732,7 @@ class HomeActivity :
         so player can't reset scale completely. Manually resetting player scale value
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(playlistManager.getCurrentChannel()?.isLinear == true) {
+            if (playlistManager.getCurrentChannel()?.isLinear == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
@@ -762,19 +750,19 @@ class HomeActivity :
         }
         updateFullScreenState()
     }
-
+    
     override fun channelCannotBePlayedDueToSettings() {
         binding.playerView.showWifiOnlyMessage()
     }
-
+    
     override fun onContentExpired() {
         binding.playerView.showContentExpiredMessage()
     }
-
+    
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, appbarConfig) || super.onSupportNavigateUp()
     }
-
+    
     private fun updateFullScreenState() {
         val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
@@ -782,39 +770,38 @@ class HomeActivity :
         setFullScreen(state)// || binding.playerView.channelType != "LIVE")
         toggleNavigation(state)
     }
-
+    
     private fun setFullScreen(visible: Boolean) {
-        if(visible) {
+        if (visible) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-//                  or WindowInsetsCompat.Type.displayCutout()
+                controller.hide(
+                    WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
                 )
                 controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                window.attributes = window.attributes.apply {
-                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-                }
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                window.attributes = window.attributes.apply {
+//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+//                }
+//            }
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, true)
-            WindowInsetsControllerCompat(window, window.decorView).let { controller->
-                controller.show(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-//                  or WindowInsetsCompat.Type.displayCutout()
+            WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+                controller.show(
+                    WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
                 )
             }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                window.attributes = window.attributes.apply {
-                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-                }
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                window.attributes = window.attributes.apply {
+//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+//                }
+//            }
         }
     }
-
+    
     private fun toggleNavigation(state: Boolean) {
-        if(state) {
+        if (state) {
             supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
@@ -826,11 +813,11 @@ class HomeActivity :
             binding.uploadButton.show()
         }
     }
-
+    
     override fun onTrackerDialogDismissed() {
         updateFullScreenState()
     }
-
+    
     private fun calculateScreenWidth(): Point {
         return UtilsKt.getRealScreenSize(this)
     }
@@ -838,18 +825,17 @@ class HomeActivity :
     private fun handleSharedUrl(intent: Intent) {
         lifecycleScope.launch {
             var appLinkUriStr: String? = null
-            try{
+            try {
                 val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
-                if(appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                if (appLinkUri != null && appLinkUri.host != "toffeelive.com") {
                     appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
                 }
             } catch (ex: Exception) {
                 ToffeeAnalytics.logException(ex)
             }
-            if(!appLinkUriStr.isNullOrEmpty()) {
+            if (!appLinkUriStr.isNullOrEmpty()) {
                 handleDeepLink(appLinkUriStr)
-            }
-            else {
+            } else {
                 val uri = intent.data
                 if (uri != null) {
                     val strUri = runCatching {
@@ -866,28 +852,28 @@ class HomeActivity :
             }
         }
     }
-
-    private fun handleDeepLink(url: String){
+    
+    private fun handleDeepLink(url: String) {
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
         lifecycleScope.launch {
-            try{
+            try {
                 var isDeepLinkHandled = false
                 val route = inAppMessageParser.parseUrlV2(url)
                 route?.let {
                     ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
-                    when(it.destId) {
+                    when (it.destId) {
                         is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
                         is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                     isDeepLinkHandled = true
                 }
-
-                if(!isDeepLinkHandled){
+                
+                if (!isDeepLinkHandled) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
                     val hash = url.substring(url.lastIndexOf("/") + 1)
                     mPref.shareableHashLiveData.value = hash
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
                 ToffeeAnalytics.logException(e)
             }
@@ -911,25 +897,24 @@ class HomeActivity :
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
         }
-        if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
+        if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
         try {
             val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-            url?.let { 
+            url?.let {
                 FwSDK.play(it)
                 return
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("FwSDK", "FireworkDeeplinkPlayException")
         }
         handleSharedUrl(intent)
     }
-
+    
     private fun navigateToSearch(query: String?) {
-        ToffeeAnalytics.logEvent(ToffeeEvents.SEARCH,
-            bundleOf("search_query" to query)
+        ToffeeAnalytics.logEvent(
+            ToffeeEvents.SEARCH, bundleOf("search_query" to query)
         )
         navController.popBackStack(R.id.searchFragment, true)
 //        navController.navigate(Uri.parse("app.toffee://search/$query"))
@@ -937,8 +922,8 @@ class HomeActivity :
             putString(SearchFragment.SEARCH_KEYWORD, query)
         })
     }
-
-    private fun handleVoiceSearchEvent(query: String){
+    
+    private fun handleVoiceSearchEvent(query: String) {
         if (!TextUtils.isEmpty(query)) {
             navigateToSearch(query)
         }
@@ -947,38 +932,37 @@ class HomeActivity :
             searchView!!.clearFocus()
         }
     }
-
-    private fun handlePackageSubscribe(){
+    
+    private fun handlePackageSubscribe() {
         //Clean up stack upto landingPageFragment inclusive
         supportFragmentManager.popBackStack(
-            LandingPageFragment::class.java.name,
-            POP_BACK_STACK_INCLUSIVE
+            LandingPageFragment::class.java.name, POP_BACK_STACK_INCLUSIVE
         )
     }
-
+    
     private fun loadChannel(channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
-        if(channelInfo.isLinear) {
+        if (channelInfo.isLinear) {
             viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
         }
         addChannelToPlayList(channelInfo)
     }
-
+    
     private fun loadPlayListItem(playbackInfo: PlaylistPlaybackInfo) {
         playIndex(playbackInfo.playIndex)
         playlistManager.getCurrentChannel()?.let {
             viewModel.sendViewContentEvent(it)
         }
     }
-
+    
     private fun loadDramaSeasonInfo(seasonInfo: SeriesPlaybackInfo) {
         playChannelId(seasonInfo.channelId)
         playlistManager.getCurrentChannel()?.let {
             viewModel.sendViewContentEvent(it)
         }
     }
-
+    
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1013,7 +997,7 @@ class HomeActivity :
                 it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
                     playInNativePlayer(detailsInfo, it)
                 }
-                it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PAYMENT ->{
+                it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PAYMENT -> {
                     playInNativePlayer(detailsInfo, it)
                 }
             }
@@ -1021,8 +1005,8 @@ class HomeActivity :
     }
     
     private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
-        ToffeeAnalytics.logEvent(ToffeeEvents.CONTENT_CLICK,
-            bundleOf(
+        ToffeeAnalytics.logEvent(
+            ToffeeEvents.CONTENT_CLICK, bundleOf(
                 "content_id" to it.id,
                 "content_title" to it.program_name,
                 "content_category" to it.category,
@@ -1036,8 +1020,9 @@ class HomeActivity :
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, 
-                    detailsInfo.currentItem!!.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(
+                    detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, detailsInfo.currentItem!!.seasonNo
+                )
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
@@ -1056,25 +1041,21 @@ class HomeActivity :
         it.getHlsLink()?.let { url ->
             startActivity(
                 Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(url)
+                    Intent.ACTION_VIEW, Uri.parse(url)
                 )
             )
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     
     private fun playInWebView(it: ChannelInfo) {
-        if(!connectionWatcher.isOnline) {
+        if (!connectionWatcher.isOnline) {
             showToast(getString(R.string.show_offline_message))
             return
         }
         it.getHlsLink()?.let { url ->
             heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
             viewModel.sendViewContentEvent(it)
-            val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT)
-                it.video_share_url
-            else
-                null
+            val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT) it.video_share_url else null
             launchActivity<Html5PlayerViewActivity> {
                 putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
                 putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)
@@ -1084,7 +1065,7 @@ class HomeActivity :
     
     override fun playNext() {
         super.playNext()
-        if(playlistManager.playlistId == -1L) {
+        if (playlistManager.playlistId == -1L) {
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
@@ -1096,7 +1077,7 @@ class HomeActivity :
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
     }
-
+    
     override fun playPrevious() {
         super.playPrevious()
         ConvivaHelper.endPlayerSession()
@@ -1120,17 +1101,17 @@ class HomeActivity :
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
     }
-
+    
     override fun playChannelId(channelId: Int) {
         super.playChannelId(channelId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
     }
-
-    private fun loadDetailFragment(info: Any?){
+    
+    private fun loadDetailFragment(info: Any?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-        if(info is ChannelInfo) {
+        if (info is ChannelInfo) {
             if (info.isStingray) {
                 if (fragment !is StingrayChannelFragmentNew) {
                     loadFragmentById(
@@ -1145,11 +1126,10 @@ class HomeActivity :
                 }
             } else {
                 loadFragmentById(
-                    R.id.details_viewer,
-                    CatchupDetailsFragment.createInstance(info)
+                    R.id.details_viewer, CatchupDetailsFragment.createInstance(info)
                 )
             }
-        } else if(info is PlaylistPlaybackInfo) {
+        } else if (info is PlaylistPlaybackInfo) {
             when {
                 (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && !info.isUserPlaylist -> {
                     loadFragmentById(
@@ -1168,7 +1148,7 @@ class HomeActivity :
                     fragment.setCurrentChannel(info.currentItem)
                 }
             }
-        } else if(info is PlaylistItem) {
+        } else if (info is PlaylistItem) {
             when (fragment) {
                 is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.channelInfo)
@@ -1180,13 +1160,10 @@ class HomeActivity :
                     fragment.setCurrentChannel(info.channelInfo)
                 }
             }
-        } else if(info is SeriesPlaybackInfo) {
-            if(fragment !is EpisodeListFragment
-                || fragment.getSeriesId() != info.seriesId) {
+        } else if (info is SeriesPlaybackInfo) {
+            if (fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId) {
                 loadFragmentById(
-                    R.id.details_viewer, EpisodeListFragment.newInstance(
-                    info
-                )
+                    R.id.details_viewer, EpisodeListFragment.newInstance(info)
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -1196,32 +1173,30 @@ class HomeActivity :
     
     private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
-            LandingPageFragment::class.java.name,
-            0
+            LandingPageFragment::class.java.name, 0
         )
-        supportFragmentManager.beginTransaction()
-            .replace(id, fragment).addToBackStack(tag).commit()
+        supportFragmentManager.beginTransaction().replace(id, fragment).addToBackStack(tag).commit()
     }
-
+    
     private fun loadFragmentById(id: Int, fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(id, fragment).commit()
     }
-
+    
     private fun initializeDraggableView() {
         binding.draggableView.addOnPositionChangedListener(this)
         binding.draggableView.addOnPositionChangedListener(binding.playerView)
         binding.draggableView.visibility = View.GONE
         binding.draggableView.isClickable = true
     }
-
-    private fun initDrawer(){
+    
+    private fun initDrawer() {
         drawerHelper = DrawerHelper(this, mPref, binding)
         drawerHelper.initDrawer()
     }
-
+    
     private fun initSideNav() {
         val isBanglalinkNumber = mPref.isBanglalinkNumber
-        if(isBanglalinkNumber != "true") {
+        if (isBanglalinkNumber != "true") {
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
@@ -1237,7 +1212,7 @@ class HomeActivity :
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             if (cPref.appThemeMode == 0) {
-                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
+                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
             }
             val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
             var switch: View? = null
@@ -1246,14 +1221,12 @@ class HomeActivity :
                 parser.nextTag()
                 val attr: AttributeSet = Xml.asAttributeSet(parser)
                 switch = SwitchButton(this, attr)
-            }
-            catch (e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 e.printStackTrace()
                 switch = SwitchMaterial(this)
-            }
-            finally {
+            } finally {
                 themeMenu.actionView = switch
-                when(themeMenu.actionView){
+                when (themeMenu.actionView) {
                     is SwitchButton -> {
                         (themeMenu.actionView as SwitchButton).let {
                             val param = LinearLayout.LayoutParams(36.px, 22.px)
@@ -1277,8 +1250,8 @@ class HomeActivity :
             }
         }
     }
-
-    private fun changeAppTheme(isDarkEnabled: Boolean){
+    
+    private fun changeAppTheme(isDarkEnabled: Boolean) {
         ConvivaHelper.endPlayerSession()
         ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
         if (isDarkEnabled) {
@@ -1289,51 +1262,51 @@ class HomeActivity :
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
-
-    private fun observeInAppMessage(){
+    
+    private fun observeInAppMessage() {
         ToffeeAnalytics.logEvent("trigger_inapp_messaging", null, true)
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
-
-    private fun initLandingPageFragmentAndListenBackStack(){
+    
+    private fun initLandingPageFragmentAndListenBackStack() {
         supportFragmentManager.addOnBackStackChangedListener(this)
     }
-
-    private fun showRedeemMessageIfPossible(){
+    
+    private fun showRedeemMessageIfPossible() {
         //show referral redeem msg if possible
         val msg = intent.getStringExtra(INTENT_REFERRAL_REDEEM_MSG)
         msg?.let {
             showDisplayMessageDialog(this, it)
         }
     }
-
+    
     override fun onPlayerMinimize() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding.playerView.clearDebugWindow()
     }
-
+    
     override fun onControllerVisible() {
-        if(playlistManager.getCurrentChannel()?.isLinear == true && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (playlistManager.getCurrentChannel()?.isLinear == true && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
-
+    
     override fun onControllerInVisible() {
-        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
-
+    
     override fun onPlayerMaximize() {
         MedalliaDigital.disableIntercept()
-        requestedOrientation = if(binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait)
-            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        else {
-            ActivityInfo.SCREEN_ORIENTATION_LOCKED
-        }
+        requestedOrientation =
+            if (binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait) ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            else {
+                ActivityInfo.SCREEN_ORIENTATION_LOCKED
+            }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
             if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
@@ -1366,7 +1339,7 @@ class HomeActivity :
                     }
                 """.trimIndent(), PlayerOverlayData::class.java)*/
             binding.playerView.showDebugOverlay(playerOverlayData!!, playlistManager.getCurrentChannel()?.id ?: "")
-        
+            
             val debugOverlayView = binding.playerView.getDebugOverLay()
 //            debugOverlayView?.parent?.let { 
 //                if (it is View) {
@@ -1419,7 +1392,7 @@ class HomeActivity :
     }
     
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
-        if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
+        if (isAutoRotationEnabled && !binding.playerView.isVideoPortrait) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             showToast(getString(R.string.auto_rotation_on))
         } else {
@@ -1427,7 +1400,7 @@ class HomeActivity :
             showToast(getString(R.string.auto_rotation_off))
         }
     }
-
+    
     override fun onPlayerDestroy() {
         ConvivaHelper.endPlayerSession()
         releasePlayer()
@@ -1466,15 +1439,15 @@ class HomeActivity :
                 observeLogout()
                 viewModel.logoutUser()
             }
-            .setNegativeButton("No") { dialog, _ -> 
-                dialog.cancel() 
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.cancel()
             }
             .show()
     }
-
+    
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
-            when(it) {
+            when (it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
                         mPref.mqttHost = ""
@@ -1496,18 +1469,20 @@ class HomeActivity :
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
-                        navController.popBackStack(R.id.menu_feed, false).let { 
+                        navController.popBackStack(R.id.menu_feed, false).let {
                             recreate()
                         }
                     }
                 }
                 is Failure -> {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
-                        bundleOf(
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION, bundleOf(
                             "api_name" to ApiNames.UN_VERIFY_USER,
                             FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                             "error_code" to it.error.code,
-                            "error_description" to it.error.msg))
+                            "error_description" to it.error.msg
+                        )
+                    )
                     showToast(it.error.msg)
                 }
             }
@@ -1518,19 +1493,18 @@ class HomeActivity :
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true
     }
-
+    
     override fun onMinimizeButtonPressed(): Boolean {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         return true
     }
-
+    
     override fun isVideoPortrait() = binding.playerView.isVideoPortrait
-
+    
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        requestedOrientation =
-        if(!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
+        requestedOrientation = if (!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1538,62 +1512,60 @@ class HomeActivity :
         updateFullScreenState()
         return true
     }
-
+    
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
             drawerHelper.toggle.isDrawerIndicatorEnabled = true
-        }
-        else if (supportFragmentManager.backStackEntryCount == 1) { //home
+        } else if (supportFragmentManager.backStackEntryCount == 1) { //home
             closeSearchBarIfOpen()
         }
     }
-
+    
     private fun closeSearchBarIfOpen() {
-        if(searchView?.isIconified == false) {
+        if (searchView?.isIconified == false) {
             searchView?.onActionViewCollapsed()
         }
     }
-
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else if(binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
+        } else if (binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
             binding.playerView.isFullScreen = false
             updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
-            if(mPref.isEnableFloatingWindow) {
+            if (mPref.isEnableFloatingWindow) {
                 minimizePlayer()
-            }
-            else {
+            } else {
                 destroyPlayer()
             }
-        } else if(searchView?.isIconified == false) {
+        } else if (searchView?.isIconified == false) {
             closeSearchBarIfOpen()
         } else {
             super.onBackPressed()
         }
     }
-
+    
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
-
+    
     private fun destroyPlayer() {
         binding.draggableView.destroyView()
         mPref.playerOverlayLiveData.removeObservers(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
-
+    
     override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
-
+    
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
@@ -1602,7 +1574,7 @@ class HomeActivity :
         }
         return super.onPrepareOptionsMenu(menu)
     }
-
+    
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -1631,70 +1603,69 @@ class HomeActivity :
             navController.popBackStack(R.id.searchFragment, true)
             false
         }
-
+        
         val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
-
+        
         val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
         mic.setImageResource(R.drawable.ic_menu_microphone)
-
+        
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
         close.setImageResource(R.drawable.ic_close)
-
+        
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
-
+        
         val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
-
+        
         val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.apply {
             textSize = 18f
             setTextColor(
                 ContextCompat.getColor(
-                    this@HomeActivity,
-                    R.color.searchview_input_text_color
+                    this@HomeActivity, R.color.searchview_input_text_color
                 )
             )
             background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
             hint = null
             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_search, 0)
-
-            addTextChangedListener { text->
-                val rightIcon = if(text?.length ?: 0 <= 0) R.drawable.ic_menu_search else 0
-                if(compoundPaddingRight != rightIcon) {
+            
+            addTextChangedListener { text ->
+                val rightIcon = if (text?.length ?: 0 <= 0) R.drawable.ic_menu_search else 0
+                if (compoundPaddingRight != rightIcon) {
                     setCompoundDrawablesWithIntrinsicBounds(0, 0, rightIcon, 0)
                 }
             }
         }
-
+        
         searchView?.setOnSearchClickListener {
             val searchFrag = supportFragmentManager.currentNavigationFragment
-            if(searchFrag is SearchFragment) {
+            if (searchFrag is SearchFragment) {
                 searchFrag.getSearchString()?.let {
                     searchAutoComplete.setText(it)
                     searchAutoComplete.setSelection(searchAutoComplete.text.length)
                 }
             }
         }
-
+        
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
-            if(navController.currentDestination?.id != R.id.notificationDropdownFragment) {
+            if (navController.currentDestination?.id != R.id.notificationDropdownFragment) {
                 navController.navigate(R.id.notificationDropdownFragment)
             }
         }
         searchView?.setOnQueryTextListener(this)
-
+        
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView.setOnClickListener {  binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-
+        awesomeActionView.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
+        
         observeNotification()
         return true
     }
-
+    
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (!query.isNullOrBlank()) {
             navigateToSearch(query)
@@ -1702,31 +1673,31 @@ class HomeActivity :
         }
         return false
     }
-
+    
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
     }
-
+    
     override fun onMediaItemChanged() {
         super.onMediaItemChanged()
         maximizePlayer()
         onPlayerMaximize()
-        if(binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         updateFullScreenState()
     }
-
+    
     private fun observeUpload2() {
         binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
             binding.homeMiniProgressContainer.root.isVisible = false
         }
-
+        
         binding.homeMiniProgressContainer.closeButton.setOnClickListener {
             lifecycleScope.launch {
                 uploadRepo.getActiveUploadsList().let {
-                    if(it.isNotEmpty()) {
+                    if (it.isNotEmpty()) {
                         uploadRepo.updateUploadInfo(it[0].apply {
                             this.status = UploadStatus.CLEARED.value
                         })
@@ -1734,29 +1705,29 @@ class HomeActivity :
                 }
             }
         }
-
+        
         lifecycleScope.launchWhenStarted {
             uploadViewModel.getActiveUploadList().collectLatest {
                 Log.i("UPLOAD 2", "Collecting ->>> ${it.size}")
-                if(it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     binding.homeMiniProgressContainer.root.isVisible = true
                     val upInfo = it[0]
-                    when(upInfo.status){
-                        UploadStatus.SUCCESS.value,
-                        UploadStatus.SUBMITTED.value -> {
+                    when (upInfo.status) {
+                        UploadStatus.SUCCESS.value, UploadStatus.SUBMITTED.value -> {
                             binding.homeMiniProgressContainer.miniUploadProgress.progress = 100
                             binding.homeMiniProgressContainer.addUploadInfoButton.isVisible = true
                             binding.homeMiniProgressContainer.closeButton.isVisible = true
                             binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
-                            binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
+                            binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_upload_done, 0, 0, 0
+                            )
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
                             cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
 //                            if (navController.currentDestination?.id == R.id.myChannelHomeFragment) {
 //                                myChannelReloadViewModel.reloadVideos.postValue(true)
 //                            }
                         }
-                        UploadStatus.ADDED.value,
-                        UploadStatus.STARTED.value -> {
+                        UploadStatus.ADDED.value, UploadStatus.STARTED.value -> {
                             binding.homeMiniProgressContainer.addUploadInfoButton.isInvisible = true
                             binding.homeMiniProgressContainer.uploadSizeText.isVisible = true
                             binding.homeMiniProgressContainer.closeButton.isInvisible = true
@@ -1772,11 +1743,11 @@ class HomeActivity :
         }
     }
     
-    private fun observeMyChannelNavigation(){
+    private fun observeMyChannelNavigation() {
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
                 navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}"))
-            } else{
+            } else {
                 minimizePlayer()
             }
         }
