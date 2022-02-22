@@ -47,13 +47,13 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:onClick="@{()-> callback.onItemClicked(data)}">
     
-                <ImageView
+                <com.banglalink.toffee.ui.widget.CustomImageView
                     android:contentDescription="@string/txt_video_thumb"
                     android:id="@+id/video_thumb"
                     loadChannelImage="@{data.channelInfo}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:scaleType="centerCrop"
+                    app:layout_constraintDimensionRatio="16:9"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline6"
                     app:layout_constraintStart_toStartOf="parent"
@@ -86,17 +86,16 @@
                     bindActivityType="@{data}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="6dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="1"
-                    android:layout_marginStart="6dp"
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="@dimen/default_text_size"
                     app:layout_constraintBottom_toBottomOf="@+id/reactIcon"
                     app:layout_constraintEnd_toStartOf="@+id/videoMenuIcon"
                     app:layout_constraintStart_toEndOf="@+id/reactIcon"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/reactIcon"
                     tools:text="Reacted" />
 
                 <TextView
