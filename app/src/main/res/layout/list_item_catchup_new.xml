@@ -33,14 +33,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.banglalink.toffee.ui.widget.CustomImageView
                 android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:scaleType="centerCrop"
                 tools:src="@drawable/placeholder" />
 
         </FrameLayout>

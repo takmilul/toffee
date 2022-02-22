@@ -29,6 +29,7 @@
             android:src="@drawable/ic_profile"
             android:background="@drawable/circular_white_bg"
             loadChannelImage="@{data}"
+            android:scaleType="centerInside"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
