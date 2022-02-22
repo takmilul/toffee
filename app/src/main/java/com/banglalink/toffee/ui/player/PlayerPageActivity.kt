@@ -194,14 +194,14 @@ abstract class PlayerPageActivity :
     
     public override fun onStart() {
         super.onStart()
-        if (Util.SDK_INT > 23 && isAppBackgrounded) {
+        if (Util.SDK_INT > 23 /*&& isAppBackgrounded*/) {
             initializePlayer()
         }
     }
     
     public override fun onResume() {
         super.onResume()
-        if (Util.SDK_INT <= 23 || player == null && isAppBackgrounded) {
+        if (Util.SDK_INT <= 23 || player == null /*&& isAppBackgrounded*/) {
             initializePlayer()
         }
     }
@@ -249,7 +249,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    fun initializePlayer() {
+    private fun initializePlayer() {
         reloadCounter = 0
         initializeLocalPlayer()
         initializeRemotePlayer()
@@ -402,7 +402,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    fun releasePlayer() {
+    private fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
@@ -719,7 +719,7 @@ abstract class PlayerPageActivity :
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
         homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLinear && channelInfo.urlTypeExt != PAYMENT
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
             val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
             ConvivaHelper.setVastTagUrl(vastTag)
             if (shouldPlayAd && vastTag.isNotBlank()) {
@@ -953,6 +953,8 @@ abstract class PlayerPageActivity :
         return false
     }
     
+    var isKnownException = false
+    
     private inner class PlayerEventListener : Player.Listener {
         override fun onPlayerError(e: PlaybackException) {
             e.printStackTrace()
@@ -963,7 +965,9 @@ abstract class PlayerPageActivity :
             if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
-            } else if (e.cause is DrmSessionException && reloadCounter < 3) {
+            } else if (e.cause is DrmSessionException && reloadCounter < 2) {
+                reloadCounter++
+                isKnownException = true
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -981,14 +985,16 @@ abstract class PlayerPageActivity :
                     ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
                     reloadChannel()
                 }
-                reloadCounter++
             } else {
-                if (reloadCounter < 5) {
+                val counterLimit = if (isKnownException) 4 else 2
+                if (reloadCounter < counterLimit) {
                     if (playlistManager.getCurrentChannel()?.isDrmActive == true) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 0
+                    } else {
+                        playlistManager.getCurrentChannel()?.is_drm_active = 1
                     }
-                    reloadChannel()
                     reloadCounter++
+                    reloadChannel()
                 } else {
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }

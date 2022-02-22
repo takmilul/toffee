@@ -232,7 +232,7 @@ class HomeActivity :
             mPref.mqttPassword = ""
         }
         observe(viewModel.playContentLiveData) {
-            resetPlayer()
+//            resetPlayer()
             onDetailsFragmentLoad(it)
         }
         observe(mPref.sessionTokenLiveData) {
@@ -1070,7 +1070,7 @@ class HomeActivity :
             return
         }
         ConvivaHelper.endPlayerSession()
-        resetPlayer()
+//        resetPlayer()
         val info = playlistManager.getCurrentChannel()
         ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
@@ -1081,7 +1081,7 @@ class HomeActivity :
     override fun playPrevious() {
         super.playPrevious()
         ConvivaHelper.endPlayerSession()
-        resetPlayer()
+//        resetPlayer()
         val info = playlistManager.getCurrentChannel()
         ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
         loadDetailFragment(
@@ -1089,11 +1089,11 @@ class HomeActivity :
         )
     }
     
-    private fun resetPlayer() {
-        releasePlayer()
-        initializePlayer()
-        setPlayerInPlayerView()
-    }
+//    private fun resetPlayer() {
+//        releasePlayer()
+//        initializePlayer()
+//        setPlayerInPlayerView()
+//    }
     
     override fun playIndex(index: Int) {
         super.playIndex(index)
@@ -1403,7 +1403,7 @@ class HomeActivity :
     
     override fun onPlayerDestroy() {
         ConvivaHelper.endPlayerSession()
-        releasePlayer()
+//        releasePlayer()
         if (mPref.isMedalliaActive) {
             MedalliaDigital.enableIntercept()
         }
