@@ -36,17 +36,14 @@
             android:contentDescription="@string/txt_poster"
             android:id="@+id/posterView"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="@dimen/channel_banner_height"
             android:adjustViewBounds="true"
-            android:src="@drawable/placeholder"
-            android:scaleType="centerInside"
             android:background="@color/fw_gnt_black"
-            imageWidth="@{720}"
-            imageHeight="@{405}"
             loadImageFromUrl="@{data.myChannelDetail.bannerUrl}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/placeholder" />
         
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/channelLogoImageView"

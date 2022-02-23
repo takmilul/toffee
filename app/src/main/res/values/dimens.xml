@@ -44,4 +44,5 @@
     <dimen name="placeholder_2_line_text_height">24dp</dimen>
     <dimen name="multitext_button_width">104dp</dimen>
     <dimen name="multitext_button_height">30dp</dimen>
+    <dimen name="channel_banner_height">160dp</dimen>
 </resources>

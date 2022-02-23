@@ -10,11 +10,15 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ImageView.ScaleType.CENTER_CROP
+import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import coil.request.ImageRequest
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -194,6 +198,32 @@ fun Context.openUrlToExternalApp(url: String): Boolean {
         Log.e("EXT_APP", "Url is not valid")
         false
     }
+}
+
+fun ImageView.loadPlaceholder(isCircular: Boolean = false) {
+    scaleType = CENTER_CROP
+    if (isCircular) {
+        setImageResource(R.drawable.ic_profile)
+    } else {
+        setImageResource(R.drawable.placeholder)
+    }
+}
+
+fun ImageRequest.Builder.initListener(view: ImageView) {
+    listener(onStart = {
+        view.scaleType = CENTER_CROP
+    }, onError = { _, _ ->
+        view.scaleType = CENTER_CROP
+    }, onSuccess = { _, _ ->
+        view.scaleType = FIT_CENTER
+    })
+}
+
+
+fun ImageRequest.Builder.setCircularImageRequestParams() {
+    error(R.drawable.ic_profile)
+    fallback(R.drawable.ic_profile)
+    placeholder(R.drawable.ic_profile)
 }
 
 //@SuppressLint("ClickableViewAccessibility")

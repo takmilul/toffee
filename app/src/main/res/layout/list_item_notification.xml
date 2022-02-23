@@ -42,7 +42,7 @@
                 android:layout_margin="16dp"
                 android:contentDescription="@string/txt_profile_image"
                 android:src="@drawable/ic_profile"
-                loadImageFromUrlRounded="@{data.thumbnailUrl}"
+                loadSmallImageFromUrlRounded="@{data.thumbnailUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

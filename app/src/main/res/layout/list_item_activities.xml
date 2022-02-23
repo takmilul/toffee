@@ -119,7 +119,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ownerThumb"
-                    loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
+                    loadSmallImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:contentDescription="@string/txt_profile_image"

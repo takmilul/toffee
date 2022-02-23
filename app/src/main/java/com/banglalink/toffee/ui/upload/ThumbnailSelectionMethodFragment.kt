@@ -23,6 +23,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -37,18 +38,22 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private var imageUri: Uri? = null
     private lateinit var title: String
     private var isProfileImage:Boolean = false
+    private var isChannelBanner:Boolean = false
     private var alertDialog: AlertDialog? = null
     private var _binding: FragmentThumbSelectionMethodBinding ? = null
     private val binding get() = _binding!!
+    
     companion object {
         const val THUMB_URI = "thumb-uri"
         const val TITLE = "title"
         const val IS_PROFILE_IMAGE = "isProfileImage"
+        const val IS_CHANNEL_BANNER = "isChannelBanner"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
         isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
+        isChannelBanner = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isChannelBanner
         _binding = FragmentThumbSelectionMethodBinding.inflate(layoutInflater)
         binding.heading.text = title
         binding.openGalleryButton.setOnClickListener { checkFileSystemPermission() }
@@ -155,11 +160,19 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     
             val options = UCrop.Options().apply {
                 setHideBottomControls(true)
-                if (isProfileImage){
-                    withAspectRatio(4f, 4f)
-                    setCircleDimmedLayer(true)
-                } else {
-                    withAspectRatio(16f, 9f)
+                when {
+                    isChannelBanner -> {
+                        val width = UtilsKt.getScreenWidth().toFloat()
+                        val height = resources.getDimension(R.dimen.channel_banner_height)
+                        withAspectRatio(width, height)
+                    }
+                    isProfileImage -> {
+                        withAspectRatio(4f, 4f)
+                        setCircleDimmedLayer(true)
+                    }
+                    else -> {
+                        withAspectRatio(16f, 9f)
+                    }
                 }
                 withMaxResultSize(1280, 720)
                 setFreeStyleCropEnabled(false)

@@ -50,7 +50,7 @@
         
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
-            loadImageFromUrlRounded="@{data.channelProfileUrl}"
+            loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:contentDescription="@string/txt_profile_image"

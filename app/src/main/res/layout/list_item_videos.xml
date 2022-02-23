@@ -70,7 +70,7 @@
             android:layout_marginStart="16dp"
             app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
             tools:src="@drawable/ic_menu_profile"
-            loadImageFromUrlRounded="@{data.channelProfileUrl}"
+            loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster"/>

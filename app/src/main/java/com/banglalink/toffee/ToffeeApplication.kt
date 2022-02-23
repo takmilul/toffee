@@ -4,16 +4,14 @@ import android.app.Application
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
-import coil.imageLoader
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.di.CoilCache
+import com.banglalink.toffee.di.CoilImageLoader
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -33,8 +31,6 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import okhttp3.Cache
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,12 +38,11 @@ import javax.inject.Provider
 class ToffeeApplication : Application() {
     
     @Inject lateinit var cacheManager: CacheManager
-    @Inject @CoilCache lateinit var coilCache: Cache
     @Inject lateinit var mUploadObserver: UploadObserver
-    @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var sessionPreference: SessionPreference
+    @Inject @CoilImageLoader lateinit var imageLoader: ImageLoader
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
@@ -70,6 +65,7 @@ class ToffeeApplication : Application() {
         SessionPreference.init(this)
         CommonPreference.init(this)
         PlayerPreference.init(this)
+        Coil.setImageLoader(imageLoader)
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
         } catch (e: Exception) {
@@ -96,7 +92,6 @@ class ToffeeApplication : Application() {
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
         
-        initCoil()
         initFireworkSdk()
         initMedalliaSdk()
         mUploadObserver.start()
@@ -149,22 +144,6 @@ class ToffeeApplication : Application() {
         } catch (e: Exception) {
             Log.e("MED_", "onInitialize: ${e.message}")
         }
-    }
-    
-    private fun initCoil() {
-        val imageLoader = ImageLoader.Builder(this).apply {
-            crossfade(true)
-//            availableMemoryPercentage(0.2)
-//            bitmapPoolPercentage(0.4)
-            okHttpClient {
-                OkHttpClient
-                    .Builder()
-                    .cache(coilCache)
-                    .addInterceptor(coilInterceptor)
-                    .build()
-            }
-        }.build()
-        Coil.setImageLoader(imageLoader)
     }
     
     override fun onTrimMemory(level: Int) {

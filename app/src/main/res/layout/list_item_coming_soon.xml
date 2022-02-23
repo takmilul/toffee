@@ -19,8 +19,6 @@
         <ImageView
             android:contentDescription="@string/txt_poster"
             android:id="@+id/poster"
-            imageWidth="@{720}"
-            imageHeight="@{405}"
             loadImageFromUrl="@{data.coming_soon_poster_url}"
             android:layout_width="0dp"
             android:layout_height="0dp"

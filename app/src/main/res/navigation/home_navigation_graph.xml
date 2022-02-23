@@ -132,7 +132,7 @@
         <action
             android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
             app:destination="@id/musicDetailsFragmant" />
-
+    
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -219,8 +219,7 @@
     <fragment
         android:id="@+id/EditProfileFragment"
         android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
-        android:label="Edit-Profile"
-        >
+        android:label="Edit-Profile">
         <argument
             android:name="data"
             app:argType="com.banglalink.toffee.model.EditProfileForm"
@@ -253,12 +252,10 @@
         android:label="About">
         <action
             android:id="@+id/action_AboutFragment_to_PrivacyPolicy"
-            app:destination="@id/privacyPolicyFragment"
-            />
+            app:destination="@id/privacyPolicyFragment" />
         <action
             android:id="@+id/action_AboutFragment_to_TermsAndConditons"
-            app:destination="@id/termsAndConditionFragment"
-            />
+            app:destination="@id/termsAndConditionFragment" />
     </fragment>
     
     <dialog
@@ -269,8 +266,7 @@
             android:id="@+id/action_uploadMethodFragment_to_editUploadInfoFragment"
             app:destination="@id/editUploadInfoFragment"
             app:popUpTo="@id/uploadMethodFragment"
-            app:popUpToInclusive="true"
-            />
+            app:popUpToInclusive="true" />
     </dialog>
     <dialog
         android:id="@+id/bottomSheetUploadFragment"
@@ -377,8 +373,11 @@
             app:argType="string" />
         <argument
             android:name="isProfileImage"
-            app:argType="boolean"
-            />
+            app:argType="boolean" />
+        <argument
+            android:name="isChannelBanner"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </dialog>
     <fragment
         android:id="@+id/notificationDropdownFragment"
@@ -473,9 +472,9 @@
         android:id="@+id/musicDetailsFragmant"
         android:name="com.banglalink.toffee.ui.category.music.MusicDetailsFragmant"
         android:label="{title}">
-    <argument
-        android:name="title"
-        android:defaultValue="Category"
-        app:argType="string" />
+        <argument
+            android:name="title"
+            android:defaultValue="Category"
+            app:argType="string" />
     </fragment>
 </navigation>

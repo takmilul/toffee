@@ -13,18 +13,18 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import coil.ImageLoader
 import coil.load
-import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.CoilImageLoader
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
-import com.banglalink.toffee.extension.px
-import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
@@ -35,140 +35,116 @@ import javax.inject.Singleton
 import kotlin.math.min
 
 @Singleton
-class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
-    @BindingAdapter(value = ["loadImageFromUrl", "imageWidth", "imageHeight"], requireAll = false)
-    fun bindImageFromUrl(view: ImageView, imageUrl: String?, width: Int = 0, height: Int = 0) {
+class BindingUtil @Inject constructor(private val mPref: SessionPreference, @CoilImageLoader private val imageLoader: ImageLoader) {
+    @BindingAdapter(value = ["loadImageFromUrl"], requireAll = false)
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
-            if(android.os.Build.VERSION.SDK_INT < 24) {
-                view.scaleType = ImageView.ScaleType.FIT_XY
-            }
-            view.setImageResource(R.drawable.placeholder)
+            view.loadPlaceholder()
         } else {
-            if(android.os.Build.VERSION.SDK_INT < 24) {
-                view.scaleType = ImageView.ScaleType.FIT_XY
-            }
-            view.load(imageUrl) {
-                fallback(R.drawable.placeholder)
-                placeholder(R.drawable.placeholder)
-                error(R.drawable.placeholder)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-//                UtilsKt.getImageSize(view.context, 720).apply {
-//                    size(x, y)
-//                }
-
-                if (width > 0 && height > 0) {
-                    size(width, height)
-                }
-                else {
-                    size(min(360.px, 720), min(202.px, 405))
-                }
-                listener(
-                    onSuccess = { _, _->
-                        view.scaleType = ImageView.ScaleType.CENTER_CROP
-                })
+            view.load(imageUrl, imageLoader) {
+                size(min(360.px, 720), min(202.px, 405))
+                initListener(view)
             }
         }
     }
-
-    @BindingAdapter("loadImageFromUrlRounded")
-    fun bindRoundImage(view: ImageView, imageUrl: String?) {
-        if (!imageUrl.isNullOrEmpty()) {
-            view.load(imageUrl) {
+    
+    @BindingAdapter("loadSmallImageFromUrlRounded")
+    fun bindSmallRoundImage(view: ImageView, imageUrl: String?) {
+        if (imageUrl.isNullOrEmpty()) {
+            view.loadPlaceholder(isCircular = true)
+        } else {
+            view.load(imageUrl, imageLoader) {
                 transformations(CircleCropTransformation())
-                crossfade(false)
-                fallback(R.drawable.ic_profile)
-                placeholder(R.drawable.ic_profile)
-                error(R.drawable.ic_profile)
-                diskCachePolicy(CachePolicy.ENABLED)
-                size(min(80.px, 150), min(80.px, 150))
-            }
-        } else {
-            view.setImageResource(R.drawable.ic_profile)
-        }
-    }
-
-    @BindingAdapter("loadImageResource")
-    fun loadImageFromResource(view: ImageView, image: Int) {
-        view.load(image) {
-            placeholder(R.drawable.placeholder)
-            fallback(R.drawable.placeholder)
-            error(R.drawable.placeholder)
-            crossfade(false)
-            diskCachePolicy(CachePolicy.ENABLED)
-            size(min(320.px, 720), min(180.px, 405))
-        }
-    }
-
-    @BindingAdapter("loadCategoryBackground")
-    fun bindCategoryBackground(view: ImageView, category: Category) {
-        view.load(category.thumbnailUrl) {
-            crossfade(false)
-            fallback(R.drawable.placeholder)
-            placeholder(R.drawable.placeholder)
-            error(R.drawable.placeholder)
-            diskCachePolicy(CachePolicy.ENABLED)
-            size(min(120.px, 360), min(61.px, 184))
-        }
-    }
-
-    @BindingAdapter("loadCategoryImage")
-    fun bindCategoryImage(view: ImageView, category: Category) {
-        if (category.categoryIcon.isNullOrBlank()) {
-            view.setImageResource(R.drawable.ic_cat_movie)
-        } else {
-            view.load(category.categoryIcon) {
-                crossfade(false)
-                fallback(R.drawable.ic_cat_movie)
-                placeholder(R.drawable.ic_cat_movie)
-                error(R.drawable.ic_cat_movie)
-                diskCachePolicy(CachePolicy.ENABLED)
+                setCircularImageRequestParams()
                 size(min(30.px, 92), min(30.px, 92))
             }
         }
     }
-
+    
+    @BindingAdapter("loadImageFromUrlRounded")
+    fun bindRoundImage(view: ImageView, imageUrl: String?) {
+        if (imageUrl.isNullOrEmpty()) {
+            view.loadPlaceholder(isCircular = true)
+        } else {
+            view.load(imageUrl, imageLoader) {
+                transformations(CircleCropTransformation())
+                setCircularImageRequestParams()
+                size(min(80.px, 150), min(80.px, 150))
+            }
+        }
+    }
+    
+    @BindingAdapter("loadImageResource")
+    fun loadImageFromResource(view: ImageView, image: Int) {
+        view.load(image, imageLoader) {
+            size(min(320.px, 720), min(180.px, 405))
+            initListener(view)
+        }
+    }
+    
+    @BindingAdapter("loadCategoryBackground")
+    fun bindCategoryBackground(view: ImageView, category: Category) {
+        if (category.thumbnailUrl.isNullOrBlank()) {
+            view.loadPlaceholder()
+        } else {
+            view.load(category.thumbnailUrl, imageLoader) {
+                size(min(120.px, 360), min(61.px, 184))
+                initListener(view)
+            }
+        }
+    }
+    
+    @BindingAdapter("loadCategoryImage")
+    fun bindCategoryImage(view: ImageView, category: Category) {
+        if (category.categoryIcon.isNullOrBlank()) {
+            view.loadPlaceholder(isCircular = true)
+        } else {
+            view.load(category.categoryIcon, imageLoader) {
+                setCircularImageRequestParams()
+                size(min(30.px, 92), min(30.px, 92))
+            }
+        }
+    }
+    
     @BindingAdapter("loadChannelImage")
     fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         if (channelInfo.isLinear) {
             if (channelInfo.channel_logo.isNullOrBlank()) {
-                view.setImageResource(R.drawable.ic_profile)
+                view.loadPlaceholder(isCircular = true)
             } else {
-                view.load(channelInfo.channel_logo) {
+                view.load(channelInfo.channel_logo, imageLoader) {
                     transformations(CircleCropTransformation())
-                    crossfade(false)
-                    fallback(R.drawable.ic_profile)
-                    placeholder(R.drawable.ic_profile)
-                    error(R.drawable.ic_profile)
-                    diskCachePolicy(CachePolicy.ENABLED)
+                    setCircularImageRequestParams()
                     size(min(80.px, 150), min(80.px, 150))
                 }
             }
         } else {
             if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
-//                view.scaleType = ImageView.ScaleType.FIT_XY
-                view.setImageResource(R.drawable.placeholder)
+                view.loadPlaceholder()
             } else {
-//                view.scaleType = ImageView.ScaleType.FIT_XY
-                view.load(channelInfo.landscape_ratio_1280_720)
-                {
-                    diskCachePolicy(CachePolicy.ENABLED)
-                    crossfade(false)
-                    fallback(R.drawable.placeholder)
-                    placeholder(R.drawable.placeholder)
-                    error(R.drawable.placeholder)
-//                    UtilsKt.getImageSize(view.context, 720).apply {
-//                        size(x, y)
-//                    }
+                view.load(channelInfo.landscape_ratio_1280_720, imageLoader) {
                     size(min(360.px, 720), min(202.px, 405))
-                    listener(onSuccess = { _, _->
-                        view.scaleType = ImageView.ScaleType.CENTER_CROP
-                    })
+                    initListener(view)
                 }
             }
         }
     }
-
+    
+    @BindingAdapter("loadPartnerImageFromUrl")
+    fun bindPartnerImageFromUrl(view: ImageView, imageUrl: String?) {
+        if (!imageUrl.isNullOrBlank()) {
+            view.loadPlaceholder()
+        } else {
+            view.load(imageUrl, imageLoader) {
+                transformations(
+                    CropCenterEndTransformation(4.1f)
+                )
+                size(min(360.px, 720), min(80.px, 150))
+                initListener(view)
+            }
+        }
+    }
+    
     @BindingAdapter("bindDuration")
     fun bindDuration(view: TextView, channelInfo: ChannelInfo?) {
         try {
@@ -178,30 +154,25 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             ToffeeAnalytics.logException(NullPointerException("Error getting duration info for id ${channelInfo?.id}, ${channelInfo?.program_name}"))
         }
     }
-
+    
     @BindingAdapter("bindButtonState")
     fun bindButtonState(view: Button, isPressed: Boolean) {
         view.isPressed = isPressed
     }
-
+    
     @BindingAdapter(value = ["bindSubscriptionStatus", "channelOwnerId"], requireAll = false)
-    fun bindSubscriptionStatus(
-        view: MultiTextButton,
-        isSubscribed: Boolean,
-        channelOwnerId: Int = 0
-    ) {
+    fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean, channelOwnerId: Int = 0) {
         view.setSubscriptionInfo(
-            isSubscribed,
-            null
+            isSubscribed, null
         )
         view.isEnabled = mPref.customerId != channelOwnerId
     }
-
+    
     @BindingAdapter("bindViewCount")
     fun bindViewCount(view: TextView, channelInfo: ChannelInfo?) {
         view.text = channelInfo?.formattedViewCount() ?: ""
     }
-
+    
     @BindingAdapter("packageExpiryText")
     fun bindPackageExpiryText(view: TextView, mPackage: Package) {
         if (TextUtils.isEmpty(mPackage.expireDate)) {
@@ -209,11 +180,11 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             view.visibility = View.VISIBLE
         }
-
+        
         val days = Utils.getDateDiffInDayOrHour(Utils.getDate(mPackage.expireDate))
         view.text = "$days left"
     }
-
+    
     @BindingAdapter("autoRenewText")
     fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
         if (item.isAutoRenewable == 1) {
@@ -224,7 +195,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             autoRenewTv.visibility = View.INVISIBLE
         }
     }
-
+    
     @BindingAdapter("bindVideoUploadTime")
     fun bindVideoUploadTime(tv: TextView, item: ChannelInfo) {
         if (item.created_at.isNullOrBlank()) {
@@ -233,7 +204,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             tv.text = Utils.getDateDiffInDayOrHour(Utils.getDate(item.created_at)) + " ago"
         }
     }
-
+    
     @BindingAdapter("validityText")
     fun bindValidityText(validityTv: TextView, item: Package) {
         val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
@@ -243,7 +214,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             validityTv.text = "Expires on $days"
         }
     }
-
+    
     @BindingAdapter("discountText")
     fun bindDiscountText(discountTv: TextView, item: Package) {
         if (item.discount == 0) {
@@ -251,15 +222,11 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             discountTv.visibility = View.VISIBLE
             val discountString = discountTv.context.getString(
-                R.string.discount_foramtted_text,
-                item.discount
+                R.string.discount_foramtted_text, item.discount
             )
             val str = SpannableStringBuilder(discountString)
             str.setSpan(
-                StrikethroughSpan(),
-                0,
-                discountString.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                StrikethroughSpan(), 0, discountString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             discountTv.text = str
         }
@@ -276,7 +243,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             imageView.visibility = View.VISIBLE
         }
     }*/
-
+    
     @BindingAdapter("bindActivityType")
     fun bindActivityType(view: TextView, item: UserActivities?) {
         view.text = when (item?.activityType) {
@@ -294,7 +261,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             else -> null
         }
     }
-
+    
     @BindingAdapter("bindViewProgress")
     fun bindViewProgress(view: ProgressBar, item: ChannelInfo?) {
         if (item != null && item.viewProgressPercent() > 0) {
@@ -304,7 +271,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             view.visibility = View.GONE
         }
     }
-
+    
     @BindingAdapter("loadReactionEmo")
     fun loadReactionEmo(view: View, reaction: Int) {
         var reactionTitle = "React"
@@ -354,7 +321,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             }
         }
     }
-
+    
     @BindingAdapter("bindEmoCount")
     fun bindEmoCount(view: TextView, item: ChannelInfo) {
         var react = item.reaction?.run {
@@ -363,7 +330,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         if (item.myReaction > 0) react++
         view.text = Utils.getFormattedViewsText(react.toString())
     }
-
+    
     @BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)
     fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int) {
         val reactionCountList = listOf(
@@ -374,7 +341,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             Sad to item.reaction?.sad,
             Angry to item.reaction?.angry
         ).sortedByDescending { (_, v) -> v }
-
+        
         val icon = when (reactionCountList[iconPosition - 1].first) {
             Like -> R.drawable.ic_reaction_like_no_shadow
             Love -> R.drawable.ic_reaction_love_no_shadow
@@ -386,24 +353,23 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         }
         view.setImageResource(icon)
     }
-
+    
     @BindingAdapter("loadMyReactionBg")
     fun loadMyReactionBg(view: ImageView, isSetBg: Boolean) {
         if (isSetBg) {
             view.setBackgroundResource(R.drawable.reaction_round_bg)
         }
     }
-
+    
     @BindingAdapter("loadUnseenCardBgColor")
     fun loadUnseenBgColor(view: CardView, isSeen: Boolean) {
         view.setCardBackgroundColor(
             ContextCompat.getColor(
-                view.context,
-                if (isSeen) R.color.cardBgColor else R.color.unseenCardColor
+                view.context, if (isSeen) R.color.cardBgColor else R.color.unseenCardColor
             )
         )
     }
-
+    
     @BindingAdapter("onSafeClick")
     fun onSafeClick(view: View, listener: View.OnClickListener) {
         view.safeClick(listener)
@@ -414,22 +380,6 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         view.text = ""
         item?.let {
             view.text = it.getDescriptionDecoded()
-        }
-    }
-    
-    @BindingAdapter("loadPartnerImageFromUrl")
-    fun bindPartnerImageFromUrl(view: ImageView, imageUrl: String?) {
-        imageUrl?.let {
-            view.load(imageUrl) {
-                fallback(R.drawable.placeholder)
-                placeholder(R.drawable.placeholder)
-                error(R.drawable.placeholder)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-                transformations(
-                    CropCenterEndTransformation(4.1f)
-                )
-            }
         }
     }
 }

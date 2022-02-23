@@ -31,3 +31,6 @@ annotation class CommonPreference
 
 @Qualifier
 annotation class ToffeeHeader
+
+@Qualifier
+annotation class CoilImageLoader

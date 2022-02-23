@@ -203,7 +203,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
-            ?.observe(viewLifecycleOwner, {
+            ?.observe(viewLifecycleOwner) {
                 it?.let {
                     if (isPosterClicked) {
                         newBannerUrl = it
@@ -213,12 +213,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                         loadImage()
                     }
                 }
-            })
+            }
     }
     
     private fun loadImage() {
         newBannerUrl?.let {
-            bindingUtil.bindImageFromUrl(binding.bannerImageView, it, 720, 405)
+            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
         }
         newProfileImageUrl?.let {
             bindingUtil.bindRoundImage(binding.profileImageView, it)
@@ -284,7 +284,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 isPosterClicked = true
                 findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
                     ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_channel_cover_photo),
-                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
+                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false,
+                    ThumbnailSelectionMethodFragment.IS_CHANNEL_BANNER to true
                 ))
             }
             binding.profileImageEditButton -> {
