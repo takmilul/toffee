@@ -110,6 +110,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.loopnow.fireworklibrary.FwSDK
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -336,6 +337,11 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
+
+        //NewRelic
+        NewRelic.withApplicationToken(
+            "AA075689888616e0b8a354735a008b9afd1731183d-NRMA"
+        ).start(this.applicationContext)
 //        showDeviceId()
     }
     

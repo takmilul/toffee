@@ -68,3 +68,7 @@
 -keep class com.medallia.** { *; } 
 -dontwarn com.medallia.**
 -keep class com.conviva.** {*;}
+
+-keep class com.newrelic.* { ; }
+-dontwarn com.newrelic.**
+-keepattributes Exceptions, Signature, InnerClasses, LineNumberTable
