@@ -71,7 +71,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         seriesInfo = requireArguments().getParcelable(SERIES_INFO)!!
-        val seasonList = (1..(seriesInfo.totalSeason)).map { "Season $it" }
+        val seasonList = seriesInfo.currentItem?.activeSeasonList?.map { "Season $it" } ?: listOf("Season 1")
         mViewModel.seasonList.value =  seasonList
         mViewModel.selectedSeason.value = minOf(seriesInfo.seasonNo - 1, seasonList.size - 1)
         currentItem = seriesInfo.currentItem
