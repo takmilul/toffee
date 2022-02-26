@@ -129,7 +129,7 @@
                     app:layout_constraintTop_toBottomOf="@id/reactStatus"
                     tools:text="Title" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/ownerThumb"
                     loadSmallImageFromUrlRounded="@{data.channelInfo.channel_logo}"
                     android:layout_width="20dp"

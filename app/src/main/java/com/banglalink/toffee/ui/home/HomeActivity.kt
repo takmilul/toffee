@@ -139,6 +139,7 @@ class HomeActivity :
     private var channelOwnerId: Int = 0
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
+    @Inject lateinit var bindingUtil: BindingUtil
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
@@ -1196,7 +1197,7 @@ class HomeActivity :
     }
     
     private fun initDrawer() {
-        drawerHelper = DrawerHelper(this, mPref, binding)
+        drawerHelper = DrawerHelper(this, mPref, bindingUtil, binding)
         drawerHelper.initDrawer()
     }
     
@@ -1575,7 +1576,9 @@ class HomeActivity :
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
-                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
+                    bindingUtil.bindRoundImage(profileImageView, it)
+                }
             }
         }
         return super.onPrepareOptionsMenu(menu)

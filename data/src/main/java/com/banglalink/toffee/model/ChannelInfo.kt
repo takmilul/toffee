@@ -58,7 +58,7 @@ data class ChannelInfo(
     var expireTime: String? = null,
     @SerializedName("hlsLinks")
     var hlsLinks: List<HlsLinks>? = null,
-
+    
     @SerializedName("drm_dash_url_extended")
     var drmDashUrlExt: List<DrmHlsLinks>? = null,
     @SerializedName("drm_dash_url_extended_sd")
@@ -67,7 +67,7 @@ data class ChannelInfo(
     var drmDashUrlSd: String? = null,
     @SerializedName("content_expire")
     var contentExpiryTime: String? = null,
-
+    
     @SerializedName("channel_logo")
     var channel_logo: String? = null,
     @SerializedName("categoryName")
@@ -96,7 +96,7 @@ data class ChannelInfo(
     var isSubscribed: Int = 0,
     @SerializedName("subscriberCount")
     var subscriberCount: Long = 0,
-
+    
     @SerializedName("serial_name")
     val seriesName: String? = null,
     @SerializedName("total_season_no")
@@ -109,7 +109,7 @@ data class ChannelInfo(
     val totalEpisode: Int = 0,
     @SerializedName("episode_no")
     val episodeNo: Int = 0,
-
+    
     @SerializedName("is_available")
     var is_available: Int = 0,
     @SerializedName("reaction")
@@ -121,7 +121,7 @@ data class ChannelInfo(
     @SerializedName("playlist_content_id")
     val playlistContentId: Int = 0,
     @SerializedName("active_season_list")
-    val activeSeasonList: Array<Int> = arrayOf(1),
+    val activeSeasonList: List<Int>? = listOf(1),
     @SerializedName("channel_profile_url")
     val channelProfileUrl: String? = null,
     @SerializedName("url_type")
@@ -140,7 +140,7 @@ data class ChannelInfo(
     val isEncoded: Int? = null,
     @SerializedName("is_ugc")
     val is_ugc: Int = 0,
-
+    
     @SerializedName("is_drm_active")
     var is_drm_active: Int = 0,
     @SerializedName("drm_dash_url")

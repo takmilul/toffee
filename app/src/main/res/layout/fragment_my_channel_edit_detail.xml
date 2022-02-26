@@ -59,7 +59,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
                     app:srcCompat="@drawable/ic_edit_btn" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/profileImageView"
                     loadImageFromUrlRounded="@{viewModel.myChannelDetail.profileUrl}"
                     android:layout_width="80dp"

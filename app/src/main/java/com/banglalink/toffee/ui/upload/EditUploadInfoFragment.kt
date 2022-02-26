@@ -42,6 +42,7 @@ import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -381,7 +382,7 @@ class EditUploadInfoFragment : BaseFragment() {
             override fun onTextChanged(text: CharSequence?) {
                 if (text?.endsWith(" ") == true) {
                     text.let {
-                        val chipText = it.toString().trim().capitalize()
+                        val chipText = it.toString().trim().capitalize(Locale.US)
                         if (chipText.isNotEmpty()) {
                             binding.uploadTags.addChip(chipText, null)
                         }

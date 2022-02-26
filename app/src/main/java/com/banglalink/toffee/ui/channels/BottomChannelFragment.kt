@@ -41,7 +41,7 @@ class BottomChannelFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = BottomChannelAdapter(object : BaseListItemCallback<TVChannelItem> {
+        mAdapter = BottomChannelAdapter(requireContext(), object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
                 homeViewModel.playContentLiveData.postValue(item.channelInfo)
             }

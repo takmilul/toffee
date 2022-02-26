@@ -1,19 +1,19 @@
 package com.banglalink.toffee.ui.channels
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.data.database.entities.TVChannelItem
-import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.BindingUtil
 
 class BottomChannelAdapter(
+    private val context: Context,
     private val callback: BaseListItemCallback<TVChannelItem>,
     private val bindingUtil: BindingUtil
 ) :PagingDataAdapter<TVChannelItem, BottomChannelViewHolder>(ItemComparator()) {
@@ -26,9 +26,9 @@ class BottomChannelAdapter(
             if(it.channelInfo != null) {
                 bindingUtil.bindChannel(holder.imageView, it.channelInfo!!)
                 if (it.channelInfo!!.id == selectedItem?.id.toString()) {
-                    holder.imageView.borderWidth = 4.px
+                    holder.imageView.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
                 } else {
-                    holder.imageView.borderWidth = 0
+                    holder.imageView.background = ContextCompat.getDrawable(context, R.drawable.circular_white_bg)
                 }
             }
             holder.itemView.setOnClickListener {

@@ -4,16 +4,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 import com.banglalink.toffee.util.BindingUtil
-import de.hdodenhof.circleimageview.CircleImageView
 
 class ChannelStickyListAdapter(
     private val context: Context,
@@ -121,11 +120,7 @@ class ChannelStickyListAdapter(
         }
     }
 
-    override fun onBindItemViewHolder(
-        viewHolder: ItemViewHolder,
-        section: Int,
-        offset: Int
-    ) {
+    override fun onBindItemViewHolder(viewHolder: ItemViewHolder, section: Int, offset: Int) {
         if (onItemClickListener != null) {
             viewHolder.itemView.setOnClickListener { onItemClickListener.onItemClicked(getSection(section).channelInfoList[offset]) }
         }
@@ -134,35 +129,16 @@ class ChannelStickyListAdapter(
 
         bindingUtil.bindChannel(liveTvViewHolder.icon, item)
 
-//        liveTvViewHolder.icon.load(item.channel_logo){
-//            transformations(CircleCropTransformation())
-//            crossfade(true)
-//            memoryCachePolicy(CachePolicy.ENABLED)
-////            diskCachePolicy(CachePolicy.ENABLED)
-//        }
-
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
-            liveTvViewHolder.icon.borderWidth = 4.px
+            liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
         } else {
-            liveTvViewHolder.icon.borderWidth = 0
+            liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.circular_white_bg)
         }
-
-/* TODO: Uncomment for Subscription
-        if(!item.isExpired(SessionPreference.getInstance().getSystemTime())){
-            liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
-        }
-        else if(item.isPurchased||item.subscription){
-            liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
-        }
-        else{
-            liveTvViewHolder.premimumIcon.visibility = View.VISIBLE
-        }
-*/
     }
-
+    
     internal class TvTitleViewHolder(itemView: View):
         StickyHeaderGridAdapter.HeaderViewHolder(itemView) {
-        val providerIcon: CircleImageView = itemView.findViewById(R.id.circleImageView)
+        val providerIcon: ImageView = itemView.findViewById(R.id.providerImageView)
         val providerName: TextView = itemView.findViewById(R.id.providerName)
         val nonTvGroup: Group = itemView.findViewById(R.id.tvExcludeList)
     }
@@ -170,14 +146,12 @@ class ChannelStickyListAdapter(
     internal class HeaderViewHolder(itemView: View) :
         StickyHeaderGridAdapter.HeaderViewHolder(itemView) {
         var text: TextView = itemView.findViewById(R.id.text)
-
     }
 
     internal class LiveTvViewHolder(itemView: View) :
         ItemViewHolder(itemView) {
-        var icon: CircleImageView = itemView.findViewById(R.id.icon)
-        var premimumIcon: ImageView = itemView.findViewById(R.id.premium_icon)
-
+        var icon: ImageView = itemView.findViewById(R.id.icon)
+        var premiumIcon: ImageView = itemView.findViewById(R.id.premium_icon)
     }
 
     interface OnItemClickListener {

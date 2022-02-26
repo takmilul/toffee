@@ -9,12 +9,11 @@
     android:background="?selectableItemBackgroundBorderless"
     >
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/icon"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_gravity="center"
-        app:civ_border_color="@color/colorAccent"
         android:background="@drawable/circular_white_bg"
         tools:src="@mipmap/ic_menu_channel" />
 

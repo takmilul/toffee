@@ -37,27 +37,28 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
-import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@AndroidEntryPoint
+private const val TAG = "EditProfileActivity"
+
 class EditProfileFragment : BaseFragment() {
 
-    private val TAG = "EditProfileActivity"
-    private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
-    }
+    private var previousEmail: String = ""
+    private var previousAddress: String = ""
+    @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var cacheManager: CacheManager
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
+    private val progressDialog by unsafeLazy {
+        VelBoxProgressDialog(requireContext())
+    }
+    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     private val args by navArgs<EditProfileFragmentArgs>()
     private val viewModel by viewModels<EditProfileViewModel>()
-    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
-    private var previousEmail: String = ""
-    private var previousAddress: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -92,7 +93,7 @@ class EditProfileFragment : BaseFragment() {
             }
         }
         observe(mPref.profileImageUrlLiveData) {
-            binding.profileIv.loadProfileImage(it)
+            bindingUtil.bindRoundImage(binding.profileIv, it)
         }
 
         observeThumbnailChange()

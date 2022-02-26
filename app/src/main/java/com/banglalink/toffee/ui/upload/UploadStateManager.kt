@@ -24,7 +24,11 @@ class UploadStateManager(
 
     private var retryUploadId: Long = -1L
     private var networkRetryCount: Int = MAX_RETRY_COUNT
-
+    
+    companion object {
+        const val MAX_RETRY_COUNT = 3
+    }
+    
     suspend fun checkUploadStatus(fromNetwork: Boolean = false) {
         val uploads = uploadRepo.getUploads()
         if(uploads.isNotEmpty()) {
@@ -104,10 +108,7 @@ class UploadStateManager(
             retryUploadId = info.uploadId ?: -1L
         }
         withContext(Dispatchers.IO + Job()) {
-            TusUploadRequest(
-                app,
-                mPref.tusUploadServerUrl,
-            )
+            TusUploadRequest(app, mPref.tusUploadServerUrl)
                 .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
                 .setMetadata(info.getFileNameMetadata())
                 .setUploadID(info.getUploadIdStr()!!)
@@ -178,13 +179,7 @@ class UploadStateManager(
         }
     }
 
-    suspend fun handleProgress(
-        uploadId: String,
-        totalBytes: Long,
-        uploadedBytes: Long,
-        progressPercent: Int,
-        uploadUri: String?
-    ) {
+    suspend fun handleProgress(uploadId: String, totalBytes: Long, uploadedBytes: Long, progressPercent: Int, uploadUri: String?) {
         if(UtilsKt.isCopyrightUploadId(uploadId)) return
         uploadRepo.updateProgressById(UtilsKt.stringToUploadId(uploadId),
             uploadedBytes,
@@ -192,9 +187,5 @@ class UploadStateManager(
             totalBytes,
             uploadUri
         )
-    }
-
-    companion object {
-        const val MAX_RETRY_COUNT = 3
     }
 }

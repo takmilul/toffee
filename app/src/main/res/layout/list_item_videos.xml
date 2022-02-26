@@ -61,7 +61,7 @@
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
         
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/ownerPicture"
             android:layout_width="30dp"
             android:layout_height="30dp"

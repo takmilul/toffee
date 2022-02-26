@@ -18,16 +18,23 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.FragmentViewProfileBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
+import javax.inject.Inject
 
 class ViewProfileFragment : BaseFragment() {
+    
     private lateinit var phoneNumber: String
+    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentViewProfileBinding? = null
     private val binding get() = _binding!!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
@@ -49,7 +56,7 @@ class ViewProfileFragment : BaseFragment() {
                 photoUrl = mPref.userImageUrl ?: ""
             }
             observe(mPref.profileImageUrlLiveData) {
-                binding.profileIv.loadProfileImage(it)
+                bindingUtil.bindRoundImage(binding.profileIv, it)
             }
             loadProfile()
         }
@@ -126,7 +133,6 @@ class ViewProfileFragment : BaseFragment() {
     }
     
     private fun observeCategory() {
-      //  progressDialog.show()
         observe(viewModel.categories){
             if(it.isNotEmpty()){
                 val width = (Resources.getSystem().displayMetrics.widthPixels - 64.px) / 3
@@ -146,7 +152,6 @@ class ViewProfileFragment : BaseFragment() {
                         userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
                     }
                 }
-               // progressDialog.hide()
             }
         }
     }

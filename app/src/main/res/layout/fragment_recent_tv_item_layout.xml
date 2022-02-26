@@ -20,14 +20,13 @@
         android:background="?selectableItemBackgroundBorderless"
         android:onClick="@{(v) -> callback.onItemClicked(data)}">
     
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:contentDescription="@string/txt_channel"
             android:layout_gravity="center"
             loadChannelImage="@{data.channelInfo}"
-            app:civ_border_color="@color/colorAccent"
             android:background="@drawable/circular_white_bg"
             tools:src="@mipmap/ic_menu_channel" />
     

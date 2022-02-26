@@ -14,14 +14,19 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.openUrlToExternalApp
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
 class DrawerHelper(
     private val activity: HomeActivity,
     private val mPref: SessionPreference,
+    private var bindingUtil: BindingUtil,
     private val binding: ActivityMainMenuBinding,
 ) {
 
@@ -76,11 +81,11 @@ class DrawerHelper(
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
-        val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
+        val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
         
         if (mPref.isVerifiedUser) {
             if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
-            if (!mPref.userImageUrl.isNullOrBlank())profilePicture.loadProfileImage(mPref.userImageUrl!!)
+            if (!mPref.userImageUrl.isNullOrBlank()) bindingUtil.bindRoundImage(profileImageView, mPref.userImageUrl)
             
             activity.observe(mPref.customerNameLiveData) {
                 when {
@@ -92,7 +97,7 @@ class DrawerHelper(
                 }
             }
             activity.observe(mPref.profileImageUrlLiveData) {
-                profilePicture.loadProfileImage(it)
+                bindingUtil.bindRoundImage(profileImageView, it)
             }
         }
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {

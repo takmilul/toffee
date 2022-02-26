@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/icon"
                 android:contentDescription="@string/txt_profile_image"
                 loadImageFromUrlRounded="@{data.profileUrl}"

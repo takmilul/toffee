@@ -68,7 +68,7 @@
             app:layout_constraintTop_toTopOf="@+id/poster_container"
             tools:text="Title" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/ownerPicture"
             loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="20dp"

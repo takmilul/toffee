@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
             android:paddingBottom="16dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/thumbnailImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

@@ -3,10 +3,10 @@ buildscript {
         appVersionCode = 71
         appVersionName = '2.2.0'
         
-        exoVersion = '2.16.1'
+        exoVersion = '2.17.0'
         hiltVersion = '1.0.0'
         gsonVersion = '2.8.8'
-        roomDbVersion = '2.4.1'
+        roomDbVersion = '2.4.2'
         okHttpVersion = '4.9.0'
         pagingVersion = '3.1.0'
         kotlinVersion = '1.6.10'
@@ -24,10 +24,10 @@ buildscript {
         googleApiClientVersion = '1.32.2'
         pubsubVersion = 'v1-rev452-1.25.0'
         convivaExoPlayerVersion = '4.0.10'
-        firebaseMessagingVersion = '23.0.0'
-        firebaseAnalyticsVersion = '20.0.2'
         pahoAndroidServiceVersion = '1.1.1'
-        firebaseCrashlyticsVersion = '18.2.7'
+        firebaseMessagingVersion = '23.0.0'
+        firebaseAnalyticsVersion = '20.1.0'
+        firebaseCrashlyticsVersion = '18.2.8'
         googleHttpClientGsonVersion = '1.40.1'
     }
     repositories {

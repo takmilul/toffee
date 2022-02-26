@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="1000dp" />
+            <solid android:color="@color/tvChannelLogoBg"/>
+            <stroke android:color="@color/colorAccent" android:width="5dp"/>
+            <padding android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp" />
+        </shape>
+    </item>
+</selector>

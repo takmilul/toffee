@@ -13,7 +13,7 @@
             android:layout_width="104dp"
             android:layout_height="wrap_content">
             
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/iconHolder"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
