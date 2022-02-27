@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMusicBinding
-import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
@@ -145,7 +144,7 @@ class MusicInfoFragment: HomeBaseFragment() {
     private fun setCategoryUiInfo() {
         categoryInfo.let {
             binding.categoryName.text = it.categoryName
-            bindingUtil.bindCategoryImage(binding.categoryIcon, categoryInfo)
+            bindingUtil.bindCategoryIcon(binding.categoryIcon, categoryInfo)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(),
                     R.color.colorAccent2))

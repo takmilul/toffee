@@ -36,6 +36,7 @@ import kotlin.math.min
 
 @Singleton
 class BindingUtil @Inject constructor(private val mPref: SessionPreference, @CoilImageLoader private val imageLoader: ImageLoader) {
+    
     @BindingAdapter(value = ["loadImageFromUrl"], requireAll = false)
     fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
@@ -94,8 +95,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         }
     }
     
-    @BindingAdapter("loadCategoryImage")
-    fun bindCategoryImage(view: ImageView, category: Category) {
+    @BindingAdapter("loadCategoryIcon")
+    fun bindCategoryIcon(view: ImageView, category: Category) {
         if (category.categoryIcon.isNullOrBlank()) {
             view.loadPlaceholder(isCircular = true)
         } else {

@@ -15,7 +15,6 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.setVisibility
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -69,7 +68,7 @@ class MovieFragment : BaseFragment() {
     private fun setCategoryIcon() {
         category.let {
             binding.categoryName.text = it.categoryName
-            bindingUtil.bindCategoryImage(binding.categoryIcon, it)
+            bindingUtil.bindCategoryIcon(binding.categoryIcon, it)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }

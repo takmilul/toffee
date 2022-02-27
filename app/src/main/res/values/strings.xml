@@ -435,4 +435,5 @@
     <string name="reaction_text">Reaction</string>
     <string name="recommended_text">Recommended</string>
     <string name="autoplay_text">Autoplay</string>
+    <string name="category_icon_text">Category Icon</string>
 </resources>

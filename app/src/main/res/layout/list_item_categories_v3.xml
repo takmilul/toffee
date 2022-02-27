@@ -59,7 +59,7 @@
     
                 <ImageView
                     android:id="@+id/icon"
-                    loadCategoryImage="@{data}"
+                    loadCategoryIcon="@{data}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:maxHeight="30dp"
@@ -71,7 +71,8 @@
                     tools:src="@drawable/ic_cat_movie"
                     app:layout_constraintBottom_toBottomOf="@+id/category_background"
                     app:layout_constraintEnd_toStartOf="@+id/guideline16"
-                    app:layout_constraintStart_toStartOf="@+id/category_background" />
+                    app:layout_constraintStart_toStartOf="@+id/category_background"
+                    android:contentDescription="@string/category_icon_text" />
     
                 <TextView
                     android:id="@+id/text"
