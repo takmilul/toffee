@@ -7,6 +7,8 @@ data class VastTag(
     val id: Int = 0,
     @SerializedName("description")
     var description: String = "",
+    @SerializedName("adPosition")
+    val adPosition: String?,
     @SerializedName("url")
     var url: String = "",
 )

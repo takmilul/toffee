@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -75,20 +76,20 @@ class MovieFragment : BaseFragment() {
 
     private fun observeCardsVisibility() {
         observe(viewModel.moviesContentCards){
-            binding.featuredFragment.setVisibility(it.featuredContent == 1)
-            binding.continueWatchingFragment.setVisibility(it.continueWatching == 1)
-            binding.editorsChoiceFragment.setVisibility(it.editorsChoice == 1)
-            binding.moviePreviewFragment.setVisibility(it.moviePreviews == 1)
-            binding.trendingNowMoviesFragment.setVisibility(it.trendingNow == 1)
-            binding.thrillerMoviesFragment.setVisibility(it.thriller == 1)
-            binding.actionMoviesFragment.setVisibility(it.action == 1)
-            binding.romanticMoviesFragment.setVisibility(it.romantic == 1)
-            binding.banglaMoviesFragment.setVisibility(it.bangla == 1)
-            binding.englishMoviesFragment.setVisibility(it.english == 1)
-            binding.comingSoonFragment.setVisibility(it.comingSoon == 1)
-            binding.telefilmFragment.setVisibility(it.telefilm == 1)
-            binding.topMovieChannelsFragment.setVisibility(it.topMovieChannels == 1)
-            binding.latestVideosFragment.setVisibility(it.feed == 1)
+            binding.featuredFragment.isVisible = it.featuredContent == 1
+            binding.continueWatchingFragment.isVisible = it.continueWatching == 1
+            binding.editorsChoiceFragment.isVisible = it.editorsChoice == 1
+            binding.moviePreviewFragment.isVisible = it.moviePreviews == 1
+            binding.trendingNowMoviesFragment.isVisible = it.trendingNow == 1
+            binding.thrillerMoviesFragment.isVisible = it.thriller == 1
+            binding.actionMoviesFragment.isVisible = it.action == 1
+            binding.romanticMoviesFragment.isVisible = it.romantic == 1
+            binding.banglaMoviesFragment.isVisible = it.bangla == 1
+            binding.englishMoviesFragment.isVisible = it.english == 1
+            binding.comingSoonFragment.isVisible = it.comingSoon == 1
+            binding.telefilmFragment.isVisible = it.telefilm == 1
+            binding.topMovieChannelsFragment.isVisible = it.topMovieChannels == 1
+            binding.latestVideosFragment.isVisible = it.feed == 1
         }
     }
 

@@ -19,6 +19,7 @@ class ChannelStickyListAdapter(
     private val onItemClickListener: OnItemClickListener?,
     private val bindingUtil: BindingUtil
 ): StickyHeaderGridAdapter() {
+    
     private var highlightedChannel: ChannelInfo? = null
     private var selectedChannel: ChannelInfo? = null
     private var values: List<StickyHeaderInfo> = emptyList()
@@ -56,22 +57,15 @@ class ChannelStickyListAdapter(
         notifyAllSectionsDataSetChanged()
     }
 
-    override fun onCreateHeaderViewHolder(
-        parent: ViewGroup,
-        headerType: Int
-    ): StickyHeaderGridAdapter.HeaderViewHolder {
+    override fun onCreateHeaderViewHolder(parent: ViewGroup, headerType: Int): StickyHeaderGridAdapter.HeaderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
             if(headerType == 1) R.layout.catchup_details_list_header_new else R.layout.layout_item_channel_header,
             parent,
             false
         )
         return when(headerType) {
-            1 -> {
-                TvTitleViewHolder(view)
-            }
-            else -> {
-                HeaderViewHolder(view)
-            }
+            1 -> TvTitleViewHolder(view)
+            else -> HeaderViewHolder(view)
         }
     }
 
@@ -82,34 +76,16 @@ class ChannelStickyListAdapter(
         return 2
     }
 
-    override fun onCreateItemViewHolder(
-        parent: ViewGroup,
-        itemType: Int
-    ): ItemViewHolder {
+    override fun onCreateItemViewHolder(parent: ViewGroup, itemType: Int): ItemViewHolder {
         return LiveTvViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.live_tv_grid_item,
-                parent,
-                false
-            )
+            LayoutInflater.from(parent.context).inflate(R.layout.live_tv_grid_item, parent, false)
         )
     }
 
-    override fun onBindHeaderViewHolder(
-        viewHolder: StickyHeaderGridAdapter.HeaderViewHolder,
-        section: Int
-    ) {
+    override fun onBindHeaderViewHolder(viewHolder: StickyHeaderGridAdapter.HeaderViewHolder, section: Int) {
         if(viewHolder is TvTitleViewHolder && selectedChannel != null) {
             selectedChannel?.let {
                 bindingUtil.bindChannel(viewHolder.providerIcon, it)
-
-//                viewHolder.providerIcon.load(it.channel_logo){
-//                    transformations(CircleCropTransformation())
-////                    crossfade(true)
-//                    memoryCachePolicy(CachePolicy.ENABLED)
-////            diskCachePolicy(CachePolicy.ENABLED)
-//                }
-
                 viewHolder.providerName.text = it.program_name
                 viewHolder.nonTvGroup.visibility = View.GONE
             }
@@ -126,9 +102,9 @@ class ChannelStickyListAdapter(
         }
         val item = getSection(section).channelInfoList[offset]
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
-
+        
         bindingUtil.bindChannel(liveTvViewHolder.icon, item)
-
+        
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
         } else {

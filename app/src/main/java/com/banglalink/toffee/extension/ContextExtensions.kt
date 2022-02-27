@@ -12,8 +12,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
-    if(!message.isNullOrBlank())
+    if(!message.isNullOrBlank()) {
         Toast.makeText(this, message, length).show()
+    }
 }
 
 inline fun <reified T : Any> FragmentActivity.launchActivity(
@@ -24,12 +25,8 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
     val intent = newIntent<T>(this)
     intent.init()
     when (requestCode) {
-        -1 -> {
-            startActivity(intent, options)
-        }
-        else -> {
-            startActivityForResult(intent, requestCode, options)
-        }
+        -1 -> startActivity(intent, options)
+        else -> startActivityForResult(intent, requestCode, options)
     }
 }
 
@@ -42,20 +39,11 @@ fun View.setVisibility(isVisible: Boolean){
 
 fun MotionLayout.onTransitionCompletedListener(onCompleted:(transitionId: Int) -> Unit){
     this.addTransitionListener(object : MotionLayout.TransitionListener{
-        override fun onTransitionStarted(motion: MotionLayout?, startId: Int, endId: Int) {
-
-        }
-
-        override fun onTransitionChange(motion: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-
-        }
-
+        override fun onTransitionStarted(motion: MotionLayout?, startId: Int, endId: Int) { }
+        override fun onTransitionChange(motion: MotionLayout?, startId: Int, endId: Int, progress: Float) { }
+        override fun onTransitionTrigger(motion: MotionLayout?, startId: Int, endId: Boolean, progress: Float) { }
         override fun onTransitionCompleted(motion: MotionLayout?, transitionId: Int) {
             onCompleted(transitionId)
-        }
-
-        override fun onTransitionTrigger(motion: MotionLayout?, startId: Int, endId: Boolean, progress: Float) {
-
         }
     })
 }
@@ -65,11 +53,7 @@ fun View.safeClick(action: View.OnClickListener, debounceTime: Long = 1000L) {
         private var lastClickTime: Long = 0
 
         override fun onClick(v: View) {
-            if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) {
-                return
-            }
-            else action.onClick(v)
-
+            if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) return else action.onClick(v)
             lastClickTime = SystemClock.elapsedRealtime()
         }
     })

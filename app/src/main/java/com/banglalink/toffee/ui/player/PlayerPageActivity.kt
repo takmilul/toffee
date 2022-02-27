@@ -85,6 +85,7 @@ import java.net.CookieManager
 import java.net.CookiePolicy
 import javax.inject.Inject
 import kotlin.math.max
+import kotlin.random.Random
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
@@ -659,19 +660,23 @@ abstract class PlayerPageActivity :
         }
         hlsUrl ?: return null
         
-        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
+        var uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
             hlsUrl
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
         }
         ConvivaHelper.updateStreamUrl(uri)
         return MediaItem.Builder().apply {
-            if (!channelInfo.isStingray) {
-                httpDataSourceFactory?.setUserAgent(toffeeHeader)
-                httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
-            }
+//            if (!channelInfo.isStingray) {
+//                httpDataSourceFactory?.setUserAgent(toffeeHeader)
+//                httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+//            } else {
+//                uri = uri?.replace("[DID]", cPref.deviceId)
+//                    ?.replace("[CACHEBUSTER]", (mPref.customerId + Random.nextInt() + System.nanoTime()).toString())
+////                    ?.replace("[IP]", mPref.userIp)
+//            }
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
-            setUri(uri)
+            setUri(getGeneratedUrl(uri))
             setTag(channelInfo)
         }.build()
     }
@@ -718,15 +723,18 @@ abstract class PlayerPageActivity :
         }
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
-            val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
-            ConvivaHelper.setVastTagUrl(vastTag)
-            if (shouldPlayAd && vastTag.isNotBlank()) {
-                mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-                if (!isReload) currentlyPlayingVastUrl = tag.url
+        homeViewModel.vastTagsMutableLiveData.value
+            ?.filter { if (channelInfo.isLinear) it.adPosition == "pre-roll" else it.adPosition == "any" }
+            ?.randomOrNull()
+            ?.let { tag ->
+                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
+                val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+                ConvivaHelper.setVastTagUrl(vastTag)
+                if (shouldPlayAd && vastTag.isNotBlank()) {
+                    mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
+                    if (!isReload) currentlyPlayingVastUrl = tag.url
+                }
             }
-        }
         
         player?.let {
             val oldChannelInfo = getCurrentChannelInfo()
@@ -830,6 +838,21 @@ abstract class PlayerPageActivity :
                 it.prepare()
             }
 //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
+        }
+    }
+    
+    private fun getGeneratedUrl(url: String?): String? {
+        return if (playlistManager.getCurrentChannel()?.isStingray == true) {
+            val userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
+            url?.replace("[APP_BUNDLE]", BuildConfig.VERSION_NAME)
+                ?.replace("[DID]", cPref.deviceId)
+                ?.replace("[CACHEBUSTER]", (mPref.customerId + Random.nextInt() + System.nanoTime()).toString())
+                ?.replace("[IP]", mPref.userIp)
+                ?.replace("[%UA%]", userAgentString)
+        } else {
+            httpDataSourceFactory?.setUserAgent(toffeeHeader)
+            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+            url
         }
     }
     

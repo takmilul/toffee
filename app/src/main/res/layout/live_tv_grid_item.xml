@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackgroundBorderless">
-
+    
     <ImageView
         android:id="@+id/icon"
         android:layout_width="@dimen/channel_width"
         android:layout_height="@dimen/channel_height"
         android:layout_gravity="center"
         android:contentDescription="@string/txt_channel"
+        android:scaleType="centerCrop"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/circular_white_bg"
-        android:src="@mipmap/ic_menu_channel" />
-
+        tools:src="@mipmap/ic_menu_channel" />
+    
     <ImageView
         android:contentDescription="@string/txt_icon"
         android:id="@+id/premium_icon"
