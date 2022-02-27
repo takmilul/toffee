@@ -431,4 +431,8 @@
     <string name="convivaCustomerKeyTest">4d18565c4eff1d51ace324803225906a124fd756</string>
     <string name="convivaCustomerKeyProd">b5657a3f90fac1a580f7ad4920e9830923077b55</string>
     <string name="convivaGatewayUrl">https://banglalink-test.testonly.conviva.com</string>
+    <string name="live_text">LIVE</string>
+    <string name="reaction_text">Reaction</string>
+    <string name="recommended_text">Recommended</string>
+    <string name="autoplay_text">Autoplay</string>
 </resources>

@@ -11,7 +11,7 @@
         <ImageView
             android:id="@+id/icon"
             android:layout_width="@dimen/stingray_content_width"
-            android:layout_height="@dimen/stingray_content_hight"
+            android:layout_height="@dimen/stingray_content_height"
             android:layout_marginTop="8dp"
             android:background="@drawable/circular_white_bg"
             android:contentDescription="@string/txt_icon"
