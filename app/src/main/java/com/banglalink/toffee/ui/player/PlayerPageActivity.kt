@@ -83,6 +83,7 @@ import okhttp3.OkHttpClient
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
+import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
@@ -843,12 +844,16 @@ abstract class PlayerPageActivity :
     
     private fun getGeneratedUrl(url: String?): String? {
         return if (playlistManager.getCurrentChannel()?.isStingray == true) {
-            val userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
-            url?.replace("[APP_BUNDLE]", BuildConfig.VERSION_NAME)
+            val userAgentString = "Mozilla/5.0 (Linux; Android 4.2.1; SMART-TV; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko; googleweblight) Chrome/38.0.1025.166 Mobile Safari/535.19"
+            val encodedUserAgent = URLEncoder.encode(userAgentString, "UTF-8")
+            val cacheBuster = mPref.customerId.toString() + Random.nextInt() + System.nanoTime()
+            
+            url
+//                ?.replace("[APP_BUNDLE]", BuildConfig.VERSION_NAME)
                 ?.replace("[DID]", cPref.deviceId)
-                ?.replace("[CACHEBUSTER]", (mPref.customerId + Random.nextInt() + System.nanoTime()).toString())
-                ?.replace("[IP]", mPref.userIp)
-                ?.replace("[%UA%]", userAgentString)
+                ?.replace("[CACHEBUSTER]", cacheBuster)
+//                ?.replace("[IP]", mPref.userIp)
+//                ?.replace("[%UA%]", encodedUserAgent)
         } else {
             httpDataSourceFactory?.setUserAgent(toffeeHeader)
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))

@@ -229,7 +229,8 @@ dependencies {
     implementation "org.eclipse.paho:org.eclipse.paho.android.service:$rootProject.pahoAndroidServiceVersion"
 
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-//    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
+    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
+    implementation("com.google.guava:guava:28.0-android")
     
     //medallia
     implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'

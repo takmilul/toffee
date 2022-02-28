@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.ads.identifier.AdvertisingIdClient
+import androidx.ads.identifier.AdvertisingIdInfo
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,8 +30,10 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.today
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.google.common.util.concurrent.FutureCallback
+import com.google.common.util.concurrent.Futures.addCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers.IO
@@ -37,6 +41,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
+import java.util.concurrent.*
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
@@ -116,15 +121,51 @@ class SplashScreenFragment : BaseFragment() {
     private fun sendAdIdLog() {
         if (mPref.adIdUpdateDate != today) {
             lifecycleScope.launch(IO + Job()) {
-                kotlin.runCatching { 
-                    val adId = AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
-                    adId?.let { 
-                        viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
-                            it.phoneNumber = mPref.phoneNumber
-                            it.isBlNumber = mPref.isBanglalinkNumber
-                        })
+                runCatching {
+                    var adId: String? = null
+                    
+                    if (AdvertisingIdClient.isAdvertisingIdProviderAvailable(appContext)) {
+                        val adIdInfoCallback = AdvertisingIdClient.getAdvertisingIdInfo(appContext)
+                        
+                        addCallback(
+                            adIdInfoCallback,
+                            object : FutureCallback<AdvertisingIdInfo> {
+                                override fun onSuccess(adInfo: AdvertisingIdInfo?) {
+                                    adId = adInfo?.id
+                                    Log.i("AD_ID", "adId: $adId")
+                                    adId?.let {
+                                        viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
+                                            it.phoneNumber = mPref.phoneNumber
+                                            it.isBlNumber = mPref.isBanglalinkNumber
+                                        })
+                                        mPref.adIdUpdateDate = today
+                                    } ?: run {
+                                        ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                                    }
+                                }
+                                
+                                override fun onFailure(t: Throwable) {
+                                    Log.e("AD_ID", "Failed to connect to Advertising ID provider.")
+                                    ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                                }
+                            },
+                            Executors.newSingleThreadExecutor()
+                        )
+                    } else {
+                        adId = com.google.android.gms.ads.identifier.AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
+                        Log.i("AD_ID", "adId: $adId")
+                        adId?.let {
+                            viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
+                                it.phoneNumber = mPref.phoneNumber
+                                it.isBlNumber = mPref.isBanglalinkNumber
+                            })
+                            mPref.adIdUpdateDate = today
+                        } ?: run {
+                            ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                        }
                     }
-                    mPref.adIdUpdateDate = today
+                }.onFailure {
+                    ToffeeAnalytics.logEvent("fetching_ad_id_failed")
                 }
             }
         }

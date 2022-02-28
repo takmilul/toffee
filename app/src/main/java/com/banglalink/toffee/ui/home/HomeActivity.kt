@@ -338,8 +338,7 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
-
-        //NewRelic
+        
         NewRelic.withApplicationToken(
             "AA075689888616e0b8a354735a008b9afd1731183d-NRMA"
         ).start(this.applicationContext)

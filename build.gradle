@@ -13,7 +13,7 @@ buildscript {
         composeVersion = '1.0.5'
         retrofitVersion = '2.9.0'
         espressoVersion = '3.4.0'
-        lifecycleVersion = '2.4.0'
+        lifecycleVersion = '2.4.1'
         navigationVersion = '2.3.5'
         pahoClientVersion = '1.2.5'
         convivaSdkVersion = '4.0.18'

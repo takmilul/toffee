@@ -65,10 +65,25 @@
 -keep class com.google.ads.interactivemedia.** { *; }
 -keep interface com.google.ads.interactivemedia.** { *; }
 
+-keep class * extends java.util.ListResourceBundle { *; }
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
 -keep class com.medallia.** { *; } 
 -dontwarn com.medallia.**
--keep class com.conviva.** {*;}
+-keep class com.conviva.** { *; }
 
--keep class com.newrelic.* { ; }
+-keep class com.newrelic.* { *; }
 -dontwarn com.newrelic.**
 -keepattributes Exceptions, Signature, InnerClasses, LineNumberTable
