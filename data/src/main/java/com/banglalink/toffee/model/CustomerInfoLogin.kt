@@ -142,5 +142,7 @@ class CustomerInfoLogin(
     @SerializedName("isMedalliaActiveForAndroid")
     var isMedalliaActive:Boolean = false,
     @SerializedName("isConvivaActiveForAndroid")
-    var isConvivaActive:Boolean = false
+    var isConvivaActive:Boolean = false,
+    @SerializedName("isNewRelicActiveForAndroid")
+    var isNewRelicActive:Boolean = false
 ) : BodyResponse(), Parcelable

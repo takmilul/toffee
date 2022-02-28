@@ -87,3 +87,10 @@
 -keep class com.newrelic.* { *; }
 -dontwarn com.newrelic.**
 -keepattributes Exceptions, Signature, InnerClasses, LineNumberTable
+
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+-keep class retrofit2.** { *; }
+-dontwarn retrofit2.**

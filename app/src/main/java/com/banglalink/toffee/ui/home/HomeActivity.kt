@@ -51,6 +51,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -338,15 +339,23 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
+        if (mPref.isNewRelicActive) {
+            initNewRelicSdk()
+        }
         
-        NewRelic.withApplicationToken(
-            "AA075689888616e0b8a354735a008b9afd1731183d-NRMA"
-        ).start(this.applicationContext)
 //        showDeviceId()
     }
     
+    private fun initNewRelicSdk() {
+        runCatching {
+            NewRelic
+                .withApplicationToken(getString(string.new_relic_app_token))
+                .start(this.applicationContext)
+        }
+    }
+    
     private fun initConvivaSdk() {
-        try {
+        runCatching {
             if (BuildConfig.DEBUG) {
                 val settings: Map<String, Any> = mutableMapOf(
                     ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
@@ -357,8 +366,6 @@ class HomeActivity :
                 ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
             }
             ConvivaHelper.init(applicationContext, true)
-        } catch (e: Exception) {
-            Log.e("CON_", "onCreate: ${e.message}")
         }
     }
     

@@ -436,4 +436,5 @@
     <string name="recommended_text">Recommended</string>
     <string name="autoplay_text">Autoplay</string>
     <string name="category_icon_text">Category Icon</string>
+    <string name="new_relic_app_token">AA075689888616e0b8a354735a008b9afd1731183d-NRMA</string>
 </resources>
