@@ -1,18 +1,25 @@
 package com.banglalink.toffee.receiver
 
 import android.Manifest
+import android.Manifest.permission
 import android.app.Application
 import android.content.Context
+import android.content.Context.TELEPHONY_SERVICE
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import android.util.Log
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
+import android.telephony.TelephonyManager
+import android.telephony.TelephonyManager.*
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresPermission
+import androidx.core.app.ActivityCompat
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -26,6 +33,7 @@ constructor(
     private val application: Application
 ) {
     
+    private val telephonyManager = application.applicationContext.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
     private val connectivityManager = application.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     
     // general availability of Internet over any type
@@ -53,6 +61,30 @@ constructor(
             return field
         }
     
+    var isOver2G = false
+        get() {
+            updateFields()
+            return field
+        }
+    
+    var isOver3G = false
+        get() {
+            updateFields()
+            return field
+        }
+    
+    var isOver4G = false
+        get() {
+            updateFields()
+            return field
+        }
+    
+    var isOver5G = false
+        get() {
+            updateFields()
+            return field
+        }
+    
     @Suppress("DEPRECATION")
     private fun updateFields() {
         try {
@@ -74,6 +106,10 @@ constructor(
                     
                     // ethernet
                     isOverEthernet = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                    
+                    if (networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                        updateCellularNetworkType()
+                    }
                 } else {
                     networkFailed()
                 }
@@ -90,6 +126,10 @@ constructor(
                     
                     val ethernet = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET)
                     isOverEthernet = ethernet != null && ethernet.isConnected
+                    
+                    if (cellular != null && cellular.isConnected) {
+                        updateCellularNetworkType()
+                    }
                 } else {
                     networkFailed()
                 }
@@ -100,8 +140,37 @@ constructor(
         }
     }
     
+    @Suppress("DEPRECATION")
+    private fun updateCellularNetworkType() {
+        if (ActivityCompat.checkSelfPermission(application.applicationContext, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            isOver2G = telephonyManager.networkType == NETWORK_TYPE_EDGE
+                || telephonyManager.networkType == NETWORK_TYPE_GPRS
+                || telephonyManager.networkType == NETWORK_TYPE_CDMA
+                || telephonyManager.networkType == NETWORK_TYPE_IDEN
+                || telephonyManager.networkType == NETWORK_TYPE_1xRTT
+            
+            isOver3G = telephonyManager.networkType == NETWORK_TYPE_UMTS
+                || telephonyManager.networkType == NETWORK_TYPE_HSDPA
+                || telephonyManager.networkType == NETWORK_TYPE_HSPA
+                || telephonyManager.networkType == NETWORK_TYPE_HSPAP
+                || telephonyManager.networkType == NETWORK_TYPE_EVDO_0
+                || telephonyManager.networkType == NETWORK_TYPE_EVDO_A
+                || telephonyManager.networkType == NETWORK_TYPE_EVDO_B
+            
+            isOver4G = telephonyManager.networkType == NETWORK_TYPE_LTE
+            
+            if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+                isOver5G = telephonyManager.networkType == NETWORK_TYPE_NR
+            }
+        }
+    }
+    
     private fun networkFailed() {
         isOnline = false
+        isOver2G = false
+        isOver3G = false
+        isOver4G = false
+        isOver5G = false
         isOverWifi = false
         isOverCellular = false
         isOverEthernet = false
