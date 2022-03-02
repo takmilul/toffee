@@ -458,12 +458,6 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private var totalBytes = 0L
-    override fun onLoadCompleted(eventTime: EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
-        totalBytes += loadEventInfo.bytesLoaded
-        Log.i("PLAYER BYTES", "" + totalBytes / 1024 + " KB")
-    }
-    
     protected fun updateStartPosition() {
         player?.let {
             startAutoPlay = it.playWhenReady
@@ -661,7 +655,7 @@ abstract class PlayerPageActivity :
         }
         hlsUrl ?: return null
         
-        var uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
+        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
             hlsUrl
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)

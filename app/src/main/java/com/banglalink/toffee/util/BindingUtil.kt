@@ -54,6 +54,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         if (imageUrl.isNullOrEmpty()) {
             view.loadPlaceholder(isCircular = true)
         } else {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
             view.load(imageUrl, imageLoader) {
                 transformations(CircleCropTransformation())
                 setCircularImageRequestParams()
@@ -67,6 +68,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         if (imageUrl.isNullOrEmpty()) {
             view.loadPlaceholder(isCircular = true)
         } else {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
             view.load(imageUrl, imageLoader) {
                 transformations(CircleCropTransformation())
                 setCircularImageRequestParams()
@@ -88,9 +90,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         if (category.thumbnailUrl.isNullOrBlank()) {
             view.loadPlaceholder()
         } else {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
             view.load(category.thumbnailUrl, imageLoader) {
                 size(min(120.px, 360), min(61.px, 184))
-                initListener(view)
             }
         }
     }

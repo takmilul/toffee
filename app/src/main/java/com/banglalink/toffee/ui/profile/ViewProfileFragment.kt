@@ -29,8 +29,9 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
+@AndroidEntryPoint
 class ViewProfileFragment : BaseFragment() {
     
     private lateinit var phoneNumber: String
