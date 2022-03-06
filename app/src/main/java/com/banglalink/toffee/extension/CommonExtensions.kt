@@ -35,7 +35,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
-//private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,4}$"
+private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,4}$"
 private const val ADDRESS_PATTERN = ""
 private const val DESCRIPTION_PATTERN = ""
 private const val PHONE_PATTERN = "^(?:\\+8801|01)(?:\\d{9})$"
@@ -43,7 +43,7 @@ private const val PHONE_PATTERN = "^(?:\\+8801|01)(?:\\d{9})$"
 fun String.isValid(type: InputType): Boolean{
     return when(type){
         TITLE -> this.isNotBlank() and TITLE_PATTERN.toRegex().matches(this)
-        EMAIL -> this.isNotBlank() and Patterns.EMAIL_ADDRESS.toRegex().matches(this)
+        EMAIL -> this.isNotBlank() and EMAIL_PATTERN.toRegex().matches(this)
         ADDRESS -> this.isNotBlank() and ADDRESS_PATTERN.toRegex().matches(this)
         DESCRIPTION -> this.isNotBlank() and DESCRIPTION_PATTERN.toRegex().matches(this)
         PHONE -> this.isNotBlank() and PHONE_PATTERN.toRegex().matches(this)

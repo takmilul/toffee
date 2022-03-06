@@ -305,12 +305,12 @@ class SplashScreenFragment : BaseFragment() {
                 }
                 requireActivity().finish()
             }
-            if (! forceUpdate) {
-                setNegativeButton("SKIP") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    viewModel.loginResponse(true)
-                }
-            }
+//            if (! forceUpdate) {
+//                setNegativeButton("SKIP") { dialogInterface, _ ->
+//                    dialogInterface.dismiss()
+//                    viewModel.loginResponse(true)
+//                }
+//            }
         }.create().show()
     }
     
