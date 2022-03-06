@@ -68,9 +68,10 @@ class SplashViewModel @Inject constructor(
             val response = resultFromResponse { apiLogin.execute() }
             if (!skipUpdate) {
                 val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString())}
-                if(updateResponse is Resource.Failure) apiLoginResponse.value = updateResponse
-            }
+                apiLoginResponse.value = if(updateResponse is Resource.Failure)  updateResponse else response
+            } else{
             apiLoginResponse.value=response
+            }
         }
     }
     
