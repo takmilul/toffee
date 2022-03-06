@@ -41,10 +41,11 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 private const val TAG = "EditProfileActivity"
-
+@AndroidEntryPoint
 class EditProfileFragment : BaseFragment() {
 
     private var previousEmail: String = ""
