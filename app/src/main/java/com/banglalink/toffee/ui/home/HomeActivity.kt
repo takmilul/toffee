@@ -109,7 +109,7 @@ import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.loopnow.fireworklibrary.FwSDK
+import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
@@ -137,6 +137,7 @@ class HomeActivity :
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
+    private val gson = Gson()
     private var channelOwnerId: Int = 0
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -327,8 +328,8 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
         viewModel.getVastTags()
-        observe(mPref.shareableHashLiveData) {
-            it?.let { observeShareableContent(it) }
+        observe(mPref.shareableHashLiveData) { pair ->
+            pair.first?.let { observeShareableContent(it, pair.second) }
         }
         if (mPref.isFireworkActive) {
             viewModel.isFireworkActive.postValue(true)
@@ -855,7 +856,7 @@ class HomeActivity :
                         URLDecoder.decode(uri.toString().trim(), "UTF-8")
                     }.getOrElse {
                         uri.toString().trim().replace("%3A", ":").replace("%2F", "/").replace("%23", "#")
-                    }
+                    }.replace(" ", "+")
                     handleDeepLink(strUri)
                 }
             }
@@ -883,8 +884,18 @@ class HomeActivity :
                 
                 if (!isDeepLinkHandled) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                    val hash = url.substring(url.lastIndexOf("/") + 1)
-                    mPref.shareableHashLiveData.value = hash
+                    val hash = url.substring(url.lastIndexOf("#video/") + 7)
+                    var pair: Pair<String?, String?>? = null
+                    if (hash.contains("data=", true)) {
+                        val newHash = hash.removePrefix("data=").trim()
+                        val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
+                        if (shareableData.type == "stingray" && !shareableData.stingrayShareUrl.isNullOrBlank()) {
+                            pair = Pair(shareableData.stingrayShareUrl, "stingray")
+                        }
+                    } else {
+                        pair = Pair(hash, null)
+                    }
+                    mPref.shareableHashLiveData.value = pair
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
@@ -893,8 +904,8 @@ class HomeActivity :
         }
     }
     
-    private fun observeShareableContent(hash: String) {
-        observe(viewModel.getShareableContent(hash)) { channelResource ->
+    private fun observeShareableContent(hash: String, type: String? = null) {
+        observe(viewModel.getShareableContent(hash, type)) { channelResource ->
             if (channelResource is Success) {
                 channelResource.data?.let {
                     onDetailsFragmentLoad(it)
@@ -913,15 +924,15 @@ class HomeActivity :
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
-        try {
-            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-            url?.let {
-                FwSDK.play(it)
-                return
-            }
-        } catch (e: Exception) {
-            Log.e("FwSDK", "FireworkDeeplinkPlayException")
-        }
+//        try {
+//            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+//            url?.let {
+//                FwSDK.play(it)
+//                return
+//            }
+//        } catch (e: Exception) {
+//            Log.e("FwSDK", "FireworkDeeplinkPlayException")
+//        }
         handleSharedUrl(intent)
     }
     

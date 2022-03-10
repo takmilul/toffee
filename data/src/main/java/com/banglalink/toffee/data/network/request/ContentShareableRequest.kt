@@ -10,6 +10,8 @@ data class ContentShareableRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
+    @SerializedName("type")
+    val type: String? = null,
     @SerializedName("telcoId")
-    val telcoId: Int = 1
+    val telcoId: Int = 1,
 ) : BaseRequest(ApiNames.GET_CONTENT_FROM_SEARCHABLE_URL)
