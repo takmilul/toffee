@@ -7,7 +7,9 @@ import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.banglalink.toffee.R
 
 fun showAlertDialog(context: Context, title: String, message: String, cancellable: Boolean) {
@@ -52,8 +54,48 @@ fun showDisplayMessageDialog(
             alertDialog.dismiss()
             callbacks.invoke()
         }
+    alertDialog.show()
+}
 
+fun showRedeemDisplayMessageDialog(
+    context: Context?,
+    title:String?,
+    message: String?,
+    bulletMessage: List<String>?,
+    callbacks: () -> Unit = {}
+) {
+    val factory = LayoutInflater.from(context)
+    val alertView: View =
+        factory.inflate(R.layout.alert_dialog_redem_invalid_layout, null)
+    val alertDialog = AlertDialog.Builder(context).create()
+    alertDialog.setView(alertView)
+    alertDialog.setCancelable(true)
+    alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    val bullterContainer = alertView.findViewById<LinearLayout>(R.id.bulletContainer)
+    val titleTv = alertView.findViewById<TextView>(R.id.dialogTitleTextView)
+    val messageTv = alertView.findViewById<TextView>(R.id.texttitle1)
 
+    title?.let {
+        titleTv.text=it
+    }
+    message?.let {
+        messageTv.text=it
+    }
+    bulletMessage?.let { bulletMsg->
+
+        bulletMsg.forEach {text->
+            bullterContainer.addView(context?.let {
+                RedeemBulletCardView(it).apply {
+                    setConfiguration(text)
+                }
+            })
+        }
+    }
+    alertView.findViewById<View>(R.id.ok_button)
+        .setOnClickListener {
+            alertDialog.dismiss()
+            callbacks.invoke()
+        }
     alertDialog.show()
 }
 
