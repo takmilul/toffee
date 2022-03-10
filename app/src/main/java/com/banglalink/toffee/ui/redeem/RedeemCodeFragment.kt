@@ -2,12 +2,14 @@ package com.banglalink.toffee.ui.redeem
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -15,15 +17,19 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.FragmentRedeemCodeBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.ui.widget.showRedeemDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
+import kotlin.math.log
 
 class RedeemCodeFragment : BaseFragment() {
-    private var _binding: FragmentRedeemCodeBinding?=null
+    private var _binding: FragmentRedeemCodeBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<RedeemCodeViewModel>()
 
@@ -41,7 +47,6 @@ class RedeemCodeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.redeemBtn.setOnClickListener { _ -> handleRedeemCodeButton() }
     }
 
@@ -55,7 +60,6 @@ class RedeemCodeFragment : BaseFragment() {
             showDisplayMessageDialog(requireContext(), "Please enter valid referral code.")
             return
         }
-
         redeemReferralCode(binding.referralCode.text.toString())
     }
 
@@ -65,8 +69,40 @@ class RedeemCodeFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    showDisplayMessageDialog(requireContext(), it.data.referralStatusMessage) {
-                        findNavController().popBackStack()
+                    val response = it.data
+                    if (response.isBullterPointMessage!!) {
+                        showRedeemDisplayMessageDialog(
+                            requireContext(),
+                            response.title,
+                            response.message,
+                            response.bulletMessage
+                        )
+                    } else {
+                        if (!response.isRedeemSuccess!!) {
+                            VelBoxAlertDialogBuilder(
+                                requireContext(),
+                                hideCloseButton = true,
+                                icon = R.drawable.ic_error,
+                            ).apply {
+                                response.title?.let { it1 -> setTitle(it1) }
+                                response.message?.let { it1 -> setText(it1) }
+                                setNegativeButtonListener(getString(R.string.okay_text)) {
+                                    it?.dismiss()
+                                }
+                            }.create().show()
+                        } else {
+                            VelBoxAlertDialogBuilder(
+                                requireContext(),
+                                hideCloseButton = true,
+                                icon = R.drawable.ic_check_magenta
+                            ).apply {
+                                response.title?.let { it1 -> setTitle(it1) }
+                                response.message?.let { it1 -> setText(it1) }
+                                setNegativeButtonListener(getString(R.string.okay_text)) {
+                                    it?.dismiss()
+                                }
+                            }.create().show()
+                        }
                     }
                 }
                 is Resource.Failure -> {
@@ -76,15 +112,13 @@ class RedeemCodeFragment : BaseFragment() {
                             "api_name" to ApiNames.REDEEM_REFERRAL_CODE,
                             FirebaseParams.BROWSER_SCREEN to "Enter Referral code page",
                             "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
+                            "error_description" to it.error.msg
+                        )
                     )
                     if (it.error.code == 100) {
                         showDisplayMessageDialog(requireContext(), it.error.msg)
                     } else {
-                        binding.root.snack(it.error.msg) {
-                            action("Ok") {
-                            }
-                        }
+                        context?.showToast(it.error.msg)
                     }
                 }
             }

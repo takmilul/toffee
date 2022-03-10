@@ -340,7 +340,7 @@
     
     <string name="partnership_text">By uploading video,\nyou are about to apply for the \n<b>Toffee Partnership Program</b></string>
     <string name="learn_more">LEARN MORE</string>
-    <string name="okay_text">okay</string>
+    <string name="okay_text">OKAY</string>
     <string name="your_name_text">Your Name</string>
     <string name="address_text">Address</string>
     <string name="address_null_error_text">*Address is Required</string>
@@ -407,7 +407,7 @@
     <string name="medallia_api_key">eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhcGlUb2tlblYyIiwiYXV0aFVybCI6Imh0dHBzOi8vbW9iaWxlc2RrLWV1LmthbXB5bGUuY29tL2FwaS92MS9hY2Nlc3NUb2tlbiIsImVudmlyb25tZW50IjoicHJvZEV1SXJsYW5kIiwiY3JlYXRlVGltZSI6MTYzMjM5ODM2MDE4OSwiYXBpVG9rZW5WMlZlcnNpb24iOjIsInByb3BlcnR5SWQiOjcxNjAwNX0.Ojg-m5Q93U4Eha9cxNN88ykKpd0mw4cJF4Lc02G2TylHbZPF34clxEwETYwyZRzBjZ2LiFMJpWKHkVIzaSIUC-_XKj9fV_lSJAi1rCVUYpT4V_w52zzTNCgaagjzMEbhbVBj9dEPaKGMsNO7JTg4D8__DtIzjcBHwsBX1AH63aHShwJbbTDWbiU8YC1EBXQM_6HlZeMEMi0uw6fK_i0eLILi97jBm4_RZM1Un0TCc8g_0_ErRXjTXVdIu9vEAKTHI-7okvMQHd22sQhPj2XPueDSJufGZL8NB901xLj7UDEQLZT9MRHtvVPFML4miUdrIrPjxARZ-Fg3Af_mdP3_FA</string>
     <string name="menu_all_tv_channels">All TV Channels</string>
     <string name="menu_activities">Activities</string>
-    <string name="menu_playlists">Playlists</string>
+    <string name="menu_playlists">My Playlist</string>
     <string name="menu_favorites">Favorites</string>
     <string name="menu_subscriptions">Subscriptions</string>
     <string name="menu_creators_policy">Creators Policy</string>
@@ -437,4 +437,9 @@
     <string name="autoplay_text">Autoplay</string>
     <string name="category_icon_text">Category Icon</string>
     <string name="new_relic_app_token">AA075689888616e0b8a354735a008b9afd1731183d-NRMA</string>
+    <string name="creators_playlist">Creators Playlist</string>
+    <string name="videos">Videos</string>
+    <string name="alert_redeem_secondary_title">This may have happened due to</string>
+    <string name="alert_redeem_invalid_reson1">The code being used after 24 hours of \nfirst sign-in</string>
+    <string name="alert_redeem_invalid_reson2">An attempt to avail referral code benefits \n more than once</string>
 </resources>

@@ -294,7 +294,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.viewPager.offscreenPageLimit = 1
         binding.viewPager.adapter = viewPagerAdapter
         
-        val fragmentTitleList = listOf("Videos", "Playlists")
+        val fragmentTitleList = listOf(resources.getString(R.string.videos), resources.getString(R.string.creators_playlist))
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = fragmentTitleList[position]
         }.attach()

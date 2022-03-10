@@ -429,11 +429,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putString(PREF_MQTT_HOST, value) }
     
     var mqttClientId: String
-        get() = pref.getString(PREF_MQTT_CLIENT_ID, "") ?: ""  //evan-02@im.toffeelive.com
+        get() = pref.getString(PREF_MQTT_CLIENT_ID, "") ?: ""
         set(value) = pref.edit { putString(PREF_MQTT_CLIENT_ID, value) }
 
     var mqttUserName: String
-        get() = pref.getString(PREF_MQTT_USER_NAME, "") ?: ""  //evan-02@im.toffeelive.com
+        get() = pref.getString(PREF_MQTT_USER_NAME, "") ?: ""
         set(value) = pref.edit { putString(PREF_MQTT_USER_NAME, value) }
 
     var mqttPassword: String
