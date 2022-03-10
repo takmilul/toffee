@@ -1,9 +1,9 @@
 package com.banglalink.toffee.notification
 
 import android.content.Context
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.util.Log
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback
 import com.google.api.client.googleapis.json.GoogleJsonError
@@ -18,26 +18,27 @@ import com.google.api.services.pubsub.model.PubsubMessage
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 
-const val PROJECTID = "toffee-261507"
+const val PROJECT_ID = "toffee-261507"
 const val TOPIC_ID = "fcm-notification-response"
-const val NOTIFICATION_TOPIC = "projects/$PROJECTID/topics/$TOPIC_ID"
-const val HEARTBEAT_TOPIC = "projects/$PROJECTID/topics/current_viewers_heartbeat"
-const val VIEWCONTENT_TOPIC = "projects/$PROJECTID/topics/current_viewers"
-const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth"
-const val API_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/api_error"
-const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/firebase_connection_error"
-const val APP_LAUNCH_TOPIC = "projects/$PROJECTID/topics/app_launch"
-const val LOGIN_LOG_TOPIC = "projects/$PROJECTID/topics/login_log"
-const val REACTION_TOPIC = "projects/$PROJECTID/topics/ugc_reaction"
-const val SHARE_COUNT_TOPIC = "projects/$PROJECTID/topics/share_count"
-const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
-const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
-const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
-const val USER_OTP_TOPIC = "projects/$PROJECTID/topics/user_otp_log"
-const val HE_REPORT_TOPIC = "projects/$PROJECTID/topics/toffee_he_log"
-const val DRM_UNAVAILABLE_TOPIC = "projects/$PROJECTID/topics/drm_unavailable_devices"
-const val DRM_FALLBACK_TOPIC = "projects/$PROJECTID/topics/drm_fallback_log"
-const val ADVERTISING_ID_TOPIC = "projects/$PROJECTID/topics/advertising_id_log"
+const val NOTIFICATION_TOPIC = "projects/$PROJECT_ID/topics/$TOPIC_ID"
+const val HEARTBEAT_TOPIC = "projects/$PROJECT_ID/topics/current_viewers_heartbeat"
+const val VIEW_CONTENT_TOPIC = "projects/$PROJECT_ID/topics/current_viewers"
+const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECT_ID/topics/player_bandwidth"
+const val API_ERROR_TRACK_TOPIC = "projects/$PROJECT_ID/topics/api_error"
+const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECT_ID/topics/firebase_connection_error"
+const val APP_LAUNCH_TOPIC = "projects/$PROJECT_ID/topics/app_launch"
+const val LOGIN_LOG_TOPIC = "projects/$PROJECT_ID/topics/login_log"
+const val REACTION_TOPIC = "projects/$PROJECT_ID/topics/ugc_reaction"
+const val SHARE_COUNT_TOPIC = "projects/$PROJECT_ID/topics/share_count"
+const val SUBSCRIPTION_TOPIC = "projects/$PROJECT_ID/topics/channels_subscribers"
+const val CONTENT_REPORT_TOPIC = "projects/$PROJECT_ID/topics/report_inappropriate_content"
+const val USER_INTEREST_TOPIC = "projects/$PROJECT_ID/topics/user_interest"
+const val USER_OTP_TOPIC = "projects/$PROJECT_ID/topics/user_otp_log"
+const val HE_REPORT_TOPIC = "projects/$PROJECT_ID/topics/toffee_he_log"
+const val DRM_UNAVAILABLE_TOPIC = "projects/$PROJECT_ID/topics/drm_unavailable_devices"
+const val DRM_FALLBACK_TOPIC = "projects/$PROJECT_ID/topics/drm_fallback_log"
+const val ADVERTISING_ID_TOPIC = "projects/$PROJECT_ID/topics/advertising_id_log"
+const val PLAYER_EVENTS_TOPIC = "projects/$PROJECT_ID/topics/player-events"
 
 object PubSubMessageUtil {
 

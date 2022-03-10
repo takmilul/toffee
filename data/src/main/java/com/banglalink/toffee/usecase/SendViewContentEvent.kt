@@ -12,7 +12,7 @@ import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.VIEWCONTENT_TOPIC
+import com.banglalink.toffee.notification.VIEW_CONTENT_TOPIC
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -62,7 +62,7 @@ class SendViewContentEvent @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken()?:""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEWCONTENT_TOPIC)
+        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEW_CONTENT_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(contentId: Int,contentType: String){

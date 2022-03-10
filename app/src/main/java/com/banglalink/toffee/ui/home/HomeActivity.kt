@@ -128,6 +128,7 @@ const val PLAY_IN_WEB_VIEW = 1
 const val STINGRAY_CONTENT = 10
 const val PLAY_IN_NATIVE_PLAYER = 0
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+const val PLAYER_EVENT_TAG = "PLAYER_EVENT"
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
@@ -711,6 +712,7 @@ class HomeActivity :
     override fun onStart() {
         super.onStart()
         if (playlistManager.getCurrentChannel() != null) {
+            playerEventHelper.setPlayerEvent("app foregrounded")
             ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
@@ -733,6 +735,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.player = null
         }
+        playerEventHelper.setPlayerEvent("app backgrounded")
         ConvivaAnalytics.reportAppBackgrounded()
     }
     
@@ -1030,20 +1033,19 @@ class HomeActivity :
             maximizePlayer()
         }
         ConvivaHelper.endPlayerSession(true)
+        playerEventHelper.startSession()
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                ConvivaHelper.setConvivaVideoMetadata(
-                    detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, detailsInfo.currentItem!!.seasonNo
-                )
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
-                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId)
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
-                ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId)
                 loadChannel(it)
             }
         }
@@ -1082,10 +1084,11 @@ class HomeActivity :
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
+        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1093,10 +1096,11 @@ class HomeActivity :
     
     override fun playPrevious() {
         super.playPrevious()
+        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1415,6 +1419,7 @@ class HomeActivity :
     }
     
     override fun onPlayerDestroy() {
+        playerEventHelper.endSession()
         ConvivaHelper.endPlayerSession()
 //        releasePlayer()
         if (mPref.isMedalliaActive) {
@@ -1433,6 +1438,7 @@ class HomeActivity :
     override fun onDestroy() {
         mqttService.destroy()
         viewModelStore.clear()
+        playerEventHelper.release()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         try {

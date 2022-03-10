@@ -27,9 +27,7 @@ import kotlinx.coroutines.flow.combine
 
 //https://stackoverflow.com/questions/53532406/activenetworkinfo-type-is-deprecated-in-api-level-28
 
-class ConnectionWatcher
-@RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-constructor(
+class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE) constructor(
     private val application: Application
 ) {
     
@@ -85,9 +83,19 @@ constructor(
             return field
         }
     
+    var netType = ""
+        get() {
+            updateFields()
+            return field
+        }
+    
     @Suppress("DEPRECATION")
     private fun updateFields() {
         try {
+            var isWifi = false
+            var isCellular = false
+            var isEthernet = false
+            
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val networkAvailability = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
                 
@@ -99,17 +107,16 @@ constructor(
                     isOnline = true
                     
                     // wifi
-                    isOverWifi = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                    isWifi = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                    isOverWifi = isWifi
                     
                     // cellular
-                    isOverCellular = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    isCellular = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    isOverCellular = isCellular
                     
                     // ethernet
-                    isOverEthernet = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                    
-                    if (networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        updateCellularNetworkType()
-                    }
+                    isEthernet = networkAvailability.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                    isOverEthernet = isEthernet
                 } else {
                     networkFailed()
                 }
@@ -119,20 +126,25 @@ constructor(
                     isOnline = true
                     
                     val wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-                    isOverWifi = wifi != null && wifi.isConnected
+                    isWifi = wifi != null && wifi.isConnected
+                    isOverWifi = isWifi
                     
                     val cellular = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-                    isOverCellular = cellular != null && cellular.isConnected
+                    isCellular = cellular != null && cellular.isConnected
+                    isOverCellular = isCellular
                     
                     val ethernet = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET)
-                    isOverEthernet = ethernet != null && ethernet.isConnected
-                    
-                    if (cellular != null && cellular.isConnected) {
-                        updateCellularNetworkType()
-                    }
+                    isEthernet = ethernet != null && ethernet.isConnected
+                    isOverEthernet = isEthernet
                 } else {
                     networkFailed()
                 }
+            }
+            when {
+                isWifi -> netType = "WiFi"
+                isCellular -> netType = updateCellularNetworkType()
+                isEthernet -> netType = "Ethernet"
+                else -> netType = "Offline"
             }
         } catch (e: Exception) {
             networkFailed()
@@ -141,15 +153,15 @@ constructor(
     }
     
     @Suppress("DEPRECATION")
-    private fun updateCellularNetworkType() {
-        if (ActivityCompat.checkSelfPermission(application.applicationContext, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            isOver2G = telephonyManager.networkType == NETWORK_TYPE_EDGE
+    private fun updateCellularNetworkType(): String {
+        return if (ActivityCompat.checkSelfPermission(application.applicationContext, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            val is2G = telephonyManager.networkType == NETWORK_TYPE_EDGE
                 || telephonyManager.networkType == NETWORK_TYPE_GPRS
                 || telephonyManager.networkType == NETWORK_TYPE_CDMA
                 || telephonyManager.networkType == NETWORK_TYPE_IDEN
                 || telephonyManager.networkType == NETWORK_TYPE_1xRTT
             
-            isOver3G = telephonyManager.networkType == NETWORK_TYPE_UMTS
+            val is3G = telephonyManager.networkType == NETWORK_TYPE_UMTS
                 || telephonyManager.networkType == NETWORK_TYPE_HSDPA
                 || telephonyManager.networkType == NETWORK_TYPE_HSPA
                 || telephonyManager.networkType == NETWORK_TYPE_HSPAP
@@ -157,11 +169,27 @@ constructor(
                 || telephonyManager.networkType == NETWORK_TYPE_EVDO_A
                 || telephonyManager.networkType == NETWORK_TYPE_EVDO_B
             
-            isOver4G = telephonyManager.networkType == NETWORK_TYPE_LTE
+            val is4G = telephonyManager.networkType == NETWORK_TYPE_LTE
             
+            var is5G = false
             if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-                isOver5G = telephonyManager.networkType == NETWORK_TYPE_NR
+                is5G = telephonyManager.networkType == NETWORK_TYPE_NR
             }
+            
+            isOver2G = is2G
+            isOver3G = is3G
+            isOver4G = is4G
+            isOver5G = is5G
+            
+            when {
+                is2G -> "2G"
+                is3G -> "3G"
+                is4G -> "4G"
+                is5G -> "5G"
+                else -> "Unknown"
+            }
+        } else {
+            "Unknown"
         }
     }
     
@@ -174,6 +202,7 @@ constructor(
         isOverWifi = false
         isOverCellular = false
         isOverEthernet = false
+        netType = "Unknown"
     }
     
     fun watchNetwork(): Flow<Boolean> = watchWifi()

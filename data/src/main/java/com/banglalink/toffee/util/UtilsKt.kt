@@ -36,7 +36,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.*
 
-
 object UtilsKt {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
     fun isCopyrightUploadId(id: String) = id.contains("_copyright")
@@ -75,7 +74,7 @@ object UtilsKt {
     suspend fun fileNameFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
         context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
-                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: 0)
             }
             else {
                 null
@@ -90,7 +89,7 @@ object UtilsKt {
         else {
             context.contentResolver.query(uri, null, null, null, null)?.use {
                 if(it.moveToFirst()) {
-                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE))
+                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE) ?: 0)
                 }
                 else {
                     0L
@@ -271,6 +270,15 @@ object UtilsKt {
             e.printStackTrace()
         }
         return null
+    }
+    
+    fun getOsName(): String {
+        return try {
+            val fields = Build.VERSION_CODES::class.java.fields
+            "Android " + fields[Build.VERSION.SDK_INT + 1].name
+        } catch (e: Exception) {
+            "Unknown"
+        }
     }
 }
 

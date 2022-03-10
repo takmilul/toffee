@@ -70,6 +70,9 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
             pref.edit { putInt(PREF_DRM_AVAILABLE, value) }
         }
     
+    val isTablet: Boolean
+        get() = context.resources.configuration.smallestScreenWidthDp >= 600
+    
     fun isUserInterestSubmitted(key: String): Boolean = pref.getBoolean(key + PREF_IS_USER_INTEREST_SUBMITTED, false)
     
     fun setUserInterestSubmitted(key: String) {

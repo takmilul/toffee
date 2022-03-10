@@ -496,6 +496,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_GEO_CITY, "") ?: ""
         set(value) = pref.edit { putString(PREF_GEO_CITY, value) }
     
+    var geoRegion: String
+        get() = pref.getString(PREF_GEO_REGION, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_REGION, value) }
+    
     var geoLocation: String
         get() = pref.getString(PREF_GEO_LOCATION, "") ?: ""
         set(value) = pref.edit { putString(PREF_GEO_LOCATION, value) }
@@ -586,21 +590,30 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isPaidUser: Boolean
         get() = pref.getBoolean(PREF_PAYMENT_STATUS, false)
         set(value) = pref.edit { putBoolean(PREF_PAYMENT_STATUS, value) }
+    
     var isFireworkActive: Boolean
         get() = pref.getBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, false)
         set(value) = pref.edit { putBoolean(PREF_IS_FIREWORK_ACTIVE_ANDROID, value) }
+    
     var isStingrayActive: Boolean
         get() = pref.getBoolean(PREF_IS_STINGRAY_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_STINGRAY_ACTIVE, value) }
+    
     var isMedalliaActive: Boolean
         get() = pref.getBoolean(PREF_IS_MEDALLIA_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_MEDALLIA_ACTIVE, value) }
+    
     var isConvivaActive: Boolean
         get() = pref.getBoolean(PREF_IS_CONVIVA_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CONVIVA_ACTIVE, value) }
+    
     var isNewRelicActive: Boolean
         get() = pref.getBoolean(PREF_IS_NEW_RELIC_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_NEW_RELIC_ACTIVE, value) }
+    
+    var isPlayerMonitoringActive: Boolean
+        get() = pref.getBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, value) }
     
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
@@ -625,7 +638,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             setDBVersion(it)
         }
         latitude = customerInfoLogin.lat ?: ""
-        longitude = customerInfoLogin.long ?: ""
+        longitude = customerInfoLogin.lon ?: ""
         isSubscriptionActive = customerInfoLogin.isSubscriptionActive ?: "false"
         viewCountDbUrl = customerInfoLogin.viewCountDbUrl ?: ""
         reactionDbUrl = customerInfoLogin.reactionDbUrl ?: ""
@@ -653,6 +666,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         youtubePageUrl = customerInfoLogin.youtubePageUrl
         
         geoCity = customerInfoLogin.geoCity ?: ""
+        geoRegion = customerInfoLogin.geoRegion ?: geoCity
         geoLocation = customerInfoLogin.geoLocation ?: ""
         userIp = customerInfoLogin.userIp ?: ""
 
@@ -677,6 +691,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isMedalliaActive = customerInfoLogin.isMedalliaActive
         isConvivaActive = customerInfoLogin.isConvivaActive
         isNewRelicActive = customerInfoLogin.isNewRelicActive
+        isPlayerMonitoringActive = customerInfoLogin.isPlayerMonitoringActive
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -760,6 +775,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
         private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
         private const val PREF_GEO_CITY = "geo_city"
+        private const val PREF_GEO_REGION = "geo_region"
         private const val PREF_GEO_LOCATION = "geo_location"
         private const val PREF_USER_IP = "user_ip"
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
@@ -787,6 +803,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_MEDALLIA_ACTIVE = "pref_medallia_active"
         private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
         private const val PREF_IS_NEW_RELIC_ACTIVE = "pref_new_relic_active"
+        private const val PREF_IS_PLAYER_MONITORING_ACTIVE = "pref_is_player_monitoring_active"
 
         private var instance: SessionPreference? = null
 
