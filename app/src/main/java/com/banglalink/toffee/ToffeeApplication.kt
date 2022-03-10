@@ -88,7 +88,7 @@ class ToffeeApplication : Application() {
                 ToffeeAnalytics.logException(e)
             }
         }
-
+        
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
         
@@ -114,12 +114,6 @@ class ToffeeApplication : Application() {
                             Log.e("FwSDK", "InitializationFailed: $extra")
                             ToffeeAnalytics.logException(java.lang.Exception("FwSDK InitializationFailed: $extra"))
                             sessionPreference.isFireworkInitialized.postValue(false)
-                        }
-                        LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
-                        ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
-                        LoadingContentFailed -> {
-                            Log.e("FwSDK", "LoadingContentFailed: $extra")
-                            ToffeeAnalytics.logException(java.lang.Exception("FwSDK LoadingContentFailed: $extra"))
                         }
                         RefreshTokenFailed -> Log.e("FwSDK", "RefreshTokenFailed: $extra")
                     }
