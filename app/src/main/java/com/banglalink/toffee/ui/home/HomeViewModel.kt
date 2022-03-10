@@ -79,9 +79,10 @@ class HomeViewModel @Inject constructor(
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
-    val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
+    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
+    val linearVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
@@ -338,7 +339,10 @@ class HomeViewModel @Inject constructor(
     fun getVastTags() {
         viewModelScope.launch {
             try {
-                vastTagsMutableLiveData.value = vastTagService.execute().response.tags
+                vastTagService.execute().response.let {
+                    vodVastTagsMutableLiveData.value = it.vodTags
+                    linearVastTagsMutableLiveData.value = it.linearTags
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 val error = getError(e)

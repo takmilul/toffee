@@ -7,9 +7,7 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
-class VastTagService  @Inject constructor(private val pref: SessionPreference, private val api: ToffeeApi
-) {
-
+class VastTagService  @Inject constructor(private val pref: SessionPreference, private val api: ToffeeApi) {
     suspend fun execute(): VastTagResponse {
         return tryIO2 {
             api.getVastTagLists(

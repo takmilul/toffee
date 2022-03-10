@@ -733,8 +733,13 @@ abstract class PlayerPageActivity :
         playerEventHelper.setPlayerEvent("Playing started")
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        homeViewModel.vastTagsMutableLiveData.value
-            ?.filter { if (channelInfo.isLive) it.adPosition == "pre-roll" else if (channelInfo.isVOD) it.adPosition == "any" else false}
+        val vastTagList = if (isDrmActive) {
+            homeViewModel.linearVastTagsMutableLiveData.value
+        }
+        else {
+            homeViewModel.vodVastTagsMutableLiveData.value
+        }
+        vastTagList
             ?.randomOrNull()
             ?.let { tag ->
                 val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive

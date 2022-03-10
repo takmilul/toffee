@@ -242,7 +242,6 @@ class SplashScreenFragment : BaseFragment() {
                     isOperationCompleted = true
                 }
                 is Resource.Failure -> {
-
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
