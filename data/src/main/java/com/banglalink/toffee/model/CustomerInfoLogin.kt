@@ -63,6 +63,8 @@ class CustomerInfoLogin(
     val isAllTvChannelsMenuEnabled: Boolean = false,
     @SerializedName("geo_city")
     var geoCity: String? = null,
+    @SerializedName("geo_region")
+    var geoRegion: String? = null,
     @SerializedName("geo_location")
     var geoLocation: String? = null,
     @SerializedName("user_ip")
@@ -144,5 +146,7 @@ class CustomerInfoLogin(
     @SerializedName("isConvivaActiveForAndroid")
     var isConvivaActive:Boolean = false,
     @SerializedName("isNewRelicActiveForAndroid")
-    var isNewRelicActive:Boolean = false
+    var isNewRelicActive:Boolean = false,
+    @SerializedName("isNdMonitoringActiveAndroid")
+    var isPlayerMonitoringActive: Boolean = false
 ) : BodyResponse(), Parcelable

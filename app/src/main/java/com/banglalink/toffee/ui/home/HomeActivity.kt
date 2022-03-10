@@ -109,7 +109,7 @@ import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.loopnow.fireworklibrary.FwSDK
+import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
@@ -128,6 +128,7 @@ const val PLAY_IN_WEB_VIEW = 1
 const val STINGRAY_CONTENT = 10
 const val PLAY_IN_NATIVE_PLAYER = 0
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+const val PLAYER_EVENT_TAG = "PLAYER_EVENT"
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
@@ -137,6 +138,7 @@ class HomeActivity :
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
+    private val gson = Gson()
     private var channelOwnerId: Int = 0
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -327,8 +329,8 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
         viewModel.getVastTags()
-        observe(mPref.shareableHashLiveData) {
-            it?.let { observeShareableContent(it) }
+        observe(mPref.shareableHashLiveData) { pair ->
+            pair.first?.let { observeShareableContent(it, pair.second) }
         }
         if (mPref.isFireworkActive) {
             viewModel.isFireworkActive.postValue(true)
@@ -711,6 +713,7 @@ class HomeActivity :
     override fun onStart() {
         super.onStart()
         if (playlistManager.getCurrentChannel() != null) {
+            playerEventHelper.setPlayerEvent("app foregrounded")
             ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
@@ -733,6 +736,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.player = null
         }
+        playerEventHelper.setPlayerEvent("app backgrounded")
         ConvivaAnalytics.reportAppBackgrounded()
     }
     
@@ -855,7 +859,7 @@ class HomeActivity :
                         URLDecoder.decode(uri.toString().trim(), "UTF-8")
                     }.getOrElse {
                         uri.toString().trim().replace("%3A", ":").replace("%2F", "/").replace("%23", "#")
-                    }
+                    }.replace(" ", "+")
                     handleDeepLink(strUri)
                 }
             }
@@ -883,8 +887,18 @@ class HomeActivity :
                 
                 if (!isDeepLinkHandled) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                    val hash = url.substring(url.lastIndexOf("/") + 1)
-                    mPref.shareableHashLiveData.value = hash
+                    val hash = url.substring(url.lastIndexOf("#video/") + 7)
+                    var pair: Pair<String?, String?>? = null
+                    if (hash.contains("data=", true)) {
+                        val newHash = hash.removePrefix("data=").trim()
+                        val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
+                        if (shareableData.type == "stingray" && !shareableData.stingrayShareUrl.isNullOrBlank()) {
+                            pair = Pair(shareableData.stingrayShareUrl, "stingray")
+                        }
+                    } else {
+                        pair = Pair(hash, null)
+                    }
+                    mPref.shareableHashLiveData.value = pair
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
@@ -893,8 +907,8 @@ class HomeActivity :
         }
     }
     
-    private fun observeShareableContent(hash: String) {
-        observe(viewModel.getShareableContent(hash)) { channelResource ->
+    private fun observeShareableContent(hash: String, type: String? = null) {
+        observe(viewModel.getShareableContent(hash, type)) { channelResource ->
             if (channelResource is Success) {
                 channelResource.data?.let {
                     onDetailsFragmentLoad(it)
@@ -913,15 +927,15 @@ class HomeActivity :
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
-        try {
-            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-            url?.let {
-                FwSDK.play(it)
-                return
-            }
-        } catch (e: Exception) {
-            Log.e("FwSDK", "FireworkDeeplinkPlayException")
-        }
+//        try {
+//            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+//            url?.let {
+//                FwSDK.play(it)
+//                return
+//            }
+//        } catch (e: Exception) {
+//            Log.e("FwSDK", "FireworkDeeplinkPlayException")
+//        }
         handleSharedUrl(intent)
     }
     
@@ -1030,20 +1044,19 @@ class HomeActivity :
             maximizePlayer()
         }
         ConvivaHelper.endPlayerSession(true)
+        playerEventHelper.startSession()
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
-                ConvivaHelper.setConvivaVideoMetadata(
-                    detailsInfo.currentItem!!, mPref.customerId, detailsInfo.currentItem!!.seriesName, detailsInfo.currentItem!!.seasonNo
-                )
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId)
                 loadPlayListItem(detailsInfo)
             }
             is SeriesPlaybackInfo -> {
-                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId, detailsInfo.serialName, detailsInfo.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(detailsInfo.currentItem!!, mPref.customerId)
                 loadDramaSeasonInfo(detailsInfo)
             }
             else -> {
-                ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId, it.seriesName, it.seasonNo)
+                ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId)
                 loadChannel(it)
             }
         }
@@ -1082,10 +1095,11 @@ class HomeActivity :
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
+        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1093,10 +1107,11 @@ class HomeActivity :
     
     override fun playPrevious() {
         super.playPrevious()
+        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId, info.seriesName, info.seasonNo)
+        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1415,6 +1430,7 @@ class HomeActivity :
     }
     
     override fun onPlayerDestroy() {
+        playerEventHelper.endSession()
         ConvivaHelper.endPlayerSession()
 //        releasePlayer()
         if (mPref.isMedalliaActive) {
@@ -1433,6 +1449,7 @@ class HomeActivity :
     override fun onDestroy() {
         mqttService.destroy()
         viewModelStore.clear()
+        playerEventHelper.release()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         try {

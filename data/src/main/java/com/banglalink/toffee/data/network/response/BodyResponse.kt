@@ -28,5 +28,5 @@ open class BodyResponse {
     var lat: String? = ""
     
     @SerializedName("long")
-    var long: String? = ""
+    var lon: String? = ""
 }

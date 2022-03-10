@@ -24,8 +24,9 @@ import com.banglalink.toffee.data.database.entities.*
         ShareCount::class,
         DrmLicenseEntity::class,
         SessionPrefData::class,
+        PlayerEventData::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
@@ -46,7 +47,8 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getShareCountDao(): ShareCountDao
     abstract fun getDrmLicenseDao(): DrmLicenseDao
     abstract fun getSessionPrefDao(): SessionPrefDao
-
+    abstract fun getCustomPlayerEventsDao(): PlayerEventsDao
+    
     companion object {
         const val DB_NAME = "toffee-db"
     }

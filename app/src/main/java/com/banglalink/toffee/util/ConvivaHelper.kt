@@ -40,7 +40,7 @@ class ConvivaHelper private constructor() {
             instance.convivaVideoAnalytics?.setPlayer(player)
         }
         
-        fun setConvivaVideoMetadata(info: ChannelInfo, customerId: Int, seriesName: String? = null, seasonNumber: Int? = 0) {
+        fun setConvivaVideoMetadata(info: ChannelInfo, customerId: Int) {
             if (isVideoSessionActive) {
                 endPlayerSession()
             }
@@ -58,8 +58,8 @@ class ConvivaHelper private constructor() {
                 ConvivaConstants.CATEGORY_TYPE to (info.category ?: "N/A"),
                 ConvivaConstants.NAME to "CMS",
                 ConvivaConstants.ID to info.id,
-                ConvivaConstants.SERIES_NAME to (seriesName ?: "N/A"),
-                ConvivaConstants.SEASON_NUMBER to (seasonNumber?.toString() ?: "N/A"),
+                ConvivaConstants.SERIES_NAME to (info.seriesName ?: "N/A"),
+                ConvivaConstants.SEASON_NUMBER to (info.seasonNo.toString() ?: "N/A"),
                 ConvivaConstants.SHOW_TITLE to "N/A",
                 ConvivaConstants.EPISODE_NUMBER to (if (info.episodeNo == 0) "N/A" else info.episodeNo.toString()),
                 ConvivaConstants.GENRE to "N/A",

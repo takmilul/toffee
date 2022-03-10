@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.home
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
-import com.loopnow.fireworklibrary.FwSDK
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -74,15 +72,15 @@ class LandingPageFragment : HomeBaseFragment() {
             val isActive = mPref.isFireworkActive && isInitialized
             if (isActive) {
                 _binding?.fireworkFragment?.isVisible = isActive
-                try {
-                    val url = requireActivity().intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-                    url?.let {
-                        FwSDK.play(it)
-                    }
-                }
-                catch (e: Exception) {
-                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
-                }
+//                try {
+//                    val url = requireActivity().intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+//                    url?.let {
+//                        FwSDK.play(it)
+//                    }
+//                }
+//                catch (e: Exception) {
+//                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
+//                }
             }
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to "home"))

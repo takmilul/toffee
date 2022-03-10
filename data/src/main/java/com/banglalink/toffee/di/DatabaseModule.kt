@@ -213,4 +213,16 @@ object DatabaseModule {
     fun providesDrmLicenseRepository(dao: DrmLicenseDao): DrmLicenseRepository {
         return DrmLicenseRepositoryImpl(dao)
     }
+    
+    @Singleton
+    @Provides
+    fun providesCustomPlayerEventsDataDao(db: ToffeeDatabase): PlayerEventsDao {
+        return db.getCustomPlayerEventsDao()
+    }
+    
+    @Singleton
+    @Provides
+    fun providesCustomPlayerEventsDataRepository(db: ToffeeDatabase, dao: PlayerEventsDao): PlayerEventRepository {
+        return PlayerEventRepositoryImpl(db, dao)
+    }
 }

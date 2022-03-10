@@ -198,9 +198,9 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getShareableContent(shareUrl: String): LiveData<Resource<ChannelInfo?>> {
+    fun getShareableContent(shareUrl: String, type: String? = null): LiveData<Resource<ChannelInfo?>> {
         return resultLiveData {
-            contentFromShareableUrl.execute(shareUrl)
+            contentFromShareableUrl.execute(shareUrl, type)
         }
     }
     

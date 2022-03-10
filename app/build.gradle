@@ -194,7 +194,7 @@ dependencies {
     implementation 'com.google.android.play:core:1.10.3'
     
     //firework sdk
-    implementation ('com.github.loopsocial:firework_sdk:v5.8.0') {
+    implementation ('com.github.loopsocial:firework_sdk:v5.10.0') {
         exclude module: "picasso-transformations"
     }
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
@@ -240,7 +240,7 @@ dependencies {
     
     def espresso_version = rootProject.espressoVersion
     def test_core = '1.4.0'
-    testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')
+    testImplementation('com.squareup.okhttp3:mockwebserver:4.9.2')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 
     //Androidx Core library
