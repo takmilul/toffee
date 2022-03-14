@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -29,8 +30,10 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -42,6 +45,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
@@ -159,24 +163,39 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
-        if (isOwner) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_channel_playlist)
-                setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.menu_edit_playlist -> {
-                            showEditPlaylistDialog(item.id, item.name)
+                if (isOwner) {
+                    setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.menu_edit_playlist -> {
+                                showEditPlaylistDialog(item.id, item.name)
+                            }
+                            R.id.menu_delete_playlist -> {
+                                showDeletePlaylistDialog(item.id)
+                            }
+                            R.id.menu_share_playlist -> {
+                                Toast.makeText(activity, "Share My-Channel Playlist!", Toast.LENGTH_LONG).show()
+                            }
                         }
-                        R.id.menu_delete_playlist -> {
-                            showDeletePlaylistDialog(item.id)
-                        }
+                        return@setOnMenuItemClickListener true
                     }
-                    return@setOnMenuItemClickListener true
+                }
+                else{
+                    menu.findItem(R.id.menu_edit_playlist).isVisible = false
+                    menu.findItem(R.id.menu_delete_playlist).isVisible = false
+                    setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.menu_share_playlist -> {
+                                Toast.makeText(activity, "Share Public Channel Playlist!!", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
                 }
                 show()
             }
         }
-    }
     
     private fun observeEditPlaylist() {
         observe(editPlaylistViewModel.editPlaylistLiveData) {

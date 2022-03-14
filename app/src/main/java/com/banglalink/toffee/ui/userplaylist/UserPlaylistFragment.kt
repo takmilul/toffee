@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -267,6 +268,9 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                     }
                     R.id.menu_delete_playlist -> {
                         showDeletePlaylistDialog(item.id)
+                    }
+                    R.id.menu_share_playlist -> {
+                        Toast.makeText(activity, "Share Nav Drawer Playlist!", Toast.LENGTH_LONG).show()
                     }
                 }
                 return@setOnMenuItemClickListener true
