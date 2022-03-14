@@ -3,10 +3,7 @@ package com.banglalink.toffee.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.RelativeLayout
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.Group
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -91,6 +88,7 @@ class ChannelHeaderAdapter(
             else -> {
                 holder.seasonInfoHeader.visibility = View.GONE
                 holder.seasonSpinnerWrap.visibility = View.GONE
+                holder.playlistShareButton.visibility =View.GONE
             }
         }
 
@@ -116,6 +114,7 @@ class ChannelHeaderAdapter(
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)
         val seasonSpinnerWrap: RelativeLayout = binding.root.findViewById(R.id.seasonSpinnerWrap)
+        val playlistShareButton: ImageView = binding.root.findViewById(R.id.playlist_share)
 
         fun bind(obj: Any, cb: Any?, pos: Int, vm: EpisodeListViewModel?) {
             binding.setVariable(BR.callback, cb)

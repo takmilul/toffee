@@ -9,4 +9,7 @@
     <item
         android:id="@+id/menu_delete_playlist"
         android:title="Delete Playlist" />
+    <item
+        android:id="@+id/menu_share_playlist"
+        android:title="Share" />
 </menu>

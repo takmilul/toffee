@@ -406,12 +406,12 @@ Day 21 - AUS vs IND" />
 
             </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-            
+
         <TextView
             android:id="@+id/autoPlayText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
+            android:layout_marginEnd="6dp"
             android:text="@string/autoplay_text"
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
@@ -428,11 +428,25 @@ Day 21 - AUS vs IND" />
             app:sb_background="@color/switchUnCheckedColor"
             app:sb_checked_color="@color/colorAccent"
             app:sb_show_indicator="false"
+            android:layout_marginEnd="13dp"
+            app:layout_goneMarginEnd="0dp"
             app:sb_uncheck_color="@color/switchUnCheckedColor"
-            app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
+            app:layout_constraintEnd_toStartOf="@+id/playlist_share"
             app:layout_constraintTop_toTopOf="@id/autoPlayText"
             app:layout_constraintBottom_toBottomOf="@id/autoPlayText"
             tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/playlist_share"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:src="@drawable/ic_share"
+            app:layout_constraintBottom_toBottomOf="@id/autoPlaySwitch"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_button"
+            app:layout_constraintTop_toTopOf="@id/autoPlaySwitch" />
+
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/autoplay_switch_group"

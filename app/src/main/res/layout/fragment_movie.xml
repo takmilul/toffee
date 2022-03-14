@@ -33,6 +33,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/featuredFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:weightSum="1"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -46,16 +47,28 @@
 
                     <TextView
                         android:id="@+id/categoryName"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="8dp"
                         android:textSize="16sp"
                         tools:text="Movies"
+                        android:layout_weight="1"
                         android:contentDescription="@string/txt_movies"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/roboto_medium"
                         android:textColor="@color/categoryNameColor"/>
+
+                    <ImageView
+                        android:id="@+id/categoryShare"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:src="@drawable/ic_share" />
 
                 </LinearLayout>
 
