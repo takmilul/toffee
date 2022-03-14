@@ -110,4 +110,6 @@
     <color name="reaction_selected_bg_color">#F2F2F2</color>
     <color name="placeholder_logo_color">#F2F2F2</color>
     <color name="strike_through_color">#FFCCE1</color>
+    <color name="redeem_dialog_invalid_header">#FFFFFF</color>
+    <color name="redeem_dialog_invalid_footer">#F2F2F2</color>
 </resources>

@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.banglalink.toffee.databinding.VelboxDialogLayoutBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 
 data class VelBoxAlertDialogBuilder(
         var context: Context,
@@ -17,7 +19,8 @@ data class VelBoxAlertDialogBuilder(
         private var negativeButtonTitle: String = "Cancel",
         private var positiveButtonListener: ((d: AlertDialog?) -> Unit)? = null,
         private var negativeButtonListener: ((d: AlertDialog?) -> Unit)? = null,
-        private var closeButtonListener: ((d: AlertDialog?) -> Unit)? = null
+        private var closeButtonListener: ((d: AlertDialog?) -> Unit)? = null,
+        private var hideCloseButton:Boolean = false,
     ) {
         private var dialog: AlertDialog? = null
         private lateinit var binding: VelboxDialogLayoutBinding
@@ -75,9 +78,13 @@ data class VelBoxAlertDialogBuilder(
                 } ?: run {
                     binding.dialogNegativeButton.visibility = View.GONE
                 }
-                
-                binding.closeButton.setOnClickListener { _ ->
-                    closeButtonListener?.invoke(dialog) ?: run { dialog?.dismiss() }
+                if(hideCloseButton){
+                    binding.closeButton.hide()
+                }else {
+                    binding.closeButton.show()
+                    binding.closeButton.setOnClickListener { _ ->
+                        closeButtonListener?.invoke(dialog) ?: run { dialog?.dismiss() }
+                    }
                 }
             }
             return dialogBuilder.create().apply {

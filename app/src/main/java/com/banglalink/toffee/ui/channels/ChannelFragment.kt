@@ -24,7 +24,6 @@ import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -108,14 +107,12 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
 //        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
-
+        
         viewLifecycleOwner.lifecycleScope.launch {
+            channelViewModel(0, isStingray)
             with(channelViewModel(0, isStingray)){
-                map {
-                    it.filter { it.channelInfo?.isExpired == false }
-                }
                 collectLatest { tvList ->
-                    val res = tvList.groupBy { it.categoryName }.map {
+                    val res = tvList.filter { it.channelInfo?.isExpired == false }.groupBy { it.categoryName }.map {
                         val categoryName = it.key
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)

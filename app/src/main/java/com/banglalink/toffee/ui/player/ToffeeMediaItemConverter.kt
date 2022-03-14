@@ -20,8 +20,9 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-class ToffeeMediaItemConverter(private val mPref: SessionPreference,
-                               private val isOverWifi: Boolean
+class ToffeeMediaItemConverter(
+    private val isOverWifi: Boolean,
+    private val mPref: SessionPreference,
 ): MediaItemConverter {
     companion object {
         private const val KEY_MEDIA_ITEM = "mediaItem"

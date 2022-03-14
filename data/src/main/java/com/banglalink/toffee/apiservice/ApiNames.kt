@@ -28,6 +28,7 @@ object ApiNames {
     const val GET_REFERRAL_CODE = "getMyReferralCode"
     const val GET_REFERRAL_CODE_STATUS = "getReferralCodeStatus"
     const val REDEEM_REFERRAL_CODE = "redeemReferralCode"
+    const val REDEEM_REFERRAL_CODEV2 = "redeemReferralCodeV2"
     const val GET_REFERRER_POLICY = "getReferrerPolicy"
     const val GET_MOST_POPULAR_CONTENTS = "getUgcMostPopularContents"
     const val GET_CATEGORIES = "getUgcCategories"
