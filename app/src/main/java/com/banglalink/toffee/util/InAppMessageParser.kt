@@ -8,6 +8,7 @@ import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +29,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=settings
 //    https://toffeelive.com?routing=internal&page=login
 //    https://toffeelive.com?routing=internal&page=search&keyword=natok
-//    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=6417560
+//    https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=6417560
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
 //    https://toffeelive.com?routing=internal&page=categories&catid=9
 //    https://toffeelive.com?routing=internal&page=categories&catid=2
@@ -52,11 +53,14 @@ class InAppMessageParser @Inject constructor(
                         val catId = link.getQueryParameter("catid")?.toLongOrNull() ?: return null
                         val catList = categoryListApi.loadData(0, 0).filter { it.id ==  catId }
                         if(catList.isEmpty()) return null
-                        val destId = when(catId) {
-                            1L -> {
+                        val destId = when(catId.toInt()) {
+                            CategoryType.MOVIE.value -> {
                                 R.id.movieFragment
                             }
-                            9L -> {
+                            CategoryType.MUSIC.value -> {
+                                R.id.musicDetailsFragmant
+                            }
+                            CategoryType.DRAMA_SERIES.value -> {
                                 R.id.dramaSeriesFragment
                             }
                             else -> {

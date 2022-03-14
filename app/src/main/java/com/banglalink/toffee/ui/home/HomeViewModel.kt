@@ -69,6 +69,8 @@ class HomeViewModel @Inject constructor(
     private val subscribeChannelApiService: SubscribeChannelService,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
+    private val episodeListApi: GetShareableDramaEpisodesBySeason.AssistedFactory,
+    private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
 ) : ViewModel() {
     
     val isStingray = MutableLiveData<Boolean>()
@@ -87,6 +89,8 @@ class HomeViewModel @Inject constructor(
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
+    val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
+    val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     
     init {
         getProfile()
@@ -356,6 +360,20 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+        }
+    }
+    
+    fun getPlaylistShareableVideos(shareableData: ShareableData) {
+        viewModelScope.launch {
+            val response = resultFromResponse { playlistShareableApiService.create(shareableData).loadData(0, 30) }
+            playlistShareableLiveData.postValue(response)
+        }
+    }
+    
+    fun getShareableEpisodesBySeason(shareableData: ShareableData) {
+        viewModelScope.launch {
+            val response = resultFromResponse { episodeListApi.create(shareableData).loadData(0, 30) }
+            webSeriesShareableLiveData.postValue(response)
         }
     }
 }

@@ -21,7 +21,9 @@ data class Category(
     @SerializedName("category_icon")
     val categoryIcon: String? = null,
     @SerializedName("subcategories")
-    val subcategories: List<SubCategory>? = null
+    val subcategories: List<SubCategory>? = null,
+    @SerializedName("category_share_url")
+    val categoryShareUrl: String? = null
 ): Parcelable {
     override fun toString(): String = categoryName
 }

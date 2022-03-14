@@ -1,7 +1,7 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.Constants
+import com.banglalink.toffee.util.Log
 import okhttp3.internal.immutableListOf
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,7 +43,8 @@ class GetTracker @Inject constructor():IGetMethodTracker {
         "/vast-tags-list/${Constants.DEVICE_TYPE}",
         "/ugc-feature-partner-list/${Constants.DEVICE_TYPE}",
         "/ugc-fireworks-list/${Constants.DEVICE_TYPE}",
-        "/stingray-contents/${Constants.DEVICE_TYPE}"
+        "/stingray-contents/${Constants.DEVICE_TYPE}",
+        "/playlist-shareable/${Constants.DEVICE_TYPE}"
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

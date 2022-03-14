@@ -64,6 +64,7 @@ import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
@@ -78,6 +79,7 @@ import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
@@ -874,16 +876,7 @@ class HomeActivity :
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
         lifecycleScope.launch {
             try {
-                var isDeepLinkHandled = false
-                val route = inAppMessageParser.parseUrlV2(url)
-                route?.let {
-                    ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
-                    when (it.destId) {
-                        is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
-                        is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
-                    }
-                    isDeepLinkHandled = true
-                }
+                val isDeepLinkHandled = handleInAppDeepLink(url)
                 
                 if (!isDeepLinkHandled) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
@@ -892,8 +885,30 @@ class HomeActivity :
                     if (hash.contains("data=", true)) {
                         val newHash = hash.removePrefix("data=").trim()
                         val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
-                        if (shareableData.type == "stingray" && !shareableData.stingrayShareUrl.isNullOrBlank()) {
-                            pair = Pair(shareableData.stingrayShareUrl, "stingray")
+                        when(shareableData.type) {
+                            SharingType.STINGRAY.value -> {
+                                if (!shareableData.stingrayShareUrl.isNullOrBlank()) {
+                                    pair = Pair(shareableData.stingrayShareUrl, SharingType.STINGRAY.value)
+                                }
+                            }
+                            SharingType.CATEGORY.value -> {
+                                shareableData.categoryId?.let {
+                                    val categoryDeepLinkUrl = "https://toffeelive.com?routing=internal&page=categories&catid=$it"
+                                    handleInAppDeepLink(categoryDeepLinkUrl)
+                                }
+                            }
+                            SharingType.CHANNEL.value -> {
+                                shareableData.channelId?.let {
+                                    val channelDeepLinkUrl = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=$it"
+                                    handleInAppDeepLink(channelDeepLinkUrl)
+                                }
+                            }
+                            SharingType.PLAYLIST.value -> {
+                                playPlaylistShareable(shareableData)
+                            }
+                            SharingType.SERIES.value -> {
+                                playShareableWebSeries(shareableData)
+                            }
                         }
                     } else {
                         pair = Pair(hash, null)
@@ -905,6 +920,89 @@ class HomeActivity :
                 ToffeeAnalytics.logException(e)
             }
         }
+    }
+    
+    private fun playPlaylistShareable(shareableData: ShareableData) {
+        observe(viewModel.playlistShareableLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    response.data.channels?.let {
+                        val playlistInfo = PlaylistPlaybackInfo(
+                            shareableData.playlistId ?: 0,
+                            shareableData.channelOwnerId ?: 0,
+                            shareableData.name ?: "",
+                            response.data.totalCount,
+                            shareableData.isUserPlaylist == 1,
+                            0,
+                            it[0]
+                        )
+                        viewModel.addToPlayListMutableLiveData.postValue(
+                            AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
+                        )
+                        viewModel.playContentLiveData.postValue(playlistInfo)
+                    }
+                }
+                is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION, bundleOf(
+                            "api_name" to ApiNames.GET_PLAYLIST_SHAREABLE,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                            "error_code" to response.error.code,
+                            "error_description" to response.error.msg
+                        )
+                    )
+                }
+            }
+        }
+        viewModel.getPlaylistShareableVideos(shareableData)
+    }
+    
+    private fun playShareableWebSeries(shareableData: ShareableData) {
+        observe(viewModel.webSeriesShareableLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    response.data.channels?.let {
+                        val seriesInfo = SeriesPlaybackInfo(
+                            shareableData.serialSummaryId ?: 0,
+                            shareableData.name ?: "",
+                            shareableData.seasonNo ?: 1,
+                            shareableData.activeSeason?.size ?: 0,
+                            it[0].id.toInt(),
+                            it[0],
+                        )
+                        viewModel.addToPlayListMutableLiveData.postValue(
+                            AddToPlaylistData(seriesInfo.playlistId(), it)
+                        )
+                        viewModel.playContentLiveData.postValue(seriesInfo)
+                    }
+                }
+                is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION, bundleOf(
+                            "api_name" to ApiNames.GET_WEB_SERIES_BY_SEASON,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                            "error_code" to response.error.code,
+                            "error_description" to response.error.msg
+                        )
+                    )
+                }
+            }
+        }
+        viewModel.getShareableEpisodesBySeason(shareableData)
+    }
+    
+    private suspend fun handleInAppDeepLink(url: String): Boolean {
+        var isDeepLinkHandled = false
+        val route = inAppMessageParser.parseUrlV2(url)
+        route?.let {
+            ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
+            when (it.destId) {
+                is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
+                is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
+            }
+            isDeepLinkHandled = true
+        }
+        return isDeepLinkHandled
     }
     
     private fun observeShareableContent(hash: String, type: String? = null) {

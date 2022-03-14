@@ -39,6 +39,8 @@ data class MyChannelPlaylist (
     val landscape_ratio_1280_720: String? = null,
     @SerializedName("created_at")
     val created_at: String? = null,
+    @SerializedName("playlist_share_url")
+    val playlistShareUrl: String? = null,
 ) {
     fun isOwner(): Boolean {
         return isChannelOwner == "1"

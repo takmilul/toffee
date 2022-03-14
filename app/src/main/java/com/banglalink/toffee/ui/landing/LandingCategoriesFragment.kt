@@ -19,6 +19,7 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
 import com.banglalink.toffee.databinding.PlaceholderCategoriesBinding
+import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
@@ -118,7 +119,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
-            1 -> {
+            CategoryType.MOVIE.value -> {
                 if (findNavController().currentDestination?.id != R.id.movieFragment && findNavController().currentDestination?.id==
                     R.id.menu_feed) {
                     findNavController().navigate(
@@ -127,18 +128,18 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
                     )
                 }
             }
-            9 -> {
-                if (findNavController().currentDestination?.id != R.id.dramaSeriesFragment && findNavController().currentDestination?.id==
-                    R.id.menu_feed)
-                {
-                    findNavController().navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
-                }
-            }
-            2 ->{
+            CategoryType.MUSIC.value ->{
                 if (findNavController().currentDestination?.id != R.id.musicFragment && findNavController().currentDestination?.id==
                     R.id.menu_feed)
                 {
                     findNavController().navigate(R.id.action_menu_feed_to_musicDetailsFragmant, args)
+                }
+            }
+            CategoryType.DRAMA_SERIES.value -> {
+                if (findNavController().currentDestination?.id != R.id.dramaSeriesFragment && findNavController().currentDestination?.id==
+                    R.id.menu_feed)
+                {
+                    findNavController().navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
                 }
             }
             else -> {

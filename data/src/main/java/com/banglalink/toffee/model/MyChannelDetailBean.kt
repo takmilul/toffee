@@ -23,6 +23,8 @@ data class MyChannelDetailBean(
     val channelOwnerId: Int = 0,
     @SerializedName("isSubscribed")
     var isSubscribed: Int = 0,
+    @SerializedName("channel_share_url")
+    val channelShareUrl: String? = null,
     @SerializedName("systemTime")
     val systemTime: String? = null
 )

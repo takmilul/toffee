@@ -16,7 +16,17 @@ data class ShareableData(
     @SerializedName("isOwner")
     val isOwner: Int? = null,
     @SerializedName("channelOwnerUserId")
-    val channelOwnerUserId: Int? = null,
+    val channelOwnerId: Int? = null,
     @SerializedName("playlistId")
-    val playlistId: Int? = null
+    val playlistId: Int? = null,
+    @SerializedName("name")
+    val name: String? = null,
+    @SerializedName("seasonNo")
+    val seasonNo: Int? = null,
+    @SerializedName("serialSummaryId")
+    val serialSummaryId: Int? = null,
+    @SerializedName("activeSeason")
+    val activeSeason: List<Int>? = null,
+    @SerializedName("contentType")
+    val contentType: String = "VOD"
 )

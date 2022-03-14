@@ -14,6 +14,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
+import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
@@ -74,14 +75,14 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
-            1 -> {
+            CategoryType.MOVIE.value -> {
                 parentFragment?.findNavController()?.navigate(R.id.movieFragment, args)
             }
-            9 -> {
-                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
-            }
-            2 -> {
+            CategoryType.MUSIC.value -> {
                 parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant, args)
+            }
+            CategoryType.DRAMA_SERIES.value -> {
+                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
             }
             else -> {
                 parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment, args)

@@ -434,5 +434,15 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body featuredPartnerRequest: FeaturedPartnerRequest
     ): FeaturedPartnerResponse
-
+    
+    @POST("/playlist-shareable/${Constants.DEVICE_TYPE}/{isUserPlaylist}/{isOwner}/{channelOwnerUserId}/{playlistId}/{limit}/{offset}")
+    suspend fun getPlaylistShareable(
+        @Path("isUserPlaylist") isUserPlaylist: Int,
+        @Path("isOwner") isOwner: Int,
+        @Path("channelOwnerUserId") channelOwnerUserId: Int,
+        @Path("playlistId") playlistId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Body playlistRequest: PlaylistShareableRequest
+    ): MyChannelPlaylistVideosResponse
 }

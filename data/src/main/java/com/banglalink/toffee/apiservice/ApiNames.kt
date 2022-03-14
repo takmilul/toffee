@@ -53,6 +53,7 @@ object ApiNames {
     const val ADD_CONTENT_TO_PLAYLIST = "ugcAddContentToPlaylist"
     const val GET_USER_CHANNEL_PLAYLISTS = "getUgcUserPlaylistNames"
     const val GET_MY_CHANNEL_PLAYLIST_VIDEOS = "getUgcContentByPlaylist"
+    const val GET_PLAYLIST_SHAREABLE = "getPlaylistShareable"
     const val GET_USER_CHANNEL_PLAYLIST_VIDEOS = "getUgcContentByUserPlaylist"
     const val RATE_CHANNEL = "ugcRatingOnChannel"
     const val GET_TERMS_AND_CONDITIONS = "getUgcTermsAndConditions"

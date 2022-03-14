@@ -121,7 +121,7 @@ data class ChannelInfo(
     @SerializedName("playlist_content_id")
     val playlistContentId: Int = 0,
     @SerializedName("active_season_list")
-    val activeSeasonList: List<Int>? = listOf(1),
+    var activeSeasonList: List<Int>? = listOf(1),
     @SerializedName("channel_profile_url")
     val channelProfileUrl: String? = null,
     @SerializedName("url_type")
