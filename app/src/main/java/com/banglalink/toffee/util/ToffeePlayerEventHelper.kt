@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.repository.PlayerEventRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.google.ads.interactivemedia.v3.api.Ad
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 class ToffeePlayerEventHelper @Inject constructor(
     private val mPref: SessionPreference,
+    private val connectionWatcher: ConnectionWatcher,
     private val playerEventRepository: PlayerEventRepository,
 ) {
     private var schedulerJob: Job? = null
@@ -124,7 +126,9 @@ class ToffeePlayerEventHelper @Inject constructor(
         if (!forceUpdate) {
             delay(15_000)
         }
-        playerEventRepository.sentTopEventToPubsubAndRemove()
+        if (connectionWatcher.isOnline) {
+            playerEventRepository.sentTopEventToPubsubAndRemove()
+        }
     }
     
     fun endSession() {

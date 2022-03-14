@@ -29,25 +29,29 @@ class PingTool @Inject constructor(
     suspend fun ping(hostUrl: String): PingData? {
         var pingData: PingData? = null
         coroutineScope.launch(IO) {
-            val host = hostUrl.removePrefix("https://www.").removePrefix("http://www.").replaceAfter(".com", "")
-            val inetAddress = InetAddress.getByName(host)
-            val ip = inetAddress.hostAddress
-            val runtime = Runtime.getRuntime()
-            var isExist = false
-            val isOnline = connectionWatcher.isOnline
-            val netType = connectionWatcher.netType
-            val ispOrTelecom = if (connectionWatcher.isOverCellular) "Telecom" else "ISP"
-            val latency = measureTimeMillis {
-                try {
-                    val ipProcess = runtime.exec("/system/bin/ping -c 1 $host")
-                    val exitValue = ipProcess.waitFor()
-                    isExist = (exitValue == 0)
-                } catch (e: Exception) {
-                    Log.i("HOS_", "isConnectedToThisServer: ${e.message}")
-                    e.printStackTrace()
-                }
-            }.toString().plus(" ms")
-            pingData = PingData(isOnline, netType, ispOrTelecom, host, ip, latency)
+            try {
+                val host = hostUrl.removePrefix("https://www.").removePrefix("http://www.").replaceAfter(".com", "")
+                val inetAddress = InetAddress.getByName(host)
+                val ip = inetAddress.hostAddress
+                val runtime = Runtime.getRuntime()
+                var isExist = false
+                val isOnline = connectionWatcher.isOnline
+                val netType = connectionWatcher.netType
+                val ispOrTelecom = if (connectionWatcher.isOverCellular) "Telecom" else "ISP"
+                val latency = measureTimeMillis {
+                    try {
+                        val ipProcess = runtime.exec("/system/bin/ping -c 1 $host")
+                        val exitValue = ipProcess.waitFor()
+                        isExist = (exitValue == 0)
+                    } catch (e: Exception) {
+                        Log.i("HOS_", "isConnectedToThisServer: ${e.message}")
+                        e.printStackTrace()
+                    }
+                }.toString().plus(" ms")
+                pingData = PingData(isOnline, netType, ispOrTelecom, host, ip, latency)
+            } catch (e: Exception) {
+                pingData = PingData(false)
+            }
         }.join()
         return pingData
     }

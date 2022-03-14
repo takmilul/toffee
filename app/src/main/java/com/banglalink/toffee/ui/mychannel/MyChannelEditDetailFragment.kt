@@ -227,6 +227,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun observeEditChannel() {
         observe(viewModel.exitFragment) {
+            cacheManager.clearCacheByUrl(ApiRoutes.GET_ALL_USER_CHANNEL)
             requireContext().showToast(getString(R.string.unable_to_load_data))
             findNavController().popBackStack()
         }
@@ -250,7 +251,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     findNavController().navigateUp()
                 }
                 is Failure -> {
-
                     ToffeeAnalytics.logEvent(
                         ToffeeEvents.EXCEPTION,
                         bundleOf(
@@ -259,7 +259,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
-
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     println(it.error)

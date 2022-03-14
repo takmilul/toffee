@@ -16,7 +16,11 @@ import com.google.api.services.pubsub.model.PublishRequest
 import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
 import com.google.gson.JsonObject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val PROJECT_ID = "toffee-261507"
 const val TOPIC_ID = "fcm-notification-response"
@@ -44,7 +48,7 @@ object PubSubMessageUtil {
 
     private lateinit var client:Pubsub
     private val TAG = "PubSubMessageUtil"
-    private val coroutineContext = Dispatchers.IO + SupervisorJob()
+    private val coroutineContext = IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
 
     fun init(context: Context){
@@ -66,8 +70,8 @@ object PubSubMessageUtil {
     
     fun sendMessage(jsonMessage: String, topic: String) {
         coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
+            withContext(IO) {
+                runCatching {
                     val batch = client.batch()
                     Log.i("PUBSUB - $topic", jsonMessage)
                     val pubsubMessage = PubsubMessage()
@@ -76,8 +80,8 @@ object PubSubMessageUtil {
                     publishRequest.messages = listOf(pubsubMessage)
                     client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
                     batch?.execute()
-                } catch (ex: Exception) {
-                    Log.e("PUBSUB - $topic", ex.message, ex)
+                }.onFailure {
+                    Log.e("PUBSUB - $topic", it.message, it)
                 }
             }
         }

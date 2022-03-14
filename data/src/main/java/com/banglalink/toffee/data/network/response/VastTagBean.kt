@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 class VastTagBean(
     @SerializedName("numOfTags")
     val numOfTags: Int = 0,
-    @SerializedName("tags")
-    val tags: List<VastTag>?
+    @SerializedName("linearTags")
+    val linearTags: List<VastTag>?,
+    @SerializedName("vodTags")
+    val vodTags: List<VastTag>?
 )

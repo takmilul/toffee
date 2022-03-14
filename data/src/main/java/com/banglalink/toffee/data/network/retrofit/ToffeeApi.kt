@@ -402,7 +402,7 @@ interface ToffeeApi {
         @Body logoutRequest: LogoutRequest
     ): LogoutResponse
 
-    @POST("vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
+    @POST("v2/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getVastTagLists(
         @Path("dbVersion") dbVersion: Int,
         @Body paymentMethodRequest: VastTagRequest
