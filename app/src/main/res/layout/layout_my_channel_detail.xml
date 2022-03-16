@@ -40,6 +40,7 @@
             android:adjustViewBounds="true"
             android:background="@color/fw_gnt_black"
             loadImageFromUrl="@{data.myChannelDetail.bannerUrl}"
+            maintainRatio="@{false}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

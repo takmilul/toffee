@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -209,13 +208,13 @@ fun ImageView.loadPlaceholder(isCircular: Boolean = false) {
     }
 }
 
-fun ImageRequest.Builder.initListener(view: ImageView) {
+fun ImageRequest.Builder.initListener(view: ImageView, maintainRatio: Boolean = true) {
     listener(onStart = {
         view.scaleType = CENTER_CROP
     }, onError = { _, _ ->
         view.scaleType = CENTER_CROP
     }, onSuccess = { _, _ ->
-        view.scaleType = FIT_CENTER
+        view.scaleType = if (maintainRatio) FIT_CENTER else CENTER_CROP
     })
 }
 

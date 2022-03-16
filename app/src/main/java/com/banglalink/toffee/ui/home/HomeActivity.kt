@@ -1189,7 +1189,7 @@ class HomeActivity :
                 }
             }
         } else if (info is SeriesPlaybackInfo) {
-            if (fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId) {
+            if (fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId || fragment.getSeasonNo() != info.seasonNo) {
                 loadFragmentById(
                     R.id.details_viewer, EpisodeListFragment.newInstance(info)
                 )

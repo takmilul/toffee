@@ -37,14 +37,14 @@ import kotlin.math.min
 @Singleton
 class BindingUtil @Inject constructor(private val mPref: SessionPreference, @CoilImageLoader private val imageLoader: ImageLoader) {
     
-    @BindingAdapter(value = ["loadImageFromUrl"], requireAll = false)
-    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
+    @BindingAdapter(value = ["loadImageFromUrl", "maintainRatio"], requireAll = false)
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?, maintainRatio: Boolean = true) {
         if (imageUrl.isNullOrEmpty()) {
             view.loadPlaceholder()
         } else {
             view.load(imageUrl, imageLoader) {
                 size(min(360.px, 720), min(202.px, 405))
-                initListener(view)
+                initListener(view, maintainRatio)
             }
         }
     }

@@ -36,7 +36,7 @@ import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -106,6 +106,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     }
 
     fun getSeriesId() = seriesInfo.seriesId
+    fun getSeasonNo() = seriesInfo.seasonNo
     fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
@@ -165,7 +166,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onSeasonChanged(newSeason: Int) {
                 if(newSeason - 1 != mViewModel.selectedSeason.value) {
                     mViewModel.selectedSeason.value = newSeason - 1
-                    observeList(newSeason)
+                    val seasonNumber = currentItem?.activeSeasonList?.get(newSeason - 1) ?: 0
+                    observeList(seasonNumber)
                 }
             }
         }, mPref, mViewModel)
