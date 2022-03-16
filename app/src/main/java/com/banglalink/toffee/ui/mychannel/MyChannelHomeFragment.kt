@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -119,6 +120,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.channelDetailView.analyticsButton.safeClick(this)
         binding.channelDetailView.ratingButton.safeClick(this)
         binding.channelDetailView.subscriptionButton.safeClick(this)
+        binding.channelDetailView.channelShareButton.safeClick(this)
     }
     
     override fun onClick(v: View?) {
@@ -148,6 +150,9 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), -1)
                     }
                 }
+            }
+            binding.channelDetailView.channelShareButton -> {
+                myChannelDetail?.channelShareUrl?.let { requireActivity().handleUrlShare(it) }
             }
         }
     }
@@ -238,6 +243,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             mPref.isChannelDetailChecked = true
             subscriberCount = it.subscriberCount
             channelId = myChannelDetail?.id?.toInt() ?: 0
+            binding.channelDetailView.channelShareButton.isVisible = channelData.myChannelDetail?.isApproved ?: false
         }
         
         if (isOwner) {

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
@@ -62,6 +63,7 @@ class ChannelHeaderAdapter(
                 holder.seasonInfoHeader.visibility = View.GONE
                 holder.bottomPanelStatus.text = "${headerData.playlistName} (${headerData.playlistItemCount})"
                 holder.seasonSpinnerWrap.visibility = View.GONE
+                holder.playlistShareButton.isVisible = headerData.isApproved == 1
             }
             is SeriesPlaybackInfo -> {
                 holder.seasonInfoHeader.visibility = View.VISIBLE
@@ -114,7 +116,7 @@ class ChannelHeaderAdapter(
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)
         val seasonSpinnerWrap: RelativeLayout = binding.root.findViewById(R.id.seasonSpinnerWrap)
-        val playlistShareButton: ImageView = binding.root.findViewById(R.id.playlist_share)
+        val playlistShareButton: ImageView = binding.root.findViewById(R.id.playlistShareButton)
 
         fun bind(obj: Any, cb: Any?, pos: Int, vm: EpisodeListViewModel?) {
             binding.setVariable(BR.callback, cb)

@@ -38,6 +38,10 @@ data class MyChannelDetail(
     val is_email_verified: Int = 0,
     @SerializedName("is_nid_verified")
     val is_nid_verified: Int = 0,
+    @SerializedName("is_approved")
+    val isApproved: Boolean = false,
+    @SerializedName("channel_share_url")
+    val channelShareUrl: String? = null,
 ) : Parcelable {
     fun isEmailVerified() = is_email_verified == 1
     fun isNIDVerified() = is_nid_verified == 1

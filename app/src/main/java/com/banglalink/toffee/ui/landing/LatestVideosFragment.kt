@@ -237,8 +237,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         childFragmentManager.commit { add(reactionPopupFragment, TAG) }
     }
 
-    override fun onShareClicked(view: View, item: ChannelInfo) {
-        super.onShareClicked(view, item)
+    override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
+        super.onShareClicked(view, item, isPlaylist)
         requireActivity().handleShare(item)
     }
 

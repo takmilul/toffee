@@ -41,6 +41,8 @@ data class MyChannelPlaylist (
     val created_at: String? = null,
     @SerializedName("playlist_share_url")
     val playlistShareUrl: String? = null,
+    @SerializedName("is_approved")
+    val isApproved: Int = 0
 ) {
     fun isOwner(): Boolean {
         return isChannelOwner == "1"

@@ -146,9 +146,13 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 }
                 childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
-    
-            override fun onShareClicked(view: View, item: ChannelInfo) {
-                homeViewModel.shareContentLiveData.postValue(item)
+            
+            override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
+                if (isPlaylist) {
+                    args.playlistInfo.playlistShareUrl?.let { requireActivity().handleUrlShare(it) }
+                } else {
+                    requireActivity().handleShare(item)
+                }
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {

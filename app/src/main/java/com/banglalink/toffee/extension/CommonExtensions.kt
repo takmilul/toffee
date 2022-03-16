@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -125,6 +124,13 @@ fun Activity.handleShare(item: ChannelInfo) {
     ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
+    }
+}
+
+fun Activity.handleUrlShare(url: String) {
+    ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
+    if(this is HomeActivity) {
+        getHomeViewModel().shareUrlLiveData.postValue(url)
     }
 }
 

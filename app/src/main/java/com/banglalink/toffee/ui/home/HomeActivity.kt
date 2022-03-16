@@ -296,6 +296,14 @@ class HomeActivity :
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
             viewModel.sendShareLog(channelInfo)
         }
+        observe(viewModel.shareUrlLiveData) {
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.type = "text/plain"
+            sharingIntent.putExtra(
+                Intent.EXTRA_TEXT, it
+            )
+            startActivity(Intent.createChooser(sharingIntent, "Share via"))
+        }
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
             observe(profileViewModel.loadCustomerProfile()) {
@@ -904,7 +912,7 @@ class HomeActivity :
                                 }
                             }
                             SharingType.PLAYLIST.value -> {
-                                playPlaylistShareable(shareableData)
+                                playPlaylistShareable(shareableData, url)
                             }
                             SharingType.SERIES.value -> {
                                 playShareableWebSeries(shareableData)
@@ -922,7 +930,7 @@ class HomeActivity :
         }
     }
     
-    private fun playPlaylistShareable(shareableData: ShareableData) {
+    private fun playPlaylistShareable(shareableData: ShareableData, shareUrl: String) {
         observe(viewModel.playlistShareableLiveData) { response ->
             when (response) {
                 is Success -> {
@@ -932,6 +940,8 @@ class HomeActivity :
                             shareableData.channelOwnerId ?: 0,
                             shareableData.name ?: "",
                             response.data.totalCount,
+                            shareUrl,
+                            1,
                             shareableData.isUserPlaylist == 1,
                             0,
                             it[0]
@@ -1287,7 +1297,7 @@ class HomeActivity :
                 }
             }
         } else if (info is SeriesPlaybackInfo) {
-            if (fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId) {
+            if (fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId || fragment.getSeasonNo() != info.seasonNo) {
                 loadFragmentById(
                     R.id.details_viewer, EpisodeListFragment.newInstance(info)
                 )

@@ -208,8 +208,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
-    override fun onShareClicked(view: View, item: ChannelInfo) {
-        super.onShareClicked(view, item)
+    override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
+        super.onShareClicked(view, item, isPlaylist)
         requireActivity().handleShare(item)
     }
     

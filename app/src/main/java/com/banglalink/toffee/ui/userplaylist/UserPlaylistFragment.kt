@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -29,10 +28,7 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
@@ -165,7 +161,8 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
-            putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, true))
+            putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, item.playlistShareUrl, item
+                .isApproved, true))
         })
     }
 
@@ -261,6 +258,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_channel_playlist)
+            menu.findItem(R.id.menu_share_playlist).isVisible = item.isApproved == 1
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_playlist -> {
@@ -270,7 +268,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                         showDeletePlaylistDialog(item.id)
                     }
                     R.id.menu_share_playlist -> {
-                        Toast.makeText(activity, "Share Nav Drawer Playlist!", Toast.LENGTH_LONG).show()
+                        item.playlistShareUrl?.let { requireActivity().handleUrlShare(it) }
                     }
                 }
                 return@setOnMenuItemClickListener true

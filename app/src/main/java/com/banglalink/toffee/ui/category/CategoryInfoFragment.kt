@@ -11,8 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
+import com.banglalink.toffee.extension.handleUrlShare
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -36,7 +38,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,6 +48,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
         setCategoryUiInfo()
         observeHashTags()
         observeSubCategories()
+        binding.categoryShareButton.safeClick({
+            categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
+        })
     }
 
     private fun observeSubCategories() {

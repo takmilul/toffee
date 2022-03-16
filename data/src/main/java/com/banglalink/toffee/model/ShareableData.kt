@@ -22,7 +22,7 @@ data class ShareableData(
     @SerializedName("name")
     val name: String? = null,
     @SerializedName("seasonNo")
-    val seasonNo: Int? = null,
+    var seasonNo: Int? = null,
     @SerializedName("serialSummaryId")
     val serialSummaryId: Int? = null,
     @SerializedName("activeSeason")

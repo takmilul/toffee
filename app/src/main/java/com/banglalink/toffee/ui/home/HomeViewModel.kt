@@ -76,6 +76,7 @@ class HomeViewModel @Inject constructor(
     val isStingray = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
+    val shareUrlLiveData = SingleLiveEvent<String>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()

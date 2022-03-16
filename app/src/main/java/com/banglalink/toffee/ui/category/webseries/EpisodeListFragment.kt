@@ -24,24 +24,24 @@ import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.SeriesPlaybackInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.EncryptionUtil
+import com.google.gson.Gson
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+    private val gson = Gson()
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
     private var seasonListJob: Job? = null
@@ -106,6 +106,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     }
 
     fun getSeriesId() = seriesInfo.seriesId
+    fun getSeasonNo() = seriesInfo.seasonNo
     fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
@@ -139,11 +140,32 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 }
                 childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
-
-            override fun onShareClicked(view: View, item: ChannelInfo) {
-                requireActivity().handleShare(item)
+            
+            override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
+                val channelInfo = seriesInfo.currentItem
+                if (isPlaylist && channelInfo != null) {
+                    try {
+                        val hash = channelInfo.video_share_url?.substring(channelInfo.video_share_url!!.lastIndexOf("data=") + 5)
+                        hash?.let {
+                            val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(it).trimIndent(), ShareableData::class.java)
+                            val currentSeasonNo = channelInfo.activeSeasonList?.get(mViewModel.selectedSeason.value ?: 0) ?: 1
+                            var shareUrl = channelInfo.video_share_url
+                            if (shareableData.seasonNo != currentSeasonNo) {
+                                val newShareableData = shareableData.copy(seasonNo = currentSeasonNo)
+                                val jsonString = gson.toJson(newShareableData, ShareableData::class.java).toString()
+                                val prefix = channelInfo.video_share_url?.substring(0, channelInfo.video_share_url!!.lastIndexOf("data=") + 5)
+                                shareUrl = prefix.plus(EncryptionUtil.encryptRequest(jsonString))
+                            }
+                            shareUrl?.let { requireActivity().handleUrlShare(it) }
+                        }
+                    } catch (e: Exception) {
+                        requireActivity().handleShare(channelInfo)
+                    }
+                } else {
+                    requireActivity().handleShare(item)
+                }
             }
-
+            
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification { 
                     if (item.isSubscribed == 0) {
@@ -165,7 +187,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onSeasonChanged(newSeason: Int) {
                 if(newSeason - 1 != mViewModel.selectedSeason.value) {
                     mViewModel.selectedSeason.value = newSeason - 1
-                    observeList(newSeason)
+                    val seasonNumber = currentItem?.activeSeasonList?.get(newSeason - 1) ?: 0
+                    observeList(seasonNumber)
                 }
             }
         }, mPref, mViewModel)

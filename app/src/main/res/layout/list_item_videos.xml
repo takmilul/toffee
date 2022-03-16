@@ -224,7 +224,7 @@
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
-            app:onSafeClick="@{(v) -> callback.onShareClicked(v, data)}"
+            app:onSafeClick="@{(v) -> callback.onShareClicked(v, data, false)}"
             app:drawableStartCompat="@drawable/ic_share"
             app:layout_constraintBottom_toBottomOf="@id/viewCount"
             app:layout_constraintEnd_toStartOf="@+id/guideline3"

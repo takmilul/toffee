@@ -16,6 +16,10 @@ data class PlaylistPlaybackInfo(
     val playlistName: String,
     @SerializedName("playlistItemCount")
     var playlistItemCount: Int,
+    @SerializedName("playlist_share_url")
+    val playlistShareUrl: String? = null,
+    @SerializedName("is_approved")
+    val isApproved: Int = 0,
     @SerializedName("isUserPlaylist")
     var isUserPlaylist: Boolean = false,
     @SerializedName("playIndex")
