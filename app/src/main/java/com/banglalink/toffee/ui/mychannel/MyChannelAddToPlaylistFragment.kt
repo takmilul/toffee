@@ -134,10 +134,19 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 binding.addToPlaylistGroup.visibility = View.GONE
                 binding.createPlaylistGroup.visibility = View.VISIBLE
             }
-            binding.doneButton -> addToPlaylist(false)
-            binding.cancelButton -> alertDialog.dismiss()
+            binding.doneButton -> {
+                addToPlaylist(false)
+                binding.playlistNameEditText.text.clear()
+            }
+            binding.cancelButton -> {
+                alertDialog.dismiss()
+                binding.playlistNameEditText.text.clear()
+            }
             binding.createButton -> createPlaylist()
-            binding.closeIv -> alertDialog.dismiss()
+            binding.closeIv -> {
+                alertDialog.dismiss()
+                binding.playlistNameEditText.text.clear()
+            }
         }
     }
     

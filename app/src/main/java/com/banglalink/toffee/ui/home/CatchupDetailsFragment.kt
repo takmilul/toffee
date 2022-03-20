@@ -217,8 +217,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         super.onOpenMenu(view, item)
         onOptionClicked(view, item)
     }
-
-    override fun hideShareMenuItem(hide: Boolean): Boolean {
+    
+    override fun showShareMenuItem(hide: Boolean): Boolean {
         return true
     }
 }
