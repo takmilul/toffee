@@ -81,7 +81,7 @@ data class ChannelInfo(
     @SerializedName("favorite")
     var favorite: String? = null,
     @SerializedName("potrait_ratio_800_1200")
-    var potrait_ratio_800_1200: String? = null,
+    var portrait_ratio_800_1200: String? = null,
     @SerializedName("landscape_ratio_1280_720")
     var landscape_ratio_1280_720: String? = null,
     @SerializedName("feature_image")

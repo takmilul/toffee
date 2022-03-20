@@ -13,7 +13,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.ActivityMainMenuBinding
+import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
@@ -27,7 +27,7 @@ class DrawerHelper(
     private val activity: HomeActivity,
     private val mPref: SessionPreference,
     private var bindingUtil: BindingUtil,
-    private val binding: ActivityMainMenuBinding,
+    private val binding: ActivityHomeBinding,
 ) {
 
     lateinit var toggle: ActionBarDrawerToggle

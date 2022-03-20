@@ -11,21 +11,25 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UserChannelInfo
+import com.google.gson.Gson
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LocalSync @Inject constructor(
-    private val viewCountRepo: ViewCountRepository,
-    private val viewProgressRepo: ContentViewPorgressRepsitory,
-    private val reactionStatusRepo: ReactionStatusRepository,
-    private val shareCountRepository: ShareCountRepository,
     private val reactionDao: ReactionDao,
+    private val favoriteDao: FavoriteItemDao,
+    private val preference: SessionPreference,
+    private val tvChannelRepo: TVChannelRepository,
+    private val viewCountRepo: ViewCountRepository,
+    private val shareCountRepository: ShareCountRepository,
+    private val reactionStatusRepo: ReactionStatusRepository,
+    private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-    private val favoriteDao: FavoriteItemDao,
-    private val preference: SessionPreference
 ) {
+    val gson = Gson()
+    
     suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL) {
         if(syncFlag and SYNC_FLAG_VIEW_COUNT == SYNC_FLAG_VIEW_COUNT) {
             val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
@@ -67,6 +71,20 @@ class LocalSync @Inject constructor(
             val fav = favoriteDao.isFavorite(channelInfo.id.toLong())
             if (fav != null) {
                 channelInfo.favorite = fav.toString()
+            }
+        }
+        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
+            tvChannelRepo.getRecentItemById(channelInfo.id.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
+                val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                if (!dbRecentPayload.equals(channelInfo)) {
+                    val isStingray = if (channelInfo.isStingray) 1 else 0
+                    tvChannelRepo.updateRecentItemPayload(
+                        channelInfo.id.toLong(),
+                        isStingray,
+                        channelInfo.view_count?.toLong() ?: 0L,
+                        gson.toJson(channelInfo)
+                    )
+                }
             }
         }
     }
@@ -156,5 +174,6 @@ class LocalSync @Inject constructor(
         const val SYNC_FLAG_REACT = 8
         const val SYNC_FLAG_CHANNEL_SUB = 16
         const val SYNC_FLAG_FAVORITE = 32
+        const val SYNC_FLAG_TV_RECENT = 64
     }
 }

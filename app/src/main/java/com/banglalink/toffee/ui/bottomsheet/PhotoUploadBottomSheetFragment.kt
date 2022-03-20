@@ -8,12 +8,10 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
-import coil.ImageLoader
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.BottomSheetUploadPhotoBinding
-import com.banglalink.toffee.di.CoilImageLoader
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -32,7 +30,6 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
     private var channelNameTextWatcher: TextWatcher? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: BottomSheetUploadPhotoBinding? = null
-    @Inject @CoilImageLoader lateinit var imageLoader: ImageLoader
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -106,7 +103,11 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
     }
 
     private fun loadImage(logoUrl: String) {
-        binding.channelLogoIv.load(logoUrl, imageLoader)
+        binding.channelLogoIv.load(logoUrl) {
+            error(R.drawable.ic_channel_logo)
+            fallback(R.drawable.ic_channel_logo)
+            placeholder(R.drawable.ic_channel_logo)
+        }
         binding.editIv.show()
         binding.channelLogoIv.isClickable = false
     }

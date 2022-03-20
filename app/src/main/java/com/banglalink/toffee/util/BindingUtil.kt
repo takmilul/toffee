@@ -13,14 +13,12 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import coil.ImageLoader
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.di.CoilImageLoader
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
@@ -35,16 +33,17 @@ import javax.inject.Singleton
 import kotlin.math.min
 
 @Singleton
-class BindingUtil @Inject constructor(private val mPref: SessionPreference, @CoilImageLoader private val imageLoader: ImageLoader) {
+class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter(value = ["loadImageFromUrl", "maintainRatio"], requireAll = false)
     fun bindImageFromUrl(view: ImageView, imageUrl: String?, maintainRatio: Boolean = true) {
         if (imageUrl.isNullOrEmpty()) {
             view.loadPlaceholder()
         } else {
-            view.load(imageUrl, imageLoader) {
-                size(min(360.px, 720), min(202.px, 405))
+            view.load(imageUrl) {
+                setImageRequestParams()
                 initListener(view, maintainRatio)
+                size(min(360.px, 720), min(202.px, 405))
             }
         }
     }
@@ -55,10 +54,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
             view.loadPlaceholder(isCircular = true)
         } else {
             view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.load(imageUrl, imageLoader) {
-                transformations(CircleCropTransformation())
-                setCircularImageRequestParams()
+            view.load(imageUrl) {
+                setImageRequestParams(true)
                 size(min(30.px, 92), min(30.px, 92))
+                transformations(CircleCropTransformation())
             }
         }
     }
@@ -69,9 +68,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
             view.loadPlaceholder(isCircular = true)
         } else {
             view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.load(imageUrl, imageLoader) {
+            view.load(imageUrl) {
+                setImageRequestParams(true)
                 transformations(CircleCropTransformation())
-                setCircularImageRequestParams()
                 size(min(80.px, 150), min(80.px, 150))
             }
         }
@@ -79,9 +78,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
     
     @BindingAdapter("loadImageResource")
     fun loadImageFromResource(view: ImageView, image: Int) {
-        view.load(image, imageLoader) {
-            size(min(320.px, 720), min(180.px, 405))
+        view.load(image) {
             initListener(view)
+            setImageRequestParams()
+            size(min(320.px, 720), min(180.px, 405))
         }
     }
     
@@ -91,7 +91,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
             view.loadPlaceholder()
         } else {
             view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.load(category.thumbnailUrl, imageLoader) {
+            view.load(category.thumbnailUrl) {
+                setImageRequestParams()
                 size(min(120.px, 360), min(61.px, 184))
             }
         }
@@ -102,8 +103,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         if (category.categoryIcon.isNullOrBlank()) {
             view.loadPlaceholder(isCircular = true)
         } else {
-            view.load(category.categoryIcon, imageLoader) {
-                setCircularImageRequestParams()
+            view.load(category.categoryIcon) {
+                setImageRequestParams(true)
                 size(min(30.px, 92), min(30.px, 92))
             }
         }
@@ -115,9 +116,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
             if (channelInfo.channel_logo.isNullOrBlank()) {
                 view.loadPlaceholder(isCircular = true)
             } else {
-                view.load(channelInfo.channel_logo, imageLoader) {
+                view.load(channelInfo.channel_logo) {
+                    setImageRequestParams(true)
                     transformations(CircleCropTransformation())
-                    setCircularImageRequestParams()
                     size(min(80.px, 150), min(80.px, 150))
                 }
             }
@@ -125,9 +126,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
             if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
                 view.loadPlaceholder()
             } else {
-                view.load(channelInfo.landscape_ratio_1280_720, imageLoader) {
-                    size(min(360.px, 720), min(202.px, 405))
+                view.load(channelInfo.landscape_ratio_1280_720) {
                     initListener(view)
+                    setImageRequestParams()
+                    size(min(360.px, 720), min(202.px, 405))
                 }
             }
         }
@@ -138,12 +140,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference, @Coi
         if (!imageUrl.isNullOrBlank()) {
             view.loadPlaceholder()
         } else {
-            view.load(imageUrl, imageLoader) {
+            view.load(imageUrl) {
                 transformations(
                     CropCenterEndTransformation(4.1f)
                 )
-                size(min(360.px, 720), min(80.px, 150))
                 initListener(view)
+                setImageRequestParams()
+                size(min(360.px, 720), min(80.px, 150))
             }
         }
     }

@@ -109,7 +109,6 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            channelViewModel(0, isStingray)
             with(channelViewModel(0, isStingray)){
                 collectLatest { tvList ->
                     val res = tvList.filter { it.channelInfo?.isExpired == false }.groupBy { it.categoryName }.map {

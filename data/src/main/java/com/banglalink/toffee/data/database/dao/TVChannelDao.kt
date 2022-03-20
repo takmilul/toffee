@@ -34,6 +34,12 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE categoryName=\"Recent\"")
     abstract suspend fun getRecentItems(): List<TVChannelItem>
 
+    @Query("SELECT * FROM TVChannelItem WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray")
+    abstract suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem?
+    
+    @Query("UPDATE TVChannelItem SET payload = :payload, viewCount = :viewCount WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray == :isStingray")
+    abstract suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String)
+
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\"")
     abstract suspend fun getStingrayRecentItems(): List<TVChannelItem>
 
@@ -53,7 +59,7 @@ abstract class TVChannelDao {
 
     @Transaction
     open suspend fun insertRecentItem(item: TVChannelItem) {
-        val recItem = getRecentItems().find { it.channelId == item.channelId }
+        val recItem = getRecentItems().find { (it.channelId == item.channelId) and (it.isStingray == item.isStingray) }
         recItem?.let {
             recItem.updateTime = System.currentTimeMillis()
             update(recItem)

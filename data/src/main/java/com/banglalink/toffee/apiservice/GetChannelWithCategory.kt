@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -11,10 +12,13 @@ import com.google.gson.Gson
 import javax.inject.Inject
 
 class GetChannelWithCategory @Inject constructor(
-    private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
+    private val preference: SessionPreference,
     private val tvChannelRepo: TVChannelRepository
 ) {
+    val gson = Gson()
+    
     suspend operator fun invoke(subcategoryId: Int) {
         val response = tryIO2 {
             toffeeApi.getChannels(
@@ -35,15 +39,16 @@ class GetChannelWithCategory @Inject constructor(
                 } catch (e: Exception) {
                     true
                 }
-            }?.forEach { channelInfo->
+            }?.forEach {
+                localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
                 dbList.add(TVChannelItem(
-                    channelInfo.id.toLong(),
-                    channelInfo.type ?: "LIVE",
+                    it.id.toLong(),
+                    it.type ?: "LIVE",
                     index + 1,
                     channelCategory.categoryName,
-                    Gson().toJson(channelInfo),
-                    channelInfo.view_count?.toLong() ?: 0L,
-                    channelInfo.isStingray
+                    gson.toJson(it),
+                    it.view_count?.toLong() ?: 0L,
+                    it.isStingray
                 ).apply {
                     updateTime = upTime
                 })

@@ -298,14 +298,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
         }
     }
-
-//    private fun setupRotationObserver(){
-//        context.contentResolver.registerContentObserver(
-//            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
-//            true,
-//            rotationObserver
-//        )
-//    }
+    
+    fun isControllerVisible(): Boolean {
+        return isControllerFullyVisible
+    }
     
     override fun showController() {
         if (!isControllerFullyVisible && !isMinimize) {

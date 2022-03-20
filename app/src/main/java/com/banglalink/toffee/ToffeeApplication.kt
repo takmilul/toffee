@@ -2,16 +2,20 @@ package com.banglalink.toffee
 
 import android.app.Application
 import androidx.databinding.DataBindingUtil
-import coil.Coil
 import coil.ImageLoader
-import com.banglalink.toffee.analytics.HeartBeatManager
+import coil.ImageLoaderFactory
+import coil.imageLoader
+import coil.request.CachePolicy.DISABLED
+import coil.request.CachePolicy.ENABLED
+import coil.request.ImageRequest
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.di.CoilImageLoader
+import com.banglalink.toffee.di.CoilCache
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -31,18 +35,20 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Provider
 
 @HiltAndroidApp
-class ToffeeApplication : Application() {
+class ToffeeApplication : Application(), ImageLoaderFactory {
     
     @Inject lateinit var cacheManager: CacheManager
+    @Inject @CoilCache lateinit var coilCache: Cache
     @Inject lateinit var mUploadObserver: UploadObserver
-    @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var sessionPreference: SessionPreference
-    @Inject @CoilImageLoader lateinit var imageLoader: ImageLoader
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
@@ -65,7 +71,6 @@ class ToffeeApplication : Application() {
         SessionPreference.init(this)
         CommonPreference.init(this)
         PlayerPreference.init(this)
-        Coil.setImageLoader(imageLoader)
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
         } catch (e: Exception) {
@@ -140,9 +145,35 @@ class ToffeeApplication : Application() {
         }
     }
     
+    override fun newImageLoader(): ImageLoader {
+        val imageRequest = ImageRequest.Builder(this).apply {
+            dispatcher(IO)
+            crossfade(false)
+            diskCachePolicy(ENABLED)
+            networkCachePolicy(ENABLED)
+            memoryCachePolicy(DISABLED)
+            allowHardware(false)
+        }.build()
+        
+        return ImageLoader.Builder(this).apply {
+//            availableMemoryPercentage(0.2)
+//            bitmapPoolPercentage(0.4)
+            
+            okHttpClient {
+                OkHttpClient
+                    .Builder()
+                    .cache(coilCache)
+                    .addInterceptor(coilInterceptor)
+                    .build()
+            }
+        }.build().apply {
+            enqueue(imageRequest)
+        }
+    }
+    
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        with(imageLoader) {
+        with(this.imageLoader) {
             bitmapPool.clear()
             memoryCache.clear()
         }

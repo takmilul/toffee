@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.StingrayContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -13,10 +14,13 @@ import javax.inject.Inject
 
 class GetStingrayContentService @Inject constructor(
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
     private val preference: SessionPreference,
     private val tvChannelRepo: TVChannelRepository
 ): BaseApiService<ChannelInfo> {
 
+    val gson = Gson()
+    
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getStingrayContents(
@@ -43,13 +47,14 @@ class GetStingrayContentService @Inject constructor(
                 true
             }
         }?.forEach {
+            localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
             dbList.add(
                 TVChannelItem(
                     it.id.toLong(),
                     it.type ?: "Stingray",
                     1,
                     "Music Playlist",
-                    Gson().toJson(it),
+                    gson.toJson(it),
                     it.view_count?.toLong() ?: 0L,
                     it.isStingray
                 ).apply {

@@ -218,11 +218,16 @@ fun ImageRequest.Builder.initListener(view: ImageView, maintainRatio: Boolean = 
     })
 }
 
-
-fun ImageRequest.Builder.setCircularImageRequestParams() {
-    error(R.drawable.ic_profile)
-    fallback(R.drawable.ic_profile)
-    placeholder(R.drawable.ic_profile)
+fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
+    if (isCircular) {
+        error(R.drawable.ic_profile)
+        fallback(R.drawable.ic_profile)
+        placeholder(R.drawable.ic_profile)
+    } else {
+        error(R.drawable.placeholder)
+        fallback(R.drawable.placeholder)
+        placeholder(R.drawable.placeholder)
+    }
 }
 
 //@SuppressLint("ClickableViewAccessibility")
