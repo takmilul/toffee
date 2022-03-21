@@ -188,7 +188,7 @@ dependencies {
 //    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     
-//	implementation 'de.hdodenhof:circleimageview:3.1.0'
+	implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
     implementation 'com.google.android.play:core:1.10.3'
