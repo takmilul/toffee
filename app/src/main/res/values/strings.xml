@@ -437,7 +437,7 @@
     <string name="autoplay_text">Autoplay</string>
     <string name="category_icon_text">Category Icon</string>
     <string name="new_relic_app_token">AA075689888616e0b8a354735a008b9afd1731183d-NRMA</string>
-    <string name="creators_playlist">Creators Playlist</string>
+    <string name="creators_playlist">Creator\'s Playlist</string>
     <string name="videos">Videos</string>
     <string name="alert_redeem_secondary_title">This may have happened due to</string>
     <string name="alert_redeem_invalid_reson1">The code being used after 24 hours of \nfirst sign-in</string>

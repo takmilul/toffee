@@ -345,7 +345,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                         requireActivity().handleFavorite(channelInfo, favoriteDao, onAdded = {playlistAdapter.refresh()}, onRemoved = {playlistAdapter.refresh()})
                     }
                     R.id.menu_add_to_playlist->{
-                        requireActivity().handleAddToPlaylist(channelInfo)
+                        requireActivity().handleAddToPlaylist(channelInfo, if (mPref.customerId == channelInfo.channel_owner_id) 0 else 1)
                     }
                     R.id.menu_report -> {
                         requireActivity().handleReport(channelInfo)

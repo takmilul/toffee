@@ -1,6 +1,8 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.data.database.LocalSync.Companion.SYNC_FLAG_TV_RECENT
+import com.banglalink.toffee.data.database.LocalSync.Companion.SYNC_FLAG_USER_ACTIVITY
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -40,7 +42,8 @@ class GetChannelWithCategory @Inject constructor(
                     true
                 }
             }?.forEach {
-                localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
+                localSync.syncData(it, SYNC_FLAG_TV_RECENT)
+                localSync.syncData(it, SYNC_FLAG_USER_ACTIVITY)
                 dbList.add(TVChannelItem(
                     it.id.toLong(),
                     it.type ?: "LIVE",

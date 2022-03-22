@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -11,8 +12,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 class GetContents @AssistedInject constructor(
-    private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
+    private val preference: SessionPreference,
     @Assisted private val requestParams: ChannelRequestParams,
 ) : BaseApiService<ChannelInfo> {
 
@@ -43,6 +45,7 @@ class GetContents @AssistedInject constructor(
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
                 it.subCategory = requestParams.subcategory
+                localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
                 it
             }
         }

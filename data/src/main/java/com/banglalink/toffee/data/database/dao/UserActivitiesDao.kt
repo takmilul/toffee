@@ -29,6 +29,12 @@ abstract class UserActivitiesDao {
     @Query("DELETE FROM UserActivities WHERE customerId=:customerId AND id NOT IN " +
             "(SELECT id from UserActivities WHERE customerId=:customerId ORDER BY updateTime DESC LIMIT "+ USER_ACTIVITIES_LIMIT +")")
     abstract suspend fun deleteExtraRows(customerId: Int)
+    
+    @Query("SELECT * FROM UserActivities WHERE channelId = :channelId AND type = :type")
+    abstract suspend fun getUserActivityById(channelId: Long, type: String): UserActivities?
+    
+    @Query("UPDATE UserActivities SET payload = :payload WHERE channelId = :channelId AND type == :type")
+    abstract suspend fun updateUserActivityPayload(channelId: Long, type: String, payload: String)
 
     @Transaction
     open suspend fun insert(item: UserActivities): Long {

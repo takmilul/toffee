@@ -22,6 +22,7 @@ class LocalSync @Inject constructor(
     private val preference: SessionPreference,
     private val tvChannelRepo: TVChannelRepository,
     private val viewCountRepo: ViewCountRepository,
+    private val userActivityRepo: UserActivitiesRepository,
     private val shareCountRepository: ShareCountRepository,
     private val reactionStatusRepo: ReactionStatusRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
@@ -82,6 +83,18 @@ class LocalSync @Inject constructor(
                         channelInfo.id.toLong(),
                         isStingray,
                         channelInfo.view_count?.toLong() ?: 0L,
+                        gson.toJson(channelInfo)
+                    )
+                }
+            }
+        }
+        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
+            userActivityRepo.getUserActivityById(channelInfo.id.toLong(), channelInfo.type ?: "VOD")?.let {
+                val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                if (!dbUserActivityPayload.equals(channelInfo)) {
+                    userActivityRepo.updateUserActivityPayload(
+                        channelInfo.id.toLong(),
+                        channelInfo.type ?: "VOD",
                         gson.toJson(channelInfo)
                     )
                 }
@@ -175,5 +188,6 @@ class LocalSync @Inject constructor(
         const val SYNC_FLAG_CHANNEL_SUB = 16
         const val SYNC_FLAG_FAVORITE = 32
         const val SYNC_FLAG_TV_RECENT = 64
+        const val SYNC_FLAG_USER_ACTIVITY = 128
     }
 }

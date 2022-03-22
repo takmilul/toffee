@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.PackageChannelListRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -8,7 +9,11 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
-class GetPackageChannels @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
+class GetPackageChannels @Inject constructor(
+    private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
+    private val preference: SessionPreference,
+) {
 
     suspend fun execute(packageId:Int):List<ChannelInfo>{
         val response = tryIO2 {
@@ -20,6 +25,7 @@ class GetPackageChannels @Inject constructor(private val preference: SessionPref
             } catch (e: Exception) {
                 false
             }
+            localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
             it
         }
 

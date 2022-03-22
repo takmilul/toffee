@@ -106,10 +106,9 @@ fun Activity.handleReport(item: ChannelInfo) {
     }
 }
 
-fun Activity.handleAddToPlaylist(item: ChannelInfo) {
+fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
     checkVerification {
         if (this is HomeActivity) {
-            val isUserPlaylist = if (mPref.customerId == item.channel_owner_id) 0 else 1
             val args = Bundle().also {
                 it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
                 it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)

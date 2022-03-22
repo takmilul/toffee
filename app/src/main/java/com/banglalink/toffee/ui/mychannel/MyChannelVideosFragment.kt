@@ -174,13 +174,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         ))
                     }
                     R.id.menu_add_to_playlist -> {
-                        val isUserPlaylist = if (isOwner) 0 else 1
-                        val args = Bundle().also {
-                            it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
-                            it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
-                            it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
-                        }
-                        findNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
+                        requireActivity().handleAddToPlaylist(item, 0)
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)

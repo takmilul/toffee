@@ -48,6 +48,7 @@ class GetStingrayContentService @Inject constructor(
             }
         }?.forEach {
             localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
+            localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
             dbList.add(
                 TVChannelItem(
                     it.id.toLong(),
