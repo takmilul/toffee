@@ -79,6 +79,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -729,17 +730,16 @@ abstract class PlayerPageActivity :
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
         ConvivaHelper.updateStreamUrl(contentUrl)
-        playerEventHelper.setEventData(channelInfo, isDrmActive, toffeeHeader, contentUrl, getPingData(mediaItem))
-        playerEventHelper.setPlayerEvent("Playing started")
+        runCatching {
+            async{
+                playerEventHelper.setEventData(channelInfo, isDrmActive, toffeeHeader, contentUrl, getPingData(mediaItem))
+                playerEventHelper.setPlayerEvent("Playing started")
+            }
+        }
         
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        val vastTagList = if (isDrmActive) {
-            homeViewModel.linearVastTagsMutableLiveData.value
-        }
-        else {
-            homeViewModel.vodVastTagsMutableLiveData.value
-        }
-        vastTagList
+        
+        getVastTagList(channelInfo)
             ?.randomOrNull()
             ?.let { tag ->
                 val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
@@ -853,6 +853,21 @@ abstract class PlayerPageActivity :
                 it.prepare()
             }
 //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
+        }
+    }
+    
+    private fun getVastTagList(channelInfo: ChannelInfo) = when {
+        channelInfo.isStingray -> {
+            homeViewModel.stingrayVastTagsMutableLiveData.value
+        }
+        channelInfo.isLive -> {
+            homeViewModel.liveVastTagsMutableLiveData.value
+        }
+        channelInfo.isVOD -> {
+            homeViewModel.vodVastTagsMutableLiveData.value
+        }
+        else -> {
+            null
         }
     }
     

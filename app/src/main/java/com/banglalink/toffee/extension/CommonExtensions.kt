@@ -106,10 +106,9 @@ fun Activity.handleReport(item: ChannelInfo) {
     }
 }
 
-fun Activity.handleAddToPlaylist(item: ChannelInfo) {
+fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
     checkVerification {
         if (this is HomeActivity) {
-            val isUserPlaylist = if (mPref.customerId == item.channel_owner_id) 0 else 1
             val args = Bundle().also {
                 it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
                 it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
@@ -215,21 +214,26 @@ fun ImageView.loadPlaceholder(isCircular: Boolean = false) {
     }
 }
 
-fun ImageRequest.Builder.initListener(view: ImageView) {
+fun ImageRequest.Builder.initListener(view: ImageView, maintainRatio: Boolean = true) {
     listener(onStart = {
         view.scaleType = CENTER_CROP
     }, onError = { _, _ ->
         view.scaleType = CENTER_CROP
     }, onSuccess = { _, _ ->
-        view.scaleType = FIT_CENTER
+        view.scaleType = if (maintainRatio) FIT_CENTER else CENTER_CROP
     })
 }
 
-
-fun ImageRequest.Builder.setCircularImageRequestParams() {
-    error(R.drawable.ic_profile)
-    fallback(R.drawable.ic_profile)
-    placeholder(R.drawable.ic_profile)
+fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
+    if (isCircular) {
+        error(R.drawable.ic_profile)
+        fallback(R.drawable.ic_profile)
+        placeholder(R.drawable.ic_profile)
+    } else {
+        error(R.drawable.placeholder)
+        fallback(R.drawable.placeholder)
+        placeholder(R.drawable.placeholder)
+    }
 }
 
 //@SuppressLint("ClickableViewAccessibility")

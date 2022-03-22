@@ -1,14 +1,14 @@
 buildscript {
     ext {
-        appVersionCode = 72
+        appVersionCode = 73
         appVersionName = '2.3.1'
         
-        exoVersion = '2.17.0'
+        exoVersion = '2.17.1'
         hiltVersion = '1.0.0'
         gsonVersion = '2.8.8'
         roomDbVersion = '2.4.2'
         okHttpVersion = '4.9.0'
-        pagingVersion = '3.1.0'
+        pagingVersion = '3.1.1'
         kotlinVersion = '1.6.10'
         composeVersion = '1.0.5'
         retrofitVersion = '2.9.0'
@@ -27,7 +27,7 @@ buildscript {
         pahoAndroidServiceVersion = '1.1.1'
         firebaseMessagingVersion = '23.0.0'
         firebaseAnalyticsVersion = '20.1.0'
-        firebaseCrashlyticsVersion = '18.2.8'
+        firebaseCrashlyticsVersion = '18.2.9'
         googleHttpClientGsonVersion = '1.40.1'
     }
     repositories {

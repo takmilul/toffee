@@ -25,7 +25,7 @@ abstract class HomeBaseFragment : BaseFragment(), OptionCallBack {
         MyPopupWindow(requireContext(), anchor).apply { 
             inflate(R.menu.menu_catchup_item)
             menu.findItem(R.id.menu_fav).isVisible = channelInfo.isApproved == 1
-            menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem() && channelInfo.isApproved == 1
+            menu.findItem(R.id.menu_share).isVisible = showShareMenuItem() && channelInfo.isApproved == 1
             menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
             
             if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
@@ -54,7 +54,7 @@ abstract class HomeBaseFragment : BaseFragment(), OptionCallBack {
         }.show()
     }
     
-    open fun hideShareMenuItem(hide: Boolean = false): Boolean {
+    open fun showShareMenuItem(hide: Boolean = false): Boolean {
         return hide
     }
     

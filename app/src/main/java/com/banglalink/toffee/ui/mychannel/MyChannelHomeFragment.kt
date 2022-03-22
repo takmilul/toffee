@@ -196,6 +196,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
+        createPlaylistViewModel.playlistName = ""
+        playlistBinding.playlistNameEditText.text.clear()
         playlistBinding.viewModel = createPlaylistViewModel
         playlistBinding.createButton.setOnClickListener {
             if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {

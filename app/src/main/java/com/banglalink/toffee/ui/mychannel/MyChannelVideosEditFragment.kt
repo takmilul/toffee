@@ -13,7 +13,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import coil.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
@@ -23,11 +22,7 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
-import com.banglalink.toffee.di.CoilImageLoader
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -40,7 +35,6 @@ import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
@@ -49,7 +43,6 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private var descWatcher: TextWatcher? = null
     private var titleTextWatcher: TextWatcher? = null
     private lateinit var progressDialog: VelBoxProgressDialog
-    @Inject @CoilImageLoader lateinit var imageLoader: ImageLoader
     private var _binding: FragmentMyChannelVideosEditBinding ? = null
     private val binding get() = _binding!!
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
@@ -245,7 +238,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.observe(viewLifecycleOwner) {
             it?.let {
-                binding.bannerImageView.load(it, imageLoader)
+                binding.bannerImageView.load(it) {
+                    setImageRequestParams()
+                }
             }
             viewModel.saveThumbnail(it)
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.banglalink.toffee.ui.widget.ToffeeDrawerLayout 
+<com.banglalink.toffee.ui.widget.ToffeeDrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
@@ -7,33 +7,33 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+            
             <include
                 android:id="@+id/tbar"
                 layout="@layout/layout_appbar" />
-
+            
             <FrameLayout
                 android:id="@+id/main_ui_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/tbar"
                 android:layout_marginBottom="?attr/actionBarSize">
-
+                
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
+                    
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/home_nav_host"
                         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -43,7 +43,7 @@
                         android:background="@color/screen_bg"
                         app:defaultNavHost="true"
                         app:navGraph="@navigation/home_navigation_graph" />
-
+                    
                     <include
                         android:id="@+id/home_mini_progress_container"
                         layout="@layout/home_mini_upload_progress"
@@ -53,7 +53,7 @@
                         android:visibility="gone" />
                 </RelativeLayout>
             </FrameLayout>
-
+            
             <com.banglalink.toffee.ui.widget.DraggerLayout
                 android:id="@+id/draggable_view"
                 android:layout_width="match_parent"
@@ -61,27 +61,28 @@
                 android:translationZ="9dp"
                 dragger_layout:bottom_view_id="@+id/details_viewer"
                 dragger_layout:top_view_id="@+id/player_view">
-
+                
                 <FrameLayout
                     android:id="@+id/details_viewer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/player_view"
                     android:layout_marginBottom="?attr/actionBarSize"
-                    android:clickable="true" />
-
+                    android:clickable="true"
+                    android:focusable="true" />
+                
                 <com.banglalink.toffee.ui.player.ExoMediaController4
                     android:id="@+id/player_view"
                     android:layout_width="match_parent"
-                    app:surface_type="surface_view"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/black"
                     app:show_buffering="always"
                     app:shutter_background_color="#000000"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/black" />
-
+                    app:surface_type="surface_view" />
+            
             </com.banglalink.toffee.ui.widget.DraggerLayout>
         </RelativeLayout>
-
+        
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_app_bar"
             android:layout_width="match_parent"
@@ -96,7 +97,7 @@
             app:fabCradleVerticalOffset="0dp"
             app:paddingLeftSystemWindowInsets="false"
             app:paddingRightSystemWindowInsets="false">
-
+            
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/tab_navigator"
                 android:layout_width="match_parent"
@@ -106,10 +107,10 @@
                 app:itemTextColor="@color/menuColorSecondaryDark"
                 app:labelVisibilityMode="labeled"
                 app:menu="@menu/menu_bottom_nav">
-
+            
             </com.google.android.material.bottomnavigation.BottomNavigationView>
         </com.google.android.material.bottomappbar.BottomAppBar>
-
+        
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/upload_button"
             android:layout_width="wrap_content"
@@ -124,13 +125,13 @@
             app:elevation="0dp"
             app:fabCustomSize="32dp"
             app:tint="@color/colorAccent2" />
-
+        
         <include
             android:id="@+id/home_bottom_sheet"
             layout="@layout/player_bottom_sheet_layout" />
-
+    
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+    
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/sideNavigation"
         style="@style/NavigationMenuStyle"
@@ -138,10 +139,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="@color/window_background"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:headerLayout="@layout/nav_header_main"
         app:insetForeground="@null"
         app:itemTextAppearance="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:menu="@menu/menu_drawer" />
 
 </com.banglalink.toffee.ui.widget.ToffeeDrawerLayout>

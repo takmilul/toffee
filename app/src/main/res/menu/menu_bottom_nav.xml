@@ -12,6 +12,6 @@
         android:id="@id/menu_explore" android:title="@string/tab_explore_label"
         android:icon="@drawable/ic_menu_explore" />
     <item
-        android:id="@id/myChannelHomeFragment" android:title="@string/tab_mychannel_label"
+        android:id="@id/menu_channel" android:title="@string/tab_mychannel_label"
         android:icon="@drawable/ic_menu_my_channel" />
 </menu>

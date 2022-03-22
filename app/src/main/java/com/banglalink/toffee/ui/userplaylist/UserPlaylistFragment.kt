@@ -104,6 +104,8 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
+        createPlaylistViewModel.playlistName = ""
+        playlistBinding.playlistNameEditText.text.clear()
         playlistBinding.viewModel = createPlaylistViewModel
         playlistBinding.createButton.safeClick({
             if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {

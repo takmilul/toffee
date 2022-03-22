@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.MostPopularContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -17,8 +18,9 @@ data class LandingUserChannelsRequestParam(
 )
 
 class GetMostPopularContents @AssistedInject constructor(
-    private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
+    private val preference: SessionPreference,
     @Assisted private val requestParams: LandingUserChannelsRequestParam,
 ) : BaseApiService<ChannelInfo> {
 
@@ -46,6 +48,7 @@ class GetMostPopularContents @AssistedInject constructor(
                 } catch (e: Exception) {
                     false
                 }
+                localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
                 it
             }
         } else emptyList()

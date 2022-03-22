@@ -14,7 +14,15 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
     override suspend fun insertRecentItems(item: TVChannelItem) {
         dao.insertRecentItem(item)
     }
-
+    
+    override suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem? {
+        return dao.getRecentItemById(channelId, isStingray)
+    }
+    
+    override suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String) {
+        dao.updateRecentItemPayload(channelId, isStingray, viewCount, payload)
+    }
+    
     override fun getAllItems(): Flow<List<TVChannelItem>> {
         return dao.getAllItems()
     }

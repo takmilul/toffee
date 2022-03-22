@@ -7,7 +7,9 @@ class VastTagBean(
     @SerializedName("numOfTags")
     val numOfTags: Int = 0,
     @SerializedName("linearTags")
-    val linearTags: List<VastTag>?,
+    val liveTags: List<VastTag>?,
     @SerializedName("vodTags")
-    val vodTags: List<VastTag>?
+    val vodTags: List<VastTag>?,
+    @SerializedName("stingrayTags")
+    val stingrayTags: List<VastTag>?
 )

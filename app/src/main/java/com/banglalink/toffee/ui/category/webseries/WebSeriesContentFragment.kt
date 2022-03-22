@@ -169,7 +169,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
-    override fun hideShareMenuItem(hide: Boolean): Boolean {
-        return true
+    override fun showShareMenuItem(hide: Boolean): Boolean {
+        return false
     }
 }

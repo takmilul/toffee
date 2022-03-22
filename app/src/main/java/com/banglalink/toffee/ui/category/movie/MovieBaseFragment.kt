@@ -61,5 +61,5 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
         }
     }
 
-    override fun hideShareMenuItem(hide: Boolean) = true
+    override fun showShareMenuItem(hide: Boolean) = true
 }

@@ -248,11 +248,11 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     private fun openMenu(view: View, item: ChannelInfo) {
-        hideShareMenuItem(true)
+        showShareMenuItem(true)
         super.onOptionClicked(view, item)
     }
 
-    override fun hideShareMenuItem(hide: Boolean): Boolean {
+    override fun showShareMenuItem(hide: Boolean): Boolean {
         return hide
     }
     

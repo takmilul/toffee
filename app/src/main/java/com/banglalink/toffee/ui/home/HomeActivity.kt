@@ -62,7 +62,7 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.databinding.ActivityMainMenuBinding
+import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
@@ -142,10 +142,10 @@ class HomeActivity :
 {
     private val gson = Gson()
     private var channelOwnerId: Int = 0
+    lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
     @Inject lateinit var bindingUtil: BindingUtil
-    lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var navController: NavController
@@ -204,7 +204,7 @@ class HomeActivity :
             )
         }
         cPref.isAlreadyForceLoggedOut = false
-        binding = ActivityMainMenuBinding.inflate(layoutInflater)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -315,7 +315,7 @@ class HomeActivity :
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
-        if (mPref.isVerifiedUser) {
+        if (mPref.isVerifiedUser && mPref.mqttIsActive) {
             initMqtt()
         }
         observe(mPref.loginDialogLiveData) {
@@ -418,19 +418,17 @@ class HomeActivity :
                             mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
                             
-                            if (mPref.mqttIsActive) {
-                                appScope.launch {
-                                    val mqttDir = withContext(Dispatchers.IO + Job()) {
-                                        val mqttTag = "MqttConnection"
-                                        var tempDir = getExternalFilesDir(mqttTag)
-                                        if (tempDir == null) {
-                                            tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
-                                        }
-                                        tempDir
+                            appScope.launch {
+                                val mqttDir = withContext(Dispatchers.IO + Job()) {
+                                    val mqttTag = "MqttConnection"
+                                    var tempDir = getExternalFilesDir(mqttTag)
+                                    if (tempDir == null) {
+                                        tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
                                     }
-                                    if (mqttDir != null) {
-                                        mqttService.initialize()
-                                    }
+                                    tempDir
+                                }
+                                if (mqttDir != null) {
+                                    mqttService.initialize()
                                 }
                             }
                         }
@@ -450,14 +448,12 @@ class HomeActivity :
             }
             viewModel.getMqttCredential()
         } else {
-            if (mPref.mqttIsActive) {
-                mqttService.initialize()
-            }
+            mqttService.initialize()
         }
     }
     
     private val appUpdateListener = InstallStateUpdatedListener { state ->
-        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+        if (state.installStatus() == InstallStatus.INSTALLED) {
             showToast("Toffee updated successfully")
         }
     }
@@ -660,7 +656,7 @@ class HomeActivity :
                 R.id.menu_feed,
                 R.id.menu_tv,
                 R.id.menu_activities,
-                R.id.myChannelHomeFragment,
+                R.id.menu_channel,
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
                 R.id.menu_settings,
@@ -761,7 +757,9 @@ class HomeActivity :
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                if (binding.playerView.isControllerVisible()) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
             } else {
                 binding.homeBottomSheet.bottomSheet.visibility = View.GONE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -794,7 +792,7 @@ class HomeActivity :
         val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
-        setFullScreen(state)// || binding.playerView.channelType != "LIVE")
+        setFullScreen(state)
         toggleNavigation(state)
     }
     
@@ -1885,7 +1883,7 @@ class HomeActivity :
     
     private fun observeMyChannelNavigation() {
         observe(viewModel.myChannelNavLiveData) {
-            if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
+            if (navController.currentDestination?.id != R.id.menu_channel || channelOwnerId != it.channelOwnerId) {
                 navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}"))
             } else {
                 minimizePlayer()
