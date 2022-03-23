@@ -1212,18 +1212,18 @@ abstract class PlayerPageActivity :
             }
         }
         
-        override fun onPlayerError(eventTime: EventTime, error: PlaybackException) {
-            super.onPlayerError(eventTime, error)
-            lifecycleScope.launch {
-                playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
-                playerEventHelper.setPlayerEvent("player error", error.message, error.cause.toString(), error.errorCode)
-            }
-        }
+//        override fun onPlayerError(eventTime: EventTime, error: PlaybackException) {
+//            super.onPlayerError(eventTime, error)
+//            lifecycleScope.launch {
+//                playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
+//                playerEventHelper.setPlayerEvent("player error", error.message, error.cause.toString(), error.errorCode)
+//            }
+//        }
         
-        override fun onPlayerErrorChanged(eventTime: EventTime, error: PlaybackException?) {
-            super.onPlayerErrorChanged(eventTime, error)
-            playerEventHelper.setPlayerEvent("player error changed", error?.message, error?.cause?.toString(), error?.errorCode)
-        }
+//        override fun onPlayerErrorChanged(eventTime: EventTime, error: PlaybackException?) {
+//            super.onPlayerErrorChanged(eventTime, error)
+//            playerEventHelper.setPlayerEvent("player error changed", error?.message, error?.cause?.toString(), error?.errorCode)
+//        }
         
         override fun onLoadCanceled(eventTime: EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
             super.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData)
@@ -1332,12 +1332,12 @@ abstract class PlayerPageActivity :
             playerEventHelper.setPlayerEvent("volume changed to: $volume")
         }
         
-        override fun onDeviceVolumeChanged(eventTime: EventTime, volume: Int, muted: Boolean) {
-            super.onDeviceVolumeChanged(eventTime, volume, muted)
-            if (muted) {
-                playerEventHelper.setPlayerEvent("device volume muted")
-            }
-        }
+//        override fun onDeviceVolumeChanged(eventTime: EventTime, volume: Int, muted: Boolean) {
+//            super.onDeviceVolumeChanged(eventTime, volume, muted)
+//            if (muted) {
+//                playerEventHelper.setPlayerEvent("device volume muted")
+//            }
+//        }
         
         override fun onDroppedVideoFrames(eventTime: EventTime, droppedFrames: Int, elapsedMs: Long) {
             super.onDroppedVideoFrames(eventTime, droppedFrames, elapsedMs)

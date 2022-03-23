@@ -166,7 +166,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onSeasonChanged(newSeason: Int) {
                 if(newSeason - 1 != mViewModel.selectedSeason.value) {
                     mViewModel.selectedSeason.value = newSeason - 1
-                    val seasonNumber = currentItem?.activeSeasonList?.get(newSeason - 1) ?: 0
+                    val seasonNumber = currentItem?.activeSeasonList?.getOrElse(newSeason - 1){0} ?: 0
                     observeList(seasonNumber)
                 }
             }

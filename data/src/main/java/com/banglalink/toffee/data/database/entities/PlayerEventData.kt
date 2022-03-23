@@ -51,7 +51,7 @@ data class PlayerEventData (
     var contentProviderName: String? = null,
     
     @SerializedName("contentCategoryId")
-    var contentCategoryId: Int = 0,
+    var contentCategoryId: Int? = 0,
     
     @SerializedName("contentCategoryName")
     var contentCategoryName: String? = null,

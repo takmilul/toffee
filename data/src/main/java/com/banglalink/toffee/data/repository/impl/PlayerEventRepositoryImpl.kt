@@ -26,10 +26,11 @@ class PlayerEventRepositoryImpl(
     
     override suspend fun sentTopEventToPubsubAndRemove() {
         db.withTransaction {
-            val limit = dao.getTopEventData().onEach {
+            dao.getTopEventData()?.onEach {
                 PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
-            }.size
-            dao.deleteTopEventData(limit)
+            }?.size?.also {
+                dao.deleteTopEventData(it)
+            }
         }
     }
 }

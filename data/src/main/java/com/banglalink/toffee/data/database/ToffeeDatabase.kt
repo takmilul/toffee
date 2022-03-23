@@ -26,7 +26,7 @@ import com.banglalink.toffee.data.database.entities.*
         SessionPrefData::class,
         PlayerEventData::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
