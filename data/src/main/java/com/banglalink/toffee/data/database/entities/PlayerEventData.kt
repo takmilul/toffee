@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName
 @Entity
 data class PlayerEventData (
     
+    @SerializedName("dateTime")
+    var dateTime: String, // = System.currentTimeMillis().toFormattedBigDate()
+    
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     val id: Long = 0,

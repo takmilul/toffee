@@ -733,7 +733,6 @@ abstract class PlayerPageActivity :
         runCatching {
             async{
                 playerEventHelper.setEventData(channelInfo, isDrmActive, toffeeHeader, contentUrl, getPingData(mediaItem))
-                playerEventHelper.setPlayerEvent("Playing started")
             }
         }
         
@@ -1235,12 +1234,12 @@ abstract class PlayerPageActivity :
 //            Log.i(PLAYER_EVENT, "loading started")
         }
         
-        override fun onIsLoadingChanged(eventTime: EventTime, isLoading: Boolean) {
-            super.onIsLoadingChanged(eventTime, isLoading)
-            if (isLoading) {
-                playerEventHelper.setPlayerEvent("loading...")
-            }
-        }
+//        override fun onIsLoadingChanged(eventTime: EventTime, isLoading: Boolean) {
+//            super.onIsLoadingChanged(eventTime, isLoading)
+//            if (isLoading) {
+//                playerEventHelper.setPlayerEvent("loading...")
+//            }
+//        }
         
         override fun onLoadError(eventTime: EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData, error: IOException, wasCanceled: Boolean) {
             super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
