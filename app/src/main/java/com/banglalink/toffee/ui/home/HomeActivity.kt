@@ -1180,10 +1180,10 @@ class HomeActivity :
     }
     
     private fun playInWebView(it: ChannelInfo) {
-        if (!connectionWatcher.isOnline) {
-            showToast(getString(R.string.show_offline_message))
-            return
-        }
+//        if (!connectionWatcher.isOnline) {
+//            showToast(getString(R.string.show_offline_message))
+//            return
+//        }
         it.getHlsLink()?.let { url ->
             heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
             viewModel.sendViewContentEvent(it)

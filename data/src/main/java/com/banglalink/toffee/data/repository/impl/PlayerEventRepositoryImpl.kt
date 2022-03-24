@@ -29,7 +29,9 @@ class PlayerEventRepositoryImpl(
             dao.getTopEventData()?.onEach {
                 PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
             }?.size?.also {
-                dao.deleteTopEventData(it)
+                if (it > 0) {
+                    dao.deleteTopEventData(it)
+                }
             }
         }
     }

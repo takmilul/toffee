@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        appVersionCode = 73
-        appVersionName = '2.3.1'
+        appVersionCode = 74
+        appVersionName = '2.3.2'
         
         exoVersion = '2.16.1'
         hiltVersion = '1.0.0'

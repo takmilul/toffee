@@ -1,5 +1,6 @@
 package com.banglalink.toffee.util
 
+import android.os.Build
 import com.banglalink.toffee.data.database.entities.PlayerEventData
 import com.banglalink.toffee.data.repository.PlayerEventRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -20,15 +21,18 @@ class ToffeePlayerEventHelper @Inject constructor(
 ) {
     private var schedulerJob: Job? = null
     private val eventMutex = Mutex()
+    private val playerEventListMutex = Mutex()
     private var playerEventData: PlayerEventData? = null
     private var coroutineScope = CoroutineScope(IO)
+    private val playerEventList = arrayListOf<PlayerEventData>()
     
     fun startSession() {
         if (mPref.isPlayerMonitoringActive) {
             val sessionId = mPref.customerId.toString().plus("_").plus(System.nanoTime())
-            playerEventData = PlayerEventData().apply {
+            playerEventData = PlayerEventData(dateTime = System.currentTimeMillis().toFormattedBigDate()).apply {
                 this.sessionId = sessionId
             }
+            setPlayerEvent("Content clicked for Playing")
             startScheduler()
         }
     }
@@ -36,6 +40,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     private fun startScheduler(){
         schedulerJob = coroutineScope.launch(IO) {
             while (isActive) {
+                addPlayerEventToDb()
                 sendPlayerEventData()
             }
         }
@@ -67,7 +72,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     fun setPingData(pingData: PingData?) {
         playerEventData?.apply {
             pingData?.let {
-                isInternetAvailable = it.isOnline
+                isInternetAvailable = if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) it.isOnline else null
                 networkType = it.networkType
                 ispOrTelecomOperator = it.ispOrTelecom
                 remoteHost = it.host
@@ -93,7 +98,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     
     fun setAdData(ad: Ad?, eventName: String, errorMessage: String? = null) {
 //        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
-        addEventToDb(
+        addEventToList(
             playerEventData?.apply {
                 dateTime = System.currentTimeMillis().toFormattedBigDate()
                 adId = ad?.adId
@@ -112,6 +117,17 @@ class ToffeePlayerEventHelper @Inject constructor(
         )
     }
     
+    private fun addEventToList(playerEventData: PlayerEventData?) {
+        playerEventData?.let {
+            coroutineScope.launch {
+                playerEventListMutex.withLock {
+                    playerEventList.add(playerEventData)
+                    playerEventList.clear()
+                }
+            }
+        }
+    }
+    
     private fun addEventToDb(playerEventData: PlayerEventData?) {
         playerEventData?.let {
             coroutineScope.launch {
@@ -122,11 +138,26 @@ class ToffeePlayerEventHelper @Inject constructor(
         }
     }
     
+    private suspend fun addPlayerEventToDb(forceUpdate: Boolean = false) {
+        if (!forceUpdate) {
+            delay(10_000)
+        }
+        playerEventListMutex.withLock {
+            if (playerEventList.isNotEmpty()) {
+                playerEventRepository.insertAll(*playerEventList.toTypedArray())
+            }
+        }
+    }
+    
     private suspend fun sendPlayerEventData(forceUpdate: Boolean = false) {
         if (!forceUpdate) {
             delay(15_000)
         }
-        if (connectionWatcher.isOnline) {
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) {
+            if (connectionWatcher.isOnline) {
+                playerEventRepository.sentTopEventToPubsubAndRemove()
+            }
+        } else {
             playerEventRepository.sentTopEventToPubsubAndRemove()
         }
     }
@@ -138,6 +169,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     
     fun release() {
         coroutineScope.launch {
+            addPlayerEventToDb(true)
             sendPlayerEventData(true)
         }
         schedulerJob?.cancel()
