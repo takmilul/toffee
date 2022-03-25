@@ -48,11 +48,7 @@ class RecentChannelsFragment: BaseFragment() {
         isStingray = arguments?.getBoolean(IS_STINGRAY, false) ?: false
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRecentTvChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -69,8 +65,8 @@ class RecentChannelsFragment: BaseFragment() {
         val channelItemWidth = resources.getDimension(R.dimen.channel_width)
         val horizontalGap = (UtilsKt.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
 
-        val recentsMargin = resources.getDimension(R.dimen.recent_channels_margin)
-        val leftPadding = horizontalGap - recentsMargin + channelsPadding
+        val recentMargin = resources.getDimension(R.dimen.recent_channels_margin)
+        val leftPadding = horizontalGap - recentMargin + channelsPadding
 
         mAdapter = RecentChannelsAdapter(object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
@@ -94,7 +90,7 @@ class RecentChannelsFragment: BaseFragment() {
                 val newList = if(it.isNotEmpty()) {
                     if(showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)
                 } else it
-                binding.channelTv.visibility = if(newList.isEmpty()) View.GONE else View.VISIBLE
+                binding.channelTv.visibility = if(newList.isNullOrEmpty()) View.GONE else View.VISIBLE
                 mAdapter.setItems(newList)
             }
         }
