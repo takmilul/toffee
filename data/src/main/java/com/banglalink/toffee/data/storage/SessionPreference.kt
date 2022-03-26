@@ -615,6 +615,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, value) }
     
+    var showBuyInternetForAndroid: Boolean
+        get() = pref.getBoolean(PREF_SHOW_BUY_INTERNET_PACK, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOW_BUY_INTERNET_PACK, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -692,6 +696,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isConvivaActive = customerInfoLogin.isConvivaActive
         isNewRelicActive = customerInfoLogin.isNewRelicActive
         isPlayerMonitoringActive = customerInfoLogin.isPlayerMonitoringActive
+        showBuyInternetForAndroid = customerInfoLogin.showBuyInternetForAndroid
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -804,6 +809,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
         private const val PREF_IS_NEW_RELIC_ACTIVE = "pref_new_relic_active"
         private const val PREF_IS_PLAYER_MONITORING_ACTIVE = "pref_is_player_monitoring_active"
+        private const val PREF_SHOW_BUY_INTERNET_PACK = "pref_show_buy_internet_pack"
 
         private var instance: SessionPreference? = null
 

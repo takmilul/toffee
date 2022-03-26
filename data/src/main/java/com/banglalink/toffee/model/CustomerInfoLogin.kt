@@ -148,5 +148,7 @@ class CustomerInfoLogin(
     @SerializedName("isNewRelicActiveForAndroid")
     var isNewRelicActive:Boolean = false,
     @SerializedName("isNdMonitoringActiveAndroid")
-    var isPlayerMonitoringActive: Boolean = false
+    var isPlayerMonitoringActive: Boolean = false,
+    @SerializedName("showBuyInternetForAndroid")
+    var showBuyInternetForAndroid: Boolean = false
 ) : BodyResponse(), Parcelable
