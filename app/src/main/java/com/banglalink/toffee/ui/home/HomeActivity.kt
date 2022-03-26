@@ -1329,8 +1329,7 @@ class HomeActivity :
     }
     
     private fun initSideNav() {
-        val isBanglalinkNumber = mPref.isBanglalinkNumber
-        if (isBanglalinkNumber != "true") {
+        if (mPref.isBanglalinkNumber != "true" || !mPref.showBuyInternetForAndroid) {
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
