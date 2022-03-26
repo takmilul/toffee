@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -83,13 +84,13 @@ class RecentChannelsFragment : BaseFragment() {
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadRecentTvChannels(isStingray).map {
-                it.filter { it.channelInfo?.isExpired == false }
+                it?.filter { it.channelInfo?.isExpired == false }
             }.collectLatest {
-                val newList = if (it.isNotEmpty()) {
+                val newList = if (!it.isNullOrEmpty()) {
                     if (showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)
                 } else it
-                binding.channelTv.visibility = if (newList.isNullOrEmpty()) View.GONE else View.VISIBLE
-                mAdapter.setItems(newList)
+                binding.channelTv.isVisible = !newList.isNullOrEmpty()
+                newList?.let { mAdapter.setItems(it) }
             }
         }
     }
