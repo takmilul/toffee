@@ -1,9 +1,9 @@
 buildscript {
     ext {
-        appVersionCode = 74
+        appVersionCode = 75
         appVersionName = '2.3.2'
         
-        exoVersion = '2.16.1'
+        exoVersion = '2.17.1'
         hiltVersion = '1.0.0'
         gsonVersion = '2.8.8'
         roomDbVersion = '2.4.2'

@@ -657,7 +657,6 @@ abstract class PlayerPageActivity :
                 MediaItem
                     .DrmConfiguration
                     .Builder(C.WIDEVINE_UUID)
-                    .forceSessionsForAudioAndVideoTracks(true)
                     .setKeySetId(license)
                     .build()
             )

@@ -111,13 +111,13 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         viewLifecycleOwner.lifecycleScope.launch {
             with(channelViewModel(0, isStingray)){
                 collectLatest { tvList ->
-                    val res = tvList.filter { it.channelInfo?.isExpired == false }.groupBy { it.categoryName }.map {
+                    val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName }?.map {
                         val categoryName = it.key
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }
                     binding.progressBar.hide()
-                    channelAdapter.setItems(res)
+                    res?.let { channelAdapter.setItems(it) }
                 }
                 catch {
                     binding.progressBar.hide()
