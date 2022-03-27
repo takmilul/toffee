@@ -86,6 +86,7 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
+import com.banglalink.toffee.ui.splash.SplashViewModel
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
@@ -164,6 +165,7 @@ class HomeActivity :
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val splashViewModel by viewModels<SplashViewModel>()
     private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     
     companion object {
@@ -1579,7 +1581,7 @@ class HomeActivity :
             }
             .show()
     }
-    
+
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when (it) {
@@ -1604,9 +1606,14 @@ class HomeActivity :
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
-                        navController.popBackStack(R.id.menu_feed, false).let {
-                            recreate()
+                        observe(splashViewModel.apiLoginResponse){
+                            if (it is Success){
+                                navController.popBackStack(R.id.menu_feed, false).let {
+                                    recreate()
+                                }
+                            }
                         }
+                        splashViewModel.credentialResponse()
                     }
                 }
                 is Failure -> {

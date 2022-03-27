@@ -15,7 +15,9 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
+import com.banglalink.toffee.extension.handleUrlShare
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -64,6 +66,9 @@ class MovieFragment : BaseFragment() {
         setCategoryIcon()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail(category.id.toInt())
+        binding.categoryMovieShare.safeClick({
+            category.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
+        })
     }
 
     private fun setCategoryIcon() {

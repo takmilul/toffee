@@ -187,7 +187,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                     setOnMenuItemClickListener {
                         when (it.itemId) {
                             R.id.menu_share_playlist -> {
-                                Toast.makeText(activity, "Share Public Channel Playlist!!", Toast.LENGTH_LONG).show()
+                                item.playlistShareUrl?.let { requireActivity().handleUrlShare(it) }
                             }
                         }
                         return@setOnMenuItemClickListener true
