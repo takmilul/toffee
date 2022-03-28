@@ -20,12 +20,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.paging.map
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.NativeAdType.LARGE
+import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
@@ -39,7 +42,11 @@ import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.banglalink.toffee.util.BindingUtil
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -54,6 +61,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var category: Category? = null
     @Inject lateinit var localSync: LocalSync
     private var selectedFilter: Int = FEED.value
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: LatestVideosAdapter
     private var _binding: FragmentLandingLatestVideosBinding ? = null
     private val binding get() = _binding!!
@@ -80,7 +88,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
-
+            
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
@@ -92,8 +100,24 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     isInitialized = true
                 }
             }
-            adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-            setHasFixedSize(true)
+            if (viewModel.pageType.value == Landing) {
+                val testDeviceIds = listOf("09B67C1ED8519418B65ECA002058C882")
+                val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+                MobileAds.setRequestConfiguration(configuration)
+                MobileAds.initialize(requireContext())
+                
+//                mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+                val admobNativeAdAdapter = NativeAdAdapter.Builder.with(
+                    "/21622890900,22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid", 
+                    mAdapter, LARGE
+                ).adItemInterval(2).build(bindingUtil)
+                
+                adapter = admobNativeAdAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            } else {
+                adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+                setHasFixedSize(true)
+            }
         }
         
         selectedFilter = FEED.value
@@ -176,6 +200,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
+            mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
                     mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
@@ -198,6 +223,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
+            mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                     localSync.syncData(channel)

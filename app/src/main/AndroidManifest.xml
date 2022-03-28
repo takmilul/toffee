@@ -159,6 +159,10 @@
         <meta-data
             android:name="Firework:AppID"
             android:value="@string/firework_oauth_id" />
-        
+    
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8724031649645430~8504153625"/>
+
     </application>
 </manifest>

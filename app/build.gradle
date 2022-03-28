@@ -83,7 +83,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "androidx.core:core-ktx:$rootProject.kotlinKtxVersion"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'net.gotev:uploadservice:4.7.0'
@@ -227,8 +227,9 @@ dependencies {
     //mqtt library
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$rootProject.pahoClientVersion"
     implementation "org.eclipse.paho:org.eclipse.paho.android.service:$rootProject.pahoAndroidServiceVersion"
-
+    
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
     implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
     implementation("com.google.guava:guava:28.0-android")
     

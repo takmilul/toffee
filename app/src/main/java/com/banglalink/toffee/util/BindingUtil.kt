@@ -1,6 +1,7 @@
 package com.banglalink.toffee.util
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
 import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -147,6 +149,20 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 initListener(view)
                 setImageRequestParams()
                 size(min(360.px, 720), min(80.px, 150))
+            }
+        }
+    }
+    
+    @BindingAdapter("loadSmallImageFromUrlRoundedFromDrawable")
+    fun bindSmallRoundImageFromDrawable(view: ImageView, imageUrl:  Drawable?) {
+        if (imageUrl==null) {
+            view.loadPlaceholder(isCircular = true)
+        } else {
+            // view.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            view.load(imageUrl) {
+                transformations(RoundedCornersTransformation(100f))
+                setImageRequestParams(true)
+                size(min(30.px, 92), min(30.px, 92))
             }
         }
     }

@@ -580,4 +580,35 @@
     <style name="fireworkImageStyle" >
         <item name="android:radius">12dp</item>
     </style>
+    
+    <style name="ButtonStyleNativeAd" parent="ToffeeNativeAdButtonStyle">
+        <item name="backgroundTint">@color/main_text_color</item>
+        <item name="android:textColor">@color/white_transparency</item>
+    </style>
+    
+    <style name="ToffeeNativeAdButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">5dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+    
+    <style name="AppTheme.AdAttribution">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">@string/ad_attribution</item>
+        <item name="android:background">#FFCC66</item>
+        <item name="android:width">15dp</item>
+        <item name="android:height">15dp</item>
+    </style>
 </resources>
