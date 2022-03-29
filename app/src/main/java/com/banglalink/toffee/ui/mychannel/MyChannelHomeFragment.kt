@@ -85,7 +85,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         progressDialog = VelBoxProgressDialog(requireContext())
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         if(channelOwnerId == 0) channelOwnerId = mPref.customerId
-        isOwner = channelOwnerId == mPref.customerId
+        isOwner = channelOwnerId == mPref.customerId && mPref.isVerifiedUser
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

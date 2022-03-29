@@ -43,7 +43,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
@@ -61,7 +60,6 @@ import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
@@ -88,7 +86,6 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.splash.SplashViewModel
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
@@ -1608,16 +1605,9 @@ class HomeActivity :
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
-                        Log.i("Anna", "observeLogout: ${mPref.customerId}")
-                        observe(viewModel.apiLoginResponse){
-                            if (it is Success){
-                                Log.i("Anna", "Logout info: ${mPref.customerId}")
-                                navController.popBackStack(R.id.menu_feed, false).let {
-                                    recreate()
-                                }
-                            }
+                        navController.popBackStack(R.id.menu_feed, false).let {
+                            recreate()
                         }
-                       viewModel.credentialResponse()
                     }
                 }
                 is Failure -> {
