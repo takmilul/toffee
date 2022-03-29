@@ -43,6 +43,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
@@ -60,6 +61,7 @@ import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
@@ -165,7 +167,6 @@ class HomeActivity :
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val splashViewModel by viewModels<SplashViewModel>()
     private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     
     companion object {
@@ -1590,6 +1591,7 @@ class HomeActivity :
                         mPref.mqttHost = ""
                         mPref.phoneNumber = ""
                         mPref.channelName = ""
+                        mPref.customerId = 0
                         mPref.channelLogo = ""
                         mPref.customerDOB = ""
                         mPref.customerNID = ""
@@ -1606,14 +1608,16 @@ class HomeActivity :
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
-                        observe(splashViewModel.apiLoginResponse){
+                        Log.i("Anna", "observeLogout: ${mPref.customerId}")
+                        observe(viewModel.apiLoginResponse){
                             if (it is Success){
+                                Log.i("Anna", "Logout info: ${mPref.customerId}")
                                 navController.popBackStack(R.id.menu_feed, false).let {
                                     recreate()
                                 }
                             }
                         }
-                        splashViewModel.credentialResponse()
+                       viewModel.credentialResponse()
                     }
                 }
                 is Failure -> {
