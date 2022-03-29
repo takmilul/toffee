@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -28,6 +29,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.NativeAdType.LARGE
+import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
@@ -45,8 +47,9 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -56,24 +59,33 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
-    
+
     private var listJob: Job? = null
     private var category: Category? = null
-    @Inject lateinit var localSync: LocalSync
+    @Inject
+    lateinit var localSync: LocalSync
     private var selectedFilter: Int = FEED.value
-    @Inject lateinit var bindingUtil: BindingUtil
+    @Inject
+    lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: LatestVideosAdapter
-    private var _binding: FragmentLandingLatestVideosBinding ? = null
+    private var _binding: FragmentLandingLatestVideosBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    private var nativeAdBuilder: NativeAdAdapter.Builder? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onDestroyView() {
+        nativeAdBuilder?.destroyAd()
         binding.latestVideosList.adapter = null
+        nativeAdBuilder=null
         super.onDestroyView()
         _binding = null
     }
@@ -92,7 +104,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    val isEmpty =
+                        mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
                     binding.emptyView.isVisible = isEmpty && !isLoading
                     binding.placeholder.isVisible = isLoading
                     binding.latestVideosList.isVisible = !isEmpty && !isLoading
@@ -102,16 +115,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             }
             if (viewModel.pageType.value == Landing) {
                 val testDeviceIds = listOf("09B67C1ED8519418B65ECA002058C882")
-                val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+                val configuration =
+                    RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
                 MobileAds.setRequestConfiguration(configuration)
                 MobileAds.initialize(requireContext())
                 
 //                mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-                val admobNativeAdAdapter = NativeAdAdapter.Builder.with(
-                    "/21622890900,22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid", 
+                nativeAdBuilder = NativeAdAdapter.Builder.with(
+                    "/21622890900,22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid",
                     mAdapter, LARGE
-                ).adItemInterval(2).build(bindingUtil)
-                
+                )
+                val admobNativeAdAdapter = nativeAdBuilder!!.adItemInterval(2).build(bindingUtil)
+
                 adapter = admobNativeAdAdapter
                 layoutManager = LinearLayoutManager(requireContext())
             } else {
@@ -161,8 +176,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 0, it)
-            }
-            else {
+            } else {
                 observeTrendingVideosList(category?.id?.toInt() ?: 0, it)
             }
         }
@@ -203,7 +217,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
-                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                         localSync.syncData(channel)
                         channel
                     })
@@ -211,7 +225,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             }
             else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
-                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                         localSync.syncData(channel)
                         channel
                     })

@@ -49,4 +49,5 @@
     <color name="placeholder_logo_color">#829AB8</color>
     <color name="redeem_dialog_invalid_header">#1A2E47</color>
     <color name="redeem_dialog_invalid_footer">#111F31</color>
+    <color name="native_ad_button_color">#222F46</color>
 </resources>

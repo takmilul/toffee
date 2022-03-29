@@ -112,4 +112,5 @@
     <color name="strike_through_color">#FFCCE1</color>
     <color name="redeem_dialog_invalid_header">#FFFFFF</color>
     <color name="redeem_dialog_invalid_footer">#F2F2F2</color>
+    <color name="native_ad_button_color">#829AB8</color>
 </resources>

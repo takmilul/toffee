@@ -20,15 +20,16 @@ import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.gms.ads.*
-import com.google.android.gms.ads.formats.NativeAdOptions
-import com.google.android.gms.ads.formats.UnifiedNativeAd
-import com.google.android.gms.ads.formats.UnifiedNativeAdView
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.google.android.gms.ads.nativead.NativeAdView
+
 
 class NativeAdAdapter private constructor(
     private val mParam: Param,
-    private val bindingUtil: BindingUtil
+    private val bindingUtil: BindingUtil,
 ) : RecyclerViewAdapterWrapper(mParam.adapter) {
-    
+    var currentNativeAd: NativeAd? = null
     companion object {
         private const val TYPE_FB_NATIVE_ADS = 900
         private const val DEFAULT_AD_ITEM_INTERVAL = 4
@@ -52,20 +53,35 @@ class NativeAdAdapter private constructor(
     private fun onBindAdViewHolder(holder: ViewHolder) {
         val adHolder = holder as AdViewHolder
         if (mParam.forceReloadAdOnBind || !adHolder.loaded) {
-            AdLoader.Builder(adHolder.context, mParam.adUnitId).forUnifiedNativeAd { nativeAd ->
-                populateUnifiedNativeAdView(nativeAd, adHolder)
+            AdLoader.Builder(adHolder.context, mParam.adUnitId!!).forNativeAd { nativeAd ->
+                if (mParam.isFinished) {
+                    nativeAd.destroy()
+                    return@forNativeAd
+                }
+
+                currentNativeAd?.destroy()
+                currentNativeAd = nativeAd
+
+                populateNativeAdView(nativeAd, adHolder)
                 adHolder.loaded = true
             }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     Log.e("admobnative", "error:" + loadAdError.message)
                     adHolder.adContainer.hide()
                 }
+
+                override fun onAdLoaded() {
+                    super.onAdLoaded()
+                    adHolder.adContainer.show()
+                }
             }).withNativeAdOptions(
                 NativeAdOptions.Builder().setVideoOptions(
-                    VideoOptions.Builder().setStartMuted(true).setClickToExpandRequested(true).build()
+                    VideoOptions.Builder().setStartMuted(true).setClickToExpandRequested(true)
+                        .build()
                 ).build()
             ).build().loadAd(AdRequest.Builder().build())
         }
+
     }
     
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -80,7 +96,7 @@ class NativeAdAdapter private constructor(
         val inflater = LayoutInflater.from(parent.context)
         val adLayoutOutline = inflater.inflate(mParam.itemContainerLayoutRes, parent, false)
         val vg = adLayoutOutline.findViewById<ViewGroup>(mParam.itemContainerId)
-        val adLayoutContent = inflater.inflate(mParam.adViewLayoutRes, parent, false) as UnifiedNativeAdView
+        val adLayoutContent = inflater.inflate(mParam.adViewLayoutRes, parent, false) as NativeAdView
         vg.addView(adLayoutContent)
         return AdViewHolder(adLayoutOutline)
     }
@@ -94,7 +110,7 @@ class NativeAdAdapter private constructor(
     private class AdViewHolder constructor(private val view: View) : ViewHolder(view) {
         var loaded: Boolean = false
         val context: Context get() = view.context
-        var adContainer: UnifiedNativeAdView = view.findViewById<View>(R.id.nativeAdview) as UnifiedNativeAdView
+        var adContainer: NativeAdView = view.findViewById<View>(R.id.nativeAdview) as NativeAdView
         var duration: TextView = adContainer.findViewById(R.id.duration)
     }
     
@@ -107,6 +123,7 @@ class NativeAdAdapter private constructor(
         @LayoutRes var adViewLayoutRes = 0
         lateinit var adapter: Adapter<ViewHolder>
         @LayoutRes var itemContainerLayoutRes = 0
+        var isFinished = false
     }
     
     class Builder private constructor(private val mParam: Param) {
@@ -124,7 +141,11 @@ class NativeAdAdapter private constructor(
                 })
             }
         }
-        
+
+        fun destroyAd(){
+            mParam.isFinished=true
+        }
+
         fun adItemInterval(interval: Int): Builder {
             mParam.adItemInterval = interval
             return this
@@ -146,8 +167,8 @@ class NativeAdAdapter private constructor(
         }
     }
     
-    private fun populateUnifiedNativeAdView(nativeAd: UnifiedNativeAd, adContainerView: AdViewHolder) {
-        val adView = adContainerView.adContainer as UnifiedNativeAdView
+    private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: AdViewHolder) {
+        val adView = adContainerView.adContainer as NativeAdView
         adView.mediaView = adView.findViewById(R.id.ad_media)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
         adView.headlineView = adView.findViewById(R.id.ad_headline)

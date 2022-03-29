@@ -582,7 +582,7 @@
     </style>
     
     <style name="ButtonStyleNativeAd" parent="ToffeeNativeAdButtonStyle">
-        <item name="backgroundTint">@color/main_text_color</item>
+        <item name="backgroundTint">@color/native_ad_button_color</item>
         <item name="android:textColor">@color/white_transparency</item>
     </style>
     
