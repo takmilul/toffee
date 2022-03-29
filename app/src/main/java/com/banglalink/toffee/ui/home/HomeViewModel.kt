@@ -2,10 +2,7 @@ package com.banglalink.toffee.ui.home
 
 import android.content.Context
 import androidx.core.os.bundleOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -29,6 +26,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.google.firebase.messaging.FirebaseMessaging
@@ -49,6 +47,7 @@ class HomeViewModel @Inject constructor(
     private val reactionDao: ReactionDao,
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
+    private val credential: CredentialService,
     private val vastTagService: VastTagService,
     private val updateFavorite: UpdateFavorite,
     private val sendOtpLogEvent: SendOTPLogEvent,
@@ -79,6 +78,7 @@ class HomeViewModel @Inject constructor(
     val shareUrlLiveData = SingleLiveEvent<String>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
+    val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
@@ -156,7 +156,14 @@ class HomeViewModel @Inject constructor(
             DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
         }
     }
-    
+
+    fun credentialResponse() {
+        viewModelScope.launch {
+            val response = resultFromResponse { credential.execute() }
+            apiLoginResponse.value = response
+        }
+    }
+
     fun populateSubscriptionCountDb(url: String) {
         appScope.launch {
             DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
