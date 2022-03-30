@@ -64,6 +64,7 @@ import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
@@ -148,6 +149,8 @@ class HomeActivity :
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
+    private var playlistShareableUrl: String? = null
+    private var shareableData: ShareableData? = null
     private lateinit var navController: NavController
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
@@ -878,42 +881,41 @@ class HomeActivity :
         }
     }
     
-    private fun handleDeepLink(url: String) {
-//        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
+    private fun handleDeepLink(uri: String) {
+        val url = prepareWebsiteDeepLink(uri)
         lifecycleScope.launch {
             try {
-                val isDeepLinkHandled = handleInAppDeepLink(url)
-                
-                if (!isDeepLinkHandled) {
+                if (!handleInAppDeepLink(url)) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                    val hash = url.substring(url.lastIndexOf("#video/") + 7)
+                    val hash = url.substringAfter("#video/")
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
-                        val newHash = hash.removePrefix("data=").trim()
-                        val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
-                        when(shareableData.type) {
+                        val newHash = hash.substringAfter("data=").trim()
+                        shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
+                        when(shareableData?.type) {
                             SharingType.STINGRAY.value -> {
-                                if (!shareableData.stingrayShareUrl.isNullOrBlank()) {
-                                    pair = Pair(shareableData.stingrayShareUrl, SharingType.STINGRAY.value)
+                                if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
+                                    pair = Pair(shareableData?.stingrayShareUrl, SharingType.STINGRAY.value)
                                 }
                             }
                             SharingType.CATEGORY.value -> {
-                                shareableData.categoryId?.let {
+                                shareableData?.categoryId?.let {
                                     val categoryDeepLinkUrl = "https://toffeelive.com?routing=internal&page=categories&catid=$it"
                                     handleInAppDeepLink(categoryDeepLinkUrl)
                                 }
                             }
                             SharingType.CHANNEL.value -> {
-                                shareableData.channelId?.let {
+                                shareableData?.channelId?.let {
                                     val channelDeepLinkUrl = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=$it"
                                     handleInAppDeepLink(channelDeepLinkUrl)
                                 }
                             }
                             SharingType.PLAYLIST.value -> {
-                                playPlaylistShareable(shareableData, url)
+                                playlistShareableUrl = url
+                                playPlaylistShareable()
                             }
                             SharingType.SERIES.value -> {
-                                playShareableWebSeries(shareableData)
+                                playShareableWebSeries()
                             }
                         }
                     } else {
@@ -928,26 +930,52 @@ class HomeActivity :
         }
     }
     
-    private fun playPlaylistShareable(shareableData: ShareableData, shareUrl: String) {
+    private fun prepareWebsiteDeepLink(url: String): String {
+        val categoryDeepLink = "https://toffeelive.com?routing=internal&page=categories&catid=categoryId"
+        val ugcChannelDeepLink = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=channelId"
+        return when {
+            url.contains("channel/") -> {
+                val ownerId = url.substringAfter("channel/").trim()
+                ugcChannelDeepLink.replace("channelId", ownerId)
+            }
+            url.contains("category/") -> {
+                val categoryId = url.substringAfter("category/").substringBefore("/").trim()
+                categoryDeepLink.replace("categoryId", categoryId)
+            }
+            url.contains("movies/") -> {
+                categoryDeepLink.replace("categoryId", CategoryType.MOVIE.value.toString())
+            }
+            url.contains("web-series/") -> {
+                categoryDeepLink.replace("categoryId", CategoryType.DRAMA_SERIES.value.toString())
+            }
+            else -> url
+        }
+    }
+    
+    private fun playPlaylistShareable() {
         observe(viewModel.playlistShareableLiveData) { response ->
             when (response) {
                 is Success -> {
-                    response.data.channels?.let {
-                        val playlistInfo = PlaylistPlaybackInfo(
-                            shareableData.playlistId ?: 0,
-                            shareableData.channelOwnerId ?: 0,
-                            shareableData.name ?: "",
-                            response.data.totalCount,
-                            shareUrl,
-                            1,
-                            shareableData.isUserPlaylist == 1,
-                            0,
-                            it[0]
-                        )
-                        viewModel.addToPlayListMutableLiveData.postValue(
-                            AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
-                        )
-                        viewModel.playContentLiveData.postValue(playlistInfo)
+                    if (shareableData != null) {
+                        response.data.channels?.let {
+                            val playlistInfo = PlaylistPlaybackInfo(
+                                shareableData?.playlistId ?: 0,
+                                shareableData?.channelOwnerId ?: 0,
+                                shareableData?.name ?: "",
+                                response.data.totalCount,
+                                playlistShareableUrl,
+                                1,
+                                shareableData?.isUserPlaylist == 1,
+                                0,
+                                it[0]
+                            )
+                            viewModel.addToPlayListMutableLiveData.postValue(
+                                AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
+                            )
+                            viewModel.playContentLiveData.postValue(playlistInfo)
+                        }
+                    } else {
+                        showToast("Something went wrong")
                     }
                 }
                 is Failure -> {
@@ -962,26 +990,30 @@ class HomeActivity :
                 }
             }
         }
-        viewModel.getPlaylistShareableVideos(shareableData)
+        shareableData?.let { viewModel.getPlaylistShareableVideos(it) }
     }
     
-    private fun playShareableWebSeries(shareableData: ShareableData) {
+    private fun playShareableWebSeries() {
         observe(viewModel.webSeriesShareableLiveData) { response ->
             when (response) {
                 is Success -> {
-                    response.data.channels?.let {
-                        val seriesInfo = SeriesPlaybackInfo(
-                            shareableData.serialSummaryId ?: 0,
-                            shareableData.name ?: "",
-                            shareableData.seasonNo ?: 1,
-                            shareableData.activeSeason?.size ?: 0,
-                            it[0].id.toInt(),
-                            it[0],
-                        )
-                        viewModel.addToPlayListMutableLiveData.postValue(
-                            AddToPlaylistData(seriesInfo.playlistId(), it)
-                        )
-                        viewModel.playContentLiveData.postValue(seriesInfo)
+                    if (shareableData != null) {
+                        response.data.channels?.let {
+                            val seriesInfo = SeriesPlaybackInfo(
+                                shareableData?.serialSummaryId ?: 0,
+                                shareableData?.name ?: "",
+                                shareableData?.seasonNo ?: 1,
+                                shareableData?.activeSeason?.size ?: 0,
+                                it[0].id.toInt(),
+                                it[0],
+                            )
+                            viewModel.addToPlayListMutableLiveData.postValue(
+                                AddToPlaylistData(seriesInfo.playlistId(), it)
+                            )
+                            viewModel.playContentLiveData.postValue(seriesInfo)
+                        }
+                    } else {
+                        showToast("Something went wrong")
                     }
                 }
                 is Failure -> {
@@ -996,7 +1028,7 @@ class HomeActivity :
                 }
             }
         }
-        viewModel.getShareableEpisodesBySeason(shareableData)
+        shareableData?.let { viewModel.getShareableEpisodesBySeason(it) }
     }
     
     private suspend fun handleInAppDeepLink(url: String): Boolean {

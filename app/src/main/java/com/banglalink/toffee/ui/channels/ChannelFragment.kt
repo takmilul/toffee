@@ -76,14 +76,9 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         this.isStingray = requireArguments().getBoolean("is_stingray")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentChannelListBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return _binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,13 +86,13 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         title?.let {
             activity?.title = it
         }
-        binding.progressBar.show()
+        _binding?.progressBar?.show()
         homeViewModel.isStingray.postValue(isStingray)
         setupEmptyView()
         
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
-        with(binding.listview){
+        _binding?.listview?.apply{
             setHasFixedSize(true)
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)
             gridLayoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
@@ -116,17 +111,17 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }
-                    binding.progressBar.hide()
+                    _binding?.progressBar?.hide()
                     res?.let { channelAdapter.setItems(it) }
                 }
                 catch {
-                    binding.progressBar.hide()
-                    binding.emptyView.show()
+                    _binding?.progressBar?.hide()
+                    _binding?.emptyView?.show()
                     it.message?.let { errorMessage -> requireContext().showToast(errorMessage) }
                 }
                 onEmpty {
-                    binding.progressBar.hide()
-                    binding.emptyView.show()
+                    _binding?.progressBar?.hide()
+                    _binding?.emptyView?.show()
                 }
             }
         }
@@ -152,14 +147,19 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     private fun setupEmptyView() {
         val info = getEmptyViewInfo()
         if (info.first > 0) {
-            binding.emptyViewIcon.setImageResource(info.first)
+            _binding?.emptyViewIcon?.setImageResource(info.first)
         }
         else {
-            binding.emptyViewIcon.visibility = View.GONE
+            _binding?.emptyViewIcon?.visibility = View.GONE
         }
 
         info.second?.let {
-            binding.emptyViewLabel.text = it
+            _binding?.emptyViewLabel?.text = it
         }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
