@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.banglalink.toffee.R
@@ -21,15 +22,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginFragment : DialogFragment() {
+class LoginFragment : DialogFragment(), DefaultLifecycleObserver {
 
     @Inject lateinit var mPref: SessionPreference
     private lateinit var navController: NavController
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            LoginFragment()
+        fun newInstance() = LoginFragment()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -38,7 +38,7 @@ class LoginFragment : DialogFragment() {
         navController = navHostFragment.navController
         ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG)
         binding.closeIv.safeClick({
-            dismiss().let { 
+            dismiss().let {
                 if (mPref.isVerifiedUser) {
                     requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also { 
                         requireActivity().recreate()

@@ -73,6 +73,7 @@ class HomeViewModel @Inject constructor(
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
 ) : ViewModel() {
     
+    val fcmToken = MutableLiveData<String>()
     val isStingray = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
@@ -113,6 +114,7 @@ class HomeViewModel @Inject constructor(
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result
+                fcmToken.postValue(token)
                 setFcmToken(token)
             }
         }
@@ -120,7 +122,7 @@ class HomeViewModel @Inject constructor(
     
     fun getPlaylistManager() = _playlistManager
     
-    private fun setFcmToken(token: String) {
+    fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {
                 setFcmToken.execute(token)
@@ -156,7 +158,7 @@ class HomeViewModel @Inject constructor(
             DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
         }
     }
-    
+
     fun populateSubscriptionCountDb(url: String) {
         appScope.launch {
             DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)

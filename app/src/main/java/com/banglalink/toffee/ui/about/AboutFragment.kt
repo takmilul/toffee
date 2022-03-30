@@ -16,15 +16,15 @@ class AboutFragment : BaseFragment() {
     private var _binding: FragmentAboutBinding? = null
     private val binding get() = _binding!!
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentAboutBinding.inflate(inflater, container, false)
-        return binding.root
+        return _binding?.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.versionTv.text = getVersionText()
-        binding.checkUpdate.setOnClickListener {
+        _binding?.versionTv?.text = getVersionText()
+        _binding?.checkUpdate?.setOnClickListener {
             onClickCheckUpdateButton()
         }
     }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -13,15 +14,17 @@ import com.banglalink.toffee.R
 class MyChannelPlaylistsHostFragment : Fragment() {
     
     private var channelOwnerId: Int = 0
+    private var isMyChannel: Boolean = false
     private var navController: NavController? = null
     
     companion object {
         @JvmStatic
-        fun newInstance(channelOwnerId: Int): MyChannelPlaylistsHostFragment {
+        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelPlaylistsHostFragment {
             return MyChannelPlaylistsHostFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID, channelOwnerId)
-                }
+                arguments = bundleOf(
+                    MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId,
+                    MyChannelPlaylistsFragment.IS_MY_CHANNEL to isMyChannel
+                )
             }
         }
     }
@@ -29,7 +32,8 @@ class MyChannelPlaylistsHostFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            channelOwnerId = arguments?.getInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID) ?: 0
+            isMyChannel = it.getBoolean(MyChannelPlaylistsFragment.IS_MY_CHANNEL)
+            channelOwnerId = it.getInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID)
         }
     }
     
@@ -41,7 +45,13 @@ class MyChannelPlaylistsHostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.playlistNavHostFragment) as? NavHostFragment
         navController = navHostFragment?.navController
-        navController?.setGraph(R.navigation.my_channel_playlist_navigation, Bundle().apply { putInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID, channelOwnerId) })
+        navController?.setGraph(
+            R.navigation.my_channel_playlist_navigation,
+            bundleOf(
+                MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId,
+                MyChannelPlaylistsFragment.IS_MY_CHANNEL to isMyChannel
+            )
+        )
         listenBackStack()
     }
     

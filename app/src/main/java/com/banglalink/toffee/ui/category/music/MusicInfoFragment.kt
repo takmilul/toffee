@@ -11,8 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMusicBinding
+import com.banglalink.toffee.extension.handleUrlShare
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -48,6 +50,9 @@ class MusicInfoFragment: HomeBaseFragment() {
         setCategoryUiInfo()
         observeHashTags()
         observeSubCategories()
+        binding.categoryMusicShare.safeClick({
+            categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
+        })
     }
 
     private fun observeSubCategories() {

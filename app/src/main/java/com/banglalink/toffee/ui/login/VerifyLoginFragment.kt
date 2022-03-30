@@ -90,9 +90,11 @@ class VerifyLoginFragment : ChildDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
+                    if (mPref.phoneNumber != phoneNumber) {
+                        homeViewModel.fcmToken.value?.let { homeViewModel.setFcmToken(it) }
+                    }
                     mPref.phoneNumber = phoneNumber
                     ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 1))
-                    //ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {

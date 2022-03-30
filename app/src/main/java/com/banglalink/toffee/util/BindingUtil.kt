@@ -187,7 +187,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         view.setSubscriptionInfo(
             isSubscribed, null
         )
-        view.isEnabled = mPref.customerId != channelOwnerId
+        view.isEnabled = mPref.customerId != channelOwnerId || !mPref.isVerifiedUser
     }
     
     @BindingAdapter("bindViewCount")

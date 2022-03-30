@@ -47,14 +47,9 @@ class RecentChannelsFragment : BaseFragment() {
         isStingray = arguments?.getBoolean(IS_STINGRAY, false) ?: false
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentRecentTvChannelsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return _binding?.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,7 +68,7 @@ class RecentChannelsFragment : BaseFragment() {
             }
         })
         
-        with(binding.channelList) {
+        _binding?.channelList?.apply {
             setPadding(leftPadding.toInt(), 0, leftPadding.toInt(), 0)
             adapter = mAdapter
         }
@@ -89,9 +84,14 @@ class RecentChannelsFragment : BaseFragment() {
                 val newList = if (!it.isNullOrEmpty()) {
                     if (showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)
                 } else it
-                binding.channelTv.isVisible = !newList.isNullOrEmpty()
+                _binding?.channelTv?.isVisible = !newList.isNullOrEmpty()
                 newList?.let { mAdapter.setItems(it) }
             }
         }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
