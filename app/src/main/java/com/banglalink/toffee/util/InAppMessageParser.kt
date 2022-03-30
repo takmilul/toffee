@@ -45,7 +45,7 @@ class InAppMessageParser @Inject constructor(
                     "ugc_channel" -> {
                         val channelId = link.getQueryParameter("owner_id") ?: "0"
                         return RouteV2(
-                            Uri.parse("app.toffee://ugc_channel/${channelId}"),
+                            Uri.parse("app.toffee://ugc_channel/${channelId}/false"),
                             "Ugc Channel (${channelId})"
                         )
                     }

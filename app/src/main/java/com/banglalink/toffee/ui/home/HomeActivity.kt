@@ -1180,12 +1180,7 @@ class HomeActivity :
     }
     
     private fun playInWebView(it: ChannelInfo) {
-//        if (!connectionWatcher.isOnline) {
-//            showToast(getString(R.string.show_offline_message))
-//            return
-//        }
         it.getHlsLink()?.let { url ->
-            heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
             viewModel.sendViewContentEvent(it)
             val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT) it.video_share_url else null
             launchActivity<Html5PlayerViewActivity> {
@@ -1588,7 +1583,6 @@ class HomeActivity :
                         mPref.mqttHost = ""
                         mPref.phoneNumber = ""
                         mPref.channelName = ""
-                        mPref.customerId = 0
                         mPref.channelLogo = ""
                         mPref.customerDOB = ""
                         mPref.customerNID = ""
@@ -1884,7 +1878,7 @@ class HomeActivity :
     private fun observeMyChannelNavigation() {
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.menu_channel || channelOwnerId != it.channelOwnerId) {
-                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}"))
+                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}/false"))
             } else {
                 minimizePlayer()
             }

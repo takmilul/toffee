@@ -304,7 +304,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
-        if (requestParams.channelOwnerId == mPref.customerId) {
+        if (requestParams.channelOwnerId == mPref.customerId && mPref.isVerifiedUser) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_delete_playlist_video)
                 menu.findItem(R.id.menu_fav).isVisible = false

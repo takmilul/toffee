@@ -51,6 +51,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
+    private var isMyChannel: Boolean = false
     @Inject lateinit var reactionDao: ReactionDao
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var favoriteDao: FavoriteItemDao
@@ -62,21 +63,22 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
+        const val IS_MY_CHANNEL = "isMyChannel"
         private const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int): MyChannelVideosFragment {
+        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelVideosFragment {
             return MyChannelVideosFragment().apply {
-                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId, IS_MY_CHANNEL to isMyChannel)
             }
         }
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         mAdapter = MyChannelVideosAdapter(this)
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isOwner = channelOwnerId == mPref.customerId
+        isMyChannel = arguments?.getBoolean(IS_MY_CHANNEL) ?: false
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -106,7 +108,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        if (isOwner && !mPref.isVerifiedUser) {
+        if (isOwner && !mPref.isVerifiedUser && isMyChannel) {
             return
         }
         observeReloadVideos()
@@ -152,11 +154,11 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
-            if (isOwner) {
+            if (isOwner && mPref.isVerifiedUser) {
                 inflate(R.menu.menu_channel_owner_videos)
             } else {
                 inflate(R.menu.menu_channel_videos)
-                menu.findItem(R.id.menu_report).isVisible = mPref.customerId != item.channel_owner_id
+                menu.findItem(R.id.menu_report).isVisible = !(mPref.customerId == item.channel_owner_id && mPref.isVerifiedUser)
                 menu.findItem(R.id.menu_fav).isVisible = item.isApproved == 1
                 if (item.favorite == null || item.favorite == "0" || !mPref.isVerifiedUser) {
                     menu.findItem(R.id.menu_fav).title = "Add to Favorites"
@@ -174,7 +176,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         ))
                     }
                     R.id.menu_add_to_playlist -> {
-                        requireActivity().handleAddToPlaylist(item, 0)
+                        requireActivity().handleAddToPlaylist(item, if(isOwner && mPref.isVerifiedUser) 0 else 1)
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)

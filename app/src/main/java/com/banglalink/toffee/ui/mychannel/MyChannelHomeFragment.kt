@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -48,7 +49,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelHomeFragment : BaseFragment(), OnClickListener {
-    
     private var myRating: Int = 0
     private var channelId: Int = 0
     private var rating: Float = 0.0f
@@ -56,6 +56,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     private var subscriberCount: Long = 0
+    private var isMyChannel: Boolean = false
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
@@ -71,11 +72,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     
     companion object {
+        const val IS_MY_CHANNEL = "isMyChannel"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int): MyChannelHomeFragment {
+        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelHomeFragment {
             return MyChannelHomeFragment().apply {
-                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId, IS_MY_CHANNEL to isMyChannel)
             }
         }
     }
@@ -83,9 +85,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
+        isMyChannel = arguments?.getBoolean(IS_MY_CHANNEL) ?: false
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         if(channelOwnerId == 0) channelOwnerId = mPref.customerId
-        isOwner = channelOwnerId == mPref.customerId && mPref.isVerifiedUser
+        isOwner = channelOwnerId == mPref.customerId
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -106,7 +109,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         
         if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         binding.contentBody.hide()
-        if(mPref.isVerifiedUser || !isOwner) {
+        val showDetails = !(!mPref.isVerifiedUser && isMyChannel && isOwner)
+        if(showDetails) {
             progressDialog.show()
             observeChannelDetail()
             observeSubscribeChannel()
@@ -163,7 +167,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     private fun showRatingDialog() {
         _bindingRating = AlertDialogMyChannelRatingBinding.inflate(layoutInflater)
-        val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
+        val dialogBuilder = AlertDialog.Builder(requireContext())
         dialogBuilder.setView(bindingRating.root)
         bindingRating.ratingBar.rating = myRating.toFloat()
         var newRating = 0.0f
@@ -171,7 +175,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             newRating = rating
         }
         
-        val alertDialog: android.app.AlertDialog = dialogBuilder.create()
+        val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         bindingRating.submitButton.setOnClickListener {
@@ -191,8 +195,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
-        val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
-        val alertDialog: android.app.AlertDialog = dialogBuilder.create().apply {
+        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
+        val alertDialog: AlertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
@@ -240,7 +244,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             myChannelDetail = it.myChannelDetail
             rating = it.ratingCount
             myRating = it.myRating
-            isOwner = it.isOwner == 1
+            isOwner = it.isOwner == 1 && mPref.isVerifiedUser
             isSubscribed = it.isSubscribed
             mPref.isChannelDetailChecked = true
             subscriberCount = it.subscriberCount
@@ -295,8 +299,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         if (viewPagerAdapter.itemCount == 0) {
             viewPagerAdapter.addFragments(listOf(
-                MyChannelVideosFragment.newInstance(channelOwnerId),
-                MyChannelPlaylistsHostFragment.newInstance(channelOwnerId)
+                MyChannelVideosFragment.newInstance(channelOwnerId, isMyChannel),
+                MyChannelPlaylistsHostFragment.newInstance(channelOwnerId, isMyChannel)
             ))
         }
         binding.viewPager.offscreenPageLimit = 1

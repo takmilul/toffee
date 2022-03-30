@@ -331,6 +331,10 @@
             android:name="channelOwnerId"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="isMyChannel"
+            android:defaultValue="true"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
             app:destination="@id/myChannelEditDetailFragment" />
@@ -342,7 +346,9 @@
             app:destination="@id/myChannelVideosEditFragment" />
         
         <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />
-        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />
+<!--        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />-->
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{isMyChannel}" />
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{isMyChannel}/{title}" />
     </fragment>
     
     <fragment

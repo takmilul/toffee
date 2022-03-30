@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -51,6 +50,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
+    private var isMyChannel: Boolean = false
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
     private var _binding: FragmentMyChannelPlaylistsBinding ? = null
@@ -61,14 +61,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     
     companion object {
-        const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val IS_MY_CHANNEL = "isMyChannel"
         const val PLAYLIST_INFO = "playlistInfo"
+        const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int): MyChannelPlaylistsFragment {
+        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelPlaylistsFragment {
             return MyChannelPlaylistsFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                }
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId, IS_MY_CHANNEL to isMyChannel)
             }
         }
     }
@@ -76,7 +75,10 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAdapter = MyChannelPlaylistAdapter(this)
-        channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+        arguments?.let {
+            isMyChannel = it.getBoolean(IS_MY_CHANNEL)
+            channelOwnerId = it.getInt(CHANNEL_OWNER_ID)
+        }
         isOwner = channelOwnerId == mPref.customerId
     }
     
@@ -103,7 +105,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        if (isOwner && !mPref.isVerifiedUser) {
+        if (isOwner && !mPref.isVerifiedUser && isMyChannel) {
             return
         }
         observeMyChannelPlaylists()
@@ -164,7 +166,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         super.onOpenMenu(view, item)
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_channel_playlist)
-                if (isOwner) {
+                if (isOwner && mPref.isVerifiedUser) {
                     menu.findItem(R.id.menu_share_playlist).isVisible = item.isApproved == 1
                     setOnMenuItemClickListener {
                         when (it.itemId) {
