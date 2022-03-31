@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -29,7 +28,6 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.NativeAdType.LARGE
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
@@ -48,8 +46,6 @@ import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.gms.ads.*
-import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -62,32 +58,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     private var listJob: Job? = null
     private var category: Category? = null
-    @Inject
-    lateinit var localSync: LocalSync
+    @Inject lateinit var localSync: LocalSync
     private var selectedFilter: Int = FEED.value
-    @Inject
-    lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: LatestVideosAdapter
+    private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private var _binding: FragmentLandingLatestVideosBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private var nativeAdBuilder: NativeAdAdapter.Builder? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        nativeAdBuilder?.destroyAd()
-        binding.latestVideosList.adapter = null
-        nativeAdBuilder=null
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,22 +95,12 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     isInitialized = true
                 }
             }
-            if (viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval>0) {
-
-                val testDeviceIds = listOf("09B67C1ED8519418B65ECA002058C882")
-                val configuration =
-                    RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-                MobileAds.setRequestConfiguration(configuration)
-                MobileAds.initialize(requireContext())
-                
-//                mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-                nativeAdBuilder = NativeAdAdapter.Builder.with(
-                    "/21622890900,22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid",
-                    mAdapter, LARGE
-                )
-                val admobNativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.feedAdInterval).build(bindingUtil)
-
-                adapter = admobNativeAdAdapter
+            
+            val feedAdUnitId = mPref.feedNativeAdUnitId.value?.randomOrNull()
+            if (viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval > 0 && !feedAdUnitId.isNullOrBlank()) {
+                nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
+                val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.feedAdInterval).build(bindingUtil)
+                adapter = nativeAdAdapter
                 layoutManager = LinearLayoutManager(requireContext())
             } else {
                 adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
@@ -353,5 +325,13 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 unSelectedColor
             )
         )
+    }
+    
+    override fun onDestroyView() {
+        nativeAdBuilder?.destroyAd()
+        binding.latestVideosList.adapter = null
+        nativeAdBuilder=null
+        super.onDestroyView()
+        _binding = null
     }
 }

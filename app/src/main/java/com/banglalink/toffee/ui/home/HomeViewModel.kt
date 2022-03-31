@@ -94,9 +94,7 @@ class HomeViewModel @Inject constructor(
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
-    val feedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val recommendedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val playlistNativeAdUnitId = MutableLiveData<List<String>?>()
+    
     init {
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
@@ -354,18 +352,19 @@ class HomeViewModel @Inject constructor(
                         vodVastTagsMutableLiveData.value = it.vodTags
                         liveVastTagsMutableLiveData.value = it.liveTags
                         stingrayVastTagsMutableLiveData.value = it.stingrayTags
-
-                        feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId.orEmpty()
+                        
+                        mPref.feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId ?: listOf("/21622890900," +
+                            "22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid")
                         mPref.isFeedAdActive = it.nativeAdsTags?.isFeedAdActive ?: true
-                        mPref.feedAdInterval= it.nativeAdsTags?.feedAdInterval ?: 4
-
-                        recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendAdUnitId.orEmpty()
-                        mPref.isRecommendAdActive= it.nativeAdsTags?.isRecommendAdActive ?: true
-                        mPref.RecommendAdInterval=it.nativeAdsTags?.recommendAdInterval ?: 4
-
-                        playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId.orEmpty()
-                        mPref.isPlaylistAdActive= it.nativeAdsTags?.isPlaylistAdActive ?: true
-                        mPref.playlistAdInterval= it.nativeAdsTags?.playlistAdInterval ?: 4
+                        mPref.feedAdInterval = it.nativeAdsTags?.feedAdInterval ?: 4
+    
+                        mPref.recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendedAdUnitId ?: listOf("/21622890900,22419763167/BD_Toffee_Android_RecommendVideo_NativeAdvance_Mid_Fluid")
+                        mPref.isRecommendedAdActive = it.nativeAdsTags?.isRecommendedAdActive ?: true
+                        mPref.recommendedAdInterval = it.nativeAdsTags?.recommendedAdInterval ?: 4
+    
+                        mPref.playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId ?: listOf("/21622890900,22419763167/BD_Toffee_Android_RecommendVideo_NativeAdvance_Mid_Fluid")
+                        mPref.isPlaylistAdActive = it.nativeAdsTags?.isPlaylistAdActive ?: true
+                        mPref.playlistAdInterval = it.nativeAdsTags?.playlistAdInterval ?: 4
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

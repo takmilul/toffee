@@ -19,19 +19,21 @@ import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.getTime
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 
-
 class NativeAdAdapter private constructor(
     private val mParam: Param,
     private val bindingUtil: BindingUtil,
 ) : RecyclerViewAdapterWrapper(mParam.adapter) {
+    
     var currentNativeAd: NativeAd? = null
+    
     companion object {
-        private const val TYPE_FB_NATIVE_ADS = 900
         private const val DEFAULT_AD_ITEM_INTERVAL = 4
     }
     
@@ -168,7 +170,7 @@ class NativeAdAdapter private constructor(
     }
     
     private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: AdViewHolder) {
-        val adView = adContainerView.adContainer as NativeAdView
+        val adView = adContainerView.adContainer
         adView.mediaView = adView.findViewById(R.id.ad_media)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
         adView.headlineView = adView.findViewById(R.id.ad_headline)
@@ -176,40 +178,41 @@ class NativeAdAdapter private constructor(
         adView.callToActionView = adView.findViewById(R.id.ad_call_to_action)
         
         (adView.headlineView as TextView).text = nativeAd.headline
-        adView.mediaView.setMediaContent(nativeAd.mediaContent)
-        adView.mediaView.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
         
         if (nativeAd.body == null) {
-            adView.bodyView.visibility = View.INVISIBLE
+            adView.bodyView?.visibility = View.INVISIBLE
         } else {
-            adView.bodyView.visibility = View.VISIBLE
+            adView.bodyView?.visibility = View.VISIBLE
             (adView.bodyView as TextView).text = nativeAd.body
         }
         
         if (nativeAd.callToAction == null) {
-            adView.callToActionView.visibility = View.INVISIBLE
+            adView.callToActionView?.visibility = View.INVISIBLE
         } else {
-            adView.callToActionView.visibility = View.VISIBLE
+            adView.callToActionView?.visibility = View.VISIBLE
             (adView.callToActionView as Button).text = nativeAd.callToAction
         }
         
         if (nativeAd.icon == null) {
-            adView.iconView.visibility = View.GONE
+            adView.iconView?.visibility = View.GONE
         } else {
-            (adView.iconView as ImageView).setImageDrawable(nativeAd.icon.drawable)
-            bindingUtil.bindSmallRoundImageFromDrawable((adView.iconView as ImageView), nativeAd.icon.drawable)
-            adView.iconView.visibility = View.VISIBLE
+            (adView.iconView as ImageView).setImageDrawable(nativeAd.icon?.drawable)
+            bindingUtil.bindSmallRoundImageFromDrawable((adView.iconView as ImageView), nativeAd.icon?.drawable)
+            adView.iconView?.visibility = View.VISIBLE
         }
         
-        if (nativeAd.mediaContent.hasVideoContent()) {
-            val videoController = nativeAd.mediaContent.videoController
-            val mediaAspectRatio: Float = nativeAd.mediaContent.aspectRatio
-            val duration: Float = nativeAd.mediaContent.duration
-            
-            adContainerView.duration.show()
-            adContainerView.duration.text = duration.toString()
-        } else {
-            adContainerView.duration.hide()
+        nativeAd.mediaContent?.let {
+            adView.mediaView?.setMediaContent(it)
+            adView.mediaView?.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+            if (nativeAd.mediaContent?.hasVideoContent() == true) {
+                val videoController = it.videoController
+                val mediaAspectRatio: Float = it.aspectRatio
+                val duration: String = getTime(it.duration.toInt())
+                adContainerView.duration.show()
+                adContainerView.duration.text = duration
+            } else {
+                adContainerView.duration.hide()
+            }
         }
         adView.setNativeAd(nativeAd)
     }

@@ -99,6 +99,8 @@ import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -357,7 +359,13 @@ class HomeActivity :
         if (mPref.isNewRelicActive) {
             initNewRelicSdk()
         }
-        
+        if (mPref.isFeedAdActive && mPref.isRecommendedAdActive && mPref.isPlaylistAdActive) {
+            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
+            val configuration =
+                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+            MobileAds.setRequestConfiguration(configuration)
+            MobileAds.initialize(this)
+        }
 //        showDeviceId()
     }
     

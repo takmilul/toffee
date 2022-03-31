@@ -25,6 +25,8 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.PackageInfoCompat
+import com.banglalink.toffee.extension.toFormattedBigDate
+import com.google.api.client.util.DateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -393,6 +395,20 @@ fun getDate(dateTime: String?): Date {
     } catch (e: ParseException) {
         e.printStackTrace()
         Date()
+    }
+}
+
+fun getTime(time: Int): String {
+    return try {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+        val cal = Calendar.getInstance(TimeZone.getDefault())
+        cal.set(0, 0, 0, 0, 0, 0)
+        cal.set(Calendar.SECOND, time)
+        val dateGMT = cal.time
+        val sdf = SimpleDateFormat("mm:ss", Locale.US)
+        sdf.format(dateGMT)
+    } catch(e: Exception) {
+        time.toString()
     }
 }
 

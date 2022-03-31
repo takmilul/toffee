@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -21,6 +23,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
+import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.handleShare
@@ -31,6 +34,7 @@ import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosViewModel
+import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
@@ -47,9 +51,10 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var currentItem: ChannelInfo
     private var _binding: FragmentCatchupBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
-    private val binding get() = _binding!!
+    private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     
@@ -73,11 +78,6 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -131,9 +131,17 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this, mPref)
-        mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
+        
+        val recommendedAdUnitId = mPref.recommendedNativeAdUnitId.value?.randomOrNull()
+        if (mPref.isRecommendedAdActive && mPref.recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
+            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, catchupAdapter as Adapter<ViewHolder>, SMALL)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.recommendedAdInterval).build(bindingUtil)
+            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
+        } else {
+            mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
+        }
     }
-
+    
     private fun observeListState() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             catchupAdapter.loadStateFlow.collect {
@@ -220,5 +228,13 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     
     override fun showShareMenuItem(hide: Boolean): Boolean {
         return true
+    }
+    
+    override fun onDestroyView() {
+        nativeAdBuilder?.destroyAd()
+        binding.listview.adapter = null
+        nativeAdBuilder=null
+        super.onDestroyView()
+        _binding = null
     }
 }

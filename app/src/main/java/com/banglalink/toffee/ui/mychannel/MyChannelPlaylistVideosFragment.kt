@@ -19,6 +19,8 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -33,6 +35,7 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
+import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
@@ -44,9 +47,11 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -58,9 +63,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     @Inject lateinit var localSync: LocalSync
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
+    @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var favoriteDao: FavoriteItemDao
     private lateinit var detailsAdapter: ChannelHeaderAdapter
+    private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private lateinit var args: MyChannelPlaylistVideosFragmentArgs
     private lateinit var requestParams: MyChannelPlaylistContentParam
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
@@ -172,7 +179,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
-        mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
+        
+        val playlistAdUnitId = mPref.playlistNativeAdUnitId.value?.randomOrNull()
+        if (currentItem != null && mPref.isPlaylistAdActive && mPref.playlistAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
+            nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.playlistAdInterval).build(bindingUtil)
+            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
+        } else {
+            mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter{playlistAdapter.retry()}))
+        }
     }
     
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
@@ -359,9 +374,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
         }.show()
     }
-
+    
     override fun onDestroyView() {
+        nativeAdBuilder?.destroyAd()
         binding.myChannelPlaylistVideos.adapter = null
+        nativeAdBuilder=null
         super.onDestroyView()
         _binding = null
     }
