@@ -160,7 +160,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             // view.scaleType = ImageView.ScaleType.CENTER_INSIDE
             view.load(imageUrl) {
-                transformations(RoundedCornersTransformation(100f))
+                transformations(RoundedCornersTransformation(1000f))
                 setImageRequestParams(true)
                 size(min(30.px, 92), min(30.px, 92))
             }

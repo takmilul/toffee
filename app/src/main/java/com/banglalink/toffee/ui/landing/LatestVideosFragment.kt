@@ -113,7 +113,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     isInitialized = true
                 }
             }
-            if (viewModel.pageType.value == Landing) {
+            if (viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval>0) {
+
                 val testDeviceIds = listOf("09B67C1ED8519418B65ECA002058C882")
                 val configuration =
                     RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
@@ -125,7 +126,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     "/21622890900,22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid",
                     mAdapter, LARGE
                 )
-                val admobNativeAdAdapter = nativeAdBuilder!!.adItemInterval(2).build(bindingUtil)
+                val admobNativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.feedAdInterval).build(bindingUtil)
 
                 adapter = admobNativeAdAdapter
                 layoutManager = LinearLayoutManager(requireContext())

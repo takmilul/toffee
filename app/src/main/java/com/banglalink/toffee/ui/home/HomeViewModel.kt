@@ -93,7 +93,9 @@ class HomeViewModel @Inject constructor(
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
-    
+    val feedNativeAdUnitId = MutableLiveData<List<String>?>()
+    val recommendedNativeAdUnitId = MutableLiveData<List<String>?>()
+    val playlistNativeAdUnitId = MutableLiveData<List<String>?>()
     init {
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
@@ -341,27 +343,41 @@ class HomeViewModel @Inject constructor(
             sendOtpLogEvent.execute(otpLogData, phoneNumber)
         }
     }
-    
-    fun getVastTags() {
+
+    fun getVastTag(){
         viewModelScope.launch {
-            try {
-                vastTagService.execute().response.let {
-                    vodVastTagsMutableLiveData.value = it.vodTags
-                    liveVastTagsMutableLiveData.value = it.liveTags
-                    stingrayVastTagsMutableLiveData.value = it.stingrayTags
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                val error = getError(e)
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.EXCEPTION,
-                    bundleOf(
-                        "api_name" to ApiNames.GET_VAST_TAG_LIST,
-                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
-                        "error_code" to error.code,
-                        "error_description" to error.msg
+            vastTagService.execute().response.let {
+                try {
+                    vastTagService.execute().response.let {
+                        vodVastTagsMutableLiveData.value = it.vodTags
+                        liveVastTagsMutableLiveData.value = it.liveTags
+                        stingrayVastTagsMutableLiveData.value = it.stingrayTags
+
+                        feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId.orEmpty()
+                        mPref.isFeedAdActive = it.nativeAdsTags?.isFeedAdActive ?: true
+                        mPref.feedAdInterval= it.nativeAdsTags?.feedAdInterval ?: 4
+
+                        recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendAdUnitId.orEmpty()
+                        mPref.isRecommendAdActive= it.nativeAdsTags?.isRecommendAdActive ?: true
+                        mPref.RecommendAdInterval=it.nativeAdsTags?.recommendAdInterval ?: 4
+
+                        playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId.orEmpty()
+                        mPref.isPlaylistAdActive= it.nativeAdsTags?.isPlaylistAdActive ?: true
+                        mPref.playlistAdInterval= it.nativeAdsTags?.playlistAdInterval ?: 4
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    val error = getError(e)
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.GET_VAST_TAG_LIST,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                            "error_code" to error.code,
+                            "error_description" to error.msg
+                        )
                     )
-                )
+                }
             }
         }
     }

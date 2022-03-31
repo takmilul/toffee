@@ -224,7 +224,40 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isChannelDetailChecked: Boolean
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
-    
+
+    var isFeedAdActive: Boolean
+        get() = pref.getBoolean(PREF_IS_FEED_AD_ACTIVE, false)
+        set(isFeedAdActive) {
+            pref.edit{ putBoolean(PREF_IS_FEED_AD_ACTIVE, isFeedAdActive) }
+        }
+    var feedAdInterval: Int
+        get() = pref.getInt(PREF_FEED_AD_INTERVAL, 0)
+        set(feedAdInterval) {
+            pref.edit{ putInt(PREF_FEED_AD_INTERVAL, feedAdInterval) }
+        }
+
+    var isRecommendAdActive: Boolean
+        get() = pref.getBoolean(PREF_IS_RECOMMEND_AD_ACTIVE, false)
+        set(isRecommendAdActive) {
+            pref.edit{ putBoolean(PREF_IS_RECOMMEND_AD_ACTIVE, isRecommendAdActive) }
+        }
+    var RecommendAdInterval: Int
+        get() = pref.getInt(PREF_RECOMMEND_AD_INTERVAL, 0)
+        set(RecommendAdInterval) {
+            pref.edit{ putInt(PREF_RECOMMEND_AD_INTERVAL, RecommendAdInterval) }
+        }
+
+    var isPlaylistAdActive: Boolean
+        get() = pref.getBoolean(PREF_IS_PLAYLIST_AD_ACTIVE, false)
+        set(isPlaylistAdActive) {
+            pref.edit{ putBoolean(PREF_IS_PLAYLIST_AD_ACTIVE, isPlaylistAdActive) }
+        }
+    var playlistAdInterval: Int
+        get() = pref.getInt(PREF_PLAYLIST_AD_INTERVAL, 0)
+        set(playlistAdInterval) {
+            pref.edit{ putInt(PREF_PLAYLIST_AD_INTERVAL, playlistAdInterval) }
+        }
+
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }
@@ -712,6 +745,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CUSTOMER_DOB = "customer_dob"
         private const val PREF_CUSTOMER_NID = "customer_nid"
         private const val PREF_CUSTOMER_ID = "customer_id"
+        private const val PREF_IS_FEED_AD_ACTIVE = "is_Feed_Ad_Active"
+        private const val PREF_FEED_AD_INTERVAL = "feed_ad_interval"
+        private const val PREF_IS_RECOMMEND_AD_ACTIVE = "is_Recommend_Ad_Active"
+        private const val PREF_RECOMMEND_AD_INTERVAL = "Recommend_ad_interval"
+        private const val PREF_IS_PLAYLIST_AD_ACTIVE = "is_Playlist_Ad_Active"
+        private const val PREF_PLAYLIST_AD_INTERVAL = "Playlist_ad_interval"
         private const val PREF_PASSWORD = "passwd"
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"

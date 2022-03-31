@@ -338,7 +338,7 @@ class HomeActivity :
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
-        viewModel.getVastTags()
+//        viewModel.getVastTags()
         observe(mPref.shareableHashLiveData) { pair ->
             pair.first?.let { observeShareableContent(it, pair.second) }
         }

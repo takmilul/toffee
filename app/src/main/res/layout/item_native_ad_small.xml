@@ -8,6 +8,8 @@
         android:id="@+id/nativeAdview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:visibility="gone"
         tools:visibility="visible"
         >
@@ -18,19 +20,21 @@
             
             <FrameLayout
                 android:id="@+id/adPoster"
-                android:layout_width="@dimen/catchup_width"
-                android:layout_height="@dimen/catchup_height"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="16:9"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 
                 <com.google.android.gms.ads.nativead.MediaView
                     android:id="@+id/ad_media"
-                    android:layout_width="@dimen/catchup_width"
-                    android:layout_height="@dimen/catchup_height"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:scaleType="fitXY"
-                    app:layout_constraintDimensionRatio="W,16:9" />
+                     />
             
             </FrameLayout>
             
@@ -40,7 +44,7 @@
                 android:layout_margin="5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
             <TextView
                 android:id="@+id/duration"
                 android:layout_width="wrap_content"
@@ -56,8 +60,8 @@
 
             <ImageView
                 android:id="@+id/ad_app_icon"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="6dp"
                 android:contentDescription="@string/txt_profile_image"
                 app:layout_constraintStart_toStartOf="@+id/ad_headline"
@@ -69,8 +73,8 @@
                 style="@style/programNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -86,27 +90,35 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto_regular"
                 android:maxLines="1"
+                android:layout_marginTop="8dp"
+                app:layout_goneMarginStart="0dp"
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/ad_app_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ad_app_icon"
-                app:layout_constraintTop_toTopOf="@+id/ad_app_icon"
+                app:layout_constraintTop_toBottomOf="@+id/ad_headline"
                 tools:text="Content Provider" />
-            
+
             <Button
                 android:id="@+id/ad_call_to_action"
                 style="@style/ButtonStyleNativeAd"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="25dp"
                 android:textColor="@color/white_transparency"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/adPoster"
+                app:layout_constraintStart_toStartOf="@+id/ad_headline"
                 app:layout_constraintTop_toBottomOf="@+id/ad_body"
                 tools:text="Download" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.52" />
         
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </com.google.android.gms.ads.nativead.NativeAdView>
 </layout>

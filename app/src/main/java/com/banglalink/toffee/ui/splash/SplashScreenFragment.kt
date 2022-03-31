@@ -28,6 +28,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
@@ -55,7 +56,8 @@ class SplashScreenFragment : BaseFragment() {
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
-    
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+
     companion object {
         @JvmStatic
         fun newInstance() = SplashScreenFragment()
@@ -236,6 +238,7 @@ class SplashScreenFragment : BaseFragment() {
                     sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
+                    homeViewModel.getVastTag()
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

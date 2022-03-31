@@ -3,10 +3,14 @@ package com.banglalink.toffee.ui.splash
 import android.database.sqlite.SQLiteDatabase
 import android.media.MediaDrm
 import android.os.Environment
+import androidx.core.os.bundleOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -16,8 +20,10 @@ import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAIL
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.VastTag
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
+import com.banglalink.toffee.util.getError
 import com.google.android.exoplayer2.C
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -40,10 +46,18 @@ class SplashViewModel @Inject constructor(
     private val sendDrmFallbackLogEvent: SendDrmFallbackEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
+    private val vastTagService: VastTagService
 ) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
     val headerEnrichmentResponse = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
+
+    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val feedNativeAdUnitId = MutableLiveData<List<String>?>()
+    val recommendedNativeAdUnitId = MutableLiveData<List<String>?>()
+    val playlistNativeAdUnitId = MutableLiveData<List<String>?>()
     
     private val reportAppLaunch by lazy {
         ReportAppLaunch()
@@ -164,4 +178,6 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-}
+
+
+    }
