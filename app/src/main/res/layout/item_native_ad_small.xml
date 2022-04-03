@@ -116,6 +116,7 @@
                     android:layout_height="36dp"
                     android:layout_marginTop="4dp"
                     android:minHeight="36dp"
+                    app:layout_goneMarginTop="30dp"
                     android:textColor="@color/white_transparency"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/ad_headline"

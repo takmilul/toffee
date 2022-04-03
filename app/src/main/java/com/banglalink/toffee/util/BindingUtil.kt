@@ -88,12 +88,12 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     
     @BindingAdapter("loadCategoryBackground")
-    fun bindCategoryBackground(view: ImageView, category: Category) {
-        if (category.thumbnailUrl.isNullOrBlank()) {
+    fun bindCategoryBackground(view: ImageView, category: Category?) {
+        if (category?.thumbnailUrl.isNullOrBlank()) {
             view.loadPlaceholder()
         } else {
             view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.load(category.thumbnailUrl) {
+            view.load(category?.thumbnailUrl) {
                 setImageRequestParams()
                 size(min(120.px, 360), min(61.px, 184))
             }
@@ -101,11 +101,11 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     
     @BindingAdapter("loadCategoryIcon")
-    fun bindCategoryIcon(view: ImageView, category: Category) {
-        if (category.categoryIcon.isNullOrBlank()) {
+    fun bindCategoryIcon(view: ImageView, category: Category?) {
+        if (category?.categoryIcon.isNullOrBlank()) {
             view.loadPlaceholder(isCircular = true)
         } else {
-            view.load(category.categoryIcon) {
+            view.load(category?.categoryIcon) {
                 setImageRequestParams(true)
                 size(min(30.px, 92), min(30.px, 92))
             }
@@ -113,8 +113,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     
     @BindingAdapter("loadChannelImage")
-    fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
-        if (channelInfo.isLinear) {
+    fun bindChannel(view: ImageView, channelInfo: ChannelInfo?) {
+        if (channelInfo?.isLinear == true) {
             if (channelInfo.channel_logo.isNullOrBlank()) {
                 view.loadPlaceholder(isCircular = true)
             } else {
@@ -125,10 +125,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 }
             }
         } else {
-            if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
+            if (channelInfo?.landscape_ratio_1280_720.isNullOrBlank()) {
                 view.loadPlaceholder()
             } else {
-                view.load(channelInfo.landscape_ratio_1280_720) {
+                view.load(channelInfo?.landscape_ratio_1280_720) {
                     initListener(view)
                     setImageRequestParams()
                     size(min(360.px, 720), min(202.px, 405))
