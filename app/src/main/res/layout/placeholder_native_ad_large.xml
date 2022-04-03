@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/ShimmerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_round_white_bg">
+        
+        <com.banglalink.toffee.ui.widget.CustomImageView
+            android:id="@+id/poster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/txt_placeholder"
+            android:minHeight="200dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/placeholder"
+            app:layout_constraintBottom_toTopOf="@id/name"
+            app:layout_constraintDimensionRatio="W,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/adTag"
+            style="@style/AppTheme.AdAttribution"
+            android:layout_margin="8dp"
+            android:paddingHorizontal="4dp"
+            app:layout_constraintStart_toStartOf="@id/poster"
+            app:layout_constraintTop_toTopOf="@id/poster" />
+        
+        <View
+            android:id="@+id/ownerPicture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/placeholder_image_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/poster" />
+        
+        <View
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/placeholder_text_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
+            app:layout_constraintTop_toBottomOf="@id/poster" />
+        
+        <View
+            android:id="@+id/owner"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/placeholder_text_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/name" />
+        
+        <View
+            android:id="@+id/viewCount"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/placeholder_text_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/owner"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/owner" />
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

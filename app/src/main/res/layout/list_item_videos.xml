@@ -45,8 +45,8 @@
             android:text="@{data.formattedDuration}"
             android:textSize="@dimen/duration_text_size"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
-            app:layout_constraintEnd_toEndOf="@+id/poster"
+            app:layout_constraintBottom_toTopOf="@id/progress"
+            app:layout_constraintEnd_toEndOf="@id/poster"
             tools:text="00:00" />
         
         <ProgressBar
@@ -57,8 +57,8 @@
             android:max="1000"
             bindViewProgress="@{data}"
             android:progressBackgroundTint="#000000"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/duration"
+            app:layout_constraintBottom_toBottomOf="@id/poster"
+            app:layout_constraintEnd_toEndOf="@id/duration"
             app:layout_constraintStart_toStartOf="parent" />
         
         <ImageView
@@ -82,11 +82,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:maxLines="2"
             android:gravity="center_vertical"
             android:text="@{data.program_name}"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
-            app:layout_constraintEnd_toStartOf="@+id/options"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
+            app:layout_constraintEnd_toStartOf="@id/options"
+            app:layout_constraintStart_toEndOf="@id/ownerPicture"
             app:layout_constraintTop_toBottomOf="@id/poster"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
         
@@ -108,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="8dp"
             android:text="@{data.content_provider_name + ` \u2022 `}"
             android:ellipsize="end"
             android:maxLines="1"
@@ -117,8 +118,8 @@
             android:fontFamily="@font/roboto_regular"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/name"
             app:layout_constraintEnd_toStartOf="@id/uploadDuration"
             tools:text="Banglalink &#8226; " />
         
@@ -141,9 +142,9 @@
         
         <ImageView
             android:id="@+id/thirdIcon"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_marginStart="13dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="12dp"
             android:src="@drawable/ic_reaction_wow_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{3}"
@@ -154,9 +155,9 @@
 
         <ImageView
             android:id="@+id/secondIcon"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_marginStart="13dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="12dp"
             app:srcCompat="@drawable/ic_reaction_love_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
@@ -167,8 +168,8 @@
 
         <ImageView
             android:id="@+id/firstIcon"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:src="@drawable/ic_reaction_like_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{1}"
@@ -190,16 +191,16 @@
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintStart_toEndOf="@id/thirdIcon"
-            app:layout_constraintBottom_toBottomOf="@+id/owner"
+            app:layout_constraintBottom_toBottomOf="@id/owner"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/owner"
+            app:layout_constraintTop_toTopOf="@id/owner"
             tools:text="904.5k" />
         
         <TextView
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="10dp"
             android:paddingVertical="4dp"
             android:text="@{data.formattedViewCount + ` Views`}"
@@ -207,8 +208,8 @@
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/owner"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/owner"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             tools:text="10K" />
         
@@ -227,9 +228,9 @@
             app:onSafeClick="@{(v) -> callback.onShareClicked(v, data, false)}"
             app:drawableStartCompat="@drawable/ic_share"
             app:layout_constraintBottom_toBottomOf="@id/viewCount"
-            app:layout_constraintEnd_toStartOf="@+id/guideline3"
-            app:layout_constraintStart_toEndOf="@+id/viewCount"
-            app:layout_constraintTop_toTopOf="@+id/viewCount"
+            app:layout_constraintEnd_toStartOf="@id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/viewCount"
+            app:layout_constraintTop_toTopOf="@id/viewCount"
             tools:text="21K" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -256,10 +257,10 @@
             app:drawableStartCompat="@drawable/ic_reaction_love_empty"
             loadReactionEmo="@{data.myReaction}"
             app:onSafeClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
-            app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+            app:layout_constraintBottom_toBottomOf="@id/viewCount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toTopOf="@+id/viewCount"
+            app:layout_constraintTop_toTopOf="@id/viewCount"
             tools:text="React" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>

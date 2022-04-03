@@ -83,21 +83,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
             
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty =
-                        mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isVisible = isEmpty && !isLoading
-                    binding.placeholder.isVisible = isLoading
-                    binding.latestVideosList.isVisible = !isEmpty && !isLoading
-                    binding.placeholder.showLoadingAnimation(isLoading)
-                    isInitialized = true
-                }
-            }
-            
             val feedAdUnitId = mPref.feedNativeAdUnitId.value?.randomOrNull()
-            if (viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval > 0 && !feedAdUnitId.isNullOrBlank()) {
+            val isLoadAdAdapter = viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval > 0 && !feedAdUnitId.isNullOrBlank()
+            if (isLoadAdAdapter) {
                 nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
                 val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.feedAdInterval).build(bindingUtil)
                 adapter = nativeAdAdapter
@@ -105,6 +93,19 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             } else {
                 adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
                 setHasFixedSize(true)
+            }
+            
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+//                    binding.footerLoader.isVisible = !isEmpty && isLoadAdAdapter && it.source.refresh is LoadState.Loading
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.placeholder.isVisible = isLoading
+                    binding.latestVideosList.isVisible = !isEmpty && !isLoading
+                    binding.placeholder.showLoadingAnimation(isLoading)
+                    isInitialized = true
+                }
             }
         }
         

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
@@ -21,6 +22,7 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getTime
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
@@ -37,53 +39,16 @@ class NativeAdAdapter private constructor(
         private const val DEFAULT_AD_ITEM_INTERVAL = 4
     }
     
-    private fun convertAdPosition2OrgPosition(position: Int) = position - (position + 1) / (mParam.adItemInterval + 1)
-    
-    override fun getItemCount(): Int {
-        val realCount = super.getItemCount()
-        return realCount + realCount / mParam.adItemInterval
-    }
-    
     override fun getItemViewType(position: Int): Int {
         return if (isAdPosition(position)) {
             mParam.adViewLayoutRes
         } else super.getItemViewType(convertAdPosition2OrgPosition(position))
     }
     
-    private fun isAdPosition(position: Int) = (position + 1) % (mParam.adItemInterval + 1) == 0
-    
-    private fun onBindAdViewHolder(holder: ViewHolder) {
-        val adHolder = holder as AdViewHolder
-        if (mParam.forceReloadAdOnBind || !adHolder.loaded) {
-            AdLoader.Builder(adHolder.context, mParam.adUnitId!!).forNativeAd { nativeAd ->
-                if (mParam.isFinished) {
-                    nativeAd.destroy()
-                    return@forNativeAd
-                }
-
-                currentNativeAd?.destroy()
-                currentNativeAd = nativeAd
-
-                populateNativeAdView(nativeAd, adHolder)
-                adHolder.loaded = true
-            }.withAdListener(object : AdListener() {
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    Log.e("admobnative", "error:" + loadAdError.message)
-                    adHolder.adContainer.hide()
-                }
-
-                override fun onAdLoaded() {
-                    super.onAdLoaded()
-                    adHolder.adContainer.show()
-                }
-            }).withNativeAdOptions(
-                NativeAdOptions.Builder().setVideoOptions(
-                    VideoOptions.Builder().setStartMuted(true).setClickToExpandRequested(true)
-                        .build()
-                ).build()
-            ).build().loadAd(AdRequest.Builder().build())
-        }
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return if (viewType == mParam.adViewLayoutRes) {
+            onCreateAdViewHolder(parent, viewType)
+        } else super.onCreateViewHolder(parent, viewType)
     }
     
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -94,79 +59,67 @@ class NativeAdAdapter private constructor(
         }
     }
     
+    override fun getItemCount(): Int {
+        val realCount = super.getItemCount()
+        return realCount + realCount / mParam.adItemInterval
+    }
+    
+    private fun convertAdPosition2OrgPosition(position: Int) = position - (position + 1) / (mParam.adItemInterval + 1)
+    
+    private fun isAdPosition(position: Int) = (position + 1) % (mParam.adItemInterval + 1) == 0
+    
     private fun onCreateAdViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val adLayoutOutline = inflater.inflate(mParam.itemContainerLayoutRes, parent, false)
         val vg = adLayoutOutline.findViewById<ViewGroup>(mParam.itemContainerId)
-        val adLayoutContent = inflater.inflate(mParam.adViewLayoutRes, parent, false) as NativeAdView
+        val adLayoutContent = inflater.inflate(mParam.adViewLayoutRes, parent, false) as LinearLayout
         vg.addView(adLayoutContent)
         return AdViewHolder(adLayoutOutline)
     }
     
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return if (viewType == mParam.adViewLayoutRes) {
-            onCreateAdViewHolder(parent, viewType)
-        } else super.onCreateViewHolder(parent, viewType)
+    private fun onBindAdViewHolder(holder: ViewHolder) {
+        val adHolder = holder as AdViewHolder
+        if (mParam.forceReloadAdOnBind || !adHolder.loaded) {
+            AdLoader.Builder(adHolder.context, mParam.adUnitId!!)
+                .forNativeAd { nativeAd ->
+                    if (mParam.isFinished) {
+                        nativeAd.destroy()
+                        return@forNativeAd
+                    }
+                    
+                    currentNativeAd?.destroy()
+                    currentNativeAd = nativeAd
+                    
+                    populateNativeAdView(nativeAd, adHolder)
+                    adHolder.loaded = true
+                }.withAdListener(object : AdListener() {
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        adHolder.adContainer.hide()
+                        adHolder.placeholder.hide()
+                        adHolder.placeholder.stopShimmer()
+                    }
+                    
+                    override fun onAdLoaded() {
+                        super.onAdLoaded()
+                        adHolder.adContainer.show()
+                        adHolder.placeholder.hide()
+                        adHolder.placeholder.stopShimmer()
+                    }
+                }).withNativeAdOptions(
+                    NativeAdOptions.Builder().setVideoOptions(
+                        VideoOptions.Builder().setStartMuted(true).setClickToExpandRequested(true).build()
+                    ).build()
+                ).build()
+                .loadAd(AdRequest.Builder().build())
+        }
     }
     
     private class AdViewHolder constructor(private val view: View) : ViewHolder(view) {
         var loaded: Boolean = false
         val context: Context get() = view.context
-        var adContainer: NativeAdView = view.findViewById<View>(R.id.nativeAdview) as NativeAdView
-        var duration: TextView = adContainer.findViewById(R.id.duration)
-    }
-    
-    private class Param {
-        var adItemInterval = 0
-        @IdRes var itemContainerId = 0
-        var forceReloadAdOnBind = false
-        var adType: NativeAdType = LARGE
-        var adUnitId: String? = null
-        @LayoutRes var adViewLayoutRes = 0
-        lateinit var adapter: Adapter<ViewHolder>
-        @LayoutRes var itemContainerLayoutRes = 0
-        var isFinished = false
-    }
-    
-    class Builder private constructor(private val mParam: Param) {
-        companion object {
-            fun with(placementId: String?, wrapped: Adapter<ViewHolder>, nativeAdType: NativeAdType): Builder {
-                return Builder(Param().apply {
-                    adapter = wrapped
-                    adType = nativeAdType
-                    forceReloadAdOnBind = true
-                    adUnitId = placementId
-                    itemContainerId = R.id.ad_container
-                    adItemInterval = DEFAULT_AD_ITEM_INTERVAL
-                    itemContainerLayoutRes = R.layout.native_ad_container
-                    adViewLayoutRes = if (nativeAdType == SMALL) R.layout.item_native_ad_small else R.layout.item_native_ad_large
-                })
-            }
-        }
-
-        fun destroyAd(){
-            mParam.isFinished=true
-        }
-
-        fun adItemInterval(interval: Int): Builder {
-            mParam.adItemInterval = interval
-            return this
-        }
-        
-        fun adLayout(@LayoutRes layoutContainerRes: Int, @IdRes itemContainerId: Int): Builder {
-            mParam.itemContainerLayoutRes = layoutContainerRes
-            mParam.itemContainerId = itemContainerId
-            return this
-        }
-        
-        fun build(bindingUtil: BindingUtil): NativeAdAdapter {
-            return NativeAdAdapter(mParam, bindingUtil)
-        }
-        
-        fun forceReloadAdOnBind(forced: Boolean): Builder {
-            mParam.forceReloadAdOnBind = forced
-            return this
-        }
+        val placeholder: ShimmerFrameLayout = view.findViewById(R.id.placeholder)
+        val adContainer: NativeAdView = view.findViewById<View>(R.id.nativeAdview) as NativeAdView
+        val duration: TextView = adContainer.findViewById(R.id.duration)
     }
     
     private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: AdViewHolder) {
@@ -215,5 +168,58 @@ class NativeAdAdapter private constructor(
             }
         }
         adView.setNativeAd(nativeAd)
+    }
+    
+    private class Param {
+        var adItemInterval = 0
+        @IdRes var itemContainerId = 0
+        var forceReloadAdOnBind = false
+        var adType: NativeAdType = LARGE
+        var adUnitId: String? = null
+        @LayoutRes var adViewLayoutRes = 0
+        lateinit var adapter: Adapter<ViewHolder>
+        @LayoutRes var itemContainerLayoutRes = 0
+        var isFinished = false
+    }
+    
+    class Builder private constructor(private val mParam: Param) {
+        companion object {
+            fun with(placementId: String?, wrapped: Adapter<ViewHolder>, nativeAdType: NativeAdType): Builder {
+                return Builder(Param().apply {
+                    adapter = wrapped
+                    adType = nativeAdType
+                    forceReloadAdOnBind = true
+                    adUnitId = placementId
+                    itemContainerId = R.id.ad_container
+                    adItemInterval = DEFAULT_AD_ITEM_INTERVAL
+                    itemContainerLayoutRes = R.layout.native_ad_container
+                    adViewLayoutRes = if (nativeAdType == SMALL) R.layout.item_native_ad_small else R.layout.item_native_ad_large
+                })
+            }
+        }
+        
+        fun adItemInterval(interval: Int): Builder {
+            mParam.adItemInterval = interval
+            return this
+        }
+        
+        fun adLayout(@LayoutRes layoutContainerRes: Int, @IdRes itemContainerId: Int): Builder {
+            mParam.itemContainerLayoutRes = layoutContainerRes
+            mParam.itemContainerId = itemContainerId
+            return this
+        }
+        
+        fun forceReloadAdOnBind(forced: Boolean): Builder {
+            mParam.forceReloadAdOnBind = forced
+            return this
+        }
+        
+        fun build(bindingUtil: BindingUtil): NativeAdAdapter {
+            return NativeAdAdapter(mParam, bindingUtil)
+        }
+        
+        fun destroyAd() {
+            mParam.isFinished = true
+        }
     }
 }

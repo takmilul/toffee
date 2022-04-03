@@ -80,7 +80,7 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/footerLoader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
@@ -101,7 +101,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/latestVideosList" />
-
+    
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/footerLoader"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/gif_round_border"
+        android:contentDescription="@string/txt_content_loader"
+        android:elevation="2dp"
+        android:src="@drawable/content_loader"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/latestVideosList"/>
+    
     <LinearLayout
         android:id="@+id/empty_view"
         android:layout_width="0dp"
