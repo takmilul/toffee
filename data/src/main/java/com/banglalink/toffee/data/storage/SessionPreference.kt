@@ -35,9 +35,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
-    val feedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val recommendedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val playlistNativeAdUnitId = MutableLiveData<List<String>?>()
+    val feedNativeAdUnitId = MutableLiveData<String?>()
+    val recommendedNativeAdUnitId = MutableLiveData<String?>()
+    val playlistNativeAdUnitId = MutableLiveData<String?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     
     var phoneNumber: String

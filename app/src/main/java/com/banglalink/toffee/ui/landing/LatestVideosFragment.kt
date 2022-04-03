@@ -83,7 +83,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
             
-            val feedAdUnitId = mPref.feedNativeAdUnitId.value?.randomOrNull()
+            val feedAdUnitId = mPref.feedNativeAdUnitId.value
             val isLoadAdAdapter = viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval > 0 && !feedAdUnitId.isNullOrBlank()
             if (isLoadAdAdapter) {
                 nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)

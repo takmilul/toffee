@@ -46,7 +46,6 @@ class SplashViewModel @Inject constructor(
     private val sendDrmFallbackLogEvent: SendDrmFallbackEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
-    private val vastTagService: VastTagService
 ) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()

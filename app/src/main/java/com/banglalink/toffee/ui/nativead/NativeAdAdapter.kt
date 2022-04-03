@@ -80,6 +80,8 @@ class NativeAdAdapter private constructor(
     private fun onBindAdViewHolder(holder: ViewHolder) {
         val adHolder = holder as AdViewHolder
         if (mParam.forceReloadAdOnBind || !adHolder.loaded) {
+            adHolder.adContainer.hide()
+            adHolder.placeholder.show()
             AdLoader.Builder(adHolder.context, mParam.adUnitId!!)
                 .forNativeAd { nativeAd ->
                     if (mParam.isFinished) {
@@ -101,9 +103,7 @@ class NativeAdAdapter private constructor(
                     
                     override fun onAdLoaded() {
                         super.onAdLoaded()
-                        adHolder.adContainer.show()
-                        adHolder.placeholder.hide()
-                        adHolder.placeholder.stopShimmer()
+
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().setVideoOptions(
@@ -168,6 +168,9 @@ class NativeAdAdapter private constructor(
             }
         }
         adView.setNativeAd(nativeAd)
+        adContainerView.adContainer.show()
+        adContainerView.placeholder.hide()
+        adContainerView.placeholder.stopShimmer()
     }
     
     private class Param {

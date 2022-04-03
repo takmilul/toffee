@@ -14,6 +14,6 @@ class VastTagBean(
     val vodTags: List<VastTag>?,
     @SerializedName("stingrayTags")
     val stingrayTags: List<VastTag>?,
-    @SerializedName("nativeAdsTags")
+    @SerializedName("nativeAdSettings")
     val nativeAdsTags: NativeAdTag? = null
 )

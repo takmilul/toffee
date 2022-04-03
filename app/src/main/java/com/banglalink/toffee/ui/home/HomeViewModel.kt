@@ -346,25 +346,23 @@ class HomeViewModel @Inject constructor(
 
     fun getVastTag(){
         viewModelScope.launch {
-            vastTagService.execute().response.let {
                 try {
                     vastTagService.execute().response.let {
                         vodVastTagsMutableLiveData.value = it.vodTags
                         liveVastTagsMutableLiveData.value = it.liveTags
                         stingrayVastTagsMutableLiveData.value = it.stingrayTags
                         
-                        mPref.feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId ?: listOf("/21622890900," +
-                            "22419763167/BD_Toffee_Android_Toffeefeed_NativeAdvance_Mid_Fluid")
-                        mPref.isFeedAdActive = it.nativeAdsTags?.isFeedAdActive ?: true
-                        mPref.feedAdInterval = it.nativeAdsTags?.feedAdInterval ?: 4
+                        mPref.feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId
+                        mPref.isFeedAdActive = it.nativeAdsTags?.isFeedAdActive ?: false
+                        mPref.feedAdInterval = it.nativeAdsTags?.feedAdInterval ?: 0
     
-                        mPref.recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendedAdUnitId ?: listOf("/21622890900,22419763167/BD_Toffee_Android_RecommendVideo_NativeAdvance_Mid_Fluid")
-                        mPref.isRecommendedAdActive = it.nativeAdsTags?.isRecommendedAdActive ?: true
-                        mPref.recommendedAdInterval = it.nativeAdsTags?.recommendedAdInterval ?: 4
+                        mPref.recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendedAdUnitId
+                        mPref.isRecommendedAdActive = it.nativeAdsTags?.isRecommendedAdActive ?: false
+                        mPref.recommendedAdInterval = it.nativeAdsTags?.recommendedAdInterval ?: 0
     
-                        mPref.playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId ?: listOf("/21622890900,22419763167/BD_Toffee_Android_RecommendVideo_NativeAdvance_Mid_Fluid")
-                        mPref.isPlaylistAdActive = it.nativeAdsTags?.isPlaylistAdActive ?: true
-                        mPref.playlistAdInterval = it.nativeAdsTags?.playlistAdInterval ?: 4
+                        mPref.playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId
+                        mPref.isPlaylistAdActive = it.nativeAdsTags?.isPlaylistAdActive ?: false
+                        mPref.playlistAdInterval = it.nativeAdsTags?.playlistAdInterval ?: 0
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -379,7 +377,6 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
-            }
         }
     }
     

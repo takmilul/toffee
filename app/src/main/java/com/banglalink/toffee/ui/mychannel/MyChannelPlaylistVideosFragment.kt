@@ -180,7 +180,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
         }, mPref)
         
-        val playlistAdUnitId = mPref.playlistNativeAdUnitId.value?.randomOrNull()
+        val playlistAdUnitId = mPref.playlistNativeAdUnitId.value
         if (currentItem != null && mPref.isPlaylistAdActive && mPref.playlistAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
             val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.playlistAdInterval).build(bindingUtil)
