@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.home
 
-import android.Manifest
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -11,15 +10,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
-import android.net.ConnectivityManager
-import android.net.NetworkRequest
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -79,7 +74,6 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
@@ -162,14 +156,12 @@ class HomeActivity :
     @Inject lateinit var uploadManager: UploadStateManager
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
-    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -182,20 +174,7 @@ class HomeActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-        try {
-            connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
-                    connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
-                } else {
-                    Log.e("CONN_", "Connectivity registration failed: network permission denied")
-                }
-            } else {
-                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
-            }
-        } catch (e: Exception) {
-            Log.e("CONN_", "Connectivity registration failed: ${e.message}")
-        }
+        
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
             || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
@@ -281,11 +260,6 @@ class HomeActivity :
                 finish()
             }
         }
-//        observe(mPref.reactionDbUrlLiveData){
-//        if(!mPref.hasReactionDb){
-//            viewModel.populateReactionDb("url")
-//        }
-//        }
         observe(viewModel.addToPlayListMutableLiveData) { item ->
             setPlayList(item)
         }
@@ -1592,11 +1566,6 @@ class HomeActivity :
         playerEventHelper.release()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
-        try {
-            connectivityManager.unregisterNetworkCallback(heartBeatManager)
-        } catch (e: Exception) {
-            ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
-        }
         ConvivaHelper.release()
         super.onDestroy()
     }

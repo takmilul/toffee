@@ -8,11 +8,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.databinding.FragmentAboutBinding
+import com.banglalink.toffee.extension.isTestEnvironment
 import com.banglalink.toffee.ui.common.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AboutFragment : BaseFragment() {
     
+    @Inject lateinit var toffeeConfig: ToffeeConfig
     private var _binding: FragmentAboutBinding? = null
     private val binding get() = _binding!!
     
@@ -41,7 +47,7 @@ class AboutFragment : BaseFragment() {
     private fun getVersionText(): String =
         try {
             val pInfo =  requireContext().packageManager.getPackageInfo( requireContext().packageName, 0)
-            "Version ${pInfo.versionName}"
+            "Version ${pInfo.versionName}" + if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) " (Test Environment)" else ""
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             ""

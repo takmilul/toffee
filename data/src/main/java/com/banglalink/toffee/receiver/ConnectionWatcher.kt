@@ -11,8 +11,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.telephony.TelephonyManager
 import android.telephony.TelephonyManager.*
 import androidx.annotation.IntRange
@@ -140,11 +138,11 @@ class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_S
                     networkFailed()
                 }
             }
-            when {
-                isWifi -> netType = "WiFi"
-                isCellular -> netType = updateCellularNetworkType()
-                isEthernet -> netType = "Ethernet"
-                else -> netType = "Offline"
+            netType = when {
+                isWifi -> "WiFi"
+                isCellular -> updateCellularNetworkType()
+                isEthernet -> "Ethernet"
+                else -> "Offline"
             }
         } catch (e: Exception) {
             networkFailed()
@@ -172,7 +170,7 @@ class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_S
             val is4G = telephonyManager.networkType == NETWORK_TYPE_LTE
             
             var is5G = false
-            if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 is5G = telephonyManager.networkType == NETWORK_TYPE_NR
             }
             

@@ -1,6 +1,12 @@
 package com.banglalink.toffee
 
+import android.Manifest
 import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
+import android.os.Build
 import androidx.databinding.DataBindingUtil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
@@ -8,6 +14,7 @@ import coil.imageLoader
 import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
+import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -48,14 +55,29 @@ class ToffeeApplication : Application(), ImageLoaderFactory {
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject lateinit var commonPreference: CommonPreference
+    @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var sessionPreference: SessionPreference
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
     
     override fun onCreate() {
         super.onCreate()
-        
+        try {
+            connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+                } else {
+                    Log.e("CONN_", "Connectivity registration failed: network permission denied")
+                }
+            } else {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+            }
+        } catch (e: Exception) {
+            Log.e("CONN_", "Connectivity registration failed: ${e.message}")
+        }
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
@@ -176,6 +198,11 @@ class ToffeeApplication : Application(), ImageLoaderFactory {
         with(this.imageLoader) {
             bitmapPool.clear()
             memoryCache.clear()
+        }
+        try {
+            connectivityManager.unregisterNetworkCallback(heartBeatManager)
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
     }
 }

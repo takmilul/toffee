@@ -236,6 +236,8 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
     }
 }
 
+fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
+
 //@SuppressLint("ClickableViewAccessibility")
 //fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
 //    this.setOnTouchListener(View.OnTouchListener { _, event ->
