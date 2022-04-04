@@ -170,6 +170,6 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     }
 
     override fun showShareMenuItem(hide: Boolean): Boolean {
-        return false
+        return true
     }
 }
