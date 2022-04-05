@@ -71,6 +71,7 @@ class HomeViewModel @Inject constructor(
     private val subscriptionCountRepository: SubscriptionCountRepository,
     private val episodeListApi: GetShareableDramaEpisodesBySeason.AssistedFactory,
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
+    private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
 ) : ViewModel() {
     
     val fcmToken = MutableLiveData<String>()
@@ -265,6 +266,12 @@ class HomeViewModel @Inject constructor(
     fun sendShareLog(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             sendShareCountEvent.execute(channelInfo)
+        }
+    }
+
+    fun sendCategoryChannelShareLog(contentType: String, contentId: Int, sharedUrl: String) {
+        viewModelScope.launch {
+            sendCategoryChannelShareCountEvent.execute(contentType, contentId, sharedUrl)
         }
     }
     

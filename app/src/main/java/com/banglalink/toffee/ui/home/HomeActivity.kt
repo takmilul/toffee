@@ -884,12 +884,14 @@ class HomeActivity :
                                 shareableData?.categoryId?.let {
                                     val categoryDeepLinkUrl = "https://toffeelive.com?routing=internal&page=categories&catid=$it"
                                     handleInAppDeepLink(categoryDeepLinkUrl)
+                                    viewModel.sendCategoryChannelShareLog(shareableData!!.type!!,it, uri)
                                 }
                             }
                             SharingType.CHANNEL.value -> {
                                 shareableData?.channelId?.let {
                                     val channelDeepLinkUrl = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=$it"
                                     handleInAppDeepLink(channelDeepLinkUrl)
+                                     viewModel.sendCategoryChannelShareLog(shareableData!!.type!!,it, uri)
                                 }
                             }
                             SharingType.PLAYLIST.value -> {
