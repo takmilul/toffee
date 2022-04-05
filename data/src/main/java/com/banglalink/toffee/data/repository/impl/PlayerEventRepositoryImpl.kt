@@ -24,7 +24,7 @@ class PlayerEventRepositoryImpl(
         return dao.insertAll(*items)
     }
     
-    override suspend fun sentTopEventToPubsubAndRemove() {
+    override suspend fun sendTopEventToPubsubAndRemove() {
         db.withTransaction {
             dao.getTopEventData()?.onEach {
                 PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
