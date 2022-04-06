@@ -848,12 +848,12 @@ class HomeActivity :
             } else {
                 val uri = intent.data
                 if (uri != null) {
-                    val strUri = runCatching {
+                    val decodedUrl = runCatching {
                         URLDecoder.decode(uri.toString().trim(), "UTF-8")
                     }.getOrElse {
                         uri.toString().trim().replace("%3A", ":").replace("%2F", "/").replace("%23", "#")
                     }.replace(" ", "+")
-                    handleDeepLink(strUri)
+                    handleDeepLink(decodedUrl)
                 }
             }
             val id = intent.getLongExtra(ROW_ID, 0L)
@@ -863,8 +863,8 @@ class HomeActivity :
         }
     }
     
-    private fun handleDeepLink(uri: String) {
-        val url = prepareWebsiteDeepLink(uri)
+    private fun handleDeepLink(decodedUrl: String) {
+        val url = prepareWebsiteDeepLink(decodedUrl)
         lifecycleScope.launch {
             try {
                 if (!handleInAppDeepLink(url)) {
@@ -884,14 +884,14 @@ class HomeActivity :
                                 shareableData?.categoryId?.let {
                                     val categoryDeepLinkUrl = "https://toffeelive.com?routing=internal&page=categories&catid=$it"
                                     handleInAppDeepLink(categoryDeepLinkUrl)
-                                    viewModel.sendCategoryChannelShareLog(shareableData!!.type!!,it, uri)
+                                    viewModel.sendCategoryChannelShareLog(shareableData!!.type!!, it, decodedUrl)
                                 }
                             }
                             SharingType.CHANNEL.value -> {
                                 shareableData?.channelId?.let {
                                     val channelDeepLinkUrl = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=$it"
                                     handleInAppDeepLink(channelDeepLinkUrl)
-                                     viewModel.sendCategoryChannelShareLog(shareableData!!.type!!,it, uri)
+                                    viewModel.sendCategoryChannelShareLog(shareableData!!.type!!, it, decodedUrl)
                                 }
                             }
                             SharingType.PLAYLIST.value -> {
