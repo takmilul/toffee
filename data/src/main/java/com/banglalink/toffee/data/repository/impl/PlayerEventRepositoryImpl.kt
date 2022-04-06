@@ -17,22 +17,34 @@ class PlayerEventRepositoryImpl(
     private val gson: Gson = Gson()
     
     override suspend fun insert(item: PlayerEventData): Long {
-        return dao.insert(item)
+        return try {
+            dao.insert(item)
+        } catch (e: Exception) {
+            0
+        }
     }
     
     override suspend fun insertAll(vararg items: PlayerEventData): LongArray {
-        return dao.insertAll(*items)
+        return try {
+            dao.insertAll(*items)
+        } catch (e: Exception) {
+            longArrayOf(0)
+        }
     }
     
-    override suspend fun sendTopEventToPubsubAndRemove() {
-        db.withTransaction {
-            dao.getTopEventData()?.onEach {
-                PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
-            }?.size?.also {
-                if (it > 0) {
-                    dao.deleteTopEventData(it)
+    override suspend fun sendTopEventToPubSubAndRemove() {
+        try {
+            db.withTransaction {
+                dao.getTopEventData()?.onEach {
+                    PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
+                }?.size?.also {
+                    if (it > 0) {
+                        dao.deleteTopEventData(it)
+                    }
                 }
             }
+        } catch (e: Exception) {
+            
         }
     }
 }

@@ -98,7 +98,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         )
     }
     
-    fun setAdData(ad: Ad?, eventName: String, errorMessage: String? = null) {
+    fun setAdData(ad: Ad?, eventName: String?, errorMessage: String? = null) {
 //        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
         addEventToDb(
             playerEventData?.apply {
@@ -157,10 +157,10 @@ class ToffeePlayerEventHelper @Inject constructor(
         }
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) {
             if (connectionWatcher.isOnline) {
-                playerEventRepository.sendTopEventToPubsubAndRemove()
+                playerEventRepository.sendTopEventToPubSubAndRemove()
             }
         } else {
-            playerEventRepository.sendTopEventToPubsubAndRemove()
+            playerEventRepository.sendTopEventToPubSubAndRemove()
         }
     }
     

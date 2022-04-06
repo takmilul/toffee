@@ -8,25 +8,26 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
-import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.BottomSheetUploadPhotoBinding
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.imagePathToBase64
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
 
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
     private var newChannelLogoUrl: String = ""
     private var isNewChannelLogo: Boolean = false
-    @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var bindingUtil: BindingUtil
     private var channelNameTextWatcher: TextWatcher? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: BottomSheetUploadPhotoBinding? = null
@@ -103,11 +104,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
     }
 
     private fun loadImage(logoUrl: String) {
-        binding.channelLogoIv.load(logoUrl) {
-            error(R.drawable.ic_channel_logo)
-            fallback(R.drawable.ic_channel_logo)
-            placeholder(R.drawable.ic_channel_logo)
-        }
+        bindingUtil.bindRoundImage(binding.channelLogoIv, logoUrl)
         binding.editIv.show()
         binding.channelLogoIv.isClickable = false
     }
