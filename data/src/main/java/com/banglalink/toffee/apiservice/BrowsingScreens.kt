@@ -19,4 +19,5 @@ object BrowsingScreens {
     const val EDIT_VIDEO_DETAILS = "EDIT_VIDEO_DETAILS_PAGE"
     const val MY_CHANNEL = "MY_CHANNEL_PAGE"
     const val PROFILE = "MY_CHANNEL_PAGE"
+    const val SPLASH_SCREEN = "Splash Screen"
 }

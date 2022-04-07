@@ -856,13 +856,13 @@ abstract class PlayerPageActivity :
     
     private fun getVastTagList(channelInfo: ChannelInfo) = when {
         channelInfo.isStingray -> {
-            homeViewModel.stingrayVastTagsMutableLiveData.value
+            mPref.stingrayVastTagsMutableLiveData.value
         }
         channelInfo.isLive -> {
-            homeViewModel.liveVastTagsMutableLiveData.value
+            mPref.liveVastTagsMutableLiveData.value
         }
         channelInfo.isVOD -> {
-            homeViewModel.vodVastTagsMutableLiveData.value
+            mPref.vodVastTagsMutableLiveData.value
         }
         else -> {
             null

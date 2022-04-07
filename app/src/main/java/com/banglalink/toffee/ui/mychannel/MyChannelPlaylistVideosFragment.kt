@@ -35,6 +35,7 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
+import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.*
@@ -179,11 +180,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
-        
-        val playlistAdUnitId = mPref.playlistNativeAdUnitId.value
-        if (currentItem != null && mPref.isPlaylistAdActive && mPref.playlistAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
+        val nativeAdSettings = mPref.nativeAdSettings.value?.find {
+            it.area== NativeAdAreaType.PLAYER_PLAYLIST.value
+        }
+        val playlistAdUnitId = nativeAdSettings?.adUnitId
+        val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
+        val isRecommendedActive = nativeAdSettings?.isActive ?:false
+        if (currentItem != null && isRecommendedActive && recommendedAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.playlistAdInterval).build(bindingUtil)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
             mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
         } else {
             mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter{playlistAdapter.retry()}))

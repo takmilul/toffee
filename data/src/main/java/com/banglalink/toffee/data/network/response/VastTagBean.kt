@@ -1,6 +1,6 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.model.NativeAdTag
+import com.banglalink.toffee.model.NativeAdSettings
 import com.banglalink.toffee.model.VastTag
 
 import com.google.gson.annotations.SerializedName
@@ -15,5 +15,5 @@ class VastTagBean(
     @SerializedName("stingrayTags")
     val stingrayTags: List<VastTag>?,
     @SerializedName("nativeAdSettings")
-    val nativeAdsTags: NativeAdTag? = null
+    val nativeAdSettings: List<NativeAdSettings>? = null
 )

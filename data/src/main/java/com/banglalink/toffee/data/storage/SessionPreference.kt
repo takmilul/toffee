@@ -6,10 +6,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.model.DBVersion
-import com.banglalink.toffee.model.DBVersionV2
-import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
@@ -35,11 +32,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
-    val feedNativeAdUnitId = MutableLiveData<String?>()
-    val recommendedNativeAdUnitId = MutableLiveData<String?>()
-    val playlistNativeAdUnitId = MutableLiveData<String?>()
+    val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
-    
+    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
@@ -227,39 +224,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isChannelDetailChecked: Boolean
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
-
-    var isFeedAdActive: Boolean
-        get() = pref.getBoolean(PREF_IS_FEED_AD_ACTIVE, false)
-        set(isFeedAdActive) {
-            pref.edit{ putBoolean(PREF_IS_FEED_AD_ACTIVE, isFeedAdActive) }
-        }
-    var feedAdInterval: Int
-        get() = pref.getInt(PREF_FEED_AD_INTERVAL, 0)
-        set(feedAdInterval) {
-            pref.edit{ putInt(PREF_FEED_AD_INTERVAL, feedAdInterval) }
-        }
-
-    var isRecommendedAdActive: Boolean
-        get() = pref.getBoolean(PREF_IS_RECOMMEND_AD_ACTIVE, false)
-        set(isRecommendAdActive) {
-            pref.edit{ putBoolean(PREF_IS_RECOMMEND_AD_ACTIVE, isRecommendAdActive) }
-        }
-    var recommendedAdInterval: Int
-        get() = pref.getInt(PREF_RECOMMEND_AD_INTERVAL, 0)
-        set(RecommendAdInterval) {
-            pref.edit{ putInt(PREF_RECOMMEND_AD_INTERVAL, RecommendAdInterval) }
-        }
-
-    var isPlaylistAdActive: Boolean
-        get() = pref.getBoolean(PREF_IS_PLAYLIST_AD_ACTIVE, false)
-        set(isPlaylistAdActive) {
-            pref.edit{ putBoolean(PREF_IS_PLAYLIST_AD_ACTIVE, isPlaylistAdActive) }
-        }
-    var playlistAdInterval: Int
-        get() = pref.getInt(PREF_PLAYLIST_AD_INTERVAL, 0)
-        set(playlistAdInterval) {
-            pref.edit{ putInt(PREF_PLAYLIST_AD_INTERVAL, playlistAdInterval) }
-        }
 
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()

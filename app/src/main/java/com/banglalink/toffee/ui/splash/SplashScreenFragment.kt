@@ -57,7 +57,6 @@ class SplashScreenFragment : BaseFragment() {
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         @JvmStatic
@@ -240,7 +239,7 @@ class SplashScreenFragment : BaseFragment() {
                     sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
-                    homeViewModel.getVastTag()
+                    viewModel.getVastTag()
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

@@ -23,6 +23,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
+import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.checkVerification
@@ -131,11 +132,17 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this, mPref)
-        
-        val recommendedAdUnitId = mPref.recommendedNativeAdUnitId.value
-        if (mPref.isRecommendedAdActive && mPref.recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
+
+        val nativeAdSettings = mPref.nativeAdSettings.value?.find {
+            it.area== NativeAdAreaType.RECOMMEND_VIDEO.value
+        }
+        val recommendedAdUnitId = nativeAdSettings?.adUnitId
+        val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
+        val isRecommendedActive = nativeAdSettings?.isActive ?:false
+
+        if (isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, catchupAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.recommendedAdInterval).build(bindingUtil)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
             mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
         } else {
             mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))

@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.ui.home.PLAYER_EVENT_TAG
 import com.google.ads.interactivemedia.v3.api.Ad
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -97,7 +98,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     }
     
     fun setAdData(ad: Ad?, eventName: String, errorMessage: String? = null) {
-//        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
+        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
         addEventToList(
             playerEventData?.apply {
                 dateTime = System.currentTimeMillis().toFormattedBigDate()

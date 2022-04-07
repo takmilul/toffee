@@ -23,6 +23,7 @@ import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.SimpleHttpClient
+import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
@@ -84,10 +85,7 @@ class HomeViewModel @Inject constructor(
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
-    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
-    val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
@@ -344,41 +342,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getVastTag(){
-        viewModelScope.launch {
-                try {
-                    vastTagService.execute().response.let {
-                        vodVastTagsMutableLiveData.value = it.vodTags
-                        liveVastTagsMutableLiveData.value = it.liveTags
-                        stingrayVastTagsMutableLiveData.value = it.stingrayTags
-                        
-                        mPref.feedNativeAdUnitId.value = it.nativeAdsTags?.feedAdUnitId
-                        mPref.isFeedAdActive = it.nativeAdsTags?.isFeedAdActive ?: false
-                        mPref.feedAdInterval = it.nativeAdsTags?.feedAdInterval ?: 0
-    
-                        mPref.recommendedNativeAdUnitId.value  = it.nativeAdsTags?.recommendedAdUnitId
-                        mPref.isRecommendedAdActive = it.nativeAdsTags?.isRecommendedAdActive ?: false
-                        mPref.recommendedAdInterval = it.nativeAdsTags?.recommendedAdInterval ?: 0
-    
-                        mPref.playlistNativeAdUnitId.value = it.nativeAdsTags?.playlistAdUnitId
-                        mPref.isPlaylistAdActive = it.nativeAdsTags?.isPlaylistAdActive ?: false
-                        mPref.playlistAdInterval = it.nativeAdsTags?.playlistAdInterval ?: 0
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    val error = getError(e)
-                    ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
-                            "api_name" to ApiNames.GET_VAST_TAG_LIST,
-                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
-                            "error_code" to error.code,
-                            "error_description" to error.msg
-                        )
-                    )
-                }
-        }
-    }
     
     fun getPlaylistShareableVideos(shareableData: ShareableData) {
         viewModelScope.launch {

@@ -26,15 +26,14 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
+import com.banglalink.toffee.enums.FilterContentType
 import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.LARGE
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.SubCategory
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -79,22 +78,10 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
         setupEmptyView()
         mAdapter = LatestVideosAdapter(this)
-        
+        selectedFilter = FEED.value
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
-            
-            val feedAdUnitId = mPref.feedNativeAdUnitId.value
-            val isLoadAdAdapter = viewModel.pageType.value == Landing && mPref.isFeedAdActive && mPref.feedAdInterval > 0 && !feedAdUnitId.isNullOrBlank()
-            if (isLoadAdAdapter) {
-                nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
-                val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(mPref.feedAdInterval).build(bindingUtil)
-                adapter = nativeAdAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-            } else {
-                adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-                setHasFixedSize(true)
-            }
-            
+            initAdapter()
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
@@ -108,8 +95,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 }
             }
         }
-        
-        selectedFilter = FEED.value
 
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
@@ -121,7 +106,38 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
     }
-    
+
+    private fun initAdapter() {
+         val nativeAdSettings:NativeAdSettings?
+        if(selectedFilter== FilterContentType.TRENDING_VIDEOS.value) {
+            nativeAdSettings = mPref.nativeAdSettings.value?.find {
+                 it.area==NativeAdAreaType.TRENDING_VIDEO.value
+             }
+        }
+        else{
+            nativeAdSettings = mPref.nativeAdSettings.value?.find {
+                it.area==NativeAdAreaType.LATEST_VIDEO.value
+            }
+        }
+
+        val feedAdUnitId:String? = nativeAdSettings?.adUnitId
+        val adInterval = nativeAdSettings?.adInterval ?: 0
+        val isAdActive = nativeAdSettings?.isActive ?: false
+
+        val isLoadAdAdapter = isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
+        if (isLoadAdAdapter) {
+            nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
+            val nativeAdAdapter =
+                nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
+            binding.latestVideosList.adapter = nativeAdAdapter
+            binding.latestVideosList.layoutManager = LinearLayoutManager(requireContext())
+         } else {
+            binding.latestVideosList.adapter =
+                mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+            binding.latestVideosList.setHasFixedSize(true)
+         }
+    }
+
     private fun filterButtonClickListener(it: View?) {
         val popupMenu = PopupMenu(requireContext(), it)
         popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
@@ -135,6 +151,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
                 TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
             }
+            initAdapter()
             true
         }
     }

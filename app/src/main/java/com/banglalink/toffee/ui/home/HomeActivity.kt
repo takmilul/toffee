@@ -60,6 +60,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.enums.CategoryType
+import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
@@ -333,11 +334,16 @@ class HomeActivity :
         if (mPref.isNewRelicActive) {
             initNewRelicSdk()
         }
-        if (mPref.isFeedAdActive && mPref.isRecommendedAdActive && mPref.isPlaylistAdActive) {
-            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
-            val configuration =
-                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-            MobileAds.setRequestConfiguration(configuration)
+
+       val isNativeAdActive= mPref.nativeAdSettings.value?.find {
+           it.isActive
+        }?.isActive ?: false
+
+        if (isNativeAdActive) {
+//            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
+//            val configuration =
+//                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+//            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
 //        showDeviceId()
