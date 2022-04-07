@@ -81,23 +81,28 @@
             android:layout_marginStart="16dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="Movies"
+            tools:text="Music Videos"
             android:paddingBottom="8dp"
             android:textColor="@color/main_text_color"
             app:layout_constraintStart_toEndOf="@+id/categoryIcon"
             app:layout_constraintTop_toTopOf="@+id/categoryIcon"
             app:layout_constraintBottom_toBottomOf="@id/categoryIcon" />
+        
         <ImageView
             android:id="@+id/categoryMusicShare"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackground"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
             android:src="@drawable/ic_share"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="@id/categoryName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/categoryName" />
+            app:layout_constraintTop_toTopOf="@+id/categoryName"
+            android:contentDescription="@string/share_button"
+            tools:ignore="UnusedAttribute" />
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/stingrayFragment"
             android:name="com.banglalink.toffee.ui.category.music.stingray.StingrayFragment"

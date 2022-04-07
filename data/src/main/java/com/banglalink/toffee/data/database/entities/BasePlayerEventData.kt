@@ -3,6 +3,7 @@ package com.banglalink.toffee.data.database.entities
 import android.os.Build
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.util.UtilsKt
 import com.google.gson.annotations.SerializedName
 
@@ -58,4 +59,8 @@ abstract class BasePlayerEventData {
     
     @SerializedName("statusCode")
     var statusCode: Int = 200
+    
+    @SerializedName("dateTime")
+    var dateTime: String = System.currentTimeMillis().toFormattedBigDate()
+    
 }

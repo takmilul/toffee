@@ -124,7 +124,9 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.channelDetailView.analyticsButton.safeClick(this)
         binding.channelDetailView.ratingButton.safeClick(this)
         binding.channelDetailView.subscriptionButton.safeClick(this)
-        binding.channelDetailView.channelShareButton.safeClick(this)
+        binding.channelDetailView.channelShareButton.safeClick({
+            myChannelDetail?.channelShareUrl?.let { requireActivity().handleUrlShare(it) }
+        })
     }
     
     override fun onClick(v: View?) {
@@ -132,7 +134,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             handleClick(v)
         }
     }
-
+    
     private fun handleClick(v: View?) {
         when (v) {
             binding.channelDetailView.addBioButton -> { navigateToEditChannel() }
@@ -154,9 +156,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), -1)
                     }
                 }
-            }
-            binding.channelDetailView.channelShareButton -> {
-                myChannelDetail?.channelShareUrl?.let { requireActivity().handleUrlShare(it) }
             }
         }
     }

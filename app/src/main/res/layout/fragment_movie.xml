@@ -61,14 +61,18 @@
 
                     <ImageView
                         android:id="@+id/categoryMovieShare"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
                         android:clickable="true"
-                        android:src="@drawable/ic_share" />
+                        android:focusable="true"
+                        android:src="@drawable/ic_share"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/share_button"
+                        tools:ignore="UnusedAttribute" />
 
                 </LinearLayout>
 

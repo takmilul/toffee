@@ -13,6 +13,7 @@ import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -79,17 +80,17 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     override fun onOpenMenu(view: View, item: UserActivities) {
         PopupMenu(requireContext(), view).apply {
-            menu.add(0, 0x112, 0, "Delete")
+            menu.add(0, R.id.menu_delete_content, 0, "Delete")
             if(item.channelInfo?.isApproved == 1) {
-                menu.add(0, 0x113, 0, "Share")
+                menu.add(0, R.id.menu_share, 0, "Share")
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    0x112 -> {
+                    R.id.menu_delete_content -> {
                         mViewModel.removeItem(item)
                     }
-                    0x113 -> {
-                        homeViewModel.shareContentLiveData.postValue(item.channelInfo)
+                    R.id.menu_share -> {
+                        item.channelInfo?.let { requireActivity().handleShare(it) }
                     }
                 }
                 return@setOnMenuItemClickListener true

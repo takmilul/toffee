@@ -7,14 +7,15 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import com.banglalink.toffee.ui.home.PLAYER_EVENT_TAG
 import com.google.ads.interactivemedia.v3.api.Ad
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ToffeePlayerEventHelper @Inject constructor(
     private val mPref: SessionPreference,
     private val connectionWatcher: ConnectionWatcher,
@@ -30,7 +31,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     fun startSession() {
         if (mPref.isPlayerMonitoringActive) {
             val sessionId = mPref.customerId.toString().plus("_").plus(System.nanoTime())
-            playerEventData = PlayerEventData(dateTime = System.currentTimeMillis().toFormattedBigDate()).apply {
+            playerEventData = PlayerEventData().apply {
                 this.sessionId = sessionId
             }
             setPlayerEvent("Content clicked for Playing")
@@ -41,7 +42,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     private fun startScheduler(){
         schedulerJob = coroutineScope.launch(IO) {
             while (isActive) {
-                addPlayerEventToDb()
+//                addPlayerEventToDb()
                 sendPlayerEventData()
             }
         }
@@ -83,7 +84,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         }
     }
     
-    fun setPlayerEvent(event: String, errorMessage: String? = null, errorCause: String? = null, errorCode: Int? = 200, eventId: Int = 0) {
+    fun setPlayerEvent(event: String, errorMessage: String? = null, errorCause: String? = null, errorCode: Int? = 200, eventId: Int? = 0) {
 //        Log.i(PLAYER_EVENT_TAG, "Event: $event, Error Message: $errorMessage, Error Cause: $errorCause")
         addEventToDb(
             playerEventData?.apply {
@@ -97,9 +98,9 @@ class ToffeePlayerEventHelper @Inject constructor(
         )
     }
     
-    fun setAdData(ad: Ad?, eventName: String, errorMessage: String? = null) {
-        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
-        addEventToList(
+    fun setAdData(ad: Ad?, eventName: String?, errorMessage: String? = null) {
+//        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
+        addEventToDb(
             playerEventData?.apply {
                 dateTime = System.currentTimeMillis().toFormattedBigDate()
                 adId = ad?.adId
@@ -123,7 +124,6 @@ class ToffeePlayerEventHelper @Inject constructor(
             coroutineScope.launch {
                 playerEventListMutex.withLock {
                     playerEventList.add(playerEventData)
-                    playerEventList.clear()
                 }
             }
         }
@@ -133,7 +133,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         playerEventData?.let {
             coroutineScope.launch {
                 eventMutex.withLock {
-                    playerEventRepository.insert(it)
+                    playerEventRepository.insertAll(it)
                 }
             }
         }
@@ -146,6 +146,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         playerEventListMutex.withLock {
             if (playerEventList.isNotEmpty()) {
                 playerEventRepository.insertAll(*playerEventList.toTypedArray())
+                playerEventList.clear()
             }
         }
     }
@@ -156,10 +157,10 @@ class ToffeePlayerEventHelper @Inject constructor(
         }
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) {
             if (connectionWatcher.isOnline) {
-                playerEventRepository.sentTopEventToPubsubAndRemove()
+                playerEventRepository.sendTopEventToPubSubAndRemove()
             }
         } else {
-            playerEventRepository.sentTopEventToPubsubAndRemove()
+            playerEventRepository.sendTopEventToPubSubAndRemove()
         }
     }
     
@@ -170,7 +171,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     
     fun release() {
         coroutineScope.launch {
-            addPlayerEventToDb(true)
+//            addPlayerEventToDb(true)
             sendPlayerEventData(true)
         }
         schedulerJob?.cancel()

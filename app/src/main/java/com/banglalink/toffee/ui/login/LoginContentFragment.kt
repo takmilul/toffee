@@ -24,6 +24,8 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
+import com.banglalink.toffee.enums.InputType.PHONE
+import com.banglalink.toffee.extension.isValid
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
@@ -64,11 +66,15 @@ class LoginContentFragment : ChildDialogFragment() {
         setSpannableTermsAndConditions()
         with(binding) {
             verifyButton.safeClick({
-                progressDialog.show()
                 handleLogin()
-                observeLogin()
-                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED)
-                viewModel.login(phoneNo)
+                if (phoneNo.isValid(PHONE)) {
+                    progressDialog.show()
+                    observeLogin()
+                    ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED)
+                    viewModel.login(phoneNo)
+                } else {
+                    requireActivity().showToast("Invalid phone number")
+                }
             })
             termsAndConditionsCheckbox.setOnClickListener {
                 verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11

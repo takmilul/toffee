@@ -3,11 +3,14 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import android.os.Build
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.Lifecycle.Event
+import androidx.lifecycle.Lifecycle.Event.ON_START
+import androidx.lifecycle.Lifecycle.Event.ON_STOP
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -36,7 +39,7 @@ class HeartBeatManager @Inject constructor(
     private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val headerEnrichmentService: HeaderEnrichmentService
-) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
+) : LifecycleEventObserver, ConnectivityManager.NetworkCallback() {
     
     private var contentId = 0;
     private var contentType = ""
@@ -52,24 +55,26 @@ class HeartBeatManager @Inject constructor(
         private const val TIMER_PERIOD = 30000// 30 sec
     }
     
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onAppBackGround() {
-        isAppForeGround = false
-        coroutineScope.cancel()
-        coroutineScope3.cancel()
-    }
-    
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onAppForeGround() {
-        isAppForeGround = true
-        coroutineScope = CoroutineScope(Default)
-        coroutineScope3 = CoroutineScope(IO + Job())
-        coroutineScope.launch {
-            sendHeartBeat(sendToPubSub = false)
-            execute()
+    override fun onStateChanged(source: LifecycleOwner, event: Event) {
+        when(event) {
+            ON_START -> {
+                isAppForeGround = true
+                coroutineScope = CoroutineScope(Default)
+                coroutineScope3 = CoroutineScope(IO + Job())
+                coroutineScope.launch {
+                    sendHeartBeat(sendToPubSub = false)
+                    execute()
+                }
+                sendAdIdLog()
+                sendHeaderEnrichmentLog()
+            }
+            ON_STOP -> {
+                isAppForeGround = false
+                coroutineScope.cancel()
+                coroutineScope3.cancel()
+            }
+            else -> {}
         }
-        sendAdIdLog()
-        sendHeaderEnrichmentLog()
     }
     
     private fun sendAdIdLog() {
@@ -91,7 +96,8 @@ class HeartBeatManager @Inject constructor(
     
     private fun sendHeaderEnrichmentLog() {
         try {
-            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
+            val isCellular = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
+            if (mPref.heUpdateDate != today && isCellular) {
                 coroutineScope.launch {
                     val response = resultFromResponse { headerEnrichmentService.execute() }
                     when(response) {

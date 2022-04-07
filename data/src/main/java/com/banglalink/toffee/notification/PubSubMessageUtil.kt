@@ -43,6 +43,7 @@ const val DRM_UNAVAILABLE_TOPIC = "projects/$PROJECT_ID/topics/drm_unavailable_d
 const val DRM_FALLBACK_TOPIC = "projects/$PROJECT_ID/topics/drm_fallback_log"
 const val ADVERTISING_ID_TOPIC = "projects/$PROJECT_ID/topics/advertising_id_log"
 const val PLAYER_EVENTS_TOPIC = "projects/$PROJECT_ID/topics/player-events"
+const val CATEGORY_CHANNEL_SHARE_COUNT_TOPIC = "projects/$PROJECT_ID/topics/share_log"
 
 object PubSubMessageUtil {
 
