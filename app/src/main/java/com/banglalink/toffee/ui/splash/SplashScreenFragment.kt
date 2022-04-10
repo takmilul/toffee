@@ -29,7 +29,6 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
@@ -175,7 +174,7 @@ class SplashScreenFragment : BaseFragment() {
     
     private fun requestHeaderEnrichment() {
         try {
-            val isCellular = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
+            val isCellular = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
             if (mPref.heUpdateDate != today && isCellular) {
                 viewModel.getHeaderEnrichment()
             } else {

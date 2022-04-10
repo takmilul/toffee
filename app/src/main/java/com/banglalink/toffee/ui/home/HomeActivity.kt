@@ -962,6 +962,8 @@ class HomeActivity :
                             viewModel.addToPlayListMutableLiveData.postValue(
                                 AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
                             )
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                             viewModel.playContentLiveData.postValue(playlistInfo)
                         }
                     } else {

@@ -41,7 +41,7 @@ class HeartBeatManager @Inject constructor(
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : LifecycleEventObserver, ConnectivityManager.NetworkCallback() {
     
-    private var contentId = 0;
+    private var contentId = 0
     private var contentType = ""
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
@@ -96,7 +96,7 @@ class HeartBeatManager @Inject constructor(
     
     private fun sendHeaderEnrichmentLog() {
         try {
-            val isCellular = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
+            val isCellular = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
             if (mPref.heUpdateDate != today && isCellular) {
                 coroutineScope.launch {
                     val response = resultFromResponse { headerEnrichmentService.execute() }
