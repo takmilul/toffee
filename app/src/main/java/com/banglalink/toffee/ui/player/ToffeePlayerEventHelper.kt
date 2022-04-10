@@ -156,7 +156,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         if (!forceUpdate) {
             delay(15_000)
         }
-        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             if (connectionWatcher.isOnline) {
                 playerEventRepository.sendTopEventToPubSubAndRemove()
             }
