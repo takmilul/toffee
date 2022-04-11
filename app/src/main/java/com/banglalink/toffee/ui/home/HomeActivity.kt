@@ -44,13 +44,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import androidx.work.BackoffPolicy.LINEAR
-import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy.APPEND_OR_REPLACE
-import androidx.work.NetworkType.CONNECTED
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
@@ -81,7 +74,10 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
-import com.banglalink.toffee.ui.player.*
+import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.player.PlayerPageActivity
+import com.banglalink.toffee.ui.player.PlaylistItem
+import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
@@ -122,7 +118,6 @@ import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.net.URLDecoder
-import java.util.concurrent.TimeUnit.*
 import javax.inject.Inject
 
 const val PAYMENT = 1
@@ -738,18 +733,6 @@ class HomeActivity :
         }
         playerEventHelper.setPlayerEvent("app backgrounded")
         ConvivaAnalytics.reportAppBackgrounded()
-    
-        try {
-            Log.i(PLAYER_EVENT_TAG, "release: worker started")
-            val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
-            val workerRequest = OneTimeWorkRequestBuilder<PlayerEventWorker>()
-                .setConstraints(constraints)
-                .setBackoffCriteria(LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, MILLISECONDS)
-                .build()
-            WorkManager.getInstance(applicationContext).enqueueUniqueWork("sendPlayerEvent", APPEND_OR_REPLACE, workerRequest)
-        } catch (e: Exception) {
-            Log.i(PLAYER_EVENT_TAG, "release: worker error")
-        }
     }
     
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -977,8 +960,11 @@ class HomeActivity :
                             viewModel.addToPlayListMutableLiveData.postValue(
                                 AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
                             )
-                            cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
-                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                            if (shareableData?.isUserPlaylist == 1) {
+                                cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                            } else {
+                                cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                            }
                             viewModel.playContentLiveData.postValue(playlistInfo)
                         }
                     } else {
@@ -1401,6 +1387,7 @@ class HomeActivity :
                             it.layoutParams = param
                             it.isChecked = isDarkEnabled
                             it.setOnCheckedChangeListener { _, isChecked ->
+                                heartBeatManager.triggerEventViewingContentStop()
                                 changeAppTheme(isChecked)
                             }
                         }
@@ -1409,6 +1396,7 @@ class HomeActivity :
                         (themeMenu.actionView as SwitchMaterial).let {
                             it.isChecked = isDarkEnabled
                             it.setOnCheckedChangeListener { _, isChecked ->
+                                heartBeatManager.triggerEventViewingContentStop()
                                 changeAppTheme(isChecked)
                             }
                         }

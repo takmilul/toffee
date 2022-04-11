@@ -6,4 +6,5 @@ interface PlayerEventRepository {
     suspend fun insert(item: PlayerEventData): Long
     suspend fun insertAll(vararg items: PlayerEventData): LongArray
     suspend fun sendTopEventToPubSubAndRemove()
+    suspend fun sendAllRemainingEventToPubSubAndRemove()
 }

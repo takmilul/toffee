@@ -1,6 +1,8 @@
 package com.banglalink.toffee.data.repository.impl
 
+import android.util.Log
 import androidx.room.withTransaction
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.PlayerEventsDao
 import com.banglalink.toffee.data.database.entities.PlayerEventData
@@ -44,7 +46,25 @@ class PlayerEventRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            
+            Log.i("PLAYER_EVENT", "sendTopEventToPubSubAndRemove: failed")
+            ToffeeAnalytics.logBreadCrumb("Failed to send player event pubsub")
+        }
+    }
+    
+    override suspend fun sendAllRemainingEventToPubSubAndRemove() {
+        try {
+            db.withTransaction {
+                dao.getAllRemainingEventData()?.onEach {
+                    PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
+                }?.size?.also {
+                    if (it > 0) {
+                        dao.deleteTopEventData(it)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.i("PLAYER_EVENT", "sendTopEventToPubSubAndRemove: failed")
+            ToffeeAnalytics.logBreadCrumb("Failed to send player event pubsub")
         }
     }
 }

@@ -17,6 +17,9 @@ interface PlayerEventsDao {
     @Query("SELECT * FROM PlayerEventData ORDER BY id ASC LIMIT 30")
     fun getTopEventData(): List<PlayerEventData>?
     
+    @Query("SELECT * FROM PlayerEventData ORDER BY id ASC")
+    fun getAllRemainingEventData(): List<PlayerEventData>?
+    
     @Query("DELETE FROM PlayerEventData where id IN (SELECT id FROM PlayerEventData ORDER BY id ASC LIMIT :limit)")
     suspend fun deleteTopEventData(limit: Int): Int
 }
