@@ -14,6 +14,10 @@ data class SeriesPlaybackInfo(
     var seasonNo: Int,
     @SerializedName("totalSeason")
     val totalSeason: Int,
+    @SerializedName("active_season_list")
+    var activeSeasonList: List<Int>? = listOf(1),
+    @SerializedName("shareUrl")
+    var shareUrl: String? = null,
     @SerializedName("channelId")
     var channelId: Int = -1,
     @SerializedName("currentItem")

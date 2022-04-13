@@ -71,7 +71,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         seriesInfo = requireArguments().getParcelable(SERIES_INFO)!!
-        val seasonList = seriesInfo.currentItem?.activeSeasonList?.map { "Season $it" } ?: listOf("Season 1")
+        val seasonList = seriesInfo.activeSeasonList?.map { "Season $it" } ?: listOf("Season 1")
         mViewModel.seasonList.value =  seasonList
         mViewModel.selectedSeason.value = minOf(seriesInfo.seasonNo - 1, seasonList.size - 1)
         currentItem = seriesInfo.currentItem
@@ -145,15 +145,15 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 val channelInfo = seriesInfo.currentItem
                 if (isPlaylist && channelInfo != null) {
                     try {
-                        val hash = channelInfo.video_share_url?.substring(channelInfo.video_share_url!!.lastIndexOf("data=") + 5)
+                        var shareUrl = seriesInfo.shareUrl
+                        val hash = shareUrl?.substringAfter("data=")?.trim()
                         hash?.let {
                             val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(it).trimIndent(), ShareableData::class.java)
-                            val currentSeasonNo = channelInfo.activeSeasonList?.get(mViewModel.selectedSeason.value ?: 0) ?: 1
-                            var shareUrl = channelInfo.video_share_url
+                            val currentSeasonNo = seriesInfo.activeSeasonList?.getOrElse(mViewModel.selectedSeason.value ?: 0){1} ?: 1
                             if (shareableData.seasonNo != currentSeasonNo) {
                                 val newShareableData = shareableData.copy(seasonNo = currentSeasonNo)
                                 val jsonString = gson.toJson(newShareableData, ShareableData::class.java).toString()
-                                val prefix = channelInfo.video_share_url?.substring(0, channelInfo.video_share_url!!.lastIndexOf("data=") + 5)
+                                val prefix = shareUrl?.substringBefore("data=")?.trim()?.plus("data=")
                                 shareUrl = prefix.plus(EncryptionUtil.encryptRequest(jsonString))
                             }
                             shareUrl?.let { requireActivity().handleUrlShare(it) }
@@ -187,7 +187,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onSeasonChanged(newSeason: Int) {
                 if(newSeason - 1 != mViewModel.selectedSeason.value) {
                     mViewModel.selectedSeason.value = newSeason - 1
-                    val seasonNumber = currentItem?.activeSeasonList?.getOrElse(newSeason - 1){0} ?: 0
+                    val seasonNumber = seriesInfo.activeSeasonList?.getOrElse(newSeason - 1){0} ?: 0
                     observeList(seasonNumber)
                 }
             }
