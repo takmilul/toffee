@@ -145,8 +145,9 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             item.seriesName ?: "",
             item.seasonNo,
             item.totalSeason,
-            item.id.toInt(),
+            item.activeSeasonList,
             item.video_share_url,
+            item.id.toInt(),
             item
         )
         homeViewModel.addToPlayListMutableLiveData.postValue(
@@ -162,7 +163,6 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOptionClicked(view, item)
-        //onOptionClicked(view, item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

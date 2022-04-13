@@ -999,8 +999,9 @@ class HomeActivity :
                                 shareableData?.name ?: "",
                                 shareableData?.seasonNo ?: 1,
                                 shareableData?.activeSeason?.size ?: 0,
-                                it[0].id.toInt(),
+                                shareableData?.activeSeason,
                                 webSeriesShareableUrl,
+                                it[0].id.toInt(),
                                 it[0],
                             )
                             viewModel.addToPlayListMutableLiveData.postValue(

@@ -71,7 +71,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         seriesInfo = requireArguments().getParcelable(SERIES_INFO)!!
-        val seasonList = seriesInfo.currentItem?.activeSeasonList?.map { "Season $it" } ?: listOf("Season 1")
+        val seasonList = seriesInfo.activeSeasonList?.map { "Season $it" } ?: listOf("Season 1")
         mViewModel.seasonList.value =  seasonList
         mViewModel.selectedSeason.value = minOf(seriesInfo.seasonNo - 1, seasonList.size - 1)
         currentItem = seriesInfo.currentItem
@@ -149,7 +149,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         val hash = shareUrl?.substringAfter("data=")?.trim()
                         hash?.let {
                             val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(it).trimIndent(), ShareableData::class.java)
-                            val currentSeasonNo = channelInfo.activeSeasonList?.getOrElse(mViewModel.selectedSeason.value ?: 0){1} ?: 1
+                            val currentSeasonNo = seriesInfo.activeSeasonList?.getOrElse(mViewModel.selectedSeason.value ?: 0){1} ?: 1
                             if (shareableData.seasonNo != currentSeasonNo) {
                                 val newShareableData = shareableData.copy(seasonNo = currentSeasonNo)
                                 val jsonString = gson.toJson(newShareableData, ShareableData::class.java).toString()
@@ -187,7 +187,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onSeasonChanged(newSeason: Int) {
                 if(newSeason - 1 != mViewModel.selectedSeason.value) {
                     mViewModel.selectedSeason.value = newSeason - 1
-                    val seasonNumber = currentItem?.activeSeasonList?.getOrElse(newSeason - 1){0} ?: 0
+                    val seasonNumber = seriesInfo.activeSeasonList?.getOrElse(newSeason - 1){0} ?: 0
                     observeList(seasonNumber)
                 }
             }
