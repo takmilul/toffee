@@ -149,7 +149,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         val hash = shareUrl?.substringAfter("data=")?.trim()
                         hash?.let {
                             val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(it).trimIndent(), ShareableData::class.java)
-                            val currentSeasonNo = channelInfo.activeSeasonList?.get(mViewModel.selectedSeason.value ?: 0) ?: 1
+                            val currentSeasonNo = channelInfo.activeSeasonList?.getOrElse(mViewModel.selectedSeason.value ?: 0){1} ?: 1
                             if (shareableData.seasonNo != currentSeasonNo) {
                                 val newShareableData = shareableData.copy(seasonNo = currentSeasonNo)
                                 val jsonString = gson.toJson(newShareableData, ShareableData::class.java).toString()
