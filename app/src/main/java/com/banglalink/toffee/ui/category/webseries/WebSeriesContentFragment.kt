@@ -146,6 +146,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             item.seasonNo,
             item.totalSeason,
             item.id.toInt(),
+            item.video_share_url,
             item
         )
         homeViewModel.addToPlayListMutableLiveData.postValue(

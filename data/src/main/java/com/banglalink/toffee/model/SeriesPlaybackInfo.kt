@@ -16,6 +16,8 @@ data class SeriesPlaybackInfo(
     val totalSeason: Int,
     @SerializedName("channelId")
     var channelId: Int = -1,
+    @SerializedName("shareUrl")
+    var shareUrl: String? = null,
     @SerializedName("currentItem")
     var currentItem: ChannelInfo? = null,
     @SerializedName("type")

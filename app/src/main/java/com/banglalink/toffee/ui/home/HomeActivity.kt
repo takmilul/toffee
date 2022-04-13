@@ -998,6 +998,7 @@ class HomeActivity :
                                 shareableData?.seasonNo ?: 1,
                                 shareableData?.activeSeason?.size ?: 0,
                                 it[0].id.toInt(),
+                                mPref.shareableUrlLiveData.value,
                                 it[0],
                             )
                             viewModel.addToPlayListMutableLiveData.postValue(
