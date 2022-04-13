@@ -203,7 +203,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 seriesInfo = seriesInfo.apply {
                     seasonNo = item.seasonNo
                     channelId = item.id.toInt()
-                    shareUrl = currentItem?.video_share_url
                     currentItem = item
                 }
                 homeViewModel.addToPlayListMutableLiveData.postValue(

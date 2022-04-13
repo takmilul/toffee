@@ -146,6 +146,7 @@ class HomeActivity :
     @Inject lateinit var cacheManager: CacheManager
     private var playlistShareableUrl: String? = null
     private var shareableData: ShareableData? = null
+    private var webSeriesShareableUrl: String? = null
     private lateinit var navController: NavController
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
@@ -903,6 +904,7 @@ class HomeActivity :
                                 playPlaylistShareable()
                             }
                             SharingType.SERIES.value -> {
+                                webSeriesShareableUrl = url
                                 playShareableWebSeries()
                             }
                         }
@@ -998,7 +1000,7 @@ class HomeActivity :
                                 shareableData?.seasonNo ?: 1,
                                 shareableData?.activeSeason?.size ?: 0,
                                 it[0].id.toInt(),
-                                mPref.shareableUrlLiveData.value,
+                                webSeriesShareableUrl,
                                 it[0],
                             )
                             viewModel.addToPlayListMutableLiveData.postValue(
