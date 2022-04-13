@@ -333,11 +333,11 @@ class HomeActivity :
             initNewRelicSdk()
         }
 
-       val isNativeAdActive= mPref.nativeAdSettings.value?.find {
+       val isAnyNativeSectonActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
 
-        if (isNativeAdActive) {
+        if (isAnyNativeSectonActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
 //                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
@@ -379,7 +379,7 @@ class HomeActivity :
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
-    
+
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()

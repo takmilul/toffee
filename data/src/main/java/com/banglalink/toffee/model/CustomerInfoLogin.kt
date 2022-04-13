@@ -150,5 +150,7 @@ class CustomerInfoLogin(
     @SerializedName("isNdMonitoringActiveAndroid")
     var isPlayerMonitoringActive: Boolean = false,
     @SerializedName("showBuyInternetForAndroid")
-    var showBuyInternetForAndroid: Boolean = false
+    var showBuyInternetForAndroid: Boolean = false,
+    @SerializedName("isNativeAdActive")
+    var isNativeAdActive: Boolean = false,
 ) : BodyResponse(), Parcelable

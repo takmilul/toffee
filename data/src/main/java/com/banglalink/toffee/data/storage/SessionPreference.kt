@@ -526,6 +526,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isVastActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
+
+    var isNativeAdActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_NATIVE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_NATIVE_ACTIVE, value) }
     
     var vastFrequency: Int
         get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
@@ -698,6 +702,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isPlayerMonitoringActive = customerInfoLogin.isPlayerMonitoringActive
         showBuyInternetForAndroid = customerInfoLogin.showBuyInternetForAndroid
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
+        isNativeAdActive = customerInfoLogin.isNativeAdActive
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
         }
@@ -793,6 +798,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_NAME_IP_TV = "IP_TV"
         private const val PREF_FORCE_UPDATE_VERSIONS = "pref_force_update_versions"
         private const val PREF_TOFFEE_IS_VAST_ACTIVE = "pref_is_vast_active"
+        private const val PREF_TOFFEE_IS_NATIVE_ACTIVE = "pref_is_native_active"
         private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE = "pref_is_fcm_event_active"
         private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE = "pref_is_fb_event_active"
         private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE = "pref_is_global_drm_active"

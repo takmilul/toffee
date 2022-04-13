@@ -52,13 +52,6 @@ class SplashViewModel @Inject constructor(
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
     val headerEnrichmentResponse = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
 
-    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val feedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val recommendedNativeAdUnitId = MutableLiveData<List<String>?>()
-    val playlistNativeAdUnitId = MutableLiveData<List<String>?>()
-    
     private val reportAppLaunch by lazy {
         ReportAppLaunch()
     }
