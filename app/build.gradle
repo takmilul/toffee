@@ -1,10 +1,12 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: "kotlin-kapt"
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: "androidx.navigation.safeargs"
-apply plugin: "newrelic"
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs'
+    id 'newrelic'
+}
 
 android {
     
@@ -12,14 +14,14 @@ android {
     
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         applicationId "com.banglalink.toffee"
-        versionCode rootProject.appVersionCode
-        versionName rootProject.appVersionName
+        versionCode appVersionCode
+        versionName appVersionName
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
     }
-
+    
     flavorDimensions "lib"
     productFlavors {
         mobile {
@@ -27,28 +29,23 @@ android {
             buildConfigField 'int', 'DEVICE_TYPE', "1"
         }
     }
-
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
-
+    
     kotlinOptions {
 //        useIR = true
         jvmTarget = "1.8"
     }
-
+    
     buildFeatures {
 //        compose true
         dataBinding true
         viewBinding true
     }
-
+    
     buildTypes {
         release {
             minifyEnabled true
@@ -61,88 +58,104 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+            excludes += [
+                'lib/*/librsjni.so',
+                'lib/*/libRSSupport.so',
+                'lib/*/librsjni_androidx.so'
+            ]
+        }
+        resources {
+            excludes += ['META-INF/*.kotlin_module']
+            pickFirsts += [
+                'META-INF/LICENSE',
+                'META-INF/INDEX.LIST',
+                'META-INF/io.netty.versions.properties',
+                'META-INF/annotation-experimental_release.kotlin_module'
+            ]
+        }
+    }
 
 //    composeOptions {
-//        kotlinCompilerExtensionVersion = rootProject.composeVersion
+//        kotlinCompilerExtensionVersion = composeVersion
 //    }
-
-    packagingOptions {
-        exclude 'lib/*/librsjni.so'
-        exclude 'lib/*/libRSSupport.so'
-        exclude("META-INF/*.kotlin_module")
-        exclude 'lib/*/librsjni_androidx.so'
-        pickFirst 'META-INF/LICENSE'
-        pickFirst 'META-INF/INDEX.LIST'
-        pickFirst 'META-INF/io.netty.versions.properties'
-        pickFirst 'META-INF/annotation-experimental_release.kotlin_module'
+    
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
+    
+    namespace 'com.banglalink.toffee'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation "androidx.core:core-ktx:$rootProject.kotlinKtxVersion"
+    implementation "androidx.core:core-ktx:$kotlinKtxVersion"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'net.gotev:uploadservice:4.7.0'
     implementation 'net.gotev:uploadservice-okhttp:4.7.0'
-
-    //Compose
-//    implementation "androidx.compose.runtime:runtime:$rootProject.composeVersion"
-//    implementation "androidx.compose.ui:ui:$rootProject.composeVersion"
-//    implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
-//    implementation "androidx.compose.foundation:foundation:$rootProject.composeVersion"
-//    implementation "androidx.compose.foundation:foundation-layout:$rootProject.composeVersion"
-//    implementation "androidx.compose.material:material:$rootProject.composeVersion"
-//    implementation "androidx.compose.runtime:runtime-livedata:$rootProject.composeVersion"
-//    implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
-//    implementation "com.google.android.material:compose-theme-adapter:1.1.2"
-
-    //Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpVersion"
-    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$rootProject.okHttpVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
-
-    //LifeCycle Extensions
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
     
+    //Compose
+//    implementation "androidx.compose.runtime:runtime:$composeVersion"
+//    implementation "androidx.compose.ui:ui:$composeVersion"
+//    implementation "androidx.compose.ui:ui-tooling:$composeVersion"
+//    implementation "androidx.compose.foundation:foundation:$composeVersion"
+//    implementation "androidx.compose.foundation:foundation-layout:$composeVersion"
+//    implementation "androidx.compose.material:material:$composeVersion"
+//    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
+//    implementation "androidx.compose.ui:ui-tooling:$composeVersion"
+//    implementation "com.google.android.material:compose-theme-adapter:1.1.2"
+    
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$okHttpVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    
+    //LifeCycle Extensions
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+
 //    implementation 'androidx.work:work-runtime-ktx:2.7.1'
     
     implementation 'com.google.android.material:material:1.5.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
-
+    
     //GIF imageview
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.24'
     // Crop Image
-    implementation 'com.github.yalantis:ucrop:2.2.7'
+    implementation 'com.github.yalantis:ucrop:2.2.8'
     implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
     implementation 'com.xfinity:dahdit:0.9.3'
-
+    
     //Coil image Lib
     implementation 'io.coil-kt:coil:1.4.0'
     implementation "jp.wasabeef.transformers:coil:1.0.5"
     implementation "jp.wasabeef.transformers:core:1.0.5"
-
+    
     //Firebase Push Notification
-    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
+    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
     //Firebase core
-//    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
-    implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
-    implementation "com.google.firebase:firebase-crashlytics:$rootProject.firebaseCrashlyticsVersion"
-
+//    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
+    
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.jakewharton:butterknife:10.2.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     
-    def exoVersion = rootProject.exoVersion
+    //Exo Player
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-dash:$exoVersion"
@@ -150,73 +163,71 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
     implementation "com.google.android.exoplayer:extension-ima:$exoVersion"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
-
+    
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.6'
     implementation 'com.google.android.gms:play-services-cast-framework:21.0.1'
-
+    
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
-
+    
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:$rootProject.pagingVersion"
-
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    
     // Hilt
-    def hilt_android_ver = rootProject.hiltAndroidVersion
-    implementation "com.google.dagger:hilt-android:$hilt_android_ver"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
-    kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
-    kapt "androidx.hilt:hilt-compiler:$rootProject.hiltVersion"
-
+    implementation "com.google.dagger:hilt-android:$hiltAndroidVersion"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hiltAndroidVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
+    kapt "com.google.dagger:hilt-compiler:$hiltAndroidVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltVersion"
+    
     // Room database
-    def room_version = rootProject.roomDbVersion
-    implementation "androidx.room:room-runtime:$room_version"
-//    annotationProcessor "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-paging:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-
+    implementation "androidx.room:room-runtime:$roomDbVersion"
+//    annotationProcessor "androidx.room:room-compiler:roomDbVersion"
+    implementation "androidx.room:room-paging:$roomDbVersion"
+    implementation "androidx.room:room-ktx:$roomDbVersion"
+    kapt "androidx.room:room-compiler:$roomDbVersion"
+    
     // Navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
-
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    
     //Permission extension
 //    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
     
     //Facebook SDK
-//    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
+//    implementation "com.facebook.android:facebook-android-sdk:$facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     
-	implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
     implementation 'com.google.android.play:core:1.10.3'
     
     //firework sdk
-    implementation ('com.github.loopsocial:firework_sdk:v5.10.0') {
+    implementation('com.github.loopsocial:firework_sdk:v5.10.0') {
         exclude module: "picasso-transformations"
     }
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
     
     //conviva sdk
-    implementation "com.conviva.sdk:conviva-core-sdk:$rootProject.convivaSdkVersion"
-    implementation "com.conviva.sdk:conviva-exoplayer-sdk:$rootProject.convivaExoPlayerVersion"
+    implementation "com.conviva.sdk:conviva-core-sdk:$convivaSdkVersion"
+    implementation "com.conviva.sdk:conviva-exoplayer-sdk:$convivaExoPlayerVersion"
     
-    implementation ("com.google.apis:google-api-services-pubsub:$rootProject.pubsubVersion") {
+    implementation("com.google.apis:google-api-services-pubsub:$pubsubVersion") {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.json'
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-    implementation ("com.google.api-client:google-api-client-android:$rootProject.googleApiClientVersion") {
+    implementation("com.google.api-client:google-api-client-android:$googleApiClientVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-    implementation ("com.google.http-client:google-http-client-gson:$rootProject.googleHttpClientGsonVersion") {
+    implementation("com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
@@ -225,9 +236,9 @@ dependencies {
     implementation project(path: ':data')
     
     //mqtt library
-    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$rootProject.pahoClientVersion"
-    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$rootProject.pahoAndroidServiceVersion"
-
+    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$pahoClientVersion"
+    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
+    
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.android.gms:play-services-ads:20.6.0'
     implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
@@ -235,45 +246,44 @@ dependencies {
     
     //medallia
     implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
-
-    //New Relic SDK
-    implementation 'com.newrelic.agent.android:android-agent:6.4.1'
     
-    def espresso_version = rootProject.espressoVersion
+    //New Relic SDK
+    implementation 'com.newrelic.agent.android:android-agent:6.5.0'
+    
     def test_core = '1.4.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.2')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-
+    
     //Androidx Core library
     androidTestImplementation("androidx.test:core-ktx:$test_core")
-
+    
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation("androidx.test:runner:$test_core")
     testImplementation 'org.robolectric:robolectric:4.7.3'
 //    testImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation("androidx.test:rules:$test_core")
-
+    
     // Assertions
     androidTestImplementation('androidx.test.ext:junit-ktx:1.1.3')
     androidTestImplementation("androidx.test.ext:truth:$test_core")
     androidTestImplementation('com.google.truth:truth:1.1.3')
-
+    
     // Espresso dependencies
-    androidTestImplementation("androidx.test.espresso:espresso-core:$espresso_version")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:$espresso_version")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:$espresso_version")
-    androidTestImplementation("androidx.test.espresso:espresso-accessibility:$espresso_version")
-    androidTestImplementation("androidx.test.espresso:espresso-web:$espresso_version")
-    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espresso_version")
-
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:$espressoVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:$espressoVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-accessibility:$espressoVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-web:$espressoVersion")
+    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espressoVersion")
+    
     // Fragment testing
     debugImplementation("androidx.fragment:fragment-testing:1.4.1")
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
 
 //    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
-    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espresso_version")
-
-    def mockk_version = '1.12.1'
+    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espressoVersion")
+    
+    def mockk_version = '1.12.3'
     testImplementation "io.mockk:mockk:$mockk_version"
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
 }

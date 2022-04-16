@@ -59,7 +59,7 @@ class ConvivaHelper private constructor() {
                 ConvivaConstants.NAME to "CMS",
                 ConvivaConstants.ID to info.id,
                 ConvivaConstants.SERIES_NAME to (info.seriesName ?: "N/A"),
-                ConvivaConstants.SEASON_NUMBER to (info.seasonNo.toString() ?: "N/A"),
+                ConvivaConstants.SEASON_NUMBER to (info.seasonNo.toString()),
                 ConvivaConstants.SHOW_TITLE to "N/A",
                 ConvivaConstants.EPISODE_NUMBER to (if (info.episodeNo == 0) "N/A" else info.episodeNo.toString()),
                 ConvivaConstants.GENRE to "N/A",

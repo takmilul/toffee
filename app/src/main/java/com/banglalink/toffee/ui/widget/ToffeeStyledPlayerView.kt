@@ -112,7 +112,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     private fun initView() {
-        playerControlView = findViewById(R.id.exo_controller)
+        playerControlView = findViewById(com.google.android.exoplayer2.ui.R.id.exo_controller)
         drawerButton = findViewById(R.id.drawer)
         videoOption = findViewById(R.id.video_option)
         shareButton = findViewById(R.id.share)
@@ -138,16 +138,16 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         fullscreenButton = findViewById(R.id.fullscreen)
         controllerBg = findViewById(R.id.controller_bg)
-        playPause = findViewById(R.id.exo_play_pause)
+        playPause = findViewById(com.google.android.exoplayer2.ui.R.id.exo_play_pause)
         previewImage = findViewById(R.id.exo_shutter)
         
         playNext = findViewById(R.id.play_next)
         playPrev = findViewById(R.id.play_prev)
         
-        exoDuration = findViewById(R.id.exo_duration)
+        exoDuration = findViewById(com.google.android.exoplayer2.ui.R.id.exo_duration)
         exoTimeSeparator = findViewById(R.id.time_seperator)
-        exoPosition = findViewById(R.id.exo_position)
-        exoProgress = findViewById(R.id.exo_progress)
+        exoPosition = findViewById(com.google.android.exoplayer2.ui.R.id.exo_position)
+        exoProgress = findViewById(com.google.android.exoplayer2.ui.R.id.exo_progress)
         
         drawerButton.setOnClickListener(this)
         videoOption.setOnClickListener(this)

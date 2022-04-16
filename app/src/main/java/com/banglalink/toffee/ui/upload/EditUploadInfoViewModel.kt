@@ -3,11 +3,17 @@ package com.banglalink.toffee.ui.upload
 import android.content.Context
 import android.net.Uri
 import androidx.core.os.bundleOf
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.ContentUpload
+import com.banglalink.toffee.apiservice.GetContentCategories
+import com.banglalink.toffee.apiservice.UploadSignedUrlService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -144,7 +150,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 it.first?.let { thumb ->
                     thumbnailData.value = thumb
                 }
-                orientationData.value = it.second ?: 1
+                orientationData.value = it.second!!
             }
         }
     }

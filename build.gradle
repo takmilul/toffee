@@ -9,52 +9,41 @@ buildscript {
         roomDbVersion = '2.4.2'
         okHttpVersion = '4.9.0'
         pagingVersion = '3.1.1'
-        kotlinVersion = '1.6.10'
+        kotlinVersion = '1.6.20'
         composeVersion = '1.0.5'
         retrofitVersion = '2.9.0'
         espressoVersion = '3.4.0'
         kotlinKtxVersion = '1.7.0'
         lifecycleVersion = '2.4.1'
-        navigationVersion = '2.3.5'
+        navigationVersion = '2.4.2'
         pahoClientVersion = '1.2.5'
-        convivaSdkVersion = '4.0.18'
-        hiltAndroidVersion = '2.40.5'
+        hiltAndroidVersion = '2.41'
+        convivaSdkVersion = '4.0.20'
+        gradlePluginVersion = '7.1.3'
         facebookSdkVersion = '12.2.0'
         firebaseCoreVersion = '19.0.2'
         kotlinCoroutineVersion = '1.5.2'
-        googleApiClientVersion = '1.32.2'
+        googleApiClientVersion = '1.34.0'
         pubsubVersion = 'v1-rev452-1.25.0'
-        convivaExoPlayerVersion = '4.0.10'
+        convivaExoPlayerVersion = '4.0.12'
         pahoAndroidServiceVersion = '1.1.1'
         firebaseMessagingVersion = '23.0.0'
-        firebaseAnalyticsVersion = '20.1.0'
+        firebaseAnalyticsVersion = '20.1.2'
         firebaseCrashlyticsVersion = '18.2.9'
-        googleHttpClientGsonVersion = '1.40.1'
-    }
-    repositories {
-        google()
-        mavenCentral()
+        googleHttpClientGsonVersion = '1.41.7'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.37'
-        classpath 'com.newrelic.agent.android:agent-gradle-plugin:6.4.1'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
+        classpath 'com.newrelic.agent.android:agent-gradle-plugin:6.5.0'
     }
 }
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
-        maven { url "https://repository.medallia.com/digital-maven/" }
-        maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
-    }
+plugins {
+    id 'com.google.gms.google-services' version '4.3.10' apply false
+    id 'com.google.firebase.crashlytics' version '2.8.1' apply false
+    id 'com.android.library' version "$gradlePluginVersion" apply false
+    id 'org.jetbrains.kotlin.android' version "$kotlinVersion" apply false
+    id 'com.android.application' version "$gradlePluginVersion" apply false
+    id 'androidx.navigation.safeargs' version "$navigationVersion" apply false
+    id 'com.google.dagger.hilt.android' version "$hiltAndroidVersion" apply false
 }
 
 task clean(type: Delete) {

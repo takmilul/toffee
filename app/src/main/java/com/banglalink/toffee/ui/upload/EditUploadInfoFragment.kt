@@ -230,7 +230,6 @@ class EditUploadInfoFragment : BaseFragment() {
     
     private fun checkFileValidity(uri: Uri) {
         lifecycleScope.launch {
-            val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), uri)
             val fileName = UtilsKt.fileNameFromContentUri(requireContext(), uri)
             val fileSize = UtilsKt.fileSizeFromContentUri(requireContext(), uri)
             when (fileName.substringAfterLast(".")) {
@@ -373,7 +372,7 @@ class EditUploadInfoFragment : BaseFragment() {
     }
     
     private fun setupTagView() {
-        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
+        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R.id.chips_recycler)
         chipRecycler.setPadding(0)
         
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {

@@ -12,8 +12,8 @@ class LeftCropImageView @JvmOverloads constructor(
     override fun setFrame(l: Int, t: Int, r: Int, b: Int): Boolean {
         val matrix = imageMatrix
         val imageWidth = drawable.intrinsicWidth
-        val imageHeight = drawable.intrinsicHeight
-        val scaleRatio = 1.2
+//        val imageHeight = drawable.intrinsicHeight
+//        val scaleRatio = 1.2
         matrix.postTranslate((measuredWidth - imageWidth).toFloat(), 1f)
 //        matrix.postScale(-0.2f, 1f)
         imageMatrix = matrix

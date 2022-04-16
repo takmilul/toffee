@@ -1,15 +1,14 @@
 package com.banglalink.toffee.ui.player
 
 import android.content.Context
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.banglalink.toffee.R
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), LifecycleObserver {
+class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), DefaultLifecycleObserver {
     fun init(defaultTrackSelector: DefaultTrackSelector?) {
         val trackGroupArray = defaultTrackSelector?.currentMappedTrackInfo?.getTrackGroups(0)
         val initialOverride = trackGroupArray?.let { defaultTrackSelector.parameters.getSelectionOverride(0, it) }
@@ -34,8 +33,8 @@ class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), Lifec
         setContentView(bottomView)
     }
     
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun dismissDialog() {
+    override fun onPause(owner: LifecycleOwner) {
         dismiss()
+        super.onPause(owner)
     }
 }

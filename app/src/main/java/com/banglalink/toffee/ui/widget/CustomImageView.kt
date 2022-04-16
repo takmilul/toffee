@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import com.banglalink.toffee.R
 
 class CustomImageView : AppCompatImageView {
     constructor(context: Context) : super(context)
@@ -16,6 +15,6 @@ class CustomImageView : AppCompatImageView {
         val width = measuredWidth
         val height = width * 9 / 16
         setMeasuredDimension(width, height)
-        background = ContextCompat.getDrawable(context, R.color.fw_gnt_black)
+        background = ContextCompat.getDrawable(context, android.R.color.black)
     }
 }

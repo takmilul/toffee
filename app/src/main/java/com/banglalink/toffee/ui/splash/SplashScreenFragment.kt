@@ -29,7 +29,6 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
@@ -43,7 +42,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
-import java.util.concurrent.*
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
@@ -124,8 +123,8 @@ class SplashScreenFragment : BaseFragment() {
         if (mPref.adIdUpdateDate != today) {
             lifecycleScope.launch(IO + Job()) {
                 runCatching {
-                    var adId: String? = null
-                    
+                    var adId: String?
+    
                     if (AdvertisingIdClient.isAdvertisingIdProviderAvailable(appContext)) {
                         val adIdInfoCallback = AdvertisingIdClient.getAdvertisingIdInfo(appContext)
                         

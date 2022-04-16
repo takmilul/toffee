@@ -1,3 +1,20 @@
-include ':app'//, ':showcase_view'
-rootProject.name='ToffeeKotlin'
-include ':data'
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
+        maven { url "https://repository.medallia.com/digital-maven/" }
+        maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
+    }
+}
+rootProject.name = 'ToffeeKotlin'
+include ':app', ':data'//, ':showcase_view'

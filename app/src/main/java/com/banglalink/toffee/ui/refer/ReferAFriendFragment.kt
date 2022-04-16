@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -27,7 +26,6 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentReferAFriendBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -115,7 +113,7 @@ class ReferAFriendFragment : BaseFragment() {
             override fun updateDrawState(ds: TextPaint) {
                 super.updateDrawState(ds)
                 ds.isUnderlineText = true
-                ds.color = ContextCompat.getColor(requireContext(),R.color.com_facebook_blue)
+                ds.color = Color.BLUE
             }
         }
         ss.setSpan(clickableSpan, msg.length + 1, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

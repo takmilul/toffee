@@ -46,7 +46,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -60,7 +59,6 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.enums.CategoryType
-import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
@@ -95,7 +93,6 @@ import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -352,7 +349,7 @@ class HomeActivity :
     private fun initNewRelicSdk() {
         runCatching {
             NewRelic
-                .withApplicationToken(getString(string.new_relic_app_token))
+                .withApplicationToken(getString(R.string.new_relic_app_token))
                 .start(this.applicationContext)
         }
     }
@@ -468,6 +465,7 @@ class HomeActivity :
         appUpdateManager.registerListener(appUpdateListener)
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IN_APP_UPDATE_REQUEST_CODE) {
@@ -673,7 +671,15 @@ class HomeActivity :
         }
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
-
+        binding.tabNavigator.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.menu_feed -> navController.popBackStack(R.id.menu_feed, false)
+                R.id.menu_tv -> navController.navigate(R.id.menu_tv) 
+                R.id.menu_explore -> navController.navigate(R.id.menu_explore) 
+                R.id.menu_channel -> navController.navigate(R.id.menu_channel)
+            }
+            return@setOnItemSelectedListener true
+        }
 //        binding.sideNavigation.setNavigationItemSelectedListener {
 //            binding.drawerLayout.closeDrawers()
 //            return@setNavigationItemSelectedListener false

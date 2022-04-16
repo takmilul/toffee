@@ -34,7 +34,7 @@ class PingTool @Inject constructor(
                 val inetAddress = InetAddress.getByName(host)
                 val ip = inetAddress.hostAddress
                 val runtime = Runtime.getRuntime()
-                var isExist = false
+//                var isExist = false
                 val isOnline = connectionWatcher.isOnline
                 val netType = connectionWatcher.netType
                 val ispOrTelecom = if (connectionWatcher.isOverCellular) "Telecom" else "ISP"
@@ -42,7 +42,7 @@ class PingTool @Inject constructor(
                     try {
                         val ipProcess = runtime.exec("/system/bin/ping -c 1 $host")
                         val exitValue = ipProcess.waitFor()
-                        isExist = (exitValue == 0)
+//                        isExist = (exitValue == 0)
                     } catch (e: Exception) {
                         Log.i("HOS_", "isConnectedToThisServer: ${e.message}")
                         e.printStackTrace()

@@ -8,17 +8,14 @@ plugins {
 
 android {
     compileSdk 31
-
+    
     defaultConfig {
         minSdk 21
         targetSdk 30
-        versionCode 1
-        versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
-
+    
     flavorDimensions "lib"
     productFlavors {
         mobile {
@@ -30,67 +27,66 @@ android {
             buildConfigField 'int', 'DEVICE_TYPE', "4"
         }
     }
-
+    
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    
+    namespace 'com.banglalink.toffee.lib'
 }
 
 dependencies {
-
     //Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpVersion"
-    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$rootProject.okHttpVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
-
-    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
-
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$okHttpVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    
+    implementation "com.facebook.android:facebook-android-sdk:$facebookSdkVersion"
+    
     //Firebase Push Notification
-    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
+    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     implementation "androidx.exifinterface:exifinterface:1.3.3"
     //Firebase core
-//    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
-    implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
-    implementation "com.google.firebase:firebase-crashlytics:$rootProject.firebaseCrashlyticsVersion"
-
+//    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
+    
     // Room database
-    implementation "androidx.room:room-runtime:$rootProject.roomDbVersion"
-//    annotationProcessor "androidx.room:room-compiler:rootProject.roomDbVersion"
-    implementation "androidx.room:room-paging:$rootProject.roomDbVersion"
-    implementation "androidx.room:room-ktx:$rootProject.roomDbVersion"
-    kapt "androidx.room:room-compiler:$rootProject.roomDbVersion"
-
+    implementation "androidx.room:room-runtime:$roomDbVersion"
+//    annotationProcessor "androidx.room:room-compiler:roomDbVersion"
+    implementation "androidx.room:room-paging:$roomDbVersion"
+    implementation "androidx.room:room-ktx:$roomDbVersion"
+    kapt "androidx.room:room-compiler:$roomDbVersion"
+    
     // Hilt
-    def hilt_android_ver = rootProject.hiltAndroidVersion
-    implementation "com.google.dagger:hilt-android:$hilt_android_ver"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
-    kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
-
-    def hilt_ver = rootProject.hiltVersion
-//    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-    kapt "androidx.hilt:hilt-compiler:$hilt_ver"
-
+    implementation "com.google.dagger:hilt-android:$hiltAndroidVersion"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hiltAndroidVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
+    kapt "com.google.dagger:hilt-compiler:$hiltAndroidVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltVersion"
+    
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:$rootProject.pagingVersion"
-
-    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
-
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
-
-    implementation ("com.google.apis:google-api-services-pubsub:$rootProject.pubsubVersion") {
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
+    
+    implementation("com.google.apis:google-api-services-pubsub:$pubsubVersion") {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.json'
@@ -98,24 +94,24 @@ dependencies {
         exclude group: 'com.google.guava'
 //        exclude module: 'google-http-client-jackson2'
     }
-    implementation ("com.google.api-client:google-api-client-android:$rootProject.googleApiClientVersion") {
+    implementation("com.google.api-client:google-api-client-android:$googleApiClientVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-    implementation ("com.google.http-client:google-http-client-gson:$rootProject.googleHttpClientGsonVersion") {
+    implementation("com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion") {
         exclude module: 'httpclient'
         exclude group: 'com.google.code.findbugs'
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-
+    
     //mqtt library
-    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$rootProject.pahoClientVersion"
-    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$rootProject.pahoAndroidServiceVersion"
-
+    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$pahoClientVersion"
+    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
+    
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
 }
