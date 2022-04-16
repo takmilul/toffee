@@ -174,7 +174,7 @@ class SplashScreenFragment : BaseFragment() {
     
     private fun requestHeaderEnrichment() {
         try {
-            val isCellular = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
+            val isCellular = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
             if (mPref.heUpdateDate != today && isCellular) {
                 viewModel.getHeaderEnrichment()
             } else {

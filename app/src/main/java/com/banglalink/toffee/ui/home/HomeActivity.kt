@@ -145,6 +145,7 @@ class HomeActivity :
     @Inject lateinit var cacheManager: CacheManager
     private var playlistShareableUrl: String? = null
     private var shareableData: ShareableData? = null
+    private var webSeriesShareableUrl: String? = null
     private lateinit var navController: NavController
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
@@ -332,11 +333,11 @@ class HomeActivity :
             initNewRelicSdk()
         }
 
-       val isNativeAdActive= mPref.nativeAdSettings.value?.find {
+       val isAnyNativeSectonActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
 
-        if (isNativeAdActive) {
+        if (isAnyNativeSectonActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
 //                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
@@ -378,7 +379,7 @@ class HomeActivity :
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
-    
+
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()
@@ -911,6 +912,7 @@ class HomeActivity :
                                 playPlaylistShareable()
                             }
                             SharingType.SERIES.value -> {
+                                webSeriesShareableUrl = url
                                 playShareableWebSeries()
                             }
                         }
@@ -968,6 +970,11 @@ class HomeActivity :
                             viewModel.addToPlayListMutableLiveData.postValue(
                                 AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
                             )
+                            if (shareableData?.isUserPlaylist == 1) {
+                                cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                            } else {
+                                cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                            }
                             viewModel.playContentLiveData.postValue(playlistInfo)
                         }
                     } else {
@@ -1000,6 +1007,8 @@ class HomeActivity :
                                 shareableData?.name ?: "",
                                 shareableData?.seasonNo ?: 1,
                                 shareableData?.activeSeason?.size ?: 0,
+                                shareableData?.activeSeason,
+                                webSeriesShareableUrl,
                                 it[0].id.toInt(),
                                 it[0],
                             )
@@ -1390,6 +1399,7 @@ class HomeActivity :
                             it.layoutParams = param
                             it.isChecked = isDarkEnabled
                             it.setOnCheckedChangeListener { _, isChecked ->
+                                heartBeatManager.triggerEventViewingContentStop()
                                 changeAppTheme(isChecked)
                             }
                         }
@@ -1398,6 +1408,7 @@ class HomeActivity :
                         (themeMenu.actionView as SwitchMaterial).let {
                             it.isChecked = isDarkEnabled
                             it.setOnCheckedChangeListener { _, isChecked ->
+                                heartBeatManager.triggerEventViewingContentStop()
                                 changeAppTheme(isChecked)
                             }
                         }

@@ -124,7 +124,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         val adInterval = nativeAdSettings?.adInterval ?: 0
         val isAdActive = nativeAdSettings?.isActive ?: false
 
-        val isLoadAdAdapter = isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
+        val isLoadAdAdapter =mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
         if (isLoadAdAdapter) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
             val nativeAdAdapter =

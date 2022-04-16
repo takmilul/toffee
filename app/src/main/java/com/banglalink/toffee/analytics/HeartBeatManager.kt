@@ -8,6 +8,13 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.work.BackoffPolicy.LINEAR
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy.APPEND_OR_REPLACE
+import androidx.work.NetworkType.CONNECTED
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -15,7 +22,10 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.ui.home.PLAYER_EVENT_TAG
+import com.banglalink.toffee.ui.player.PlayerEventWorker
 import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.today
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -24,6 +34,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import java.util.concurrent.TimeUnit.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +49,7 @@ class HeartBeatManager @Inject constructor(
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
-    private var contentId = 0;
+    private var contentId = 0
     private var contentType = ""
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
@@ -53,6 +64,7 @@ class HeartBeatManager @Inject constructor(
     }
     
     override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
         isAppForeGround = true
         coroutineScope = CoroutineScope(Default)
         coroutineScope3 = CoroutineScope(IO + Job())
@@ -62,14 +74,24 @@ class HeartBeatManager @Inject constructor(
         }
         sendAdIdLog()
         sendHeaderEnrichmentLog()
-        super.onStart(owner)
     }
     
     override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
         isAppForeGround = false
         coroutineScope.cancel()
         coroutineScope3.cancel()
-        super.onStop(owner)
+        
+        try {
+            val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
+            val workerRequest = OneTimeWorkRequestBuilder<PlayerEventWorker>()
+                .setConstraints(constraints)
+                .setBackoffCriteria(LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, MILLISECONDS)
+                .build()
+            WorkManager.getInstance(appContext).enqueueUniqueWork("sendPlayerEvent", APPEND_OR_REPLACE, workerRequest)
+        } catch (e: Exception) {
+            Log.i(PLAYER_EVENT_TAG, "release: worker error")
+        }
     }
     
     private fun sendAdIdLog() {
@@ -91,7 +113,7 @@ class HeartBeatManager @Inject constructor(
     
     private fun sendHeaderEnrichmentLog() {
         try {
-            val isCellular = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
+            val isCellular = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
             if (mPref.heUpdateDate != today && isCellular) {
                 coroutineScope.launch {
                     val response = resultFromResponse { headerEnrichmentService.execute() }

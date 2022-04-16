@@ -1,4 +1,4 @@
-package com.banglalink.toffee.util
+package com.banglalink.toffee.ui.player
 
 import android.os.Build
 import com.banglalink.toffee.data.database.entities.PlayerEventData
@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.util.PingData
 import com.google.ads.interactivemedia.v3.api.Ad
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -155,7 +156,7 @@ class ToffeePlayerEventHelper @Inject constructor(
         if (!forceUpdate) {
             delay(15_000)
         }
-        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             if (connectionWatcher.isOnline) {
                 playerEventRepository.sendTopEventToPubSubAndRemove()
             }

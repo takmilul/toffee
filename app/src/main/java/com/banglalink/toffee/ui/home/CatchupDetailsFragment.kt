@@ -140,7 +140,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
         val isRecommendedActive = nativeAdSettings?.isActive ?:false
 
-        if (isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
+        if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, catchupAdapter as Adapter<ViewHolder>, SMALL)
             val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
             mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)

@@ -28,7 +28,7 @@ import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.player.PlayerPreview
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.ConvivaHelper
-import com.banglalink.toffee.util.ToffeePlayerEventHelper
+import com.banglalink.toffee.ui.player.ToffeePlayerEventHelper
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player

@@ -8,6 +8,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.databinding.DataBindingUtil
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.imageLoader
@@ -48,12 +50,13 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @HiltAndroidApp
-class ToffeeApplication : Application(), ImageLoaderFactory {
+class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provider {
     
     @Inject lateinit var cacheManager: CacheManager
     @Inject @CoilCache lateinit var coilCache: Cache
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var coilInterceptor: CoilInterceptor
+    @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var sessionPreference: SessionPreference
@@ -122,6 +125,10 @@ class ToffeeApplication : Application(), ImageLoaderFactory {
         initFireworkSdk()
         initMedalliaSdk()
         mUploadObserver.start()
+    }
+    
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
     }
     
     private fun initFireworkSdk() {

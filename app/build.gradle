@@ -124,7 +124,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
 
-//    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
     
     implementation 'com.google.android.material:material:1.5.0'
     //Switch Lib
@@ -179,6 +179,8 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hiltAndroidVersion"
     kapt "com.google.dagger:hilt-compiler:$hiltAndroidVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltVersion"
+    implementation "androidx.hilt:hilt-work:$hiltVersion"
     kapt "androidx.hilt:hilt-compiler:$hiltVersion"
     
     // Room database

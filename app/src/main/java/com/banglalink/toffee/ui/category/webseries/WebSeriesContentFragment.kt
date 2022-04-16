@@ -145,6 +145,8 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             item.seriesName ?: "",
             item.seasonNo,
             item.totalSeason,
+            item.activeSeasonList,
+            item.video_share_url,
             item.id.toInt(),
             item
         )
@@ -161,7 +163,6 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOptionClicked(view, item)
-        //onOptionClicked(view, item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {
