@@ -1423,8 +1423,8 @@ class HomeActivity :
     }
     
     private fun observeInAppMessage() {
-        ToffeeAnalytics.logEvent("trigger_inapp_messaging", null, true)
-        FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
+        ToffeeAnalytics.logEvent(ToffeeEvents.TRIGGER_INAPP_MESSAGING, null, true)
+        FirebaseInAppMessaging.getInstance().triggerEvent(ToffeeEvents.TRIGGER_INAPP_MESSAGING)
     }
     
     private fun initLandingPageFragmentAndListenBackStack() {

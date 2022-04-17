@@ -104,7 +104,7 @@ class SplashScreenFragment : BaseFragment() {
         if (!mPref.isPreviousDbDeleted){
             viewModel.deletePreviousDatabase()
         }
-        ToffeeAnalytics.logEvent("app_launch")
+        ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
         detectTlsVersion()
     }
     
@@ -141,13 +141,13 @@ class SplashScreenFragment : BaseFragment() {
                                         })
                                         mPref.adIdUpdateDate = today
                                     } ?: run {
-                                        ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                                        ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
                                     }
                                 }
                                 
                                 override fun onFailure(t: Throwable) {
                                     Log.e("AD_ID", "Failed to connect to Advertising ID provider.")
-                                    ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
                                 }
                             },
                             Executors.newSingleThreadExecutor()
@@ -162,11 +162,11 @@ class SplashScreenFragment : BaseFragment() {
                             })
                             mPref.adIdUpdateDate = today
                         } ?: run {
-                            ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                            ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
                         }
                     }
                 }.onFailure {
-                    ToffeeAnalytics.logEvent("fetching_ad_id_failed")
+                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
                 }
             }
         }
