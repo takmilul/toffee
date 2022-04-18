@@ -107,7 +107,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
-                    ToffeeAnalytics.logEvent("confirm_otp", bundleOf(
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf(
                         "confirm_otp_status" to "0",
                         "confirm_otp_failure_reason" to it.error.msg
                     ))

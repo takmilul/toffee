@@ -118,12 +118,12 @@ class LoginContentFragment : ChildDialogFragment() {
                                 putString(REG_SESSION_TOKEN_ARG, regSessionToken)
                             }
                         )
-                        ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
+                        ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED, bundleOf("login_status" to "1"))
                     }
                 }
                 is Resource.Failure -> {
-                    ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "0"))
-                    ToffeeAnalytics.logEvent("login", bundleOf("login_failure_reason" to it.error.msg))
+                    ToffeeAnalytics.logEvent(ToffeeEvents.LOGIN, bundleOf("login_status" to "0"))
+                    ToffeeAnalytics.logEvent(ToffeeEvents.LOGIN, bundleOf("login_failure_reason" to it.error.msg))
                     requireActivity().showToast(it.error.msg)
 
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
