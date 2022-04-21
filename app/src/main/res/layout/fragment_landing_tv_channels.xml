@@ -28,7 +28,7 @@
             android:id="@+id/viewAllButton"
             style="@style/ViewAllTextView"
             android:text="@string/view_all"
-            app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+            app:drawableEndCompat="@drawable/ic_right_arrow_accent"
             app:layout_constraintTop_toTopOf="@id/channel_tv"
             app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
             app:layout_constraintEnd_toEndOf="parent" />

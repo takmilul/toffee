@@ -1,0 +1,7 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_toffee"
+        android:width="56dp"
+        android:height="42dp"
+        android:gravity="center"/>
+</layer-list>

@@ -39,19 +39,19 @@ public class VelBoxFieldTextWatcher implements View.OnFocusChangeListener {
             this.validLength = 4;
             this.leftDrawable = R.drawable.ic_user;
             this.leftDrawableSelected = R.drawable.ic_user;
-            this.rightDrawable = R.mipmap.ic_field_tick;
+            this.rightDrawable = R.drawable.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
         } else if (type == FieldType.EMAIL_FIELD) {
             this.leftDrawable = R.drawable.ic_email;
             this.leftDrawableSelected = R.drawable.ic_email;
-            this.rightDrawable = R.mipmap.ic_field_tick;
+            this.rightDrawable = R.drawable.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
         } else if (type == FieldType.ADDRESS_FIELD) {
             this.leftDrawable = R.drawable.ic_location;
             this.leftDrawableSelected = R.drawable.ic_location;
-            this.rightDrawable = R.mipmap.ic_field_tick;
+            this.rightDrawable = R.drawable.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
         }

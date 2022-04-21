@@ -71,7 +71,7 @@
                     android:layout_margin="12dp"
                     android:padding="4dp"
                     android:text="@string/Creators_policy_page_title"
-                    app:drawableEndCompat="@drawable/ic_right_arrow_accent_2" />
+                    app:drawableEndCompat="@drawable/ic_right_arrow_accent" />
     
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/empty_view_icon"

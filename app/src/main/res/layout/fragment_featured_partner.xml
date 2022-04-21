@@ -22,7 +22,7 @@
         style="@style/ViewAllTextView"
         android:text="@string/view_all"
         android:visibility="gone"
-        app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
+        app:drawableRightCompat="@drawable/ic_right_arrow_accent"
         app:layout_constraintBottom_toBottomOf="@+id/featuredPartnerHeader"
         app:layout_constraintEnd_toEndOf="parent" />
     

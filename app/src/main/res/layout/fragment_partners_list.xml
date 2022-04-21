@@ -27,7 +27,7 @@
             style="@style/ViewAllTextView"
             android:visibility="gone"
             android:text="@string/view_all"
-            app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
+            app:drawableRightCompat="@drawable/ic_right_arrow_accent"
             app:layout_constraintBottom_toBottomOf="@+id/contentHeader"
             app:layout_constraintEnd_toEndOf="parent" />
 

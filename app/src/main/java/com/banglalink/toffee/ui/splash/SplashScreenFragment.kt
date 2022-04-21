@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.splash
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -42,11 +43,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
-import java.util.concurrent.Executors
+import java.util.concurrent.*
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
 @AndroidEntryPoint
+@SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
     private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null

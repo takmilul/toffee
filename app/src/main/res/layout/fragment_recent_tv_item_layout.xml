@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             loadChannelImage="@{data.channelInfo}"
             android:background="@drawable/circular_white_bg"
-            tools:src="@mipmap/ic_menu_channel" />
+            tools:src="@drawable/ic_profile" />
     
         <ImageView
             android:contentDescription="@string/txt_badge_icon"

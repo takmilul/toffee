@@ -20,7 +20,7 @@
     
     <item
         android:id="@+id/menu_playlist"
-        android:icon="@drawable/ic_group_215"
+        android:icon="@drawable/ic_menu_playlist"
         android:title="@string/menu_playlists" />
     
     <item

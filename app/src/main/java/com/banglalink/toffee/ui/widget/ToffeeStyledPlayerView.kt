@@ -26,9 +26,9 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.player.PlayerPreview
+import com.banglalink.toffee.ui.player.ToffeePlayerEventHelper
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.ConvivaHelper
-import com.banglalink.toffee.ui.player.ToffeePlayerEventHelper
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -121,7 +121,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         if (isAutoRotationEnabled) {
             rotateButton.setImageResource(R.drawable.ic_screen_rotate)
         } else {
-            rotateButton.setImageResource(R.mipmap.rotation_off)
+            rotateButton.setImageResource(R.drawable.rotation_off)
         }
         
         setShowNextButton(false)
@@ -233,7 +233,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
         rotateButton.visibility = if (status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
-        rotateButton.setImageResource(if (!isAutoRotationEnabled) R.mipmap.rotation_off else R.drawable.ic_screen_rotate)
+        rotateButton.setImageResource(if (!isAutoRotationEnabled) R.drawable.rotation_off else R.drawable.ic_screen_rotate)
         if (invokeListener) {
             onPlayerControllerChangedListeners.forEach {
                 it.onRotationLock(isAutoRotationEnabled)
@@ -287,7 +287,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             R.id.rotation -> {
                 if (isAutoRotationEnabled) {
                     isAutoRotationEnabled = false
-                    rotateButton.setImageResource(R.mipmap.rotation_off)
+                    rotateButton.setImageResource(R.drawable.rotation_off)
                 } else {
                     isAutoRotationEnabled = true
                     rotateButton.setImageResource(R.drawable.ic_screen_rotate)
