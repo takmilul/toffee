@@ -15,7 +15,7 @@ class SendDrmUnavailableLogEvent @Inject constructor(private val mPref: SessionP
     fun execute(sendToPubSub: Boolean = true) {
         PubSubMessageUtil.sendMessage(
             gson.toJson(DrmUnavailableLogData().also {
-                it.phoneNumber = if (mPref.phoneNumber.isNotBlank()) mPref.phoneNumber else mPref.hePhoneNumber
+                it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             }),
             DRM_UNAVAILABLE_TOPIC
         )

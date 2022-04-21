@@ -15,7 +15,7 @@ class SendDrmFallbackEvent @Inject constructor(private val mPref: SessionPrefere
     fun execute(channelId: Long, reason: String) {
         PubSubMessageUtil.sendMessage(
             gson.toJson(DrmFallbackData(reason, channelId).also {
-                it.phoneNumber = if (mPref.phoneNumber.isNotBlank()) mPref.phoneNumber else mPref.hePhoneNumber
+                it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             }),
             DRM_FALLBACK_TOPIC
         )
