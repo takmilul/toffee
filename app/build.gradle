@@ -10,11 +10,11 @@ plugins {
 
 android {
     
-    compileSdkVersion 31
+    compileSdkVersion 32
     
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         applicationId "com.banglalink.toffee"
         versionCode appVersionCode
         versionName appVersionName
@@ -281,7 +281,7 @@ dependencies {
     
     // Fragment testing
     debugImplementation("androidx.fragment:fragment-testing:1.4.1")
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion"
 
 //    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
     androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espressoVersion")

@@ -16,7 +16,6 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.DrmTokenService
-import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
@@ -36,7 +35,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
-import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.banglalink.toffee.util.*
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
@@ -116,14 +114,12 @@ abstract class PlayerPageActivity :
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
     private var defaultCookieManager = CookieManager()
-    @Inject lateinit var toffeeDatabase: ToffeeDatabase
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
-    @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -131,7 +127,6 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
-    private val homeViewModel by viewModels<HomeViewModel>()
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
