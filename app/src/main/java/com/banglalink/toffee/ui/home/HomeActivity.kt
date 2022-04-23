@@ -316,7 +316,6 @@ class HomeActivity :
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
-//        viewModel.getVastTags()
         observe(mPref.shareableHashLiveData) { pair ->
             pair.first?.let { observeShareableContent(it, pair.second) }
         }
@@ -333,11 +332,11 @@ class HomeActivity :
             initNewRelicSdk()
         }
 
-       val isAnyNativeSectonActive= mPref.nativeAdSettings.value?.find {
+       val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
 
-        if (isAnyNativeSectonActive && mPref.isNativeAdActive) {
+        if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
 //                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()

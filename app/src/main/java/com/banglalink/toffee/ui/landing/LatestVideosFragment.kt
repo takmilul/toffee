@@ -26,14 +26,15 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
-import com.banglalink.toffee.enums.FilterContentType
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.LARGE
-import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -44,7 +45,6 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
-import com.google.android.gms.ads.*
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -54,7 +54,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
-
+    
     private var listJob: Job? = null
     private var category: Category? = null
     @Inject lateinit var localSync: LocalSync
@@ -65,20 +65,20 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var _binding: FragmentLandingLatestVideosBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
-    
+        
         setupEmptyView()
-        mAdapter = LatestVideosAdapter(this)
         selectedFilter = FEED.value
+        mAdapter = LatestVideosAdapter(this)
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
             initAdapter()
@@ -95,7 +95,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 }
             }
         }
-
+        
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }
@@ -106,44 +106,40 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
     }
-
+    
     private fun initAdapter() {
-         val nativeAdSettings:NativeAdSettings?
-        if(selectedFilter== FilterContentType.TRENDING_VIDEOS.value) {
-            nativeAdSettings = mPref.nativeAdSettings.value?.find {
-                 it.area==NativeAdAreaType.TRENDING_VIDEO.value
-             }
-        }
-        else{
-            nativeAdSettings = mPref.nativeAdSettings.value?.find {
-                it.area==NativeAdAreaType.LATEST_VIDEO.value
+        val nativeAdSettings = if (selectedFilter == TRENDING_VIDEOS.value) {
+            mPref.nativeAdSettings.value?.find {
+                it.area == NativeAdAreaType.TRENDING_VIDEO.value
+            }
+        } else {
+            mPref.nativeAdSettings.value?.find {
+                it.area == NativeAdAreaType.LATEST_VIDEO.value
             }
         }
-
-        val feedAdUnitId:String? = nativeAdSettings?.adUnitId
+        
+        val feedAdUnitId = nativeAdSettings?.adUnitId
         val adInterval = nativeAdSettings?.adInterval ?: 0
         val isAdActive = nativeAdSettings?.isActive ?: false
-
-        val isLoadAdAdapter =mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
+        
+        val isLoadAdAdapter = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
         if (isLoadAdAdapter) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
-            val nativeAdAdapter =
-                nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
             binding.latestVideosList.adapter = nativeAdAdapter
             binding.latestVideosList.layoutManager = LinearLayoutManager(requireContext())
-         } else {
-            binding.latestVideosList.adapter =
-                mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+        } else {
+            binding.latestVideosList.adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             binding.latestVideosList.setHasFixedSize(true)
-         }
+        }
     }
-
+    
     private fun filterButtonClickListener(it: View?) {
         val popupMenu = PopupMenu(requireContext(), it)
         popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
         popupMenu.menu.add(Menu.NONE, TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
         popupMenu.show()
-
+        
         popupMenu.setOnMenuItemClickListener { item ->
             selectedFilter = item.itemId
             binding.latestVideosHeader.text = item.title
@@ -164,44 +160,46 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0 && binding.subCategoryChipGroup.childCount > 0) {
                 binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
             }
-
+            
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 0, it)
             } else {
                 observeTrendingVideosList(category?.id?.toInt() ?: 0, it)
             }
+            initAdapter()
         }
     }
-
+    
     private fun observeHashTagChange() {
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
             listJob = viewLifecycleOwner.lifecycleScope.launch {
+                mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
                 viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }
             }
+            initAdapter()
         }
     }
-
+    
     private fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(0, "No item found")
     }
-
+    
     private fun setupEmptyView() {
         val info = getEmptyViewInfo()
         if (info.first > 0) {
             binding.emptyViewIcon.setImageResource(info.first)
-        }
-        else {
+        } else {
             binding.emptyViewIcon.visibility = View.GONE
         }
-
+        
         info.second?.let {
             binding.emptyViewLabel.text = it
         }
     }
-
+    
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -213,8 +211,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                         channel
                     })
                 }
-            }
-            else {
+            } else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
                     mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                         localSync.syncData(channel)
@@ -230,7 +227,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
-                mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
+                mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     localSync.syncData(channel)
                     channel
                 })
@@ -241,11 +238,11 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onItemClicked(item: ChannelInfo) {
         homeViewModel.playContentLiveData.postValue(item)
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         openMenu(view, item)
     }
-
+    
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
         val iconLocation = IntArray(2)
@@ -258,8 +255,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
                     if (reactionText == Love.name) {
                         view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
-                    }
-                    else {
+                    } else {
                         view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                     }
                 }
@@ -267,22 +263,22 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         }
         childFragmentManager.commit { add(reactionPopupFragment, TAG) }
     }
-
+    
     override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
         super.onShareClicked(view, item, isPlaylist)
         requireActivity().handleShare(item)
     }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     private fun openMenu(view: View, item: ChannelInfo) {
         showShareMenuItem(true)
         super.onOptionClicked(view, item)
     }
-
+    
     override fun showShareMenuItem(hide: Boolean): Boolean {
         return hide
     }
@@ -313,42 +309,36 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             }
         }
     }
-
+    
     private fun addChip(subCategory: SubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
-
+        
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, binding.subCategoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
-
+        
         chip.chipBackgroundColor = chipColor
         chip.chipStrokeColor = createStateColor(intColor, textColor)
         chip.rippleColor = chipColor
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
-
+        
         return chip
     }
-
+    
     private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
         return ColorStateList(
-            arrayOf(
-                intArrayOf(attr.state_checked),
-                intArrayOf()
-            ),
-            intArrayOf(
-                selectedColor,
-                unSelectedColor
-            )
+            arrayOf(intArrayOf(attr.state_checked), intArrayOf()),
+            intArrayOf(selectedColor, unSelectedColor)
         )
     }
     
     override fun onDestroyView() {
         nativeAdBuilder?.destroyAd()
         binding.latestVideosList.adapter = null
-        nativeAdBuilder=null
+        nativeAdBuilder = null
         super.onDestroyView()
         _binding = null
     }
