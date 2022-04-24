@@ -13,7 +13,7 @@ import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -57,7 +57,7 @@ class RecentChannelsFragment : BaseFragment() {
         
         val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
         val channelItemWidth = resources.getDimension(R.dimen.channel_width)
-        val horizontalGap = (UtilsKt.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
+        val horizontalGap = (Utils.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
         
         val recentMargin = resources.getDimension(R.dimen.recent_channels_margin)
         val leftPadding = horizontalGap - recentMargin + channelsPadding

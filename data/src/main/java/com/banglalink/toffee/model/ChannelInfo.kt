@@ -6,9 +6,6 @@ import android.util.Base64
 import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.Utils.discardZeroFromDuration
-import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
@@ -220,7 +217,7 @@ data class ChannelInfo(
     var viewProgress: Long = -1L
     
     fun viewProgressPercent(): Int {
-        val durationInt = UtilsKt.getLongDuration(duration)
+        val durationInt = Utils.getLongDuration(duration)
         if(viewProgress < 0L || durationInt <= 0L || isLive) return 0
         if(viewProgress > durationInt) return 1000
         return ((viewProgress.toDouble() / durationInt) * 1000L).toInt()
@@ -247,6 +244,7 @@ data class ChannelInfo(
     @get:SerializedName("isPurchased")
     val isPurchased: Boolean
         get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
+    
     @get:SerializedName("isPaidSubscribed")
     val isPaidSubscribed: Boolean
         get() = individual_price?.toInt() == 0 && subscription
@@ -269,8 +267,8 @@ data class ChannelInfo(
         return time
     }
     
-    fun formattedViewCount(): String = getFormattedViewsText(view_count)
-    fun formattedDuration(): String = discardZeroFromDuration(duration)
+    fun formattedViewCount(): String = Utils.getFormattedViewsText(view_count)
+    fun formattedDuration(): String = Utils.discardZeroFromDuration(duration)
     fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"
-    fun formattedSubscriberCount(): String = getFormattedViewsText(subscriberCount.toString())
+    fun formattedSubscriberCount(): String = Utils.getFormattedViewsText(subscriberCount.toString())
 }

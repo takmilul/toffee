@@ -4,10 +4,10 @@ import android.os.Build
 import com.banglalink.toffee.data.database.entities.PlayerEventData
 import com.banglalink.toffee.data.repository.PlayerEventRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toFormattedBigDate
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.util.PingData
+import com.banglalink.toffee.util.currentDateTimeMillis
 import com.google.ads.interactivemedia.v3.api.Ad
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -89,7 +89,7 @@ class ToffeePlayerEventHelper @Inject constructor(
 //        Log.i(PLAYER_EVENT_TAG, "Event: $event, Error Message: $errorMessage, Error Cause: $errorCause")
         addEventToDb(
             playerEventData?.apply {
-                dateTime = System.currentTimeMillis().toFormattedBigDate()
+                dateTime = currentDateTimeMillis
                 playerEvent = event
                 playerEventId = eventId
                 this.errorMessage = errorMessage
@@ -103,7 +103,7 @@ class ToffeePlayerEventHelper @Inject constructor(
 //        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
         addEventToDb(
             playerEventData?.apply {
-                dateTime = System.currentTimeMillis().toFormattedBigDate()
+                dateTime = currentDateTimeMillis
                 adId = ad?.adId
                 adCreativeId = ad?.creativeId
                 adFirstCreativeId = ad?.adWrapperCreativeIds?.firstOrNull()?.toString()

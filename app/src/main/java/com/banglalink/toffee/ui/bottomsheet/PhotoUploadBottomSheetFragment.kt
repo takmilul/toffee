@@ -16,7 +16,7 @@ import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.imagePathToBase64
+import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -97,7 +97,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
                     it?.let {
                         loadImage(it)
                         saveButtonStateChange()
-                        newChannelLogoUrl = imagePathToBase64(requireContext(), it)
+                        newChannelLogoUrl = Utils.imagePathToBase64(requireContext(), it)
                     }
                 }
             }

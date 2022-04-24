@@ -2,12 +2,11 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.model.PlayerSessionDetails
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.currentDateTime
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class PlayerPreference private constructor(val context: Context) {
     private val pref: SharedPreferences =
@@ -31,7 +30,7 @@ class PlayerPreference private constructor(val context: Context) {
     }
 
     fun getInitialTime():String{
-        val timeString = pref.getString("initial_Time",Utils.getDateTime())?:Utils.getDateTime()
+        val timeString = pref.getString("initial_Time", currentDateTime) ?: currentDateTime
         pref.edit().remove("initial_Time").commit()
         return timeString
     }

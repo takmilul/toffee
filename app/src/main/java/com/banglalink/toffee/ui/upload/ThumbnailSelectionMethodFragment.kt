@@ -23,7 +23,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -162,7 +162,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 setHideBottomControls(true)
                 when {
                     isChannelBanner -> {
-                        val width = UtilsKt.getScreenWidth().toFloat()
+                        val width = Utils.getScreenWidth().toFloat()
                         val height = resources.getDimension(R.dimen.channel_banner_height)
                         withAspectRatio(width, height)
                     }

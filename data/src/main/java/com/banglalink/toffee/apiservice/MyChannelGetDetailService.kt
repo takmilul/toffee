@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelDetailBean
-import com.banglalink.toffee.util.getFormattedViewsText
+import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
 class MyChannelGetDetailService @Inject constructor(
@@ -35,7 +35,7 @@ class MyChannelGetDetailService @Inject constructor(
         }
     
         return response.response.apply {
-            formattedSubscriberCount = getFormattedViewsText(subscriberCount.toString())
+            formattedSubscriberCount = Utils.getFormattedViewsText(subscriberCount.toString())
             subscriberCount = subscriptionCountRepository.getSubscriberCount(channelOwnerId)
             isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelOwnerId, preference.customerId) != null) 1 else 0
         }

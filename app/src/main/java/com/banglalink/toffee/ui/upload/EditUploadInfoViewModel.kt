@@ -13,7 +13,6 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetContentCategories
-import com.banglalink.toffee.apiservice.UploadSignedUrlService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -21,7 +20,10 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
-import com.banglalink.toffee.util.*
+import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.SingleLiveEvent
+import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.getError
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,7 +41,6 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private val contentUploadApi: ContentUpload,
     private val preference: SessionPreference,
     private val categoryApi: GetContentCategories,
-    private val uploadSignedUrlService: UploadSignedUrlService,
     @Assisted private val uploadFileUri: String
 ) : ViewModel() {
 
@@ -145,7 +146,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private fun loadThumbnail() {
         viewModelScope.launch {
             withContext(Dispatchers.Default + Job()) {
-                UtilsKt.generateThumbnail(appContext, uploadFileUri)
+                Utils.generateThumbnail(appContext, uploadFileUri)
             }?.let {
                 it.first?.let { thumb ->
                     thumbnailData.value = thumb
@@ -157,13 +158,13 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     private fun loadVideoDuration() {
         viewModelScope.launch {
-            durationData.value = UtilsKt.getVideoDuration(appContext, uploadFileUri)
+            durationData.value = Utils.getVideoDuration(appContext, uploadFileUri)
         }
     }
 
     private suspend fun initUpload() {
-        actualFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
-        val fileSize = UtilsKt.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
+        actualFileName = Utils.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
+        val fileSize = Utils.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
 
         uploadStatusText.value = "$actualFileName \u2022 ${Utils.readableFileSize(fileSize)}"
 
@@ -195,9 +196,9 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     suspend fun loadCopyrightFileName(fileUri: Uri) {
         copyrightDocUri = fileUri.toString()
-        val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
+        val fileSize = Utils.fileSizeFromContentUri(appContext, fileUri)
         val actualFileSize = Utils.readableFileSize(fileSize)
-        val contentFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
+        val contentFileName = Utils.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
         copyrightDocExt = contentFileName.substringAfterLast(".")
         val docFileName = "$contentFileName ($actualFileSize)"
         copyrightFileName.value = docFileName
@@ -252,7 +253,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         if (uri == null) return
         viewModelScope.launch {
             val imageData = withContext(Dispatchers.Default + Job()) {
-                imagePathToBase64(appContext, uri)
+                Utils.imagePathToBase64(appContext, uri)
             }
             thumbnailData.value = imageData
         }

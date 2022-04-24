@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.nativead
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,7 @@ import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.getTime
+import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
@@ -160,7 +158,7 @@ class NativeAdAdapter private constructor(
             if (nativeAd.mediaContent?.hasVideoContent() == true) {
                 val videoController = it.videoController
                 val mediaAspectRatio: Float = it.aspectRatio
-                val duration: String = getTime(it.duration.toInt())
+                val duration: String = Utils.getDuration(it.duration.toInt())
                 adContainerView.duration.show()
                 adContainerView.duration.text = duration
             } else {

@@ -37,8 +37,7 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.imagePathToBase64
+import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
@@ -148,7 +147,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
                 }
                 binding.container.requestFocus()
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
             }
             
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -270,13 +269,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     override fun onClick(v: View?) {
         when (v) {
-            binding.container -> UtilsKt.hideSoftKeyboard(requireActivity())
+            binding.container -> Utils.hideSoftKeyboard(requireActivity())
             binding.cancelButton -> {
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
                 findNavController().navigateUp()
             }
             binding.saveButton -> {
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
                 updateChannelInfo()
             }
             binding.bannerEditButton -> {
@@ -311,7 +310,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         var bannerBase64: String? = null
         try {
             if (!newBannerUrl.isNullOrEmpty()) {
-                bannerBase64 = imagePathToBase64(requireContext(), newBannerUrl!!)
+                bannerBase64 = Utils.imagePathToBase64(requireContext(), newBannerUrl!!)
             }
         } catch (e: Exception) {
             bannerBase64 = null
@@ -320,7 +319,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         var profileImageBase64: String? = null
         try {
             if (!newProfileImageUrl.isNullOrEmpty()) {
-                profileImageBase64 = imagePathToBase64(requireContext(), newProfileImageUrl!!)
+                profileImageBase64 = Utils.imagePathToBase64(requireContext(), newProfileImageUrl!!)
             }
         } catch (e: Exception) {
             profileImageBase64 = null
@@ -444,7 +443,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun validateDOB(): Boolean {
         var isDobValid = false
-        userDOB = UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy"), "yyyy-MM-dd")
+        userDOB = Utils.dateToStr(Utils.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy"), "yyyy-MM-dd")
         if (binding.dateOfBirthTv.text.isBlank() || userDOB.isNullOrBlank()) {
             binding.emailEt.validateInput(
                 binding.errorDateTv,
@@ -453,7 +452,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 R.drawable.error_single_line_input_text_bg
             )
         } else {
-            val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy") ?: Date()
+            val date = Utils.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy") ?: Date()
             val userAge = ageCalculate(date)
             
             if (userAge < 18) {
@@ -480,14 +479,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private fun showDatePicker() {
         binding.emailEt.requestFocus()
         binding.emailEt.setSelection(binding.emailEt.length())
-        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy") ?: Date()
+        val date = Utils.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy") ?: Date()
         val calendar = Calendar.getInstance()
         calendar.time = date
         val datePickerDialog = DatePickerDialog(requireContext(),
             { _, year, monthOfYear, dayOfMonth ->
                 val calendarTwo = Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                binding.dateOfBirthTv.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
                 validateDOB()
             },
             calendar[Calendar.YEAR],

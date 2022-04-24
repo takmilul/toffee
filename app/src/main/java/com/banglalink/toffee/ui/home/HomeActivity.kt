@@ -332,10 +332,10 @@ class HomeActivity :
             initNewRelicSdk()
         }
 
-       val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
+        val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
-
+        
         if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
@@ -673,7 +673,10 @@ class HomeActivity :
         navController.addOnDestinationChangedListener(destinationChangeListener)
         binding.tabNavigator.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.menu_feed -> navController.popBackStack(R.id.menu_feed, false)
+                R.id.menu_feed -> {
+                    navController.popBackStack(R.id.menu_feed, true)
+                    navController.navigate(R.id.menu_feed)
+                }
                 R.id.menu_tv -> navController.navigate(R.id.menu_tv) 
                 R.id.menu_explore -> navController.navigate(R.id.menu_explore) 
                 R.id.menu_channel -> navController.navigate(R.id.menu_channel)
@@ -841,7 +844,7 @@ class HomeActivity :
     }
     
     private fun calculateScreenWidth(): Point {
-        return UtilsKt.getRealScreenSize(this)
+        return Utils.getRealScreenSize(this)
     }
     
     private fun handleSharedUrl(intent: Intent) {

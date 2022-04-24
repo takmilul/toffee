@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -98,7 +98,7 @@ class UploadStateManager(
 
     suspend fun restartUploadTask(info: UploadInfo) {
         if(UploadService.taskList.isNotEmpty()
-            && UploadService.taskList[0] == UtilsKt.uploadIdToString(info.uploadId!!)) {
+            && UploadService.taskList[0] == Utils.uploadIdToString(info.uploadId!!)) {
             return
         }
         if(retryUploadId == info.uploadId) {
@@ -118,11 +118,11 @@ class UploadStateManager(
     }
 
     suspend fun handleSuccess(uploadId: String, serverResponse: ServerResponse) {
-        if(UtilsKt.isCopyrightUploadId(uploadId)) {
+        if(Utils.isCopyrightUploadId(uploadId)) {
             handleCopyrightUploadSuccess(uploadId, serverResponse)
             return
         }
-        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        val item = uploadRepo.getUploadById(Utils.stringToUploadId(uploadId)) ?: return
 
         uploadRepo.updateUploadInfo(item.apply {
             statusMessage = serverResponse.bodyString
@@ -137,22 +137,22 @@ class UploadStateManager(
     }
 
     private suspend fun handleCopyrightUploadSuccess(uploadId: String, serverResponse: ServerResponse) {
-        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        val item = uploadRepo.getUploadById(Utils.stringToUploadId(uploadId)) ?: return
         sendStatusToServer(item, true, copyrightStatus = true)
     }
 
     private suspend fun handleCopyrightUploadError(uploadId: String, exception: Throwable) {
-        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        val item = uploadRepo.getUploadById(Utils.stringToUploadId(uploadId)) ?: return
         sendStatusToServer(item, true, copyrightStatus = false)
     }
 
     suspend fun handleError(uploadId: String, exception: Throwable) {
-        if(UtilsKt.isCopyrightUploadId(uploadId)) {
+        if(Utils.isCopyrightUploadId(uploadId)) {
             handleCopyrightUploadError(uploadId, exception)
             return
         }
 
-        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        val item = uploadRepo.getUploadById(Utils.stringToUploadId(uploadId)) ?: return
 
         val newStatus = if(exception is UserCancelledUploadException)
             UploadStatus.CANCELED.value
@@ -180,8 +180,8 @@ class UploadStateManager(
     }
 
     suspend fun handleProgress(uploadId: String, totalBytes: Long, uploadedBytes: Long, progressPercent: Int, uploadUri: String?) {
-        if(UtilsKt.isCopyrightUploadId(uploadId)) return
-        uploadRepo.updateProgressById(UtilsKt.stringToUploadId(uploadId),
+        if(Utils.isCopyrightUploadId(uploadId)) return
+        uploadRepo.updateProgressById(Utils.stringToUploadId(uploadId),
             uploadedBytes,
             progressPercent,
             totalBytes,

@@ -4,7 +4,6 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
 
 fun Long.toFormattedDate(): String{
@@ -16,7 +15,7 @@ fun Long.toFormattedDate(): String{
     return sdf.format(dateGMT)
 }
 
-fun Long.toFormattedBigDate(): String{
+fun Long.toFormattedDateMillis(): String{
     TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
     val cal = Calendar.getInstance(TimeZone.getDefault())
     cal.timeInMillis = this

@@ -29,7 +29,7 @@ import com.banglalink.toffee.ui.player.PlayerPreview
 import com.banglalink.toffee.ui.player.ToffeePlayerEventHelper
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.ConvivaHelper
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.cast.CastPlayer
@@ -89,10 +89,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var debugContainer: FrameLayout
     private lateinit var castButton: MediaRouteButton
     private lateinit var textCasting: AppCompatTextView
-    private val screenWidth = UtilsKt.getScreenWidth()
+    private val screenWidth = Utils.getScreenWidth()
     private var mPlayListListener: PlaylistListener? = null
     protected lateinit var playerOverlay: PlayerOverlayView
-    private val screenHeight = UtilsKt.getScreenHeight()
+    private val screenHeight = Utils.getScreenHeight()
     private lateinit var autoplayProgress: CircularProgressBar
     protected lateinit var doubleTapInterceptor: PlayerPreview
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -455,7 +455,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         return layoutParams.height <= minBound
     }
     
-    fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
+    fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= Utils.getScreenHeight()
     
     private val minVideoHeight: Int = screenWidth * 9 / 16
     private val maxVideoHeight: Int = screenHeight * 2 / 3
@@ -750,7 +750,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             isUgc = channelInfo.is_ugc == 1
             
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
-            resizeView(UtilsKt.getRealScreenSize(context))
+            resizeView(Utils.getRealScreenSize(context))
             
             rotateButton.visibility =
                 if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE

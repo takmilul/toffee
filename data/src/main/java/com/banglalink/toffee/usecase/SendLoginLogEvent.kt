@@ -4,9 +4,9 @@ import android.os.Build
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.notification.LOGIN_LOG_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -54,5 +54,5 @@ data class LoginLogData(
     @SerializedName("user_id")
     val customerId:Long = SessionPreference.getInstance().customerId.toLong(),
     @SerializedName("date_time")
-    val dateTime: String = System.currentTimeMillis().toFormattedDate(),
+    val dateTime: String = currentDateTime,
 )

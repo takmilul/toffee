@@ -28,7 +28,7 @@ import com.banglalink.toffee.ui.mychannel.MyChannelHomeViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.BottomSheetUploadFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -250,14 +250,14 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     private fun showDatePicker() {
         binding.emailEt.requestFocus()
         binding.emailEt.setSelection(binding.emailEt.length())
-        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
+        val date = Utils.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
         val calendar = Calendar.getInstance()
         calendar.time = date
         val datePickerDialog = DatePickerDialog(
             requireContext(), { _, year, monthOfYear, dayOfMonth ->
                 val calendarTwo = Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                binding.dateOfBirthTv.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
                 validateDOB()
             },
             calendar[Calendar.YEAR],
@@ -286,7 +286,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     
     private fun validateDOB(): Boolean {
         var isDobValid = false
-        userDOB = UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy"), "yyyy-MM-dd")
+        userDOB = Utils.dateToStr(Utils.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy"), "yyyy-MM-dd")
         if (binding.dateOfBirthTv.text.isBlank() || userDOB.isNullOrBlank()) {
             binding.dateOfBirthTv.validateInput(
                 binding.errorDateTv,
@@ -295,7 +295,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 R.drawable.error_single_line_input_text_bg
             )
         } else {
-            val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
+            val date = Utils.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
             val userAge = ageCalculate(date)
             
             if (userAge < 18) {

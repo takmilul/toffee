@@ -28,7 +28,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -185,8 +185,8 @@ class NewUploadMethodFragment : DialogFragment() {
 
     private fun checkAndOpenUpload(videoUri: Uri) {
         lifecycleScope.launch {
-            val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), videoUri)
-            val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
+            val contentType = Utils.contentTypeFromContentUri(requireContext(), videoUri)
+            val fileName = Utils.fileNameFromContentUri(requireContext(), videoUri)
 
             Log.i("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
 

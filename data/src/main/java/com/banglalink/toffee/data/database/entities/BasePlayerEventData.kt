@@ -3,8 +3,8 @@ package com.banglalink.toffee.data.database.entities
 import android.os.Build
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toFormattedBigDate
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTimeMillis
 import com.google.gson.annotations.SerializedName
 
 abstract class BasePlayerEventData {
@@ -13,7 +13,7 @@ abstract class BasePlayerEventData {
     var appVersion: String = CommonPreference.getInstance().appVersionName
     
     @SerializedName("osName")
-    var osName: String = UtilsKt.getOsName()
+    var osName: String = Utils.getOsName()
     
     @SerializedName("userId")
     var userId: Int = SessionPreference.getInstance().customerId
@@ -61,6 +61,6 @@ abstract class BasePlayerEventData {
     var statusCode: Int = 200
     
     @SerializedName("dateTime")
-    var dateTime: String = System.currentTimeMillis().toFormattedBigDate()
+    var dateTime: String = currentDateTimeMillis
     
 }

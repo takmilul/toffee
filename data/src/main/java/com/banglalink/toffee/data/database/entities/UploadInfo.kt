@@ -4,7 +4,7 @@ import android.util.Base64
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.banglalink.toffee.enums.UploadStatus
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
 
 @Entity
@@ -56,7 +56,7 @@ data class UploadInfo(
 ) {
     fun getFingerprint(): String? {
         if (uploadId != null && uploadId >= 0L) {
-            val uploadIdStr = UtilsKt.uploadIdToString(uploadId)
+            val uploadIdStr = Utils.uploadIdToString(uploadId)
             return Base64.encodeToString("${uploadIdStr}-$fileName".toByteArray(), Base64.NO_WRAP)
         }
         return null
@@ -64,13 +64,13 @@ data class UploadInfo(
     
     fun getUploadIdStr(): String? {
         return if (uploadId != null && uploadId >= 0L) {
-            UtilsKt.uploadIdToString(uploadId)
+            Utils.uploadIdToString(uploadId)
         } else null
     }
     
     fun getCopyrightUploadIdStr(): String? {
         return if (uploadId != null && uploadId >= 0L) {
-            UtilsKt.uploadIdToString(uploadId) + "_copyright"
+            Utils.uploadIdToString(uploadId) + "_copyright"
         } else null
     }
     

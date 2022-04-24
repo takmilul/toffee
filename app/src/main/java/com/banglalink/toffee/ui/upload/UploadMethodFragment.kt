@@ -25,7 +25,7 @@ import com.banglalink.toffee.databinding.UploadMethodFragmentBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -186,7 +186,7 @@ class UploadMethodFragment : DialogFragment() {
             lifecycleScope.launch {
                 println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                 println("CapturePath${videoFile!!.path}")
-                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
 
                     VelBoxAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)
@@ -208,14 +208,14 @@ class UploadMethodFragment : DialogFragment() {
     
     private fun checkAndOpenUpload(videoUri: Uri) {
         lifecycleScope.launch {
-            val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), videoUri)
-            val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
+            val contentType = Utils.contentTypeFromContentUri(requireContext(), videoUri)
+            val fileName = Utils.fileNameFromContentUri(requireContext(), videoUri)
 
             Log.i("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
 
             if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
 
-                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
 
                     VelBoxAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)

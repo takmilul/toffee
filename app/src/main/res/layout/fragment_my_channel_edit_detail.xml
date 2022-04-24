@@ -316,7 +316,7 @@
                     android:layout_marginTop="16dp"
                     app:drawableStartCompat="@drawable/ic_date_icon"
                     android:hint="@string/date_of_birth_text"
-                    android:text="@{Utils.formateDate(viewModel.myChannelDetail.dateOfBirth)}"
+                    android:text="@{Utils.formatDate(viewModel.myChannelDetail.dateOfBirth)}"
                     android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
 import androidx.core.content.edit
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 
 const val COMMON_PREF_NAME = "LIFETIME_DATA"
 
@@ -37,11 +37,11 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     }
 
     val appVersionName by lazy {
-        UtilsKt.getVersionInfo(context)?.first ?: "Unknown"
+        Utils.getVersionInfo(context)?.first ?: "Unknown"
     }
 
     val appVersionCode by lazy {
-        UtilsKt.getVersionInfo(context)?.second ?: 0L
+        Utils.getVersionInfo(context)?.second ?: 0L
     }
     
     var versionCode: Int

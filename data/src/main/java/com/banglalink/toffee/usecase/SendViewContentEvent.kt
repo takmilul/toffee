@@ -13,7 +13,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.VIEW_CONTENT_TOPIC
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -25,9 +25,7 @@ class SendViewContentEvent @Inject constructor(
 ) {
 
     private val gson = Gson()
-
-
-
+    
     suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
         if(sendToPubSub){
             sendToPubSub(channel.id.toInt(),channel.type ?: "")
@@ -109,6 +107,6 @@ class SendViewContentEvent @Inject constructor(
         @SerializedName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerializedName("date_time")
-        val dateTime: String = Utils.getDateTime()
+        val dateTime: String = currentDateTime
     )
 }

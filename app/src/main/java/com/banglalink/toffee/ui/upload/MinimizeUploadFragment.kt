@@ -13,7 +13,6 @@ import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.UtilsKt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ class MinimizeUploadFragment: BaseFragment() {
         super.onCreate(savedInstanceState)
 
         uploadId = requireArguments().getString(UPLOAD_ID)!!
-        uploadIdLong = UtilsKt.stringToUploadId(uploadId)
+        uploadIdLong = Utils.stringToUploadId(uploadId)
         contentId = requireArguments().getLong(CONTENT_ID)
     }
 

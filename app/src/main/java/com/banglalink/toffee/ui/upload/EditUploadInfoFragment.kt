@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.upload
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -34,7 +35,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -112,7 +113,7 @@ class EditUploadInfoFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         
         binding.container.setOnClickListener {
-            UtilsKt.hideSoftKeyboard(requireActivity())
+            Utils.hideSoftKeyboard(requireActivity())
         }
         binding.cancelButton.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
@@ -230,8 +231,8 @@ class EditUploadInfoFragment : BaseFragment() {
     
     private fun checkFileValidity(uri: Uri) {
         lifecycleScope.launch {
-            val fileName = UtilsKt.fileNameFromContentUri(requireContext(), uri)
-            val fileSize = UtilsKt.fileSizeFromContentUri(requireContext(), uri)
+            val fileName = Utils.fileNameFromContentUri(requireContext(), uri)
+            val fileSize = Utils.fileSizeFromContentUri(requireContext(), uri)
             when (fileName.substringAfterLast(".")) {
                 "txt", "pdf", "doc", "docx", "rtf", "png", "jpg" -> {
                     if (fileSize <= 5 * 1024 * 1024) {
@@ -280,7 +281,7 @@ class EditUploadInfoFragment : BaseFragment() {
     
     private fun observeVideoDuration() {
         observe(viewModel.durationData) {
-            binding.duration.text = UtilsKt.getDurationLongToString(it)
+            binding.duration.text = Utils.getDurationLongToString(it)
         }
     }
     
@@ -371,8 +372,9 @@ class EditUploadInfoFragment : BaseFragment() {
         }
     }
     
+    @SuppressLint("InvalidR2Usage")
     private fun setupTagView() {
-        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R.id.chips_recycler)
+        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R2.id.chips_recycler)
         chipRecycler.setPadding(0)
         
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {

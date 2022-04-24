@@ -8,7 +8,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
@@ -108,6 +108,6 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerializedName("date_time")
-        val dateTime: String = Utils.getDateTime()
+        val dateTime: String = currentDateTime
     )
 }

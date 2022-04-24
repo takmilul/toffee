@@ -4,7 +4,7 @@ import android.os.Build
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.annotations.SerializedName
 
 open class PubSubBaseRequest {
@@ -25,5 +25,5 @@ open class PubSubBaseRequest {
     @SerializedName("msisdn")
     open var phoneNumber: String = SessionPreference.getInstance().phoneNumber
     @SerializedName("reportingTime")
-    val reportingTime: String = Utils.getDateTime()
+    val reportingTime: String = currentDateTime
 }

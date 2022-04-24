@@ -4,10 +4,10 @@ import android.os.Build
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.ReportInfo
 import com.banglalink.toffee.notification.CONTENT_REPORT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -39,7 +39,7 @@ data class ReportInAppropriateVideoData(
     @SerializedName("additional_detail")
     val additionalDetail: String?,
     @SerializedName("report_time")
-    val reportTime: String = System.currentTimeMillis().toFormattedDate(),
+    val reportTime: String = currentDateTime,
     @SerializedName("device_type")
     val deviceType :Int = Constants.DEVICE_TYPE,
     @SerializedName("device_id")

@@ -6,7 +6,7 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -44,7 +44,7 @@ class DownloadReactionDb(
             return false
         }
         ToffeeAnalytics.logBreadCrumb("Processing user reaction file")
-        val fileBytes = UtilsKt.readFileToBytes(file)
+        val fileBytes = Utils.readFileToBytes(file)
         val byteBuffer = ByteBuffer.wrap(fileBytes)
         val checksum = CRC32()
         checksum.update(fileBytes, 0, fileBytes.size)

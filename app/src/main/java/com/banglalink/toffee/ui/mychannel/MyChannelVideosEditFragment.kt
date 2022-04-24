@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -31,7 +32,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +86,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
-        binding.container.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
+        binding.container.setOnClickListener { Utils.hideSoftKeyboard(requireActivity()) }
         progressDialog.show()
         setCategorySpinner()
         setupSubcategorySpinner()
@@ -98,11 +99,11 @@ class MyChannelVideosEditFragment : BaseFragment() {
         
         with(binding) {
             cancelButton.setOnClickListener {
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
                 findNavController().popBackStack()
             }
             submitButton.setOnClickListener {
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
                 updateVideoInfo()
             }
             thumbEditButton.setOnClickListener {
@@ -246,8 +247,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
         }
     }
 
+    @SuppressLint("InvalidR2Usage")
     private fun setupTagView() {
-        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R.id.chips_recycler)
+        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R2.id.chips_recycler)
         chipRecycler.setPadding(0)
         
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {

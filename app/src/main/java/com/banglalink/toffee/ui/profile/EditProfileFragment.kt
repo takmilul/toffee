@@ -38,7 +38,7 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,7 +75,7 @@ class EditProfileFragment : BaseFragment() {
             previousEmail = profileForm?.email ?: ""
             previousAddress = profileForm?.address ?: ""
             container.setOnClickListener {
-                UtilsKt.hideSoftKeyboard(requireActivity())
+                Utils.hideSoftKeyboard(requireActivity())
             }
             saveButton.setOnClickListener { handleSaveButton() }
             cancelBtn.setOnClickListener { findNavController().popBackStack() }
