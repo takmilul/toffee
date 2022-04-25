@@ -31,7 +31,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
 class ReferAFriendFragment : BaseFragment() {
@@ -40,7 +40,7 @@ class ReferAFriendFragment : BaseFragment() {
     private val binding get() = _binding!!
     private val viewModel by viewModels<ReferAFriendViewModel>()
     private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
+        ToffeeProgressDialog(requireContext())
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

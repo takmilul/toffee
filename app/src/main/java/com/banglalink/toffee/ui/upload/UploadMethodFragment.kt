@@ -24,7 +24,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.UploadMethodFragmentBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -188,7 +188,7 @@ class UploadMethodFragment : DialogFragment() {
                 println("CapturePath${videoFile!!.path}")
                 if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
 
-                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                    ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)
                         setText(R.string.txt_video_length_msg)
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
@@ -217,7 +217,7 @@ class UploadMethodFragment : DialogFragment() {
 
                 if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
 
-                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                    ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)
                         setText(R.string.txt_video_length_msg)
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
@@ -230,7 +230,7 @@ class UploadMethodFragment : DialogFragment() {
                 }
 
             } else {
-                VelBoxAlertDialogBuilder(requireContext()).apply {
+                ToffeeAlertDialogBuilder(requireContext()).apply {
                     setTitle(R.string.txt_video_format)
                     setText(R.string.txt_video_format_msg)
                     setPositiveButtonListener(getString(R.string.btn_got_it)) {

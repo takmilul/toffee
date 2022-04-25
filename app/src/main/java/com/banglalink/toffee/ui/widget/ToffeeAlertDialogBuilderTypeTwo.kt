@@ -6,10 +6,9 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.banglalink.toffee.databinding.VelboxDialogLayoutBinding
 import com.banglalink.toffee.databinding.VelboxDialogLayoutTypeTwoBinding
 
-data class VelBoxAlertDialogBuilderTypeTwo(
+data class ToffeeAlertDialogBuilderTypeTwo(
         var context: Context,
         private var title: String? = null,
         private var text: String? = null,

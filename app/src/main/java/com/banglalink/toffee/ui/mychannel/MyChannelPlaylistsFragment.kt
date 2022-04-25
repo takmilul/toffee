@@ -38,7 +38,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -244,7 +244,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     }
     
     private fun showDeletePlaylistDialog(playlistId: Int) {
-        VelBoxAlertDialogBuilder(
+        ToffeeAlertDialogBuilder(
             requireContext(),
             text = "Are you sure to delete?",
             positiveButtonTitle = "No",

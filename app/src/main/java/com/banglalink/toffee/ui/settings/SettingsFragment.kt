@@ -16,7 +16,7 @@ import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.FragmentSettingsBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -139,7 +139,7 @@ class SettingsFragment : BaseFragment() {
     }
     
     private fun onClickClearWatchHistory() {
-        VelBoxAlertDialogBuilder(requireContext()).apply {
+        ToffeeAlertDialogBuilder(requireContext()).apply {
             setTitle("Clear Activities")
             setText("Are you sure that you want to clear Activities?")
             setPositiveButtonListener("Clear") {

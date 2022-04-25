@@ -40,7 +40,7 @@ import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -197,7 +197,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun showDeleteVideoDialog(contentId: Int) {
-        VelBoxAlertDialogBuilder(
+        ToffeeAlertDialogBuilder(
             requireContext(),
             text = "Are you sure to delete?",
             positiveButtonTitle = "No",

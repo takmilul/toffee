@@ -35,8 +35,8 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
-import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeFieldTextWatcher
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
@@ -55,7 +55,7 @@ class EditProfileFragment : BaseFragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
+        ToffeeProgressDialog(requireContext())
     }
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     private val args by navArgs<EditProfileFragmentArgs>()
@@ -79,9 +79,9 @@ class EditProfileFragment : BaseFragment() {
             }
             saveButton.setOnClickListener { handleSaveButton() }
             cancelBtn.setOnClickListener { findNavController().popBackStack() }
-            nameEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.nameEt, VelBoxFieldTextWatcher.FieldType.NAME_FIELD)
-            emailEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.emailEt, VelBoxFieldTextWatcher.FieldType.EMAIL_FIELD)
-            addressEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.addressEt, VelBoxFieldTextWatcher.FieldType.ADDRESS_FIELD)
+            nameEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.nameEt, ToffeeFieldTextWatcher.FieldType.NAME_FIELD)
+            emailEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.emailEt, ToffeeFieldTextWatcher.FieldType.EMAIL_FIELD)
+            addressEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.addressEt, ToffeeFieldTextWatcher.FieldType.ADDRESS_FIELD)
             editIv.setOnClickListener {
                 if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.EditProfileFragment) {
                     val action =

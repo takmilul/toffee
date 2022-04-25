@@ -84,7 +84,7 @@ import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.conviva.sdk.ConvivaAnalytics
@@ -112,7 +112,6 @@ import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
@@ -302,7 +301,7 @@ class HomeActivity :
             }
         }
         observe(mPref.messageDialogLiveData) { message ->
-            VelBoxAlertDialogBuilder(this, title = "Notice", text = message, positiveButtonListener = {
+            ToffeeAlertDialogBuilder(this, title = "Notice", text = message, positiveButtonListener = {
                 it?.dismiss()
             }).create().show()
         }
@@ -370,7 +369,7 @@ class HomeActivity :
     }
     
     private fun showDeviceId() {
-        VelBoxAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
+        ToffeeAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip: ClipData = ClipData.newPlainText("DeviceId", cPref.deviceId)
             clipboard.setPrimaryClip(clip)

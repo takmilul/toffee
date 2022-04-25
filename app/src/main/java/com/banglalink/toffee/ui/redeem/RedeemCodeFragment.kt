@@ -2,31 +2,26 @@ package com.banglalink.toffee.ui.redeem
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.FragmentRedeemCodeBinding
-import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showRedeemDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
-import kotlin.math.log
 
 class RedeemCodeFragment : BaseFragment() {
     private var _binding: FragmentRedeemCodeBinding? = null
@@ -34,7 +29,7 @@ class RedeemCodeFragment : BaseFragment() {
     private val viewModel by viewModels<RedeemCodeViewModel>()
 
     private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
+        ToffeeProgressDialog(requireContext())
     }
 
     override fun onCreateView(
@@ -79,7 +74,7 @@ class RedeemCodeFragment : BaseFragment() {
                         )
                     } else {
                         if (!response.isRedeemSuccess!!) {
-                            VelBoxAlertDialogBuilder(
+                            ToffeeAlertDialogBuilder(
                                 requireContext(),
                                 hideCloseButton = true,
                                 icon = R.drawable.ic_error,
@@ -91,7 +86,7 @@ class RedeemCodeFragment : BaseFragment() {
                                 }
                             }.create().show()
                         } else {
-                            VelBoxAlertDialogBuilder(
+                            ToffeeAlertDialogBuilder(
                                 requireContext(),
                                 hideCloseButton = true,
                                 icon = R.drawable.ic_check_magenta

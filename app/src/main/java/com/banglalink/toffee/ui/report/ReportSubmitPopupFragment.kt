@@ -13,7 +13,7 @@ import com.banglalink.toffee.databinding.FragmentReportSubmitPopupBinding
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.ReportInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilderTypeTwo
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilderTypeTwo
 
 class ReportSubmitPopupFragment : DialogFragment(), View.OnClickListener {
     
@@ -87,7 +87,7 @@ class ReportSubmitPopupFragment : DialogFragment(), View.OnClickListener {
         alertDialog.dismiss()
         val reportInfo = ReportInfo(contentId.toLong(), selectedOffenceTypeId.toInt(), "", binding.additionalDetailsEt.text.toString())
         homeViewModel.sendReportData(reportInfo)
-        VelBoxAlertDialogBuilderTypeTwo(
+        ToffeeAlertDialogBuilderTypeTwo(
             requireContext(),
             title = "Successfully Reported",
             text = "Toffee will review this report according to \n" +

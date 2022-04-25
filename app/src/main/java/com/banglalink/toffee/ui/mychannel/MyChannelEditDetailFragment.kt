@@ -35,7 +35,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +59,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var newProfileImageUrl: String? = null
     @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
+    private lateinit var progressDialog: ToffeeProgressDialog
     private var _binding: FragmentMyChannelEditDetailBinding? = null
     private val binding get() = _binding!!
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
@@ -76,7 +76,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        progressDialog = VelBoxProgressDialog(requireContext())
+        progressDialog = ToffeeProgressDialog(requireContext())
         val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
         myChannelDetail = args.myChannelDetail ?: MyChannelDetail(0)
         val profileForm = profileViewModel.profileForm.value

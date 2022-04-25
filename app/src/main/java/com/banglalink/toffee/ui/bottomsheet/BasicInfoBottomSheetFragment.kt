@@ -27,7 +27,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.BottomSheetUploadFragment
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -52,7 +52,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
-    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     private val myChannelHomeViewModel by activityViewModels<MyChannelHomeViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -40,7 +40,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,7 +61,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private lateinit var progressDialog: VelBoxProgressDialog
+    private lateinit var progressDialog: ToffeeProgressDialog
     private var _binding: FragmentMyChannelHomeBinding ? = null
     private val binding get() = _binding!!
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
@@ -84,7 +84,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        progressDialog = VelBoxProgressDialog(requireContext())
+        progressDialog = ToffeeProgressDialog(requireContext())
         isMyChannel = arguments?.getBoolean(IS_MY_CHANNEL) ?: false
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         if(channelOwnerId == 0) channelOwnerId = mPref.customerId

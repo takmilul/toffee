@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
+import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.HeaderViewHolder
 import com.banglalink.toffee.util.BindingUtil
 
 class ChannelStickyListAdapter(
@@ -23,10 +24,8 @@ class ChannelStickyListAdapter(
     private var highlightedChannel: ChannelInfo? = null
     private var selectedChannel: ChannelInfo? = null
     private var values: List<StickyHeaderInfo> = emptyList()
-
-    override fun getSectionCount(): Int {
-        return values.size + if(selectedChannel == null) 0 else 1
-    }
+    override val sectionCount: Int
+        get() = values.size + if(selectedChannel == null) 0 else 1
 
     fun setSelected(channel: ChannelInfo?) {
         highlightedChannel = channel
@@ -75,7 +74,7 @@ class ChannelStickyListAdapter(
         }
         return 2
     }
-
+    
     override fun onCreateItemViewHolder(parent: ViewGroup, itemType: Int): ItemViewHolder {
         return LiveTvViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.live_tv_grid_item, parent, false)

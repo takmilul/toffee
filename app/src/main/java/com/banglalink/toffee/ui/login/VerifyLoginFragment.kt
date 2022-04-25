@@ -25,7 +25,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
@@ -47,7 +47,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private var mSmsBroadcastReceiver: SMSBroadcastReceiver? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<VerifyCodeViewModel>()
-    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

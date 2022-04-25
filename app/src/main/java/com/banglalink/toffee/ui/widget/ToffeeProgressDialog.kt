@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import com.banglalink.toffee.R
 
 
-class VelBoxProgressDialog(context: Context) : Dialog(context, R.style.TransparentProgressDialog) {
+class ToffeeProgressDialog(context: Context) : Dialog(context, R.style.TransparentProgressDialog) {
 
     init {
         val windowManger = window!!.attributes

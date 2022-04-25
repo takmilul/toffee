@@ -14,7 +14,7 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +29,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
     private var isNewChannelLogo: Boolean = false
     @Inject lateinit var bindingUtil: BindingUtil
     private var channelNameTextWatcher: TextWatcher? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
+    private lateinit var progressDialog: ToffeeProgressDialog
     private var _binding: BottomSheetUploadPhotoBinding? = null
     private val binding get() = _binding!!
 
@@ -40,7 +40,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        progressDialog = VelBoxProgressDialog(requireContext())
+        progressDialog = ToffeeProgressDialog(requireContext())
         binding.channelLogoIv.isClickable = true
         channelName = mPref.channelName
         channelLogoUrl = mPref.channelLogo

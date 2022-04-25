@@ -10,7 +10,7 @@ import com.banglalink.toffee.databinding.VelboxDialogLayoutBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 
-data class VelBoxAlertDialogBuilder(
+data class ToffeeAlertDialogBuilder(
         var context: Context,
         private var title: String? = null,
         private var text: String? = null,

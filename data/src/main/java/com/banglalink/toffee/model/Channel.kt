@@ -9,9 +9,6 @@ import java.io.Serializable
 import java.net.MalformedURLException
 import java.net.URL
 
-/**
- * Created by shantanu on 8/31/16.
- */
 class Channel(
     @SerializedName("name")
     private val name: String?,
@@ -20,16 +17,16 @@ class Channel(
     @SerializedName("provider")
     private val provider: String? = "",
     @SerializedName("uri")
-    private val uri: String? = null,
+    private var uri: String? = null,
     @SerializedName("type")
     private val type: Int = Samples.TYPE_HLS,
     @SerializedName("imageUrl")
     private var imageUrl: String? = null
-): Serializable, Samples.Sample(name, contentId, provider, uri, type)
+) : Serializable//, Samples.Sample(name, contentId, provider, uri, type)
 {
-
-    @SerializedName("bundle")
-    val bundle: Bundle =  Bundle().apply {
+    
+    @SerializedName("bundle") 
+    val bundle: Bundle = Bundle().apply {
         putString("name", name)
         putString("contentid", contentId)
         putString("provider", provider)
@@ -37,7 +34,25 @@ class Channel(
         putInt("type", type)
         putString("imageurl", imageUrl)
     }
-
+    
+    companion object {
+        @JvmStatic
+        fun createChannel(programName: String?, hlsLink: String): Channel {
+            return Channel(programName, uri = hlsLink)
+        }
+        
+        fun create(bundle: Bundle): Channel {
+            return Channel(
+                bundle.getString("name"),
+                bundle.getString("contentid"),
+                bundle.getString("provider"),
+                bundle.getString("uri"),
+                bundle.getInt("type"),
+                bundle.getString("imageurl")
+            )
+        }
+    }
+    
     fun getContentUri(pref: SessionPreference, isWifiConnected: Boolean): String? {
         val text = if (isWifiConnected) {
             if (pref.wifiProfileStatus == 7) {
@@ -64,29 +79,12 @@ class Channel(
                 e.printStackTrace()
             }
         }
-        val contentUri = if (uri.endsWith("/")) {
-            Uri.parse(uri + pref.sessionToken + text)
-        } else {
-            Uri.parse(uri + "/" + pref.sessionToken + text)
-        }
-        return contentUri.toString()
-    }
-
-    companion object {
-        @JvmStatic
-        fun createChannel(programName: String?, hlsLink: String): Channel {
-            return Channel(programName, uri = hlsLink)
-        }
-
-        fun create(bundle: Bundle): Channel {
-            return Channel(
-                bundle.getString("name"),
-                bundle.getString("contentid"),
-                bundle.getString("provider"),
-                bundle.getString("uri"),
-                bundle.getInt("type"),
-                bundle.getString("imageurl")
-            )
+        return uri?.let {
+            if (it.endsWith("/")) {
+                Uri.parse(it + pref.sessionToken + text).toString()
+            } else {
+                Uri.parse(it + "/" + pref.sessionToken + text).toString()
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
@@ -40,7 +40,7 @@ class ViewProfileFragment : BaseFragment() {
     private val binding get() = _binding!!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     private val viewModel by activityViewModels<ViewProfileViewModel>()
-    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentViewProfileBinding.inflate(inflater, container, false)

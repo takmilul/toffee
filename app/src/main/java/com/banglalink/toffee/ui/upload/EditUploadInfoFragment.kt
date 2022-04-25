@@ -33,8 +33,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -52,7 +52,7 @@ class EditUploadInfoFragment : BaseFragment() {
     private lateinit var uploadFileUri: String
     private var descTextWatcher: TextWatcher? = null
     private var titleTextWatcher: TextWatcher? = null
-    private var progressDialog: VelBoxProgressDialog? = null
+    private var progressDialog: ToffeeProgressDialog? = null
     private var _binding: FragmentEditUploadInfoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: EditUploadInfoViewModel by viewModels {
@@ -71,7 +71,7 @@ class EditUploadInfoFragment : BaseFragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
-                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                    ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(getString(R.string.cancel_upload_title))
                         setText(getString(R.string.cancel_upload_msg))
                         setPositiveButtonListener("NO") {
@@ -116,7 +116,7 @@ class EditUploadInfoFragment : BaseFragment() {
             Utils.hideSoftKeyboard(requireActivity())
         }
         binding.cancelButton.setOnClickListener {
-            VelBoxAlertDialogBuilder(requireContext()).apply {
+            ToffeeAlertDialogBuilder(requireContext()).apply {
                 setTitle(getString(R.string.cancel_upload_title))
                 setText(getString(R.string.cancel_upload_msg))
                 setPositiveButtonListener("NO") {
@@ -240,7 +240,7 @@ class EditUploadInfoFragment : BaseFragment() {
                         binding.copyrightLayout.closeIv.show()
                         binding.copyrightLayout.uploadFileButton.hide()
                     } else {
-                        VelBoxAlertDialogBuilder(requireContext()).apply {
+                        ToffeeAlertDialogBuilder(requireContext()).apply {
                             setTitle(getString(R.string.file_size_title))
                             setText(getString(R.string.file_size_msg))
                             setPositiveButtonListener(getString(R.string.btn_got_it)) {
@@ -250,7 +250,7 @@ class EditUploadInfoFragment : BaseFragment() {
                     }
                 }
                 else -> {
-                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                    ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(getString(R.string.file_format_title))
                         setText(getString(R.string.file_format_msg))
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
@@ -401,7 +401,7 @@ class EditUploadInfoFragment : BaseFragment() {
                         progressDialog?.dismiss()
                         progressDialog = null
                     }
-                    progressDialog = VelBoxProgressDialog(requireContext())
+                    progressDialog = ToffeeProgressDialog(requireContext())
                     progressDialog?.show()
                 }
                 false -> {

@@ -35,7 +35,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.mychannel.*
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -216,7 +216,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     }
 
     private fun showDeletePlaylistDialog(playlistId: Int) {
-        VelBoxAlertDialogBuilder(
+        ToffeeAlertDialogBuilder(
             requireContext(),
             text = getString(string.delete_confirmation),
             positiveButtonTitle = getString(string.no_text),

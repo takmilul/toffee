@@ -31,7 +31,7 @@ import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
@@ -43,7 +43,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private var channelInfo: ChannelInfo? = null
     private var descWatcher: TextWatcher? = null
     private var titleTextWatcher: TextWatcher? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
+    private lateinit var progressDialog: ToffeeProgressDialog
     private var _binding: FragmentMyChannelVideosEditBinding ? = null
     private val binding get() = _binding!!
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
@@ -61,7 +61,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        progressDialog = VelBoxProgressDialog(requireContext())
+        progressDialog = ToffeeProgressDialog(requireContext())
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

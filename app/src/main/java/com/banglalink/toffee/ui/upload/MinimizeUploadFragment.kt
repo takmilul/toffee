@@ -11,7 +11,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentMinimizeUploadBinding
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -61,7 +61,7 @@ class MinimizeUploadFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cancelButton.setOnClickListener {
-            VelBoxAlertDialogBuilder(requireContext()).apply {
+            ToffeeAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
                 setText("Are you sure that you want to\n" +
                         "cancel uploading video?")

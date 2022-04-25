@@ -6,7 +6,7 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.UploadStatus
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -69,7 +69,7 @@ class UploadStateManager(
     private suspend fun sendStatusToServer(item: UploadInfo, status: Boolean, copyrightStatus: Boolean) {
 
         if(item.status == UploadStatus.ERROR_CONFIRMED.value) {
-            VelBoxAlertDialogBuilder(app, "Can't upload video", "Upload error. Please try again later.").apply {
+            ToffeeAlertDialogBuilder(app, "Can't upload video", "Upload error. Please try again later.").apply {
                 setPositiveButtonListener("OK") {
                     it?.dismiss()
                 }

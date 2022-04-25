@@ -40,13 +40,15 @@ class GetStingrayContentService @Inject constructor(
         }
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
-        response.response.channels?.filter {
-            try {
-                Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+        response.response.channels?.map {
+            it.isExpired = try {
+                val date = Utils.getDate(it.contentExpiryTime)
+                date.before(preference.getSystemTime())
             } catch (e: Exception) {
-                true
+                false
             }
-        }?.forEach {
+            it
+        }?.filter { !it.isExpired }?.forEach {
             localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
             localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
             dbList.add(

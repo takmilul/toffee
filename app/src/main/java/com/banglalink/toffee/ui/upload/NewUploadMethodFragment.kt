@@ -27,7 +27,7 @@ import com.banglalink.toffee.databinding.FragmentNewUploadMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -193,7 +193,7 @@ class NewUploadMethodFragment : DialogFragment() {
             if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
                 openEditUpload(videoUri.toString())
             } else {
-                VelBoxAlertDialogBuilder(requireContext()).apply {
+                ToffeeAlertDialogBuilder(requireContext()).apply {
                     setTitle("Select mp4 file")
                     setText("Only mp4 file uploading is supported.")
                     setPositiveButtonListener("Got It!") {

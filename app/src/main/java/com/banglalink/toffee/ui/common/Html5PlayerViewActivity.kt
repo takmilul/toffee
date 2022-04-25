@@ -12,7 +12,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.WebActionType.*
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     private var shareableUrl: String? = null
     private lateinit var mWebView: HTML5WebView
     private val progressDialog by lazy {
-        VelBoxProgressDialog(this)
+        ToffeeProgressDialog(this)
     }
     @Inject lateinit var heartBeatManager: HeartBeatManager
     
