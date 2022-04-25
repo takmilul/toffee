@@ -227,7 +227,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun observeEditChannel() {
         observe(viewModel.exitFragment) {
-            cacheManager.clearCacheByUrl(ApiRoutes.GET_ALL_USER_CHANNEL)
             requireContext().showToast(getString(R.string.unable_to_load_data))
             findNavController().popBackStack()
         }
@@ -246,6 +245,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_ALL_USER_CHANNEL)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_TRENDING_CHANNELS)
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                     requireContext().showToast(it.data.message)
                     findNavController().navigateUp()
