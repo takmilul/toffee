@@ -42,8 +42,7 @@ class GetStingrayContentService @Inject constructor(
         val upTime = System.currentTimeMillis()
         response.response.channels?.map {
             it.isExpired = try {
-                val date = Utils.getDate(it.contentExpiryTime)
-                date.before(preference.getSystemTime())
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
