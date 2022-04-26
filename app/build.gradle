@@ -196,10 +196,10 @@ dependencies {
     implementation 'com.google.android.play:core:1.10.3'
     
     //firework sdk
-    implementation ('com.github.loopsocial:firework_sdk:v5.10.0') {
+    implementation ('com.github.loopsocial:firework_sdk:v5.11.4') {
         exclude module: "picasso-transformations"
     }
-    implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
+    implementation 'com.github.loopsocial:AndroidAdsService:v20.0.0'
     
     //conviva sdk
     implementation "com.conviva.sdk:conviva-core-sdk:$rootProject.convivaSdkVersion"
