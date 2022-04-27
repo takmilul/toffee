@@ -99,25 +99,27 @@ class ToffeePlayerEventHelper @Inject constructor(
         )
     }
     
-    fun setAdData(ad: Ad?, eventName: String?, errorMessage: String? = null) {
+    fun setAdData(ad: Ad?, eventName: String?, errorMessage: String? = null, isReset: Boolean = false) {
 //        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
-        addEventToDb(
-            playerEventData?.apply {
-                dateTime = currentDateTimeMillis
-                adId = ad?.adId
-                adCreativeId = ad?.creativeId
-                adFirstCreativeId = ad?.adWrapperCreativeIds?.firstOrNull()?.toString()
-                adFirstAdId = ad?.adWrapperIds?.firstOrNull()?.toString()
-                adFirstAdSystem = ad?.adWrapperSystems?.firstOrNull()?.toString()
-                adSystem = ad?.adWrapperSystems?.contentToString()
-                adIsSlate = false.toString()
-                adTechnology = "Client Side"
-                adIsLive = ad?.isLinear?.toString()
-                adPosition = ad?.adPodInfo?.podIndex?.let { if (it == 0) "PRE-ROLL" else if (it == -1) "POST-ROLL" else "MID-ROLL" }
-                adErrorMessage = errorMessage
-                adEvent = eventName
-            }
-        )
+        playerEventData?.apply {
+            dateTime = currentDateTimeMillis
+            adId = ad?.adId
+            adCreativeId = ad?.creativeId
+            adFirstCreativeId = ad?.adWrapperCreativeIds?.firstOrNull()?.toString()
+            adFirstAdId = ad?.adWrapperIds?.firstOrNull()?.toString()
+            adFirstAdSystem = ad?.adWrapperSystems?.firstOrNull()?.toString()
+            adSystem = ad?.adWrapperSystems?.contentToString()
+            adIsSlate = ad?.let { false.toString() }
+            adTechnology = ad?.let { "Client Side" }
+            adIsLive = ad?.isLinear?.toString()
+            adPosition = ad?.adPodInfo?.podIndex?.let { if (it == 0) "PRE-ROLL" else if (it == - 1) "POST-ROLL" else "MID-ROLL" }
+            adErrorMessage = errorMessage
+            adEvent = eventName
+        }
+        if (!isReset) {
+            val eventData = playerEventData?.copy()
+            addEventToDb(eventData)
+        }
     }
     
     private fun addEventToList(playerEventData: PlayerEventData?) {

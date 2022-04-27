@@ -211,7 +211,7 @@ dependencies {
     implementation('com.github.loopsocial:firework_sdk:v5.10.0') {
         exclude module: "picasso-transformations"
     }
-    implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
+    implementation 'com.github.loopsocial:AndroidAdsService:v20.0.0'
     
     //conviva sdk
     implementation "com.conviva.sdk:conviva-core-sdk:$convivaSdkVersion"

@@ -92,11 +92,11 @@ import kotlin.random.Random
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
+    BaseAppCompatActivity(),
+    OnPlayerControllerChangedListener,
     PlaylistListener,
     AnalyticsListener,
-    BaseAppCompatActivity(),
-    SessionAvailabilityListener,
-    OnPlayerControllerChangedListener
+    SessionAvailabilityListener
 {
     private var startWindow = 0
     private var playCounter: Int = -1
@@ -119,6 +119,7 @@ abstract class PlayerPageActivity :
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    private val playerViewModel by viewModels<PlayerViewModel>()
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
@@ -127,7 +128,6 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
-    private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
     init {
@@ -336,27 +336,40 @@ abstract class PlayerPageActivity :
     //&& !channelInfo.drmCid.isNullOrBlank()
     // && player is SimpleExoPlayer
     
-    private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
-        val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
-        val isDrmActive = isDrmActiveForChannel(channelInfo)
-        
-        if (!isDrmActive) {
-            return DrmSessionManager.DRM_UNSUPPORTED
-        }
-        return DefaultDrmSessionManager
-            .Builder()
-            .setMultiSession(false)
-            .build(
-                ToffeeMediaDrmCallback(
-                    mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
-                )
-            )
-            .apply {
-                mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
-                    Log.i("DRM_T", "Using offline key")
-                    setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
-                }
+    private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
+        return try {
+            ToffeeAnalytics.logBreadCrumb("isMediaItemNull: ${mediaItem == null}")
+            val channelInfo = mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
+            val isDrmActive = isDrmActiveForChannel(channelInfo)
+            ToffeeAnalytics.logBreadCrumb("isDrmActive: $isDrmActive")
+            
+            if (!isDrmActive) {
+                return DrmSessionManager.DRM_UNSUPPORTED
             }
+            ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, isHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, isDrmCidNull: ${channelInfo.drmCid.isNullOrBlank()}")
+            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null && !channelInfo.drmCid.isNullOrBlank()) {
+                DefaultDrmSessionManager
+                    .Builder()
+                    .setMultiSession(false)
+                    .build(
+                        ToffeeMediaDrmCallback(
+                            mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
+                        )
+                    )
+                    .apply {
+                        mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
+                            Log.i("DRM_T", "Using offline key")
+                            ToffeeAnalytics.logBreadCrumb("Using offline key")
+                            setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
+                        }
+                    }
+            } else {
+                DrmSessionManager.DRM_UNSUPPORTED
+            }
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("DefaultDrmSessionManager build error: ${e.message}")
+            DrmSessionManager.DRM_UNSUPPORTED
+        }
     }
     
     private val castSessionListener = object : SessionManagerListener<CastSession> {
@@ -1272,6 +1285,7 @@ abstract class PlayerPageActivity :
         
         override fun onDrmSessionManagerError(eventTime: EventTime, error: java.lang.Exception) {
             super.onDrmSessionManagerError(eventTime, error)
+            ToffeeAnalytics.logBreadCrumb("DRM session manager error: ${error.message}, ${error.cause.toString()}")
             if (isCurrentContentDrm()) {
                 playerEventHelper.setPlayerEvent("DRM session manager error", error.message, error.cause.toString())
             }
@@ -1344,6 +1358,7 @@ abstract class PlayerPageActivity :
                 val errorMessage = it.adData["errorMessage"] ?: "Unknown error occurred."
                 playerEventHelper.setAdData(it.ad, LOG.name, errorMessage)
                 ConvivaHelper.onAdFailed(errorMessage, it.ad)
+                playerEventHelper.setAdData(null, null, isReset = true)
             }
             AD_BUFFERING -> {
                 playerEventHelper.setAdData(it.ad, AD_BUFFERING.name)
@@ -1384,6 +1399,7 @@ abstract class PlayerPageActivity :
             ALL_ADS_COMPLETED -> {
                 playerEventHelper.setAdData(it.ad, ALL_ADS_COMPLETED.name)
                 ConvivaHelper.onAllAdEnded()
+                playerEventHelper.setAdData(null, null, isReset = true)
             }
             else -> {
 //                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
@@ -1397,5 +1413,6 @@ abstract class PlayerPageActivity :
 //        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)
+        playerEventHelper.setAdData(null, null, isReset = true)
     }
 }
