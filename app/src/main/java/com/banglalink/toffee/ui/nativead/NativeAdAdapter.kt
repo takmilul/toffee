@@ -31,7 +31,7 @@ class NativeAdAdapter private constructor(
     private val bindingUtil: BindingUtil,
 ) : RecyclerViewAdapterWrapper(mParam.adapter) {
     
-    var currentNativeAd: NativeAd? = null
+    private var currentNativeAd: NativeAd? = null
     
     companion object {
         private const val DEFAULT_AD_ITEM_INTERVAL = 4
@@ -97,11 +97,6 @@ class NativeAdAdapter private constructor(
                         adHolder.adContainer.hide()
                         adHolder.placeholder.hide()
                         adHolder.placeholder.stopShimmer()
-                    }
-                    
-                    override fun onAdLoaded() {
-                        super.onAdLoaded()
-
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().setVideoOptions(
