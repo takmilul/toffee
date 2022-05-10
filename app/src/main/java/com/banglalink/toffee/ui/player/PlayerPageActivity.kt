@@ -56,14 +56,12 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
-import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 import com.google.android.exoplayer2.util.EventLogger
@@ -92,11 +90,11 @@ import kotlin.random.Random
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
-    BaseAppCompatActivity(),
-    OnPlayerControllerChangedListener,
     PlaylistListener,
     AnalyticsListener,
-    SessionAvailabilityListener
+    BaseAppCompatActivity(),
+    SessionAvailabilityListener,
+    OnPlayerControllerChangedListener
 {
     private var startWindow = 0
     private var playCounter: Int = -1
@@ -119,8 +117,6 @@ abstract class PlayerPageActivity :
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
-    private val playerViewModel by viewModels<PlayerViewModel>()
-    private var lastSeenTrackGroupArray: TrackGroupArray? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -128,6 +124,7 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
+    private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
     init {
@@ -279,7 +276,6 @@ abstract class PlayerPageActivity :
             defaultTrackSelector = DefaultTrackSelector(this, adaptiveTrackSelectionFactory).apply {
                 parameters = trackSelectorParameters!!
             }
-            lastSeenTrackGroupArray = null
             playerAnalyticsListener = PlayerAnalyticsListener()
             httpDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient.apply {
@@ -316,7 +312,6 @@ abstract class PlayerPageActivity :
                 .build()
                 .apply {
                     addAnalyticsListener(playerAnalyticsListener!!)
-//                    addAnalyticsListener(EventLogger(defaultTrackSelector))
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
@@ -346,14 +341,16 @@ abstract class PlayerPageActivity :
             if (!isDrmActive) {
                 return DrmSessionManager.DRM_UNSUPPORTED
             }
-            ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, isHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, isDrmCidNull: ${channelInfo.drmCid.isNullOrBlank()}")
-            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null && !channelInfo.drmCid.isNullOrBlank()) {
+            val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
+            ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
+            
+            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
                 DefaultDrmSessionManager
                     .Builder()
                     .setMultiSession(false)
                     .build(
                         ToffeeMediaDrmCallback(
-                            mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
+                            mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, drmCid ?: ""
                         )
                     )
                     .apply {
@@ -1102,27 +1099,27 @@ abstract class PlayerPageActivity :
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
-                        if (mPref.isDrmActive) {
-                            drmLicenseRepo.deleteByChannelId(-1L)
-                            reloadChannel()
+                        if (mPref.isDrmActive && mPref.isGlobalCidActive) {
+                             drmLicenseRepo.deleteByChannelId(-1L)
                         } else {
                             playlistManager.getCurrentChannel()?.id?.let {
                                 drmLicenseRepo.deleteByChannelId(it.toLong())
-                                reloadChannel()
                             }
                         }
+                        reloadChannel()
                     }
                 } else {
                     ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
                     reloadChannel()
                 }
             } else {
-                val counterLimit = if (isKnownException) 4 else 2
+                val counterLimit = if (isKnownException) 20 else 18
                 if (reloadCounter < counterLimit) {
-                    if (playlistManager.getCurrentChannel()?.isDrmActive == true) {
-                        playlistManager.getCurrentChannel()?.is_drm_active = 0
-                    } else {
+                    val channelInfo = playlistManager.getCurrentChannel()
+                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
+                    } else {
+                        playlistManager.getCurrentChannel()?.is_drm_active = 0
                     }
                     reloadCounter++
                     reloadChannel()
@@ -1135,12 +1132,6 @@ abstract class PlayerPageActivity :
                 if (!channelInfo.isLinear) {
                     insertContentViewProgress(channelInfo, player?.duration ?: -1)
                 }
-            }
-        }
-        
-        override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
-            if (trackGroups !== lastSeenTrackGroupArray) {
-                lastSeenTrackGroupArray = trackGroups
             }
         }
         
@@ -1157,7 +1148,7 @@ abstract class PlayerPageActivity :
             }
             val channelInfo = getCurrentChannelInfo()
             if (channelInfo is ChannelInfo) {
-                if (player?.currentPosition ?: 0 > 0L) {
+                if ((player?.currentPosition ?: 0) > 0L) {
                     insertContentViewProgress(channelInfo, player?.currentPosition ?: -1)
                 }
             }

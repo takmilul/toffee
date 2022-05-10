@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.nativead
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getTime
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.ads.*
@@ -33,7 +31,7 @@ class NativeAdAdapter private constructor(
     private val bindingUtil: BindingUtil,
 ) : RecyclerViewAdapterWrapper(mParam.adapter) {
     
-    var currentNativeAd: NativeAd? = null
+    private var currentNativeAd: NativeAd? = null
     
     companion object {
         private const val DEFAULT_AD_ITEM_INTERVAL = 4
@@ -99,11 +97,6 @@ class NativeAdAdapter private constructor(
                         adHolder.adContainer.hide()
                         adHolder.placeholder.hide()
                         adHolder.placeholder.stopShimmer()
-                    }
-                    
-                    override fun onAdLoaded() {
-                        super.onAdLoaded()
-
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().setVideoOptions(

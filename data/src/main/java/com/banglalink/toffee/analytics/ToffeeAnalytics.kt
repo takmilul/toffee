@@ -42,10 +42,6 @@ object ToffeeAnalytics {
         val logMsg = gson.toJson(ApiFailData(apiName, errorMsg))
         PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
     }
-
-//    fun apiLoginFailed(errorMsg: String) {
-//        logApiError("apiLogin",errorMsg)
-//    }
     
     fun playerError(programName: String, msg: String, isFallbackSucceeded: Boolean = false) {
         val mPref = SessionPreference.getInstance()
@@ -66,7 +62,7 @@ object ToffeeAnalytics {
             logValue.appendLine(it)
         }
         val bundle = bundleOf(
-            "detailed_log" to logValue.toString()
+            "error_value" to logValue.toString()
         )
         firebaseCrashlytics.log(logValue.toString())
         firebaseAnalytics.logEvent("player_error", bundle)
