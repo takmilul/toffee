@@ -84,10 +84,6 @@
 -dontwarn com.medallia.**
 -keep class com.conviva.** { *; }
 
--keep class com.newrelic.** { *; }
--dontwarn com.newrelic.**
--keepattributes Exceptions, Signature, InnerClasses, LineNumberTable, SourceFile, EnclosingMethod
-
 -keep class okhttp3.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**

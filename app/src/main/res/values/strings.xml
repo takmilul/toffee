@@ -90,7 +90,7 @@
     <string name="confirm_purchase">Confirm Purchase</string>
     <string name="auto_renew_formatted_text">Auto Renew in %1$d %2$s</string>
     <string name="subscribe_text">Subscribe ৳30</string>
-    <string name="discount_foramtted_text"><strike>৳%1$d</strike></string>
+    <string name="discount_formatted_text"><strike>৳%1$d</strike></string>
     <string name="amount_formatted_text">৳%1$d</string>
     <string name="day_formatted_text">%1$d days</string>
     <string name="single_day_formatted_text">%1$d day</string>
@@ -225,16 +225,15 @@
     <string name="txt_poster">Poster</string>
     <string name="txt_prize">Prize</string>
     <string name="txt_video_thumb">Video Thumb</string>
-    <string name="txt_featued_image">Featued Image</string>
+    <string name="txt_featured_image">Featured Image</string>
     <string name="txt_view_all">View All</string>
     <string name="txt_banner">Banner</string>
     <string name="txt_refer_code">Refer code</string>
-    <string name="txt_spalash_logo">Spalash Logo</string>
-    <string name="txt_splash_pink">Spalash Pink</string>
+    <string name="txt_splash_pink">Splash Pink</string>
     <string name="txt_splash_white">Splash White</string>
     <string name="txt_splash_logo">Splash Logo</string>
     <string name="txt_splash_line">Splash Line</string>
-    <string name="txt_splash_logo_title">Spalash Logo Title</string>
+    <string name="txt_splash_logo_title">Splash Logo Title</string>
     <string name="fireworks_section_title">Moments</string>
     <string name="Creators_policy_page_title">Creators Policy</string>
     <string name="skip_text">Skip</string>
@@ -249,7 +248,7 @@
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
-    <string name="successfully_loged_in_text">Successfully Logged In!</string>
+    <string name="successfully_logged_in_text">Successfully Logged In!</string>
     <string name="select_at_least_3_of_your_interests_text">Please select \nat least 3 of your interests</string>
     <string name="subscription_empty_view_text">You haven\'t subscribed any channel yet</string>
     <string name="about_toffee_title">About Toffee</string>
@@ -417,7 +416,7 @@
     <string name="menu_dark_mode">Dark Mode</string>
     <string name="show_offline_message">You\'re offline. Please check your connection.</string>
     <string name="description_mandatory">Description*</string>
-    <string name="description_hint">Description...</string>
+    <string name="description_hint">Description…</string>
     <string name="title_text">Title</string>
     <string name="txt_sub_category">Sub Category</string>
     <string name="txt_age_group">Age Group</string>
@@ -436,11 +435,10 @@
     <string name="recommended_text">Recommended</string>
     <string name="autoplay_text">Autoplay</string>
     <string name="category_icon_text">Category Icon</string>
-    <string name="new_relic_app_token">AA075689888616e0b8a354735a008b9afd1731183d-NRMA</string>
     <string name="creators_playlist">Creator\'s Playlist</string>
     <string name="videos">Videos</string>
     <string name="alert_redeem_secondary_title">This may have happened due to</string>
-    <string name="alert_redeem_invalid_reson1">The code being used after 24 hours of \nfirst sign-in</string>
-    <string name="alert_redeem_invalid_reson2">An attempt to avail referral code benefits \n more than once</string>
+    <string name="alert_redeem_invalid_reason_1">The code being used after 24 hours of \nfirst sign-in</string>
+    <string name="alert_redeem_invalid_reason_2">An attempt to avail referral code benefits \n more than once</string>
     <string name="ad_attribution">Ad</string>
 </resources>

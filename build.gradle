@@ -32,9 +32,6 @@ buildscript {
         firebaseCrashlyticsVersion = '18.2.9'
         googleHttpClientGsonVersion = '1.41.7'
     }
-    dependencies {
-        classpath 'com.newrelic.agent.android:agent-gradle-plugin:6.5.0'
-    }
 }
 plugins {
     id 'com.google.gms.google-services' version '4.3.10' apply false

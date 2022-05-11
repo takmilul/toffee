@@ -5,7 +5,6 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs'
-    id 'newrelic'
 }
 
 android {
@@ -249,9 +248,6 @@ dependencies {
     
     //medallia
     implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
-    
-    //New Relic SDK
-    implementation 'com.newrelic.agent.android:android-agent:6.5.0'
     
     def test_core = '1.4.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.2')

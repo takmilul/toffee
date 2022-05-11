@@ -108,10 +108,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
-import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
@@ -327,9 +327,6 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
-        if (mPref.isNewRelicActive) {
-            initNewRelicSdk()
-        }
 
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
@@ -343,14 +340,6 @@ class HomeActivity :
             MobileAds.initialize(this)
         }
 //        showDeviceId()
-    }
-    
-    private fun initNewRelicSdk() {
-        runCatching {
-            NewRelic
-                .withApplicationToken(getString(R.string.new_relic_app_token))
-                .start(this.applicationContext)
-        }
     }
     
     private fun initConvivaSdk() {
