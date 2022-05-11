@@ -244,7 +244,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             discountTv.visibility = View.VISIBLE
             val discountString = discountTv.context.getString(
-                R.string.discount_foramtted_text, item.discount
+                R.string.discount_formatted_text, item.discount
             )
             val str = SpannableStringBuilder(discountString)
             str.setSpan(

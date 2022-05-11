@@ -611,10 +611,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CONVIVA_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CONVIVA_ACTIVE, value) }
     
-    var isNewRelicActive: Boolean
-        get() = pref.getBoolean(PREF_IS_NEW_RELIC_ACTIVE, false)
-        set(value) = pref.edit { putBoolean(PREF_IS_NEW_RELIC_ACTIVE, value) }
-    
     var isPlayerMonitoringActive: Boolean
         get() = pref.getBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_PLAYER_MONITORING_ACTIVE, value) }
@@ -698,7 +694,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isStingrayActive = customerInfoLogin.isStingrayActive
         isMedalliaActive = customerInfoLogin.isMedalliaActive
         isConvivaActive = customerInfoLogin.isConvivaActive
-        isNewRelicActive = customerInfoLogin.isNewRelicActive
         isPlayerMonitoringActive = customerInfoLogin.isPlayerMonitoringActive
         showBuyInternetForAndroid = customerInfoLogin.showBuyInternetForAndroid
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
@@ -819,7 +814,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_STINGRAY_ACTIVE = "pref_stingray_active"
         private const val PREF_IS_MEDALLIA_ACTIVE = "pref_medallia_active"
         private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
-        private const val PREF_IS_NEW_RELIC_ACTIVE = "pref_new_relic_active"
         private const val PREF_IS_PLAYER_MONITORING_ACTIVE = "pref_is_player_monitoring_active"
         private const val PREF_SHOW_BUY_INTERNET_PACK = "pref_show_buy_internet_pack"
 

@@ -145,8 +145,6 @@ class CustomerInfoLogin(
     var isMedalliaActive:Boolean = false,
     @SerializedName("isConvivaActiveForAndroid")
     var isConvivaActive:Boolean = false,
-    @SerializedName("isNewRelicActiveForAndroid")
-    var isNewRelicActive:Boolean = false,
     @SerializedName("isNdMonitoringActiveAndroid")
     var isPlayerMonitoringActive: Boolean = false,
     @SerializedName("showBuyInternetForAndroid")

@@ -46,7 +46,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -109,7 +108,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
-import com.newrelic.agent.android.NewRelic
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -329,9 +327,6 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
-        if (mPref.isNewRelicActive) {
-            initNewRelicSdk()
-        }
 
        val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
@@ -345,14 +340,6 @@ class HomeActivity :
             MobileAds.initialize(this)
         }
 //        showDeviceId()
-    }
-    
-    private fun initNewRelicSdk() {
-        runCatching {
-            NewRelic
-                .withApplicationToken(getString(string.new_relic_app_token))
-                .start(this.applicationContext)
-        }
     }
     
     private fun initConvivaSdk() {

@@ -17,7 +17,7 @@
         android:id="@+id/featured_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/txt_featued_image"
+        android:contentDescription="@string/txt_featured_image"
         android:onClick="@{()->callback.onItemClicked(data)}"
         loadImageFromUrl="@{data.ugcFeaturedImage}"
         android:adjustViewBounds="true"
