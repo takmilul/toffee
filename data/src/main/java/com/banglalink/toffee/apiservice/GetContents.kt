@@ -45,7 +45,7 @@ class GetContents @AssistedInject constructor(
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
                 it.subCategory = requestParams.subcategory
-                localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
+                localSync.syncData(it)
                 it
             }
         }
