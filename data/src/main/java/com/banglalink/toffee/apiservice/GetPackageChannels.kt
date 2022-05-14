@@ -25,7 +25,7 @@ class GetPackageChannels @Inject constructor(
             } catch (e: Exception) {
                 false
             }
-            localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
+            localSync.syncData(it)
             it
         }
 
