@@ -1,7 +1,6 @@
 package com.banglalink.toffee.mqttservice
 
 import android.content.Context
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.ShareCount
@@ -17,6 +16,7 @@ import com.banglalink.toffee.usecase.ReactionData
 import com.banglalink.toffee.usecase.ShareData
 import com.banglalink.toffee.usecase.SubscriptionCountData
 import com.banglalink.toffee.util.EncryptionUtil
+import com.banglalink.toffee.util.Log
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
@@ -24,7 +24,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.net.ssl.SSLSocketFactory
@@ -56,11 +55,12 @@ class ToffeeMqttService @Inject constructor(
                 val clientId = EncryptionUtil.decryptResponse(mPref.mqttClientId)
                 val userName = EncryptionUtil.decryptResponse(mPref.mqttUserName)
                 val password = EncryptionUtil.decryptResponse(mPref.mqttPassword)
+//                Log.i("MQ_", "host: $host, client_id: $clientId, user_name: $userName password: $password")
                 ToffeeAnalytics.logBreadCrumb("creating mqtt because null")
                 client = MqttAndroidClient(context, host, clientId).apply {
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
-//                    Log.i("MQ_", "initialize: connecting...")
+                    Log.i("MQ_", "initialize: connecting...")
                 }
 //                repeat(100){
 //                    shareStatusList.add(ShareCount(it, 1))
@@ -145,7 +145,7 @@ class ToffeeMqttService @Inject constructor(
     override fun onSuccess(token: IMqttToken?) {
         try {
             if (client?.isConnected == true && token?.topics.isNullOrEmpty()) {
-//                Log.i("MQ_", "onSuccess: Connected")
+                Log.i("MQ_", "onSuccess: connected")
                 ToffeeAnalytics.logBreadCrumb("mqtt connected")
                 val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
                     isBufferEnabled = true
@@ -242,7 +242,7 @@ class ToffeeMqttService @Inject constructor(
         }
         catch (e: Exception) {
             Log.e("MQ_", "disconnectionError: $e")
-            ToffeeAnalytics.logBreadCrumb("mqtt disconnect error -> ${e.message}")
+            ToffeeAnalytics.logBreadCrumb("mqtt disconnection error -> ${e.message}")
         }
     }
 }

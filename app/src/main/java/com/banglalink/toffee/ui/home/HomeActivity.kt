@@ -212,9 +212,8 @@ class HomeActivity :
                 checkChannelDetailAndUpload()
             }
         }
-        
-        if (mPref.mqttClientId.startsWith("_") || mPref.mqttClientId.substringBefore("_") != mPref.phoneNumber) {
-            mPref.mqttIsActive = false
+        val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
+        if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""
             mPref.mqttClientId = ""
             mPref.mqttUserName = ""
@@ -403,7 +402,7 @@ class HomeActivity :
                                     }
                                     tempDir
                                 }
-                                if (mqttDir != null) {
+                                if (mPref.mqttIsActive && mqttDir != null) {
                                     mqttService.initialize()
                                 }
                             }
@@ -1615,14 +1614,14 @@ class HomeActivity :
                         mPref.mqttPassword = ""
                         mPref.customerName = ""
                         mPref.customerEmail = ""
+                        mPref.isPaidUser = false
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
-                        mPref.mqttIsActive = false
-                        mPref.isPaidUser = false
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
+                        mqttService.destroy()
                         navController.popBackStack(R.id.menu_feed, false).let {
                             recreate()
                         }
