@@ -239,7 +239,8 @@ dependencies {
     
     //mqtt library
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$pahoClientVersion"
-    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
+    implementation "com.github.hannesa2:paho.mqtt.android:$pahoAndroidServiceVersion"
+    //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.android.gms:play-services-ads:20.6.0'
@@ -258,7 +259,7 @@ dependencies {
     
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation("androidx.test:runner:$test_core")
-    testImplementation 'org.robolectric:robolectric:4.7.3'
+    testImplementation 'org.robolectric:robolectric:4.8.1'
 //    testImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation("androidx.test:rules:$test_core")
     
@@ -282,7 +283,7 @@ dependencies {
 //    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
     androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espressoVersion")
     
-    def mockk_version = '1.12.3'
+    def mockk_version = '1.12.4'
     testImplementation "io.mockk:mockk:$mockk_version"
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
 }

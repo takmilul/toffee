@@ -148,7 +148,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                         bundleOf(
                             PUB_SUB_ID to notificationBuilder.pubSubId
                         ))
-                    val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                    val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                     val builder = notificationBuilder.getNotificationBuilder().apply {
                         setContentText(content)
                         setContentIntent(pendingIntent)

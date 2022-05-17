@@ -109,7 +109,8 @@ dependencies {
     
     //mqtt library
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$pahoClientVersion"
-    implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
+    implementation "com.github.hannesa2:paho.mqtt.android:$pahoAndroidServiceVersion"
+    //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
