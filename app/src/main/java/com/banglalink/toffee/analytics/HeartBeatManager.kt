@@ -3,7 +3,6 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import android.os.Build
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -113,8 +112,7 @@ class HeartBeatManager @Inject constructor(
     
     private fun sendHeaderEnrichmentLog() {
         try {
-            val isCellular = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) true else connectionWatcher.isOverCellular
-            if (mPref.heUpdateDate != today && isCellular) {
+            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
                 coroutineScope.launch {
                     val response = resultFromResponse { headerEnrichmentService.execute() }
                     when(response) {

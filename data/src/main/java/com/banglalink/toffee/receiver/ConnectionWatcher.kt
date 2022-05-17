@@ -1,21 +1,16 @@
 package com.banglalink.toffee.receiver
 
 import android.Manifest
-import android.Manifest.permission
 import android.app.Application
 import android.content.Context
-import android.content.Context.TELEPHONY_SERVICE
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import android.telephony.TelephonyManager
 import android.telephony.TelephonyManager.*
 import androidx.annotation.IntRange
-import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.channels.awaitClose
@@ -25,11 +20,10 @@ import kotlinx.coroutines.flow.combine
 
 //https://stackoverflow.com/questions/53532406/activenetworkinfo-type-is-deprecated-in-api-level-28
 
-class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE) constructor(
+class ConnectionWatcher constructor(
     private val application: Application
 ) {
     
-    private val telephonyManager = application.applicationContext.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
     private val connectivityManager = application.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     
     // general availability of Internet over any type
@@ -152,26 +146,27 @@ class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_S
     
     @Suppress("DEPRECATION")
     private fun updateCellularNetworkType(): String {
-        return if (ActivityCompat.checkSelfPermission(application.applicationContext, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            val is2G = telephonyManager.networkType == NETWORK_TYPE_EDGE
-                || telephonyManager.networkType == NETWORK_TYPE_GPRS
-                || telephonyManager.networkType == NETWORK_TYPE_CDMA
-                || telephonyManager.networkType == NETWORK_TYPE_IDEN
-                || telephonyManager.networkType == NETWORK_TYPE_1xRTT
+        return try {
+            val networkType = connectivityManager.activeNetworkInfo?.subtype ?: -1
+            val is2G = networkType == NETWORK_TYPE_EDGE
+                || networkType == NETWORK_TYPE_GPRS
+                || networkType == NETWORK_TYPE_CDMA
+                || networkType == NETWORK_TYPE_IDEN
+                || networkType == NETWORK_TYPE_1xRTT
             
-            val is3G = telephonyManager.networkType == NETWORK_TYPE_UMTS
-                || telephonyManager.networkType == NETWORK_TYPE_HSDPA
-                || telephonyManager.networkType == NETWORK_TYPE_HSPA
-                || telephonyManager.networkType == NETWORK_TYPE_HSPAP
-                || telephonyManager.networkType == NETWORK_TYPE_EVDO_0
-                || telephonyManager.networkType == NETWORK_TYPE_EVDO_A
-                || telephonyManager.networkType == NETWORK_TYPE_EVDO_B
+            val is3G = networkType == NETWORK_TYPE_UMTS
+                || networkType == NETWORK_TYPE_HSDPA
+                || networkType == NETWORK_TYPE_HSPA
+                || networkType == NETWORK_TYPE_HSPAP
+                || networkType == NETWORK_TYPE_EVDO_0
+                || networkType == NETWORK_TYPE_EVDO_A
+                || networkType == NETWORK_TYPE_EVDO_B
             
-            val is4G = telephonyManager.networkType == NETWORK_TYPE_LTE
+            val is4G = networkType == NETWORK_TYPE_LTE
             
             var is5G = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                is5G = telephonyManager.networkType == NETWORK_TYPE_NR
+                is5G = networkType == NETWORK_TYPE_NR
             }
             
             isOver2G = is2G
@@ -186,7 +181,7 @@ class ConnectionWatcher @RequiresPermission(Manifest.permission.ACCESS_NETWORK_S
                 is5G -> "5G"
                 else -> "Unknown"
             }
-        } else {
+        } catch (e: Exception) {
             "Unknown"
         }
     }

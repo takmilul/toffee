@@ -247,9 +247,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
         }
     }
 
-    @SuppressLint("InvalidR2Usage")
     private fun setupTagView() {
-        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R2.id.chips_recycler)
+        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R.id.chips_recycler)
         chipRecycler.setPadding(0)
         
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {

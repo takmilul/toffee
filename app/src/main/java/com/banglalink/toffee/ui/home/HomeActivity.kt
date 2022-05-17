@@ -3,6 +3,8 @@ package com.banglalink.toffee.ui.home
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -15,6 +17,7 @@ import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -66,7 +69,15 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
-import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
+import com.banglalink.toffee.notification.PUBSUBMessageStatus
+import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.CONTENT_VIEW
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.DISMISS
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
+import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -111,7 +122,6 @@ import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
@@ -169,6 +179,7 @@ class HomeActivity :
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
     
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
@@ -1058,6 +1069,21 @@ class HomeActivity :
         }
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
+        }
+        if (intent.hasExtra(ROW_ID)) {
+            val actionName = intent.getIntExtra(ACTION_NAME, DISMISS)
+            val pubSubId = intent.getStringExtra(PUB_SUB_ID) ?: "0"
+            val notificationId = intent.getIntExtra(NOTIFICATION_ID, -1)
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getSystemService(NotificationManager::class.java)
+            } else {
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            }.cancel(notificationId)
+            
+            if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
+                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
+            }
         }
 //        try {
 //            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")

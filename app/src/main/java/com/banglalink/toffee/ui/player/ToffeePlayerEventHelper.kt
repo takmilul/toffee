@@ -24,10 +24,8 @@ class ToffeePlayerEventHelper @Inject constructor(
 ) {
     private var schedulerJob: Job? = null
     private val eventMutex = Mutex()
-    private val playerEventListMutex = Mutex()
     private var playerEventData: PlayerEventData? = null
     private var coroutineScope = CoroutineScope(IO)
-    private val playerEventList = arrayListOf<PlayerEventData>()
     
     fun startSession() {
         if (mPref.isPlayerMonitoringActive) {
@@ -43,7 +41,6 @@ class ToffeePlayerEventHelper @Inject constructor(
     private fun startScheduler(){
         schedulerJob = coroutineScope.launch(IO) {
             while (isActive) {
-//                addPlayerEventToDb()
                 sendPlayerEventData()
             }
         }
@@ -122,34 +119,12 @@ class ToffeePlayerEventHelper @Inject constructor(
         }
     }
     
-    private fun addEventToList(playerEventData: PlayerEventData?) {
-        playerEventData?.let {
-            coroutineScope.launch {
-                playerEventListMutex.withLock {
-                    playerEventList.add(playerEventData)
-                }
-            }
-        }
-    }
-    
     private fun addEventToDb(playerEventData: PlayerEventData?) {
         playerEventData?.let {
             coroutineScope.launch {
                 eventMutex.withLock {
                     playerEventRepository.insertAll(it)
                 }
-            }
-        }
-    }
-    
-    private suspend fun addPlayerEventToDb(forceUpdate: Boolean = false) {
-        if (!forceUpdate) {
-            delay(10_000)
-        }
-        playerEventListMutex.withLock {
-            if (playerEventList.isNotEmpty()) {
-                playerEventRepository.insertAll(*playerEventList.toTypedArray())
-                playerEventList.clear()
             }
         }
     }
@@ -174,7 +149,6 @@ class ToffeePlayerEventHelper @Inject constructor(
     
     fun release() {
         coroutineScope.launch {
-//            addPlayerEventToDb(true)
             sendPlayerEventData(true)
         }
         schedulerJob?.cancel()

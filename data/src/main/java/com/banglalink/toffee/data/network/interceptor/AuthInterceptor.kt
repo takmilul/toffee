@@ -72,7 +72,6 @@ class AuthInterceptor @Inject constructor(
             val contentType = response.body!!.contentType()
             val body = jsonString.toResponseBody(contentType)
             return response.newBuilder().body(body).build()
-
         } catch (e: Exception) {
             throw AuthEncodeDecodeException(e.message, e.cause)
         }

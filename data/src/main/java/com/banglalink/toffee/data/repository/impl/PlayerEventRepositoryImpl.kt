@@ -46,8 +46,8 @@ class PlayerEventRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Log.i("PLAYER_EVENT", "sendTopEventToPubSubAndRemove: failed")
-            ToffeeAnalytics.logBreadCrumb("Failed to send player event pubsub")
+            Log.i("PLAYER_EVENT", "sendTopEventToPubSubAndRemove: failed. errorMsg: ${e.message}")
+            ToffeeAnalytics.logBreadCrumb("Failed to send player event pubsub. errorMsg: ${e.message}")
         }
     }
     
