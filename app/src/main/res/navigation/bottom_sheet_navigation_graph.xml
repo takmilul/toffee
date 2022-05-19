@@ -67,6 +67,10 @@
             android:name="isProfileImage"
             app:argType="boolean"
             />
+        <argument
+            android:name="isChannelBanner"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </dialog>
 
 
