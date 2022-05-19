@@ -9,6 +9,7 @@ interface NotificationInfoRepository {
     suspend fun delete(notificationInfo: NotificationInfo)
     fun getAllNotification(): PagingSource<Int, NotificationInfo>
     fun getUnseenNotificationCount(): Flow<Int>
+    suspend fun getLastNotification(): NotificationInfo?
     /*suspend fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo>
     suspend fun getNotificationByTopic(topic: Int): PagingSource<Int, NotificationInfo>*/
     suspend fun updateSeenStatus(id: Long, isSeen: Boolean, seenTime: Long): Int

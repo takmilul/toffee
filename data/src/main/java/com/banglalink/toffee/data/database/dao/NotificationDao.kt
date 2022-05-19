@@ -20,7 +20,10 @@ interface NotificationDao {
 
     @Query("SELECT COUNT(id) FROM NotificationInfo WHERE (userId=:customerId OR userId=0) AND isSeen=:isSeen")
     fun getUnseenNotificationCount(customerId: Int, isSeen: Boolean = false): Flow<Int>
-
+    
+    @Query("SELECT * FROM NotificationInfo WHERE userId=:userId OR userId=0 ORDER BY receiveTime DESC LIMIT 1")
+    fun getLastNotification(userId: Int): NotificationInfo?
+    //15340685
     /*@Query("SELECT * FROM NotificationInfo WHERE receiveTime >= :date ORDER BY receiveTime DESC")
     fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo>
     
