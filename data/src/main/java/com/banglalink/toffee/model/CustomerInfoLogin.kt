@@ -151,4 +151,8 @@ class CustomerInfoLogin(
     var showBuyInternetForAndroid: Boolean = false,
     @SerializedName("isNativeAdActive")
     var isNativeAdActive: Boolean = false,
+    @SerializedName("playerMaxBitRateAndroid")
+    var maxBitRateWifi: Int = -1,
+    @SerializedName("playerMaxBitRateCellular")
+    var maxBitRateCellular: Int = -1,
 ) : BodyResponse(), Parcelable

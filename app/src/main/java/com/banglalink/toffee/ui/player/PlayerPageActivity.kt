@@ -681,7 +681,7 @@ abstract class PlayerPageActivity :
         val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
             hlsUrl
         } else {
-            Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
+            Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)
         }
         val playingUrl = getGeneratedUrl(uri)
         return MediaItem.Builder().apply {
@@ -753,6 +753,12 @@ abstract class PlayerPageActivity :
                     if (!isReload) currentlyPlayingVastUrl = tag.url
                 }
             }
+        
+        val maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
+        if (maxBitRate > 0) {
+            val param = defaultTrackSelector?.buildUponParameters()?.setMaxVideoBitrate(maxBitRate)?.build()
+            param?.let { defaultTrackSelector?.parameters = it }
+        }
         
         player?.let {
             val oldChannelInfo = getCurrentChannelInfo()
@@ -994,7 +1000,8 @@ abstract class PlayerPageActivity :
     override fun onOptionMenuPressed(): Boolean {
         if (defaultTrackSelector == null || defaultTrackSelector?.currentMappedTrackInfo == null) return false
         val bottomSheetDialog = TrackSelectionDialog(this)
-        bottomSheetDialog.init(defaultTrackSelector)
+        val maxBitRate = if (connectionWatcher.isOverWifi) mPref.maxBitRateWifi else mPref.maxBitRateCellular
+        bottomSheetDialog.init(defaultTrackSelector, maxBitRate)
         lifecycle.addObserver(bottomSheetDialog)
         bottomSheetDialog.setOnDismissListener {
             lifecycle.removeObserver(bottomSheetDialog)
@@ -1182,6 +1189,14 @@ abstract class PlayerPageActivity :
                 Log.i(
                     "PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
                 )
+                val format = mediaLoadData.trackFormat
+                format?.let {
+                    val bitrate = Utils.readableFileSize(it.bitrate.toLong())
+                    val profile = it.width.toString() + "*" + it.height.toString()
+                    val mimeType = it.containerMimeType
+                    val codec = it.codecs
+                    Log.i("PLAYER_EVENT_", "onLoadCompleted: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
@@ -1265,6 +1280,7 @@ abstract class PlayerPageActivity :
                 val profile = it.width.toString() + "*" + it.height.toString()
                 val mimeType = it.containerMimeType
                 val codec = it.codecs
+                Log.i("PLAYER_EVENT_", "onDownstreamFormatChanged: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
                 playerEventHelper.setPlayerEvent("playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
             }
         }

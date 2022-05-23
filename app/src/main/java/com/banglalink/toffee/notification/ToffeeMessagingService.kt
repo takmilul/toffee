@@ -5,6 +5,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.util.Base64
@@ -195,6 +196,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     
     inner class NotificationBuilder(private val remoteMessage: RemoteMessage) {
         val data: Map<String, String> get() = remoteMessage.data
+        private var imageDrawable: Drawable? = null
         private val button = data["button"]
         val pubSubId = data["notificationId"]
         private val playNowUrl = data["playNowUrl"]
@@ -211,12 +213,14 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         
         private suspend fun insertIntoDB() = notificationInfoRepository.insert(notificationInfo)
         
-        private suspend fun getDrawableImage() = imageUrl?.let { CoilUtils.coilExecuteGet(this@ToffeeMessagingService, it) }
+        private suspend fun loadImageDrawable() {
+            imageDrawable = imageUrl?.let { CoilUtils.coilExecuteGet(this@ToffeeMessagingService, it) }
+        }
         
         private suspend fun getThumbnailImage(): Bitmap? {
-            var thumbnailImage: Bitmap? = getDrawableImage()?.toBitmap(48, 48)
+            var thumbnailImage: Bitmap? = imageDrawable?.toBitmap(48, 48)
             if (!thumbnailUrl.isNullOrBlank()) {
-                val thumbnailDrawable = CoilUtils.coilExecuteGet(this@ToffeeMessagingService, thumbnailUrl) ?: getDrawableImage()
+                val thumbnailDrawable = CoilUtils.coilExecuteGet(this@ToffeeMessagingService, thumbnailUrl) ?: imageDrawable
                 thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
             }
             return thumbnailImage
@@ -257,13 +261,14 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         }
         
         suspend fun getNotificationBuilder(ignoreContentIntent: Boolean = false): NotificationCompat.Builder? {
+            loadImageDrawable()
             notificationInfoRepository.getLastNotification()?.let {
                 if (it.title == title && it.content == content && it.imageUrl == imageUrl && it.resourceUrl == resourceUrl) {
                     return null
                 }
             }
             val notificationStyle = if (notificationType?.equals(NotificationType.LARGE.type, ignoreCase = true) == true) {
-                NotificationCompat.BigPictureStyle().bigPicture(getDrawableImage()?.toBitmap())
+                NotificationCompat.BigPictureStyle().bigPicture(imageDrawable?.toBitmap())
             } else {
                 NotificationCompat.BigTextStyle().bigText(content)
             }

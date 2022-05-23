@@ -4,14 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.FragmentSettingsBinding
 import com.banglalink.toffee.extension.showToast
@@ -28,27 +24,6 @@ class SettingsFragment : BaseFragment() {
     private val binding get() = _binding!!
     @Inject lateinit var userActivitiesRepository: UserActivitiesRepository
     
-    var wifiProfileRes = arrayOf("240x160", "320x240", "480x320", "720x576", "1280x720", "1920x1080", "Auto")
-    var wifiProfileBWRequiredTxt = intArrayOf(
-        R.string.profile_240x160,
-        R.string.profile_320x240,
-        R.string.profile_480x320,
-        R.string.profile_720x576,
-        R.string.profile_1280x720,
-        R.string.profile_1920x1080,
-        R.string.profile_1920x1080,
-    )
-    var cellularProfileRes = arrayOf("240x160", "320x240", "480x320", "720x480", "1280x720", "1920x1080", "Auto")
-    var cellularProfileBWRequiredTxt = intArrayOf(
-        R.string.profile_240x160,
-        R.string.profile_320x240,
-        R.string.profile_480x320,
-        R.string.profile_720x576,
-        R.string.profile_1280x720,
-        R.string.profile_1920x1080,
-        R.string.profile_1920x1080,
-    )
-    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
@@ -58,29 +33,6 @@ class SettingsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
-        binding.wifiProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                mPref.wifiProfileStatus = progress + 1
-                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
-                binding.wifiProfileStatusTv.text = getString(R.string.txt_video_resolution, wifiProfileRes[progress])
-                binding.wifiProfileDescTxt.text = getString(wifiProfileBWRequiredTxt[progress])
-            }
-            
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
-        binding.cellularProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                mPref.cellularProfileStatus = progress + 1
-                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
-                binding.cellularProfileDescTxt.text = getString(cellularProfileBWRequiredTxt[progress])
-                binding.cellularProfileStatusTv.text = getString(R.string.txt_video_resolution, cellularProfileRes[progress])
-            }
-            
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
-        binding.dataQualityToggleBtn.setOnCheckedChangeListener { _, _ -> handleDefaultDataQualityToggleBtn() }
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
         binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
@@ -94,16 +46,9 @@ class SettingsFragment : BaseFragment() {
     }
     
     private fun initializeSettings() {
-        binding.defaultDataQuality = mPref.defaultDataQuality()
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
-        binding.cellularProfileDescTxt.text = getString(cellularProfileBWRequiredTxt[mPref.cellularProfileStatus - 1])
-        binding.cellularProfileStatusTv.text = getString(R.string.txt_video_resolution, cellularProfileRes[mPref.cellularProfileStatus - 1])
-        binding.cellularProfileStateBar.progress = mPref.cellularProfileStatus - 1
-        binding.wifiProfileStateBar.progress = mPref.wifiProfileStatus - 1
-        binding.wifiProfileStatusTv.text = getString(R.string.txt_video_resolution, wifiProfileRes[mPref.wifiProfileStatus - 1])
-        binding.wifiProfileDescTxt.text = getString(wifiProfileBWRequiredTxt[mPref.wifiProfileStatus - 1])
     }
     
     private fun handleNotificationChange() {
@@ -114,11 +59,6 @@ class SettingsFragment : BaseFragment() {
     private fun handleFloatingWindowPrefChange() {
         mPref.isEnableFloatingWindow = binding.prefFloatingWindow.isChecked
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
-    }
-    
-    private fun handleDefaultDataQualityToggleBtn() {
-        mPref.setDefaultDataQuality(binding.dataQualityToggleBtn.isChecked)
-        binding.defaultDataQuality = mPref.defaultDataQuality()
     }
     
     private fun handleWatchOnlyWifiToggleBtn() {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.banglalink.toffee.ui.player.TrackSelectionView
+<com.banglalink.toffee.ui.player.TrackSelectionViewKt
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/track_selection_view"

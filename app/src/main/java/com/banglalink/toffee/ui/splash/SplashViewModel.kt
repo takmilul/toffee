@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.media.MediaDrm
 import android.os.Environment
 import androidx.core.os.bundleOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
@@ -20,7 +19,6 @@ import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAIL
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.VastTag
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
@@ -196,5 +194,4 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-
-    }
+}

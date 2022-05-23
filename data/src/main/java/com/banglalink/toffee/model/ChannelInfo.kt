@@ -8,6 +8,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -156,8 +157,8 @@ data class ChannelInfo(
     val fcm_event_is_active: Int = 0,
     @SerializedName("plain_hls_url_for_url_type")
     val paidPlainHlsUrl: String? = null
-) :Parcelable
-{
+) :Parcelable {
+    
     @get:SerializedName("isApproved")
     val isApproved: Int
         get() = if (is_approved == null || is_approved == 1) 1 else 0
@@ -202,6 +203,7 @@ data class ChannelInfo(
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
     
+    @IgnoredOnParcel
     @SerializedName("isExpired")
     var isExpired: Boolean = false
     
@@ -213,6 +215,7 @@ data class ChannelInfo(
         return itemCategory
     }
 
+    @IgnoredOnParcel
     @SerializedName("viewProgress")
     var viewProgress: Long = -1L
     
@@ -243,7 +246,7 @@ data class ChannelInfo(
 
     @get:SerializedName("isPurchased")
     val isPurchased: Boolean
-        get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
+        get() = (individual_price?.toInt() ?: 0) > 0 && individual_purchase
     
     @get:SerializedName("isPaidSubscribed")
     val isPaidSubscribed: Boolean
