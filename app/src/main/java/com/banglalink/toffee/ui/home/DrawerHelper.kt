@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -224,11 +223,14 @@ class DrawerHelper(
             }
         }
         return run {
-            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
-                binding.drawerLayout.closeDrawers()
-                return@run true
-            }
-            false
+            activity.getNavController().navigate(item.itemId)
+            binding.drawerLayout.closeDrawers()
+            return@run true
+//            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
+//                binding.drawerLayout.closeDrawers()
+//                return@run true
+//            }
+//            false
         }
     }
 }
