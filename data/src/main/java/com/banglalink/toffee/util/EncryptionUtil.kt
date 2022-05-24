@@ -7,7 +7,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 object EncryptionUtil {
-    private val TRANSFORMATION = "AES/ECB/PKCS5Padding"
+    private const val TRANSFORMATION = "AES/ECB/PKCS5Padding"
     private val secretKeySpec = SecretKeySpec(TOFFEE_KEY.toByteArray(), "AES")
     private val headerEnrichmentKeySpec = SecretKeySpec(HE_KEY.toByteArray(), "AES")
 

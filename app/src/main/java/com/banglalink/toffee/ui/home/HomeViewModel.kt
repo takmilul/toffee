@@ -23,7 +23,6 @@ import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.SimpleHttpClient
-import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
@@ -80,6 +79,7 @@ class HomeViewModel @Inject constructor(
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
     val shareUrlLiveData = SingleLiveEvent<String>()
+    val vastTagLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
@@ -364,7 +364,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getVastTag(){
+    fun getVastTag(shouldObserve: Boolean = true){
         viewModelScope.launch {
             try {
                 vastTagService.execute().response.let {
@@ -386,6 +386,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+            if (shouldObserve) vastTagLiveData.value = true
         }
     }
 }

@@ -223,6 +223,7 @@ class HomeActivity :
                 checkChannelDetailAndUpload()
             }
         }
+        viewModel.getVastTag()
         val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
         if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""

@@ -112,14 +112,6 @@ class DrawerHelper(
 
     fun handleMenuItemById(item: MenuItem): Boolean {
         when (item.itemId) {
-//            R.id.menu_tv -> {
-//                with(activity.getNavController()) {
-//                    if(currentDestination?.id != R.id.menu_tv) {
-//                        navigate(R.id.menu_tv)
-//                    }
-//                }
-//                binding.drawerLayout.closeDrawers()
-//            }
             R.id.menu_subscriptions -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_subscriptions)))
                 if (!mPref.isVerifiedUser) {
@@ -150,9 +142,6 @@ class DrawerHelper(
             }
             R.id.menu_settings -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_settings)))
-//                activity.launchActivity<SettingsActivity>()
-//                binding.drawerLayout.closeDrawers()
-//                return true
             }
             R.id.menu_logout -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_log_out)))
@@ -167,8 +156,7 @@ class DrawerHelper(
                 return true
             }
             R.id.menu_change_theme -> {
-                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to
-                        activity.getString(R.string.menu_dark_mode)))
+                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_dark_mode)))
                 when (val switch = item.actionView) {
                     is SwitchButton -> {
                         switch.isChecked = !switch.isChecked
@@ -177,6 +165,7 @@ class DrawerHelper(
                         switch.isChecked = !switch.isChecked
                     }
                 }
+                return true
             }
             R.id.menu_favorites -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK,  bundleOf("selected_menu" to activity.getString(R.string.menu_favorites)))

@@ -1200,7 +1200,7 @@ abstract class PlayerPageActivity :
                     val profile = it.width.toString() + "*" + it.height.toString()
                     val mimeType = it.containerMimeType
                     val codec = it.codecs
-                    Log.i("PLAYER_EVENT_", "onLoadCompleted: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                    Log.i(PLAYER_EVENT_TAG, "onLoadCompleted: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
@@ -1285,7 +1285,7 @@ abstract class PlayerPageActivity :
                 val profile = it.width.toString() + "*" + it.height.toString()
                 val mimeType = it.containerMimeType
                 val codec = it.codecs
-                Log.i("PLAYER_EVENT_", "onDownstreamFormatChanged: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                Log.i(PLAYER_EVENT_TAG, "onDownstreamFormatChanged: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
                 playerEventHelper.setPlayerEvent("playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
             }
         }

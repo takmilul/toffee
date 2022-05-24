@@ -17,7 +17,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+import androidx.paging.LoadState.Loading
 import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -73,41 +73,46 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         
         setupEmptyView()
         selectedFilter = FEED.value
         mAdapter = LatestVideosAdapter(this)
-        with(binding.latestVideosList) {
-            addItemDecoration(MarginItemDecoration(12))
-            observe(mPref.nativeAdSettings){
-                initAdapter()
-            }
-
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-//                    binding.footerLoader.isVisible = !isEmpty && isLoadAdAdapter && it.source.refresh is LoadState.Loading
-                    binding.emptyView.isVisible = isEmpty && !isLoading
-                    binding.placeholder.isVisible = isLoading
-                    binding.latestVideosList.isVisible = !isEmpty && !isLoading
-                    binding.placeholder.showLoadingAnimation(isLoading)
-                    isInitialized = true
-                }
+        binding.latestVideosList.addItemDecoration(MarginItemDecoration(12))
+        loadStateFlow()
+        observe(homeViewModel.vastTagLiveData) {
+            initAdapter()
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
+            if (mPref.nativeAdSettings.value == null) {
+                homeViewModel.getVastTag(false)
             }
         }
-        
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }
         
         observeSubCategoryChange()
         observeHashTagChange()
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
         
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
+    }
+    
+    private fun loadStateFlow() {
+        var isInitialized = false
+        with(binding) {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    val isLoading = it.source.refresh is Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+//                    binding.footerLoader.isVisible = !isEmpty && isLoadAdAdapter && it.source.refresh is LoadState.Loading
+                    emptyView.isVisible = isEmpty && !isLoading
+                    placeholder.isVisible = isLoading
+                    latestVideosList.isVisible = !isEmpty && !isLoading
+                    placeholder.showLoadingAnimation(isLoading)
+                    isInitialized = true
+                }
+            }
+        }
     }
     
     private fun initAdapter() {
@@ -126,14 +131,16 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         val isAdActive = nativeAdSettings?.isActive ?: false
         
         val isLoadAdAdapter = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
-        if (isLoadAdAdapter) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
-            binding.latestVideosList.adapter = nativeAdAdapter
-            binding.latestVideosList.layoutManager = LinearLayoutManager(requireContext())
-        } else {
-            binding.latestVideosList.adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-            binding.latestVideosList.setHasFixedSize(true)
+        with(binding.latestVideosList) {
+            if (isLoadAdAdapter) {
+                nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
+                val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
+                adapter = nativeAdAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            } else {
+                adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+                setHasFixedSize(true)
+            }
         }
     }
     

@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState.Loading
 import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,7 +42,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,22 +81,39 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             localSync.syncData(currentItem)
-            initAdapter()
+            catchupAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
+                override fun onItemClicked(item: ChannelInfo) {
+                    homeViewModel.playContentLiveData.postValue(item)
+                }
+                
+                override fun onOpenMenu(view: View, item: ChannelInfo) {
+                    super.onOpenMenu(view, item)
+                    onOptionClicked(view, item)
+                }
+                
+                override fun onProviderIconClicked(item: ChannelInfo) {
+                    super.onProviderIconClicked(item)
+                    homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+                }
+            })
+            detailsAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
+            binding.listview.addItemDecoration(MarginItemDecoration(12))
             
-            with(binding.listview) {
-                addItemDecoration(MarginItemDecoration(12))
-                layoutManager = LinearLayoutManager(context)
-                adapter = mAdapter
-            }
-    
-            if (currentItem.channel_owner_id == mPref.customerId){
-                observeMyChannelVideos()
-            } else {
-                observeList()
+            observe(homeViewModel.vastTagLiveData) {
+                initAdapter()
+                
+                if (currentItem.channel_owner_id == mPref.customerId) {
+                    observeMyChannelVideos()
+                } else {
+                    observeList()
+                }
+                if (mPref.nativeAdSettings.value == null) {
+                    homeViewModel.getVastTag(false)
+                }
             }
             observeListState()
             observeSubscribeChannel()
@@ -116,23 +134,6 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     }
     
     private fun initAdapter() {
-        catchupAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
-            override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.playContentLiveData.postValue(item)
-            }
-
-            override fun onOpenMenu(view: View, item: ChannelInfo) {
-                super.onOpenMenu(view, item)
-                onOptionClicked(view, item)
-            }
-
-            override fun onProviderIconClicked(item: ChannelInfo) {
-                super.onProviderIconClicked(item)
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-            }
-        })
-        detailsAdapter = ChannelHeaderAdapter(currentItem, this, mPref)
-
         val nativeAdSettings = mPref.nativeAdSettings.value?.find {
             it.area== NativeAdAreaType.RECOMMEND_VIDEO.value
         }
@@ -147,12 +148,22 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         } else {
             mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
         }
+        with(binding.listview) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = mAdapter
+        }
     }
     
     private fun observeListState() {
+        var isInitialized = false
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             catchupAdapter.loadStateFlow.collect {
                 val list = catchupAdapter.snapshot()
+                val isLoading = it.source.refresh is Loading || !isInitialized
+                val isEmpty = list.size <= 0 && !it.source.refresh.endOfPaginationReached
+                binding.progressBar.isVisible = isLoading && isEmpty
+                binding.emptyView.isVisible = !isLoading && isEmpty
+                isInitialized = true
                 if(list.size > 0) {
                     homeViewModel.addToPlayListMutableLiveData.postValue(
                         AddToPlaylistData(-1, listOf(currentItem, list.items[0]))
