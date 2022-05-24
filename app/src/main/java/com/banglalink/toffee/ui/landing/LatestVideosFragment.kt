@@ -81,7 +81,10 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         mAdapter = LatestVideosAdapter(this)
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
-            initAdapter()
+            observe(mPref.nativeAdSettings){
+                initAdapter()
+            }
+
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized

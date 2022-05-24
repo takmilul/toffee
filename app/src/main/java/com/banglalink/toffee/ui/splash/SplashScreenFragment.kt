@@ -238,7 +238,7 @@ class SplashScreenFragment : BaseFragment() {
                     sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
-                    viewModel.getVastTag()
+                    
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

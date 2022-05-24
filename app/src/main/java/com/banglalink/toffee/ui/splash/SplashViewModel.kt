@@ -172,29 +172,5 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun getVastTag(){
-        viewModelScope.launch {
-            try {
-                vastTagService.execute().response.let {
-                    mPref.vodVastTagsMutableLiveData.value = it.vodTags
-                    mPref.liveVastTagsMutableLiveData.value = it.liveTags
-                    mPref.stingrayVastTagsMutableLiveData.value = it.stingrayTags
-                    mPref.nativeAdSettings.value = it.nativeAdSettings
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                val error = getError(e)
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.EXCEPTION,
-                    bundleOf(
-                        "api_name" to ApiNames.GET_VAST_TAG_LIST,
-                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.SPLASH_SCREEN,
-                        "error_code" to error.code,
-                        "error_description" to error.msg
-                    )
-                )
-            }
-        }
-    }
 
     }
