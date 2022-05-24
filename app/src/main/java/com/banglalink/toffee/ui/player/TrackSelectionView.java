@@ -164,6 +164,7 @@ public class TrackSelectionView extends LinearLayout {
             int rendererIndex,
             boolean isDisabled,
             List<SelectionOverride> overrides,
+            int maxBitRate,
             @Nullable TrackSelectionListener listener) {
         this.mappedTrackInfo = mappedTrackInfo;
         this.rendererIndex = rendererIndex;
@@ -215,21 +216,34 @@ public class TrackSelectionView extends LinearLayout {
         trackViews = new TextView[trackGroups.length][];
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
             TrackGroup group = trackGroups.get(groupIndex);
-            trackViews[groupIndex] = new TextView[group.length];
+            int formatCount = 0;
+            for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+                Format format = group.getFormat(trackIndex);
+                if (format.bitrate > 262144) {
+                    continue;
+                }
+                formatCount++;
+            }
+            trackViews[groupIndex] = new TextView[formatCount];
+            int trackIndexCustom = 0;
             for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
                 TextView trackView = (TextView) inflater.inflate(R.layout.list_item_quality, this, false);
                 Format format = group.getFormat(trackIndex);
+                if (format.bitrate > 262144) {
+                    continue;
+                }
                 trackView.setText(format.width + "x" + format.height);
                 if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.setFocusable(true);
-                    trackView.setTag(Pair.create(groupIndex, trackIndex));
+                    trackView.setTag(Pair.create(groupIndex, trackIndexCustom));
                     trackView.setOnClickListener(componentListener);
                 } else {
                     trackView.setFocusable(false);
                     trackView.setEnabled(false);
                 }
-                trackViews[groupIndex][trackIndex] = trackView;
+                trackViews[groupIndex][trackIndexCustom] = trackView;
                 addView(trackView);
+                trackIndexCustom++;
             }
         }
 

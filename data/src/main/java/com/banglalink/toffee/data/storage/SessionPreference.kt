@@ -13,7 +13,7 @@ import com.banglalink.toffee.util.Utils
 import java.text.ParseException
 import java.util.*
 
-const val PREF_NAME_IP_TV= "IP_TV"
+const val PREF_NAME_IP_TV = "IP_TV"
 
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
     
@@ -55,31 +55,31 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var customerEmail: String
         get() = pref.getString(PREF_CUSTOMER_EMAIL, "") ?: ""
         set(email) = pref.edit { putString(PREF_CUSTOMER_EMAIL, email) }
-
+    
     var customerAddress: String
         get() = pref.getString(PREF_CUSTOMER_ADDRESS, "") ?: ""
-        set(address) = pref.edit{ putString(PREF_CUSTOMER_ADDRESS, address) }
-
+        set(address) = pref.edit { putString(PREF_CUSTOMER_ADDRESS, address) }
+    
     var customerDOB: String
         get() = pref.getString(PREF_CUSTOMER_DOB, "") ?: ""
-        set(dob) = pref.edit{ putString(PREF_CUSTOMER_DOB, dob) }
-
+        set(dob) = pref.edit { putString(PREF_CUSTOMER_DOB, dob) }
+    
     var customerNID: String
         get() = pref.getString(PREF_CUSTOMER_NID, "") ?: ""
-        set(nidNumber) = pref.edit{ putString(PREF_CUSTOMER_NID, nidNumber) }
-
+        set(nidNumber) = pref.edit { putString(PREF_CUSTOMER_NID, nidNumber) }
+    
     var customerId: Int
         get() = pref.getInt(PREF_CUSTOMER_ID, 0)
         set(customerId) {
-            pref.edit{ putInt(PREF_CUSTOMER_ID, customerId) }
+            pref.edit { putInt(PREF_CUSTOMER_ID, customerId) }
         }
-
+    
     var password: String
         get() = pref.getString(PREF_PASSWORD, "") ?: ""
         set(password) {
             pref.edit().putString(PREF_PASSWORD, password).apply()
         }
-
+    
     var sessionToken: String
         get() = pref.getString(PREF_SESSION_TOKEN, "") ?: ""
         set(sessionToken) {
@@ -91,22 +91,22 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
         }
     
-    var isBanglalinkNumber:String
-        get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
-        set(isBanglalinkNumber){
-            pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
+    var isBanglalinkNumber: String
+        get() = pref.getString(PREF_BANGLALINK_NUMBER, "false") ?: "false"
+        set(isBanglalinkNumber) {
+            pref.edit().putString(PREF_BANGLALINK_NUMBER, isBanglalinkNumber).apply()
         }
-
+    
     var isHeBanglalinkNumber: Boolean
-        get() = pref.getBoolean(PREF_HE_BANGLALINK_NUMBER,false)
-        set(isVerified){
-            pref.edit().putBoolean(PREF_HE_BANGLALINK_NUMBER,isVerified).apply()
+        get() = pref.getBoolean(PREF_HE_BANGLALINK_NUMBER, false)
+        set(isVerified) {
+            pref.edit().putBoolean(PREF_HE_BANGLALINK_NUMBER, isVerified).apply()
         }
     
     var isVerifiedUser: Boolean
-        get() = pref.getBoolean(PREF_VERIFICATION,false)
-        set(isVerified){
-            pref.edit().putBoolean(PREF_VERIFICATION,isVerified).apply()
+        get() = pref.getBoolean(PREF_VERIFICATION, false)
+        set(isVerified) {
+            pref.edit().putBoolean(PREF_VERIFICATION, isVerified).apply()
         }
     
     var balance: Int
@@ -114,92 +114,47 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(balance) {
             pref.edit().putInt(PREF_BALANCE, balance).apply()
         }
-
+    
     var latitude: String
         get() = pref.getString(PREF_LATITUDE, "") ?: ""
         set(latitude) {
             pref.edit().putString(PREF_LATITUDE, latitude).apply()
         }
-
+    
     var longitude: String
         get() = pref.getString(PREF_LONGITUDE, "") ?: ""
         set(Longitude) {
             pref.edit().putString(PREF_LONGITUDE, Longitude).apply()
         }
-
-    var wifiProfileStatus: Int
-        get() = pref.getInt(PREF_WIFI_PROFILE_STATUS1, 7)
-        set(value) {
-            pref.edit().putInt(PREF_WIFI_PROFILE_STATUS1, value).apply()
-        }
-
-    var cellularProfileStatus: Int
-        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 7)
-        set(value) {
-            pref.edit().putInt(PREF_CELLULAR_PROFILE_STATUS4, value).apply()
-        }
-
-    var channelDbVersion: Int
-        get() = pref.getInt(PREF_CHANNEL_DB_VERSION, 0)
-        set(version) {
-            pref.edit().putInt(PREF_CHANNEL_DB_VERSION, version).apply()
-        }
-
-    var catchupDbVersion: Int
-        get() = pref.getInt(PREF_CATCHUP_DB_VERSION, 0)
-        set(version) {
-            pref.edit().putInt(PREF_CATCHUP_DB_VERSION, version).apply()
-        }
-
-    var vodDbVersion: Int
-        get() = pref.getInt(PREF_VOD_DB_VERSION, 0)
-        set(version) {
-            pref.edit().putInt(PREF_VOD_DB_VERSION, version).apply()
-        }
-
-    var packageDbVersion: Int
-        get() = pref.getInt(PREF_PACKAGE_DB_VERSION, 0)
-        set(version) {
-            pref.edit().putInt(PREF_PACKAGE_DB_VERSION, version).apply()
-        }
-
-    var categoryDbVersion: Int
-        get() = pref.getInt(PREF_CATEGORY_DB_VERSION, 0)
-        set(version) {
-            pref.edit().putInt(PREF_CATEGORY_DB_VERSION, version).apply()
-        }
-
+    
     var fcmToken: String
         get() = pref.getString(PREF_FCM_TOKEN, "") ?: ""
         set(token) {
             pref.edit().putString(PREF_FCM_TOKEN, token).apply()
         }
-
+    
     var userImageUrl: String?
         get() = pref.getString(PREF_IMAGE_URL, null)
         set(userPhoto) {
             pref.edit().putString(PREF_IMAGE_URL, userPhoto).apply()
-            if (!TextUtils.isEmpty(userPhoto))
-                profileImageUrlLiveData.postValue(userPhoto!!)
+            if (!TextUtils.isEmpty(userPhoto)) profileImageUrlLiveData.postValue(userPhoto!!)
         }
-
+    
     val netType: String
         get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
-
+    
     var isSubscriptionActive: String
         get() = "false" // TODO: Uncomment for subscription: pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
         set(phoneNumber) {
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }
-
-
-
+    
     var isFeaturePartnerActive: String
         get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "false") ?: "false"
         set(isActive) {
             pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
         }
-
+    
     fun getFireworkUserId(): String {
         var userId = pref.getString(PREF_FIREWORK_USER_ID, null)
         if (userId.isNullOrBlank()) {
@@ -208,11 +163,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
         return userId
     }
-
+    
     var channelId: Int
         get() = pref.getInt(PREF_CHANNEL_ID, 0)
         set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
-
+    
     var channelLogo: String
         get() = pref.getString(PREF_CHANNEL_LOGO, "") ?: ""
         set(channelLogoUrl) = pref.edit().putString(PREF_CHANNEL_LOGO, channelLogoUrl).apply()
@@ -224,48 +179,40 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isChannelDetailChecked: Boolean
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
-
+    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }
-
+    
     fun getSystemTime(): Date {
         val dateString = pref.getString(PREF_SYSTEM_TIME, "")
         val deviceDate = Date()
-        try{
+        try {
             dateString?.let {
-                val serverDate =  Utils.getDate(it)
-                if(serverDate!=null){
-                    return  if(deviceDate.after(serverDate)) deviceDate else serverDate//Date is after server date that means server date not updated. In that case use device time
+                val serverDate = Utils.getDate(it)
+                if (serverDate != null) {
+                    return if (deviceDate.after(serverDate)) deviceDate else serverDate//Date is after server date that means server date not updated. In that case use device time
                 }
             }
-        }catch (pe:ParseException){
+        } catch (pe: ParseException) {
             pe.printStackTrace()
             ToffeeAnalytics.logException(pe)
         }
-
+        
         return deviceDate
     }
-
-    fun setDBVersion(dbVersion: DBVersion) {
-        pref.edit().putInt(PREF_CHANNEL_DB_VERSION, dbVersion.chanelDbVersion).apply()
-        pref.edit().putInt(PREF_VOD_DB_VERSION, dbVersion.vodDbVersion).apply()
-        pref.edit().putInt(PREF_NOTIFICATION_DB_VERSION, dbVersion.notificationDbVersion).apply()
-        pref.edit().putInt(PREF_CATCHUP_DB_VERSION, dbVersion.catchupDbVersion).apply()
-        pref.edit().putInt(PREF_PACKAGE_DB_VERSION, dbVersion.packageDbVersion).apply()
-    }
-
+    
     fun setDBVersion(dbVersionList: List<DBVersionV2>) {
-        for(dbVersion in dbVersionList){
-            pref.edit().putInt(dbVersion.apiName,dbVersion.dbVersion).apply()
+        for (dbVersion in dbVersionList) {
+            pref.edit().putInt(dbVersion.apiName, dbVersion.dbVersion).apply()
         }
     }
-
-    fun getDBVersionByApiName(apiName:String):Int{
-        return pref.getInt(apiName,0)
+    
+    fun getDBVersionByApiName(apiName: String): Int {
+        return pref.getInt(apiName, 0)
     }
-
-    fun updateDbVersionByApiName(apiName: String){
+    
+    fun updateDbVersionByApiName(apiName: String) {
         val dbVersion = getDBVersionByApiName(apiName) + 1
         pref.edit().putInt(apiName, dbVersion).apply()
     }
@@ -277,31 +224,23 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun watchOnlyWifi(): Boolean {
         return pref.getBoolean(PREF_WATCH_ONLY_WIFI, false)
     }
-
+    
     fun setWatchOnlyWifi(value: Boolean) {
         pref.edit().putBoolean(PREF_WATCH_ONLY_WIFI, value).apply()
     }
-
+    
     fun isNotificationEnabled(): Boolean {
         return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
     }
-
+    
     fun setNotificationEnabled(value: Boolean) {
         pref.edit { putBoolean(PREF_KEY_NOTIFICATION, value) }
     }
-
-    fun defaultDataQuality(): Boolean {
-        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, true)
-    }
-
-    fun setDefaultDataQuality(value: Boolean) {
-        pref.edit().putBoolean(PREF_DEFAULT_DATA_QUALITY_2, value).apply()
-    }
-
+    
     fun setHeaderSessionToken(sessionToken: String?) {
         pref.edit().putString(PREF_SESSION_TOKEN_HEADER, sessionToken).apply()
     }
-
+    
     fun getHeaderSessionToken(): String? {
         return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
     }
@@ -309,29 +248,30 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
         pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
     }
-
+    
     fun getHlsOverrideUrl(): String? {
         return pref.getString(PREF_HLS_OVERRIDE_URL, "")
     }
-
+    
     var shouldOverrideHlsUrl: Boolean
         get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
-        set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE, value) }
     
     var isAllTvChannelMenuEnabled: Boolean
         get() = pref.getBoolean(PREF_ALL_TV_CHANNEL_MENU, false)
-        set(value) = pref.edit{ putBoolean(PREF_ALL_TV_CHANNEL_MENU, value) }
+        set(value) = pref.edit { putBoolean(PREF_ALL_TV_CHANNEL_MENU, value) }
     
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
-        pref.edit().putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
+        pref.edit()
+            .putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
             .apply() //10 minute cut off for safety. We will request for new token 10 minutes early
     }
-
+    
     fun getSessionTokenLifeSpanInMillis(): Long {
-        return pref.getLong(PREF_TOKEN_LIFE_SPAN,  3600000)//default token span set to 1 hour
+        return pref.getLong(PREF_TOKEN_LIFE_SPAN, 3600000)//default token span set to 1 hour
     }
-
+    
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis())
     }
@@ -339,7 +279,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 //    var uploadId: String?
 //        get() = pref.getString("toffee-upload-id", null)
 //        set(value) = pref.edit { putString("toffee-upload-id", value) }
-
+    
     var viewCountDbUrl: String
         get() = pref.getString(PREF_VIEW_COUNT_DB_URL, "") ?: ""
         set(viewCountDbUrl) {
@@ -349,7 +289,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 viewCountDbUrlLiveData.postValue(viewCountDbUrl)//post if there is mismatch of url
             }
         }
-
+    
     var reactionDbUrl: String
         get() = pref.getString(PREF_REACTION_DB_URL, "") ?: ""
         set(reactionDbUrl) {
@@ -359,7 +299,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 reactionDbUrlLiveData.postValue(reactionDbUrl)//post if there is mismatch of url
             }
         }
-
+    
     var reactionStatusDbUrl: String
         get() = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""
         set(reactionStatusDbUrl) {
@@ -369,7 +309,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 reactionStatusDbUrlLiveData.postValue(reactionStatusDbUrl)//post if there is mismatch of url
             }
         }
-
+    
     var subscribeDbUrl: String
         get() = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""
         set(subscribeDbUrl) {
@@ -379,7 +319,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 subscribeDbUrlLiveData.postValue(subscribeDbUrl)//post if there is mismatch of url
             }
         }
-
+    
     var subscriberStatusDbUrl: String
         get() = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""
         set(subscriberStatusDbUrl) {
@@ -403,19 +343,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_UPLOAD_STATUS, value) }
-
+    
     var isEnableFloatingWindow: Boolean
         get() = pref.getBoolean(PREF_ENABLE_FLOATING_WINDOW, true)
         set(value) = pref.edit { putBoolean(PREF_ENABLE_FLOATING_WINDOW, value) }
-
+    
     var isAutoplayForRecommendedVideos: Boolean
         get() = pref.getBoolean(PREF_AUTO_PLAY_RECOMMENDED, true)
         set(value) = pref.edit { putBoolean(PREF_AUTO_PLAY_RECOMMENDED, value) }
-
+    
     var isPreviousDbDeleted: Boolean
         get() = pref.getBoolean(PREF_IS_PREVIOUS_DB_DELETED, false)
         set(value) = pref.edit { putBoolean(PREF_IS_PREVIOUS_DB_DELETED, value) }
-
+    
     var hasReactionDb: Boolean
         get() = pref.getBoolean(PREF_HAS_REACTION_DB, false)
         set(value) = pref.edit { putBoolean(PREF_HAS_REACTION_DB, value) }
@@ -431,51 +371,47 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var mqttClientId: String
         get() = pref.getString(PREF_MQTT_CLIENT_ID, "") ?: ""
         set(value) = pref.edit { putString(PREF_MQTT_CLIENT_ID, value) }
-
+    
     var mqttUserName: String
         get() = pref.getString(PREF_MQTT_USER_NAME, "") ?: ""
         set(value) = pref.edit { putString(PREF_MQTT_USER_NAME, value) }
-
+    
     var mqttPassword: String
         get() = pref.getString(PREF_MQTT_PASSWORD, "") ?: ""  //12345678
         set(value) = pref.edit { putString(PREF_MQTT_PASSWORD, value) }
-
-    var mqttTopic: String
-        get() = pref.getString(PREF_MQTT_TOPIC, "test") ?: ""
-        set(value) = pref.edit { putString(PREF_MQTT_TOPIC, value) }
-
+    
     var isCastEnabled: Boolean
         get() = pref.getBoolean(PREF_IS_CAST_ENABLED, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CAST_ENABLED, value) }
-
+    
     var isCastUrlOverride: Boolean
         get() = pref.getBoolean(PREF_IS_CAST_URL_OVERRIDE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CAST_URL_OVERRIDE, value) }
-
+    
     var castOverrideUrl: String
         get() = pref.getString(PREF_CAST_OVERRIDE_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_CAST_OVERRIDE_URL, value) }
-
+    
     var castReceiverId: String
         get() = pref.getString(PREF_CAST_RECEIVER_ID, "") ?: ""
         set(value) = pref.edit { putString(PREF_CAST_RECEIVER_ID, value) }
-
+    
     var internetPackUrl: String
         get() = pref.getString(PREF_INTERNET_PACK_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_INTERNET_PACK_URL, value) }
-
+    
     var tusUploadServerUrl: String
         get() = pref.getString(PREF_TUS_UPLOAD_SERVER_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_TUS_UPLOAD_SERVER_URL, value) }
-
+    
     var privacyPolicyUrl: String
         get() = pref.getString(PREF_PRIVACY_POLICY_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_PRIVACY_POLICY_URL, value) }
-
+    
     var creatorsPolicyUrl: String
         get() = pref.getString(PREF_CREATORS_POLICY_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_CREATORS_POLICY_URL, value) }
-
+    
     var termsAndConditionUrl: String
         get() = pref.getString(PREF_TERMS_AND_CONDITIONS_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_TERMS_AND_CONDITIONS_URL, value) }
@@ -511,22 +447,22 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var screenCaptureEnabledUsers: Set<String>
         get() = pref.getStringSet(PREF_SCREEN_CAPTURE_USERS, setOf()) ?: setOf()
         set(value) = pref.edit { putStringSet(PREF_SCREEN_CAPTURE_USERS, value) }
-
+    
     private var forcedUpdateVersions: String?
         get() = pref.getString(PREF_FORCE_UPDATE_VERSIONS, null)
         set(value) = pref.edit { putString(PREF_FORCE_UPDATE_VERSIONS, value) }
-
+    
     fun shouldForceUpdate(versionCode: Int): Boolean {
         forcedUpdateVersions?.let {
-            if(versionCode.toString() in it.split(",")) return true
+            if (versionCode.toString() in it.split(",")) return true
         }
         return false
     }
-
+    
     var isVastActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
-
+    
     var isNativeAdActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_NATIVE_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_NATIVE_ACTIVE, value) }
@@ -534,7 +470,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var vastFrequency: Int
         get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
-
+    
     var bucketDirectory: String?
         get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
         set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
@@ -550,7 +486,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isDrmActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
-
+    
     var isGlobalCidActive: Boolean
         get() = pref.getBoolean(PREF_IS_GLOBAL_CID_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_GLOBAL_CID_ACTIVE, value) }
@@ -558,7 +494,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var globalCidName: String?
         get() = pref.getString(PREF_GLOBAL_CID_NAME, null)
         set(value) = pref.edit { putString(PREF_GLOBAL_CID_NAME, value) }
-
+    
     var drmCastReceiver: String?
         get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
         set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
@@ -586,7 +522,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var drmTokenUrl: String?
         get() = pref.getString(PREF_DRM_TOKEN_URL, null)
         set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
-
+    
     var betaVersionCodes: String?
         get() = pref.getString(PREF_BETA_VERSION_CODES, null)
         set(value) = pref.edit { putString(PREF_BETA_VERSION_CODES, value) }
@@ -619,7 +555,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_SHOW_BUY_INTERNET_PACK, false)
         set(value) = pref.edit { putBoolean(PREF_SHOW_BUY_INTERNET_PACK, value) }
     
-    fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
+    var maxBitRateWifi: Int
+        get() = pref.getInt(PREF_PLAYER_MAX_BIT_RATE_WIFI, -1)
+        set(value) = pref.edit { putInt(PREF_PLAYER_MAX_BIT_RATE_WIFI, value) }
+    
+    var maxBitRateCellular: Int
+        get() = pref.getInt(PREF_PLAYER_MAX_BIT_RATE_CELLULAR, -1)
+        set(value) = pref.edit { putInt(PREF_PLAYER_MAX_BIT_RATE_CELLULAR, value) }
+    
+    fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
@@ -627,7 +571,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         if (!customerInfoLogin.customerName.isNullOrBlank()) {
             customerName = customerInfoLogin.customerName!!
         }
-        sessionToken = (customerInfoLogin.sessionToken?:"")
+        sessionToken = (customerInfoLogin.sessionToken ?: "")
         if (!customerInfoLogin.profileImage.isNullOrBlank()) {
             userImageUrl = customerInfoLogin.profileImage
         }
@@ -635,7 +579,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
         shouldOverrideHlsUrl = customerInfoLogin.hlsUrlOverride
         setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
-        if(customerInfoLogin.isBanglalinkNumber!=null){
+        if (customerInfoLogin.isBanglalinkNumber != null) {
             isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
         }
         customerInfoLogin.dbVersionList?.let {
@@ -654,7 +598,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "false"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
-
+        
         isCastEnabled = customerInfoLogin.isCastEnabled == 1
         isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
         castReceiverId = customerInfoLogin.castReceiverId ?: ""
@@ -673,7 +617,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         geoRegion = customerInfoLogin.geoRegion ?: geoCity
         geoLocation = customerInfoLogin.geoLocation ?: ""
         userIp = customerInfoLogin.userIp ?: ""
-
+        
         forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
         isVastActive = customerInfoLogin.isVastActive == 1
         vastFrequency = customerInfoLogin.vastFrequency
@@ -698,11 +642,13 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         showBuyInternetForAndroid = customerInfoLogin.showBuyInternetForAndroid
         screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
         isNativeAdActive = customerInfoLogin.isNativeAdActive
+        maxBitRateWifi = customerInfoLogin.maxBitRateWifi
+        maxBitRateCellular = customerInfoLogin.maxBitRateCellular
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
         }
     }
-
+    
     companion object {
         private const val PREF_PHONE_NUMBER = "p_number"
         private const val PREF_HE_PHONE_NUMBER = "he_p_number"
@@ -712,12 +658,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CUSTOMER_DOB = "customer_dob"
         private const val PREF_CUSTOMER_NID = "customer_nid"
         private const val PREF_CUSTOMER_ID = "customer_id"
-        private const val PREF_IS_FEED_AD_ACTIVE = "is_Feed_Ad_Active"
-        private const val PREF_FEED_AD_INTERVAL = "feed_ad_interval"
-        private const val PREF_IS_RECOMMEND_AD_ACTIVE = "is_Recommend_Ad_Active"
-        private const val PREF_RECOMMEND_AD_INTERVAL = "Recommend_ad_interval"
-        private const val PREF_IS_PLAYLIST_AD_ACTIVE = "is_Playlist_Ad_Active"
-        private const val PREF_PLAYLIST_AD_INTERVAL = "Playlist_ad_interval"
         private const val PREF_PASSWORD = "passwd"
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
@@ -725,43 +665,33 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_HE_BANGLALINK_NUMBER = "he_banglalink_number"
         private const val PREF_VERIFICATION = "VER"
         private const val PREF_BALANCE = "balance"
-        private const val PREF_LATITUDE= "latitude"
-        private const val PREF_LONGITUDE= "Longitude"
-        private const val PREF_WIFI_PROFILE_STATUS1= "WifiProfileStatus1"
-        private const val PREF_CELLULAR_PROFILE_STATUS4= "CellularProfileStatus4"
-        private const val PREF_CHANNEL_DB_VERSION= "channel_db_version"
-        private const val PREF_CATCHUP_DB_VERSION= "catchup_db_version"
-        private const val PREF_CATEGORY_DB_VERSION= "category_db_version"
-        private const val PREF_VOD_DB_VERSION= "vod_db_version"
-        private const val PREF_PACKAGE_DB_VERSION= "package_db_version"
-        private const val PREF_NOTIFICATION_DB_VERSION= "notification_db_version"
-        private const val PREF_FCM_TOKEN= "FCMToken"
-        private const val PREF_IMAGE_URL= "image_url"
-        private const val PREF_WIFI= "WIFI"
-        private const val PREF_CELLULAR= "CELLULAR"
-        private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
-        private const val PREF_FIREWORK_ACTIVE= "firework_active"
-        private const val PREF_FEATURE_PARTNER_ACTIVE= "is_feature_partner_active"
-        private const val PREF_FIREWORK_USER_ID= "firework_user_id"
-        private const val PREF_SYSTEM_TIME= "systemTime"
-        private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
-        private const val PREF_KEY_NOTIFICATION= "pref_key_notification"
-        private const val PREF_DEFAULT_DATA_QUALITY_2= "DefaultDataQuality2"
-        private const val PREF_SESSION_TOKEN_HEADER= "sessionTokenHeader"
-        private const val PREF_HLS_OVERRIDE_URL= "hlsOverrideUrl"
-        private const val PREF_SHOULD_OVERRIDE= "shouldOverride"
-        private const val PREF_ALL_TV_CHANNEL_MENU= "isAllTvChannelMenuEnabled"
-        private const val PREF_DEVICE_TIME_IN_MILLISECONDS= "deviceTimeInMillis"
-        private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
-        private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
-        private const val PREF_REACTION_DB_URL= "reactionDbUrl"
-        private const val PREF_REACTION_STATUS_DB_URL= "reactionStatusDbUrl"
-        private const val PREF_SUBSCRIBE_DB_URL= "subscribeDbUrl"
-        private const val PREF_SUBSCRIBER_STATUS_DB_URL= "subscriberStatusDbUrl"
-        private const val PREF_SHARE_COUNT_DB_URL= "shareCountDbUrl"
-        private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
-        private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
-        private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
+        private const val PREF_LATITUDE = "latitude"
+        private const val PREF_LONGITUDE = "Longitude"
+        private const val PREF_FCM_TOKEN = "FCMToken"
+        private const val PREF_IMAGE_URL = "image_url"
+        private const val PREF_WIFI = "WIFI"
+        private const val PREF_CELLULAR = "CELLULAR"
+        private const val PREF_SUBSCRIPTION_ACTIVE = "subscription_active"
+        private const val PREF_FEATURE_PARTNER_ACTIVE = "is_feature_partner_active"
+        private const val PREF_FIREWORK_USER_ID = "firework_user_id"
+        private const val PREF_SYSTEM_TIME = "systemTime"
+        private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"
+        private const val PREF_KEY_NOTIFICATION = "pref_key_notification"
+        private const val PREF_SESSION_TOKEN_HEADER = "sessionTokenHeader"
+        private const val PREF_HLS_OVERRIDE_URL = "hlsOverrideUrl"
+        private const val PREF_SHOULD_OVERRIDE = "shouldOverride"
+        private const val PREF_ALL_TV_CHANNEL_MENU = "isAllTvChannelMenuEnabled"
+        private const val PREF_DEVICE_TIME_IN_MILLISECONDS = "deviceTimeInMillis"
+        private const val PREF_TOKEN_LIFE_SPAN = "tokenLifeSpan"
+        private const val PREF_VIEW_COUNT_DB_URL = "viewCountDbUrl"
+        private const val PREF_REACTION_DB_URL = "reactionDbUrl"
+        private const val PREF_REACTION_STATUS_DB_URL = "reactionStatusDbUrl"
+        private const val PREF_SUBSCRIBE_DB_URL = "subscribeDbUrl"
+        private const val PREF_SUBSCRIBER_STATUS_DB_URL = "subscriberStatusDbUrl"
+        private const val PREF_SHARE_COUNT_DB_URL = "shareCountDbUrl"
+        private const val PREF_TOFFEE_UPLOAD_STATUS = "toffee-upload-status"
+        private const val PREF_ENABLE_FLOATING_WINDOW = "enable-floating-window"
+        private const val PREF_AUTO_PLAY_RECOMMENDED = "autoplay-for-recommended"
         private const val PREF_CHANNEL_LOGO = "channel_logo"
         private const val PREF_CHANNEL_NAME = "channel_name"
         private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
@@ -772,7 +702,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_MQTT_CLIENT_ID = "pref_mqtt_client_id"
         private const val PREF_MQTT_USER_NAME = "pref_mqtt_user_name"
         private const val PREF_MQTT_PASSWORD = "pref_mqtt_password"
-        private const val PREF_MQTT_TOPIC = "pref_mqtt_topic"
         private const val PREF_IS_CAST_ENABLED = "pref_is_cast_enabled"
         private const val PREF_IS_CAST_URL_OVERRIDE = "pref_is_cast_url_override"
         private const val PREF_CAST_RECEIVER_ID = "pref_cast_receiver_id"
@@ -816,15 +745,17 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CONVIVA_ACTIVE = "pref_conviva_active"
         private const val PREF_IS_PLAYER_MONITORING_ACTIVE = "pref_is_player_monitoring_active"
         private const val PREF_SHOW_BUY_INTERNET_PACK = "pref_show_buy_internet_pack"
-
+        private const val PREF_PLAYER_MAX_BIT_RATE_WIFI = "pref_player_max_bit_rate_wifi"
+        private const val PREF_PLAYER_MAX_BIT_RATE_CELLULAR = "pref_player_max_bit_rate_cellular"
+        
         private var instance: SessionPreference? = null
-
+        
         fun init(mContext: Context) {
             if (instance == null) {
                 instance = SessionPreference(mContext.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE), mContext)
             }
         }
-
+        
         fun getInstance(): SessionPreference {
             if (instance == null) {
                 throw InstantiationException("Instance is null...call init() first")

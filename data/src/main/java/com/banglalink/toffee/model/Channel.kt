@@ -53,20 +53,7 @@ class Channel(
         }
     }
     
-    fun getContentUri(pref: SessionPreference, isWifiConnected: Boolean): String? {
-        val text = if (isWifiConnected) {
-            if (pref.wifiProfileStatus == 7) {
-                "/auto"
-            } else {
-                "/" + pref.wifiProfileStatus
-            }
-        } else {
-            if (pref.cellularProfileStatus == 7) {
-                "/auto"
-            } else {
-                "/" + pref.cellularProfileStatus
-            }
-        }
+    fun getContentUri(pref: SessionPreference): String? {
         if (pref.shouldOverrideHlsUrl) {
             try {
                 val url = URL(uri)
@@ -81,9 +68,9 @@ class Channel(
         }
         return uri?.let {
             if (it.endsWith("/")) {
-                Uri.parse(it + pref.sessionToken + text).toString()
+                Uri.parse(it + pref.sessionToken + "/auto").toString()
             } else {
-                Uri.parse(it + "/" + pref.sessionToken + text).toString()
+                Uri.parse(it + "/" + pref.sessionToken + "/auto").toString()
             }
         }
     }

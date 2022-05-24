@@ -13,7 +13,7 @@ import com.loopnow.fireworklibrary.views.VideoFeedView
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-const val visibleItemCount = 4.5
+const val VISIBLE_ITEM_COUNT = 3.25
 
 class FireworkCardView @JvmOverloads constructor(
     context: Context,
@@ -34,10 +34,10 @@ class FireworkCardView @JvmOverloads constructor(
     }
     
     private fun setFeedFrameDynamicHeight() {
-        val spaceBeforeItems = 8.px * ceil(visibleItemCount)
+        val spaceBeforeItems = 8.px * ceil(VISIBLE_ITEM_COUNT)
         val screenWidth = Resources.getSystem().displayMetrics.widthPixels
         val paddingHorizontal = (feedFrameView?.paddingLeft ?: 0) + (feedFrameView?.paddingRight ?: 0)
-        val calculatedWidth = (screenWidth - paddingHorizontal - spaceBeforeItems) / visibleItemCount
+        val calculatedWidth = (screenWidth - paddingHorizontal - spaceBeforeItems) / VISIBLE_ITEM_COUNT
         val calculatedHeight = ((calculatedWidth / 9) * 16).roundToInt()  // video item ratio -> 9:16
         feedFrameView?.layoutParams?.height = calculatedHeight
     }
