@@ -633,7 +633,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor.setOnClickListener(null)
     }
     
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+    override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 previewImage.setImageResource(0)
@@ -652,6 +652,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     }
                 }
                 isStateEnded = false
+                playerEventHelper.setPlayerEvent("Showing loader in player")
             }
             Player.STATE_IDLE -> {
                 previewImage.setImageResource(0)
@@ -660,6 +661,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 prevButtonVisibility(false)
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
+                playerEventHelper.setPlayerEvent("Player id idle")
             }
             Player.STATE_READY -> {
                 previewImage.setImageResource(0)
@@ -669,6 +671,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 prevButtonVisibility(!isChannelLive)
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
+                playerEventHelper.setPlayerEvent("Ready to play")
             }
             Player.STATE_ENDED -> {
                 playPause.visibility = View.VISIBLE
@@ -683,6 +686,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     ConvivaHelper.endPlayerSession(true)
                     isStateEnded = true
                 }
+                playerEventHelper.setPlayerEvent("Playing ended")
             }
         }
     }

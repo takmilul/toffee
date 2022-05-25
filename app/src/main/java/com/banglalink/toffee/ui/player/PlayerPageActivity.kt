@@ -308,7 +308,7 @@ abstract class PlayerPageActivity :
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
-                .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(60_000, 120_000, 2_500, 5_000).build())
+                .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(120_000, 120_000, 2_500, 5_000).build())
                 .build()
                 .apply {
                     addAnalyticsListener(playerAnalyticsListener!!)
@@ -1165,16 +1165,6 @@ abstract class PlayerPageActivity :
                 }
             }
         }
-        
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            super.onPlaybackStateChanged(playbackState)
-            when(playbackState) {
-                Player.STATE_BUFFERING -> playerEventHelper.setPlayerEvent("buffering...")
-                Player.STATE_READY -> playerEventHelper.setPlayerEvent("playing")
-                Player.STATE_IDLE -> playerEventHelper.setPlayerEvent("paused")
-                Player.STATE_ENDED -> playerEventHelper.setPlayerEvent("playing ended")
-            }
-        }
     }
     
     private inner class PlayerAnalyticsListener : AnalyticsListener {
@@ -1194,14 +1184,6 @@ abstract class PlayerPageActivity :
                 Log.i(
                     "PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
                 )
-                val format = mediaLoadData.trackFormat
-                format?.let {
-                    val bitrate = Utils.readableFileSize(it.bitrate.toLong())
-                    val profile = it.width.toString() + "*" + it.height.toString()
-                    val mimeType = it.containerMimeType
-                    val codec = it.codecs
-                    Log.i(PLAYER_EVENT_TAG, "onLoadCompleted: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
-                }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
@@ -1224,18 +1206,12 @@ abstract class PlayerPageActivity :
             when(state) {
                 PlaybackState.STATE_BUFFERING -> playerEventHelper.setPlayerEvent("buffering")
                 PlaybackState.STATE_CONNECTING -> playerEventHelper.setPlayerEvent("connecting")
+                PlaybackState.STATE_PLAYING -> playerEventHelper.setPlayerEvent("playing")
+                PlaybackState.STATE_PAUSED -> playerEventHelper.setPlayerEvent("paused")
                 PlaybackState.STATE_ERROR -> playerEventHelper.setPlayerEvent("error occurred")
                 PlaybackState.STATE_STOPPED -> playerEventHelper.setPlayerEvent("playing stopped")
             }
         }
-        
-//        override fun onPlayerError(eventTime: EventTime, error: PlaybackException) {
-//            super.onPlayerError(eventTime, error)
-//            lifecycleScope.launch {
-//                playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
-//                playerEventHelper.setPlayerEvent("player error", error.message, error.cause.toString(), error.errorCode)
-//            }
-//        }
         
 //        override fun onPlayerErrorChanged(eventTime: EventTime, error: PlaybackException?) {
 //            super.onPlayerErrorChanged(eventTime, error)
@@ -1351,12 +1327,14 @@ abstract class PlayerPageActivity :
             playerEventHelper.setPlayerEvent("volume changed to: $volume")
         }
         
-//        override fun onDeviceVolumeChanged(eventTime: EventTime, volume: Int, muted: Boolean) {
-//            super.onDeviceVolumeChanged(eventTime, volume, muted)
-//            if (muted) {
-//                playerEventHelper.setPlayerEvent("device volume muted")
-//            }
-//        }
+        override fun onDeviceVolumeChanged(eventTime: EventTime, volume: Int, muted: Boolean) {
+            super.onDeviceVolumeChanged(eventTime, volume, muted)
+            if (muted && volume < 1) {
+                playerEventHelper.setPlayerEvent("volume muted")
+            } else {
+                playerEventHelper.setPlayerEvent("volume changed to: $volume")
+            }
+        }
         
         override fun onDroppedVideoFrames(eventTime: EventTime, droppedFrames: Int, elapsedMs: Long) {
             super.onDroppedVideoFrames(eventTime, droppedFrames, elapsedMs)

@@ -13,7 +13,7 @@ import com.loopnow.fireworklibrary.views.VideoFeedView
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-const val VISIBLE_ITEM_COUNT = 3.25
+const val VISIBLE_ITEM_COUNT = 4.5
 
 class FireworkCardView @JvmOverloads constructor(
     context: Context,
