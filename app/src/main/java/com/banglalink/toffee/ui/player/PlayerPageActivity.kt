@@ -1261,8 +1261,9 @@ abstract class PlayerPageActivity :
                 val profile = it.width.toString() + "*" + it.height.toString()
                 val mimeType = it.containerMimeType
                 val codec = it.codecs
-                Log.i(PLAYER_EVENT_TAG, "onDownstreamFormatChanged: playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
-                playerEventHelper.setPlayerEvent("playing_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                val profileTitle = if (it.width == -1 || it.height == -1) "audio" else "video"
+                Log.i(PLAYER_EVENT_TAG, "onDownstreamFormatChanged: ${profileTitle}_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                playerEventHelper.setPlayerEvent("${profileTitle}_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
             }
         }
         
