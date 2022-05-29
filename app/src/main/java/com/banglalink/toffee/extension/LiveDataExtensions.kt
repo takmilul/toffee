@@ -9,7 +9,7 @@ import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Resource
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit = {}) {
-    liveData.observe(if(this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this, { it?.let { t -> body(t) } })
+    liveData.observe(if(this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this) { it?.let { t -> body(t) } }
 }
 
 fun <T> MutableLiveData<T>.toLiveData() = this as LiveData<T>

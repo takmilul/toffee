@@ -37,7 +37,7 @@ import kotlin.math.min
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */ /** A view for making track selections.  */
-class TrackSelectionViewKt @JvmOverloads constructor(
+class TrackSelectionView @JvmOverloads constructor(
     context: Context?, attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
     /** Listener for changes to the selected tracks.  */
@@ -318,7 +318,7 @@ class TrackSelectionViewKt @JvmOverloads constructor(
     // Internal classes.
     private inner class ComponentListener : OnClickListener {
         override fun onClick(view: View) {
-            this@TrackSelectionViewKt.onClick(view)
+            this@TrackSelectionView.onClick(view)
         }
     }
 }

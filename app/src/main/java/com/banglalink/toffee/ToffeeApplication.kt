@@ -31,6 +31,7 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
+import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
@@ -92,6 +93,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         )
         DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
         
+        FirebaseApp.initializeApp(this)
         PubSubMessageUtil.init(this)
         SessionPreference.init(this)
         CommonPreference.init(this)

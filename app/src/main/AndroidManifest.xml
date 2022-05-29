@@ -159,8 +159,8 @@
             </intent-filter>
         </receiver>
         
-        <service android:name="org.eclipse.paho.android.service.MqttService"
-            android:exported="false" />
+<!--        <service android:name="org.eclipse.paho.android.service.MqttService"-->
+<!--            android:exported="false" />-->
         
         <!-- Activity needed for video playback-->
         <activity

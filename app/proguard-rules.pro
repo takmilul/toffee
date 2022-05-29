@@ -90,3 +90,8 @@
 
 -keep class retrofit2.** { *; }
 -dontwarn retrofit2.**
+
+-dontwarn com.beloo.widget.chipslayoutmanager.Orientation
+-keep class com.google.protobuf.** { *; }
+-dontwarn com.google.firebase.messaging.TopicOperation$TopicOperations
+-dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader

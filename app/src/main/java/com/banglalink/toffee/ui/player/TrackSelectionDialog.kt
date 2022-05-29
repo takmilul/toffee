@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.player.TrackSelectionViewKt.TrackSelectionListener
+import com.banglalink.toffee.ui.player.TrackSelectionView.TrackSelectionListener
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -13,7 +13,7 @@ class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), Defau
     fun init(defaultTrackSelector: DefaultTrackSelector?, maxBitRate: Int = -1) {
         val trackGroupArray = defaultTrackSelector?.currentMappedTrackInfo?.getTrackGroups(0)
         val initialOverride = trackGroupArray?.let { defaultTrackSelector.parameters.getSelectionOverride(0, it) }
-        val bottomView = layoutInflater.inflate(R.layout.track_selection_dialog, null) as TrackSelectionViewKt
+        val bottomView = layoutInflater.inflate(R.layout.track_selection_dialog, null) as TrackSelectionView
         bottomView.init(
             defaultTrackSelector?.currentMappedTrackInfo,
             0,
