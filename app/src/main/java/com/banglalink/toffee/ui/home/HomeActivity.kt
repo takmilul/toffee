@@ -959,7 +959,7 @@ class HomeActivity :
                         response.data.channels?.let {
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
-                                shareableData?.channelOwnerId ?: 0,
+                                mPref.customerId,//shareableData?.channelOwnerId ?: 0,
                                 shareableData?.name ?: "",
                                 response.data.totalCount,
                                 playlistShareableUrl,

@@ -704,7 +704,7 @@ abstract class PlayerPageActivity :
         maximizePlayer()
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && mPref.watchOnlyWifi()) {
-            showPlayerError("Please connect to WiFi or change your default data or video quality settings", true)
+            showPlayerError("Please connect to Wifi or disable “Watch video only when Wifi is available“ from settings", true)
             return@launch
         }
 //        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)

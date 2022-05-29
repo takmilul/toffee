@@ -31,6 +31,7 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
+import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.loopnow.fireworklibrary.FwSDK
@@ -49,6 +50,7 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.net.ssl.SSLContext
 
 @HiltAndroidApp
 class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provider {
@@ -107,9 +109,16 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
         try {
             ToffeeAnalytics.initFacebookAnalytics(this)
+        } catch (e: Exception) { }
+        try {
+            // Google Play will install latest OpenSSL 
+            ProviderInstaller.installIfNeeded(applicationContext)
+            val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
+            sslContext.init(null, null, null)
+            sslContext.createSSLEngine()
         } catch (e: Exception) {
+            e.printStackTrace()
         }
-        
         if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
             try {
                 coroutineScope.launch(IO) {

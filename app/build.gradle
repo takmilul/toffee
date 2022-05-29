@@ -73,8 +73,7 @@ android {
                 'META-INF/LICENSE',
                 'META-INF/INDEX.LIST',
                 'META-INF/io.netty.versions.properties',
-                'META-INF/annotation-experimental_release.kotlin_module',
-                'META-INF/services/com.google.protobuf.GeneratedExtensionRegistryLoader'
+                'META-INF/annotation-experimental_release.kotlin_module'
             ]
         }
     }
@@ -144,7 +143,7 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.2'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
