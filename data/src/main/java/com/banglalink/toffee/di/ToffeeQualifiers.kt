@@ -6,6 +6,9 @@ import javax.inject.Qualifier
 annotation class EncryptedHttpClient
 
 @Qualifier
+annotation class CustomConnectionSpec
+
+@Qualifier
 annotation class SimpleHttpClient
 
 @Qualifier

@@ -20,8 +20,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Cache
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion.*
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -86,6 +89,29 @@ object NetworkModuleLib {
             .build()
     }
 
+    @Provides
+    @Singleton
+    @CustomConnectionSpec
+    fun getConnectionSpec(): ConnectionSpec {
+        return ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
+            .tlsVersions(TLS_1_3, TLS_1_2, TLS_1_1, TLS_1_0)
+            .cipherSuites(
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+                CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+                CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+                CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+                CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+            )
+            .build()
+    }
+    
     @Provides
     @Singleton
     @SimpleHttpClient

@@ -704,7 +704,7 @@ abstract class PlayerPageActivity :
         maximizePlayer()
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && mPref.watchOnlyWifi()) {
-            showPlayerError("Please connect to Wifi or disable “Watch video only when Wifi is available“ from settings", true)
+            showPlayerError("Please connect to Wifi or disable “Watch only when Wifi is available“ from settings", true)
             return@launch
         }
 //        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)
@@ -733,6 +733,8 @@ abstract class PlayerPageActivity :
         }
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
+//        val contentSourceText = if (isDrmActive) "DRM Content\n" else "Non-DRM Content\n"
+//        showToast(contentSourceText + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {
             async{

@@ -25,7 +25,11 @@ data class PlaylistPlaybackInfo(
     @SerializedName("playIndex")
     var playIndex: Int = 0,
     @SerializedName("currentItem")
-    var currentItem: ChannelInfo? = null
+    var currentItem: ChannelInfo? = null,
+    @SerializedName("isOwner")
+    var isOwner: Int = 0,
+    @SerializedName("isFromShare")
+    var isFromShare: Boolean = false
 ): Parcelable {
     fun getPlaylistIdLong(): Long = playlistId * 10L + 1L
 }

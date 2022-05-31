@@ -323,7 +323,7 @@
     <string name="report_text">Report</string>
     <string name="notifications_text">Notifications</string>
     <string name="wifi_profile_text">WiFi Profile</string>
-    <string name="watch_only_when_wifi_available_text">Watch video only when Wifi is available</string>
+    <string name="watch_only_when_wifi_available_text">Watch only when Wifi is available</string>
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>

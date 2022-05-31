@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.MyChannelPlaylistService
-import com.banglalink.toffee.apiservice.MyChannelUserPlaylistService
+import com.banglalink.toffee.apiservice.UserPlaylistService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelPlaylistViewModel @Inject constructor(
-    private val apiService: MyChannelPlaylistService.AssistedFactory, 
-    private val userPlaylistService: MyChannelUserPlaylistService.AssistedFactory,
+    private val apiService: MyChannelPlaylistService.AssistedFactory,
+    private val userPlaylistService: UserPlaylistService.AssistedFactory,
 ) : ViewModel() {
 
     fun getMyChannelPlaylists(channelOwnerId: Int): Flow<PagingData<MyChannelPlaylist>> {

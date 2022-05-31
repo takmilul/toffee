@@ -8,7 +8,7 @@ import com.banglalink.toffee.model.MyChannelPlaylist
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-class MyChannelUserPlaylistService @AssistedInject constructor(
+class UserPlaylistService @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     @Assisted private val channelOwnerId: Int
@@ -34,6 +34,6 @@ class MyChannelUserPlaylistService @AssistedInject constructor(
 
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(channelOwnerId: Int): MyChannelUserPlaylistService
+        fun create(channelOwnerId: Int): UserPlaylistService
     }
 }

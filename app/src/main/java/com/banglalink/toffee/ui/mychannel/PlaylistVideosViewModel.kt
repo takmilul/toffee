@@ -14,6 +14,7 @@ import com.banglalink.toffee.enums.ActivityType.PLAYLIST
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.gson.Gson
@@ -23,31 +24,50 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyChannelPlaylistVideosViewModel @Inject constructor(
+class PlaylistVideosViewModel @Inject constructor(
     private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
-    private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
-    private val userPlaylistService: MyChannelUserPlaylistVideosService.AssistedFactory,
+    private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
+    private val playlistShareableService: PlaylistShareableService2.AssistedFactory,
+    private val userPlaylistService: UserPlaylistVideosService.AssistedFactory,
 ) : ViewModel() {
     
     private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()
     
-    fun getMyChannelPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
-        return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                apiService.create(requestParams), ApiNames.GET_MY_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.MY_CHANNEL_PLAYLIST_VIDEOS_PAGE
-            )
-        }).getList()
+    fun getMyChannelPlaylistVideos(playlistInfo: PlaylistPlaybackInfo): Flow<PagingData<ChannelInfo>> {
+        return if (playlistInfo.isFromShare) {
+            BaseListRepositoryImpl({
+                BaseNetworkPagingSource(
+                    playlistShareableService.create(playlistInfo), ApiNames.GET_PLAYLIST_SHAREABLE, BrowsingScreens.HOME_PAGE
+                )
+            }).getList()
+        } else {
+            val requestParams = MyChannelPlaylistContentParam(playlistInfo.channelOwnerId, playlistInfo.playlistId)
+            return BaseListRepositoryImpl({
+                BaseNetworkPagingSource(
+                    apiService.create(requestParams), ApiNames.GET_MY_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.MY_CHANNEL_PLAYLIST_VIDEOS_PAGE
+                )
+            }).getList()
+        }
     }
-
-    fun getMyChannelUserPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
-        return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                userPlaylistService.create(requestParams), ApiNames.GET_USER_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.USER_PLAYLIST_VIDEOS_PAGE
-            )
-        }).getList()
+    
+    fun getUserPlaylistVideos(playlistInfo: PlaylistPlaybackInfo): Flow<PagingData<ChannelInfo>> {
+        return if (playlistInfo.isFromShare) {
+            BaseListRepositoryImpl({
+                BaseNetworkPagingSource(
+                    playlistShareableService.create(playlistInfo), ApiNames.GET_PLAYLIST_SHAREABLE, BrowsingScreens.HOME_PAGE
+                )
+            }).getList()
+        } else {
+            val requestParams = MyChannelPlaylistContentParam(playlistInfo.channelOwnerId, playlistInfo.playlistId)
+            return BaseListRepositoryImpl({
+                BaseNetworkPagingSource(
+                    userPlaylistService.create(requestParams), ApiNames.GET_USER_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.USER_PLAYLIST_VIDEOS_PAGE
+                )
+            }).getList()
+        }
     }
     
     fun deletePlaylistVideo(channelId: Int, playlistContentId: Int, playlistId: Int) {

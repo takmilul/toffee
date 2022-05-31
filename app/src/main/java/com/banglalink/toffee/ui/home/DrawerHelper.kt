@@ -210,6 +210,9 @@ class DrawerHelper(
                     return true
                 }
             }
+            R.id.menu_follow_us -> {
+                return false
+            }
         }
         return run {
             activity.getNavController().navigate(item.itemId)

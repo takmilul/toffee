@@ -959,14 +959,16 @@ class HomeActivity :
                         response.data.channels?.let {
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
-                                mPref.customerId,//shareableData?.channelOwnerId ?: 0,
+                                shareableData?.channelOwnerId ?: 0,
                                 shareableData?.name ?: "",
                                 response.data.totalCount,
                                 playlistShareableUrl,
                                 1,
                                 shareableData?.isUserPlaylist == 1,
                                 0,
-                                it[0]
+                                it[0],
+                                shareableData?.isOwner ?: 1,
+                                true,
                             )
                             viewModel.addToPlayListMutableLiveData.postValue(
                                 AddToPlaylistData(playlistInfo.getPlaylistIdLong(), it)
@@ -977,7 +979,7 @@ class HomeActivity :
                                 cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                             }
                             viewModel.playContentLiveData.postValue(playlistInfo)
-                        }
+                        } ?: showToast("This playlist does not have any video")
                     } else {
                         showToast("Something went wrong")
                     }
@@ -1313,12 +1315,13 @@ class HomeActivity :
             }
         } else if (info is PlaylistPlaybackInfo) {
             when {
-                (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && !info.isUserPlaylist -> {
+                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ !info.isUserPlaylist -> {
                     loadFragmentById(
                         R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
                     )
                 }
-                (fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && info.isUserPlaylist -> {
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info
+                .isUserPlaylist -> {
                     loadFragmentById(
                         R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
                     )

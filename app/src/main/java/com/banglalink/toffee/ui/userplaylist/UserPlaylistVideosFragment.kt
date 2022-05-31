@@ -25,7 +25,6 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
-import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
@@ -43,13 +42,12 @@ import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosAdapter
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
+import com.banglalink.toffee.ui.mychannel.PlaylistVideosViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,16 +59,15 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     private lateinit var mAdapter: ConcatAdapter
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var favoriteDao: FavoriteItemDao
-    private lateinit var args: UserPlaylistVideosFragmentArgs
+    private lateinit var playlistInfo: PlaylistPlaybackInfo
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private var _binding: FragmentUserPlaylistVideosBinding? = null
-    private lateinit var requestParams: MyChannelPlaylistContentParam
     private val binding get() = _binding!!
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
+    private val mViewModel by viewModels<PlaylistVideosViewModel>()
     private val reloadViewModel by activityViewModels<MyChannelReloadViewModel>()
-
+    
     companion object {
         fun newInstance(info: PlaylistPlaybackInfo): UserPlaylistVideosFragment {
             return UserPlaylistVideosFragment().apply {
@@ -80,38 +77,37 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             }
         }
     }
-
-    fun getPlaylistId(): Long = args.playlistInfo.getPlaylistIdLong()
-
+    
+    fun getPlaylistId(): Long = playlistInfo.getPlaylistIdLong()
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        args = UserPlaylistVideosFragmentArgs.fromBundle(requireArguments())
-        currentItem = args.playlistInfo.currentItem
-        requestParams = MyChannelPlaylistContentParam(args.playlistInfo.channelOwnerId, args.playlistInfo.playlistId)
+        playlistInfo = UserPlaylistVideosFragmentArgs.fromBundle(requireArguments()).playlistInfo
+        currentItem = playlistInfo.currentItem
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserPlaylistVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         initAdapter()
         observeListState()
         observeVideoList()
         observeListReload()
         setSubscriptionStatus()
         observeSubscribeChannel()
-
+        
         currentItem?.let {
             binding.backButton.hide()
             binding.playlistName.hide()
             binding.myChannelPlaylistVideos.updatePadding(top = 0.dp)
         }
         binding.emptyViewLabel.text = "No item found"
-        binding.playlistName.text = args.playlistInfo.playlistName
+        binding.playlistName.text = playlistInfo.playlistName
         binding.backButton.safeClick({ findNavController().popBackStack() })
         with(binding.myChannelPlaylistVideos) {
             addItemDecoration(MarginItemDecoration(12))
@@ -119,14 +115,14 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             setHasFixedSize(true)
         }
     }
-
+    
     private fun initAdapter() {
         playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
-        detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object : ContentReactionCallback<ChannelInfo> {
+        detailsAdapter = ChannelHeaderAdapter(playlistInfo, object : ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
-
+            
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
                 val iconLocation = IntArray(2)
@@ -147,15 +143,15 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                 }
                 childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
-
+            
             override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {
                 if (isPlaylist) {
-                    args.playlistInfo.playlistShareUrl?.let { requireActivity().handleUrlShare(it) }
+                    playlistInfo.playlistShareUrl?.let { requireActivity().handleUrlShare(it) }
                 } else {
                     requireActivity().handleShare(item)
                 }
             }
-
+            
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
@@ -167,7 +163,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                     }
                 }
             }
-
+            
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
@@ -175,14 +171,14 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         }, mPref)
         mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
     }
-
+    
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
         detailsAdapter.setChannelInfo(channelInfo)
         playlistAdapter.setSelectedItem(channelInfo)
         setSubscriptionStatus()
     }
-
+    
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
@@ -191,18 +187,18 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             }
         }
     }
-
+    
     private fun observeVideoList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mViewModel.getMyChannelUserPlaylistVideos(requestParams).collectLatest {
+            mViewModel.getUserPlaylistVideos(playlistInfo).collectLatest {
                 playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
-                    localSync.syncData(channel, LocalSync.SYNC_FLAG_FAVORITE or LocalSync.SYNC_FLAG_VIEW_COUNT)
+                    localSync.syncData(channel)
                     channel
                 })
             }
         }
     }
-
+    
     private fun observeSubscribeChannel() {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when (response) {
@@ -219,7 +215,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             }
         }
     }
-
+    
     private fun observeListState() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             playlistAdapter.loadStateFlow.collect {
@@ -236,7 +232,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             }
         }
     }
-
+    
     private fun observeDeletePlaylistVideo() {
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
@@ -247,19 +243,19 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
+                        ToffeeEvents.EXCEPTION, bundleOf(
                             "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
                             FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
                             "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
+                            "error_description" to it.error.msg
+                        )
                     )
                     requireContext().showToast(it.error.msg)
                 }
             }
         }
     }
-
+    
     private fun observeListReload() {
         observe(reloadViewModel.reloadVideos) {
             if (it) {
@@ -267,26 +263,26 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             }
         }
     }
-
+    
     private fun reloadPlaylistVideos() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
-        playlistAdapter.refresh().let { 
-            lifecycleScope.launch { 
+        playlistAdapter.refresh().let {
+            lifecycleScope.launch {
                 playlistAdapter.loadStateFlow.collectLatest {
-                    if (args.playlistInfo.playlistItemCount != playlistAdapter.itemCount) {
-                        args.playlistInfo.playlistItemCount = playlistAdapter.itemCount
+                    if (playlistInfo.playlistItemCount != playlistAdapter.itemCount) {
+                        playlistInfo.playlistItemCount = playlistAdapter.itemCount
                         detailsAdapter.notifyDataSetChanged()
                     }
                 }
             }
         }
     }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
         if (item == currentItem || item.id == currentItem?.id) {
             return
@@ -295,13 +291,10 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
         )
         homeViewModel.playContentLiveData.postValue(
-            args.playlistInfo.copy(
-                playIndex = position,
-                currentItem = item
-            )
+            playlistInfo.copy(playIndex = position, currentItem = item)
         )
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         MyPopupWindow(requireContext(), view).apply {
@@ -316,17 +309,15 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_fav -> {
-                        requireActivity().handleFavorite(item, favoriteDao,
-                            onAdded = {
-                                playlistAdapter.refresh()
-                                currentItem?.favorite = "1"
-                                detailsAdapter.notifyDataSetChanged()
-                            },
-                            onRemoved = {
-                                playlistAdapter.refresh()
-                                currentItem?.favorite = "0"
-                                detailsAdapter.notifyDataSetChanged()
-                            })
+                        requireActivity().handleFavorite(item, favoriteDao, onAdded = {
+                            playlistAdapter.refresh()
+                            currentItem?.favorite = "1"
+                            detailsAdapter.notifyDataSetChanged()
+                        }, onRemoved = {
+                            playlistAdapter.refresh()
+                            currentItem?.favorite = "0"
+                            detailsAdapter.notifyDataSetChanged()
+                        })
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)
@@ -336,7 +327,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                     }
                     R.id.menu_delete_playlist_video -> {
                         observeDeletePlaylistVideo()
-                        mViewModel.deletePlaylistVideo(mPref.customerId, item.id.toInt(), requestParams.playlistId)
+                        mViewModel.deletePlaylistVideo(mPref.customerId, item.id.toInt(), playlistInfo.playlistId)
                         mViewModel.insertActivity(item, Reaction.Delete.value)
                     }
                 }
@@ -345,7 +336,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             show()
         }
     }
-
+    
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         MyPopupWindow(requireContext(), anchor).apply {
             inflate(R.menu.menu_catchup_item)
@@ -379,7 +370,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
             show()
         }
     }
-
+    
     override fun onDestroyView() {
         binding.myChannelPlaylistVideos.adapter = null
         super.onDestroyView()
