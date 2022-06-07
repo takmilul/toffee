@@ -155,4 +155,12 @@ class CustomerInfoLogin(
     var maxBitRateWifi: Int = -1,
     @SerializedName("playerMaxBitRateCellular")
     var maxBitRateCellular: Int = -1,
+    @SerializedName("isAppRetrying")
+    var isRetryActive: Boolean = false,
+    @SerializedName("isAppFailover")
+    var isFallbackActive: Boolean = false,
+    @SerializedName("appRetryingCount")
+    var retryCount: Int = -1,
+    @SerializedName("appWaitDuration")
+    var retryWaitDuration: Int = -1,
 ) : BodyResponse(), Parcelable

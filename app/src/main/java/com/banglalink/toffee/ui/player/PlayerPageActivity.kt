@@ -63,7 +63,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
@@ -73,10 +72,7 @@ import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
@@ -303,7 +299,7 @@ abstract class PlayerPageActivity :
                 }
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setAdViewProvider(getPlayerView())
-                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
+//                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
             
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
@@ -609,7 +605,7 @@ abstract class PlayerPageActivity :
             )
             
             val dataSource = httpDataSourceFactory!!.createDataSource()
-            val dashManifest = DashUtil.loadManifest(dataSource, Uri.parse(channelInfo.drmDashUrl))
+            val dashManifest = DashUtil.loadManifest(dataSource, Uri.parse(channelInfo.getDrmUrl(connectionWatcher.isOverCellular)))
             val drmInitData = DashUtil.loadFormatWithDrmInitData(dataSource, dashManifest.getPeriod(0)) ?: run {
                 offlineLicenseHelper.release()
                 return null
@@ -1077,7 +1073,7 @@ abstract class PlayerPageActivity :
         playChannel(true)
     }
     
-    var isKnownException = false
+    var isDrmSessionException = false
     
     fun isCurrentContentDrm(): Boolean {
         playlistManager.getCurrentChannel()?.let { 
@@ -1104,7 +1100,7 @@ abstract class PlayerPageActivity :
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
                 reloadCounter++
-                isKnownException = true
+                isDrmSessionException = true
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -1122,21 +1118,28 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
-                val counterLimit = if (isKnownException) 20 else 18
-                if (reloadCounter < counterLimit) {
-                    val channelInfo = playlistManager.getCurrentChannel()
-                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
-                        playlistManager.getCurrentChannel()?.is_drm_active = 1
-                    } else {
-                        val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
-                            channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
-                            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
-                        } else null
-                        hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                if (e.cause is DrmSessionException) return
+                val retryCount = if (isDrmSessionException) mPref.retryCount + 2 else mPref.retryCount //20 else 18
+                if (mPref.isRetryActive && reloadCounter < retryCount) {
+                    if (mPref.isFallbackActive) {
+                        val channelInfo = playlistManager.getCurrentChannel()
+                        if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())
+                        ) {
+                            playlistManager.getCurrentChannel()?.is_drm_active = 1
+                        } else {
+                            val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                                channelInfo.paidPlainHlsUrl
+                            } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                                channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                            } else null
+                            hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                        }
                     }
-                    reloadCounter++
-                    reloadChannel()
+                    lifecycleScope.launch {
+                        delay(mPref.retryWaitDuration.toLong())
+                        reloadCounter++
+                        reloadChannel()
+                    }
                 } else {
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }

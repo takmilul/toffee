@@ -23,7 +23,7 @@ class ToffeeMediaDrmCallback(
     private val contentId: String
 ) : MediaDrmCallback {
     
-    private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, false, dataSourceFactory)
+    private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, true, dataSourceFactory)
     
     override fun executeProvisionRequest(uuid: UUID, request: ExoMediaDrm.ProvisionRequest): ByteArray {
         Log.i("DRM_T", "Provision request from media drm callback")
