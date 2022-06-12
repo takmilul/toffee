@@ -84,6 +84,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         } catch (e: Exception) {
             Log.e("CONN_", "Connectivity registration failed: ${e.message}")
         }
+        FirebaseApp.initializeApp(this)
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
@@ -95,7 +96,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         )
         DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
         
-        FirebaseApp.initializeApp(this)
         PubSubMessageUtil.init(this)
         SessionPreference.init(this)
         CommonPreference.init(this)

@@ -1,7 +1,9 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.CoilCache
+import com.banglalink.toffee.extension.overrideUrl
 import okhttp3.Cache
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -11,7 +13,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CoilInterceptor @Inject constructor(@CoilCache val cache: Cache): Interceptor {
+class CoilInterceptor @Inject constructor(
+    @CoilCache val cache: Cache,
+    val mPref: SessionPreference
+): Interceptor {
 
     // https://gist.github.com/danh32/d91f938dc223bd11da2f3310b3767020
     // https://github.com/square/okhttp/issues/6453
@@ -20,7 +25,11 @@ class CoilInterceptor @Inject constructor(@CoilCache val cache: Cache): Intercep
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         return try {
-            chain.proceed(request)
+            val newRequest = if (mPref.shouldOverrideImageHostUrl) {
+                val url = request.url.toUrl().toString().overrideUrl(mPref.overrideImageHostUrl)
+                request.newBuilder().url(url).build()
+            } else request
+            chain.proceed(newRequest)
         }
         catch (e: Exception) {
             if (e.message?.contains("url", ignoreCase = true) == true) {

@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
     
