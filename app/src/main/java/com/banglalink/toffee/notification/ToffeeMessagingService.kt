@@ -23,8 +23,9 @@ import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.NotificationType
-import com.banglalink.toffee.extension.isNotBlank
+import com.banglalink.toffee.enums.NotificationType.*
+import com.banglalink.toffee.enums.HostUrlOverrideType.*
+import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -87,7 +88,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val data: Map<String, String> = notificationBuilder.data
         Log.i("NOT_", "onMessageReceived: $data")
         when (notificationBuilder.notificationType?.lowercase()) {
-            NotificationType.OVERLAY.type -> {
+            OVERLAY.type -> {
                 try {
                     gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
                         ?.let { mPref.playerOverlayLiveData.postValue(it) }
@@ -95,18 +96,47 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     Log.e(TAG, "playerOverlay: ${e.message}")
                 }
             }
-            NotificationType.LOGOUT.type -> {
+            LOGOUT.type -> {
                 kickOutUser(data)
             }
-            NotificationType.DRM_LICENSE_RELEASE.type -> {
+            DRM_LICENSE_RELEASE.type -> {
                 coroutineScope.launch {
                     releaseAllLicense()
                 }
             }
-            NotificationType.CHANGE_URL.type -> {
-                changeHlsUrl(data)
+            CHANGE_URL.type -> {
+                val shouldOverride = data["should_override"].equals("true")
+                val overrideUrl = data["hls_override_url"] ?: ""
+                mPref.shouldOverrideHlsHostUrl = shouldOverride
+                mPref.overrideHlsHostUrl = overrideUrl
             }
-            NotificationType.CLEAR_CACHE.type -> {
+            CHANGE_URL_EXTENDED.type -> {
+                val shouldOverride = data["should_override"].equals("true")
+                val overrideUrl = data["override_url"] ?: ""
+                when(data["overrideType"]) {
+                    HLS.type -> {
+                        mPref.shouldOverrideHlsHostUrl = shouldOverride
+                        mPref.overrideHlsHostUrl = overrideUrl
+                    }
+                    DRM.type -> {
+                        mPref.shouldOverrideDrmHostUrl = shouldOverride
+                        mPref.overrideDrmHostUrl = overrideUrl
+                    }
+                    NCG.type -> {
+                        mPref.shouldOverrideNcgHostUrl = shouldOverride
+                        mPref.overrideNcgHostUrl = overrideUrl
+                    }
+                    BASE.type -> {
+                        mPref.shouldOverrideBaseUrl = shouldOverride
+                        mPref.overrideBaseUrl = overrideUrl
+                    }
+                    IMAGE.type -> {
+                        mPref.shouldOverrideImageHostUrl = shouldOverride
+                        mPref.overrideImageHostUrl = overrideUrl
+                    }
+                }
+            }
+            CLEAR_CACHE.type -> {
                 val route = data["apiRoute"]?.trim()
                 route?.let {
                     if (it == "all") {
@@ -119,10 +149,10 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     }
                 }
             }
-            NotificationType.BETA_USER_DETECTION.type -> {
+            BETA_USER_DETECTION.type -> {
                 handleBetaNotification(notificationBuilder)
             }
-            NotificationType.CONTENT_REFRESH.type -> {
+            CONTENT_REFRESH.type -> {
                 cacheManager.clearCacheByUrl(ApiRoutes.GET_HOME_FEED_VIDEOS)
                 coroutineScope.launch {
                     notificationBuilder.build()
@@ -164,17 +194,6 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     
     private suspend fun releaseAllLicense() {
         drmLicenseRepo.deleteAll()
-    }
-    
-    private fun changeHlsUrl(notificationData: Map<String, String>) {
-        try {
-            mPref.shouldOverrideHlsUrl = notificationData["should_override"].equals("true")
-            if (mPref.shouldOverrideHlsUrl && notificationData["url_id"].equals("1")) {
-                mPref.setHlsOverrideUrl(notificationData["hls_override_url"])
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "changeHlsUrl: ${e.message}")
-        }
     }
     
     private fun kickOutUser(data: Map<String, String>) {
@@ -248,7 +267,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     NOTIFICATION_ID to notificationId,
                     ACTION_NAME to if (!hasActionButton) CONTENT_VIEW else { if (isWatchNow) WATCH_NOW else WATCH_LATER }
                 ))
-                playingUrl?.isNotBlank { data = Uri.parse(it) }
+                playingUrl?.ifNotBlank { data = Uri.parse(it) }
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val requestCode = if (hasActionButton) { if (isWatchNow) 1 else 2 } else 0 // watchNow = 1, watchLater = 2, else = 0
@@ -267,7 +286,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     return null
                 }
             }
-            val notificationStyle = if (notificationType?.equals(NotificationType.LARGE.type, ignoreCase = true) == true) {
+            val notificationStyle = if (notificationType?.equals(LARGE.type, ignoreCase = true) == true) {
                 NotificationCompat.BigPictureStyle().bigPicture(imageDrawable?.toBitmap())
             } else {
                 NotificationCompat.BigTextStyle().bigText(content)

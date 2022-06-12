@@ -245,17 +245,45 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
     }
     
-    fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
-        pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
-    }
+    var shouldOverrideHlsHostUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE_HLS_URL, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE_HLS_URL, value) }
     
-    fun getHlsOverrideUrl(): String? {
-        return pref.getString(PREF_HLS_OVERRIDE_URL, "")
-    }
+    var overrideHlsHostUrl: String
+        get() = pref.getString(PREF_HLS_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_HLS_OVERRIDE_URL, value) }
     
-    var shouldOverrideHlsUrl: Boolean
-        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
-        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    var shouldOverrideDrmHostUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE_DRM_URL, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE_DRM_URL, value) }
+    
+    var overrideDrmHostUrl: String
+        get() = pref.getString(PREF_DRM_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_DRM_OVERRIDE_URL, value) }
+    
+    var shouldOverrideNcgHostUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE_NCG_URL, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE_NCG_URL, value) }
+    
+    var overrideNcgHostUrl: String
+        get() = pref.getString(PREF_NCG_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_NCG_OVERRIDE_URL, value) }
+    
+    var shouldOverrideImageHostUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE_IMAGE_URL, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE_IMAGE_URL, value) }
+    
+    var overrideImageHostUrl: String
+        get() = pref.getString(PREF_IMAGE_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_IMAGE_OVERRIDE_URL, value) }
+    
+    var shouldOverrideBaseUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE_BASE_URL, false)
+        set(value) = pref.edit { putBoolean(PREF_SHOULD_OVERRIDE_BASE_URL, value) }
+    
+    var overrideBaseUrl: String
+        get() = pref.getString(PREF_BASE_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BASE_OVERRIDE_URL, value) }
     
     var isAllTvChannelMenuEnabled: Boolean
         get() = pref.getBoolean(PREF_ALL_TV_CHANNEL_MENU, false)
@@ -593,8 +621,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 userImageUrl = it.profileImage
             }
             setHeaderSessionToken(it.headerSessionToken)
-            setHlsOverrideUrl(it.hlsOverrideUrl)
-            shouldOverrideHlsUrl = it.hlsUrlOverride
+            overrideHlsHostUrl = customerInfoLogin.hlsOverrideUrl ?: ""
+            shouldOverrideHlsHostUrl = customerInfoLogin.hlsUrlOverride
             setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
             if (it.isBanglalinkNumber != null) {
                 isBanglalinkNumber = it.isBanglalinkNumber
@@ -701,8 +729,16 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"
         private const val PREF_KEY_NOTIFICATION = "pref_key_notification"
         private const val PREF_SESSION_TOKEN_HEADER = "sessionTokenHeader"
+        private const val PREF_SHOULD_OVERRIDE_HLS_URL = "shouldOverrideHlsUrl"
         private const val PREF_HLS_OVERRIDE_URL = "hlsOverrideUrl"
-        private const val PREF_SHOULD_OVERRIDE = "shouldOverride"
+        private const val PREF_SHOULD_OVERRIDE_DRM_URL = "shouldOverrideDrmUrl"
+        private const val PREF_DRM_OVERRIDE_URL = "drmOverrideUrl"
+        private const val PREF_SHOULD_OVERRIDE_NCG_URL = "shouldOverrideNcgUrl"
+        private const val PREF_NCG_OVERRIDE_URL = "ncgOverrideUrl"
+        private const val PREF_SHOULD_OVERRIDE_IMAGE_URL = "shouldOverrideImageUrl"
+        private const val PREF_IMAGE_OVERRIDE_URL = "imageOverrideUrl"
+        private const val PREF_SHOULD_OVERRIDE_BASE_URL = "shouldOverrideBaseUrl"
+        private const val PREF_BASE_OVERRIDE_URL = "baseOverrideUrl"
         private const val PREF_ALL_TV_CHANNEL_MENU = "isAllTvChannelMenuEnabled"
         private const val PREF_DEVICE_TIME_IN_MILLISECONDS = "deviceTimeInMillis"
         private const val PREF_TOKEN_LIFE_SPAN = "tokenLifeSpan"

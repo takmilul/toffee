@@ -3,7 +3,9 @@ package com.banglalink.toffee.data.network.interceptor
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ToffeeHeader
+import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
 import okhttp3.FormBody
@@ -19,6 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
+    private val mPref: SessionPreference,
     private val iGetMethodTracker: IGetMethodTracker,
     @ToffeeHeader private val headerProvider: Provider<String>,
 ): Interceptor {
@@ -39,7 +42,11 @@ class AuthInterceptor @Inject constructor(
         val newRequest = request.newBuilder()
             .headers(request.headers)
             .addHeader("User-Agent", headerProvider.get())
-            .method(if(convertToGet) "GET" else "POST", if(convertToGet) null else builder.build())
+            .method(if(convertToGet) "GET" else "POST", if(convertToGet) null else builder.build()).apply {
+                if (mPref.shouldOverrideBaseUrl) {
+                    url(request.url.toUrl().toString().overrideUrl(mPref.overrideBaseUrl))
+                }
+            }
         if(convertToGet){
             newRequest.addHeader(CLIENT_API_HEADER,string)
         }

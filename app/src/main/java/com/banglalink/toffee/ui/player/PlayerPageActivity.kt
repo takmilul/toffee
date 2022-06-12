@@ -27,6 +27,7 @@ import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
@@ -645,7 +646,9 @@ abstract class PlayerPageActivity :
         val license = getLicense(channelInfo)
         
         val isDataConnection = connectionWatcher.isOverCellular
-        val drmUrl = channelInfo.getDrmUrl(isDataConnection) ?: return null
+        val drmUrl = channelInfo.getDrmUrl(isDataConnection)?.let {
+            if (mPref.shouldOverrideDrmHostUrl) it.overrideUrl(mPref.overrideDrmHostUrl) else it
+        } ?: return null
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             if (!channelInfo.isStingray) {
@@ -729,8 +732,8 @@ abstract class PlayerPageActivity :
         }
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
-//        val contentSourceText = if (isDrmActive) "DRM Content\n" else "Non-DRM Content\n"
-//        showToast(contentSourceText + contentUrl)
+//        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+//        applicationContext.showToast(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {
             async{

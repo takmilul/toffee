@@ -2,12 +2,10 @@ package com.banglalink.toffee.model
 
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.overrideUrl
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-import java.net.MalformedURLException
-import java.net.URL
 
 class Channel(
     @SerializedName("name")
@@ -54,17 +52,8 @@ class Channel(
     }
     
     fun getContentUri(pref: SessionPreference): String? {
-        if (pref.shouldOverrideHlsUrl) {
-            try {
-                val url = URL(uri)
-                var path = url.path
-                if (!TextUtils.isEmpty(url.query)) {
-                    path = path + "?" + url.query
-                }
-                uri = pref.getHlsOverrideUrl() + path
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            }
+        if (pref.shouldOverrideHlsHostUrl) {
+            uri = uri?.overrideUrl(pref.overrideHlsHostUrl)
         }
         return uri?.let {
             if (it.endsWith("/")) {
