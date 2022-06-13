@@ -25,6 +25,7 @@ import com.banglalink.toffee.ui.home.PLAYER_EVENT_TAG
 import com.banglalink.toffee.ui.player.PlayerEventWorker
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.today
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -56,6 +57,8 @@ class HeartBeatManager @Inject constructor(
     private val coroutineScope2 = CoroutineScope(Main)
     private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
     val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
+    private val _networkChangeEventLiveData = SingleLiveEvent<Boolean>()
+    val networkChangeEventLiveData = _networkChangeEventLiveData.toLiveData()
     
     companion object {
         private const val INITIAL_DELAY = 0L
@@ -204,6 +207,7 @@ class HeartBeatManager @Inject constructor(
     override fun onAvailable(network: Network) {
         if(!coroutineScope2.isActive)
             return
+        _networkChangeEventLiveData.postValue(true)
         coroutineScope2.launch {
             delay(1500)
             sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)

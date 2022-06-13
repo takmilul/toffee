@@ -1749,6 +1749,10 @@ class HomeActivity :
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
     
+    override fun isPlayerVisible(): Boolean {
+        return binding.draggableView.isVisible
+    }
+    
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
