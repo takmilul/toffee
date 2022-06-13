@@ -27,6 +27,7 @@ import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -321,6 +322,15 @@ abstract class PlayerPageActivity :
                 }
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
+//            observeNetworkChange()
+        }
+    }
+    
+    private fun observeNetworkChange() {
+        observe(heartBeatManager.networkChangeEventLiveData) {
+            if (it && isPlayerVisible() /*&& connectionWatcher.isOverCellular*/) {
+                reloadChannel()
+            }
         }
     }
     
@@ -610,7 +620,7 @@ abstract class PlayerPageActivity :
             )
             
             val dataSource = httpDataSourceFactory!!.createDataSource()
-            val dashManifest = DashUtil.loadManifest(dataSource, Uri.parse(channelInfo.drmDashUrl))
+            val dashManifest = DashUtil.loadManifest(dataSource, Uri.parse(channelInfo.getDrmUrl(connectionWatcher.isOverCellular)))
             val drmInitData = DashUtil.loadFormatWithDrmInitData(dataSource, dashManifest.getPeriod(0)) ?: run {
                 offlineLicenseHelper.release()
                 return null
@@ -671,7 +681,7 @@ abstract class PlayerPageActivity :
         }.build()
     }
     
-    private fun getHlsMediaItem(channelInfo: ChannelInfo, isWifiConnected: Boolean): MediaItem? {
+    private fun getHlsMediaItem(channelInfo: ChannelInfo): MediaItem? {
         val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
             channelInfo.paidPlainHlsUrl
         } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
@@ -694,6 +704,7 @@ abstract class PlayerPageActivity :
         }.build()
     }
     
+    abstract fun isPlayerVisible(): Boolean
     abstract fun maximizePlayer()
     private var playChannelJob: Job? = null
     
@@ -728,7 +739,7 @@ abstract class PlayerPageActivity :
         var mediaItem = if (isDrmActive) {
             getDrmMediaItem(channelInfo)
         } else {
-            getHlsMediaItem(channelInfo, isWifiConnected)
+            getHlsMediaItem(channelInfo)
         } ?: run {
             showPlayerError("Content url is null")
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
@@ -995,8 +1006,8 @@ abstract class PlayerPageActivity :
         playerErrorMessage = "player idle due to error"
         if (player?.playWhenReady == true && reloadCounter < 3) {
             ToffeeAnalytics.logForcePlay()
-            reloadChannel()
             reloadCounter++
+            reloadChannel()
         } else {
             ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", "player idle due to error")
         }
@@ -1080,7 +1091,7 @@ abstract class PlayerPageActivity :
         playChannel(true)
     }
     
-    var isKnownException = false
+    var isDrmSessionException = false
     
     fun isCurrentContentDrm(): Boolean {
         playlistManager.getCurrentChannel()?.let { 
@@ -1107,7 +1118,7 @@ abstract class PlayerPageActivity :
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
                 reloadCounter++
-                isKnownException = true
+                isDrmSessionException = true
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -1125,18 +1136,20 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
-                val counterLimit = if (isKnownException) 20 else 18
+                val counterLimit = if (isDrmSessionException) 20 else 18
                 if (reloadCounter < counterLimit) {
                     val channelInfo = playlistManager.getCurrentChannel()
                     if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
                     } else {
-                        val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
-                            channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
-                            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
-                        } else null
-                        hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                        if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
+                            val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                                channelInfo.paidPlainHlsUrl
+                            } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                                channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                            } else null
+                            hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                        }
                     }
                     reloadCounter++
                     reloadChannel()
@@ -1263,7 +1276,7 @@ abstract class PlayerPageActivity :
             val format = mediaLoadData.trackFormat
             format?.let {
                 val bitrate = Utils.readableFileSize(it.bitrate.toLong())
-                val profile = it.width.toString() + "*" + it.height.toString()
+                val profile = "${it.width}x${it.height}"
                 val mimeType = it.containerMimeType
                 val codec = it.codecs
                 val profileTitle = if (it.width == -1 || it.height == -1) "audio" else "video"

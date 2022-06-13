@@ -197,7 +197,9 @@ class TrackSelectionView @JvmOverloads constructor(
                     trackView.isVisible = false
                     invisibleProfileCount++
                 }
-                trackView.text = "${format.width}x${format.height}"
+                val profile = "${format.width}x${format.height}"
+//                Log.i(PLAYER_EVENT_TAG, "updateViews: $profile")
+                trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.isFocusable = true
                     trackView.tag = Pair.create(groupIndex, trackIndex)
