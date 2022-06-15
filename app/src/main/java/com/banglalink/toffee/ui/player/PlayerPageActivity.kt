@@ -101,6 +101,7 @@ abstract class PlayerPageActivity :
     private var startPosition: Long = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
+    private var maxBitRate: Int = 0
     @Inject lateinit var pingTool: PingTool
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -318,14 +319,23 @@ abstract class PlayerPageActivity :
                 }
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
-//            observeNetworkChange()
+            observeNetworkChange()
         }
     }
     
     private fun observeNetworkChange() {
         observe(heartBeatManager.networkChangeEventLiveData) {
-            if (it && isPlayerVisible() /*&& connectionWatcher.isOverCellular*/) {
-                reloadChannel()
+            if (it && isPlayerVisible()) {
+                val isCellularNetwork = connectionWatcher.isOverCellular
+                if ((isCellularNetwork && maxBitRate != mPref.maxBitRateCellular) || (!isCellularNetwork && maxBitRate != mPref.maxBitRateWifi)) {
+                    maxBitRate = if (isCellularNetwork) mPref.maxBitRateCellular else mPref.maxBitRateWifi
+                    if (player != null && maxBitRate > 0) {
+                        val param = defaultTrackSelector?.buildUponParameters()?.setMaxVideoBitrate(maxBitRate)?.build()
+                        param?.let { defaultTrackSelector?.parameters = it }
+                        player!!.prepare()
+                        player!!.playWhenReady = true
+                    }
+                }
             }
         }
     }
@@ -766,7 +776,7 @@ abstract class PlayerPageActivity :
                 }
             }
         
-        val maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
+        maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
         if (maxBitRate > 0) {
             val param = defaultTrackSelector?.buildUponParameters()?.setMaxVideoBitrate(maxBitRate)?.build()
             param?.let { defaultTrackSelector?.parameters = it }
