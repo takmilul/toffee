@@ -15,9 +15,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
-import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.subscription.SubscribedChannelsViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -122,94 +120,44 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
-        if(channelInfo.isChannel){
-            popupMenu.menu.findItem(R.id.menu_share).isVisible = true
-            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_fav).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_report).isVisible = false
-            popupMenu.setOnMenuItemClickListener{
-                when(it?.itemId){
-                    R.id.menu_share->{
-                        requireActivity().handleShare(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_add_to_playlist->{
-                        requireActivity().handleAddToPlaylist(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_fav->{
-                        requireActivity().handleFavorite(channelInfo, favoriteDao)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_report -> {
-                        requireActivity().handleReport(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    else->{
-                        return@setOnMenuItemClickListener false
-                    }
-                }
-            }
+        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+            popupMenu.menu.getItem(0).title = "Add to Favorites"
         }
-        if(channelInfo.isLinear){
-            popupMenu.menu.findItem(R.id.menu_share).isVisible = true
-            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_fav).isVisible = true
-            popupMenu.menu.findItem(R.id.menu_report).isVisible = true
-            popupMenu.setOnMenuItemClickListener{
-                when(it?.itemId){
-                    R.id.menu_share->{
-                        requireActivity().handleShare(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_add_to_playlist->{
-                        requireActivity().handleAddToPlaylist(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_fav->{
-                        requireActivity().handleFavorite(channelInfo, favoriteDao)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_report -> {
-                        requireActivity().handleReport(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    else->{
-                        return@setOnMenuItemClickListener false
-                    }
-                }
-            }
+        else {
+            popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
-        else{
-            if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-                popupMenu.menu.getItem(0).title = "Add to Favorites"
-            }
-            else {
-                popupMenu.menu.getItem(0).title = "Remove from Favorites"
-            }
 
-            popupMenu.menu.findItem(R.id.menu_share).isVisible = true
-            popupMenu.setOnMenuItemClickListener{
-                when(it?.itemId){
-                    R.id.menu_share->{
-                        requireActivity().handleShare(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_add_to_playlist->{
-                        requireActivity().handleAddToPlaylist(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_fav->{
-                        requireActivity().handleFavorite(channelInfo, favoriteDao)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_report -> {
-                        requireActivity().handleReport(channelInfo)
-                        return@setOnMenuItemClickListener true
-                    }
-                    else->{
-                        return@setOnMenuItemClickListener false
-                    }
+        if (channelInfo.isChannel) {
+            popupMenu.menu.findItem(R.id.menu_fav).isVisible = false
+            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
+            popupMenu.menu.findItem(R.id.menu_report).isVisible = false
+        }
+
+        if (channelInfo.isLinear) {
+            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
+        }
+
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
+        popupMenu.setOnMenuItemClickListener{
+            when(it?.itemId){
+                R.id.menu_share->{
+                    requireActivity().handleShare(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_add_to_playlist->{
+                    requireActivity().handleAddToPlaylist(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_fav->{
+                    requireActivity().handleFavorite(channelInfo, favoriteDao)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    requireActivity().handleReport(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
+                else->{
+                    return@setOnMenuItemClickListener false
                 }
             }
         }
