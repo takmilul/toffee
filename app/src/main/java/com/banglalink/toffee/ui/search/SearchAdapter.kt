@@ -12,6 +12,9 @@ class SearchAdapter(listener: ProviderIconCallback<ChannelInfo>) : BasePagingDat
         if (getItem(position)!!.isLinear) {
             return R.layout.list_item_live_new
         }
+        if (getItem(position)!!.isChannel) {
+            return R.layout.list_item_ugc_new
+        }
         return R.layout.list_item_relative
     }
 }

@@ -60,8 +60,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         setupEmptyView()
     }
     
-    protected open fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(0, "No item found")
+    protected open fun getEmptyViewInfo(): Triple<Int, String?, String?> {
+        return Triple(0, null, "No item found")
     }
 
     private fun setupEmptyView() {
@@ -74,6 +74,10 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         }
 
         info.second?.let {
+            binding.emptyViewLabelLarge.text = it
+            binding.emptyViewLabelLarge.isVisible = true
+        }
+        info.third?.let {
             binding.emptyViewLabel.text = it
         }
     }

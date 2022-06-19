@@ -100,6 +100,7 @@
     <color name="categoryNameColor">#6781A1</color>
     <color name="tvChannelTitleColor">#111F31</color>
     <color name="round_bg_tv_color">#f8f9f9</color>
+    <color name="poster_container_bg_color">#f8f9f9</color>
     <color name="hashtag_chip_color">#BED6F3</color>
     <color name="interest_chip_color">#BED6F3</color>
     <color name="spinnerSeasonColor">#F3F3F3</color>

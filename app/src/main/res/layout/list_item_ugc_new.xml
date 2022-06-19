@@ -8,10 +8,14 @@
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
-        
+
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+
+        <variable
+            name="position"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,24 +34,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintEnd_toStartOf="@+id/guideline12"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
-
+            app:layout_constraintTop_toTopOf="parent">
+            
             <ImageView
+                android:contentDescription="@string/txt_channel"
                 android:id="@+id/channel"
-                loadChannelImage="@{data}"
+                loadImageFromUrlRounded="@{data.channelProfileUrl}"
                 android:layout_width="@dimen/channel_width"
                 android:layout_height="@dimen/channel_height"
                 android:layout_gravity="center"
                 android:background="@drawable/circular_white_bg"
-                android:contentDescription="@string/txt_channel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_profile" />
-
+            
         </FrameLayout>
 
         <ImageView
@@ -62,31 +64,35 @@
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
+            android:text="@{data.content_provider_name}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{data.program_name}"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/poster_container"
             app:layout_constraintTop_toTopOf="@+id/poster_container"
             tools:text="Title" />
 
-        <ImageView
-            android:id="@+id/ownerPicture"
-            loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+        <TextView
+            android:id="@+id/subscribersCount"
+            style="@style/TitleBoldTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{data.formattedSubscriberCount()}"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="@dimen/default_text_size"
+            tools:text="15K"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:src="@drawable/ic_menu_profile"/>
 
         <TextView
-            android:id="@+id/provider_name"
+            android:id="@+id/subscribers"
             style="@style/TitleBoldTextStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -94,59 +100,28 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@string/subscribers"
             android:fontFamily="@font/roboto_medium"
             android:textSize="@dimen/default_text_size"
-            android:text='@{data.content_provider_name}'
-            app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
+            app:layout_constraintBottom_toBottomOf="@+id/subscribersCount"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@+id/ownerPicture"
-            tools:text="Content Provider" />
+            app:layout_constraintStart_toEndOf="@+id/subscribersCount"
+            app:layout_constraintTop_toTopOf="@+id/subscribersCount"
+            tools:text="subscribers " />
 
-        <TextView
-            android:id="@+id/duration"
+
+        <com.banglalink.toffee.ui.widget.MultiTextButton
+            android:id="@+id/subscribe_button"
+            bindSubscriptionStatus="@{data.isSubscribed == 1}"
+            channelOwnerId="@{data.channel_owner_id}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#AA000000"
-            android:paddingLeft="8dp"
-            android:paddingTop="3dp"
-            android:paddingRight="8dp"
-            android:paddingBottom="3dp"
-            android:text="00:00"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/poster_container"
-            app:layout_constraintEnd_toEndOf="@+id/poster_container" />
-
-        <TextView
-            android:id="@+id/number_of_views"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/fixed_second_text_color"
-            android:textSize="@dimen/default_text_size"
-            android:text="@{data.formattedViewCount() + ` Views`}"
-            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
+            android:layout_marginTop="8dp"
+            app:onSafeClick="@{(v)-> callback.onSubscribeButtonClicked(v, data)}"
+            android:visibility="visible"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/ownerPicture"
-            tools:text="18K views" />
-
-        <TextView
-            android:id="@+id/uploadTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-            android:textColor="@color/fixed_second_text_color"
-            android:textSize="@dimen/default_text_size"
-            tools:text=" &#8226; 14h"
-            app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/number_of_views"
-            app:layout_constraintTop_toTopOf="@+id/number_of_views" />
+            app:layout_constraintTop_toBottomOf="@id/subscribersCount" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline12"

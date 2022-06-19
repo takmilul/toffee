@@ -54,8 +54,8 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
         }
     }
 
-    override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_activities_empty, "You don't have any activities yet")
+    override fun getEmptyViewInfo(): Triple<Int, String?, String?> {
+        return Triple(R.drawable.ic_activities_empty, null, "You don't have any activities yet")
     }
 
     override fun onItemClicked(item: UserActivities) {

@@ -49,6 +49,15 @@ interface ToffeeApi {
         @Body contentRequest: StingrayContentRequest
     ): ContentResponse
 
+    @POST("ugc-search-content-v2/${Constants.DEVICE_TYPE}/{keyWord}/{limit}/{offset}/{dbVersion}")
+    suspend fun searchContent(
+        @Path("keyWord") keyWord: String,
+        @Path("offset") offset: Int,
+        @Path("limit") limit: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body searchContentRequest: SearchContentRequest
+    ):SearchContentResponse
+
     @POST("ugc-fireworks-list/${Constants.DEVICE_TYPE}/NULL/NULL/10/0/{dbVersion}")  //{BaseUrl}/ugc-fireworks-list/deviceType/channel_id/playlist_id/limit/offset/dbVersion
     suspend fun getFireworks(
         @Path("dbVersion") dbVersion: Int,
@@ -81,9 +90,6 @@ interface ToffeeApi {
 
     @POST("subscriber-profile-photo")
     suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest):UploadProfileImageResponse
-
-    @POST("ugc-search-contents")
-    suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):SearchContentResponse
 
     @POST("contents-shareable")
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):ContentShareableResponse
