@@ -14,6 +14,18 @@ data class PlayerEventData (
     @SerializedName("sessionId")
     var sessionId: String? = null,
     
+    @SerializedName("contentPlayingSessionId")
+    var contentPlayingSessionId: String? = null,
+    
+    @SerializedName("contentPlayingSessionSequenceId")
+    var contentPlayingSessionSequenceId: String? = null,
+    
+    @SerializedName("appLifeCycleId")
+    var appLifeCycleId: String? = null,
+    
+    @SerializedName("isForeground")
+    var isForeground: String? = null,
+    
     @SerializedName("isInternetAvailable")
     var isInternetAvailable: Boolean? = null,                               //ping tool
     
@@ -34,10 +46,10 @@ data class PlayerEventData (
     
     @SerializedName("playerEventId")
     var playerEventId: Int? = null,
-
+    
     @SerializedName("playerEvent")
     var playerEvent: String? = null,
-
+    
     @SerializedName("contentId")
     var contentId: String? = null,
     
@@ -82,7 +94,7 @@ data class PlayerEventData (
     
     @SerializedName("affiliate")
     var affiliate: String? = null,
-
+    
     @SerializedName("agent")
     var agent: String? = null,
     
