@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.player
 import android.os.Build
 import com.banglalink.toffee.data.database.entities.PlayerEventData
 import com.banglalink.toffee.data.repository.PlayerEventRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
@@ -18,24 +19,41 @@ import javax.inject.Singleton
 
 @Singleton
 class ToffeePlayerEventHelper @Inject constructor(
+    private val cPref: CommonPreference,
     private val mPref: SessionPreference,
     private val connectionWatcher: ConnectionWatcher,
     private val playerEventRepository: PlayerEventRepository,
 ) {
-    private var schedulerJob: Job? = null
+    private var sequenceId: Int = 0
     private val eventMutex = Mutex()
+    private var isContentPlaying = false
+    private var schedulerJob: Job? = null
     private var playerEventData: PlayerEventData? = null
     private var coroutineScope = CoroutineScope(IO)
     
-    fun startSession() {
+    init {
         if (mPref.isPlayerMonitoringActive) {
-            val sessionId = mPref.customerId.toString().plus("_").plus(System.nanoTime())
+            val appLivecycleId = cPref.deviceId.plus("_").plus(System.nanoTime())
             playerEventData = PlayerEventData().apply {
-                this.sessionId = sessionId
+                this.appLifeCycleId = appLivecycleId
             }
-            setPlayerEvent("Content clicked for Playing")
+            appForegrounded("App started")
             startScheduler()
         }
+    }
+    
+    fun startContentPlayingSession(contentId: String) {
+        sequenceId = 0
+        isContentPlaying = true
+        val sessionId = contentId.plus("_").plus(System.nanoTime())
+        playerEventData?.contentPlayingSessionId = sessionId
+        setPlayerEvent("Content clicked for Playing")
+    }
+    
+    fun startPlayerSession() {
+        val sessionId = mPref.customerId.toString().plus("_").plus(System.nanoTime())
+        playerEventData?.sessionId = sessionId
+        setPlayerEvent("Player Opened")
     }
     
     private fun startScheduler(){
@@ -44,6 +62,16 @@ class ToffeePlayerEventHelper @Inject constructor(
                 sendPlayerEventData()
             }
         }
+    }
+    
+    fun appForegrounded(event: String) {
+        playerEventData?.isForeground = true.toString()
+        setPlayerEvent(event)
+    }
+    
+    fun appBackgrounded(event: String) {
+        playerEventData?.isForeground = false.toString()
+        setPlayerEvent(event)
     }
     
     fun setEventData(channelInfo: ChannelInfo, isDrmActive: Boolean, agent: String, url: String?, pingData: PingData?) {
@@ -123,7 +151,9 @@ class ToffeePlayerEventHelper @Inject constructor(
         playerEventData?.let {
             coroutineScope.launch {
                 eventMutex.withLock {
-                    playerEventRepository.insertAll(it)
+                    playerEventRepository.insertAll(it.apply {
+                        contentPlayingSessionSequenceId = if(isContentPlaying) (++sequenceId).toString() else null
+                    })
                 }
             }
         }
@@ -133,18 +163,20 @@ class ToffeePlayerEventHelper @Inject constructor(
         if (!forceUpdate) {
             delay(15_000)
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            if (connectionWatcher.isOnline) {
-                playerEventRepository.sendTopEventToPubSubAndRemove()
-            }
-        } else {
+        if (connectionWatcher.isOnline) {
             playerEventRepository.sendTopEventToPubSubAndRemove()
         }
     }
     
-    fun endSession() {
-        setPlayerEvent("player closed by user")
-        playerEventData = null
+    fun endPlayerSession() {
+        setPlayerEvent("player closed")
+        playerEventData?.sessionId = null
+    }
+    
+    fun endContentPlayingSession() {
+        sequenceId = 0
+        isContentPlaying = false
+        playerEventData?.contentPlayingSessionId = null
     }
     
     fun release() {

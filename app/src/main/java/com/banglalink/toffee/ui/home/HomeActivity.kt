@@ -717,8 +717,8 @@ class HomeActivity :
     
     override fun onStart() {
         super.onStart()
+        playerEventHelper.appForegrounded("app foregrounded")
         if (playlistManager.getCurrentChannel() != null) {
-            playerEventHelper.setPlayerEvent("app foregrounded")
             ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
@@ -741,7 +741,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.player = null
         }
-        playerEventHelper.setPlayerEvent("app backgrounded")
+        playerEventHelper.appBackgrounded("app backgrounded")
         ConvivaAnalytics.reportAppBackgrounded()
     }
     
@@ -1237,7 +1237,10 @@ class HomeActivity :
             maximizePlayer()
         }
         ConvivaHelper.endPlayerSession(true)
-        playerEventHelper.startSession()
+        playerEventHelper.startContentPlayingSession(it.id)
+        if (!isPlayerVisible()) {
+            playerEventHelper.startPlayerSession()
+        }
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
@@ -1283,11 +1286,11 @@ class HomeActivity :
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
-        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
+        playerEventHelper.startContentPlayingSession(info!!.id)
+        ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1295,11 +1298,11 @@ class HomeActivity :
     
     override fun playPrevious() {
         super.playPrevious()
-        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
+        playerEventHelper.startContentPlayingSession(info!!.id)
+        ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1620,7 +1623,8 @@ class HomeActivity :
     }
     
     override fun onPlayerDestroy() {
-        playerEventHelper.endSession()
+        playerEventHelper.endContentPlayingSession()
+        playerEventHelper.endPlayerSession()
         ConvivaHelper.endPlayerSession()
 //        releasePlayer()
         if (mPref.isMedalliaActive) {
