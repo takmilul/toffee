@@ -932,6 +932,7 @@ class HomeActivity :
     private fun prepareWebsiteDeepLink(url: String): String {
         val categoryDeepLink = "https://toffeelive.com?routing=internal&page=categories&catid=categoryId"
         val ugcChannelDeepLink = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=channelId"
+        val commonDeepLink = "https://toffeelive.com?routing=internal&page=pagelink"
         return when {
             url.contains("channel/") -> {
                 val ownerId = url.substringAfter("channel/").trim()
@@ -946,6 +947,27 @@ class HomeActivity :
             }
             url.contains("web-series/") -> {
                 categoryDeepLink.replace("categoryId", CategoryType.DRAMA_SERIES.value.toString())
+            }
+            url.contains("live-tv/") -> {
+                commonDeepLink.replace("pagelink", "tv_channels")
+            }
+            url.contains("explore/") -> {
+                commonDeepLink.replace("pagelink", "explore")
+            }
+            url.contains("/all-drama") -> {
+                categoryDeepLink.replace("categoryId", "18")
+            }
+            url.contains("/activities") -> {
+                commonDeepLink.replace("pagelink", "activities")
+            }
+            url.contains("/my-favorite") -> {
+                commonDeepLink.replace("pagelink", "favorites")
+            }
+            url.contains("subscription/") -> {
+                commonDeepLink.replace("pagelink", "subscription")
+            }
+            url.contains("/home") -> {
+                commonDeepLink.replace("pagelink", "home")
             }
             else -> url
         }
@@ -1046,7 +1068,17 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
             when (it.destId) {
                 is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
-                is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                is Int -> {
+                    if(it.destId==R.id.menu_favorites
+                        || it.destId==R.id.menu_activities
+                        || it.destId==R.id.menu_subscriptions){
+                        checkVerification {
+                            navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                        }
+                    }else{
+                        navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                    }
+                }
             }
             isDeepLinkHandled = true
         }
