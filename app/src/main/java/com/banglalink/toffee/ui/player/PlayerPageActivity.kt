@@ -1332,7 +1332,7 @@ abstract class PlayerPageActivity :
     
         override fun onPlayerReleased(eventTime: EventTime) {
             super.onPlayerReleased(eventTime)
-            playerEventHelper.setPlayerEvent("player released")
+//            playerEventHelper.setPlayerEvent("player released")
         }
         
         override fun onPositionDiscontinuity(eventTime: EventTime, oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {

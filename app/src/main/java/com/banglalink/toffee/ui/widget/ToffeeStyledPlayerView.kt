@@ -647,7 +647,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 if((mPlayListListener?.isAutoplayEnabled() == false && isStateEnded) || progressTime in 1 until AUTOPLAY_INTERVAL) {
                     ConvivaHelper.endPlayerSession(true)
                     player?.currentMediaItem?.getChannelMetadata(player)?.let {
-                        playerEventHelper.startSession()
+                        playerEventHelper.startContentPlayingSession(it.id)
                         ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId)
                     }
                 }
@@ -661,7 +661,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 prevButtonVisibility(false)
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
-                playerEventHelper.setPlayerEvent("Player id idle")
+                playerEventHelper.setPlayerEvent("Player is idle")
             }
             Player.STATE_READY -> {
                 previewImage.setImageResource(0)
