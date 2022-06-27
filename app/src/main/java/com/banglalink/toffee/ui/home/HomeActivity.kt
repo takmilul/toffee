@@ -887,7 +887,8 @@ class HomeActivity :
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
-                        shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
+                        val encriptedurl =EncryptionUtil.decryptResponse(newHash).trimIndent()
+                        shareableData = gson.fromJson(encriptedurl, ShareableData::class.java)
                         when(shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -969,8 +970,24 @@ class HomeActivity :
             url.contains("/home") -> {
                 commonDeepLink.replace("pagelink", "home")
             }
+            url.contains("/playlist-content") -> {
+                getWebPlaylistShare(url)
+            }
             else -> url
         }
+    }
+
+    private fun getWebPlaylistShare(url:String):String{
+        val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
+        val isOwner= if(ownerId==mPref.customerId) 1 else 0
+        val plId = url.substringAfter("pl_id=").toInt()
+        val newUrl ="https://toffeelive.com/#video/data="
+
+        val sharableData = ShareableData("playlist",0,null,null,
+        0,isOwner,ownerId,plId)
+        val json = gson.toJson(sharableData,ShareableData::class.java)
+        val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
+        return newUrl+shareableJsonData
     }
     
     private fun playPlaylistShareable() {
@@ -982,7 +999,7 @@ class HomeActivity :
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
                                 shareableData?.channelOwnerId ?: 0,
-                                shareableData?.name ?: "",
+                                shareableData?.name ?: response.data.name ?: "" ,
                                 response.data.totalCount,
                                 playlistShareableUrl,
                                 1,
