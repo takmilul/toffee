@@ -25,7 +25,6 @@ import javax.inject.Inject
 class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     ProviderIconCallback<UserActivities> {
 
-    @Inject lateinit var localSync: LocalSync
     override val mViewModel by viewModels<UserActivitiesListViewModel>()
     override val mAdapter by lazy { UserActivitiesListAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()

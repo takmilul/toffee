@@ -14,16 +14,16 @@ class SearchContentService @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
-    @Assisted private val keyWord: String,
+    @Assisted private val keyword: String,
 ) : BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.searchContent(
-                keyWord,
                 offset,
                 limit,
                 preference.getDBVersionByApiName(ApiNames.GET_SEARCH_CONTENTS),
+                keyword,
                 SearchContentRequest(
                     preference.customerId,
                     preference.password
