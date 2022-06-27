@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.player
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Pair
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
@@ -202,19 +201,22 @@ class TrackSelectionView @JvmOverloads constructor(
                 trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.isFocusable = true
-                    trackView.tag = Pair.create(groupIndex, trackIndex)
+                    trackView.tag = Triple(groupIndex, trackIndex, format.bitrate)
                     trackView.setOnClickListener(componentListener)
                 } else {
                     trackView.isFocusable = false
                     trackView.isEnabled = false
                 }
                 trackViews.add(trackView)
-                addView(trackView)
             }
             if (invisibleProfileCount == group.length) {
                 trackViews.last()?.isVisible = true
             }
         }
+        trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }.forEach { 
+            addView(it)
+        }
+        
         updateViewStates()
     }
     
@@ -266,7 +268,7 @@ class TrackSelectionView @JvmOverloads constructor(
     
     private fun onTrackViewClicked(view: View) {
         isDisabled = false
-        val tag = view.tag as Pair<Int, Int>
+        val tag = view.tag as Triple<Int, Int, Int>
         val groupIndex = tag.first
         val trackIndex = tag.second
         val override = overrides[groupIndex]
