@@ -1124,7 +1124,7 @@ abstract class PlayerPageActivity :
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
                 reloadCounter++
-                isDrmSessionException = true
+//                isDrmSessionException = true
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -1143,7 +1143,7 @@ abstract class PlayerPageActivity :
                 }
             } else {
 //                if (e.cause is DrmSessionException) return
-                val retryCount = if (isDrmSessionException) mPref.retryCount + 2 else mPref.retryCount //20 else 18
+                val retryCount = if (mPref.retryCount < 0) 3 else if (mPref.retryCount == 0) 100 else mPref.retryCount
                 if (mPref.isRetryActive && reloadCounter < retryCount) {
                     if (mPref.isFallbackActive) {
                         val channelInfo = playlistManager.getCurrentChannel()

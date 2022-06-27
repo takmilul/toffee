@@ -14,17 +14,17 @@ import javax.inject.Inject
 class NotificationDropdownViewModel @Inject constructor(
     private val notificationRepository: NotificationInfoRepository,
 ) : BasePagingViewModel<NotificationInfo>() {
-
-    override val repo: BaseListRepository<NotificationInfo> by lazy {
-        BaseListRepositoryImpl({ notificationRepository.getAllNotification() })
+    
+    override fun repo(): BaseListRepository<NotificationInfo> {
+        return BaseListRepositoryImpl({ notificationRepository.getAllNotification() })
     }
-
+    
     fun setSeenStatus(id: Long, isSeen: Boolean, seenTime: Long) {
         viewModelScope.launch {
             notificationRepository.updateSeenStatus(id, isSeen, seenTime)
         }
     }
-
+    
     fun deleteNotification(notificationInfo: NotificationInfo) {
         viewModelScope.launch {
             notificationRepository.delete(notificationInfo)
