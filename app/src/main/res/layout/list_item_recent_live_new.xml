@@ -49,6 +49,7 @@
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
                     android:background="@drawable/round_white_bg_tv"
+                    app:layout_constraintDimensionRatio="16:9"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline12"
                     app:layout_constraintStart_toStartOf="parent"

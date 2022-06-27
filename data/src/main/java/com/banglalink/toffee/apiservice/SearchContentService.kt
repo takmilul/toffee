@@ -20,12 +20,13 @@ class SearchContentService @AssistedInject constructor(
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.searchContent(
+                offset,
+                limit,
+                preference.getDBVersionByApiName(ApiNames.GET_SEARCH_CONTENTS),
+                keyword,
                 SearchContentRequest(
-                    keyword,
                     preference.customerId,
-                    preference.password,
-                    offset,
-                    limit
+                    preference.password
                 )
             )
         }

@@ -9,8 +9,10 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.px
@@ -19,6 +21,8 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -26,7 +30,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
     private var _binding: FragmentBaseSingleListBinding? = null
     protected val binding get() = _binding!!
-
+    @Inject lateinit var localSync: LocalSync
     open val itemMargin = 0
     open val verticalPadding = Pair(0,0)
     open val horizontalPadding = Pair(0,0)
@@ -60,8 +64,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         setupEmptyView()
     }
     
-    protected open fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(0, "No item found")
+    protected open fun getEmptyViewInfo(): Triple<Int, String?, String?> {
+        return Triple(0, null, "No item found")
     }
 
     private fun setupEmptyView() {
@@ -74,6 +78,10 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         }
 
         info.second?.let {
+            binding.emptyViewLabelLarge.text = it
+            binding.emptyViewLabelLarge.isVisible = true
+        }
+        info.third?.let {
             binding.emptyViewLabel.text = it
         }
     }
@@ -121,7 +129,12 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getListData.collectLatest {
-                mAdapter.submitData(it.filter { !(it is ChannelInfo && it.isExpired) })
+                mAdapter.submitData(it.filter { !(it is ChannelInfo && it.isExpired) }.map {
+                    if(it is ChannelInfo){
+                        localSync.syncData(it as ChannelInfo)
+                    }
+                    it
+                })
             }
         }
     }

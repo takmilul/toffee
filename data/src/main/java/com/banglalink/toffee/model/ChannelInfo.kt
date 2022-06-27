@@ -178,6 +178,10 @@ data class ChannelInfo(
     @get:SerializedName("isVOD")
     val isVOD: Boolean
         get() = "VOD".equals(type, ignoreCase = true)
+
+    @get:SerializedName("isChannel")
+    val isChannel: Boolean
+        get() = "CHANNEL".equals(type, ignoreCase = true)
     
     @get:SerializedName("isStingray")
     val isStingray: Boolean

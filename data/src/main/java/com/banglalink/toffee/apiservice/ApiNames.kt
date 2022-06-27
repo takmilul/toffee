@@ -16,7 +16,7 @@ object ApiNames {
     const val SET_FAVORITES = "setUgcFavorites"
     const val UPDATE_USER_PROFILE = "subscriberProfileUpdate"
     const val UPDATE_USER_PROFILE_PHOTO = "subscriberProfilePhoto"
-    const val GET_SEARCH_CONTENTS = "getUgcSearchContents"
+    const val GET_SEARCH_CONTENTS = "getUgcSearchContentV2"
     const val GET_CONTENT_FROM_SEARCHABLE_URL = "getContentsShareable"
     const val SEND_CONTENT_SHARE_LOG = "contentShareLog"
     const val SEND_HEART_BEAT = "heartBeat"

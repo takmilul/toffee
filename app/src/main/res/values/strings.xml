@@ -441,4 +441,5 @@
     <string name="alert_redeem_invalid_reason_1">The code being used after 24 hours of \nfirst sign-in</string>
     <string name="alert_redeem_invalid_reason_2">An attempt to avail referral code benefits \n more than once</string>
     <string name="ad_attribution">Ad</string>
+    <string name="subscribers">subscribers</string>
 </resources>
