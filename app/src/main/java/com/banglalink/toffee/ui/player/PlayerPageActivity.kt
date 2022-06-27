@@ -771,12 +771,12 @@ abstract class PlayerPageActivity :
         getVastTagList(channelInfo)
             ?.randomOrNull()
             ?.let { tag ->
-                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
+                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive && !(isReload && channelInfo.isLinear)
                 val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
                 ConvivaHelper.setVastTagUrl(vastTag)
                 if (shouldPlayAd && vastTag.isNotBlank()) {
                     mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-                    if (!isReload) currentlyPlayingVastUrl = tag.url
+                    currentlyPlayingVastUrl = tag.url
                 }
             }
         
