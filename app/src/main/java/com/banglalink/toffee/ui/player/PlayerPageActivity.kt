@@ -1142,7 +1142,7 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
-                if (e.cause is DrmSessionException) return
+//                if (e.cause is DrmSessionException) return
                 val retryCount = if (isDrmSessionException) mPref.retryCount + 2 else mPref.retryCount //20 else 18
                 if (mPref.isRetryActive && reloadCounter < retryCount) {
                     if (mPref.isFallbackActive) {
@@ -1151,12 +1151,14 @@ abstract class PlayerPageActivity :
                         ) {
                             playlistManager.getCurrentChannel()?.is_drm_active = 1
                         } else {
-                            val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
-                                channelInfo.paidPlainHlsUrl
-                            } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
-                                channelInfo.hlsLinks?.get(0)?.hls_url_mobile
-                            } else null
-                            hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                            if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
+                                val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                                    channelInfo.paidPlainHlsUrl
+                                } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                                    channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                                } else null
+                                hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
+                            }
                         }
                     }
                     lifecycleScope.launch {
