@@ -1152,14 +1152,14 @@ abstract class PlayerPageActivity :
                     if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
                     } else {
-                        if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
+//                        if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
                             val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
                                 channelInfo.paidPlainHlsUrl
                             } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
                                 channelInfo.hlsLinks?.get(0)?.hls_url_mobile
                             } else null
                             hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
-                        }
+//                        }
                     }
                     reloadCounter++
                     reloadChannel()
