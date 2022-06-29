@@ -1145,7 +1145,7 @@ abstract class PlayerPageActivity :
 //                if (e.cause is DrmSessionException) return
                 val retryCount = if (mPref.retryCount < 0) 3 else if (mPref.retryCount == 0) 100 else mPref.retryCount
                 if (mPref.isRetryActive && reloadCounter < retryCount) {
-                    if (mPref.isFallbackActive) {
+                    if (connectionWatcher.isOnline && mPref.isFallbackActive) {
                         val channelInfo = playlistManager.getCurrentChannel()
                         if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())
                         ) {
