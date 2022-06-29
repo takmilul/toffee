@@ -51,6 +51,7 @@ class HeartBeatManager @Inject constructor(
     
     private var contentId = 0
     private var contentType = ""
+    private var dataSource = ""
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
     private lateinit var coroutineScope3 :CoroutineScope
@@ -176,7 +177,7 @@ class HeartBeatManager @Inject constructor(
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
         if(mPref.customerId != 0){
             try{
-                sendHeartBeat.execute(contentId, contentType,isNetworkSwitch,sendToPubSub)
+                sendHeartBeat.execute(contentId, contentType, dataSource, isNetworkSwitch, sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
@@ -194,14 +195,16 @@ class HeartBeatManager @Inject constructor(
         }
     }
 
-    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String) {
+    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String) {
         contentId = playingContentId
         contentType = playingContentType
+        dataSource = contentDataSource
     }
 
     fun triggerEventViewingContentStop() {
         contentId = 0
         contentType = ""
+        dataSource = ""
     }
 
     override fun onAvailable(network: Network) {

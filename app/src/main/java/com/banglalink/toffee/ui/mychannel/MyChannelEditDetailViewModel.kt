@@ -20,7 +20,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
     private val categoryApiService: GetCategories,
     private val paymentMethodService: GetPaymentMethodList,
-    @Assisted val myChannelDetail: MyChannelDetail?,
+    @Assisted var myChannelDetail: MyChannelDetail?,
 ) : ViewModel() {
     
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
