@@ -156,7 +156,9 @@ data class ChannelInfo(
     @SerializedName("fcm_event_is_active")
     val fcm_event_is_active: Int = 0,
     @SerializedName("plain_hls_url_for_url_type")
-    val paidPlainHlsUrl: String? = null
+    val paidPlainHlsUrl: String? = null,
+    @SerializedName("data_source")
+    val dataSource: String? = "iptv_programs"
 ) :Parcelable {
     
     @get:SerializedName("isApproved")

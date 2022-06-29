@@ -9,6 +9,8 @@ data class ViewingContentRequest(
     val type: String,
     @SerializedName("contentId")
     val contentId: Int,
+    @SerializedName("data_source")
+    val dataSource: String? = "iptv_programs",
     @SerializedName("customerId")
     val customerId: Int,
     @SerializedName("password")

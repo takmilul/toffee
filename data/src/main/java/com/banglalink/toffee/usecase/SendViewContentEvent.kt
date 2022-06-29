@@ -19,24 +19,21 @@ import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendViewContentEvent @Inject constructor(
-    private val preference: SessionPreference,
-    private val toffeeApi: ToffeeApi,
-    private val activityRepo: UserActivitiesRepository
+    private val preference: SessionPreference, private val toffeeApi: ToffeeApi, private val activityRepo: UserActivitiesRepository
 ) {
-
+    
     private val gson = Gson()
     
-    suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
-        if(sendToPubSub){
-            sendToPubSub(channel.id.toInt(),channel.type ?: "")
-        }
-        else{
-            sendToToffeeServer(channel.id.toInt(),channel.type ?: "")
+    suspend fun execute(channel: ChannelInfo, sendToPubSub: Boolean = true) {
+        if (sendToPubSub) {
+            sendToPubSub(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs")
+        } else {
+            sendToToffeeServer(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs")
         }
         saveToLocalDb(channel)
     }
-
-    private suspend fun saveToLocalDb(channel: ChannelInfo){
+    
+    private suspend fun saveToLocalDb(channel: ChannelInfo) {
         val channelDataModel = UserActivities(
             preference.customerId,
             channel.id.toLong(),
@@ -48,37 +45,32 @@ class SendViewContentEvent @Inject constructor(
         )
         activityRepo.insert(channelDataModel)
     }
-
-    private fun sendToPubSub(contentId: Int,contentType: String){
+    
+    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String) {
         val viewContentData = ViewContentData(
             customerId = preference.customerId,
             contentId = contentId,
             contentType = contentType,
+            dataSource = dataSource,
             latitude = preference.latitude,
             longitude = preference.longitude,
             isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0,
             netType = preference.netType,
-            sessionToken = preference.getHeaderSessionToken()?:""
+            sessionToken = preference.getHeaderSessionToken() ?: ""
         )
         PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEW_CONTENT_TOPIC)
     }
-
-    private suspend fun sendToToffeeServer(contentId: Int,contentType: String){
+    
+    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String) {
         tryIO2 {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
-                    contentType,
-                    contentId,
-                    preference.customerId,
-                    preference.password,
-                    preference.latitude,
-                    preference.longitude
+                    contentType, contentId, dataSource, preference.customerId, preference.password, preference.latitude, preference.longitude
                 )
             )
         }
     }
-
-
+    
     private data class ViewContentData(
         @SerializedName("id")
         val id: Long = System.nanoTime(),
@@ -90,6 +82,8 @@ class SendViewContentEvent @Inject constructor(
         val contentId: Int,
         @SerializedName("content_type")
         val contentType: String,
+        @SerializedName("data_source")
+        val dataSource: String? = "iptv_programs",
         @SerializedName("lat")
         val latitude: String,
         @SerializedName("lon")
