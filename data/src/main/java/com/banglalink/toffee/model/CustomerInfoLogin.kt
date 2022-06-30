@@ -156,9 +156,9 @@ class CustomerInfoLogin(
     @SerializedName("playerMaxBitRateCellular")
     var maxBitRateCellular: Int = -1,
     @SerializedName("isAppRetrying")
-    var isRetryActive: Boolean = false,
+    var isRetryActive: Boolean = true,
     @SerializedName("isAppFailover")
-    var isFallbackActive: Boolean = false,
+    var isFallbackActive: Boolean = true,
     @SerializedName("appRetryingCount")
     var retryCount: Int = -1,
     @SerializedName("appWaitDuration")

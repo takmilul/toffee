@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
@@ -98,6 +99,8 @@ abstract class PlayerPageActivity :
     private var playCounter: Int = -1
     private var startAutoPlay = false
     private var reloadCounter: Int = 0
+    private var retryCounter: Int = 0
+    private var fallbackCounter: Int = 0
     private var startPosition: Long = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
@@ -249,7 +252,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun initializePlayer() {
+        retryCounter = 0
         reloadCounter = 0
+        fallbackCounter = 0
         initializeLocalPlayer()
         initializeRemotePlayer()
         player = if (castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
@@ -449,7 +454,9 @@ abstract class PlayerPageActivity :
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
+        retryCounter = 0
         reloadCounter = 0
+        fallbackCounter = 0
     }
     
     private fun releaseLocalPlayer() {
@@ -1142,31 +1149,36 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
-//                if (e.cause is DrmSessionException) return
-                val retryCount = if (mPref.retryCount < 0) 3 else if (mPref.retryCount == 0) 100 else mPref.retryCount
-                if (mPref.isRetryActive && reloadCounter < retryCount) {
-                    if (connectionWatcher.isOnline && mPref.isFallbackActive) {
-                        val channelInfo = playlistManager.getCurrentChannel()
-                        if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())
-                        ) {
-                            playlistManager.getCurrentChannel()?.is_drm_active = 1
-                        } else {
-//                            if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
-                                val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
-                                    channelInfo.paidPlainHlsUrl
-                                } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
-                                    channelInfo.hlsLinks?.get(0)?.hls_url_mobile
-                                } else null
-                                hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
-//                            }
-                        }
+                val retryCount = if (mPref.retryCount <= 0) 5 else mPref.retryCount
+                if (mPref.isRetryActive && retryCounter < retryCount) {
+                    retryCounter++
+                    reloadOnFailOver()
+                } else if (mPref.isFallbackActive && fallbackCounter < retryCount) {
+                    fallbackCounter++
+                    val channelInfo = playlistManager.getCurrentChannel()
+                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())
+                    ) {
+                        playlistManager.getCurrentChannel()?.is_drm_active = 1
+                    } else {
+                        val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                            channelInfo.paidPlainHlsUrl
+                        } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                        } else null
+                        hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
                     }
-                    lifecycleScope.launch {
-                        delay(mPref.retryWaitDuration.toLong())
-                        reloadCounter++
-                        reloadChannel()
+                    reloadOnFailOver()
+                }
+                else {
+                    retryCounter = 0
+                    reloadCounter = 0
+                    fallbackCounter = 0
+                    val message = if (!connectionWatcher.isOnline) {
+                        "Please check your internet and try again later."
+                    } else {
+                        "Something went wrong. Please try again later."
                     }
-                } else {
+                    showToast(message, Toast.LENGTH_LONG)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }
             }
@@ -1178,6 +1190,13 @@ abstract class PlayerPageActivity :
             }
         }
         
+        private fun reloadOnFailOver() {
+            lifecycleScope.launch {
+                delay(mPref.retryWaitDuration.toLong())
+                reloadChannel()
+            }
+        }
+        
         private fun isBehindLiveWindow(e: PlaybackException): Boolean {
             return e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW
         }
@@ -1186,7 +1205,9 @@ abstract class PlayerPageActivity :
             super.onIsPlayingChanged(isPlaying)
             if (isPlaying && reloadCounter > 0) {
                 ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+                retryCounter = 0
                 reloadCounter = 0
+                fallbackCounter = 0
                 return
             }
             val channelInfo = getCurrentChannelInfo()
