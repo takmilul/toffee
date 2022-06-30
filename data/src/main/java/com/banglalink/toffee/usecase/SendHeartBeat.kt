@@ -21,22 +21,24 @@ class SendHeartBeat @Inject constructor(
     
     private val gson = Gson()
     
-    suspend fun execute(contentId: Int, contentType: String, dataSource: String, isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = true) {
+    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = 
+        true) {
         withContext(Dispatchers.IO) {
             if (sendToPubSub) {
-                sendToPubSub(contentId, contentType, dataSource)
+                sendToPubSub(contentId, contentType, dataSource, ownerId)
             } else {
-                sendToToffeeServer(contentId, contentType, dataSource, isNetworkSwitch)
+                sendToToffeeServer(contentId, contentType, dataSource, ownerId, isNetworkSwitch)
             }
         }
     }
     
-    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String) {
+    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         val heartBeatData = HeartBeatData(
             customerId = preference.customerId,
             contentId = contentId,
             contentType = contentType,
             dataSource = dataSource,
+            ownerId = ownerId,
             latitude = preference.latitude,
             longitude = preference.longitude,
             isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0,
@@ -46,7 +48,7 @@ class SendHeartBeat @Inject constructor(
         PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), HEARTBEAT_TOPIC)
     }
     
-    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, isNetworkSwitch: Boolean = false) {
+    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false) {
         var needToRefreshSessionToken = isNetworkSwitch
         if (System.currentTimeMillis() - preference.getSessionTokenSaveTimeInMillis() > preference.getSessionTokenLifeSpanInMillis()) {
             needToRefreshSessionToken = true// we need to refresh token by setting isNetworkSwitch = true
@@ -57,6 +59,7 @@ class SendHeartBeat @Inject constructor(
                     contentId,
                     contentType,
                     dataSource,
+                    ownerId,
                     preference.customerId,
                     preference.password,
                     preference.latitude,
@@ -85,6 +88,8 @@ class SendHeartBeat @Inject constructor(
         val contentType: String,
         @SerializedName("data_source")
         val dataSource: String? = "iptv_programs",
+        @SerializedName("channel_owner_id")
+        val ownerId: String? = "0",
         @SerializedName("lat")
         val latitude: String,
         @SerializedName("lon")

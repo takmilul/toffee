@@ -52,6 +52,7 @@ class HeartBeatManager @Inject constructor(
     private var contentId = 0
     private var contentType = ""
     private var dataSource = ""
+    private var ownerId = "0"
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
     private lateinit var coroutineScope3 :CoroutineScope
@@ -173,11 +174,11 @@ class HeartBeatManager @Inject constructor(
                 sendHeartBeat()
         }
     }
-
+    
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
         if(mPref.customerId != 0){
             try{
-                sendHeartBeat.execute(contentId, contentType, dataSource, isNetworkSwitch, sendToPubSub)
+                sendHeartBeat.execute(contentId, contentType, dataSource, ownerId, isNetworkSwitch, sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
@@ -194,19 +195,21 @@ class HeartBeatManager @Inject constructor(
             }
         }
     }
-
-    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String) {
+    
+    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String, channelOwnerId: String) {
         contentId = playingContentId
         contentType = playingContentType
         dataSource = contentDataSource
+        ownerId = channelOwnerId
     }
-
+    
     fun triggerEventViewingContentStop() {
         contentId = 0
+        ownerId = "0"
         contentType = ""
         dataSource = ""
     }
-
+    
     override fun onAvailable(network: Network) {
         if(!coroutineScope2.isActive)
             return

@@ -26,9 +26,9 @@ class SendViewContentEvent @Inject constructor(
     
     suspend fun execute(channel: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            sendToPubSub(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs")
+            sendToPubSub(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
         } else {
-            sendToToffeeServer(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs")
+            sendToToffeeServer(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
         }
         saveToLocalDb(channel)
     }
@@ -46,12 +46,13 @@ class SendViewContentEvent @Inject constructor(
         activityRepo.insert(channelDataModel)
     }
     
-    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String) {
+    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         val viewContentData = ViewContentData(
             customerId = preference.customerId,
             contentId = contentId,
             contentType = contentType,
             dataSource = dataSource,
+            ownerId = ownerId,
             latitude = preference.latitude,
             longitude = preference.longitude,
             isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0,
@@ -61,11 +62,11 @@ class SendViewContentEvent @Inject constructor(
         PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEW_CONTENT_TOPIC)
     }
     
-    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String) {
+    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         tryIO2 {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
-                    contentType, contentId, dataSource, preference.customerId, preference.password, preference.latitude, preference.longitude
+                    contentType, contentId, dataSource, ownerId, preference.customerId, preference.password, preference.latitude, preference.longitude
                 )
             )
         }
@@ -84,6 +85,8 @@ class SendViewContentEvent @Inject constructor(
         val contentType: String,
         @SerializedName("data_source")
         val dataSource: String? = "iptv_programs",
+        @SerializedName("channel_owner_id")
+        val ownerId: String? = "0",
         @SerializedName("lat")
         val latitude: String,
         @SerializedName("lon")
