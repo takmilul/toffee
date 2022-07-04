@@ -36,14 +36,15 @@ class GetChannelWithCategory @Inject constructor(
         val upTime = System.currentTimeMillis()
         response.response.channelCategoryList.forEachIndexed { index, channelCategory ->
             channelCategory.channels?.filter {
-                try {
-                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+                it.isExpired = try {
+                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
-                    true
+                    false
                 }
-            }?.forEach {
                 localSync.syncData(it, SYNC_FLAG_TV_RECENT)
                 localSync.syncData(it, SYNC_FLAG_USER_ACTIVITY)
+                !it.isExpired
+            }?.forEach {
                 dbList.add(TVChannelItem(
                     it.id.toLong(),
                     it.type ?: "LIVE",

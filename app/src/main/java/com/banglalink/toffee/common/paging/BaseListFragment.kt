@@ -13,18 +13,21 @@ import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 abstract class BaseListFragment<T : Any> : BaseFragment() {
     
+    private val gson = Gson()
     protected abstract val mAdapter: BasePagingDataAdapter<T>
     protected abstract val mViewModel: BasePagingViewModel<T>
     private var _binding: FragmentBaseSingleListBinding? = null
@@ -126,11 +129,9 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getListData().collectLatest {
                 mAdapter.submitData(it.filter {
-//                    Log.i("SEAR_", "filter: ${(it as ChannelInfo).program_name}")
-                    !(it is ChannelInfo && it.isExpired)
+                    (!(it is ChannelInfo && it.isExpired) && !(it is UserActivities && gson.fromJson(it.payload, ChannelInfo::class.java).isExpired))
                 }.map {
                     if (it is ChannelInfo) {
-//                        Log.i("SEAR_", "map: ${it.program_name}")
                         localSync.syncData(it as ChannelInfo)
                     }
                     it
