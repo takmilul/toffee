@@ -976,15 +976,16 @@ class HomeActivity :
             else -> url
         }
     }
-
+    
     private fun getWebPlaylistShare(url:String):String{
         val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
         val isOwner= if(ownerId==mPref.customerId) 1 else 0
-        val plId = url.substringAfter("pl_id=").toInt()
+        val playlistId = url.substringAfter("pl_id=").substringBefore("&").toInt()
+        val playlistName = url.substringAfter("name=").substringBefore("&")
         val newUrl ="https://toffeelive.com/#video/data="
-
+        
         val sharableData = ShareableData("playlist",0,null,null,
-        0,isOwner,ownerId,plId)
+        0, isOwner, ownerId, playlistId, playlistName)
         val json = gson.toJson(sharableData,ShareableData::class.java)
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
         return newUrl+shareableJsonData
