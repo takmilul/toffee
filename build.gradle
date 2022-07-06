@@ -3,17 +3,17 @@ buildscript {
         appVersionCode = 79
         appVersionName = '4.0.0'
         
-        exoVersion = '2.17.1'
+        exoVersion = '2.18.0'
         hiltVersion = '1.0.0'
         gsonVersion = '2.9.0'
         roomDbVersion = '2.4.2'
         okHttpVersion = '4.9.0'
         pagingVersion = '3.1.1'
-        kotlinVersion = '1.6.21'
+        kotlinVersion = '1.7.0'
         composeVersion = '1.0.5'
         retrofitVersion = '2.9.0'
         espressoVersion = '3.4.0'
-        kotlinKtxVersion = '1.7.0'
+        kotlinKtxVersion = '1.8.0'
         lifecycleVersion = '2.4.1'
         navigationVersion = '2.4.2'
         pahoClientVersion = '1.2.5'
@@ -22,12 +22,12 @@ buildscript {
         gradlePluginVersion = '7.2.1'
         facebookSdkVersion = '13.1.0'
         firebaseCoreVersion = '19.0.2'
-        kotlinCoroutineVersion = '1.6.1-native-mt'
+        kotlinCoroutineVersion = '1.6.3'
         googleApiClientVersion = '1.34.1'
         pubsubVersion = 'v1-rev452-1.25.0'
         convivaExoPlayerVersion = '4.0.12'
         pahoAndroidServiceVersion = '3.3.8'
-        firebaseMessagingVersion = '23.0.5'
+        firebaseMessagingVersion = '23.0.6'
         firebaseAnalyticsVersion = '21.0.0'
         firebaseCrashlyticsVersion = '18.2.11'
         googleHttpClientGsonVersion = '1.41.8'
@@ -36,7 +36,7 @@ buildscript {
 plugins {
     id 'com.google.gms.google-services' version '4.3.10' apply false
     id 'com.google.firebase.crashlytics' version '2.8.1' apply false
-    id 'com.android.library' version "$gradlePluginVersion" apply false
+    id 'com.android.library' version '7.2.1' apply false
     id 'org.jetbrains.kotlin.android' version "$kotlinVersion" apply false
     id 'com.android.application' version "$gradlePluginVersion" apply false
     id 'androidx.navigation.safeargs' version "$navigationVersion" apply false

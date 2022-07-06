@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.app.PictureInPictureParams
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -12,6 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
@@ -21,6 +23,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Rational
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -30,6 +33,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
@@ -793,6 +797,7 @@ class HomeActivity :
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)
         toggleNavigation(state)
+//        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
     private fun setFullScreen(visible: Boolean) {
@@ -1764,6 +1769,44 @@ class HomeActivity :
         }
     }
     
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+            enterPipMode()
+        }
+    }
+    
+    @Suppress("DEPRECATION")
+    @RequiresApi(24)
+    private fun enterPipMode() {
+        toggleNavigation(true)
+        maximizePlayer()
+        if(Build.VERSION.SDK_INT < 26) {
+            enterPictureInPictureMode()
+        } else {
+            enterPictureInPictureMode(
+                PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+                    .build()
+            )
+        }
+    }
+    
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        pipChanged(isInPictureInPictureMode)
+    }
+    
+    private fun pipChanged(isInPip: Boolean) {
+        if(isInPip) {
+            toggleNavigation(true)
+            binding.draggableView.maximize()
+            binding.draggableView.visibility = View.VISIBLE
+            maximizePlayer()
+        }
+        binding.playerView.onPip(isInPip)
+    }
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -1780,9 +1823,17 @@ class HomeActivity :
             }
         } else if (searchView?.isIconified == false) {
             closeSearchBarIfOpen()
+        } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+            enterPipMode()
         } else {
             super.onBackPressed()
         }
+    }
+    
+    private fun hasPip() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        mPref.isPipEnabled && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    } else {
+        false
     }
     
     private fun minimizePlayer() {

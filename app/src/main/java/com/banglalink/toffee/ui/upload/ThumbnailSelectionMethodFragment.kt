@@ -214,6 +214,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == UCrop.REQUEST_CROP && data != null) {

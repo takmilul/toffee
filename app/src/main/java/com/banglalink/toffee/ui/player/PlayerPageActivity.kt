@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.media.session.MediaSessionCompat
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
@@ -55,6 +56,7 @@ import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
@@ -64,7 +66,6 @@ import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
@@ -128,6 +129,8 @@ abstract class PlayerPageActivity :
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    private var mediaSession: MediaSessionCompat? = null
+    private var mediaSessionConnector: MediaSessionConnector? = null
     
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -165,7 +168,7 @@ abstract class PlayerPageActivity :
             currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
             trackSelectorParameters = savedInstanceState.getBundle(KEY_TRACK_SELECTOR_PARAMETERS)?.let { Parameters.CREATOR.fromBundle(it) }
         } else {
-            val builder = ParametersBuilder(this)
+            val builder = Parameters.Builder(this)
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
@@ -199,6 +202,7 @@ abstract class PlayerPageActivity :
         if (Util.SDK_INT > 23 /*&& isAppBackgrounded*/) {
             initializePlayer()
         }
+        mediaSession?.isActive = true
     }
     
     public override fun onResume() {
@@ -319,11 +323,14 @@ abstract class PlayerPageActivity :
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
-                        addAnalyticsListener(EventLogger(defaultTrackSelector))
+                        addAnalyticsListener(EventLogger())
                     }
                 }
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
+            mediaSession = MediaSessionCompat(this, packageName)
+            mediaSessionConnector = MediaSessionConnector(mediaSession!!)
+            mediaSessionConnector?.setPlayer(exoPlayer)
             observeNetworkChange()
         }
     }

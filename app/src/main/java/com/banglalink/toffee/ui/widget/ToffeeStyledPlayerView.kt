@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView.ControllerVisibilityListener
 import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -164,7 +165,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         
         controllerShowTimeoutMs = 3000
         
-        setControllerVisibilityListener { ctrlVisibility ->
+        setControllerVisibilityListener(ControllerVisibilityListener { ctrlVisibility ->
             when (ctrlVisibility) {
                 View.VISIBLE -> {
                     val isLive = player?.isCurrentMediaItemLive == true || isLinearChannel
@@ -183,7 +184,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     }
                 }
             }
-        }
+        })
         
         setupOverlay()
         setupCastButton()
@@ -297,6 +298,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 }
             }
         }
+    }
+    
+    fun onPip(enabled: Boolean = false) {
+        useController = !enabled
+        setShowBuffering(if(enabled) SHOW_BUFFERING_NEVER else SHOW_BUFFERING_ALWAYS)
     }
     
     fun isControllerVisible(): Boolean {

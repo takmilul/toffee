@@ -45,9 +45,11 @@
         
         <activity
             android:name=".ui.home.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
+            android:resizeableActivity="true"
             android:screenOrientation="portrait"
+            android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"

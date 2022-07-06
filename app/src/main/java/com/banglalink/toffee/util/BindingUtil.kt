@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
@@ -402,6 +403,17 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         view.text = ""
         item?.let {
             view.text = it.getDescriptionDecoded()
+        }
+    }
+    
+    @BindingAdapter("setStartConstraint")
+    fun setStartConstraint(view: View, item: Boolean) {
+        val constraintLayout = view.layoutParams as ConstraintLayout.LayoutParams
+        if (item) {
+            constraintLayout.startToEnd = R.id.guideline3
+        } else {
+            constraintLayout.startToEnd = R.id.viewCount
+            constraintLayout.endToStart = R.id.guideline3
         }
     }
 }
