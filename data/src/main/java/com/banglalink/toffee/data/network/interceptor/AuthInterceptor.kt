@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.interceptor
 
+import android.os.Build
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
@@ -37,11 +38,13 @@ class AuthInterceptor @Inject constructor(
         if(!convertToGet){
             builder.addEncoded("data", string)
         }
-
+        
 //        Log.i("Header",toffeeHeader)
+        var userAgent = if (request.url.toString().contains("bl-he")) System.getProperty("http.agent") else headerProvider.get()
+        userAgent = userAgent ?: ("Toffee" + "/" + " (Linux;Android " + Build.VERSION.RELEASE + ") ")
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("User-Agent", headerProvider.get())
+            .addHeader("User-Agent", userAgent)
             .method(if(convertToGet) "GET" else "POST", if(convertToGet) null else builder.build()).apply {
                 if (mPref.shouldOverrideBaseUrl) {
                     url(request.url.toUrl().toString().overrideUrl(mPref.overrideBaseUrl))
