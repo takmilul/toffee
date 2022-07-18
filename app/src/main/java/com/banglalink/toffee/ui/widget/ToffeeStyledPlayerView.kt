@@ -89,11 +89,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var fullscreenButton: ImageView
     private lateinit var debugContainer: FrameLayout
     private lateinit var castButton: MediaRouteButton
-    private lateinit var textCasting: AppCompatTextView
     private val screenWidth = Utils.getScreenWidth()
+    private val screenHeight = Utils.getScreenHeight()
+    private lateinit var textCasting: AppCompatTextView
     private var mPlayListListener: PlaylistListener? = null
     protected lateinit var playerOverlay: PlayerOverlayView
-    private val screenHeight = Utils.getScreenHeight()
     private lateinit var autoplayProgress: CircularProgressBar
     protected lateinit var doubleTapInterceptor: PlayerPreview
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -302,7 +302,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     
     fun onPip(enabled: Boolean = false) {
         useController = !enabled
-        setShowBuffering(if(enabled) SHOW_BUFFERING_NEVER else SHOW_BUFFERING_ALWAYS)
+        setShowBuffering(/*if(enabled) SHOW_BUFFERING_NEVER else*/ SHOW_BUFFERING_ALWAYS)
     }
     
     fun isControllerVisible(): Boolean {
@@ -329,6 +329,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
             }
+        }
+    }
+    
+    private fun nextButtonVisibility(visible: Boolean) {
+        playNext.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+        }
+    }
+    
+    private fun prevButtonVisibility(visible: Boolean) {
+        playPrev.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
     
@@ -418,18 +430,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             CastButtonFactory.setUpMediaRouteButton(context.applicationContext, castButton)
         } else {
             castButton.visibility = View.GONE
-        }
-    }
-    
-    private fun nextButtonVisibility(visible: Boolean) {
-        playNext.visibility = if (!visible) View.INVISIBLE else {
-            if (mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
-        }
-    }
-    
-    private fun prevButtonVisibility(visible: Boolean) {
-        playPrev.visibility = if (!visible) View.INVISIBLE else {
-            if (mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
     

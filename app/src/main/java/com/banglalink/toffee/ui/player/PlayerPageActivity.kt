@@ -7,6 +7,9 @@ import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.MediaSessionCompat.Callback
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.State
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
@@ -56,7 +59,6 @@ import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
@@ -97,15 +99,15 @@ abstract class PlayerPageActivity :
     OnPlayerControllerChangedListener
 {
     private var startWindow = 0
+    private var maxBitRate: Int = 0
     private var playCounter: Int = -1
     private var startAutoPlay = false
-    private var reloadCounter: Int = 0
     private var retryCounter: Int = 0
-    private var fallbackCounter: Int = 0
+    private var reloadCounter: Int = 0
     private var startPosition: Long = 0
+    private var fallbackCounter: Int = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
-    private var maxBitRate: Int = 0
     @Inject lateinit var pingTool: PingTool
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -115,11 +117,13 @@ abstract class PlayerPageActivity :
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
     private var defaultCookieManager = CookieManager()
+    private var mediaSession: MediaSessionCompat? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    private val playerViewModel by viewModels<PlayerViewModel>()
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -127,10 +131,7 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
-    private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
-    private var mediaSession: MediaSessionCompat? = null
-    private var mediaSessionConnector: MediaSessionConnector? = null
     
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -329,10 +330,59 @@ abstract class PlayerPageActivity :
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
             mediaSession = MediaSessionCompat(this, packageName)
-            mediaSessionConnector = MediaSessionConnector(mediaSession!!)
-            mediaSessionConnector?.setPlayer(exoPlayer)
+            mediaSession!!.setCallback(MediaSessionCallback())
             observeNetworkChange()
         }
+    }
+    
+    inner class MediaSessionCallback : Callback() {
+        override fun onPlay() {
+            super.onPlay()
+            player?.play()
+            updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        }
+        
+        override fun onPause() {
+            super.onPause()
+            player?.pause()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+        
+        override fun onSkipToNext() {
+            super.onSkipToNext()
+            playNext()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+        
+        override fun onSkipToPrevious() {
+            super.onSkipToPrevious()
+            playPrevious()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+    }
+    
+    private fun getAction(): Long {
+        val mediaActionPlayPause = (PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE)
+        val mediaActionPlayPauseNext = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
+        val mediaActionPlayPausePrevious = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+        val mediaActionAll: Long = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+        
+        return if (!hasNext() && !hasPrevious()) {
+            mediaActionPlayPause
+        } else if (hasNext() && !hasPrevious()) {
+            mediaActionPlayPauseNext
+        } else if (!hasNext() && hasPrevious()) {
+            mediaActionPlayPausePrevious
+        } else {
+            mediaActionAll
+        }
+    }
+    
+    private fun updatePlaybackState(@State state: Int) {
+        val position = player?.currentPosition?.toInt() ?: 0
+        val mediaId = player?.currentMediaItem?.getChannelMetadata(player)?.id?.toLong() ?: 0
+        val builder = PlaybackStateCompat.Builder().setActions(getAction()).setActiveQueueItemId(mediaId).setState(state, position.toLong(), 1.0f)
+        mediaSession?.setPlaybackState(builder.build())
     }
     
     private fun observeNetworkChange() {
@@ -1210,6 +1260,8 @@ abstract class PlayerPageActivity :
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
+            updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
+            observeNetworkChange()
             if (isPlaying && reloadCounter > 0) {
                 ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
                 retryCounter = 0
