@@ -1183,7 +1183,13 @@ abstract class PlayerPageActivity :
             }
             playerErrorMessage = e.message ?: e.cause?.message ?: e.cause?.cause?.message
             
-            if (isBehindLiveWindow(e)) {
+            if (!connectionWatcher.isOnline) {
+                retryCounter = 0
+                reloadCounter = 0
+                fallbackCounter = 0
+                val message = "Please check your internet and try again later."
+                showToast(message, Toast.LENGTH_LONG)
+            } else if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
@@ -1230,11 +1236,7 @@ abstract class PlayerPageActivity :
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
-                    val message = if (!connectionWatcher.isOnline) {
-                        "Please check your internet and try again later."
-                    } else {
-                        "Something went wrong. Please try again later."
-                    }
+                    val message = "Something went wrong. Please try again later."
                     showToast(message, Toast.LENGTH_LONG)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.usecase
 
+import android.os.Build
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -95,7 +96,7 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("lon")
         val longitude: String,
         @SerializedName("os_name")
-        val os: String = "android",
+        val os: String = "android " + Build.VERSION.RELEASE,
         @SerializedName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
         @SerializedName("is_bl_number")

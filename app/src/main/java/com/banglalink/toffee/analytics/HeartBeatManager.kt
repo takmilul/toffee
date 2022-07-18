@@ -50,7 +50,7 @@ class HeartBeatManager @Inject constructor(
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
     private var contentId = 0
-    private var contentType = ""
+    private var contentType = "0"
     private var dataSource = ""
     private var ownerId = "0"
     private var isAppForeGround = false
@@ -206,7 +206,7 @@ class HeartBeatManager @Inject constructor(
     fun triggerEventViewingContentStop() {
         contentId = 0
         ownerId = "0"
-        contentType = ""
+        contentType = "0"
         dataSource = ""
     }
     

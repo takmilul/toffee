@@ -1,5 +1,6 @@
 package com.banglalink.toffee.usecase
 
+import android.os.Build
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
@@ -26,9 +27,9 @@ class SendViewContentEvent @Inject constructor(
     
     suspend fun execute(channel: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            sendToPubSub(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
+            sendToPubSub(channel.id.toInt(), channel.type ?: "0", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
         } else {
-            sendToToffeeServer(channel.id.toInt(), channel.type ?: "", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
+            sendToToffeeServer(channel.id.toInt(), channel.type ?: "0", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
         }
         saveToLocalDb(channel)
     }
@@ -92,7 +93,7 @@ class SendViewContentEvent @Inject constructor(
         @SerializedName("lon")
         val longitude: String,
         @SerializedName("os_name")
-        val os: String = "android",
+        val os: String = "android " + Build.VERSION.RELEASE,
         @SerializedName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
         @SerializedName("is_bl_number")

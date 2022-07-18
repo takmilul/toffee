@@ -2,11 +2,13 @@ package com.banglalink.toffee.ui.login
 
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -54,12 +56,12 @@ class VerifyLoginFragment : ChildDialogFragment() {
         phoneNumber = requireArguments().getString(LoginContentFragment.PHONE_NO_ARG) ?: ""
         regSessionToken = requireArguments().getString(LoginContentFragment.REG_SESSION_TOKEN_ARG) ?: ""
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogVerifyBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -121,7 +123,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             }
         }
     }
-
+    
     private fun reloadContent() {
         closeDialog()
         cacheManager.clearAllCache()
@@ -154,7 +156,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             }
         }
     }
-
+    
     private fun startCountDown(countDownTimeInMinute: Int) {
         binding.countdownTextView.visibility = View.VISIBLE
         resendCodeTimer?.cancel()
@@ -165,9 +167,9 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 val seconds = (remainingSecs % 60).toInt()
                 val timeText = (String.format("%02d", minutes)
                         + ":" + String.format("%02d", seconds))
-                binding.countdownTextView.text = "Resend otp in $timeText"
+                binding.countdownTextView.text = Html.fromHtml("Resend otp in <b>${timeText}s</b>", HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
-
+            
             observe(timer.finishLiveData) {
                 binding.resendButton.isEnabled = true
                 binding.resendButton.visibility = View.VISIBLE
