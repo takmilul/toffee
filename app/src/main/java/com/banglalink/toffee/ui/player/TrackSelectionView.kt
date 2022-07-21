@@ -197,7 +197,6 @@ class TrackSelectionView @JvmOverloads constructor(
                     invisibleProfileCount++
                 }
                 val profile = format.height.toString()
-//                Log.i(PLAYER_EVENT_TAG, "updateViews: $profile")
                 trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.isFocusable = true
@@ -216,12 +215,15 @@ class TrackSelectionView @JvmOverloads constructor(
         val sortedProfileList = trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }
         sortedProfileList.forEachIndexed { index, it ->
             if (index > 0) {
+                // get the current profile of the list and the immediate top and bottom profile and compare
                 val previousProfile: String = sortedProfileList[index-1]!!.text.toString().substringBefore("p")
-                val previousBitRate: Int = (sortedProfileList[index-1]!!.tag as Triple<Int, Int, Int>).third
+                val previousProfileBitRate: Int = (sortedProfileList[index-1]!!.tag as Triple<Int, Int, Int>).third
                 val currentBitRate: Int = (it!!.tag as Triple<Int, Int, Int>).third
-                val hasDuplicateNext = sortedProfileList.getOrNull(index + 1) != null
+                val nextProfile = sortedProfileList.getOrNull(index + 1)?.text?.toString()
+                val nextProfileBitRate = sortedProfileList.getOrNull(index + 1)?.tag?.run { (this as Triple<Int, Int, Int>).third } ?: 0
+                val hasDuplicateNext = nextProfile != null && nextProfileBitRate < currentBitRate
                 
-                it.text = it.text.toString().plus(if (it.text == previousProfile && currentBitRate < previousBitRate && 
+                it.text = it.text.toString().plus(if (it.text == previousProfile && currentBitRate < previousProfileBitRate && 
                     !hasDuplicateNext) {
                     " (Data Saver)"
                 } else {
