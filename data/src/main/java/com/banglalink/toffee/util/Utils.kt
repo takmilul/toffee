@@ -503,21 +503,29 @@ object Utils {
     fun getFormattedViewsText(viewCount: String?): String {
         if (viewCount.isNullOrBlank() || !TextUtils.isDigitsOnly(viewCount)) return "0"
         val count = viewCount.toLong()
-        return if (count < 1000) viewCount else viewCountFormat(count.toDouble(), 0)
+        return if (count < 1000) viewCount else viewCountFormat(count)
     }
     
     private val c = charArrayOf('K', 'M', 'B', 'T')
     
-    private fun viewCountFormat(n: Double, iteration: Int): String {
-        val d = n.toLong() / 100 / 10.0
-        val isRound = d * 10 % 10 == 0.0 //true if the decimal part is equal to 0 (then it's trimmed anyway)
-        //this determines the class, i.e. 'k', 'm' etc
-        //this decides whether to trim the decimals
-        // (int) d * 10 / 10 drops the decimal
-        return if (d < 1000) //this determines the class, i.e. 'k', 'm' etc
-            (if (d > 99.9 || isRound || d > 9.99) //this decides whether to trim the decimals
-                d.toInt() * 10 / 10 else d.toString() // (int) d * 10 / 10 drops the decimal
-                ).toString() + c[iteration] else viewCountFormat(d, iteration + 1)
+//    private fun viewCountFormat(n: Double, iteration: Int): String {
+//        val d = n.toLong() / 100 / 10.0
+//        val isRound = d * 10 % 10 == 0.0 //true if the decimal part is equal to 0 (then it's trimmed anyway)
+//        //this determines the class, i.e. 'k', 'm' etc
+//        //this decides whether to trim the decimals
+//        // (int) d * 10 / 10 drops the decimal
+//        return if (d < 1000) //this determines the class, i.e. 'k', 'm' etc
+//            (if (d > 99.9 || isRound || d > 9.99) //this decides whether to trim the decimals
+//                d.toInt() * 10 / 10 else d.toString() // (int) d * 10 / 10 drops the decimal
+//                ).toString() + c[iteration] else viewCountFormat(d, iteration + 1)
+//    }
+
+    private fun viewCountFormat(count: Long): String {
+        if (count < 1000) return "" + count
+        val exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
+        val format = DecimalFormat("0.#")
+        val value = format.format(count / Math.pow(1000.0, exp.toDouble()))
+        return String.format("%s%c", value, "kMBTPE"[exp - 1])
     }
     
     fun readableFileSize(size: Long): String {

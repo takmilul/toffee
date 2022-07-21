@@ -196,7 +196,7 @@ class TrackSelectionView @JvmOverloads constructor(
                     trackView.isVisible = false
                     invisibleProfileCount++
                 }
-                val profile = "${format.width}x${format.height}"
+                val profile = format.height.toString()
 //                Log.i(PLAYER_EVENT_TAG, "updateViews: $profile")
                 trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
@@ -213,10 +213,25 @@ class TrackSelectionView @JvmOverloads constructor(
                 trackViews.last()?.isVisible = true
             }
         }
-        trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }.forEach { 
+        val sortedProfileList = trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }
+        sortedProfileList.forEachIndexed { index, it ->
+            if (index > 0) {
+                val previousProfile: String = sortedProfileList[index-1]!!.text.toString().substringBefore("p")
+                val previousBitRate: Int = (sortedProfileList[index-1]!!.tag as Triple<Int, Int, Int>).third
+                val currentBitRate: Int = (it!!.tag as Triple<Int, Int, Int>).third
+                val hasDuplicateNext = sortedProfileList.getOrNull(index + 1) != null
+                
+                it.text = it.text.toString().plus(if (it.text == previousProfile && currentBitRate < previousBitRate && 
+                    !hasDuplicateNext) {
+                    " (Data Saver)"
+                } else {
+                    "p"
+                })
+            } else {
+                it!!.text = it.text.toString().plus("p")
+            }
             addView(it)
         }
-        
         updateViewStates()
     }
     
