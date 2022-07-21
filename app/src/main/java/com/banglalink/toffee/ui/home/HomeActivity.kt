@@ -1942,7 +1942,13 @@ class HomeActivity :
                 }
             }
         }
-        
+        searchView?.setOnQueryTextFocusChangeListener { view, isFocused -> 
+            if (isFocused) {
+                binding.searchOverlay.show()
+            } else {
+                binding.searchOverlay.hide()
+            }
+        }
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {

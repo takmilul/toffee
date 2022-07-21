@@ -54,7 +54,7 @@
             android:screenOrientation="portrait"
             android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateVisible|adjustPan"
             android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
