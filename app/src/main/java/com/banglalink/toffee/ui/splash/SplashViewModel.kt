@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.splash
 
 import android.database.sqlite.SQLiteDatabase
 import android.media.MediaDrm
+import android.os.Build
 import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -133,19 +134,20 @@ class SplashViewModel @Inject constructor(
             cPref.isDrmModuleAvailable = CommonPreference.DRM_TIMEOUT
             withTimeout(DRM_AVAILABILITY_TIMEOUT) {
                 withContext(Dispatchers.IO + Job()) {
-                    try {
-                        val level = MediaDrm.getMaxSecurityLevel()
-                        val securityLevel = when (level) {
-                            MediaDrm.SECURITY_LEVEL_UNKNOWN -> MediaDrm.SECURITY_LEVEL_UNKNOWN.toString()
-                            MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO.toString()
-                            MediaDrm.SECURITY_LEVEL_SW_SECURE_DECODE -> MediaDrm.SECURITY_LEVEL_SW_SECURE_DECODE.toString()
-                            MediaDrm.SECURITY_LEVEL_HW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_HW_SECURE_CRYPTO.toString()
-                            MediaDrm.SECURITY_LEVEL_HW_SECURE_DECODE -> MediaDrm.SECURITY_LEVEL_HW_SECURE_DECODE.toString()
-                            MediaDrm.SECURITY_LEVEL_HW_SECURE_ALL -> MediaDrm.SECURITY_LEVEL_HW_SECURE_ALL.toString()
-                            else -> level.toString()
-                        }
-                        ToffeeAnalytics.logBreadCrumb(securityLevel)
-                    } catch (e: Exception) { }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        try {
+                            val securityLevel = when (val level = MediaDrm.getMaxSecurityLevel()) {
+                                MediaDrm.SECURITY_LEVEL_UNKNOWN -> MediaDrm.SECURITY_LEVEL_UNKNOWN.toString()
+                                MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO.toString()
+                                MediaDrm.SECURITY_LEVEL_SW_SECURE_DECODE -> MediaDrm.SECURITY_LEVEL_SW_SECURE_DECODE.toString()
+                                MediaDrm.SECURITY_LEVEL_HW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_HW_SECURE_CRYPTO.toString()
+                                MediaDrm.SECURITY_LEVEL_HW_SECURE_DECODE -> MediaDrm.SECURITY_LEVEL_HW_SECURE_DECODE.toString()
+                                MediaDrm.SECURITY_LEVEL_HW_SECURE_ALL -> MediaDrm.SECURITY_LEVEL_HW_SECURE_ALL.toString()
+                                else -> level.toString()
+                            }
+                            ToffeeAnalytics.logBreadCrumb(securityLevel)
+                        } catch (e: Exception) {}
+                    }
                     MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
                 }.also {
                     cPref.isDrmModuleAvailable = if (it) DRM_AVAILABLE else DRM_UNAVAILABLE
