@@ -1116,10 +1116,10 @@ class HomeActivity :
     
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            query?.let { handleVoiceSearchEvent(it) }
-        }
+//        if (Intent.ACTION_SEARCH == intent.action) {
+//            val query = intent.getStringExtra(SearchManager.QUERY)
+//            query?.let { handleVoiceSearchEvent(it) }
+//        }
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
@@ -1161,15 +1161,15 @@ class HomeActivity :
         })
     }
     
-    private fun handleVoiceSearchEvent(query: String) {
-        if (!TextUtils.isEmpty(query)) {
-            navigateToSearch(query)
-        }
-        if (searchView != null) {
-            searchView!!.setQuery(query.lowercase(), false)
-            searchView!!.clearFocus()
-        }
-    }
+//    private fun handleVoiceSearchEvent(query: String) {
+//        if (!TextUtils.isEmpty(query)) {
+//            navigateToSearch(query)
+//        }
+//        if (searchView != null) {
+//            searchView!!.setQuery(query.lowercase(), false)
+//            searchView!!.clearFocus()
+//        }
+//    }
     
     private fun handlePackageSubscribe() {
         //Clean up stack upto landingPageFragment inclusive
@@ -1850,8 +1850,8 @@ class HomeActivity :
         val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
         
-        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
-        mic.setImageResource(R.drawable.ic_menu_microphone)
+//        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
+//        mic.setImageResource(R.drawable.ic_menu_microphone)
         
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
         close.setImageResource(R.drawable.ic_close)
