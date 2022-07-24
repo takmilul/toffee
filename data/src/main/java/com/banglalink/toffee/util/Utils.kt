@@ -235,7 +235,7 @@ object Utils {
     }
     
     fun getVideoUploadLimit(timeMs: Long): Boolean {
-        return (10 > round(timeMs / 1000F) || round(timeMs / 1000F) > 7200)
+        return (10 > round(timeMs / 1000F) || round(timeMs / 1000F) > 14400)
     }
 
     fun getLongDuration(str: String?): Long {

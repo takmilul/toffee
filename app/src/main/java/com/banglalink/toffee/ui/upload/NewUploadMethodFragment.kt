@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import com.banglalink.toffee.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
@@ -20,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -28,6 +28,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -194,8 +195,8 @@ class NewUploadMethodFragment : DialogFragment() {
                 openEditUpload(videoUri.toString())
             } else {
                 ToffeeAlertDialogBuilder(requireContext()).apply {
-                    setTitle("Select mp4 file")
-                    setText("Only mp4 file uploading is supported.")
+                    setTitle(getString(string.upload_vod_requirement_title))
+                    setText(getString(string.upload_vod_requirement_description))
                     setPositiveButtonListener("Got It!") {
                         it?.dismiss()
                     }
