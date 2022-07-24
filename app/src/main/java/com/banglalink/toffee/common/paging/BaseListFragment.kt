@@ -17,6 +17,7 @@ import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -84,6 +85,13 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
             binding.emptyViewLabel.text = it
         }
     }
+
+    fun setResultView(text: String?) {
+        text?.let {
+            binding.topPanel.searchResult.text = it
+            binding.topPanel.topPanelContainer.show()
+        }
+    }
     
     private fun setupListView() {
         with(binding.listview) {
@@ -131,8 +139,17 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
                 mAdapter.submitData(it.filter {
                     (!(it is ChannelInfo && it.isExpired) && !(it is UserActivities && gson.fromJson(it.payload, ChannelInfo::class.java).isExpired))
                 }.map {
+                    var isHeaderTextSet = false
                     if (it is ChannelInfo) {
                         localSync.syncData(it as ChannelInfo)
+                        if(it.totalCount > 1 && !isHeaderTextSet) {
+                            setResultView("${it.totalCount} results found")
+                            isHeaderTextSet = true
+                        }
+                        else if(it.totalCount == 1 && !isHeaderTextSet) {
+                            setResultView("${it.totalCount} result found")
+                            isHeaderTextSet = true
+                        }
                     }
                     it
                 })

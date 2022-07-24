@@ -95,9 +95,10 @@
         <LinearLayout
             android:id="@+id/submit_area"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
-            
+
             <ImageView
                 android:id="@+id/search_go_btn"
                 android:layout_width="wrap_content"
@@ -109,19 +110,19 @@
                 android:visibility="gone"
                 android:focusable="true"
                 android:contentDescription="@string/abc_searchview_description_submit" />
-            
+
             <ImageView
                 android:id="@+id/search_voice_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/abc_searchview_description_voice"
+                android:focusable="true"
                 android:paddingLeft="16dip"
                 android:paddingRight="16dip"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_menu_microphone"
-                android:focusable="true"
-                android:contentDescription="@string/abc_searchview_description_voice" />
-            
+                android:src="@drawable/ic_menu_microphone" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
