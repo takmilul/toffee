@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -30,7 +31,8 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         
-        Log.i("Path", request.url.encodedPath)
+//        Log.i("Path", request.url.encodedPath)
+        ToffeeAnalytics.logBreadCrumb(request.url.encodedPath.substringAfter("/").substringBefore("/"))
         val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
         val string = EncryptionUtil.encryptRequest(bodyToString(request.body))

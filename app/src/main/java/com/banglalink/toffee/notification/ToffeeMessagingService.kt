@@ -23,8 +23,8 @@ import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.NotificationType.*
 import com.banglalink.toffee.enums.HostUrlOverrideType.*
+import com.banglalink.toffee.enums.NotificationType.*
 import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
@@ -281,8 +281,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         
         suspend fun getNotificationBuilder(ignoreContentIntent: Boolean = false): NotificationCompat.Builder? {
             loadImageDrawable()
-            notificationInfoRepository.getLastNotification()?.let {
-                if (it.title == title && it.content == content && it.imageUrl == imageUrl && it.resourceUrl == resourceUrl) {
+            pubSubId?.let {
+                notificationInfoRepository.getNotificationById(it.toInt())?.let {
                     return null
                 }
             }

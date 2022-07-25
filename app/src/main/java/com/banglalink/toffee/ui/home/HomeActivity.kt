@@ -19,7 +19,6 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Xml
 import android.view.*
@@ -217,13 +216,20 @@ class HomeActivity :
             )
         )
         
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(intent)
+            viewModel.getVastTag()
+        } else {
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
                 checkChannelDetailAndUpload()
             }
         }
-        viewModel.getVastTag()
         val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
         if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""
@@ -319,7 +325,6 @@ class HomeActivity :
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
-        handleSharedUrl(intent)
         configureBottomSheet()
         observeUpload2()
         watchConnectionChange()
@@ -887,8 +892,8 @@ class HomeActivity :
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
-                        val encriptedurl =EncryptionUtil.decryptResponse(newHash).trimIndent()
-                        shareableData = gson.fromJson(encriptedurl, ShareableData::class.java)
+                        val encryptedUrl =EncryptionUtil.decryptResponse(newHash).trimIndent()
+                        shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
                         when(shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -1138,16 +1143,12 @@ class HomeActivity :
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
             }
         }
-//        try {
-//            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-//            url?.let {
-//                FwSDK.play(it)
-//                return
-//            }
-//        } catch (e: Exception) {
-//            Log.e("FwSDK", "FireworkDeeplinkPlayException")
-//        }
-        handleSharedUrl(intent)
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(intent)
+        } else {
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
     }
     
     private fun navigateToSearch(query: String?) {
