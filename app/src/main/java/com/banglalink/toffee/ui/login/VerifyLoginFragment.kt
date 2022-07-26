@@ -1,14 +1,16 @@
 package com.banglalink.toffee.ui.login
 
 import android.content.IntentFilter
+import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -165,9 +167,12 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 val remainingSecs = it / 1000
                 val minutes = (remainingSecs / 60).toInt()
                 val seconds = (remainingSecs % 60).toInt()
-                val timeText = (String.format("%02d", minutes)
-                        + ":" + String.format("%02d", seconds))
-                binding.countdownTextView.text = Html.fromHtml("Resend otp in <b>${timeText}s</b>", HtmlCompat.FROM_HTML_MODE_COMPACT)
+                val timeText = (String.format("%02d", minutes) + ":" + String.format("%02d", seconds))
+                val countDownText = String.format(getString(R.string.sign_in_countdown_text), timeText)
+                val str = SpannableString(countDownText)
+                str.setSpan(StyleSpan(Typeface.BOLD), countDownText.indexOf(timeText), countDownText.indexOf(timeText) + timeText.length, Spannable
+                    .SPAN_EXCLUSIVE_EXCLUSIVE)
+                binding.countdownTextView.text = str
             }
             
             observe(timer.finishLiveData) {
@@ -175,7 +180,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 binding.resendButton.visibility = View.VISIBLE
                 binding.countdownTextView.visibility = View.INVISIBLE
                 binding.countdownTextView.text = ""
-
+                
                 timer.finishLiveData.removeObservers(this)
                 timer.tickLiveData.removeObservers(this)
             }

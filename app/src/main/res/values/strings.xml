@@ -10,7 +10,7 @@
     <string name="sign_in_text">Sign In</string>
     <string name="without_sign_in_text">Continue without Sign In</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
-    
+    <string name="sign_in_countdown_text">Resend otp in %ss</string>   
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     
