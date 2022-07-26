@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.storage
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.text.TextUtils
 import androidx.core.content.edit
@@ -17,6 +18,7 @@ const val PREF_NAME_IP_TV = "IP_TV"
 
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
     
+    val homeIntent = MutableLiveData<Intent?>()
     val viewCountDbUrlLiveData = SingleLiveEvent<String>()
     val reactionDbUrlLiveData = SingleLiveEvent<String>()
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()

@@ -215,11 +215,15 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
-        
+        if (mPref.homeIntent.value != null) {
+            intent = mPref.homeIntent.value
+            mPref.homeIntent.value = null
+        }
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
             handleSharedUrl(intent)
             viewModel.getVastTag()
         } else {
+            mPref.homeIntent.value = intent
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
@@ -1143,9 +1147,15 @@ class HomeActivity :
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
             }
         }
+        var newIntent = intent
+        if (mPref.homeIntent.value != null) {
+            newIntent = mPref.homeIntent.value!!
+            mPref.homeIntent.value = null
+        }
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
-            handleSharedUrl(intent)
+            handleSharedUrl(newIntent)
         } else {
+            mPref.homeIntent.value = newIntent
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
