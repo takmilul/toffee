@@ -286,6 +286,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     return null
                 }
             }
+            notificationInfoRepository.getLastNotification()?.let {
+                if (it.title == title && it.content == content && it.imageUrl == imageUrl && it.resourceUrl == resourceUrl) {
+                    return null
+                }
+            }
             val notificationStyle = if (notificationType?.equals(LARGE.type, ignoreCase = true) == true) {
                 NotificationCompat.BigPictureStyle().bigPicture(imageDrawable?.toBitmap())
             } else {
