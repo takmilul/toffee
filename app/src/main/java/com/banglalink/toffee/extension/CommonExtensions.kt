@@ -34,7 +34,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
-private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,4}$"
+private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]{1,256}+@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}+\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25}+(?:\\.[a-zA-Z]{1,4})?$"
 private const val ADDRESS_PATTERN = ""
 private const val DESCRIPTION_PATTERN = ""
 private const val PHONE_PATTERN = "^(?:\\+8801|01)(\\d{9})$"

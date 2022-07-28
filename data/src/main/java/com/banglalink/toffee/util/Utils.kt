@@ -522,9 +522,10 @@ object Utils {
 
     private fun viewCountFormat(count: Long): String {
         if (count < 1000) return "" + count
-        val exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
+        var exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
         val format = DecimalFormat("0.#")
         val value = format.format(count / Math.pow(1000.0, exp.toDouble()))
+        if (exp > 5) exp = 1
         return String.format("%s%c", value, "kMBTPE"[exp - 1])
     }
     

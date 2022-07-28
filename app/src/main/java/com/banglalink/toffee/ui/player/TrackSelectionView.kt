@@ -212,13 +212,17 @@ class TrackSelectionView @JvmOverloads constructor(
                 trackViews.last()?.isVisible = true
             }
         }
-        val sortedProfileList = trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }
+        val sortedProfileList = trackViews.sortedByDescending {
+            it?.let {
+                if(it.tag is Triple<*, *, *>) (it.tag as Triple<Int, Int, Int>).third else null
+            }
+        }
         sortedProfileList.forEachIndexed { index, it ->
-            if (index > 0) {
+            if (it != null && it.tag is Triple<*, *, *> && index > 0) {
                 // get the current profile of the list and the immediate top and bottom profile and compare
                 val previousProfile: String = sortedProfileList[index-1]!!.text.toString()
-                val previousProfileBitRate: Int = (sortedProfileList[index-1]!!.tag as Triple<Int, Int, Int>).third
-                val currentBitRate: Int = (it!!.tag as Triple<Int, Int, Int>).third
+                val previousProfileBitRate: Int = (sortedProfileList[index-1]?.tag as Triple<Int, Int, Int>).third
+                val currentBitRate: Int = (it.tag as Triple<Int, Int, Int>).third
                 val nextProfile = sortedProfileList.getOrNull(index + 1)?.text?.toString()
                 val nextProfileBitRate = sortedProfileList.getOrNull(index + 1)?.tag?.run { (this as Triple<Int, Int, Int>).third } ?: 0
                 val hasDuplicateNext = nextProfile != null && nextProfileBitRate < currentBitRate
