@@ -158,7 +158,9 @@ data class ChannelInfo(
     @SerializedName("plain_hls_url_for_url_type")
     val paidPlainHlsUrl: String? = null,
     @SerializedName("data_source")
-    val dataSource: String? = "iptv_programs"
+    val dataSource: String? = "iptv_programs",
+    @SerializedName("totalCount")
+    var totalCount: Int = 0
 ) :Parcelable {
     
     @get:SerializedName("isApproved")

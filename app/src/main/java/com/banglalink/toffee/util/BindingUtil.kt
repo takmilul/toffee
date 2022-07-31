@@ -402,7 +402,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     fun setDescription(view: ReadMoreTextView, item: ChannelInfo?) {
         view.text = ""
         item?.let {
-            view.text = it.getDescriptionDecoded()
+            it.getDescriptionDecoded()?.let {
+                view.text = it
+            }
         }
     }
     

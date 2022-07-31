@@ -144,7 +144,7 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.2'
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
@@ -241,7 +241,7 @@ dependencies {
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-    implementation 'com.google.android.gms:play-services-ads:21.0.0'
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
     implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
     implementation('com.google.guava:guava:31.0.1-android')
     

@@ -19,12 +19,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object NetworkModule {
-
+    
     private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //    private const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
 //    private const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
 //    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
-
+    
     @Provides
     @Singleton
     fun providesToffeeConfig(): ToffeeConfig {
@@ -32,7 +32,7 @@ object NetworkModule {
             toffeeBaseUrl = TOFFEE_BASE_URL
         )
     }
-
+    
     @Provides
     @Singleton
     @CoilCache
@@ -54,5 +54,16 @@ object NetworkModule {
                 mPref.customerId +
                 "/" +
                 cPref.deviceId
+    }
+    
+    @Provides
+    @ApiHeader
+    fun providesApiHeader(): String {
+        return "Toffee" +
+                "/" +
+                BuildConfig.VERSION_NAME +
+                " (Linux;Android " +
+                Build.VERSION.RELEASE +
+                ") "
     }
 }

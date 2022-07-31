@@ -196,8 +196,7 @@ class TrackSelectionView @JvmOverloads constructor(
                     trackView.isVisible = false
                     invisibleProfileCount++
                 }
-                val profile = format.height.toString()
-//                Log.i(PLAYER_EVENT_TAG, "updateViews: $profile")
+                val profile = "${format.height}p"
                 trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.isFocusable = true
@@ -213,22 +212,24 @@ class TrackSelectionView @JvmOverloads constructor(
                 trackViews.last()?.isVisible = true
             }
         }
-        val sortedProfileList = trackViews.sortedByDescending { (it!!.tag as Triple<Int, Int, Int>).third }
+        val sortedProfileList = trackViews.sortedByDescending {
+            it?.let {
+                if(it.tag is Triple<*, *, *>) (it.tag as Triple<Int, Int, Int>).third else null
+            }
+        }
         sortedProfileList.forEachIndexed { index, it ->
-            if (index > 0) {
-                val previousProfile: String = sortedProfileList[index-1]!!.text.toString().substringBefore("p")
-                val previousBitRate: Int = (sortedProfileList[index-1]!!.tag as Triple<Int, Int, Int>).third
-                val currentBitRate: Int = (it!!.tag as Triple<Int, Int, Int>).third
-                val hasDuplicateNext = sortedProfileList.getOrNull(index + 1) != null
+            if (it != null && it.tag is Triple<*, *, *> && index > 0) {
+                // get the current profile of the list and the immediate top and bottom profile and compare
+                val previousProfile: String = sortedProfileList[index-1]!!.text.toString()
+                val previousProfileBitRate: Int = (sortedProfileList[index-1]?.tag as Triple<Int, Int, Int>).third
+                val currentBitRate: Int = (it.tag as Triple<Int, Int, Int>).third
+                val nextProfile = sortedProfileList.getOrNull(index + 1)?.text?.toString()
+                val nextProfileBitRate = sortedProfileList.getOrNull(index + 1)?.tag?.run { (this as Triple<Int, Int, Int>).third } ?: 0
+                val hasDuplicateNext = nextProfile != null && nextProfileBitRate < currentBitRate
                 
-                it.text = it.text.toString().plus(if (it.text == previousProfile && currentBitRate < previousBitRate && 
-                    !hasDuplicateNext) {
-                    " (Data Saver)"
-                } else {
-                    "p"
-                })
-            } else {
-                it!!.text = it.text.toString().plus("p")
+                if (it.text == previousProfile && currentBitRate < previousProfileBitRate && !hasDuplicateNext) {
+                    it.text = it.text.toString().plus(" (Data Saver)")
+                }
             }
             addView(it)
         }

@@ -25,7 +25,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
 
     private lateinit var searchKey: String
     override val itemMargin: Int = 12
-    override val verticalPadding = Pair(16, 16)
+//    override val verticalPadding = Pair(16, 16)
     private var currentItem: ChannelInfo? = null
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var factory: SearchViewModel.AssistedFactory

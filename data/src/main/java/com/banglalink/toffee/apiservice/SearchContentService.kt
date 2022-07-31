@@ -39,6 +39,7 @@ class SearchContentService @AssistedInject constructor(
             } catch (e: Exception) {
                 false
             }
+            it.totalCount = response.response.totalCount
             localSync.syncData(it)
             it
         } ?: emptyList()

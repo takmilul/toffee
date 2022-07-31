@@ -10,7 +10,7 @@
     <string name="sign_in_text">Sign In</string>
     <string name="without_sign_in_text">Continue without Sign In</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
-    
+    <string name="sign_in_countdown_text">Resend OTP in %ss</string>   
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     
@@ -394,7 +394,7 @@
     <string name="txt_video_format">Video Format</string>
     <string name="txt_video_format_msg">Only MP4 video format is supported</string>
     <string name="txt_video_length">Video Length</string>
-    <string name="txt_video_length_msg">Accepted video length is between 10 second and 2 hours</string>
+    <string name="txt_video_length_msg">Accepted video length is between 10 second and 4 hours</string>
     <string name="featured_partner_banner">featured partner banner</string>
     <string name="empty_copyright_file_msg">Please choose a copyright file</string>
     <string name="file_size_title">File Size</string>
@@ -443,4 +443,6 @@
     <string name="alert_redeem_invalid_reason_2">An attempt to avail referral code benefits \n more than once</string>
     <string name="ad_attribution">Ad</string>
     <string name="subscribers">subscribers</string>
+    <string name="upload_vod_requirement_title">Select mp4 file</string>
+    <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
 </resources>

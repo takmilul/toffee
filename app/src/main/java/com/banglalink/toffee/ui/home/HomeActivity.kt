@@ -21,7 +21,6 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Rational
 import android.util.Xml
@@ -220,6 +219,18 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
+        if (mPref.homeIntent.value != null) {
+            intent = mPref.homeIntent.value
+            mPref.homeIntent.value = null
+        }
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(intent)
+            viewModel.getVastTag()
+        } else {
+            mPref.homeIntent.value = intent
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
@@ -227,7 +238,6 @@ class HomeActivity :
                 checkChannelDetailAndUpload()
             }
         }
-        viewModel.getVastTag()
         val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
         if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""
@@ -323,7 +333,6 @@ class HomeActivity :
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
-        handleSharedUrl(intent)
         configureBottomSheet()
         observeUpload2()
         watchConnectionChange()
@@ -892,8 +901,8 @@ class HomeActivity :
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
-                        val encriptedurl =EncryptionUtil.decryptResponse(newHash).trimIndent()
-                        shareableData = gson.fromJson(encriptedurl, ShareableData::class.java)
+                        val encryptedUrl =EncryptionUtil.decryptResponse(newHash).trimIndent()
+                        shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
                         when(shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -1121,10 +1130,10 @@ class HomeActivity :
     
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            query?.let { handleVoiceSearchEvent(it) }
-        }
+//        if (Intent.ACTION_SEARCH == intent.action) {
+//            val query = intent.getStringExtra(SearchManager.QUERY)
+//            query?.let { handleVoiceSearchEvent(it) }
+//        }
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
@@ -1143,16 +1152,18 @@ class HomeActivity :
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
             }
         }
-//        try {
-//            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-//            url?.let {
-//                FwSDK.play(it)
-//                return
-//            }
-//        } catch (e: Exception) {
-//            Log.e("FwSDK", "FireworkDeeplinkPlayException")
-//        }
-        handleSharedUrl(intent)
+        var newIntent = intent
+        if (mPref.homeIntent.value != null) {
+            newIntent = mPref.homeIntent.value!!
+            mPref.homeIntent.value = null
+        }
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(newIntent)
+        } else {
+            mPref.homeIntent.value = newIntent
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
     }
     
     private fun navigateToSearch(query: String?) {
@@ -1166,15 +1177,15 @@ class HomeActivity :
         })
     }
     
-    private fun handleVoiceSearchEvent(query: String) {
-        if (!TextUtils.isEmpty(query)) {
-            navigateToSearch(query)
-        }
-        if (searchView != null) {
-            searchView!!.setQuery(query.lowercase(), false)
-            searchView!!.clearFocus()
-        }
-    }
+//    private fun handleVoiceSearchEvent(query: String) {
+//        if (!TextUtils.isEmpty(query)) {
+//            navigateToSearch(query)
+//        }
+//        if (searchView != null) {
+//            searchView!!.setQuery(query.lowercase(), false)
+//            searchView!!.clearFocus()
+//        }
+//    }
     
     private fun handlePackageSubscribe() {
         //Clean up stack upto landingPageFragment inclusive
@@ -1901,8 +1912,8 @@ class HomeActivity :
         val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
         
-        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
-        mic.setImageResource(R.drawable.ic_menu_microphone)
+//        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
+//        mic.setImageResource(R.drawable.ic_menu_microphone)
         
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
         close.setImageResource(R.drawable.ic_close)
