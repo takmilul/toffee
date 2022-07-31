@@ -54,6 +54,21 @@
                 </RelativeLayout>
             </FrameLayout>
             
+            <FrameLayout
+                android:id="@+id/searchOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/tbar"
+                android:visibility="gone"
+                android:layout_marginBottom="?attr/actionBarSize">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </FrameLayout>
+            
             <com.banglalink.toffee.ui.widget.DraggerLayout
                 android:id="@+id/draggable_view"
                 android:layout_width="match_parent"
