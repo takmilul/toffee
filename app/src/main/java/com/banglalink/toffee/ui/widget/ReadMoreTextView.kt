@@ -1,13 +1,17 @@
 package com.banglalink.toffee.ui.widget
 
+
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.media.session.PlaybackState
+import android.os.Bundle
 import android.text.Layout.Alignment.ALIGN_CENTER
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
+import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.text.style.AlignmentSpan.Standard
 import android.text.style.ClickableSpan
@@ -15,11 +19,23 @@ import android.text.style.MetricAffectingSpan
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.ui.player.PlayerPageActivity
+import com.banglalink.toffee.ui.search.SearchFragment
+import com.google.android.exoplayer2.Player
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     private var mainText: CharSequence? = null
     private var bufferType: BufferType? = null
@@ -70,9 +86,62 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         viewMoreSpan = ReadMoreClickableSpan()
     }
 
+    private var textWatcher: TextWatcher? = null
+
+    private val hashTagColor: Int = ContextCompat.getColor(context, R.color.colorAccent)
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 //        Log.i(TAG, "onAttachedToWindow: ")
+        textWatcher = addTextChangedListener {
+            val text = it?.toString() ?: return@addTextChangedListener
+            if(text.isBlank()) return@addTextChangedListener
+//            if(text.isBlank() || !text.last().isWhitespace()) return@addTextChangedListener
+            var startIndex = 0
+            val wordList = text.split("\\s+".toRegex())
+//            Log.e("EDIT", wordList.toString())
+            for(word in wordList) {
+                if(word.startsWith("#")) {
+                    val windex = text.indexOf(word, startIndex)
+                    val separated = word.split("#").toTypedArray()
+                    val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                        override fun onClick(textView: View) {
+                            //Toast.makeText(context, separated[1], Toast.LENGTH_LONG).show()
+                            val fragment = this@ReadMoreTextView.findFragment<Fragment>()
+                            fragment.findNavController().navigate(R.id.searchFragment, Bundle().apply {
+                                putString(SearchFragment.SEARCH_KEYWORD, separated[1])
+                            })
+                        }
+                    }
+                    it.setSpan(
+                        clickableSpan,
+                        windex,
+                        windex + word.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    startIndex = windex + word.length
+                }
+                if(word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
+                    val windex = text.indexOf(word, startIndex)
+                    val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                        override fun onClick(textView: View) {
+                            //Toast.makeText(context, word, Toast.LENGTH_LONG).show()
+                            val fragment = this@ReadMoreTextView.findFragment<Fragment>()
+                            fragment.findNavController().navigate(R.id.htmlPageViewDialogInApp, Bundle().apply {
+                                putString("myTitle", word)
+                                putString("url", word)
+                            })
+                        }
+                    }
+                    it.setSpan(
+                        clickableSpan,
+                        windex,
+                        windex + word.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+        }
         onGlobalLayoutLineEndIndex()
     }
 
@@ -123,7 +192,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
 
     private fun setText() {
 //        Log.i(TAG, "setText-main: ${getTrimmedText()}")
-        getTrimmedText()?.let { 
+        getTrimmedText()?.let {
             super.setText(it, bufferType)
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.RED
@@ -132,8 +201,8 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
 
     override fun setText(text: CharSequence, type: BufferType) {
 //        Log.i(TAG, "setText: ")
-//        this.mainText = text
-        this.mainText = text.toString().trim()/*.replace("\n".toRegex(), " ")*/
+        this.mainText = text
+        //this.mainText = text.toString().trim()/*.replace("\n".toRegex(), " ")*/
         bufferType = type
         setText()
     }
@@ -178,7 +247,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             }
             TRIM_MODE_LENGTH -> trimEndIndex = trimLength + 1
         }
-        mainText?.let { 
+        mainText?.let {
             if (it.length > trimEndIndex) {
                 val spannableText = SpannableStringBuilder(it, 0, trimEndIndex)
                     .append(ELLIPSIZE)

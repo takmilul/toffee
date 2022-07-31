@@ -236,7 +236,11 @@ data class ChannelInfo(
 
     fun getDescriptionDecoded(): Spanned? {
         return try {
-            HtmlCompat.fromHtml(String(Base64.decode(description, Base64.NO_WRAP)), HtmlCompat.FROM_HTML_MODE_LEGACY)
+//            Log.i("description_", "getDescriptionDecoded: ${String(Base64.decode(description, Base64.NO_WRAP))} ")
+            HtmlCompat.fromHtml(String(Base64.decode(description, Base64.NO_WRAP))
+                .trim()
+                .replace("\n", "<br/>"),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
         } catch (ex: Exception) {
             null
         }
