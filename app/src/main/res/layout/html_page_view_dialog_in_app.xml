@@ -62,8 +62,10 @@
                     android:layout_toStartOf="@+id/share"
                     android:layout_toEndOf="@+id/close_iv"
                     android:fontFamily="@font/roboto_medium"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/cardTitleColor"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     tools:ignore="RelativeOverlap"
                     tools:text="Title" />
 
