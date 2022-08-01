@@ -22,7 +22,7 @@ buildscript {
         gradlePluginVersion = '7.2.1'
         facebookSdkVersion = '13.1.0'
         firebaseCoreVersion = '19.0.2'
-        kotlinCoroutineVersion = '1.6.3'
+        kotlinCoroutineVersion = '1.6.1-native-mt'
         googleApiClientVersion = '1.34.1'
         pubsubVersion = 'v1-rev452-1.25.0'
         convivaExoPlayerVersion = '4.0.12'
