@@ -1,11 +1,9 @@
 package com.banglalink.toffee.ui.widget
 
-
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.media.session.PlaybackState
 import android.os.Bundle
 import android.text.Layout.Alignment.ALIGN_CENTER
 import android.text.SpannableStringBuilder
@@ -19,40 +17,37 @@ import android.text.style.MetricAffectingSpan
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.search.SearchFragment
-import com.google.android.exoplayer2.Player
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
-    private var mainText: CharSequence? = null
-    private var bufferType: BufferType? = null
+    private var trimMode: Int
+    private var trimLines: Int
     private var readMore = true
     private var trimLength: Int
-    private var trimCollapsedText: CharSequence
-    private var trimExpandedText: CharSequence
-    private val viewMoreSpan: ReadMoreClickableSpan
-    private var colorClickableText: Int
+    private var lineEndIndex = 0
     private var trimTextSize: Float
+    private var colorClickableText: Int
     private var trimFont: Typeface? = null
     private val showTrimExpandedText: Boolean
-    private var trimMode: Int
-    private var lineEndIndex = 0
-    private var trimLines: Int
-
+    private var mainText: CharSequence? = null
+    private var bufferType: BufferType? = null
+    private var trimExpandedText: CharSequence
+    private var trimCollapsedText: CharSequence
+    private var textWatcher: TextWatcher? = null
+    private val viewMoreSpan: ReadMoreClickableSpan
+    
     val TAG = "READ_"
+    
     companion object {
         private const val TRIM_MODE_LINES = 0
         private const val TRIM_MODE_LENGTH = 1
@@ -62,7 +57,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         private const val DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true
         private const val ELLIPSIZE = "... "
     }
-
+    
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ReadMoreTextView)
         val fontId = typedArray.getResourceId(R.styleable.ReadMoreTextView_readMoreFontFamily, 0)
@@ -78,30 +73,25 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_readMoreMode, TRIM_MODE_LINES)
         trimFont = try {
             ResourcesCompat.getFont(context, fontId)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
         }
         typedArray.recycle()
         viewMoreSpan = ReadMoreClickableSpan()
     }
-
-    private var textWatcher: TextWatcher? = null
-
-    private val hashTagColor: Int = ContextCompat.getColor(context, R.color.colorAccent)
-
+    
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 //        Log.i(TAG, "onAttachedToWindow: ")
         textWatcher = addTextChangedListener {
             val text = it?.toString() ?: return@addTextChangedListener
-            if(text.isBlank()) return@addTextChangedListener
+            if (text.isBlank()) return@addTextChangedListener
 //            if(text.isBlank() || !text.last().isWhitespace()) return@addTextChangedListener
             var startIndex = 0
             val wordList = text.split("\\s+".toRegex())
 //            Log.e("EDIT", wordList.toString())
-            for(word in wordList) {
-                if(word.startsWith("#")) {
+            for (word in wordList) {
+                if (word.startsWith("#")) {
                     val windex = text.indexOf(word, startIndex)
                     val separated = word.split("#").toTypedArray()
                     val clickableSpan: ClickableSpan = object : ClickableSpan() {
@@ -113,15 +103,10 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                             })
                         }
                     }
-                    it.setSpan(
-                        clickableSpan,
-                        windex,
-                        windex + word.length,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    it.setSpan(clickableSpan, windex, windex + word.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     startIndex = windex + word.length
                 }
-                if(word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
+                if (word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
                     val windex = text.indexOf(word, startIndex)
                     val clickableSpan: ClickableSpan = object : ClickableSpan() {
                         override fun onClick(textView: View) {
@@ -133,43 +118,38 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                             })
                         }
                     }
-                    it.setSpan(
-                        clickableSpan,
-                        windex,
-                        windex + word.length,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    it.setSpan(clickableSpan, windex, windex + word.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             }
         }
         onGlobalLayoutLineEndIndex()
     }
-
+    
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
 //        Log.i(TAG, "onDetachedFromWindow: ")
         viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
     }
-
+    
     private val globalLayoutListener = object : OnGlobalLayoutListener {
         override fun onGlobalLayout() {
 //            Log.i(TAG, "onGlobalLayout: $lineCount")
             val obs = viewTreeObserver
             if (lineCount > 0 && measuredHeight > 0 && measuredWidth > 0) {
                 obs.removeOnGlobalLayoutListener(this)
-            refreshLineEndIndex()
-            setText()
+                refreshLineEndIndex()
+                setText()
             }
         }
     }
-
+    
     private fun onGlobalLayoutLineEndIndex() {
 //        Log.i(TAG, "onGlobalLayoutLineEndIndex: ")
         if (trimMode == TRIM_MODE_LINES) {
             viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
     }
-
+    
     private fun refreshLineEndIndex() {
         try {
             lineEndIndex = when (trimLines) {
@@ -184,12 +164,11 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                 }
             }
 //            Log.i(TAG, "refreshLineEndIndex: ${layout.lineCount}")
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
-
+    
     private fun setText() {
 //        Log.i(TAG, "setText-main: ${getTrimmedText()}")
         getTrimmedText()?.let {
@@ -198,23 +177,22 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             highlightColor = Color.RED
         }
     }
-
+    
     override fun setText(text: CharSequence, type: BufferType) {
 //        Log.i(TAG, "setText: ")
-        this.mainText = text
-        //this.mainText = text.toString().trim()/*.replace("\n".toRegex(), " ")*/
+        this.mainText = text.trim()
+//        this.mainText = text.toString().trim()/*.replace("\n".toRegex(), " ")*/
         bufferType = type
         setText()
     }
-
+    
     private fun getTrimmedText(): CharSequence? {
 //        Log.i(TAG, "getTrimmedText: ")
         if (trimMode == TRIM_MODE_LENGTH) {
-            if (!mainText.isNullOrBlank() && mainText?.length?:0 > trimLength) {
+            if (!mainText.isNullOrBlank() && mainText?.length ?: 0 > trimLength) {
                 return if (readMore) {
                     updateCollapsedText()
-                }
-                else {
+                } else {
                     updateExpandedText()
                 }
             }
@@ -226,8 +204,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                     if (line >= trimLines) {
                         return updateCollapsedText()
                     }
-                }
-                else {
+                } else {
                     return updateExpandedText()
                 }
             }
@@ -237,7 +214,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
 
     private fun updateCollapsedText(): CharSequence? {
 //        Log.i(TAG, "updateCollapsedText: ")
-        var trimEndIndex = mainText?.length?:0
+        var trimEndIndex = mainText?.length ?: 0
         when (trimMode) {
             TRIM_MODE_LINES -> {
                 trimEndIndex = lineEndIndex - (ELLIPSIZE.length + trimCollapsedText.length + 1)
@@ -257,16 +234,18 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         }
         return mainText
     }
-
+    
     private fun updateExpandedText(): CharSequence? {
 //        Log.i(TAG, "updateExpandedText: ")
         if (showTrimExpandedText) {
-            val s = SpannableStringBuilder(mainText, 0, mainText?.length?:0).append("\n").append(trimExpandedText.toString())
+            val s = SpannableStringBuilder(mainText, 0, mainText?.length ?: 0)
+                .append("\n")
+                .append(trimExpandedText.toString())
             return addClickableSpan(s, trimExpandedText)
         }
         return mainText
     }
-
+    
     private fun addClickableSpan(spannableText: SpannableStringBuilder, trimText: CharSequence): CharSequence {
         val startIndex = spannableText.length - trimText.length
         spannableText.setSpan(Standard(ALIGN_CENTER), startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -274,57 +253,57 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         spannableText.setSpan(viewMoreSpan, startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannableText
     }
-
+    
     private inner class ReadMoreClickableSpan : ClickableSpan() {
         override fun onClick(widget: View) {
             readMore = !readMore
             setText()
         }
-
+        
         override fun updateDrawState(ds: TextPaint) {
             ds.textSize = trimTextSize
             ds.color = colorClickableText
         }
     }
-
+    
     fun setTrimLength(trimLength: Int) {
         this.trimLength = trimLength
         setText()
     }
-
+    
     fun setColorClickableText(colorClickableText: Int) {
         this.colorClickableText = colorClickableText
     }
-
+    
     fun setTrimCollapsedText(trimCollapsedText: CharSequence) {
         this.trimCollapsedText = trimCollapsedText
     }
-
+    
     fun setTrimExpandedText(trimExpandedText: CharSequence) {
         this.trimExpandedText = trimExpandedText
     }
-
+    
     fun setTrimMode(trimMode: Int) {
         this.trimMode = trimMode
     }
-
+    
     fun setTrimLines(trimLines: Int) {
         this.trimLines = trimLines
     }
-
+    
     fun setTrimTextSize(textSize: Float) {
         trimTextSize = textSize
     }
-
+    
     inner class CustomTypefaceSpan(private val typeface: Typeface?) : MetricAffectingSpan() {
         override fun updateDrawState(ds: TextPaint) {
             applyCustomTypeFace(ds, typeface)
         }
-
+        
         override fun updateMeasureState(paint: TextPaint) {
             applyCustomTypeFace(paint, typeface)
         }
-
+        
         private fun applyCustomTypeFace(paint: Paint, tf: Typeface?) {
             paint.typeface = tf
         }

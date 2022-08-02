@@ -705,6 +705,9 @@ class HomeActivity :
         super.onResume()
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
+        if(Build.VERSION.SDK_INT >= 24) {
+            pipChanged(isInPictureInPictureMode)
+        }
         setPlayerInPlayerView()
         binding.playerView.resizeView(calculateScreenWidth())
         updateFullScreenState()
@@ -766,6 +769,14 @@ class HomeActivity :
         If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
         so player can't reset scale completely. Manually resetting player scale value
          */
+        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) {
+//            binding.playerView.resizeView(Point(newConfig.screenWidthDp.px, newConfig.screenHeightDp.px))
+            pipChanged(isInPictureInPictureMode)
+//            maximizePlayer()
+//            toggleNavigations(true)
+//            binding.playerView.onPip(isInPictureInPictureMode)
+            return
+        }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
@@ -801,6 +812,7 @@ class HomeActivity :
     }
     
     private fun updateFullScreenState() {
+        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) return
         val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
