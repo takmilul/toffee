@@ -2,8 +2,10 @@ package com.banglalink.toffee.ui.search
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -15,6 +17,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,12 +56,28 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     
     override fun onCreate(savedInstanceState: Bundle?) {
         searchKey = arguments?.getString(SEARCH_KEYWORD, "") ?: ""
+        (activity as HomeActivity).openSearchBarIfClose()
         super.onCreate(savedInstanceState)
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Search"
+       // activity?.title = "Search"
+        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.title = "Search"
+        toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
+        if(requireActivity() is HomeActivity) {
+            (requireActivity() as HomeActivity).openSearchBarIfClose()
+        }
+//        toolbar?.setNavigationOnClickListener {
+//            try {
+//              //  (activity as HomeActivity).closeSearchBarIfOpen()
+//                findNavController().popBackStack()
+//            }catch (e:Exception){
+//
+//            }
+//
+//        }
         observeSubscribeChannel()
     }
 
