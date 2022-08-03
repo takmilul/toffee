@@ -632,7 +632,10 @@ class HomeActivity :
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
-        closeSearchBarIfOpen()
+        if(navController.currentDestination?.id!=R.id.searchFragment){
+            closeSearchBarIfOpen()
+        }
+
         
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
@@ -673,7 +676,8 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
-        
+
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
             WindowInsetsCompat.CONSUMED
         }
@@ -684,6 +688,7 @@ class HomeActivity :
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
         binding.tabNavigator.setOnItemSelectedListener {
+            closeSearchBarIfOpen()
             when(it.itemId) {
                 R.id.menu_feed -> {
                     navController.popBackStack(R.id.menu_feed, true)
@@ -1787,10 +1792,16 @@ class HomeActivity :
         }
     }
     
-    private fun closeSearchBarIfOpen() {
+     fun closeSearchBarIfOpen() {
         if (searchView?.isIconified == false) {
             searchView?.onActionViewCollapsed()
         }
+    }
+
+    fun openSearchBarIfClose() {
+       // if (searchView?.isIconified == true) {
+            searchView?.onActionViewExpanded()
+        //}
     }
     
     override fun onUserLeaveHint() {
@@ -1932,6 +1943,13 @@ class HomeActivity :
         
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
+
+        searchIv.setOnClickListener {
+            searchView?.onActionViewExpanded()
+            if(navController.currentDestination?.id!=R.id.searchFragment) {
+                navController.navigate(R.id.searchFragment)
+            }
+        }
         
         val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
@@ -1992,6 +2010,7 @@ class HomeActivity :
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (!query.isNullOrBlank()) {
             navigateToSearch(query)
+           // openSearchBarIfClose()
             return true
         }
         return false
