@@ -17,6 +17,7 @@
     <color name="tab_background_color">#111F31</color>
     <color name="window_background">#000000</color>
     <color name="searchview_input_text_color">#FFFFFF</color>
+    <color name="searchview_hint_text_color">#6781A1</color>
     <color name="home_screen_curve_bg_color">#111F31</color>
     <color name="home_screen_curve_bg_color_light">#111F31</color>
     <color name="tab_unselected">#7F96B4</color>

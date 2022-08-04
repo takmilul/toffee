@@ -92,8 +92,12 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     }
 
     override fun getEmptyViewInfo(): Triple<Int, String?, String?> {
-        return Triple(R.drawable.ic_search_empty, "Sorry, no relevant content\n" +
-                "found with the keyword", "Try searching with another keyword ")
+        if (searchKey == ""){
+            return Triple(0, " ", " ")
+        }
+        else
+            return Triple(R.drawable.ic_search_empty, "Sorry, no relevant content\n" +
+                    "found with the keyword", "Try searching with another keyword")
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

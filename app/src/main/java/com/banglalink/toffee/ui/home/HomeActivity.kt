@@ -22,6 +22,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Rational
 import android.util.Xml
 import android.view.*
@@ -1916,7 +1917,8 @@ class HomeActivity :
         }
         return super.onOptionsItemSelected(item)
     }
-    
+    lateinit var close:ImageView
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)
@@ -1927,10 +1929,10 @@ class HomeActivity :
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setIconifiedByDefault(true)
         }
-        searchView?.setOnCloseListener {
-            navController.popBackStack(R.id.searchFragment, true)
-            false
-        }
+//        searchView?.setOnCloseListener {
+//            navController.popBackStack(R.id.searchFragment, true)
+//            false
+//        }
         
         val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
@@ -1938,8 +1940,11 @@ class HomeActivity :
 //        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
 //        mic.setImageResource(R.drawable.ic_menu_microphone)
         
-        val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
-        close.setImageResource(R.drawable.ic_close)
+        close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
+        close.updateLayoutParams {
+            width = 0.toPx(this@HomeActivity)
+            height = 0.toPx(this@HomeActivity)
+        }
         
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
@@ -1947,30 +1952,50 @@ class HomeActivity :
         searchIv.setOnClickListener {
             searchView?.onActionViewExpanded()
             if(navController.currentDestination?.id!=R.id.searchFragment) {
-                navController.navigate(R.id.searchFragment)
+                navController.navigate(R.id.searchFragment, Bundle().apply {
+                    putString(SearchFragment.SEARCH_KEYWORD, "")
+                })
             }
         }
         
         val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
         
-        val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
+        val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(R.id.search_src_text)
+
         searchAutoComplete.apply {
-            textSize = 18f
+            textSize = 16f
             setTextColor(
                 ContextCompat.getColor(
-                    this@HomeActivity, R.color.searchview_input_text_color
+                    context, R.color.searchview_input_text_color
                 )
             )
-            background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
-            hint = null
-            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_search, 0)
-            
+            background = ContextCompat.getDrawable(context, R.drawable.searchview_input_bg)
+            hint = "Search"
+            setHintTextColor(resources.getColor(R.color.searchview_hint_text_color));
+            compoundDrawablePadding = 10
             addTextChangedListener { text ->
-                val rightIcon = if (text?.length ?: 0 <= 0) R.drawable.ic_menu_search else 0
+                val leftIcon = R.drawable.ic_search_new
+                val rightIcon = if (text?.length ?: 0 <= 0) 0 else R.drawable.ic_clear_search
                 if (compoundPaddingRight != rightIcon) {
-                    setCompoundDrawablesWithIntrinsicBounds(0, 0, rightIcon, 0)
+                    setCompoundDrawablesWithIntrinsicBounds(leftIcon, 0, rightIcon, 0)
                 }
+                searchAutoComplete.setOnTouchListener(View.OnTouchListener { v, event ->
+                    val DRAWABLE_LEFT = 0
+                    val DRAWABLE_TOP = 1
+                    val DRAWABLE_RIGHT = 2
+                    val DRAWABLE_BOTTOM = 3
+                    if (event.action == MotionEvent.ACTION_UP) {
+                        if (searchAutoComplete.compoundDrawables[DRAWABLE_RIGHT] != null ){
+                            if (event.rawX >= searchAutoComplete.right - searchAutoComplete.compoundDrawables[DRAWABLE_RIGHT].bounds.width()) {
+                                searchAutoComplete.setText("")
+                                setCompoundDrawablesWithIntrinsicBounds(leftIcon, 0, 0, 0)
+                                return@OnTouchListener true
+                            }
+                        }
+                    }
+                    false
+                })
             }
         }
         
@@ -2006,7 +2031,7 @@ class HomeActivity :
         observeNotification()
         return true
     }
-    
+    fun Int.toPx(context: Context) = this * context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (!query.isNullOrBlank()) {
             navigateToSearch(query)
@@ -2017,6 +2042,7 @@ class HomeActivity :
     }
     
     override fun onQueryTextChange(newText: String?): Boolean {
+        close.hide()
         return false
     }
     

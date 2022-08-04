@@ -50,6 +50,7 @@
     <color name="lightGray">#e0e0e0</color>
     <color name="searchBarBgColor">#F2F2F2</color>
     <color name="searchview_input_text_color">#29466B</color>
+    <color name="searchview_hint_text_color">#6781A1</color>
     <color name="tab_unselected">#29466B</color>
 
     <color name="state_background_color">#BDBDBD</color>

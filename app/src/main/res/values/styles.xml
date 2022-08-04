@@ -28,6 +28,7 @@
         <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="android:textColor">@color/cardTitleColor</item>
         <item name="colorBackgroundFloating">@color/cardBgColor</item>
+        <item name="android:listDivider">@color/listDividerDark</item>
         <item name="android:autofilledHighlight">@android:color/transparent</item>
     </style>
     
