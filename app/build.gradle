@@ -99,7 +99,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'net.gotev:uploadservice:4.7.0'
     implementation 'net.gotev:uploadservice-okhttp:4.7.0'
-    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
+    implementation 'androidx.core:core-splashscreen:1.0.0'
     
     //Compose
 //    implementation "androidx.compose.runtime:runtime:$composeVersion"
@@ -144,7 +144,7 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.2'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"

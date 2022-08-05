@@ -22,8 +22,7 @@ class SendHeartBeat @Inject constructor(
     
     private val gson = Gson()
     
-    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = 
-        true) {
+    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = true) {
         withContext(Dispatchers.IO) {
             if (sendToPubSub) {
                 sendToPubSub(contentId, contentType, dataSource, ownerId)

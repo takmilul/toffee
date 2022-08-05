@@ -1,13 +1,11 @@
 package com.banglalink.toffee.di
 
 import android.content.Context
-import android.os.Build
 import coil.util.CoilUtils
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.google.android.exoplayer2.ExoPlayerLibraryInfo
+import com.google.android.exoplayer2.util.Util
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,14 +40,8 @@ object NetworkModule {
     
     @Provides
     @ToffeeHeader
-    fun providesToffeeHeader(mPref: SessionPreference, cPref: CommonPreference): String {
-        return "Toffee" +
-                "/" +
-                BuildConfig.VERSION_NAME +
-                " (Linux;Android " +
-                Build.VERSION.RELEASE +
-                ") " +
-                ExoPlayerLibraryInfo.VERSION_SLASHY +
+    fun providesToffeeHeader(@ApplicationContext context: Context, mPref: SessionPreference, cPref: CommonPreference): String {
+        return Util.getUserAgent(context, "Toffee") +
                 "/" +
                 mPref.customerId +
                 "/" +
@@ -58,12 +50,7 @@ object NetworkModule {
     
     @Provides
     @ApiHeader
-    fun providesApiHeader(): String {
-        return "Toffee" +
-                "/" +
-                BuildConfig.VERSION_NAME +
-                " (Linux;Android " +
-                Build.VERSION.RELEASE +
-                ") "
+    fun providesApiHeader(@ApplicationContext context: Context): String {
+        return Util.getUserAgent(context, "Toffee")
     }
 }

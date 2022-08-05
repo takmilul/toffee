@@ -96,15 +96,15 @@ abstract class PlayerPageActivity :
     OnPlayerControllerChangedListener
 {
     private var startWindow = 0
+    private var maxBitRate: Int = 0
     private var playCounter: Int = -1
     private var startAutoPlay = false
-    private var reloadCounter: Int = 0
     private var retryCounter: Int = 0
-    private var fallbackCounter: Int = 0
+    private var reloadCounter: Int = 0
     private var startPosition: Long = 0
+    private var fallbackCounter: Int = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
-    private var maxBitRate: Int = 0
     @Inject lateinit var pingTool: PingTool
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -119,6 +119,7 @@ abstract class PlayerPageActivity :
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    private val playerViewModel by viewModels<PlayerViewModel>()
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -126,7 +127,6 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
-    private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
     init {
@@ -172,7 +172,7 @@ abstract class PlayerPageActivity :
         heartBeatManager.heartBeatEventLiveData.observe(this) {
             playerAnalyticsListener?.let {
                 //In every heartbeat event we are sending bandwitdh data to Pubsub
-                Log.i("PLAYER BYTES", "Flushing to pubsub")
+//                Log.i("PLAYER BYTES", "Flushing to pubsub")
                 playerViewModel.reportBandWidthFromPlayerPref(
                     it.durationInSeconds, it.getTotalBytesInMB()
                 )
@@ -722,6 +722,11 @@ abstract class PlayerPageActivity :
     private var playChannelJob: Job? = null
     
     private fun playChannel(isReload: Boolean) {
+        if (!isReload) {
+            retryCounter = 0
+            reloadCounter = 0
+            fallbackCounter = 0
+        }
         playChannelJob?.cancel()
         Log.i("DRM_T", "New play request")
         playChannelJob = playChannelImpl(isReload)
@@ -779,7 +784,7 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.setVastTagUrl(vastTag)
                 if (shouldPlayAd && vastTag.isNotBlank()) {
                     mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-                    currentlyPlayingVastUrl = tag.url
+                    currentlyPlayingVastUrl = vastTag
                 }
             }
         
@@ -1162,8 +1167,7 @@ abstract class PlayerPageActivity :
                 } else if (mPref.isFallbackActive && fallbackCounter < retryCount) {
                     fallbackCounter++
                     val channelInfo = playlistManager.getCurrentChannel()
-                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())
-                    ) {
+                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
                     } else {
                         val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
@@ -1205,8 +1209,10 @@ abstract class PlayerPageActivity :
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            if (isPlaying && reloadCounter > 0) {
-                ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+            if (isPlaying) {
+                if (reloadCounter > 1 || retryCounter > 1 || fallbackCounter > 1) {
+                    ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+                }
                 retryCounter = 0
                 reloadCounter = 0
                 fallbackCounter = 0
@@ -1235,9 +1241,7 @@ abstract class PlayerPageActivity :
                 } else {
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
                 }
-                Log.i(
-                    "PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
-                )
+                Log.i("PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB")
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
