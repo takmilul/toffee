@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ApiHeader
+import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
@@ -24,7 +25,8 @@ import javax.inject.Singleton
 class AuthInterceptor @Inject constructor(
     private val mPref: SessionPreference,
     private val iGetMethodTracker: IGetMethodTracker,
-    @ApiHeader private val headerProvider: Provider<String>,
+    @ApiHeader private val apiUserAgent: Provider<String>,
+    @ToffeeHeader private val playerUserAgent: Provider<String>
 ) : Interceptor {
     
     @Throws(IOException::class)
@@ -40,9 +42,11 @@ class AuthInterceptor @Inject constructor(
             builder.addEncoded("data", string)
         }
         
+//        Log.i("Agent", "apiAgent: ${System.getProperty("http.agent")}\n\n")
+        val userAgent = if (request.url.toString().contains("bl-he")) System.getProperty("http.agent") ?: apiUserAgent.get() else playerUserAgent.get()
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("User-Agent", headerProvider.get())
+            .addHeader("User-Agent", userAgent)
             .method(if (convertToGet) "GET" else "POST", if (convertToGet) null else builder.build()).apply {
                 if (mPref.shouldOverrideBaseUrl) {
                     url(request.url.toUrl().toString().overrideUrl(mPref.overrideBaseUrl))

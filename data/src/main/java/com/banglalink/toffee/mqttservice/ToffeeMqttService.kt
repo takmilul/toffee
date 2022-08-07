@@ -72,8 +72,8 @@ class ToffeeMqttService @Inject constructor(
             }
         }
         catch (e: Exception) {
-            ToffeeAnalytics.logBreadCrumb("exception when creating mqtt -> ${e.message}")
-            Log.e("MQ_", "initializationError: ${e.message}")
+            ToffeeAnalytics.logBreadCrumb("exception when creating mqtt -> ${e.cause}")
+            Log.e("MQ_", "initializationError: ${e.cause}")
         }
     }
     
@@ -138,7 +138,7 @@ class ToffeeMqttService @Inject constructor(
             }
         }
         catch (e: Exception){
-            Log.e("MQ_", "sendMessageError: ${e.message}")
+            Log.e("MQ_", "sendMessageError: ${e.cause}")
         }
     }
     
@@ -160,8 +160,8 @@ class ToffeeMqttService @Inject constructor(
 //                Log.i("MQ_", "onSuccess - subscribed: ${token?.topics}")
             }
         } catch (e: Exception) {
-            ToffeeAnalytics.logBreadCrumb("mqtt exception onsuccess -> ${e.message}")
-            Log.e("MQ_", "onSuccessError: ${e.message}")
+            ToffeeAnalytics.logBreadCrumb("mqtt exception onsuccess -> ${e.cause}")
+            Log.e("MQ_", "onSuccessError: ${e.cause}")
         }
     }
     
@@ -204,7 +204,7 @@ class ToffeeMqttService @Inject constructor(
                 }
             }
             catch (e: Exception) {
-                Log.e("MQ_", "messageArrivedError: ${e.message}")
+                Log.e("MQ_", "messageArrivedError: ${e.cause}")
             }
         }
     }
@@ -214,13 +214,13 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun onFailure(token: IMqttToken?, error: Throwable?) {
-        Log.i("MQ_", "onFailure: ${error?.message}")
-        ToffeeAnalytics.logBreadCrumb("mqtt failure -> ${error?.message}")
+        Log.i("MQ_", "onFailure: ${error?.cause}")
+        ToffeeAnalytics.logBreadCrumb("mqtt failure -> ${error?.cause}")
     }
     
     override fun connectionLost(error: Throwable?) {
         Log.i("MQ_", "connectionLost: $error")
-        ToffeeAnalytics.logBreadCrumb("mqtt connection lost -> ${error?.message}")
+        ToffeeAnalytics.logBreadCrumb("mqtt connection lost -> ${error?.cause}")
     }
     
     fun destroy() {
@@ -242,7 +242,7 @@ class ToffeeMqttService @Inject constructor(
         }
         catch (e: Exception) {
             Log.e("MQ_", "disconnectionError: $e")
-            ToffeeAnalytics.logBreadCrumb("mqtt disconnection error -> ${e.message}")
+            ToffeeAnalytics.logBreadCrumb("mqtt disconnection error -> ${e.cause}")
         }
     }
 }

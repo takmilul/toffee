@@ -703,6 +703,10 @@ class HomeActivity :
     
     override fun onResume() {
         super.onResume()
+        if (mPref.customerId == 0 || mPref.password.isBlank()) {
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
         if(Build.VERSION.SDK_INT >= 24) {

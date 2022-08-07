@@ -49,10 +49,10 @@ class HeartBeatManager @Inject constructor(
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
-    private var contentId = 0
-    private var contentType = "0"
-    private var dataSource = ""
     private var ownerId = "0"
+    private var contentId = 0
+    private var dataSource = ""
+    private var contentType = "0"
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
     private lateinit var coroutineScope3 :CoroutineScope
@@ -176,14 +176,14 @@ class HeartBeatManager @Inject constructor(
     }
     
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
-        if(mPref.customerId != 0){
+        if(mPref.customerId != 0 && mPref.password.isNotBlank()){
             try{
                 sendHeartBeat.execute(contentId, contentType, dataSource, ownerId, isNetworkSwitch, sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
-                val error =getError(e)
-
+                val error = getError(e)
+                
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
