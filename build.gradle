@@ -29,7 +29,7 @@ buildscript {
         pahoAndroidServiceVersion = '3.3.8'
         firebaseMessagingVersion = '23.0.6'
         firebaseAnalyticsVersion = '21.1.0'
-        firebaseCrashlyticsVersion = '18.2.11'
+        firebaseCrashlyticsVersion = '18.2.12'
         googleHttpClientGsonVersion = '1.41.8'
     }
 }
