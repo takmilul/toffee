@@ -134,6 +134,7 @@ import javax.inject.Inject
 const val PAYMENT = 1
 const val NON_PAYMENT = 0
 const val PLAY_IN_WEB_VIEW = 1
+const val PLAY_CDN = 3
 const val STINGRAY_CONTENT = 10
 const val PLAY_IN_NATIVE_PLAYER = 0
 const val OPEN_IN_EXTERNAL_BROWSER = 2
@@ -174,26 +175,26 @@ class HomeActivity :
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    
+
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
-    
+
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
-    
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-        
+
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
             || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
             || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
         ).not()
-        
+
         //disable screen capture
         if (isDisableScreenshot) {
             window.setFlags(
@@ -206,13 +207,13 @@ class HomeActivity :
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        
+
         setupNavController()
         initializeDraggableView()
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-        
+
         ToffeeAnalytics.logUserProperty(
             mapOf(
                 "userId" to mPref.customerId.toString(),
@@ -220,6 +221,7 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
+
         if (mPref.homeIntent.value != null) {
             intent = mPref.homeIntent.value
             mPref.homeIntent.value = null
@@ -232,7 +234,7 @@ class HomeActivity :
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
-        
+
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -356,7 +358,7 @@ class HomeActivity :
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
-        
+
         if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
@@ -366,7 +368,7 @@ class HomeActivity :
         }
 //        showDeviceId()
     }
-    
+
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
@@ -381,7 +383,7 @@ class HomeActivity :
             ConvivaHelper.init(applicationContext, true)
         }
     }
-    
+
     private fun showDeviceId() {
         ToffeeAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -400,13 +402,13 @@ class HomeActivity :
             && mPref.channelName.isNotBlank()
             && mPref.channelLogo.isNotBlank()
             && mPref.isChannelDetailChecked
-    
+
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
     }
-    
+
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -418,7 +420,7 @@ class HomeActivity :
                             mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                            
+
                             appScope.launch {
                                 val mqttDir = withContext(Dispatchers.IO + Job()) {
                                     val mqttTag = "MqttConnection"
@@ -637,8 +639,9 @@ class HomeActivity :
             maximizePlayer()
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0
-        
+
         closeSearchBarIfOpen()
+        
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
             val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
@@ -1011,21 +1014,21 @@ class HomeActivity :
             else -> url
         }
     }
-    
+
     private fun getWebPlaylistShare(url:String):String{
         val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
         val isOwner= if(ownerId==mPref.customerId) 1 else 0
         val playlistId = url.substringAfter("pl_id=").substringBefore("&").toInt()
         val playlistName = url.substringAfter("name=").substringBefore("&")
         val newUrl ="https://toffeelive.com/#video/data="
-        
+
         val sharableData = ShareableData("playlist",0,null,null,
         0, isOwner, ownerId, playlistId, playlistName)
         val json = gson.toJson(sharableData,ShareableData::class.java)
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
         return newUrl+shareableJsonData
     }
-    
+
     private fun playPlaylistShareable() {
         observe(viewModel.playlistShareableLiveData) { response ->
             when (response) {
@@ -1258,7 +1261,7 @@ class HomeActivity :
                     checkVerification {
                         when {
                             mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
-                            it.urlType == PLAY_IN_WEB_VIEW -> playInWebView(it)
+                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
                             it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
                         }
                     }
@@ -1270,6 +1273,9 @@ class HomeActivity :
                     openInExternalBrowser(it)
                 }
                 it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
+                    playInNativePlayer(detailsInfo, it)
+                }
+                it.urlType == PLAY_CDN && it.urlTypeExt == NON_PAYMENT -> {
                     playInNativePlayer(detailsInfo, it)
                 }
                 it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PAYMENT -> {
@@ -1288,6 +1294,25 @@ class HomeActivity :
                 "content_partner" to it.content_provider_name,
             )
         )
+        if(it.urlType== PLAY_CDN){
+            val isExpired = it.isContentUrlExpired(mPref.getSystemTime())
+            if(isExpired){
+                observe(viewModel.mediaCdnSignUrlData){
+                    it ?.let {mediaCdn->
+
+                       // playContent(detailsInfo, it)
+                    }
+                }
+                viewModel.getMediaCdnSignUrl(it.id)
+            }else{
+                playContent(detailsInfo, it)
+            }
+        }else {
+            playContent(detailsInfo, it)
+        }
+    }
+
+    private fun playContent(detailsInfo: Any?, it: ChannelInfo) {
         if (player is CastPlayer) {
             maximizePlayer()
         }
@@ -1808,7 +1833,7 @@ class HomeActivity :
             enterPipMode()
         }
     }
-    
+
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
@@ -1824,12 +1849,12 @@ class HomeActivity :
             )
         }
     }
-    
+
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         pipChanged(isInPictureInPictureMode)
     }
-    
+
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
@@ -1839,7 +1864,7 @@ class HomeActivity :
         }
         binding.playerView.onPip(isInPip)
     }
-    
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -1868,7 +1893,7 @@ class HomeActivity :
     } else {
         false
     }
-    
+
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -1974,7 +1999,7 @@ class HomeActivity :
                 }
             }
         }
-        searchView?.setOnQueryTextFocusChangeListener { view, isFocused -> 
+        searchView?.setOnQueryTextFocusChangeListener { view, isFocused ->
             if (isFocused) {
                 binding.searchOverlay.show()
             } else {

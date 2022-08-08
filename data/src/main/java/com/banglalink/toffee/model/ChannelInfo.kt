@@ -155,12 +155,13 @@ data class ChannelInfo(
     val fcmEventName: String? = null,
     @SerializedName("fcm_event_is_active")
     val fcm_event_is_active: Int = 0,
-    @SerializedName("plain_hls_url_for_url_type")
-    val paidPlainHlsUrl: String? = null,
     @SerializedName("data_source")
     val dataSource: String? = "iptv_programs",
     @SerializedName("totalCount")
-    var totalCount: Int = 0
+    var totalCount: Int = 0,
+    val paidPlainHlsUrl: String? = null,
+    @SerializedName("sign_url_expire")
+    val signUrlExpire: String? =null
 ) :Parcelable {
     
     @get:SerializedName("isApproved")
@@ -186,7 +187,7 @@ data class ChannelInfo(
     @get:SerializedName("isChannel")
     val isChannel: Boolean
         get() = "CHANNEL".equals(type, ignoreCase = true)
-    
+
     @get:SerializedName("isStingray")
     val isStingray: Boolean
         get() = "stingray".equals(type, ignoreCase = true)
@@ -245,7 +246,13 @@ data class ChannelInfo(
             null
         }
     }
-
+    fun isContentUrlExpired(serverDate:Date):Boolean{
+        return try {
+            serverDate.after(Utils.getDate(signUrlExpire))
+        } catch (ne: NullPointerException) {
+            true
+        }
+    }
     fun getHlsLink(): String? = hlsLinks?.get(0)?.hls_url_mobile
     
     fun getDrmUrl(isDataConnection: Boolean) = if (isDataConnection) {
