@@ -14,6 +14,7 @@ import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
 import com.banglalink.toffee.data.network.response.MqttBean
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -72,8 +73,9 @@ class HomeViewModel @Inject constructor(
     private val episodeListApi: GetShareableDramaEpisodesBySeason.AssistedFactory,
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
+    private val mediaCdnSignUrlService: MediaCdnSignUrlService,
 ) : ViewModel() {
-    
+
     val fcmToken = MutableLiveData<String>()
     val isStingray = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
@@ -90,23 +92,24 @@ class HomeViewModel @Inject constructor(
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
+    val mediaCdnSignUrlData = MutableLiveData<Resource<MediaCdnSignUrl?>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
-    
+
     init {
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        
+
         // Disable this in production.
         if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
             FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
         } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic("beta-user-detection")
         }
-        
+
         FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
@@ -120,9 +123,9 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun getPlaylistManager() = _playlistManager
-    
+
     fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {
@@ -141,19 +144,19 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun populateViewCountDb(url: String) {
         appScope.launch {
             DownloadViewCountDb(dbApi, viewCountRepository).execute(mContext, url)
         }
     }
-    
+
     fun populateReactionDb(url: String) {
         appScope.launch {
             DownloadReactionDb(dbApi, reactionDao, mPref).execute(mContext, url)
         }
     }
-    
+
     fun populateReactionStatusDb(url: String) {
         appScope.launch {
             DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
@@ -166,14 +169,14 @@ class HomeViewModel @Inject constructor(
                 .execute(mContext, url)
         }
     }
-    
+
     fun populateShareCountDb(url: String) {
         appScope.launch {
             DownloadShareCountDb(dbApi, shareCountRepository)
                 .execute(mContext, url)
         }
     }
-    
+
     private fun getProfile() {
         viewModelScope.launch {
             val respoense = resultFromResponse {
@@ -192,7 +195,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     suspend fun fetchRedirectedDeepLink(url: String?): String? {
         if (url == null) return url
         return withContext(Dispatchers.IO + Job()) {
@@ -207,13 +210,13 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun getShareableContent(shareUrl: String, type: String? = null): LiveData<Resource<ChannelInfo?>> {
         return resultLiveData {
             contentFromShareableUrl.execute(shareUrl, type)
         }
     }
-    
+
     fun sendViewContentEvent(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             try {
@@ -223,7 +226,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun addTvChannelToRecent(it: ChannelInfo) {
         viewModelScope.launch {
             tvChannelRepo.insertRecentItems(
@@ -239,11 +242,11 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-    
+
     fun getChannelDetail(channelOwnerId: Int) {
         viewModelScope.launch {
             val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
-            
+
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
@@ -262,7 +265,7 @@ class HomeViewModel @Inject constructor(
             myChannelDetailResponse.value = result
         }
     }
-    
+
     fun sendShareLog(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             sendShareCountEvent.execute(channelInfo)
@@ -274,7 +277,7 @@ class HomeViewModel @Inject constructor(
             sendCategoryChannelShareCountEvent.execute(contentType, contentId, sharedUrl)
         }
     }
-    
+
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { subscribeChannelApiService.execute(subscriptionInfo, status) }
@@ -297,18 +300,18 @@ class HomeViewModel @Inject constructor(
             subscriptionLiveData.value = response
         }
     }
-    
+
     fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean>> {
         return resultLiveData {
             val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
             updateFavorite.execute(channelInfo, favorite)
         }
     }
-    
+
     fun getMqttCredential() {
         viewModelScope.launch {
             val response = resultFromResponse { mqttCredentialService.execute() }
-            
+
             if (response is Resource.Success) {
                 mqttCredentialLiveData.postValue(response)
             } else {
@@ -325,44 +328,51 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun sendReportData(reportInfo: ReportInfo) {
         viewModelScope.launch {
             sendContentReportEvent.execute(reportInfo)
         }
     }
-    
+
     fun logoutUser() {
         viewModelScope.launch {
             val response = resultFromResponse { logoutService.execute() }
             logoutLiveData.postValue(response)
         }
     }
-    
+
     fun sendUserInterestData(interestList: Map<String, Int>) {
         viewModelScope.launch {
             sendUserInterestEvent.execute(interestList)
         }
     }
-    
+
     fun sendOtpLogData(otpLogData: OTPLogData, phoneNumber: String) {
         viewModelScope.launch {
             sendOtpLogEvent.execute(otpLogData, phoneNumber)
         }
     }
 
-    
+
     fun getPlaylistShareableVideos(shareableData: ShareableData) {
         viewModelScope.launch {
             val response = resultFromResponse { playlistShareableApiService.create(shareableData).loadData(0, 30) }
             playlistShareableLiveData.postValue(response)
         }
     }
-    
+
     fun getShareableEpisodesBySeason(shareableData: ShareableData) {
         viewModelScope.launch {
             val response = resultFromResponse { episodeListApi.create(shareableData).loadData(0, 30) }
             webSeriesShareableLiveData.postValue(response)
+        }
+    }
+
+    fun getMediaCdnSignUrl(contentId: String) {
+        viewModelScope.launch {
+            val response = resultFromResponse { mediaCdnSignUrlService.execute(contentId) }
+            mediaCdnSignUrlData.postValue(response)
         }
     }
 

@@ -11,7 +11,6 @@ class MediaCdnSignUrlService  @Inject constructor(private val pref: SessionPrefe
     suspend fun execute(contentId: String): MediaCdnSignUrl? {
         val response = tryIO2 {
             toffeeApi.getMediaCdnSignUrl(
-                "/media-cdn-sign-url",
                 MediaCdnSignUrlRequest(
                     pref.customerId.toString(),
                     pref.password,

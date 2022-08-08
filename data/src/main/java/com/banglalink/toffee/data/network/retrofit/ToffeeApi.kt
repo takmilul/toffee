@@ -420,9 +420,9 @@ interface ToffeeApi {
         @Header("DRM-API-HEADER") drmHeader: String,
         @Body drmTokenRequest: DrmTokenRequest
     ): DrmTokenResponse
-    @POST
+
+    @POST("/media-cdn-sign-url")
     suspend fun getMediaCdnSignUrl(
-        @Url url:String,
         @Body mediaCdnSignUrlRequest: MediaCdnSignUrlRequest
     ):MediaCdnSignUrlResponse
 
