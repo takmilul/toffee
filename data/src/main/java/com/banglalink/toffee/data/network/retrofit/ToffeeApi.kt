@@ -414,7 +414,12 @@ interface ToffeeApi {
         @Header("DRM-API-HEADER") drmHeader: String,
         @Body drmTokenRequest: DrmTokenRequest
     ): DrmTokenResponse
-    
+    @POST
+    suspend fun getMediaCdnSignUrl(
+        @Url url:String,
+        @Body mediaCdnSignUrlRequest: MediaCdnSignUrlRequest
+    ):MediaCdnSignUrlResponse
+
     @POST
     suspend fun getHeaderEnrichment(
         @HeaderMap headerMap: Map<String, String>,
