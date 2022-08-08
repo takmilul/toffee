@@ -38,6 +38,16 @@ class HashTagEditText @JvmOverloads constructor(mContext: Context,
                     )
                     startIndex = windex + word.length
                 }
+                if(word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
+                    val windex = text.indexOf(word, startIndex)
+                    it.setSpan(
+                        ForegroundColorSpan(this.hashTagColor),
+                        windex,
+                        windex + word.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    startIndex = windex + word.length
+                }
             }
         }
     }

@@ -4,12 +4,12 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import com.banglalink.toffee.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.GestureDetectorCompat
 import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
+import com.banglalink.toffee.util.Log
 
 /**
  * Custom player class for Double-Tapping listening
@@ -89,7 +89,7 @@ class ExoMediaController4 @JvmOverloads constructor(
 
     fun onPreviewTouch(ev: MotionEvent?): Boolean {
         Log.i("DOUBLE_T", "onPreviewTouch -> ")
-        if(isDoubleTapEnabled && !isMinimize) {
+        if(ev != null && isDoubleTapEnabled && !isMinimize) {
             gestureDetector.onTouchEvent(ev)
             return true
         }

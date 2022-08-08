@@ -23,7 +23,6 @@ import javax.inject.Inject
 class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
 
     override val itemMargin: Int = 12
-    @Inject lateinit var localSync: LocalSync
     @Inject lateinit var favoriteDao: FavoriteItemDao
     override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { FavoriteAdapter(this) }

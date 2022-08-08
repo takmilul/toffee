@@ -48,7 +48,14 @@ object MigrationProvider {
         }
     }
     
+    private val MIGRATION_7_8 = object: Migration(7,8) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("DROP TABLE IF EXISTS `PlayerEventData`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `PlayerEventData` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sessionId` TEXT, `contentPlayingSessionId` TEXT, `contentPlayingSessionSequenceId` TEXT, `appLifeCycleId` TEXT, `isForeground` TEXT, `isInternetAvailable` INTEGER, `networkType` TEXT, `ispOrTelecomOperator` TEXT, `remoteHost` TEXT, `remoteIp` TEXT, `latencyClientToCdn` TEXT, `playerEventId` INTEGER, `playerEvent` TEXT, `contentId` TEXT, `contentTitle` TEXT, `contentProviderId` TEXT, `contentProviderName` TEXT, `contentCategoryId` INTEGER, `contentCategoryName` TEXT, `contentDuration` TEXT, `seasonName` TEXT, `seasonNo` INTEGER, `episodeName` TEXT, `episodeNo` TEXT, `contentType` TEXT, `isDrm` INTEGER, `playingUrl` TEXT, `affiliate` TEXT, `agent` TEXT, `errorMessage` TEXT, `errorCause` TEXT, `adId` TEXT, `adEvent` TEXT, `adPosition` TEXT, `adIsLive` TEXT, `adCreativeId` TEXT, `adFirstCreativeId` TEXT, `adFirstAdId` TEXT, `adFirstAdSystem` TEXT, `adSystem` TEXT, `adTechnology` TEXT, `adIsSlate` TEXT, `adErrorMessage` TEXT, `appVersion` TEXT NOT NULL, `osName` TEXT NOT NULL, `userId` INTEGER NOT NULL, `deviceId` TEXT NOT NULL, `deviceManufacturer` TEXT NOT NULL, `deviceModel` TEXT NOT NULL, `msisdn` TEXT NOT NULL, `osVersion` TEXT NOT NULL, `city` TEXT NOT NULL, `region` TEXT NOT NULL, `country` TEXT NOT NULL, `lat` TEXT NOT NULL, `lon` TEXT NOT NULL, `clientIp` TEXT NOT NULL, `deviceType` TEXT NOT NULL, `applicationType` TEXT NOT NULL, `statusCode` INTEGER NOT NULL, `dateTime` TEXT NOT NULL)")
+        }
+    }
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
     }
 }

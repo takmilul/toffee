@@ -10,5 +10,7 @@ data class MyChannelPlaylistVideosBean (
     @SerializedName("totalCount")
     val totalCount: Int = 0,
     @SerializedName("systemTime")
-    val systemTime: String?=null
+    val systemTime: String?=null,
+    @SerializedName("name")
+    val name: String?=null
 )

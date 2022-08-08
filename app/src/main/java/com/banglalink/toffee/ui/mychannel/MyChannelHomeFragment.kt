@@ -161,7 +161,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     private fun navigateToEditChannel() {
-        findNavController().navigate(R.id.myChannelEditDetailFragment, bundleOf("myChannelDetail" to myChannelDetail))
+        findNavController().navigate(R.id.myChannelEditDetailFragment, bundleOf("channelOwnerId" to channelOwnerId))
     }
     
     private fun showRatingDialog() {

@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.player
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Pair
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
@@ -197,23 +196,42 @@ class TrackSelectionView @JvmOverloads constructor(
                     trackView.isVisible = false
                     invisibleProfileCount++
                 }
-                val profile = "${format.width}x${format.height}"
-//                Log.i(PLAYER_EVENT_TAG, "updateViews: $profile")
+                val profile = "${format.height}p"
                 trackView.text = profile
                 if (mappedTrackInfo!!.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.isFocusable = true
-                    trackView.tag = Pair.create(groupIndex, trackIndex)
+                    trackView.tag = Triple(groupIndex, trackIndex, format.bitrate)
                     trackView.setOnClickListener(componentListener)
                 } else {
                     trackView.isFocusable = false
                     trackView.isEnabled = false
                 }
                 trackViews.add(trackView)
-                addView(trackView)
             }
             if (invisibleProfileCount == group.length) {
                 trackViews.last()?.isVisible = true
             }
+        }
+        val sortedProfileList = trackViews.sortedByDescending {
+            it?.let {
+                if(it.tag is Triple<*, *, *>) (it.tag as Triple<Int, Int, Int>).third else null
+            }
+        }
+        sortedProfileList.forEachIndexed { index, it ->
+            if (it != null && it.tag is Triple<*, *, *> && index > 0) {
+                // get the current profile of the list and the immediate top and bottom profile and compare
+                val previousProfile: String = sortedProfileList[index-1]!!.text.toString()
+                val previousProfileBitRate: Int = (sortedProfileList[index-1]?.tag as Triple<Int, Int, Int>).third
+                val currentBitRate: Int = (it.tag as Triple<Int, Int, Int>).third
+                val nextProfile = sortedProfileList.getOrNull(index + 1)?.text?.toString()
+                val nextProfileBitRate = sortedProfileList.getOrNull(index + 1)?.tag?.run { (this as Triple<Int, Int, Int>).third } ?: 0
+                val hasDuplicateNext = nextProfile != null && nextProfileBitRate < currentBitRate
+                
+                if (it.text == previousProfile && currentBitRate < previousProfileBitRate && !hasDuplicateNext) {
+                    it.text = it.text.toString().plus(" (Data Saver)")
+                }
+            }
+            addView(it)
         }
         updateViewStates()
     }
@@ -266,7 +284,7 @@ class TrackSelectionView @JvmOverloads constructor(
     
     private fun onTrackViewClicked(view: View) {
         isDisabled = false
-        val tag = view.tag as Pair<Int, Int>
+        val tag = view.tag as Triple<Int, Int, Int>
         val groupIndex = tag.first
         val trackIndex = tag.second
         val override = overrides[groupIndex]

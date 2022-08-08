@@ -95,7 +95,9 @@ class HomeViewModel @Inject constructor(
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     
     init {
-        getProfile()
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            getProfile()
+        }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         
         // Disable this in production.

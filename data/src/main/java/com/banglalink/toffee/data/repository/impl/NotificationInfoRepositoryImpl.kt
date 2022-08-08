@@ -31,6 +31,10 @@ class NotificationInfoRepositoryImpl(
         return notificationDao.getLastNotification(mPref.customerId)
     }
     
+    override suspend fun getNotificationById(notificationId: Int): NotificationInfo? {
+        return notificationDao.getNotificationById(notificationId)
+    }
+    
     /*override suspend fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo> {
         return notificationDao.getNotificationByDate(date)
     }

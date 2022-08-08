@@ -1,7 +1,11 @@
 package com.banglalink.toffee.ui.login
 
 import android.content.IntentFilter
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,12 +58,12 @@ class VerifyLoginFragment : ChildDialogFragment() {
         phoneNumber = requireArguments().getString(LoginContentFragment.PHONE_NO_ARG) ?: ""
         regSessionToken = requireArguments().getString(LoginContentFragment.REG_SESSION_TOKEN_ARG) ?: ""
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogVerifyBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -121,7 +125,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             }
         }
     }
-
+    
     private fun reloadContent() {
         closeDialog()
         cacheManager.clearAllCache()
@@ -154,7 +158,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             }
         }
     }
-
+    
     private fun startCountDown(countDownTimeInMinute: Int) {
         binding.countdownTextView.visibility = View.VISIBLE
         resendCodeTimer?.cancel()
@@ -163,17 +167,20 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 val remainingSecs = it / 1000
                 val minutes = (remainingSecs / 60).toInt()
                 val seconds = (remainingSecs % 60).toInt()
-                val timeText = (String.format("%02d", minutes)
-                        + ":" + String.format("%02d", seconds))
-                binding.countdownTextView.text = "Resend otp in $timeText"
+                val timeText = (String.format("%02d", minutes) + ":" + String.format("%02d", seconds))
+                val countDownText = String.format(getString(R.string.sign_in_countdown_text), timeText)
+                val str = SpannableString(countDownText)
+                str.setSpan(StyleSpan(Typeface.BOLD), countDownText.indexOf(timeText), countDownText.indexOf(timeText) + timeText.length, Spannable
+                    .SPAN_EXCLUSIVE_EXCLUSIVE)
+                binding.countdownTextView.text = str
             }
-
+            
             observe(timer.finishLiveData) {
                 binding.resendButton.isEnabled = true
                 binding.resendButton.visibility = View.VISIBLE
                 binding.countdownTextView.visibility = View.INVISIBLE
                 binding.countdownTextView.text = ""
-
+                
                 timer.finishLiveData.removeObservers(this)
                 timer.tickLiveData.removeObservers(this)
             }

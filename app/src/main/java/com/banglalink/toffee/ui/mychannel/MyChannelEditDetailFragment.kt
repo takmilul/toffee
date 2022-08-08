@@ -21,6 +21,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -34,8 +35,8 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
-import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var userDOB: String? = ""
     private var userEmail: String = ""
     private var userName: String = ""
+    private var channelOwnerId: Int = 0
     private var channelName: String = ""
     private var userAddress: String = ""
     private var newBannerUrl: String? = null
@@ -63,6 +65,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var _binding: FragmentMyChannelEditDetailBinding? = null
     private val binding get() = _binding!!
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
+    private val channelHomeViewModel by activityViewModels<MyChannelHomeViewModel>()
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> {
         MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail)
@@ -78,38 +81,20 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         super.onCreate(savedInstanceState)
         progressDialog = ToffeeProgressDialog(requireContext())
         val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
-        myChannelDetail = args.myChannelDetail ?: MyChannelDetail(0)
-        val profileForm = profileViewModel.profileForm.value
-        myChannelDetail?.apply {
-            if (name.isNullOrBlank()) name = profileForm?.fullName
-            if (email.isNullOrBlank()) email = profileForm?.email
-            if (address.isNullOrBlank()) address = profileForm?.address
-            paymentPhoneNo = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber
-        }
+        channelOwnerId = args.channelOwnerId
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelEditDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        binding.viewModel = viewModel
         return binding.root
-    }
-    
-    override fun onDestroyView() {
-        binding.categorySpinner.adapter = null
-        binding.categoryPaymentSpinner.adapter = null
-        binding.channelName.removeTextChangedListener(nameWatcher)
-        binding.description.removeTextChangedListener(descWatcher)
-        nameWatcher = null
-        descWatcher = null
-        super.onDestroyView()
-        _binding = null
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setOnClickListener(this)
         progressDialog.show()
+        observeChannelDetail()
         observeEditChannel()
         setupCategorySpinner()
         observeThumbnailChange()
@@ -124,6 +109,41 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             cancelButton.safeClick(this@MyChannelEditDetailFragment)
             bannerEditButton.safeClick(this@MyChannelEditDetailFragment)
             profileImageEditButton.safeClick(this@MyChannelEditDetailFragment)
+        }
+        channelHomeViewModel.getChannelDetail(channelOwnerId)
+    }
+    
+    private fun observeChannelDetail() {
+        observe(channelHomeViewModel.liveData) {
+            when (it) {
+                is Success -> {
+                    myChannelDetail = it.data?.myChannelDetail ?: MyChannelDetail(0)
+                    val profileForm = profileViewModel.profileForm.value
+                    myChannelDetail?.apply {
+                        if (name.isNullOrBlank()) name = profileForm?.fullName
+                        if (email.isNullOrBlank()) email = profileForm?.email
+                        if (address.isNullOrBlank()) address = profileForm?.address
+                        paymentPhoneNo = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber
+                    }
+                    binding.viewModel = viewModel
+                    viewModel.myChannelDetail = myChannelDetail
+                    progressDialog.dismiss()
+                }
+                is Failure -> {
+                    progressDialog.dismiss()
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
+                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg
+                        )
+                    )
+                    requireContext().showToast(it.error.msg)
+                    findNavController().popBackStack()
+                }
+            }
         }
     }
     
@@ -512,5 +532,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             userAge--
         }
         return userAge
+    }
+    
+    override fun onDestroyView() {
+        binding.categorySpinner.adapter = null
+        binding.categoryPaymentSpinner.adapter = null
+        binding.channelName.removeTextChangedListener(nameWatcher)
+        binding.description.removeTextChangedListener(descWatcher)
+        nameWatcher = null
+        descWatcher = null
+        super.onDestroyView()
+        _binding = null
     }
 }

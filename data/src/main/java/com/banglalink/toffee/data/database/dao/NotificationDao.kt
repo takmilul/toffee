@@ -23,6 +23,9 @@ interface NotificationDao {
     
     @Query("SELECT * FROM NotificationInfo WHERE userId=:userId OR userId=0 ORDER BY receiveTime DESC LIMIT 1")
     fun getLastNotification(userId: Int): NotificationInfo?
+    
+    @Query("SELECT * FROM NotificationInfo WHERE notificationId=:notificationId ORDER BY receiveTime DESC LIMIT 1")
+    fun getNotificationById(notificationId: Int): NotificationInfo?
     //15340685
     /*@Query("SELECT * FROM NotificationInfo WHERE receiveTime >= :date ORDER BY receiveTime DESC")
     fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo>

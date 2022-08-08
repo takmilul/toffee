@@ -49,8 +49,10 @@ class HeartBeatManager @Inject constructor(
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
+    private var ownerId = "0"
     private var contentId = 0
-    private var contentType = ""
+    private var dataSource = ""
+    private var contentType = "0"
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
     private lateinit var coroutineScope3 :CoroutineScope
@@ -172,16 +174,16 @@ class HeartBeatManager @Inject constructor(
                 sendHeartBeat()
         }
     }
-
+    
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
-        if(mPref.customerId != 0){
+        if(mPref.customerId != 0 && mPref.password.isNotBlank()){
             try{
-                sendHeartBeat.execute(contentId, contentType,isNetworkSwitch,sendToPubSub)
+                sendHeartBeat.execute(contentId, contentType, dataSource, ownerId, isNetworkSwitch, sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
-                val error =getError(e)
-
+                val error = getError(e)
+                
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION,
                     bundleOf(
@@ -193,17 +195,21 @@ class HeartBeatManager @Inject constructor(
             }
         }
     }
-
-    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String) {
+    
+    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String, channelOwnerId: String) {
         contentId = playingContentId
         contentType = playingContentType
+        dataSource = contentDataSource
+        ownerId = channelOwnerId
     }
-
+    
     fun triggerEventViewingContentStop() {
         contentId = 0
-        contentType = ""
+        ownerId = "0"
+        contentType = "0"
+        dataSource = ""
     }
-
+    
     override fun onAvailable(network: Network) {
         if(!coroutineScope2.isActive)
             return

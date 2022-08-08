@@ -6,6 +6,11 @@ import android.content.pm.ActivityInfo
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.MediaSessionCompat.Callback
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.State
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
@@ -26,10 +31,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
-import com.banglalink.toffee.extension.getChannelMetadata
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.overrideUrl
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
@@ -63,9 +65,7 @@ import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
@@ -75,10 +75,7 @@ import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
@@ -99,13 +96,15 @@ abstract class PlayerPageActivity :
     OnPlayerControllerChangedListener
 {
     private var startWindow = 0
+    private var maxBitRate: Int = 0
     private var playCounter: Int = -1
     private var startAutoPlay = false
+    private var retryCounter: Int = 0
     private var reloadCounter: Int = 0
     private var startPosition: Long = 0
+    private var fallbackCounter: Int = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
-    private var maxBitRate: Int = 0
     @Inject lateinit var pingTool: PingTool
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -115,11 +114,13 @@ abstract class PlayerPageActivity :
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
     private var defaultCookieManager = CookieManager()
+    private var mediaSession: MediaSessionCompat? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    private val playerViewModel by viewModels<PlayerViewModel>()
     private var defaultTrackSelector: DefaultTrackSelector? = null
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -127,7 +128,6 @@ abstract class PlayerPageActivity :
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
-    private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
     init {
@@ -148,7 +148,11 @@ abstract class PlayerPageActivity :
         if (CookieHandler.getDefault() !== defaultCookieManager) {
             CookieHandler.setDefault(defaultCookieManager)
         }
-        
+        observe(mPref.isWebViewDialogOpened) {
+            if (it) {
+                player?.pause()
+            }
+        }
         if (mPref.isCastEnabled) {
             castContext = try {
                 CastContext.getSharedInstance(applicationContext)
@@ -166,14 +170,14 @@ abstract class PlayerPageActivity :
             currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
             trackSelectorParameters = savedInstanceState.getBundle(KEY_TRACK_SELECTOR_PARAMETERS)?.let { Parameters.CREATOR.fromBundle(it) }
         } else {
-            val builder = ParametersBuilder(this)
+            val builder = Parameters.Builder(this)
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
         heartBeatManager.heartBeatEventLiveData.observe(this) {
             playerAnalyticsListener?.let {
                 //In every heartbeat event we are sending bandwitdh data to Pubsub
-                Log.i("PLAYER BYTES", "Flushing to pubsub")
+//                Log.i("PLAYER BYTES", "Flushing to pubsub")
                 playerViewModel.reportBandWidthFromPlayerPref(
                     it.durationInSeconds, it.getTotalBytesInMB()
                 )
@@ -200,6 +204,7 @@ abstract class PlayerPageActivity :
         if (Util.SDK_INT > 23 /*&& isAppBackgrounded*/) {
             initializePlayer()
         }
+        mediaSession?.isActive = true
     }
     
     public override fun onResume() {
@@ -253,7 +258,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun initializePlayer() {
+        retryCounter = 0
         reloadCounter = 0
+        fallbackCounter = 0
         initializeLocalPlayer()
         initializeRemotePlayer()
         player = if (castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
@@ -306,7 +313,7 @@ abstract class PlayerPageActivity :
                 }
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setAdViewProvider(getPlayerView())
-                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
+//                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
             
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
@@ -318,13 +325,65 @@ abstract class PlayerPageActivity :
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
-                        addAnalyticsListener(EventLogger(defaultTrackSelector))
+                        addAnalyticsListener(EventLogger())
                     }
                 }
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
+            mediaSession = MediaSessionCompat(this, packageName)
+            mediaSession!!.setCallback(MediaSessionCallback())
             observeNetworkChange()
         }
+    }
+    
+    inner class MediaSessionCallback : Callback() {
+        override fun onPlay() {
+            super.onPlay()
+            player?.play()
+            updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        }
+        
+        override fun onPause() {
+            super.onPause()
+            player?.pause()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+        
+        override fun onSkipToNext() {
+            super.onSkipToNext()
+            playNext()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+        
+        override fun onSkipToPrevious() {
+            super.onSkipToPrevious()
+            playPrevious()
+            updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        }
+    }
+    
+    private fun getAction(): Long {
+        val mediaActionPlayPause = (PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE)
+        val mediaActionPlayPauseNext = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
+        val mediaActionPlayPausePrevious = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+        val mediaActionAll: Long = (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+        
+        return if (!hasNext() && !hasPrevious()) {
+            mediaActionPlayPause
+        } else if (hasNext() && !hasPrevious()) {
+            mediaActionPlayPauseNext
+        } else if (!hasNext() && hasPrevious()) {
+            mediaActionPlayPausePrevious
+        } else {
+            mediaActionAll
+        }
+    }
+    
+    private fun updatePlaybackState(@State state: Int) {
+        val position = player?.currentPosition?.toInt() ?: 0
+        val mediaId = player?.currentMediaItem?.getChannelMetadata(player)?.id?.toLong() ?: 0
+        val builder = PlaybackStateCompat.Builder().setActions(getAction()).setActiveQueueItemId(mediaId).setState(state, position.toLong(), 1.0f)
+        mediaSession?.setPlaybackState(builder.build())
     }
     
     private fun observeNetworkChange() {
@@ -439,7 +498,7 @@ abstract class PlayerPageActivity :
         castContext?.let {
             it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
             
-            Log.i("CAST_T", "CastPlayer init")
+//            Log.i("CAST_T", "CastPlayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter(connectionWatcher.isOverWifi, mPref)).apply {
                 addListener(playerEventListener)
                 playWhenReady = true
@@ -453,7 +512,9 @@ abstract class PlayerPageActivity :
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
+        retryCounter = 0
         reloadCounter = 0
+        fallbackCounter = 0
     }
     
     private fun releaseLocalPlayer() {
@@ -580,6 +641,7 @@ abstract class PlayerPageActivity :
         Log.i("DRM_T", "Existing -> $existingLicense")
         if (existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "Using existing license")
+            showDebugMessage("Using existing license")
             return existingLicense.license
         } else if (existingLicense != null && !isLicenseExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "License almost expired. requesting new one, but using old one.")
@@ -614,6 +676,7 @@ abstract class PlayerPageActivity :
                 null
             } ?: return null
             Log.i("DRM_T", "Downloading offline license")
+            showDebugMessage("Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
 //                    .newBuilder()
@@ -719,6 +782,11 @@ abstract class PlayerPageActivity :
     private var playChannelJob: Job? = null
     
     private fun playChannel(isReload: Boolean) {
+        if (!isReload) {
+            retryCounter = 0
+            reloadCounter = 0
+            fallbackCounter = 0
+        }
         playChannelJob?.cancel()
         Log.i("DRM_T", "New play request")
         playChannelJob = playChannelImpl(isReload)
@@ -757,8 +825,8 @@ abstract class PlayerPageActivity :
         }
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
-//        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
-//        applicationContext.showToast(contentSourceText + "Url: " + contentUrl)
+        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+        showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {
             async{
@@ -771,12 +839,12 @@ abstract class PlayerPageActivity :
         getVastTagList(channelInfo)
             ?.randomOrNull()
             ?.let { tag ->
-                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive
+                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive && !(isReload && channelInfo.isLinear)
                 val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
                 ConvivaHelper.setVastTagUrl(vastTag)
                 if (shouldPlayAd && vastTag.isNotBlank()) {
                     mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-                    if (!isReload) currentlyPlayingVastUrl = tag.url
+                    currentlyPlayingVastUrl = vastTag
                 }
             }
         
@@ -800,7 +868,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             }
-            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
+            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
             it.playWhenReady = !isReload || it.playWhenReady
             
             if (isReload) { //We need to start where we left off for VODs
@@ -1101,8 +1169,6 @@ abstract class PlayerPageActivity :
         playChannel(true)
     }
     
-    var isDrmSessionException = false
-    
     fun isCurrentContentDrm(): Boolean {
         playlistManager.getCurrentChannel()?.let { 
             return isDrmActiveForChannel(it)
@@ -1123,12 +1189,19 @@ abstract class PlayerPageActivity :
             }
             playerErrorMessage = e.message ?: e.cause?.message ?: e.cause?.cause?.message
             
-            if (isBehindLiveWindow(e)) {
+            if (!connectionWatcher.isOnline) {
+                retryCounter = 0
+                reloadCounter = 0
+                fallbackCounter = 0
+                val message = "Please check your internet and try again later."
+                showToast(message, Toast.LENGTH_LONG)
+            } else if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
                 reloadCounter++
-                isDrmSessionException = true
+                showDebugMessage("message: ${e.message}, cause: ${e.cause}\nerror code: ${e.errorCode}, ${e.errorCodeName}\n")
+                showDebugMessage("reloading... $reloadCounter")
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -1146,24 +1219,34 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
-                val counterLimit = if (isDrmSessionException) 20 else 18
-                if (reloadCounter < counterLimit) {
+                val retryCount = if (mPref.retryCount <= 0) 5 else mPref.retryCount
+                if (mPref.isRetryActive && retryCounter < retryCount) {
+                    retryCounter++
+                    showDebugMessage("message: ${e.message}, cause: ${e.cause}\nerror code: ${e.errorCode}, ${e.errorCodeName}\n")
+                    showDebugMessage("retrying... $retryCounter")
+                    reloadOnFailOver()
+                } else if (mPref.isFallbackActive && fallbackCounter < retryCount) {
+                    fallbackCounter++
+                    showDebugMessage("fallback... $fallbackCounter")
                     val channelInfo = playlistManager.getCurrentChannel()
                     if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
                     } else {
-                        if (e.errorCode >= 6000) { //errorCode >= 6000 is for drm error. proceed with fallback
-                            val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
-                                channelInfo.paidPlainHlsUrl
-                            } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
-                                channelInfo.hlsLinks?.get(0)?.hls_url_mobile
-                            } else null
-                            hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
-                        }
+                        val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                            channelInfo.paidPlainHlsUrl
+                        } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                        } else null
+                        hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
                     }
-                    reloadCounter++
-                    reloadChannel()
-                } else {
+                    reloadOnFailOver()
+                }
+                else {
+                    retryCounter = 0
+                    reloadCounter = 0
+                    fallbackCounter = 0
+                    val message = "Something went wrong. Please try again later."
+                    showToast(message, Toast.LENGTH_LONG)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }
             }
@@ -1175,15 +1258,28 @@ abstract class PlayerPageActivity :
             }
         }
         
+        private fun reloadOnFailOver() {
+            lifecycleScope.launch {
+                delay(mPref.retryWaitDuration.toLong())
+                reloadChannel()
+            }
+        }
+        
         private fun isBehindLiveWindow(e: PlaybackException): Boolean {
             return e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW
         }
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            if (isPlaying && reloadCounter > 0) {
-                ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+            updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
+            observeNetworkChange()
+            if (isPlaying) {
+                if (reloadCounter > 1 || retryCounter > 1 || fallbackCounter > 1) {
+                    ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+                }
+                retryCounter = 0
                 reloadCounter = 0
+                fallbackCounter = 0
                 return
             }
             val channelInfo = getCurrentChannelInfo()
@@ -1209,9 +1305,7 @@ abstract class PlayerPageActivity :
                 } else {
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
                 }
-                Log.i(
-                    "PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
-                )
+                Log.i("PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB")
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
@@ -1331,7 +1425,7 @@ abstract class PlayerPageActivity :
     
         override fun onPlayerReleased(eventTime: EventTime) {
             super.onPlayerReleased(eventTime)
-            playerEventHelper.setPlayerEvent("player released")
+//            playerEventHelper.setPlayerEvent("player released")
         }
         
         override fun onPositionDiscontinuity(eventTime: EventTime, oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {
@@ -1377,6 +1471,7 @@ abstract class PlayerPageActivity :
                 val errorMessage = it.adData["errorMessage"] ?: "Unknown error occurred."
                 playerEventHelper.setAdData(it.ad, LOG.name, errorMessage)
                 ConvivaHelper.onAdFailed(errorMessage, it.ad)
+                showDebugMessage("AdLoadFailureMessage: $errorMessage")
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
             AD_BUFFERING -> {
@@ -1428,8 +1523,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
-//        val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
+        val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
 //        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
+        showDebugMessage("AdLoadFailureMessage: $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)
         playerEventHelper.setAdData(null, null, isReset = true)

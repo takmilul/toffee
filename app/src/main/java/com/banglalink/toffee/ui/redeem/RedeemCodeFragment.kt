@@ -66,11 +66,15 @@ class RedeemCodeFragment : BaseFragment() {
                 is Resource.Success -> {
                     val response = it.data
                     if (response.isBullterPointMessage!!) {
+                        val bulletMessage = response.bulletMessage?.map {
+                            val text = it.replace("\n", " ")
+                            text
+                        }
                         showRedeemDisplayMessageDialog(
                             requireContext(),
                             response.title,
                             response.message,
-                            response.bulletMessage
+                            bulletMessage
                         )
                     } else {
                         if (!response.isRedeemSuccess!!) {

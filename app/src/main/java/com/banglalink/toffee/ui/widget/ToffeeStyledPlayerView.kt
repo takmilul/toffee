@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView.ControllerVisibilityListener
 import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -88,11 +89,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var fullscreenButton: ImageView
     private lateinit var debugContainer: FrameLayout
     private lateinit var castButton: MediaRouteButton
-    private lateinit var textCasting: AppCompatTextView
     private val screenWidth = Utils.getScreenWidth()
+    private val screenHeight = Utils.getScreenHeight()
+    private lateinit var textCasting: AppCompatTextView
     private var mPlayListListener: PlaylistListener? = null
     protected lateinit var playerOverlay: PlayerOverlayView
-    private val screenHeight = Utils.getScreenHeight()
     private lateinit var autoplayProgress: CircularProgressBar
     protected lateinit var doubleTapInterceptor: PlayerPreview
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
@@ -164,7 +165,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         
         controllerShowTimeoutMs = 3000
         
-        setControllerVisibilityListener { ctrlVisibility ->
+        setControllerVisibilityListener(ControllerVisibilityListener { ctrlVisibility ->
             when (ctrlVisibility) {
                 View.VISIBLE -> {
                     val isLive = player?.isCurrentMediaItemLive == true || isLinearChannel
@@ -183,7 +184,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     }
                 }
             }
-        }
+        })
         
         setupOverlay()
         setupCastButton()
@@ -299,6 +300,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
     }
     
+    fun onPip(enabled: Boolean = false) {
+        useController = !enabled
+        setShowBuffering(/*if(enabled) SHOW_BUFFERING_NEVER else*/ SHOW_BUFFERING_ALWAYS)
+    }
+    
     fun isControllerVisible(): Boolean {
         return isControllerFullyVisible
     }
@@ -323,6 +329,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
             }
+        }
+    }
+    
+    private fun nextButtonVisibility(visible: Boolean) {
+        playNext.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+        }
+    }
+    
+    private fun prevButtonVisibility(visible: Boolean) {
+        playPrev.visibility = if (!visible) View.INVISIBLE else {
+            if (mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
     
@@ -412,18 +430,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             CastButtonFactory.setUpMediaRouteButton(context.applicationContext, castButton)
         } else {
             castButton.visibility = View.GONE
-        }
-    }
-    
-    private fun nextButtonVisibility(visible: Boolean) {
-        playNext.visibility = if (!visible) View.INVISIBLE else {
-            if (mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
-        }
-    }
-    
-    private fun prevButtonVisibility(visible: Boolean) {
-        playPrev.visibility = if (!visible) View.INVISIBLE else {
-            if (mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
     
@@ -647,7 +653,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 if((mPlayListListener?.isAutoplayEnabled() == false && isStateEnded) || progressTime in 1 until AUTOPLAY_INTERVAL) {
                     ConvivaHelper.endPlayerSession(true)
                     player?.currentMediaItem?.getChannelMetadata(player)?.let {
-                        playerEventHelper.startSession()
+                        playerEventHelper.startContentPlayingSession(it.id)
                         ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId)
                     }
                 }
@@ -661,7 +667,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 prevButtonVisibility(false)
                 autoplayProgress.visibility = View.GONE
                 stopAutoplayTimer()
-                playerEventHelper.setPlayerEvent("Player id idle")
+                playerEventHelper.setPlayerEvent("Player is idle")
             }
             Player.STATE_READY -> {
                 previewImage.setImageResource(0)

@@ -8,6 +8,10 @@ data class HeartBeatRequest(
     val contentId: Int,
     @SerializedName("contentType")
     val contentType: String,
+    @SerializedName("data_source")
+    val dataSource: String? = "iptv_programs",
+    @SerializedName("channel_owner_id")
+    val ownerId: String? = "0",
     @SerializedName("customerId")
     val customerId: Int,
     @SerializedName("password")

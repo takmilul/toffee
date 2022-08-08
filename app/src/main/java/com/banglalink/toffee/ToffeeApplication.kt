@@ -109,7 +109,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
         try {
             ToffeeAnalytics.initFacebookAnalytics(this)
-        } catch (e: Exception) { }
+        } catch (_: Exception) { }
         try {
             // Google Play will install latest OpenSSL 
             ProviderInstaller.installIfNeeded(applicationContext)
@@ -224,4 +224,3 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
     }
 }
-

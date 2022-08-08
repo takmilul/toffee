@@ -18,13 +18,13 @@ class UserActivitiesListViewModel @Inject constructor(
     private val activitiesRepo: UserActivitiesRepository,
     private val preference: SessionPreference,
 ) : BasePagingViewModel<UserActivities>() {
-
+    
     val myChannelDetail = MutableLiveData<MyChannelDetailBean>()
-
-    override val repo: BaseListRepository<UserActivities> by lazy {
-        BaseListRepositoryImpl({ activitiesRepo.getAllItems(preference.customerId) })
+    
+    override fun repo(): BaseListRepository<UserActivities> {
+        return BaseListRepositoryImpl({ activitiesRepo.getAllItems(preference.customerId) })
     }
-
+    
     fun removeItem(item: UserActivities) {
         viewModelScope.launch {
             activitiesRepo.delete(item)

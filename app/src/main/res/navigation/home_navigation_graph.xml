@@ -251,7 +251,7 @@
             app:popUpTo="@id/uploadMethodFragment"
             app:popUpToInclusive="true" />
     </dialog>
-    
+
     <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
@@ -274,6 +274,32 @@
         <action
             android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
             app:destination="@id/menu_channel" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/htmlPageViewDialog_Home"
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
+    </dialog>
+
+    <dialog
+        android:id="@+id/htmlPageViewDialogInApp"
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialogInApp">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
     </dialog>
     
     <fragment
@@ -311,9 +337,8 @@
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
         android:label="Edit Details">
         <argument
-            android:name="myChannelDetail"
-            app:argType="com.banglalink.toffee.model.MyChannelDetail"
-            app:nullable="true" />
+            android:name="channelOwnerId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />

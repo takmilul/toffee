@@ -18,8 +18,8 @@ class SearchViewModel @AssistedInject constructor(
     @Assisted private val keyword: String,
 ) : BasePagingViewModel<ChannelInfo>() {
 
-    override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({
+    override fun repo(): BaseListRepository<ChannelInfo> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(searchApiService.create(keyword), ApiNames.GET_SEARCH_CONTENTS, BrowsingScreens.SEARCH_PAGE)
         })
     }

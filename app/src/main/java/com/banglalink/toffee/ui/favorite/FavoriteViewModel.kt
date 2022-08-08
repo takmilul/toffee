@@ -13,11 +13,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    apiService: GetFavoriteContents
+    private val apiService: GetFavoriteContents
 ): BasePagingViewModel<ChannelInfo>() {
-
-    override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({
+    
+    override fun repo(): BaseListRepository<ChannelInfo> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(apiService, ApiNames.GET_FAVORITE_CONTENTS, BrowsingScreens.FAVORITE_CONTENTS_PAGE)
         })
     }

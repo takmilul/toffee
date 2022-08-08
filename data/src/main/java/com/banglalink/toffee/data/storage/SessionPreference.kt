@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.storage
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.text.TextUtils
 import androidx.core.content.edit
@@ -17,6 +18,7 @@ const val PREF_NAME_IP_TV = "IP_TV"
 
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
     
+    val homeIntent = MutableLiveData<Intent?>()
     val viewCountDbUrlLiveData = SingleLiveEvent<String>()
     val reactionDbUrlLiveData = SingleLiveEvent<String>()
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
@@ -31,6 +33,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val loginDialogLiveData = SingleLiveEvent<Boolean>()
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
+    val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
@@ -487,6 +490,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return false
     }
     
+    var isPipEnabled: Boolean
+        get() = pref.getBoolean(PREF_PIP_ENABLED, true)
+        set(value) = pref.edit{ putBoolean(PREF_PIP_ENABLED, value) }
+    
     var isVastActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
@@ -591,89 +598,116 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_PLAYER_MAX_BIT_RATE_CELLULAR, -1)
         set(value) = pref.edit { putInt(PREF_PLAYER_MAX_BIT_RATE_CELLULAR, value) }
     
+    var isRetryActive: Boolean
+        get() = pref.getBoolean(PREF_PLAYER_IS_RETRY_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_PLAYER_IS_RETRY_ACTIVE, value) }
+    
+    var isFallbackActive: Boolean
+        get() = pref.getBoolean(PREF_PLAYER_IS_FALLBACK_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_PLAYER_IS_FALLBACK_ACTIVE, value) }
+    
+    var retryCount: Int
+        get() = pref.getInt(PREF_PLAYER_RETRY_COUNT, -1)
+        set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_COUNT, value) }
+    
+    var retryWaitDuration: Int
+        get() = pref.getInt(PREF_PLAYER_RETRY_WAIT_DURATION, -1)
+        set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_WAIT_DURATION, value) }
+    
+    var isDebugActive: Boolean
+        get() = pref.getBoolean(PREF_IS_DEBUG_ACTIVE, true)
+        set(value) = pref.edit { putBoolean(PREF_IS_DEBUG_ACTIVE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
-        balance = customerInfoLogin.balance
-        isVerifiedUser = customerInfoLogin.verified_status
-        customerId = customerInfoLogin.customerId
-        password = customerInfoLogin.password ?: ""
-        if (!customerInfoLogin.customerName.isNullOrBlank()) {
-            customerName = customerInfoLogin.customerName!!
-        }
-        sessionToken = (customerInfoLogin.sessionToken ?: "")
-        if (!customerInfoLogin.profileImage.isNullOrBlank()) {
-            userImageUrl = customerInfoLogin.profileImage
-        }
-        setHeaderSessionToken(customerInfoLogin.headerSessionToken)
-        overrideHlsHostUrl = customerInfoLogin.hlsOverrideUrl ?: ""
-        shouldOverrideHlsHostUrl = customerInfoLogin.hlsUrlOverride
-        setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
-        if (customerInfoLogin.isBanglalinkNumber != null) {
-            isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
-        }
-        customerInfoLogin.dbVersionList?.let {
-            setDBVersion(it)
-        }
-        latitude = customerInfoLogin.lat ?: ""
-        longitude = customerInfoLogin.lon ?: ""
-        isSubscriptionActive = customerInfoLogin.isSubscriptionActive ?: "false"
-        viewCountDbUrl = customerInfoLogin.viewCountDbUrl ?: ""
-        reactionDbUrl = customerInfoLogin.reactionDbUrl ?: ""
-        reactionStatusDbUrl = customerInfoLogin.reactionStatusDbUrl ?: ""
-        subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
-        subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
-        shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
-        isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
-        isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "false"
-        mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
-        mqttIsActive = customerInfoLogin.mqttIsActive == 1
-        
-        isCastEnabled = customerInfoLogin.isCastEnabled == 1
-        isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
-        castReceiverId = customerInfoLogin.castReceiverId ?: ""
-        castOverrideUrl = customerInfoLogin.castOverrideUrl ?: ""
-        
-        internetPackUrl = customerInfoLogin.internetPackUrl ?: ""
-        tusUploadServerUrl = customerInfoLogin.tusUploadServerUrl ?: ""
-        privacyPolicyUrl = customerInfoLogin.privacyPolicyUrl ?: ""
-        creatorsPolicyUrl = customerInfoLogin.creatorsPolicyUrl ?: ""
-        termsAndConditionUrl = customerInfoLogin.termsAndConditionsUrl ?: ""
-        facebookPageUrl = customerInfoLogin.facebookPageUrl
-        instagramPageUrl = customerInfoLogin.instagramPageUrl
-        youtubePageUrl = customerInfoLogin.youtubePageUrl
-        
-        geoCity = customerInfoLogin.geoCity ?: ""
-        geoRegion = customerInfoLogin.geoRegion ?: geoCity
-        geoLocation = customerInfoLogin.geoLocation ?: ""
-        userIp = customerInfoLogin.userIp ?: ""
-        
-        forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
-        isVastActive = customerInfoLogin.isVastActive == 1
-        vastFrequency = customerInfoLogin.vastFrequency
-        bucketDirectory = customerInfoLogin.gcpVodBucketDirectory
-        isFcmEventActive = customerInfoLogin.isFcmEventActive == 1
-        isFbEventActive = customerInfoLogin.isFbEventActive == 1
-        isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
-        drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
-        drmWidevineLicenseUrl = customerInfoLogin.widevineLicenseUrl
-        drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
-        drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
-        drmTokenUrl = customerInfoLogin.drmTokenUrl
-        isGlobalCidActive = customerInfoLogin.isGlobalCidActive == 1
-        globalCidName = customerInfoLogin.globalCidName
-        betaVersionCodes = customerInfoLogin.androidBetaVersionCode
-        isPaidUser = customerInfoLogin.paymentStatus
-        isFireworkActive = customerInfoLogin.isFireworkActive
-        isStingrayActive = customerInfoLogin.isStingrayActive
-        isMedalliaActive = customerInfoLogin.isMedalliaActive
-        isConvivaActive = customerInfoLogin.isConvivaActive
-        isPlayerMonitoringActive = customerInfoLogin.isPlayerMonitoringActive
-        showBuyInternetForAndroid = customerInfoLogin.showBuyInternetForAndroid
-        screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
-        isNativeAdActive = customerInfoLogin.isNativeAdActive
-        maxBitRateWifi = customerInfoLogin.maxBitRateWifi
-        maxBitRateCellular = customerInfoLogin.maxBitRateCellular
-        if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
-            ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
+        customerInfoLogin.let {
+            balance = it.balance
+            isVerifiedUser = it.verified_status
+            customerId = it.customerId
+            password = it.password ?: ""
+            if (!it.customerName.isNullOrBlank()) {
+                customerName = it.customerName!!
+            }
+            sessionToken = (it.sessionToken ?: "")
+            if (!it.profileImage.isNullOrBlank()) {
+                userImageUrl = it.profileImage
+            }
+            setHeaderSessionToken(it.headerSessionToken)
+            overrideHlsHostUrl = customerInfoLogin.hlsOverrideUrl ?: ""
+            shouldOverrideHlsHostUrl = customerInfoLogin.hlsUrlOverride
+            setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
+            if (it.isBanglalinkNumber != null) {
+                isBanglalinkNumber = it.isBanglalinkNumber
+            }
+            it.dbVersionList?.let {
+                setDBVersion(it)
+            }
+            latitude = it.lat ?: ""
+            longitude = it.lon ?: ""
+            isSubscriptionActive = it.isSubscriptionActive ?: "false"
+            viewCountDbUrl = it.viewCountDbUrl ?: ""
+            reactionDbUrl = it.reactionDbUrl ?: ""
+            reactionStatusDbUrl = it.reactionStatusDbUrl ?: ""
+            subscribeDbUrl = it.subscribeDbUrl ?: ""
+            subscriberStatusDbUrl = it.subscriberStatusDbUrl ?: ""
+            shareCountDbUrl = it.shareCountDbUrl ?: ""
+            isAllTvChannelMenuEnabled = it.isAllTvChannelsMenuEnabled
+            isFeaturePartnerActive = it.isFeaturePartnerActive ?: "false"
+            mqttHost = it.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
+            mqttIsActive = it.mqttIsActive == 1
+    
+            isCastEnabled = it.isCastEnabled == 1
+            isCastUrlOverride = it.isCastUrlOverride == 1
+            castReceiverId = it.castReceiverId ?: ""
+            castOverrideUrl = it.castOverrideUrl ?: ""
+    
+            internetPackUrl = it.internetPackUrl ?: ""
+            tusUploadServerUrl = it.tusUploadServerUrl ?: ""
+            privacyPolicyUrl = it.privacyPolicyUrl ?: ""
+            creatorsPolicyUrl = it.creatorsPolicyUrl ?: ""
+            termsAndConditionUrl = it.termsAndConditionsUrl ?: ""
+            facebookPageUrl = it.facebookPageUrl
+            instagramPageUrl = it.instagramPageUrl
+            youtubePageUrl = it.youtubePageUrl
+    
+            geoCity = it.geoCity ?: ""
+            geoRegion = it.geoRegion ?: geoCity
+            geoLocation = it.geoLocation ?: ""
+            userIp = it.userIp ?: ""
+    
+            forcedUpdateVersions = it.forceUpdateVersionCodes
+            isVastActive = it.isVastActive == 1
+            vastFrequency = it.vastFrequency
+            bucketDirectory = it.gcpVodBucketDirectory
+            isFcmEventActive = it.isFcmEventActive == 1
+            isFbEventActive = it.isFbEventActive == 1
+            isDrmActive = it.isGlobalDrmActive == 1
+            drmCastReceiver = it.defaultDrmCastReceiver
+            drmWidevineLicenseUrl = it.widevineLicenseUrl
+            drmFpsLicenseUrl = it.fpsLicenseUrl
+            drmPlayreadyLicenseUrl = it.playreadyLicenseUrl
+            drmTokenUrl = it.drmTokenUrl
+            isGlobalCidActive = it.isGlobalCidActive == 1
+            globalCidName = it.globalCidName
+            betaVersionCodes = it.androidBetaVersionCode
+            isPaidUser = it.paymentStatus
+            isFireworkActive = it.isFireworkActive
+            isStingrayActive = it.isStingrayActive
+            isMedalliaActive = it.isMedalliaActive
+            isConvivaActive = it.isConvivaActive
+            isPlayerMonitoringActive = it.isPlayerMonitoringActive
+            showBuyInternetForAndroid = it.showBuyInternetForAndroid
+            screenCaptureEnabledUsers = it.screenCaptureEnabledUsers ?: setOf()
+            isNativeAdActive = it.isNativeAdActive
+            maxBitRateWifi = it.maxBitRateWifi
+            maxBitRateCellular = it.maxBitRateCellular
+            isRetryActive = it.isRetryActive
+            isFallbackActive = it.isFallbackActive
+            retryCount = it.retryCount
+            retryWaitDuration = it.retryWaitDuration
+    
+            if (it.customerId == 0 || it.password.isNullOrBlank()) {
+                ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
+            }
         }
     }
     
@@ -770,6 +804,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
         private const val PREF_AD_ID_UPDATE_DATE = "pref_ad_id_update_date"
+        private const val PREF_PIP_ENABLED= "pref_pip_enabled"
         private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
         private const val PREF_IS_GLOBAL_CID_ACTIVE = "pref_is_global_cid_active"
         private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"
@@ -783,6 +818,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SHOW_BUY_INTERNET_PACK = "pref_show_buy_internet_pack"
         private const val PREF_PLAYER_MAX_BIT_RATE_WIFI = "pref_player_max_bit_rate_wifi"
         private const val PREF_PLAYER_MAX_BIT_RATE_CELLULAR = "pref_player_max_bit_rate_cellular"
+        private const val PREF_PLAYER_IS_RETRY_ACTIVE = "pref_player_is_retry_active"
+        private const val PREF_PLAYER_IS_FALLBACK_ACTIVE = "pref_player_is_fallback_active"
+        private const val PREF_PLAYER_RETRY_COUNT = "pref_player_retry_Count"
+        private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
+        private const val PREF_IS_DEBUG_ACTIVE = "pref_is_debug_active"
         
         private var instance: SessionPreference? = null
         

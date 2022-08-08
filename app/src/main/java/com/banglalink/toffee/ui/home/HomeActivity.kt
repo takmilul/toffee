@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.app.PictureInPictureParams
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -12,6 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
@@ -19,8 +21,8 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Rational
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -30,6 +32,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
@@ -146,6 +149,7 @@ class HomeActivity :
 {
     private val gson = Gson()
     private var channelOwnerId: Int = 0
+    private var visibleDestinationId = 0
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -216,6 +220,18 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
+        if (mPref.homeIntent.value != null) {
+            intent = mPref.homeIntent.value
+            mPref.homeIntent.value = null
+        }
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(intent)
+            viewModel.getVastTag()
+        } else {
+            mPref.homeIntent.value = intent
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
@@ -223,7 +239,6 @@ class HomeActivity :
                 checkChannelDetailAndUpload()
             }
         }
-        viewModel.getVastTag()
         val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
         if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""
@@ -319,7 +334,6 @@ class HomeActivity :
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
-        handleSharedUrl(intent)
         configureBottomSheet()
         observeUpload2()
         watchConnectionChange()
@@ -619,8 +633,12 @@ class HomeActivity :
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
-        closeSearchBarIfOpen()
+        if (visibleDestinationId == R.id.htmlPageViewDialogInApp) {
+            maximizePlayer()
+        }
+        visibleDestinationId = controller.currentDestination?.id ?: 0
         
+        closeSearchBarIfOpen()
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
             val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
@@ -690,8 +708,15 @@ class HomeActivity :
     
     override fun onResume() {
         super.onResume()
+        if (mPref.customerId == 0 || mPref.password.isBlank()) {
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
+        if(Build.VERSION.SDK_INT >= 24) {
+            pipChanged(isInPictureInPictureMode)
+        }
         setPlayerInPlayerView()
         binding.playerView.resizeView(calculateScreenWidth())
         updateFullScreenState()
@@ -717,8 +742,8 @@ class HomeActivity :
     
     override fun onStart() {
         super.onStart()
+        playerEventHelper.appForegrounded("app foregrounded")
         if (playlistManager.getCurrentChannel() != null) {
-            playerEventHelper.setPlayerEvent("app foregrounded")
             ConvivaAnalytics.reportAppForegrounded()
             maximizePlayer()
             loadDetailFragment(
@@ -741,7 +766,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.player = null
         }
-        playerEventHelper.setPlayerEvent("app backgrounded")
+        playerEventHelper.appBackgrounded("app backgrounded")
         ConvivaAnalytics.reportAppBackgrounded()
     }
     
@@ -753,6 +778,14 @@ class HomeActivity :
         If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
         so player can't reset scale completely. Manually resetting player scale value
          */
+        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) {
+//            binding.playerView.resizeView(Point(newConfig.screenWidthDp.px, newConfig.screenHeightDp.px))
+            pipChanged(isInPictureInPictureMode)
+//            maximizePlayer()
+//            toggleNavigations(true)
+//            binding.playerView.onPip(isInPictureInPictureMode)
+            return
+        }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
@@ -788,11 +821,13 @@ class HomeActivity :
     }
     
     private fun updateFullScreenState() {
+        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) return
         val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)
         toggleNavigation(state)
+//        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
     private fun setFullScreen(visible: Boolean) {
@@ -887,7 +922,8 @@ class HomeActivity :
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
-                        shareableData = gson.fromJson(EncryptionUtil.decryptResponse(newHash).trimIndent(), ShareableData::class.java)
+                        val encryptedUrl =EncryptionUtil.decryptResponse(newHash).trimIndent()
+                        shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
                         when(shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -932,6 +968,7 @@ class HomeActivity :
     private fun prepareWebsiteDeepLink(url: String): String {
         val categoryDeepLink = "https://toffeelive.com?routing=internal&page=categories&catid=categoryId"
         val ugcChannelDeepLink = "https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=channelId"
+        val commonDeepLink = "https://toffeelive.com?routing=internal&page=pagelink"
         return when {
             url.contains("channel/") -> {
                 val ownerId = url.substringAfter("channel/").trim()
@@ -947,8 +984,46 @@ class HomeActivity :
             url.contains("web-series/") -> {
                 categoryDeepLink.replace("categoryId", CategoryType.DRAMA_SERIES.value.toString())
             }
+            url.contains("live-tv/") -> {
+                commonDeepLink.replace("pagelink", "tv_channels")
+            }
+            url.contains("explore/") -> {
+                commonDeepLink.replace("pagelink", "explore")
+            }
+            url.contains("/all-drama") -> {
+                categoryDeepLink.replace("categoryId", "18")
+            }
+            url.contains("/activities") -> {
+                commonDeepLink.replace("pagelink", "activities")
+            }
+            url.contains("/my-favorite") -> {
+                commonDeepLink.replace("pagelink", "favorites")
+            }
+            url.contains("subscription/") -> {
+                commonDeepLink.replace("pagelink", "subscription")
+            }
+            url.contains("/home") -> {
+                commonDeepLink.replace("pagelink", "home")
+            }
+            url.contains("/playlist-content") -> {
+                getWebPlaylistShare(url)
+            }
             else -> url
         }
+    }
+    
+    private fun getWebPlaylistShare(url:String):String{
+        val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
+        val isOwner= if(ownerId==mPref.customerId) 1 else 0
+        val playlistId = url.substringAfter("pl_id=").substringBefore("&").toInt()
+        val playlistName = url.substringAfter("name=").substringBefore("&")
+        val newUrl ="https://toffeelive.com/#video/data="
+        
+        val sharableData = ShareableData("playlist",0,null,null,
+        0, isOwner, ownerId, playlistId, playlistName)
+        val json = gson.toJson(sharableData,ShareableData::class.java)
+        val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
+        return newUrl+shareableJsonData
     }
     
     private fun playPlaylistShareable() {
@@ -960,7 +1035,7 @@ class HomeActivity :
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
                                 shareableData?.channelOwnerId ?: 0,
-                                shareableData?.name ?: "",
+                                shareableData?.name ?: response.data.name ?: "" ,
                                 response.data.totalCount,
                                 playlistShareableUrl,
                                 1,
@@ -1046,7 +1121,17 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
             when (it.destId) {
                 is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
-                is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                is Int -> {
+                    if(it.destId==R.id.menu_favorites
+                        || it.destId==R.id.menu_activities
+                        || it.destId==R.id.menu_subscriptions){
+                        checkVerification {
+                            navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                        }
+                    }else{
+                        navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                    }
+                }
             }
             isDeepLinkHandled = true
         }
@@ -1066,10 +1151,10 @@ class HomeActivity :
     
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            query?.let { handleVoiceSearchEvent(it) }
-        }
+//        if (Intent.ACTION_SEARCH == intent.action) {
+//            val query = intent.getStringExtra(SearchManager.QUERY)
+//            query?.let { handleVoiceSearchEvent(it) }
+//        }
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
@@ -1088,16 +1173,18 @@ class HomeActivity :
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
             }
         }
-//        try {
-//            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-//            url?.let {
-//                FwSDK.play(it)
-//                return
-//            }
-//        } catch (e: Exception) {
-//            Log.e("FwSDK", "FireworkDeeplinkPlayException")
-//        }
-        handleSharedUrl(intent)
+        var newIntent = intent
+        if (mPref.homeIntent.value != null) {
+            newIntent = mPref.homeIntent.value!!
+            mPref.homeIntent.value = null
+        }
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            handleSharedUrl(newIntent)
+        } else {
+            mPref.homeIntent.value = newIntent
+            finish()
+            launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+        }
     }
     
     private fun navigateToSearch(query: String?) {
@@ -1111,15 +1198,15 @@ class HomeActivity :
         })
     }
     
-    private fun handleVoiceSearchEvent(query: String) {
-        if (!TextUtils.isEmpty(query)) {
-            navigateToSearch(query)
-        }
-        if (searchView != null) {
-            searchView!!.setQuery(query.lowercase(), false)
-            searchView!!.clearFocus()
-        }
-    }
+//    private fun handleVoiceSearchEvent(query: String) {
+//        if (!TextUtils.isEmpty(query)) {
+//            navigateToSearch(query)
+//        }
+//        if (searchView != null) {
+//            searchView!!.setQuery(query.lowercase(), false)
+//            searchView!!.clearFocus()
+//        }
+//    }
     
     private fun handlePackageSubscribe() {
         //Clean up stack upto landingPageFragment inclusive
@@ -1205,7 +1292,10 @@ class HomeActivity :
             maximizePlayer()
         }
         ConvivaHelper.endPlayerSession(true)
-        playerEventHelper.startSession()
+        playerEventHelper.startContentPlayingSession(it.id)
+        if (!isPlayerVisible()) {
+            playerEventHelper.startPlayerSession()
+        }
         
         when (detailsInfo) {
             is PlaylistPlaybackInfo -> {
@@ -1236,7 +1326,7 @@ class HomeActivity :
     
     private fun playInWebView(it: ChannelInfo) {
         it.getHlsLink()?.let { url ->
-            viewModel.sendViewContentEvent(it)
+            viewModel.sendViewContentEvent(it.copy(id = "0"))
             val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT) it.video_share_url else null
             launchActivity<Html5PlayerViewActivity> {
                 putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
@@ -1251,11 +1341,11 @@ class HomeActivity :
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
-        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
+        playerEventHelper.startContentPlayingSession(info!!.id)
+        ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1263,11 +1353,11 @@ class HomeActivity :
     
     override fun playPrevious() {
         super.playPrevious()
-        playerEventHelper.startSession()
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
-        ConvivaHelper.setConvivaVideoMetadata(info!!, mPref.customerId)
+        playerEventHelper.startContentPlayingSession(info!!.id)
+        ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -1588,7 +1678,8 @@ class HomeActivity :
     }
     
     override fun onPlayerDestroy() {
-        playerEventHelper.endSession()
+        playerEventHelper.endContentPlayingSession()
+        playerEventHelper.endPlayerSession()
         ConvivaHelper.endPlayerSession()
 //        releasePlayer()
         if (mPref.isMedalliaActive) {
@@ -1711,6 +1802,44 @@ class HomeActivity :
         }
     }
     
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+            enterPipMode()
+        }
+    }
+    
+    @Suppress("DEPRECATION")
+    @RequiresApi(24)
+    private fun enterPipMode() {
+        toggleNavigation(true)
+        maximizePlayer()
+        if(Build.VERSION.SDK_INT < 26) {
+            enterPictureInPictureMode()
+        } else {
+            enterPictureInPictureMode(
+                PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+                    .build()
+            )
+        }
+    }
+    
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        pipChanged(isInPictureInPictureMode)
+    }
+    
+    private fun pipChanged(isInPip: Boolean) {
+        if(isInPip) {
+            toggleNavigation(true)
+            binding.draggableView.maximize()
+            binding.draggableView.visibility = View.VISIBLE
+            maximizePlayer()
+        }
+        binding.playerView.onPip(isInPip)
+    }
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -1727,9 +1856,17 @@ class HomeActivity :
             }
         } else if (searchView?.isIconified == false) {
             closeSearchBarIfOpen()
+        } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+            enterPipMode()
         } else {
             super.onBackPressed()
         }
+    }
+    
+    private fun hasPip() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        mPref.isPipEnabled && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    } else {
+        false
     }
     
     private fun minimizePlayer() {
@@ -1796,8 +1933,8 @@ class HomeActivity :
         val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
         
-        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
-        mic.setImageResource(R.drawable.ic_menu_microphone)
+//        val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
+//        mic.setImageResource(R.drawable.ic_menu_microphone)
         
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
         close.setImageResource(R.drawable.ic_close)
@@ -1837,7 +1974,13 @@ class HomeActivity :
                 }
             }
         }
-        
+        searchView?.setOnQueryTextFocusChangeListener { view, isFocused -> 
+            if (isFocused) {
+                binding.searchOverlay.show()
+            } else {
+                binding.searchOverlay.hide()
+            }
+        }
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
