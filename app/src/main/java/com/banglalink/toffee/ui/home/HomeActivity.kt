@@ -149,6 +149,7 @@ class HomeActivity :
 {
     private val gson = Gson()
     private var channelOwnerId: Int = 0
+    private var visibleDestinationId = 0
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -632,8 +633,12 @@ class HomeActivity :
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
-        closeSearchBarIfOpen()
+        if (visibleDestinationId == R.id.htmlPageViewDialogInApp) {
+            maximizePlayer()
+        }
+        visibleDestinationId = controller.currentDestination?.id ?: 0
         
+        closeSearchBarIfOpen()
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
             val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")

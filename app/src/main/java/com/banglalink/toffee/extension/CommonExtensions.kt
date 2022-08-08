@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,11 +14,13 @@ import android.widget.ImageView
 import android.widget.ImageView.ScaleType.CENTER_CROP
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import coil.request.ImageRequest
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -30,6 +33,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 
@@ -238,21 +242,12 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
-//@SuppressLint("ClickableViewAccessibility")
-//fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
-//    this.setOnTouchListener(View.OnTouchListener { _, event ->
-//        val DRAWABLE_LEFT = 0
-//        val DRAWABLE_TOP = 1
-//        val DRAWABLE_RIGHT = 2
-//        val DRAWABLE_BOTTOM = 3
-//        if (event.action == MotionEvent.ACTION_UP) {
-//            if (event.rawX >= this.right - this.compoundDrawables[DRAWABLE_RIGHT].bounds.width()
-//            ) {
-//                setClickListener()
-//                return@OnTouchListener true
-//            }
-//        }
-//        false
-//    })
-//}
-
+fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
+    if (this is HomeActivity && BuildConfig.DEBUG && mPref.isDebugActive) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            showDisplayMessageDialog(this, message)
+        } else {
+            showToast(message, length)
+        }
+    }
+}

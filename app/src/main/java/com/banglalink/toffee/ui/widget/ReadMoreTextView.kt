@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Layout.Alignment.ALIGN_CENTER
+import android.text.Layout.Alignment.ALIGN_NORMAL
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.ui.home.CatchupDetailsFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -112,6 +114,9 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                         override fun onClick(textView: View) {
                             //Toast.makeText(context, word, Toast.LENGTH_LONG).show()
                             val fragment = this@ReadMoreTextView.findFragment<Fragment>()
+                            if (fragment is CatchupDetailsFragment) {
+                                fragment.mPref.isWebViewDialogOpened.postValue(true)
+                            }
                             fragment.findNavController().navigate(R.id.htmlPageViewDialogInApp, Bundle().apply {
                                 putString("myTitle", word)
                                 putString("url", word)
@@ -218,8 +223,8 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         when (trimMode) {
             TRIM_MODE_LINES -> {
                 trimEndIndex = lineEndIndex - (ELLIPSIZE.length + trimCollapsedText.length + 1)
-                if (trimEndIndex < 0) {
-                    trimEndIndex = trimLength + 1
+                if (trimEndIndex < 45) {
+                    trimEndIndex = lineEndIndex - 1
                 }
             }
             TRIM_MODE_LENGTH -> trimEndIndex = trimLength + 1
@@ -238,17 +243,18 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private fun updateExpandedText(): CharSequence? {
 //        Log.i(TAG, "updateExpandedText: ")
         if (showTrimExpandedText) {
-            val s = SpannableStringBuilder(mainText, 0, mainText?.length ?: 0)
-                .append("\n")
+            val spannableText = SpannableStringBuilder(mainText, 0, mainText?.length ?: 0)
+                .append("\n\n")
                 .append(trimExpandedText.toString())
-            return addClickableSpan(s, trimExpandedText)
+            return addClickableSpan(spannableText, trimExpandedText)
         }
         return mainText
     }
     
     private fun addClickableSpan(spannableText: SpannableStringBuilder, trimText: CharSequence): CharSequence {
         val startIndex = spannableText.length - trimText.length
-        spannableText.setSpan(Standard(ALIGN_CENTER), startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableText.setSpan(Standard(if (trimText == trimExpandedText) ALIGN_CENTER else ALIGN_NORMAL), startIndex, spannableText.length, Spanned
+            .SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableText.setSpan(CustomTypefaceSpan(trimFont), startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableText.setSpan(viewMoreSpan, startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannableText

@@ -31,10 +31,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
-import com.banglalink.toffee.extension.getChannelMetadata
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.overrideUrl
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
@@ -151,7 +148,11 @@ abstract class PlayerPageActivity :
         if (CookieHandler.getDefault() !== defaultCookieManager) {
             CookieHandler.setDefault(defaultCookieManager)
         }
-        
+        observe(mPref.isWebViewDialogOpened) {
+            if (it) {
+                player?.pause()
+            }
+        }
         if (mPref.isCastEnabled) {
             castContext = try {
                 CastContext.getSharedInstance(applicationContext)
@@ -497,7 +498,7 @@ abstract class PlayerPageActivity :
         castContext?.let {
             it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
             
-            Log.i("CAST_T", "CastPlayer init")
+//            Log.i("CAST_T", "CastPlayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter(connectionWatcher.isOverWifi, mPref)).apply {
                 addListener(playerEventListener)
                 playWhenReady = true
@@ -640,6 +641,7 @@ abstract class PlayerPageActivity :
         Log.i("DRM_T", "Existing -> $existingLicense")
         if (existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "Using existing license")
+            showDebugMessage("Using existing license")
             return existingLicense.license
         } else if (existingLicense != null && !isLicenseExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "License almost expired. requesting new one, but using old one.")
@@ -674,6 +676,7 @@ abstract class PlayerPageActivity :
                 null
             } ?: return null
             Log.i("DRM_T", "Downloading offline license")
+            showDebugMessage("Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
 //                    .newBuilder()
@@ -822,8 +825,8 @@ abstract class PlayerPageActivity :
         }
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
-//        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
-//        applicationContext.showToast(contentSourceText + "Url: " + contentUrl)
+        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+        showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {
             async{
@@ -1166,8 +1169,6 @@ abstract class PlayerPageActivity :
         playChannel(true)
     }
     
-    var isDrmSessionException = false
-    
     fun isCurrentContentDrm(): Boolean {
         playlistManager.getCurrentChannel()?.let { 
             return isDrmActiveForChannel(it)
@@ -1199,7 +1200,8 @@ abstract class PlayerPageActivity :
                 reloadChannel()
             } else if (e.cause is DrmSessionException && reloadCounter < 2) {
                 reloadCounter++
-//                isDrmSessionException = true
+                showDebugMessage("message: ${e.message}, cause: ${e.cause}\nerror code: ${e.errorCode}, ${e.errorCodeName}\n")
+                showDebugMessage("reloading... $reloadCounter")
                 if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
@@ -1220,9 +1222,12 @@ abstract class PlayerPageActivity :
                 val retryCount = if (mPref.retryCount <= 0) 5 else mPref.retryCount
                 if (mPref.isRetryActive && retryCounter < retryCount) {
                     retryCounter++
+                    showDebugMessage("message: ${e.message}, cause: ${e.cause}\nerror code: ${e.errorCode}, ${e.errorCodeName}\n")
+                    showDebugMessage("retrying... $retryCounter")
                     reloadOnFailOver()
                 } else if (mPref.isFallbackActive && fallbackCounter < retryCount) {
                     fallbackCounter++
+                    showDebugMessage("fallback... $fallbackCounter")
                     val channelInfo = playlistManager.getCurrentChannel()
                     if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
@@ -1466,6 +1471,7 @@ abstract class PlayerPageActivity :
                 val errorMessage = it.adData["errorMessage"] ?: "Unknown error occurred."
                 playerEventHelper.setAdData(it.ad, LOG.name, errorMessage)
                 ConvivaHelper.onAdFailed(errorMessage, it.ad)
+                showDebugMessage("AdLoadFailureMessage: $errorMessage")
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
             AD_BUFFERING -> {
@@ -1517,8 +1523,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
-//        val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
+        val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
 //        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
+        showDebugMessage("AdLoadFailureMessage: $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)
         playerEventHelper.setAdData(null, null, isReset = true)

@@ -33,6 +33,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val loginDialogLiveData = SingleLiveEvent<Boolean>()
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
+    val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
@@ -613,6 +614,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_PLAYER_RETRY_WAIT_DURATION, -1)
         set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_WAIT_DURATION, value) }
     
+    var isDebugActive: Boolean
+        get() = pref.getBoolean(PREF_IS_DEBUG_ACTIVE, true)
+        set(value) = pref.edit { putBoolean(PREF_IS_DEBUG_ACTIVE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -817,6 +822,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_IS_FALLBACK_ACTIVE = "pref_player_is_fallback_active"
         private const val PREF_PLAYER_RETRY_COUNT = "pref_player_retry_Count"
         private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
+        private const val PREF_IS_DEBUG_ACTIVE = "pref_is_debug_active"
         
         private var instance: SessionPreference? = null
         
