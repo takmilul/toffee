@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -112,7 +113,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
                 ))
             }
-            
+            if (channelInfo!!.isApproved == 1){
+                binding.uploadDescription.isFocusable = false
+                binding.uploadDescription.isClickable = true
+                binding.uploadDescription.isCursorVisible = false
+                uploadDescription.setOnClickListener{
+                    binding.uploadDescription.isEnabled = false
+                    binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+                    binding.errorDescriptionTv.text = getString(string.non_editable_desc_error_message)
+                    binding.errorDescriptionTv.show()
+                }
+            }
             uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
             uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
         }

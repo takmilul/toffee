@@ -445,4 +445,5 @@
     <string name="subscribers">subscribers</string>
     <string name="upload_vod_requirement_title">Select mp4 file</string>
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
+    <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
 </resources>
