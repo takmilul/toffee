@@ -1,0 +1,26 @@
+package com.banglalink.toffee.apiservice
+
+import com.banglalink.toffee.data.network.request.MediaCdnSignUrlRequest
+import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.storage.SessionPreference
+import javax.inject.Inject
+
+class MediaCdnSignUrlService  @Inject constructor(private val pref: SessionPreference, private val toffeeApi: ToffeeApi) {
+    suspend fun execute(contentId: String): MediaCdnSignUrl? {
+        val response = tryIO2 {
+            toffeeApi.getMediaCdnSignUrl(
+                "/media-cdn-sign-url",
+                MediaCdnSignUrlRequest(
+                    pref.customerId.toString(),
+                    pref.password,
+                    contentId,
+                    3,
+                    pref.getDBVersionByApiName(ApiNames.GET_POPULAR_PLAYLIST_NAMES)
+                )
+            )
+        }
+        return response.response
+    }
+}
