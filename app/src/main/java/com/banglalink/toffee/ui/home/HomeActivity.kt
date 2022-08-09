@@ -59,7 +59,9 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
+import com.banglalink.toffee.data.database.entities.CdnChannelItem
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
@@ -171,10 +173,11 @@ class HomeActivity :
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -1285,33 +1288,64 @@ class HomeActivity :
         }
     }
     
-    private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
+    private fun playInNativePlayer(detailsInfo: Any?, channelInfo: ChannelInfo) {
         ToffeeAnalytics.logEvent(
             ToffeeEvents.CONTENT_CLICK, bundleOf(
-                "content_id" to it.id,
-                "content_title" to it.program_name,
-                "content_category" to it.category,
-                "content_partner" to it.content_provider_name,
+                "content_id" to channelInfo.id,
+                "content_title" to channelInfo.program_name,
+                "content_category" to channelInfo.category,
+                "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if(it.urlType== PLAY_CDN){
-            val isExpired = it.isContentUrlExpired(mPref.getSystemTime())
-            if(isExpired){
-                observe(viewModel.mediaCdnSignUrlData){
-                    it ?.let {mediaCdn->
-
-                       // playContent(detailsInfo, it)
+        if(channelInfo.urlType == PLAY_CDN){
+            lifecycleScope.launch {
+                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
+                    val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
+                    if(isExpired){
+                        observe(viewModel.mediaCdnSignUrlData){
+                            when (it) {
+                                is Success -> {
+                                    val newChannelInfo = cdnChannelItem.channelInfo?.apply {
+                                        signedUrlExpiryDate = it.data?.signUrlExpire
+                                        if (channelInfo.urlTypeExt == PAYMENT) {
+                                            paidPlainHlsUrl = it.data?.signUrl
+                                        } else {
+                                            channelInfo.hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
+                                                if (index == 0) {
+                                                    hlsLinks.hls_url_mobile = it.data?.signUrl
+                                                }
+                                                hlsLinks
+                                            }
+                                        }
+                                    }
+                                    cdnChannelItem.expiryDate = it.data?.signUrlExpire
+                                    cdnChannelItem.payload = gson.toJson(newChannelInfo)
+                                    lifecycleScope.launch {
+                                        cdnChannelItemRepository.update(cdnChannelItem)
+                                    }
+                                    newChannelInfo?.let { item -> 
+                                        playContent(detailsInfo, item)
+                                    } ?: run { 
+                                        showToast(getString(R.string.try_again_message))
+                                    }
+                                }
+                                is Failure -> showToast("Content Expired")
+                            }
+                        }
+                        viewModel.getMediaCdnSignUrl(channelInfo.id)
+                    } else{
+                        playContent(detailsInfo, channelInfo)
                     }
+                } ?: run {
+                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo)))
+                    playContent(detailsInfo, channelInfo)
                 }
-                viewModel.getMediaCdnSignUrl(it.id)
-            }else{
-                playContent(detailsInfo, it)
             }
-        }else {
-            playContent(detailsInfo, it)
+        } else {
+            playContent(detailsInfo, channelInfo)
         }
     }
-
+    
     private fun playContent(detailsInfo: Any?, it: ChannelInfo) {
         if (player is CastPlayer) {
             maximizePlayer()

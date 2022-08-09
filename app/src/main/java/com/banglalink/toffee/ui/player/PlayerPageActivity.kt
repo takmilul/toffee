@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -755,9 +756,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun getHlsMediaItem(channelInfo: ChannelInfo): MediaItem? {
-        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType in listOf(PLAY_IN_WEB_VIEW, PLAY_CDN) && mPref.isPaidUser) {
             channelInfo.paidPlainHlsUrl
-        } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+        } else if (channelInfo.urlTypeExt == NON_PAYMENT && channelInfo.urlType in listOf(PLAY_IN_NATIVE_PLAYER, PLAY_CDN, STINGRAY_CONTENT)) {
             channelInfo.hlsLinks?.get(0)?.hls_url_mobile
         } else {
             null
@@ -1245,7 +1246,7 @@ abstract class PlayerPageActivity :
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
-                    val message = "Something went wrong. Please try again later."
+                    val message = getString(R.string.try_again_message)
                     showToast(message, Toast.LENGTH_LONG)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }

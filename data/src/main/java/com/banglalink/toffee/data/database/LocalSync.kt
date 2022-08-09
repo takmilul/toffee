@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.database
 
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.entities.CdnChannelItem
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.*
@@ -11,6 +12,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UserChannelInfo
+import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,6 +28,7 @@ class LocalSync @Inject constructor(
     private val shareCountRepository: ShareCountRepository,
     private val reactionStatusRepo: ReactionStatusRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
+    private val cdnChannelItemRepository: CdnChannelItemRepository,
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) {
@@ -97,6 +100,20 @@ class LocalSync @Inject constructor(
                         channelInfo.type ?: "VOD",
                         gson.toJson(channelInfo)
                     )
+                }
+            }
+        }
+        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
+            if (channelInfo.urlType == 3) {
+                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let {
+                    try {
+                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate))) {
+                            cdnChannelItemRepository.update(it.copy(expiryDate = channelInfo.signedUrlExpiryDate, payload = gson.toJson(channelInfo)))
+                        }
+                    } catch (_: Exception) {}
+                } ?: run {
+                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo
+                        .signedUrlExpiryDate, gson.toJson(channelInfo)))
                 }
             }
         }
@@ -189,5 +206,6 @@ class LocalSync @Inject constructor(
         const val SYNC_FLAG_FAVORITE = 32
         const val SYNC_FLAG_TV_RECENT = 64
         const val SYNC_FLAG_USER_ACTIVITY = 128
+        const val SYNC_FLAG_CDN_CONTENT = 256
     }
 }

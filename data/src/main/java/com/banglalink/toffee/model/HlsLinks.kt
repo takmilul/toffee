@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class HlsLinks(
-    @SerializedName("hls_url_mobile")
-    val hls_url_mobile: String
+    @SerializedName("hls_url_mobile") 
+    var hls_url_mobile: String?
 ) : Parcelable
 
 @Parcelize

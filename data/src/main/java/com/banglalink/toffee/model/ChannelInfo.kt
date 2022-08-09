@@ -159,9 +159,8 @@ data class ChannelInfo(
     val dataSource: String? = "iptv_programs",
     @SerializedName("totalCount")
     var totalCount: Int = 0,
-    val paidPlainHlsUrl: String? = null,
-    @SerializedName("sign_url_expire")
-    val signUrlExpire: String? =null
+    var paidPlainHlsUrl: String? = null,
+    @SerializedName("sign_url_expire") var signedUrlExpiryDate: String? =null
 ) :Parcelable {
     
     @get:SerializedName("isApproved")
@@ -248,7 +247,7 @@ data class ChannelInfo(
     }
     fun isContentUrlExpired(serverDate:Date):Boolean{
         return try {
-            serverDate.after(Utils.getDate(signUrlExpire))
+            serverDate.after(Utils.getDate(signedUrlExpiryDate))
         } catch (ne: NullPointerException) {
             true
         }

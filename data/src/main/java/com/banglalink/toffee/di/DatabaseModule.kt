@@ -225,4 +225,16 @@ object DatabaseModule {
     fun providesCustomPlayerEventsDataRepository(db: ToffeeDatabase, dao: PlayerEventsDao): PlayerEventRepository {
         return PlayerEventRepositoryImpl(db, dao)
     }
+    
+    @Singleton
+    @Provides
+    fun providesCdnChannelItemDao(db: ToffeeDatabase): CdnChannelItemDao {
+        return db.getCdnChannelItemDao()
+    }
+    
+    @Singleton
+    @Provides
+    fun providesCdnChannelItemRepository(dao: CdnChannelItemDao): CdnChannelItemRepository {
+        return CdnChannelItemRepositoryImpl(dao)
+    }
 }

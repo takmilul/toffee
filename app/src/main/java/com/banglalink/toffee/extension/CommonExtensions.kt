@@ -34,8 +34,10 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
+import java.util.*
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]{1,256}+@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}+\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25}+(?:\\.[a-zA-Z]{1,4})?$"
@@ -249,5 +251,13 @@ fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT)
         } else {
             showToast(message, length)
         }
+    }
+}
+
+fun String.isExpiredFrom(comparedDate: Date): Boolean {
+    return try {
+        Utils.getDate(this).before(comparedDate)
+    } catch (e: Exception) {
+        false
     }
 }

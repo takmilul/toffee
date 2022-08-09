@@ -19,7 +19,7 @@ buildscript {
         pahoClientVersion = '1.2.5'
         hiltAndroidVersion = '2.42'
         convivaSdkVersion = '4.0.20'
-        gradlePluginVersion = '7.2.1'
+        gradlePluginVersion = '7.2.2'
         facebookSdkVersion = '13.1.0'
         firebaseCoreVersion = '19.0.2'
         kotlinCoroutineVersion = '1.6.3'

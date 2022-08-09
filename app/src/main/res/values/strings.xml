@@ -446,4 +446,5 @@
     <string name="upload_vod_requirement_title">Select mp4 file</string>
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
+    <string name="try_again_message">Something went wrong. Please try again later.</string>
 </resources>
