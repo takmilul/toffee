@@ -1385,6 +1385,7 @@ class HomeActivity :
     }
     
     private fun playInWebView(it: ChannelInfo) {
+        showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hls_url_mobile}")
         it.getHlsLink()?.let { url ->
             viewModel.sendViewContentEvent(it.copy(id = "0"))
             val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT) it.video_share_url else null

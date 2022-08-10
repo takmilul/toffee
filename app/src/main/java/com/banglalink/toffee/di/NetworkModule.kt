@@ -18,6 +18,8 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
     
+    const val isDebugMessageActive: Boolean = false
+    
     private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //    private const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
 //    private const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"

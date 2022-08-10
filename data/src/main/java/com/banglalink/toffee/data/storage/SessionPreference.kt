@@ -614,8 +614,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_PLAYER_RETRY_WAIT_DURATION, -1)
         set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_WAIT_DURATION, value) }
     
-    val isDebugMessageActive: Boolean = true
-    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance

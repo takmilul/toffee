@@ -26,6 +26,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
+import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
 import com.banglalink.toffee.model.ChannelInfo
@@ -245,7 +246,7 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
 fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
-    if (this is HomeActivity && BuildConfig.DEBUG && mPref.isDebugMessageActive) {
+    if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.isDebugMessageActive) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             showDisplayMessageDialog(this, message)
         } else {
