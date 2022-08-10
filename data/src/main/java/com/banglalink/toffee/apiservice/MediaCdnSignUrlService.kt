@@ -16,7 +16,7 @@ class MediaCdnSignUrlService  @Inject constructor(private val pref: SessionPrefe
                     pref.password,
                     contentId,
                     3,
-                    pref.getDBVersionByApiName(ApiNames.GET_POPULAR_PLAYLIST_NAMES)
+                    pref.getDBVersionByApiName(ApiNames.MEDIA_CDN_SIGN_URL)
                 )
             )
         }

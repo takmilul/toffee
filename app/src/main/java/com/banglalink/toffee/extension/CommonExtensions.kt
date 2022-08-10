@@ -245,7 +245,7 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
 fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
-    if (this is HomeActivity && BuildConfig.DEBUG && mPref.isDebugActive) {
+    if (this is HomeActivity && BuildConfig.DEBUG && mPref.isDebugMessageActive) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             showDisplayMessageDialog(this, message)
         } else {
