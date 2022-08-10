@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
@@ -90,6 +92,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         return binding.root
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setOnClickListener(this)
@@ -111,6 +114,19 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             profileImageEditButton.safeClick(this@MyChannelEditDetailFragment)
         }
         channelHomeViewModel.getChannelDetail(channelOwnerId)
+
+        binding.description.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (binding.description.hasFocus()) {
+                v.parent.requestDisallowInterceptTouchEvent(true)
+                when (event.action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_SCROLL -> {
+                        v.parent.requestDisallowInterceptTouchEvent(false)
+                        return@OnTouchListener true
+                    }
+                }
+            }
+            false
+        })
     }
     
     private fun observeChannelDetail() {
