@@ -11,7 +11,7 @@ class CdnChannelItemRepositoryImpl (private val dao: CdnChannelItemDao): CdnChan
     override suspend fun getAllCdnChannelItem(): List<CdnChannelItem> = dao.getAllCdnChannelItem()
     override suspend fun deleteAllCdnChannelItem(): Int = dao.deleteAllCdnChannelItem()
     override suspend fun getCdnChannelItemByChannelId(channelId: Long): CdnChannelItem? = dao.getCdnChannelItemByChannelId(channelId)
-    override suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String, payload: String) = dao
+    override suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String?, payload: String) = dao
         .updateCdnChannelItemByChannelId(channelId, expiryDate, payload)
     override suspend fun deleteCdnChannelItemByChannelId(channelId: Long): Int = dao.deleteCdnChannelItemByChannelId(channelId)
     override suspend fun insertAll(vararg cdnChannelItemList: CdnChannelItem): LongArray = dao.insertAll(*cdnChannelItemList)

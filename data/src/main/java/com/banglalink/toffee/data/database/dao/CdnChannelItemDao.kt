@@ -24,7 +24,7 @@ interface CdnChannelItemDao {
     suspend fun getCdnChannelItemByChannelId(channelId: Long): CdnChannelItem?
     
     @Query("UPDATE CdnChannelItem SET expiryDate = :expiryDate, payload = :payload WHERE channelId = :channelId")
-    suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String, payload: String)
+    suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String?, payload: String)
     
     @Query("DELETE FROM CdnChannelItem WHERE channelId == :channelId")
     suspend fun deleteCdnChannelItemByChannelId(channelId: Long): Int

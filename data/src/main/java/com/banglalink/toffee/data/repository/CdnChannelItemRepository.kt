@@ -9,7 +9,7 @@ interface CdnChannelItemRepository {
     suspend fun getAllCdnChannelItem(): List<CdnChannelItem>
     suspend fun deleteAllCdnChannelItem(): Int
     suspend fun getCdnChannelItemByChannelId(channelId: Long): CdnChannelItem?
-    suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String, payload: String)
+    suspend fun updateCdnChannelItemByChannelId(channelId: Long, expiryDate: String?, payload: String)
     suspend fun deleteCdnChannelItemByChannelId(channelId: Long): Int
     suspend fun insertAll(vararg cdnChannelItemList: CdnChannelItem): LongArray
 }
