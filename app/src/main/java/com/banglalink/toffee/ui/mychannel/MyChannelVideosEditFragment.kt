@@ -37,6 +37,12 @@ import com.banglalink.toffee.util.Utils
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
+import android.view.MotionEvent
+
+import android.view.View.OnTouchListener
+
+
+
 
 @AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
@@ -84,6 +90,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         _binding = null
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
@@ -124,6 +131,19 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     binding.errorDescriptionTv.show()
                 }
             }
+
+            uploadDescription.setOnTouchListener(OnTouchListener { v, event ->
+                if (uploadDescription.hasFocus()) {
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                    when (event.action and MotionEvent.ACTION_MASK) {
+                        MotionEvent.ACTION_SCROLL -> {
+                            v.parent.requestDisallowInterceptTouchEvent(false)
+                            return@OnTouchListener true
+                        }
+                    }
+                }
+                false
+            })
             uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
             uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
         }
