@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.app.PictureInPictureParams
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -22,7 +21,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.Rational
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -1879,9 +1877,9 @@ class HomeActivity :
             enterPictureInPictureMode()
         } else {
             enterPictureInPictureMode(
-                PictureInPictureParams.Builder()
-                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
-                    .build()
+//                PictureInPictureParams.Builder()
+//                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+//                    .build()
             )
         }
     }
