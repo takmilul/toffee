@@ -60,6 +60,11 @@ class GetChannelWithCategory @Inject constructor(
                 })
             }
         }
+        tvChannelRepo.getNonStingrayRecentItems()?.forEach { tvChannelItem ->
+            if(dbList.none { it.channelId == tvChannelItem.channelId }) {
+                tvChannelRepo.deleteItems(tvChannelItem)
+            }
+        }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())
     }
 }

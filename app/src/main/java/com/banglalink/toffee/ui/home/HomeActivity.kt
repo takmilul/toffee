@@ -1301,16 +1301,16 @@ class HomeActivity :
             lifecycleScope.launch {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
                     val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
-                    if(isExpired){
+                    if(isExpired) {
                         observe(viewModel.mediaCdnSignUrlData){
                             when (it) {
                                 is Success -> {
                                     val newChannelInfo = cdnChannelItem.channelInfo?.apply {
-                                        signedUrlExpiryDate = it.data?.signUrlExpire
+                                        signedUrlExpiryDate = it.data?.signedUrlExpiryDate
                                         if (channelInfo.urlTypeExt == PAYMENT) {
                                             paidPlainHlsUrl = it.data?.signUrl
                                         } else {
-                                            channelInfo.hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
+                                            hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
                                                 if (index == 0) {
                                                     hlsLinks.hls_url_mobile = it.data?.signUrl
                                                 }
@@ -1318,7 +1318,7 @@ class HomeActivity :
                                             }
                                         }
                                     }
-                                    cdnChannelItem.expiryDate = it.data?.signUrlExpire
+                                    cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate
                                     cdnChannelItem.payload = gson.toJson(newChannelInfo)
                                     lifecycleScope.launch {
                                         cdnChannelItemRepository.update(cdnChannelItem)
@@ -1329,7 +1329,7 @@ class HomeActivity :
                                         showToast(getString(R.string.try_again_message))
                                     }
                                 }
-                                is Failure -> showToast("Content Expired")
+                                is Failure -> showToast(getString(R.string.try_again_message))
                             }
                         }
                         viewModel.getMediaCdnSignUrl(channelInfo.id)

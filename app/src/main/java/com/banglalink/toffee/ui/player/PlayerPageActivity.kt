@@ -765,7 +765,7 @@ abstract class PlayerPageActivity :
         }
         hlsUrl ?: return null
         
-        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray) {
+        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray || channelInfo.urlType == PLAY_CDN) {
             hlsUrl
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)

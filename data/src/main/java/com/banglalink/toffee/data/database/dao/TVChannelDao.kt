@@ -13,6 +13,9 @@ abstract class TVChannelDao {
     @Update
     abstract suspend fun update(item: TVChannelItem)
 
+    @Delete
+    abstract suspend fun delete(item: TVChannelItem)
+    
     @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getAllItems(): Flow<List<TVChannelItem>?>
 
@@ -42,6 +45,9 @@ abstract class TVChannelDao {
 
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\"")
     abstract suspend fun getStingrayRecentItems(): List<TVChannelItem>?
+
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\"")
+    abstract suspend fun getNonStingrayRecentItems(): List<TVChannelItem>?
 
     @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
     abstract fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>

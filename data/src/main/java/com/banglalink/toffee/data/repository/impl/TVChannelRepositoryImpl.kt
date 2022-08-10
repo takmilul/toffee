@@ -10,7 +10,11 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
     override suspend fun insertNewItems(vararg items: TVChannelItem) {
         dao.insertNewItems(*items)
     }
-
+    
+    override suspend fun deleteItems(item: TVChannelItem) {
+        return dao.delete(item)
+    }
+    
     override suspend fun insertRecentItems(item: TVChannelItem) {
         dao.insertRecentItem(item)
     }
@@ -31,8 +35,12 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
         return dao.getStingrayItems()
     }
     
-    override fun getRecentItems(): Flow<List<TVChannelItem>?> {
+    override fun getRecentItemsFlow(): Flow<List<TVChannelItem>?> {
         return dao.getRecentItemsFlow()
+    }
+    
+    override suspend fun getNonStingrayRecentItems(): List<TVChannelItem>? {
+        return dao.getNonStingrayRecentItems()
     }
     
     override fun getStingrayRecentItems(): Flow<List<TVChannelItem>?> {
