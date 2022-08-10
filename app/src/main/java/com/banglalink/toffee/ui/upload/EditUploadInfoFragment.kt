@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -88,10 +89,25 @@ class EditUploadInfoFragment : BaseFragment() {
         })
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditUploadInfoBinding.inflate(inflater, container, false)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
+
+        binding.uploadDescription.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (binding.uploadDescription.hasFocus()) {
+                v.parent.requestDisallowInterceptTouchEvent(true)
+                when (event.action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_SCROLL -> {
+                        v.parent.requestDisallowInterceptTouchEvent(false)
+                        return@OnTouchListener true
+                    }
+                }
+            }
+            false
+        })
+
         return binding.root
     }
     
