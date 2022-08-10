@@ -116,6 +116,9 @@
                 android:hint="@string/description_hint"
                 android:maxLength="600"
                 android:text="@={viewmodel.description}"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView17" />

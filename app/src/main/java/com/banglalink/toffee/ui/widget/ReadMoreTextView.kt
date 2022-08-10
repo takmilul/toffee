@@ -16,6 +16,7 @@ import android.text.style.AlignmentSpan.Standard
 import android.text.style.ClickableSpan
 import android.text.style.MetricAffectingSpan
 import android.util.AttributeSet
+import android.util.Patterns
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.widget.AppCompatTextView
@@ -108,7 +109,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                     it.setSpan(clickableSpan, windex, windex + word.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     startIndex = windex + word.length
                 }
-                if (word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
+                if(Patterns.WEB_URL.matcher(word).matches()) {
                     val windex = text.indexOf(word, startIndex)
                     val clickableSpan: ClickableSpan = object : ClickableSpan() {
                         override fun onClick(textView: View) {

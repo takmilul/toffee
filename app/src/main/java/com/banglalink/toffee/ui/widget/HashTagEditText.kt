@@ -5,6 +5,7 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
+import android.util.Patterns
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -38,7 +39,7 @@ class HashTagEditText @JvmOverloads constructor(mContext: Context,
                     )
                     startIndex = windex + word.length
                 }
-                if(word.startsWith("https") || word.startsWith("http") || word.startsWith("www")) {
+                if(Patterns.WEB_URL.matcher(word).matches()) {
                     val windex = text.indexOf(word, startIndex)
                     it.setSpan(
                         ForegroundColorSpan(this.hashTagColor),
