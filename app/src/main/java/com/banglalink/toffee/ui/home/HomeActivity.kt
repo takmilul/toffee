@@ -1321,7 +1321,8 @@ class HomeActivity :
                                     cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate
                                     cdnChannelItem.payload = gson.toJson(newChannelInfo)
                                     lifecycleScope.launch {
-                                        cdnChannelItemRepository.update(cdnChannelItem)
+                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate, 
+                                            cdnChannelItem.payload)
                                     }
                                     newChannelInfo?.let { item -> 
                                         playContent(detailsInfo, item)

@@ -11,5 +11,6 @@ interface UserActivitiesRepository {
     suspend fun deleteByContentId(customerId: Int, contentId: Long)
     fun getAllItems(customerId: Int): PagingSource<Int, UserActivities>
     suspend fun getUserActivityById(channelId: Long, type: String): UserActivities?
+    suspend fun getUserActivityListByType(type: String): List<UserActivities>?
     suspend fun updateUserActivityPayload(channelId: Long, type: String, payload: String)
 }

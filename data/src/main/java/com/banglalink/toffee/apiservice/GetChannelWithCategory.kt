@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.TVChannelRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
@@ -15,7 +16,8 @@ class GetChannelWithCategory @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
-    private val tvChannelRepo: TVChannelRepository
+    private val tvChannelRepo: TVChannelRepository,
+    private val userActivityRepo: UserActivitiesRepository,
 ) {
     val gson = Gson()
     
@@ -58,6 +60,11 @@ class GetChannelWithCategory @Inject constructor(
         tvChannelRepo.getNonStingrayRecentItems()?.forEach { tvChannelItem ->
             if(dbList.none { it.channelId == tvChannelItem.channelId }) {
                 tvChannelRepo.deleteItems(tvChannelItem)
+            }
+        }
+        userActivityRepo.getUserActivityListByType("LIVE")?.forEach { userActivity ->
+            if (dbList.none { it.channelId == userActivity.channelId }) {
+                userActivityRepo.delete(userActivity)
             }
         }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())

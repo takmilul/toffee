@@ -33,6 +33,9 @@ abstract class UserActivitiesDao {
     @Query("SELECT * FROM UserActivities WHERE channelId = :channelId AND type = :type")
     abstract suspend fun getUserActivityById(channelId: Long, type: String): UserActivities?
     
+    @Query("SELECT * FROM UserActivities WHERE type = :type")
+    abstract suspend fun getUserActivityListByType(type: String): List<UserActivities>?
+    
     @Query("UPDATE UserActivities SET payload = :payload WHERE channelId = :channelId AND type == :type")
     abstract suspend fun updateUserActivityPayload(channelId: Long, type: String, payload: String)
 
