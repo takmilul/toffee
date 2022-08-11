@@ -34,10 +34,12 @@ class AuthInterceptor @Inject constructor(
         val request = chain.request()
         
 //        Log.i("Path", request.url.encodedPath)
-        ToffeeAnalytics.logBreadCrumb(request.url.encodedPath.substringAfter("/").substringBefore("/"))
+        ToffeeAnalytics.logBreadCrumb("apiName: ${request.url.encodedPath.substringAfter("/").substringBefore("/")}")
         val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
-        val string = EncryptionUtil.encryptRequest(bodyToString(request.body))
+        val requestJsonString = bodyToString(request.body)
+        ToffeeAnalytics.logBreadCrumb("request: $requestJsonString")
+        val string = EncryptionUtil.encryptRequest(requestJsonString)
         if (!convertToGet) {
             builder.addEncoded("data", string)
         }
@@ -80,9 +82,10 @@ class AuthInterceptor @Inject constructor(
             Log.i("Network", "FROM NETWORK")
         }
         try {
-            val jsonString = EncryptionUtil.decryptResponse(response.body!!.string())
+            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string())
+            ToffeeAnalytics.logBreadCrumb("response: $responseJsonString")
             val contentType = response.body!!.contentType()
-            val body = jsonString.toResponseBody(contentType)
+            val body = responseJsonString.toResponseBody(contentType)
             return response.newBuilder().body(body).build()
         } catch (e: Exception) {
             throw AuthEncodeDecodeException(e.message, e.cause)
