@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.ads.identifier.AdvertisingIdClient
 import androidx.ads.identifier.AdvertisingIdInfo
 import androidx.core.os.bundleOf
@@ -45,6 +48,7 @@ import pl.droidsonroids.gif.GifDrawable
 import java.util.concurrent.*
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
+
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
@@ -284,7 +288,7 @@ class SplashScreenFragment : BaseFragment() {
     }
     
     private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
-        AlertDialog.Builder(requireContext()).apply {
+       val builder = AlertDialog.Builder(requireContext()).apply {
             setTitle(title)
             setMessage(message)
             setCancelable(false)
@@ -313,9 +317,13 @@ class SplashScreenFragment : BaseFragment() {
 //                    viewModel.loginResponse(true)
 //                }
 //            }
-        }.create().show()
+        }
+        val alert = builder.create()
+        alert.show()
+        val updateButton: Button = alert.getButton(DialogInterface.BUTTON_POSITIVE)
+//        updateButton.setBackgroundColor(Color.parseColor("#FF3988"))
+        updateButton.setTextColor(Color.parseColor("#FF3988"))
     }
-    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
