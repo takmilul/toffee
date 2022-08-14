@@ -613,7 +613,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var retryWaitDuration: Int
         get() = pref.getInt(PREF_PLAYER_RETRY_WAIT_DURATION, -1)
         set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_WAIT_DURATION, value) }
-    
+
+    var videoMinDuration: Int
+        get() = pref.getInt(PREF_VIDEO_MIN_DURATION,-1)
+        set(value)=pref.edit{putInt(PREF_VIDEO_MIN_DURATION,value)}
+    var videoMaxDuration: Int
+        get()=pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
+        set(value)=pref.edit{putInt(PREF_VIDEO_MAX_DURATION,value)}
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -700,6 +707,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isFallbackActive = it.isFallbackActive
             retryCount = it.retryCount
             retryWaitDuration = it.retryWaitDuration
+            videoMinDuration=it.videoMinDuration
+            videoMaxDuration=it.videoMaxDuration
     
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -818,7 +827,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_IS_FALLBACK_ACTIVE = "pref_player_is_fallback_active"
         private const val PREF_PLAYER_RETRY_COUNT = "pref_player_retry_Count"
         private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
-        
+        private const val PREF_VIDEO_MIN_DURATION="pref_video_min_duration"
+        private const val PREF_VIDEO_MAX_DURATION="pref_video_max_duration"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

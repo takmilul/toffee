@@ -163,4 +163,8 @@ class CustomerInfoLogin(
     var retryCount: Int = -1,
     @SerializedName("appWaitDuration")
     var retryWaitDuration: Int = -1,
+    @SerializedName("videoMinDuration")
+    val videoMinDuration:Int = -1,
+    @SerializedName("videoMaxDuration")
+    val videoMaxDuration:Int = -1
 ) : BodyResponse(), Parcelable
