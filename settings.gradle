@@ -16,5 +16,5 @@ dependencyResolutionManagement {
         maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
     }
 }
-rootProject.name = 'ToffeeKotlin'
+rootProject.name = 'ToffeeAndroidMobile'
 include ':app', ':data'//, ':showcase_view'
