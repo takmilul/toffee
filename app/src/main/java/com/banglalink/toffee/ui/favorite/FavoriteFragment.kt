@@ -8,9 +8,11 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.handleAddToPlaylist
+import com.banglalink.toffee.extension.handleFavorite
+import com.banglalink.toffee.extension.handleReport
+import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -51,7 +53,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
         openMenu(view, item)
     }
     
-    fun openMenu(anchor: View, channelInfo: ChannelInfo) {
+    private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
 
@@ -60,6 +62,8 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
+        popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{

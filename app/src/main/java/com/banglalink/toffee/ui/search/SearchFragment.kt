@@ -126,18 +126,11 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
-
-        if (channelInfo.isChannel) {
-            popupMenu.menu.findItem(R.id.menu_fav).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_report).isVisible = false
-        }
-
-        if (channelInfo.isLinear) {
-            popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = false
-        }
-
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
+        
+        popupMenu.menu.findItem(R.id.menu_fav).isVisible = !channelInfo.isChannel
+        popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        popupMenu.menu.findItem(R.id.menu_report).isVisible = !channelInfo.isChannel
+        
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
