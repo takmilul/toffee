@@ -54,7 +54,7 @@
             android:id="@+id/search_plate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal">
             
@@ -67,28 +67,34 @@
                 android:layout_gravity="bottom"
                 android:paddingStart="@dimen/abc_dropdownitem_text_padding_left"
                 android:paddingEnd="@dimen/abc_dropdownitem_text_padding_right"
+                android:drawablePadding="10dp"
                 android:singleLine="true"
                 android:ellipsize="end"
+                android:hint="Search"
+                android:textColorHint="@color/searchview_hint_text_color"
                 android:background="@drawable/searchview_input_bg"
                 android:inputType="text|textAutoComplete|textNoSuggestions"
                 android:imeOptions="actionSearch"
                 android:dropDownHeight="wrap_content"
                 android:dropDownAnchor="@id/search_edit_frame"
-                android:drawableEnd="@drawable/ic_menu_search"
+                android:drawableEnd="@drawable/ic_clear_search"
+                android:drawableStart="@drawable/ic_search_new"
                 android:dropDownVerticalOffset="0dip"
                 android:dropDownHorizontalOffset="0dip" />
-            
+
             <ImageView
                 android:id="@+id/search_close_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="8dip"
-                android:paddingRight="8dip"
                 android:layout_gravity="center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/abc_searchview_description_clear"
                 android:focusable="true"
-                android:src="@drawable/ic_close"
-                android:contentDescription="@string/abc_searchview_description_clear" />
+                android:layout_weight="0"
+                android:visibility="visible"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:src="@drawable/ic_close" />
             
         </LinearLayout>
         
