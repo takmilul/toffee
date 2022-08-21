@@ -636,7 +636,7 @@ class HomeActivity :
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
-        if (visibleDestinationId == R.id.htmlPageViewDialogInApp) {
+        if (visibleDestinationId == R.id.htmlPageViewDialogInApp && isPlayerVisible()) {
             maximizePlayer()
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0

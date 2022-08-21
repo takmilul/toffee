@@ -151,12 +151,12 @@ abstract class PlayerPageActivity :
             CookieHandler.setDefault(defaultCookieManager)
         }
         observe(mPref.isWebViewDialogOpened) {
-            if (it) {
+            if (it && isPlayerVisible()) {
                 player?.pause()
             }
         }
         observe(mPref.isWebViewDialogClosed) {
-            if (it && isAdRunning) {
+            if (it && isPlayerVisible() && isAdRunning) {
                 player?.play()
             }
         }
