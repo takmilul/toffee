@@ -34,12 +34,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
+    val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }

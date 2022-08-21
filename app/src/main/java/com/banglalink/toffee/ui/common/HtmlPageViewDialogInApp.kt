@@ -5,12 +5,10 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.ClipboardManager
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,26 +17,22 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.HtmlPageViewDialogInAppBinding
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.home.PLAY_IN_WEB_VIEW
-import com.banglalink.toffee.ui.player.PlayerPageActivity
-import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.firework.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerControlView
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelInfo> {
-
-    private var _binding: HtmlPageViewDialogInAppBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var htmlUrl: String
+    
     private var header: String? = ""
-
+    private lateinit var htmlUrl: String
+    private val binding get() = _binding!!
+    @Inject lateinit var mPref: SessionPreference
+    private var _binding: HtmlPageViewDialogInAppBinding? = null
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -46,26 +40,21 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
             R.style.FullScreenDialogStyle
         )
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = HtmlPageViewDialogInAppBinding.inflate(layoutInflater)
-
-        ///
+        
         htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
-
+        
         binding.titleTv.text = arguments?.getString("myTitle"," ") ?: " "
-
+        
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
-
+        
         binding.webview.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 binding.progressBar.progress = newProgress
@@ -73,7 +62,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
                     binding.progressBar.visibility = View.GONE
                 }
             }
-
+            
             override fun onPermissionRequest(request: PermissionRequest) {
                 val resources = request.resources
                 for (i in resources.indices) {
@@ -85,7 +74,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
                 super.onPermissionRequest(request)
             }
         }
-
+        
         with(binding.webview.settings) {
             if (Build.VERSION.SDK_INT >= 21) {
                 mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -102,14 +91,14 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
         }
-        if(header.isNullOrEmpty()){
+        if (header.isNullOrEmpty()){
             binding.webview.loadUrl(htmlUrl)
-        }else{
+        } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
-
+        
         binding.share.setOnClickListener {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
@@ -117,11 +106,12 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
                 Intent.EXTRA_TEXT, htmlUrl)
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
-
+        
         binding.closeIv.setOnClickListener {
+            mPref.isWebViewDialogClosed.postValue(true)
             dialog?.dismiss()
         }
-
+        
         binding.menuMore.setOnClickListener {
             val popupMenu = MyPopupWindow(requireContext(), binding.menuMore)
             popupMenu.inflate(R.menu.menu_browser_item)
@@ -160,7 +150,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
         }
         return binding.root
     }
-
+    
     override fun onStart() {
         super.onStart()
         dialog?.let {
@@ -169,7 +159,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
             it.window?.setLayout(width, height)
         }
     }
-
+    
     override fun onDestroyView() {
         binding.webview.run {
             clearCache(false)
