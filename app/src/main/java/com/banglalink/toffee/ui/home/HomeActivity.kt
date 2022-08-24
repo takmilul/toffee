@@ -5,6 +5,8 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.app.PictureInPictureParams
+import android.app.PictureInPictureUiState
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -17,10 +19,12 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.Rational
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -30,6 +34,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.CallSuper
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
@@ -171,31 +176,31 @@ class HomeActivity :
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
-
+    
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
-
+    
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-
+        
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
             || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
             || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
         ).not()
-
+        
         //disable screen capture
         if (isDisableScreenshot) {
             window.setFlags(
@@ -208,13 +213,13 @@ class HomeActivity :
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        
         setupNavController()
         initializeDraggableView()
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-
+        
         ToffeeAnalytics.logUserProperty(
             mapOf(
                 "userId" to mPref.customerId.toString(),
@@ -222,7 +227,7 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
-
+        
         if (mPref.homeIntent.value != null) {
             intent = mPref.homeIntent.value
             mPref.homeIntent.value = null
@@ -235,7 +240,7 @@ class HomeActivity :
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
-
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -355,7 +360,7 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
-
+        
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
@@ -369,7 +374,7 @@ class HomeActivity :
         }
 //        showDeviceId()
     }
-
+    
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
@@ -384,7 +389,7 @@ class HomeActivity :
             ConvivaHelper.init(applicationContext, true)
         }
     }
-
+    
     private fun showDeviceId() {
         ToffeeAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -394,7 +399,7 @@ class HomeActivity :
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
-
+    
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()
@@ -403,13 +408,13 @@ class HomeActivity :
             && mPref.channelName.isNotBlank()
             && mPref.channelLogo.isNotBlank()
             && mPref.isChannelDetailChecked
-
+    
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
     }
-
+    
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -580,7 +585,7 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
-
+        
 //        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 //            if(insets.hasInsets()) {
 //                Log.e("INSET_T", "Has inset")
@@ -1015,7 +1020,7 @@ class HomeActivity :
             else -> url
         }
     }
-
+    
     private fun getWebPlaylistShare(url:String):String{
         val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
         val isOwner= if(ownerId==mPref.customerId) 1 else 0
@@ -1029,7 +1034,7 @@ class HomeActivity :
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
         return newUrl+shareableJsonData
     }
-
+    
     private fun playPlaylistShareable() {
         observe(viewModel.playlistShareableLiveData) { response ->
             when (response) {
@@ -1777,7 +1782,7 @@ class HomeActivity :
             }
             .show()
     }
-
+    
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when (it) {
@@ -1867,7 +1872,7 @@ class HomeActivity :
             enterPipMode()
         }
     }
-
+    
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
@@ -1883,12 +1888,12 @@ class HomeActivity :
             )
         }
     }
-
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        pipChanged(isInPictureInPictureMode)
-    }
-
+    
+//    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+//        pipChanged(isInPictureInPictureMode)
+//        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+//    }
+    
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
@@ -1898,7 +1903,7 @@ class HomeActivity :
         }
         binding.playerView.onPip(isInPip)
     }
-
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -1927,7 +1932,7 @@ class HomeActivity :
     } else {
         false
     }
-
+    
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
