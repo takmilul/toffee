@@ -107,6 +107,7 @@ abstract class PlayerPageActivity :
     protected var player: Player? = null
     private var isAppBackgrounded = false
     @Inject lateinit var pingTool: PingTool
+    private var isAdRunning: Boolean = false
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -150,8 +151,13 @@ abstract class PlayerPageActivity :
             CookieHandler.setDefault(defaultCookieManager)
         }
         observe(mPref.isWebViewDialogOpened) {
-            if (it) {
+            if (it && isPlayerVisible()) {
                 player?.pause()
+            }
+        }
+        observe(mPref.isWebViewDialogClosed) {
+            if (it && isPlayerVisible() && isAdRunning) {
+                player?.play()
             }
         }
         if (mPref.isCastEnabled) {
@@ -580,6 +586,8 @@ abstract class PlayerPageActivity :
     
     protected fun setPlayList(data: AddToPlaylistData) {
         playlistManager.setPlayList(data)
+        val playbackState = if(player?.isPlaying == true) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+        updatePlaybackState(playbackState)
     }
     
     override fun hasPrevious(): Boolean {
@@ -835,8 +843,8 @@ abstract class PlayerPageActivity :
             }
         }
         
+        isAdRunning = false
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        
         getVastTagList(channelInfo)
             ?.randomOrNull()
             ?.let { tag ->
@@ -1480,6 +1488,7 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAdBuffering(it.ad)
             }
             STARTED -> {
+                isAdRunning = true
                 playerEventHelper.setAdData(it.ad, STARTED.name)
                 ConvivaHelper.onAdStarted(it.ad)
             }
@@ -1512,6 +1521,7 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAdBreakEnded()
             }
             ALL_ADS_COMPLETED -> {
+                isAdRunning = false
                 playerEventHelper.setAdData(it.ad, ALL_ADS_COMPLETED.name)
                 ConvivaHelper.onAllAdEnded()
                 playerEventHelper.setAdData(null, null, isReset = true)

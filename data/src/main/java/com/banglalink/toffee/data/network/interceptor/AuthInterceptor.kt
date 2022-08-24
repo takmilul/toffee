@@ -45,7 +45,11 @@ class AuthInterceptor @Inject constructor(
         }
         
 //        Log.i("Agent", "apiAgent: ${System.getProperty("http.agent")}\n\n")
-        val userAgent = if (request.url.toString().contains("bl-he")) System.getProperty("http.agent") ?: apiUserAgent.get() else playerUserAgent.get()
+        val userAgent = if (request.url.toString().contains("bl-he")) {
+            System.getProperty("http.agent") ?: apiUserAgent.get()
+        } else {
+            playerUserAgent.get()
+        }
         val newRequest = request.newBuilder()
             .headers(request.headers)
             .addHeader("User-Agent", userAgent)

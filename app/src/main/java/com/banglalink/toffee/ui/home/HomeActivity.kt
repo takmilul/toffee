@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.util.Rational
 import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -174,11 +173,11 @@ class HomeActivity :
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
 
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -639,7 +638,7 @@ class HomeActivity :
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
-        if (visibleDestinationId == R.id.htmlPageViewDialogInApp) {
+        if (visibleDestinationId == R.id.htmlPageViewDialogInApp && isPlayerVisible()) {
             maximizePlayer()
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0
@@ -647,8 +646,6 @@ class HomeActivity :
         if(navController.currentDestination?.id!=R.id.searchFragment){
             closeSearchBarIfOpen()
         }
-
-
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
             val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
@@ -689,7 +686,6 @@ class HomeActivity :
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
         binding.sideNavigation.setBackgroundColor(resources.getColor(R.color.cardBgColor))
-
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
             WindowInsetsCompat.CONSUMED
@@ -1328,12 +1324,12 @@ class HomeActivity :
                                     cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate
                                     cdnChannelItem.payload = gson.toJson(newChannelInfo)
                                     lifecycleScope.launch {
-                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate,
+                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate, 
                                             cdnChannelItem.payload)
                                     }
-                                    newChannelInfo?.let { item ->
+                                    newChannelInfo?.let { item -> 
                                         playContent(detailsInfo, item)
-                                    } ?: run {
+                                    } ?: run { 
                                         showToast(getString(R.string.try_again_message))
                                     }
                                 }
@@ -1899,10 +1895,10 @@ class HomeActivity :
         }
     }
 
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        pipChanged(isInPictureInPictureMode)
-    }
+//    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+//        pipChanged(isInPictureInPictureMode)
+//        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+//    }
 
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {

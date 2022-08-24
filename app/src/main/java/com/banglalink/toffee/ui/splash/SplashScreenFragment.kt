@@ -49,7 +49,6 @@ import java.util.concurrent.*
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
-
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
@@ -288,7 +287,7 @@ class SplashScreenFragment : BaseFragment() {
     }
     
     private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
-       val builder = AlertDialog.Builder(requireContext()).apply {
+        val builder = AlertDialog.Builder(requireContext()).apply {
             setTitle(title)
             setMessage(message)
             setCancelable(false)
@@ -324,6 +323,7 @@ class SplashScreenFragment : BaseFragment() {
 //        updateButton.setBackgroundColor(Color.parseColor("#FF3988"))
         updateButton.setTextColor(Color.parseColor("#FF3988"))
     }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
