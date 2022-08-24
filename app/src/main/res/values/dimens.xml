@@ -45,4 +45,5 @@
     <dimen name="multitext_button_width">104dp</dimen>
     <dimen name="multitext_button_height">30dp</dimen>
     <dimen name="channel_banner_height">160dp</dimen>
+    <dimen name="design_navigation_separator_vertical_padding" tools:override="true">3dp</dimen>
 </resources>

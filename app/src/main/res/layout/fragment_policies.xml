@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="watchWifiOnly"
+            type="Boolean" />
+        <variable
+            name="enableNotification"
+            type="boolean" />
+        <variable
+            name="enableFloatingWindow"
+            type="boolean" />
+    </data>
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        android:scrollbars="none">
+        
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="@color/screen_bg"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
+
+            <View
+                android:id="@+id/policiesDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/pref_policies"
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/menu_creators_policy"
+                    app:srcCompat="@drawable/ic_creators_policy" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_creators_policy" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            
+            <View
+                android:id="@+id/clearWatchDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/pref_privacy"
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/txt_privacy_policy"
+                    app:srcCompat="@drawable/ic_pref_privacy" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/privacy_policy" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/pref_terms"
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/terms_and_conditions"
+                    app:srcCompat="@drawable/ic_pref_terms" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/terms_and_conditions" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+</layout>

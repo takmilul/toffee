@@ -74,22 +74,22 @@
                     app:drawableStartCompat="@drawable/ic_location"
                     tools:text="Address" />
 
-                <TextView
-                    android:id="@+id/email_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@android:color/transparent"
-                    android:drawablePadding="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center_vertical"
-                    android:padding="10dp"
-                    android:text="@{TextUtils.isEmpty(data.email)?@string/add_your_email:data.email}"
-                    android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"
-                    android:textSize="14sp"
-                    android:textStyle="normal"
-                    app:drawableStartCompat="@drawable/ic_email"
-                    tools:text="user@gmail.com" />
+<!--                <TextView-->
+<!--                    android:id="@+id/email_tv"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:background="@android:color/transparent"-->
+<!--                    android:drawablePadding="12dp"-->
+<!--                    android:fontFamily="@font/roboto_regular"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:text="@{TextUtils.isEmpty(data.email)?@string/add_your_email:data.email}"-->
+<!--                    android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="normal"-->
+<!--                    app:drawableStartCompat="@drawable/ic_email"-->
+<!--                    tools:text="user@gmail.com" />-->
 
                 <LinearLayout
                     android:id="@+id/phone_number_layout"

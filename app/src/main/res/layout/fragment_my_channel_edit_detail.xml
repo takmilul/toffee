@@ -502,11 +502,12 @@
                     android:id="@+id/saveButton"
                     style="@style/ButtonStyleSolidPink"
                     android:layout_marginHorizontal="8dp"
-                    android:text="@string/save_changes"
+                    android:text='@{(viewModel.myChannelDetail.channelName == null || viewModel.myChannelDetail.channelName.empty) ? "Create channel" : "Save changes"}'
                     app:layout_constraintBottom_toBottomOf="@id/cancelButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/cancelButton"
-                    app:layout_constraintTop_toTopOf="@id/cancelButton" />
+                    app:layout_constraintTop_toTopOf="@id/cancelButton"
+                    tools:text="Save changes"/>
 
                 <ProgressBar
                     android:id="@+id/progressBar"

@@ -40,6 +40,7 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -143,6 +144,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     }
                     binding.viewModel = viewModel
                     viewModel.myChannelDetail = myChannelDetail
+                    if (binding.saveButton.text.equals("Create channel")){
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                    }
                     progressDialog.dismiss()
                 }
                 is Failure -> {

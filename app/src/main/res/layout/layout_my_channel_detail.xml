@@ -195,13 +195,14 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            android:text="Edit Channel"
+            android:text='@{(data.myChannelDetail.channelName == null || data.myChannelDetail.channelName.empty) ? "Create Channel" : "Edit channel"}'
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/analyticsButton"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelDescriptionTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/channelDescriptionTextView"
+            tools:text="Create Channel"/>
 
         <Button
             android:id="@+id/analyticsButton"

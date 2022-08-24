@@ -200,6 +200,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     requireContext().showToast(it.data.message)
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                     myChannelHomeViewModel.getChannelDetail(mPref.customerId)
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
                     parentFragment?.parentFragment?.let {
                         if (it is BottomSheetDialogFragment) {
                             it.findNavController().popBackStack().let { _ ->

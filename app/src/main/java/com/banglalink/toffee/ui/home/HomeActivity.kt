@@ -688,6 +688,7 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+        binding.sideNavigation.setBackgroundColor(resources.getColor(R.color.cardBgColor))
 
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->

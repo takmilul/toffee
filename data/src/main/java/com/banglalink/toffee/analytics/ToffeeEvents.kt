@@ -20,6 +20,7 @@ object ToffeeEvents {
     const val REACT_CLICK = "react_event"
     const val SHARE_CLICK = "share_event"
     const val UPLOAD_CLICK = "upload_event"
+    const val CREATOR_ACCOUNT_OPEN = "Creator_Account_Open"
     const val CATEGORY_EVENT = "category_"
     const val FETCHING_AD_ID_FAILED = "fetching_ad_id_failed"
     const val LOGIN = "login"

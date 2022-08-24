@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import android.view.WindowManager
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.SearchContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi

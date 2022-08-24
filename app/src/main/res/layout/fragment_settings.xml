@@ -50,15 +50,15 @@
                     android:layout_weight="1"
                     android:text="@string/notifications_text" />
                 
-                <TextView
-                    android:id="@+id/switchStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="6dp"
-                    android:gravity="center"
-                    android:text='@{enableNotification == true ? "On" : "Off"}'
-                    android:textColor="@color/fixed_second_text_color"
-                    android:textSize="12sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/switchStatus"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_marginHorizontal="6dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text='@{enableNotification == true ? "On" : "Off"}'-->
+<!--                    android:textColor="@color/fixed_second_text_color"-->
+<!--                    android:textSize="12sp" />-->
                 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/notificationSwitch"
@@ -100,7 +100,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/watch_only_when_wifi_available_text" />
+                    android:text="@string/play_on_wifi_only" />
                 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/watchOnlyWifiToggleBtn"
@@ -182,62 +182,62 @@
                     android:layout_height="wrap_content"
                     android:text="@string/clear_activities_text" />
             </androidx.appcompat.widget.LinearLayoutCompat>
-            
+
             <View
                 android:id="@+id/clearWatchDivider"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />
-            
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/pref_terms"
-                style="@style/PrefItemStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/terms_and_conditions"
-                    app:srcCompat="@drawable/ic_pref_terms" />
-                
-                <TextView
-                    style="@style/PrefItemTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/terms_and_conditions" />
-                
-            </androidx.appcompat.widget.LinearLayoutCompat>
-            
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="@color/colorSettingsDivider" />
-            
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/pref_privacy"
-                style="@style/PrefItemStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/txt_privacy_policy"
-                    app:srcCompat="@drawable/ic_pref_privacy" />
-                
-                <TextView
-                    style="@style/PrefItemTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/privacy_policy" />
-                
-            </androidx.appcompat.widget.LinearLayoutCompat>
-            
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="@color/colorSettingsDivider" />
+
+<!--            <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                android:id="@+id/pref_terms"-->
+<!--                style="@style/PrefItemStyle"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+<!--                -->
+<!--                <ImageView-->
+<!--                    android:layout_width="20dp"-->
+<!--                    android:layout_height="20dp"-->
+<!--                    android:contentDescription="@string/terms_and_conditions"-->
+<!--                    app:srcCompat="@drawable/ic_pref_terms" />-->
+<!--                -->
+<!--                <TextView-->
+<!--                    style="@style/PrefItemTextStyle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/terms_and_conditions" />-->
+<!--                -->
+<!--            </androidx.appcompat.widget.LinearLayoutCompat>-->
+<!--            -->
+<!--            <View-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="@color/colorSettingsDivider" />-->
+
+<!--            <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                android:id="@+id/pref_privacy"-->
+<!--                style="@style/PrefItemStyle"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+<!--                -->
+<!--                <ImageView-->
+<!--                    android:layout_width="20dp"-->
+<!--                    android:layout_height="20dp"-->
+<!--                    android:contentDescription="@string/txt_privacy_policy"-->
+<!--                    app:srcCompat="@drawable/ic_pref_privacy" />-->
+<!--                -->
+<!--                <TextView-->
+<!--                    style="@style/PrefItemTextStyle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/privacy_policy" />-->
+<!--                -->
+<!--            </androidx.appcompat.widget.LinearLayoutCompat>-->
+<!--            -->
+<!--            <View-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="@color/colorSettingsDivider" />-->
             
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/pref_about"

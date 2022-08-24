@@ -28,6 +28,7 @@
         <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="android:textColor">@color/cardTitleColor</item>
         <item name="colorBackgroundFloating">@color/cardBgColor</item>
+        <item name="android:listDivider">@drawable/list_divider</item>
         <item name="android:autofilledHighlight">@android:color/transparent</item>
     </style>
     
@@ -419,7 +420,6 @@
     <style name="NavigationMenuStyle" parent="Widget.Design.NavigationView">
         <item name="itemIconTint">@color/side_menu_color_selector</item>
         <item name="itemTextColor">@color/side_menu_color_selector</item>
-        <item name="itemIconPadding">16dp</item>
     </style>
 
     <style name="PrefItemTextStyle" parent="Widget.AppCompat.TextView">

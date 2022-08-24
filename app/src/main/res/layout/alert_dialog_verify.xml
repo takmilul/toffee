@@ -92,7 +92,7 @@
         android:layout_marginBottom="24dp"
         android:layout_marginEnd="0dp"
         android:paddingHorizontal="16dp"
-        android:text="@string/skip_text"
+        android:text="@string/cancel_text"
         android:textAllCaps="true"
         android:clickable="true"
         android:focusable="true"

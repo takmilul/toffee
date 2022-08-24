@@ -68,8 +68,8 @@ class SettingsFragment : BaseFragment() {
     
     private fun setPrefItemListener() {
         binding.prefClearWatch.setOnClickListener { onClickClearWatchHistory() }
-        binding.prefPrivacy.setOnClickListener { onClickPrivacyPolicy() }
-        binding.prefTerms.setOnClickListener { onClickTermsAndConditions() }
+//        binding.prefPrivacy.setOnClickListener { onClickPrivacyPolicy() }
+//        binding.prefTerms.setOnClickListener { onClickTermsAndConditions() }
         binding.prefAbout.setOnClickListener {
             if (findNavController().currentDestination?.id != R.id.AboutFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
                 val action = SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
@@ -92,17 +92,17 @@ class SettingsFragment : BaseFragment() {
         }.create().show()
     }
     
-    private fun onClickTermsAndConditions() {
-        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToTermsAndConditions("Terms & Conditions", mPref.termsAndConditionUrl)
-            findNavController().navigate(action)
-        }
-    }
-    
-    private fun onClickPrivacyPolicy() {
-        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicy("Privacy Policy", mPref.privacyPolicyUrl)
-            findNavController().navigate(action)
-        }
-    }
+//    private fun onClickTermsAndConditions() {
+//        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+//            val action = SettingsFragmentDirections.actionSettingsFragmentToTermsAndConditions("Terms & Conditions", mPref.termsAndConditionUrl)
+//            findNavController().navigate(action)
+//        }
+//    }
+//
+//    private fun onClickPrivacyPolicy() {
+//        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+//            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicy("Privacy Policy", mPref.privacyPolicyUrl)
+//            findNavController().navigate(action)
+//        }
+//    }
 }
