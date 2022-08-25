@@ -144,9 +144,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     }
                     binding.viewModel = viewModel
                     viewModel.myChannelDetail = myChannelDetail
-                    if (binding.saveButton.text.equals("Create channel")){
-                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
-                    }
                     progressDialog.dismiss()
                 }
                 is Failure -> {
@@ -273,6 +270,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
+                    if (myChannelDetail == null || myChannelDetail?.id == 0L){
+                        Log.i("AnnaPL", "text: ${myChannelDetail?.id}")
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                    }
                     mPref.isChannelDetailChecked = true
                     mPref.channelLogo = it.data.profileImage ?: myChannelDetail?.profileUrl.orEmpty()
                     mPref.channelName = channelName
