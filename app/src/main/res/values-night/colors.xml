@@ -36,6 +36,7 @@
     <color name="searchBarBgColor">#29466B</color>
     <color name="cardBgColor">#111F31</color>
     <color name="cardTitleColor">#BED6F3</color>
+    <color name="list_divider_side_nav">#29466B</color>
     <color name="categoryNameColor">#BED6F3</color>
     <color name="tvChannelTitleColor">#BED6F3</color>
     <color name="ratingButtonActiveColor">#29466B</color>
