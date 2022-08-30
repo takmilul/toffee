@@ -1871,7 +1871,10 @@ class HomeActivity :
             searchView?.onActionViewExpanded()
         //}
     }
-
+    fun hideSearchOverlay(){
+        binding.searchOverlay.hide()
+    }
+    
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {

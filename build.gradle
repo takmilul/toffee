@@ -15,7 +15,7 @@ buildscript {
         espressoVersion = '3.4.0'
         kotlinKtxVersion = '1.8.0'
         lifecycleVersion = '2.5.1'
-        navigationVersion = '2.5.1'
+        navigationVersion = '2.4.2'
         pahoClientVersion = '1.2.5'
         hiltAndroidVersion = '2.42'
         convivaSdkVersion = '4.0.20'

@@ -20,6 +20,8 @@ import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.Utils
+import com.conviva.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -68,6 +70,10 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
         if(requireActivity() is HomeActivity) {
             (requireActivity() as HomeActivity).openSearchBarIfClose()
+        }
+        if(searchKey.isNotEmpty()){
+            (requireActivity() as HomeActivity).hideSearchOverlay()
+            Utils.hideSoftKeyboard(requireActivity())
         }
 //        toolbar?.setNavigationOnClickListener {
 //            try {
