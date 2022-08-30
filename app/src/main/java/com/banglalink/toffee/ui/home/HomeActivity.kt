@@ -1875,6 +1875,10 @@ class HomeActivity :
         binding.searchOverlay.hide()
     }
     
+    fun clearSearViewFocus(){
+        searchView?.clearFocus()
+    }
+    
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {

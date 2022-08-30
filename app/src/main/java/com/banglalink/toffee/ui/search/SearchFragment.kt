@@ -72,8 +72,8 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             (requireActivity() as HomeActivity).openSearchBarIfClose()
         }
         if(searchKey.isNotEmpty()){
-            (requireActivity() as HomeActivity).hideSearchOverlay()
             Utils.hideSoftKeyboard(requireActivity())
+            (requireActivity() as HomeActivity).clearSearViewFocus()
         }
 //        toolbar?.setNavigationOnClickListener {
 //            try {
