@@ -80,7 +80,7 @@ class EditProfileFragment : BaseFragment() {
             saveButton.setOnClickListener { handleSaveButton() }
             cancelBtn.setOnClickListener { findNavController().popBackStack() }
             nameEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.nameEt, ToffeeFieldTextWatcher.FieldType.NAME_FIELD)
-            emailEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.emailEt, ToffeeFieldTextWatcher.FieldType.EMAIL_FIELD)
+//            emailEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.emailEt, ToffeeFieldTextWatcher.FieldType.EMAIL_FIELD)
             addressEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.addressEt, ToffeeFieldTextWatcher.FieldType.ADDRESS_FIELD)
             editIv.setOnClickListener {
                 if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.EditProfileFragment) {
@@ -126,14 +126,14 @@ class EditProfileFragment : BaseFragment() {
 
             val notValidEmail = form.email.isNotBlank() and !form.email.isValid(InputType.EMAIL)
 
-            if (notValidEmail) {
-                progressDialog.hide()
-                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-                binding.errorEmailTv.show()
-            } else {
-                binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
-                binding.errorEmailTv.hide()
-            }
+//            if (notValidEmail) {
+//                progressDialog.hide()
+//                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+//                binding.errorEmailTv.show()
+//            } else {
+//                binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
+//                binding.errorEmailTv.hide()
+//            }
 
             if (form.fullName.isNotBlank() && !notValidEmail) {
                 form.apply {
