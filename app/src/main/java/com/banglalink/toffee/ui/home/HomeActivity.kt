@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -1887,6 +1888,10 @@ class HomeActivity :
         binding.searchOverlay.hide()
     }
     
+    fun clearSearViewFocus(){
+        searchView?.clearFocus()
+    }
+    
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
@@ -1940,7 +1945,16 @@ class HomeActivity :
                 destroyPlayer()
             }
         } else if (searchView?.isIconified == false) {
-            closeSearchBarIfOpen()
+//            closeSearchBarIfOpen()
+            try {
+                closeSearchBarIfOpen()
+                lifecycleScope.launch {
+                    delay(300)
+                    getNavController().popBackStack()
+                }
+            }catch (e:Exception){
+        
+            }
         } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         } else {
