@@ -1931,8 +1931,8 @@ class HomeActivity :
             } else {
                 destroyPlayer()
             }
-        } else if (searchView?.isIconified == false) {
-            closeSearchBarIfOpen()
+//        } else if (searchView?.isIconified == false) {
+//            closeSearchBarIfOpen()
         } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         } else {
