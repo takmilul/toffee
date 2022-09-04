@@ -27,7 +27,6 @@ import com.banglalink.toffee.apiservice.ApiRoutes.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
-import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
@@ -124,7 +123,7 @@ class EditProfileFragment : BaseFragment() {
                 binding.errorNameTv.hide()
             }
 
-            val notValidEmail = form.email.isNotBlank() and !form.email.isValid(InputType.EMAIL)
+//            val notValidEmail = form.email.isNotBlank() and !form.email.isValid(InputType.EMAIL)
 
 //            if (notValidEmail) {
 //                progressDialog.hide()
@@ -135,7 +134,7 @@ class EditProfileFragment : BaseFragment() {
 //                binding.errorEmailTv.hide()
 //            }
 
-            if (form.fullName.isNotBlank() && !notValidEmail) {
+            if (form.fullName.isNotBlank() /*&& !notValidEmail*/) {
                 form.apply {
                     fullName = fullName.trim()
                     email = email.trim()

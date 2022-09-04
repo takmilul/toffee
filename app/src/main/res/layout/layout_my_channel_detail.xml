@@ -99,7 +99,7 @@
             style="@style/ButtonStyleRingPurple"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:text="Add Bio"
+            android:text="@string/add_bio"
             android:visibility="@{isOwner &amp;&amp; (data.myChannelDetail.description == null || data.myChannelDetail.description.empty) ? View.VISIBLE : View.GONE}"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
