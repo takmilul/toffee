@@ -450,4 +450,15 @@
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
     <string name="try_again_message">Something went wrong. Please try again later.</string>
+    <string name="delete_button_text">Delete Everything</string>
+    <string name="delete_text_title">Delete Profile &amp; Data</string>
+    <string name="delete_text_1">If you wish to proceed, your profile and data (identification data, channel data, and activities) will deleted permanently. If you have subscribed to any premium content, you will lose access to it. </string>
+    <string name="delete_text_2">You can open a fresh new account with the same mobile number, or continue to enjoy the free content on Toffee without signing in.</string>
+    <string name="delete_text_3">As per our guideline we may keep the data for 90 days before permanent deletion. </string>
+    <string name="delete_text_4">Type DELETE if you are sure you want to continue</string>
+    <string name="delete_process_title">Profile Deleted!</string>
+    <string name="delete_process_text_1">Your profile and data will be deleted permanently within 30 days. You can continue to enjoy the free content on Toffee without a profile.</string>
+    <string name="welcome_title">Hooray! Welcome back to Toffee</string>
+    <string name="welcome_button">Lets Enjoy</string>
+    <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
 </resources>

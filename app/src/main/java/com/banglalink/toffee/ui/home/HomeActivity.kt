@@ -45,6 +45,7 @@ import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -369,6 +370,18 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
+
+        if (mPref.deleteDialogLiveData.value == true){
+            getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment)
+            mPref.deleteDialogLiveData.value = false
+        }
+
+//        if (mPref.isVerifiedUser && mPref.backToffeeDialogLiveData.value == true){
+//            getNavController().navigate(R.id.backToffeeBottomSheetFragment)
+//            mPref.backToffeeDialogLiveData.value = false
+//        }
+
+        observeLogout()
 //        showDeviceId()
     }
 
@@ -1774,7 +1787,6 @@ class HomeActivity :
             .setMessage(String.format(getString(R.string.exit_from_app_msg), getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                observeLogout()
                 viewModel.logoutUser()
             }
             .setNegativeButton("No") { dialog, _ ->

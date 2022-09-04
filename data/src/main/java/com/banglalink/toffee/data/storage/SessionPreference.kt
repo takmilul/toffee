@@ -31,6 +31,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
     val loginDialogLiveData = SingleLiveEvent<Boolean>()
+    val deleteDialogLiveData = SingleLiveEvent<Boolean>()
+    val backToffeeDialogLiveData = SingleLiveEvent<Boolean>()
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
