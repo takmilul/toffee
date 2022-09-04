@@ -450,6 +450,7 @@
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
     <string name="try_again_message">Something went wrong. Please try again later.</string>
+    <string name="add_bio">Add Bio</string>
     <string name="delete_button_text">Delete Everything</string>
     <string name="delete_text_title">Delete Profile &amp; Data</string>
     <string name="delete_text_1">If you wish to proceed, your profile and data (identification data, channel data, and activities) will deleted permanently. If you have subscribed to any premium content, you will lose access to it. </string>

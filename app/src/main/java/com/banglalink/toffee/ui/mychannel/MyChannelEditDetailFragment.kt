@@ -40,7 +40,6 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -271,7 +270,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             when (it) {
                 is Success -> {
                     if (myChannelDetail == null || myChannelDetail?.id == 0L){
-                        Log.i("AnnaPL", "text: ${myChannelDetail?.id}")
                         ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
                     }
                     mPref.isChannelDetailChecked = true
