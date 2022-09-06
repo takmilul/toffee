@@ -239,12 +239,12 @@ object Utils {
         val minutes = (timeSecond / 60 % 60).toInt()
         val hours = (timeSecond / 3600).toInt()
         return if (hours > 0) {
-            String.format(if(hours==1)"%d Hour" else "%d Hours", hours)
+            String.format(if(hours==1)"%d hour" else "%d hours", hours)
         }
         else if (minutes > 0) {
-            String.format("%02d Minutes", minutes)
+            String.format("%02d minutes", minutes)
         }else{
-            String.format("%d Seconds", seconds)
+            String.format("%d seconds", seconds)
         }
     }
     
