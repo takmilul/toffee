@@ -192,7 +192,8 @@ class UploadMethodFragment : DialogFragment() {
 
                     ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)
-                        setText("Accepted video length is between ${mPref.videoMinDuration} second and ${mPref.videoMaxDuration/3600} hours")
+                        setText("Accepted video length is between ${Utils.getUploadDuration(mPref.videoMinDuration.toLong())} " +
+                            "and ${Utils.getUploadDuration(mPref.videoMaxDuration.toLong())}")
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
                             it?.dismiss()
                         }
