@@ -233,6 +233,20 @@ object Utils {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
+    fun getUploadDuration(timeSecond: Long): String {
+       // val totalSeconds = round(timeMs / 1000F)
+        val seconds = (timeSecond % 60).toInt()
+        val minutes = (timeSecond / 60 % 60).toInt()
+        val hours = (timeSecond / 3600).toInt()
+        return if (hours > 0) {
+            String.format(if(hours==1)"%d hour" else "%d hours", hours)
+        }
+        else if (minutes > 0) {
+            String.format("%02d minutes", minutes)
+        }else{
+            String.format("%d seconds", seconds)
+        }
+    }
     
     fun getVideoUploadLimit(timeMs: Long,minLength:Int,maxLength:Int): Boolean {
         return (minLength > round(timeMs / 1000F) || round(timeMs / 1000F) > maxLength)
