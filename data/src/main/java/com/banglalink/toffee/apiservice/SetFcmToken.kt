@@ -10,7 +10,7 @@ class SetFcmToken @Inject constructor(private val preference: SessionPreference,
 
     suspend fun execute(token: String) {
         val savedToken = preference.fcmToken
-        if (savedToken != token) {//check is it new token or not
+        if (savedToken != token && preference.customerId != 0 && preference.password.isNotBlank()) {//check is it new token or not
             tryIO2 {
                 toffeeApi.setFcmToken(FcmTokenRequest(token, preference.customerId))
             }
