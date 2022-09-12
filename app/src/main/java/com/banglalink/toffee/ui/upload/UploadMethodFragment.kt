@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadMethodFragmentBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -44,6 +45,7 @@ class UploadMethodFragment : DialogFragment() {
     @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
     private var _binding: UploadMethodFragmentBinding ? = null
     private val binding get() = _binding!!
+    @Inject lateinit var mPref: SessionPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,12 +188,13 @@ class UploadMethodFragment : DialogFragment() {
             lifecycleScope.launch {
                 println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                 println("CapturePath${videoFile!!.path}")
-                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
+                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()),mPref.videoMinDuration,mPref.videoMaxDuration)){
 
                     ToffeeAlertDialogBuilder(requireContext()).apply {
-                        setTitle(R.string.txt_video_length)
-                        setText(R.string.txt_video_length_msg)
-                        setPositiveButtonListener(getString(R.string.btn_got_it)) {
+                        setTitle(R.string.issue_with_video_length)
+                        setText("Accepted video length is between ${Utils.getUploadDuration(mPref.videoMinDuration.toLong())} " +
+                            "to ${Utils.getUploadDuration(mPref.videoMaxDuration.toLong())}")
+                        setPositiveButtonListener(getString(R.string.try_again_txt)) {
                             it?.dismiss()
                         }
                     }.create().show()
@@ -215,11 +218,11 @@ class UploadMethodFragment : DialogFragment() {
 
             if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
 
-                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()))){
+                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()),mPref.videoMinDuration,mPref.videoMaxDuration)){
 
                     ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.txt_video_length)
-                        setText(R.string.txt_video_length_msg)
+                        setText("Accepted video length is between ${mPref.videoMinDuration} second and ${mPref.videoMaxDuration/3600} hours")
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
                             it?.dismiss()
                         }

@@ -396,6 +396,7 @@
     <string name="txt_video_format">Video Format</string>
     <string name="txt_video_format_msg">Only MP4 video format is supported</string>
     <string name="txt_video_length">Video Length</string>
+    <string name="issue_with_video_length">Issue with video length</string>
     <string name="txt_video_length_msg">Accepted video length is between 10 second and 4 hours</string>
     <string name="featured_partner_banner">featured partner banner</string>
     <string name="empty_copyright_file_msg">Please choose a copyright file</string>
