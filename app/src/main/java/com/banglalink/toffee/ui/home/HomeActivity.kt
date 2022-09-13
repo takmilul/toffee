@@ -1949,7 +1949,7 @@ class HomeActivity :
             try {
                 closeSearchBarIfOpen()
                 lifecycleScope.launch {
-                    delay(300)
+                    delay(250)
                     getNavController().popBackStack()
                 }
             }catch (e:Exception){

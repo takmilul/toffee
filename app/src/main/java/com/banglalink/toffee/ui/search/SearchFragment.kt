@@ -82,7 +82,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             try {
                 (activity as HomeActivity).closeSearchBarIfOpen()
                 lifecycleScope.launch {
-                    delay(300)
+                    delay(250)
                     findNavController().popBackStack()
                 }
             }catch (e:Exception){

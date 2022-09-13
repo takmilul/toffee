@@ -14,5 +14,9 @@ class MediaCdnSignUrl {
     @SerializedName("sign_url")
     val signUrl: String? = null
     @SerializedName("sign_url_expire")
-    val signedUrlExpiryDate: String? = null
+    var signedUrlExpiryDate: String? =null
+//    @SerializedName("sign_cookie")
+//    var signCookie: String? = null
+//    @SerializedName("sign_cookie_expire")
+//    var signCookieDate: String? = null
 }
