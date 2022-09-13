@@ -162,7 +162,14 @@ data class ChannelInfo(
     @SerializedName("plain_hls_url_for_url_type")
     var paidPlainHlsUrl: String? = null,
     @SerializedName("sign_url_expire")
-    var signedUrlExpiryDate: String? =null
+    var signedUrlExpiryDate: String? =null,
+    @SerializedName("cdn_type")
+    var cdnType: String? = null
+//    @SerializedName("sign_cookie")
+//    var signCookie: String? = null,
+//    @SerializedName("sign_cookie_expire")
+//    var signCookieDate: String? =null,
+
 ) :Parcelable {
     
     @get:SerializedName("isApproved")
