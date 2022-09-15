@@ -80,9 +80,6 @@ import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
-import java.net.CookieHandler
-import java.net.CookieManager
-import java.net.CookiePolicy
 import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.math.max
@@ -115,7 +112,6 @@ abstract class PlayerPageActivity :
     protected var playerErrorMessage: String? = null
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
-    private var defaultCookieManager = CookieManager()
     private var mediaSession: MediaSessionCompat? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
@@ -132,10 +128,6 @@ abstract class PlayerPageActivity :
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     
-    init {
-        defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
-    }
-    
     companion object {
         private const val KEY_WINDOW = "window"
         private const val KEY_POSITION = "position"
@@ -147,9 +139,6 @@ abstract class PlayerPageActivity :
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (CookieHandler.getDefault() !== defaultCookieManager) {
-            CookieHandler.setDefault(defaultCookieManager)
-        }
         observe(mPref.isWebViewDialogOpened) {
             if (it && isPlayerVisible()) {
                 player?.pause()

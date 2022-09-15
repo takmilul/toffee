@@ -78,7 +78,7 @@
     <fragment
         android:id="@+id/menu_redeem"
         android:name="com.banglalink.toffee.ui.redeem.RedeemCodeFragment"
-        android:label="Enter Referral Code" />
+        android:label="Redeem Referral Code" />
     
     <fragment
         android:id="@+id/menu_invite"

@@ -37,3 +37,9 @@ annotation class ToffeeHeader
 
 @Qualifier
 annotation class ApiHeader
+
+@Qualifier
+annotation class CustomCookieManager
+
+@Qualifier
+annotation class CustomCookieJar

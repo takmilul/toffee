@@ -25,6 +25,7 @@ import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.CoilCache
+import com.banglalink.toffee.di.CustomCookieManager
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -48,6 +49,9 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import java.net.CookieHandler
+import java.net.CookieManager
+import java.net.CookiePolicy
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.net.ssl.SSLContext
@@ -65,11 +69,16 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     @Inject lateinit var sessionPreference: SessionPreference
     private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
+    @CustomCookieManager @Inject lateinit var defaultCookieManager: CookieManager
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
     
     override fun onCreate() {
         super.onCreate()
+        defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
+        if (CookieHandler.getDefault() !== defaultCookieManager) {
+            CookieHandler.setDefault(defaultCookieManager)
+        }
         try {
             connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

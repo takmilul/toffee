@@ -12,6 +12,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.util.CustomCookieJar
 import com.banglalink.toffee.util.Log
 import dagger.Module
 import dagger.Provides
@@ -19,27 +20,26 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import okhttp3.Cache
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
+import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.TlsVersion.*
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.CookieManager
 import java.util.concurrent.*
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object NetworkModuleLib {
-
+    
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, authInterceptor: AuthInterceptor): OkHttpClient {
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar, toffeeDns: ToffeeDns, authInterceptor: 
+    AuthInterceptor): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
@@ -52,10 +52,25 @@ object NetworkModuleLib {
             addInterceptor(authInterceptor)
             dns(toffeeDns)
             cache(cache)
+            cookieJar(cookieJar)
         }
         return clientBuilder.build()
     }
-
+    
+    @Provides
+    @Singleton
+    @com.banglalink.toffee.di.CustomCookieJar
+    fun providesCookieJar(): CookieJar {
+        return CustomCookieJar()
+    }
+    
+    @Provides
+    @Singleton
+    @CustomCookieManager
+    fun providesCookieManager(): CookieManager {
+        return CookieManager()
+    }
+    
     @Provides
     @Singleton
     @DefaultCache
@@ -126,9 +141,10 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @DnsHttpClient
-    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns): OkHttpClient {
+    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar): OkHttpClient {
         return simpleHttpClient.newBuilder()
             .dns(toffeeDns)
+            .cookieJar(cookieJar)
             .build()
     }
 
