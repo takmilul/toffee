@@ -47,7 +47,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -68,6 +67,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.enums.CategoryType
+import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.SharingType
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
@@ -643,8 +643,8 @@ class HomeActivity :
             maximizePlayer()
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0
-
-        if(navController.currentDestination?.id!=R.id.searchFragment){
+        
+        if(navController.currentDestination?.id != R.id.searchFragment){
             closeSearchBarIfOpen()
         }
         // For firebase screenview logging
@@ -1138,7 +1138,7 @@ class HomeActivity :
                         checkVerification {
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
-                    }else{
+                    } else{
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -1301,7 +1301,7 @@ class HomeActivity :
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if(channelInfo.urlType == PLAY_CDN){
+        if(channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value){
             lifecycleScope.launch {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
                     val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
@@ -1346,11 +1346,13 @@ class HomeActivity :
                     playContent(detailsInfo, channelInfo)
                 }
             }
-        } else {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
             playContent(detailsInfo, channelInfo)
+        } else {
+            // do nothing
         }
     }
-
+    
     private fun playContent(detailsInfo: Any?, it: ChannelInfo) {
         if (player is CastPlayer) {
             maximizePlayer()
@@ -1933,16 +1935,16 @@ class HomeActivity :
                 destroyPlayer()
             }
         } else if (searchView?.isIconified == false) {
-//            closeSearchBarIfOpen()
-            try {
-                closeSearchBarIfOpen()
-                lifecycleScope.launch {
-                    delay(250)
-                    getNavController().popBackStack()
-                }
-            }catch (e:Exception){
-        
-            }
+            closeSearchBarIfOpen()
+            getNavController().popBackStack(R.id.searchFragment, true)
+//            try {
+//                lifecycleScope.launch {
+//                    delay(250)
+//                    getNavController().popBackStack()
+//                }
+//            } catch (e:Exception) {
+//
+//            }
         } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         } else {

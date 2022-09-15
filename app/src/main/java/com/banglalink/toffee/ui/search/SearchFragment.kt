@@ -5,8 +5,6 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -22,10 +20,7 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.util.Utils
-import com.conviva.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -78,18 +73,17 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             Utils.hideSoftKeyboard(requireActivity())
             (requireActivity() as HomeActivity).clearSearViewFocus()
         }
-        toolbar?.setNavigationOnClickListener {
-            try {
-                (activity as HomeActivity).closeSearchBarIfOpen()
-                lifecycleScope.launch {
-                    delay(250)
-                    findNavController().popBackStack()
-                }
-            }catch (e:Exception){
-            
-            }
-        
-        }
+//        toolbar?.setNavigationOnClickListener {
+//            try {
+//                (activity as HomeActivity).closeSearchBarIfOpen()
+//                lifecycleScope.launch {
+//                    delay(250)
+//                    findNavController().popBackStack()
+//                }
+//            } catch (e:Exception){
+//
+//            }
+//        }
         observeSubscribeChannel()
     }
 
