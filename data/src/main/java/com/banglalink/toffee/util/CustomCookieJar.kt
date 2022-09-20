@@ -11,8 +11,23 @@ class CustomCookieJar: CookieJar {
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         cookies.forEach {
             try {
-                val domain = it.value.substringAfter("Domain=").substringBefore("|").trim()
-                cookieStore[domain] = cookies
+                val domainString = it.value.substringAfter("Domain=").substringBefore("|").trim() //upper loop cookie domain part
+                val isSecure = it.value.contains("Secure")
+                val isHttpOnly = it.value.contains("HttpOnly")
+                cookieStore[domainString] = cookies.map { cookie ->
+                    val cookie = Cookie.Builder().apply {
+                        name(cookie.name)
+                        value(cookie.value)
+                        expiresAt(cookie.expiresAt)
+                        val currentDomainString = cookie.value.substringAfter("Domain=").substringBefore("|").trim() //individual cookie domain part
+                        domain(currentDomainString)
+                        path(cookie.path)
+                        hostOnlyDomain(currentDomainString)
+                        if (isSecure) secure()
+                        if (isHttpOnly) httpOnly()
+                    }.build()
+                    cookie
+                }.filter { it.domain == domainString } // filter only matching domain part with each domain
             } catch (e: Exception) {
                 
             }
