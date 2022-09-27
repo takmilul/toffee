@@ -13,17 +13,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.ads.identifier.AdvertisingIdClient
 import androidx.ads.identifier.AdvertisingIdInfo
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.Constants
-import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -31,12 +25,15 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
-import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.DecorationData
+import com.banglalink.toffee.databinding.FragmentDynamicSplashScreenBinding
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
@@ -50,70 +47,55 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
-import java.util.concurrent.*
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 
+
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
-class SplashScreenFragment : BaseFragment() {
+class DynamicSplashScreenFragment : BaseFragment() {
     private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
     @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var commonPreference: CommonPreference
-    private var _binding: FragmentSplashScreenBinding? = null
+    private var _binding: FragmentDynamicSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
 
     companion object {
         @JvmStatic
-        fun newInstance() = SplashScreenFragment()
+        fun newInstance() = DynamicSplashScreenFragment()
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.reportAppLaunch()
-        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
+        _binding = FragmentDynamicSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
-        if (gif != null && gif is GifDrawable) {
-            logoGifDrawable = gif.apply {
-                stop()
-                seekToFrame(0)
-            }
-        }
+
+        val displayMetrics = resources.displayMetrics
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+
+        binding.splashGifImageView.layoutParams.height = height/2
+        binding.splashGifImageView.layoutParams.width = width/2
+
+        binding.splashLogoImageView.layoutParams.height = height/2
+        binding.splashLogoImageView.layoutParams.width = width/2
+
         observeApiLogin()
-        observeDecorationConfigData()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
-        binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (it == R.id.firstEnd) {
-                lifecycleScope.launch {
-                    delay(1000)
-                    with(binding.splashScreenMotionLayout) {
-                        setTransition(R.id.firstEnd, R.id.secondEnd)
-                        transitionToEnd()
-                    }
-                }
-            }
-            if (it == R.id.secondEnd) {
-                logoGifDrawable?.start()
-                if (isOperationCompleted) {
-                    lifecycleScope.launch { 
-                        delay(500)
-                        launchDynamicSplashPage()
-                    }
-                }
-                isOperationCompleted = true
-            }
-        }
+
         if (!mPref.isPreviousDbDeleted){
             viewModel.deletePreviousDatabase()
         }
+        launchHomePage()
         ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
         detectTlsVersion()
     }
@@ -194,30 +176,6 @@ class SplashScreenFragment : BaseFragment() {
             e.printStackTrace()
         }
     }
-
-    private fun observeDecorationConfigData() {
-        observe(viewModel.decorationConfigLiveData) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    val data = response.data
-                    mPref.splashConfigLiveData.value = data.splashScreen
-                    mPref.topBarConfigLiveData.value = data.topBar
-
-                    val isNotActive = data.splashScreen.all {
-                        it.is_active == 0
-                    }
-                    if (isNotActive) {
-
-                    } else {
-                        launchDynamicSplashPage()
-                    }
-                }
-                is Resource.Failure -> {
-
-                }
-            }
-        }
-    }
     
     private fun observeHeaderEnrichment() {
         observe(viewModel.headerEnrichmentResponse) { response ->
@@ -273,7 +231,7 @@ class SplashScreenFragment : BaseFragment() {
                     viewModel.sendDrmUnavailableLogData()
                     
                     if (isOperationCompleted) {
-                        launchDynamicSplashPage()
+                        launchHomePage()
                     }
                     isOperationCompleted = true
                 }
@@ -298,14 +256,9 @@ class SplashScreenFragment : BaseFragment() {
                         }
                         else -> {
                             ToffeeAnalytics.logApiError("apiLoginV2", it.error.msg)
-                            if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
-                                mPref.clear()
-                                requestAppLaunch()
-                            } else {
-                                binding.root.snack(it.error.msg) {
-                                    action("Retry") { _ ->
-                                        requestAppLaunch()
-                                    }
+                            binding.root.snack(it.error.msg) {
+                                action("Retry") {
+                                    requestAppLaunch()
                                 }
                             }
                         }
@@ -315,10 +268,13 @@ class SplashScreenFragment : BaseFragment() {
         }
     }
     
-    private fun launchDynamicSplashPage() {
+    private fun launchHomePage() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
-        val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToDynamicSplashScreenFragment()
-        findNavController().navigate(action)
+        lifecycleScope.launch {
+            delay(2000)
+            requireActivity().launchActivity<HomeActivity>()
+            requireActivity().finish()
+        }
     }
     
     private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
