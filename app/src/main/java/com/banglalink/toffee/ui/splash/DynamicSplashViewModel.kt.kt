@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.media.MediaDrm
 import android.os.Build
 import android.os.Environment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
@@ -18,7 +17,6 @@ import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_TIMEOUT
 import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAILABLE
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.DecorationConfig
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -28,10 +26,8 @@ import kotlinx.coroutines.*
 import java.io.File
 import javax.inject.Inject
 
-const val DRM_AVAILABILITY_TIMEOUT: Long = 1000
-
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class DynamicSplashViewModel @Inject constructor(
     val mPref: SessionPreference,
     val cPref: CommonPreference,
     private val apiLogin: ApiLogin,
@@ -47,7 +43,6 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel() {
     
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
-    val decorationConfigLiveData = MutableLiveData<Resource<DecorationConfig>>()
     val headerEnrichmentResponse = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
     
     private val reportAppLaunch by lazy {
@@ -76,8 +71,6 @@ class SplashViewModel @Inject constructor(
                 if (updateResponse is Resource.Failure) {
                     apiLoginResponse.value = updateResponse
                     return@launch
-                } else {
-                    decorationConfigLiveData.value = updateResponse
                 }
             }
             apiLoginResponse.value = response
