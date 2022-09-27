@@ -15,7 +15,7 @@ class CustomCookieJar: CookieJar {
                 val isSecure = it.value.contains("Secure")
                 val isHttpOnly = it.value.contains("HttpOnly")
                 cookieStore[domainString] = cookies.map { cookie ->
-                    val cookie = Cookie.Builder().apply {
+                    Cookie.Builder().apply {
                         name(cookie.name)
                         value(cookie.value)
                         expiresAt(cookie.expiresAt)
@@ -26,7 +26,6 @@ class CustomCookieJar: CookieJar {
                         if (isSecure) secure()
                         if (isHttpOnly) httpOnly()
                     }.build()
-                    cookie
                 }.filter { it.domain == domainString } // filter only matching domain part with each domain
             } catch (e: Exception) {
                 

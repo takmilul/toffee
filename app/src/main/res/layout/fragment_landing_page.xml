@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/landing_coordinator"
@@ -81,7 +82,8 @@
                 android:id="@+id/latestVideosFragment"
                 android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" 
+                tools:layout="@layout/fragment_landing_latest_videos"/>
             
         </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

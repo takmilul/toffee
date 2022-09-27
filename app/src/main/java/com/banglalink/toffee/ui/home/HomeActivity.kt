@@ -106,6 +106,7 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
+import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -644,9 +645,9 @@ class HomeActivity :
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0
         
-        if(navController.currentDestination?.id != R.id.searchFragment){
+//        if(navController.currentDestination?.id != R.id.searchFragment){
             closeSearchBarIfOpen()
-        }
+//        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
             val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
@@ -693,7 +694,7 @@ class HomeActivity :
         }
         
         binding.sideNavigation.setNavigationItemSelectedListener {
-            drawerHelper.handleMenuItemById(it)
+            drawerHelper.handleMenuItemById(com.google.ads.interactivemedia.v3.internal.it)
         }
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
@@ -1346,7 +1347,7 @@ class HomeActivity :
                     playContent(detailsInfo, channelInfo)
                 }
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -1870,9 +1871,9 @@ class HomeActivity :
     }
 
     fun openSearchBarIfClose() {
-       // if (searchView?.isIconified == true) {
+        if (searchView?.isIconified == true) {
             searchView?.onActionViewExpanded()
-        //}
+        }
     }
     fun hideSearchOverlay(){
         binding.searchOverlay.hide()
