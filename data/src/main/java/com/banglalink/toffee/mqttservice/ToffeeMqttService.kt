@@ -5,7 +5,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.ShareCount
 import com.banglalink.toffee.data.database.entities.SubscriptionCount
-import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.ReactionCountRepository
 import com.banglalink.toffee.data.repository.ShareCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -31,10 +31,10 @@ import kotlin.system.measureTimeMillis
 
 @Singleton
 class ToffeeMqttService @Inject constructor(
-    private val mPref: SessionPreference, 
+    private val mPref: SessionPreference,
     @ApplicationContext private val context: Context,
     private val shareCountRepository: ShareCountRepository,
-    private val reactionStatusRepository: ReactionStatusRepository,
+    private val reactionCountRepository: ReactionCountRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) : MqttCallback, IMqttActionListener {
     private var gson: Gson? = null
@@ -110,7 +110,7 @@ class ToffeeMqttService @Inject constructor(
         time = measureTimeMillis { 
             reactionListMutex.withLock {
                 if (reactionStatusList.isNotEmpty()) {
-                    reactionStatusRepository.updateReaction(reactionStatusList)
+                    reactionCountRepository.updateReaction(reactionStatusList)
                     reactionStatusList.clear()
                 }
             }

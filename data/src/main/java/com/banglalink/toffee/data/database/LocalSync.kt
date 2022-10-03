@@ -26,7 +26,7 @@ class LocalSync @Inject constructor(
     private val viewCountRepo: ViewCountRepository,
     private val userActivityRepo: UserActivitiesRepository,
     private val shareCountRepository: ShareCountRepository,
-    private val reactionStatusRepo: ReactionStatusRepository,
+    private val reactionCountRepo: ReactionCountRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val cdnChannelItemRepository: CdnChannelItemRepository,
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
@@ -35,23 +35,24 @@ class LocalSync @Inject constructor(
     val gson = Gson()
     
     suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL) {
+        val contentId = channelInfo.getContentId()
+        
         if(syncFlag and SYNC_FLAG_VIEW_COUNT == SYNC_FLAG_VIEW_COUNT) {
-            val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
+            val viewCount = viewCountRepo.getViewCountByChannelId(contentId.toInt())
             channelInfo.view_count = viewCount?.toString() ?: channelInfo.view_count
         }
         // We always need to capture viewProgress
-        channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
+        channelInfo.viewProgress = viewProgressRepo.getProgressByContent(contentId.toLong())?.progress ?: 0L
         if(syncFlag and SYNC_FLAG_SUB_COUNT == SYNC_FLAG_SUB_COUNT) {
             channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id)
         }
         if(syncFlag and SYNC_FLAG_SHARE_COUNT == SYNC_FLAG_SHARE_COUNT) {
-            channelInfo.shareCount = shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: channelInfo.shareCount
+            channelInfo.shareCount = shareCountRepository.getShareCountByContentId(contentId.toInt()) ?: channelInfo.shareCount
         }
         if(syncFlag and SYNC_FLAG_REACT == SYNC_FLAG_REACT) {
-            val reactionList =
-                reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
+            val reactionList = reactionCountRepo.getReactionStatusByChannelId(contentId.toLong())
             if (!reactionList.isNullOrEmpty()) {
-                channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
+                channelInfo.reaction = getReactionStatus(contentId, reactionList)
             }
         }
         if(syncFlag and SYNC_FLAG_CHANNEL_SUB == SYNC_FLAG_CHANNEL_SUB) {
@@ -64,7 +65,7 @@ class LocalSync @Inject constructor(
                     ) 1 else 0
                 val reactionInfo = reactionDao.getReactionByContentId(
                     preference.customerId,
-                    channelInfo.id.toLong()
+                    contentId.toLong()
                 )
                 channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
             } else {
@@ -72,18 +73,18 @@ class LocalSync @Inject constructor(
             }
         }
         if(syncFlag and SYNC_FLAG_FAVORITE == SYNC_FLAG_FAVORITE) {
-            val fav = favoriteDao.isFavorite(channelInfo.id.toLong())
+            val fav = favoriteDao.isFavorite(contentId.toLong())
             if (fav != null) {
                 channelInfo.favorite = fav.toString()
             }
         }
         if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
-            tvChannelRepo.getRecentItemById(channelInfo.id.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
+            tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
                 val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbRecentPayload.equals(channelInfo)) {
                     val isStingray = if (channelInfo.isStingray) 1 else 0
                     tvChannelRepo.updateRecentItemPayload(
-                        channelInfo.id.toLong(),
+                        contentId.toLong(),
                         isStingray,
                         channelInfo.view_count?.toLong() ?: 0L,
                         gson.toJson(channelInfo)
@@ -92,11 +93,11 @@ class LocalSync @Inject constructor(
             }
         }
         if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
-            userActivityRepo.getUserActivityById(channelInfo.id.toLong(), channelInfo.type ?: "VOD")?.let {
+            userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
                 val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbUserActivityPayload.equals(channelInfo)) {
                     userActivityRepo.updateUserActivityPayload(
-                        channelInfo.id.toLong(),
+                        contentId.toLong(),
                         channelInfo.type ?: "VOD",
                         gson.toJson(channelInfo)
                     )
@@ -105,14 +106,15 @@ class LocalSync @Inject constructor(
         }
         if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
             if (channelInfo.urlType == 3) {
-                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let {
+                cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     try {
                         if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate))) {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(channelInfo.id.toLong(), channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo))
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo))
                         }
                     } catch (_: Exception) {}
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo)))
+                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson
+                        (channelInfo)))
                 }
             }
         }
@@ -168,8 +170,8 @@ class LocalSync @Inject constructor(
         return dbSubscriberCount + status
     }
     
-    private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus {
-        val reactionStatus = ReactionStatus(0, channelInfo.id.toLong())
+    private fun getReactionStatus(contentId: String, rl: List<ReactionStatusItem>): ReactionStatus {
+        val reactionStatus = ReactionStatus(0, contentId.toLong())
         rl.forEach {
             when(it.reactionType) {
                 Reaction.Like.value -> {

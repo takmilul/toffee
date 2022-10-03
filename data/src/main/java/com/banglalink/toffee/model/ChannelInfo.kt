@@ -18,6 +18,10 @@ import java.util.*
 data class ChannelInfo(
     @SerializedName("id")
     var id: String,
+    @SerializedName("main_table_id")
+    var mainTableId: String? = "0",
+    @SerializedName("iptv_programs_id")
+    var iptvProgramsId: String? = "0",
     @SerializedName("program_name")
     var program_name: String? = null,
     @SerializedName("video_share_url")
@@ -224,6 +228,32 @@ data class ChannelInfo(
     @SerializedName("isExpired")
     var isExpired: Boolean = false
     
+    @IgnoredOnParcel
+    @SerializedName("isOwner")
+    var isOwner: Boolean = false
+    
+    @IgnoredOnParcel
+    @SerializedName("isPublic")
+    var isPublic: Boolean = false
+    
+    @IgnoredOnParcel
+    @SerializedName("isPlaylist")
+    var isPlaylist: Boolean = false
+    
+    @IgnoredOnParcel
+    @SerializedName("viewProgress")
+    var viewProgress: Long = -1L
+    
+    fun getContentId(): String {
+        return if (isOwner && !isPublic && !isPlaylist && mainTableId != null && mainTableId != "0"){
+            mainTableId ?: id
+        } else if (isOwner && !isPublic && isPlaylist && iptvProgramsId != null && iptvProgramsId != "0") {
+            iptvProgramsId ?: id
+        } else {
+            id
+        }
+    }
+    
     fun getCategory(category: String, subCategory: String): String {
         var itemCategory = "Channels>$category"
         if (subCategory.isNotEmpty()) {
@@ -231,10 +261,6 @@ data class ChannelInfo(
         }
         return itemCategory
     }
-
-    @IgnoredOnParcel
-    @SerializedName("viewProgress")
-    var viewProgress: Long = -1L
     
     fun viewProgressPercent(): Int {
         val durationInt = Utils.getLongDuration(duration)

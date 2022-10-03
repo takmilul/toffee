@@ -129,7 +129,7 @@ class ReactionPopup: Fragment() {
                         if (it.reactionType == newReactionInfo.reactionType) {
                             reactionText = "React"
                             reactionIcon = R.drawable.ic_reaction_love_empty
-                            mViewModel.removeReaction(it)
+                            mViewModel.removeReaction(info, it)
                             mViewModel.insertActivity(
                                 preference.customerId,
                                 info,
@@ -139,7 +139,7 @@ class ReactionPopup: Fragment() {
                             None.value
                         } else {
                             reactionCount++
-                            mViewModel.updateReaction(newReactionInfo, it)
+                            mViewModel.updateReaction(info, newReactionInfo, it)
                             mViewModel.insertActivity(
                                 preference.customerId,
                                 info,
@@ -149,7 +149,7 @@ class ReactionPopup: Fragment() {
                             reaction.value
                         }
                     } ?: run {
-                        mViewModel.insertReaction(newReactionInfo)
+                        mViewModel.insertReaction(info, newReactionInfo)
                         mViewModel.insertActivity(
                             preference.customerId,
                             info,

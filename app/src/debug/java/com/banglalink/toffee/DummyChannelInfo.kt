@@ -9,6 +9,8 @@ fun getDummyChannelList(): List<ChannelInfo> {
         list.add(
             ChannelInfo(
             id = "$i",
+            mainTableId = "$i",
+            iptvProgramsId = "$i",
             program_name = "Channel $i",
             description = "Channel $i description",
             view_count = "$i",

@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(
     private val mqttCredentialService: MqttCredentialService,
     private val sendUserInterestEvent: SendUserInterestEvent,
     private val sendContentReportEvent: SendContentReportEvent,
-    private val reactionStatusRepository: ReactionStatusRepository,
+    private val reactionCountRepository: ReactionCountRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val subscribeChannelApiService: SubscribeChannelService,
     private val myChannelDetailApiService: MyChannelGetDetailService,
@@ -159,7 +159,7 @@ class HomeViewModel @Inject constructor(
 
     fun populateReactionStatusDb(url: String) {
         appScope.launch {
-            DownloadReactionStatusDb(dbApi, reactionStatusRepository).execute(mContext, url)
+            DownloadReactionStatusDb(dbApi, reactionCountRepository).execute(mContext, url)
         }
     }
 
@@ -218,11 +218,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun sendViewContentEvent(channelInfo: ChannelInfo) {
-        viewModelScope.launch {
-            try {
-                sendViewContentEvent.execute(channelInfo)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        if (channelInfo.isApproved == 1) {
+            viewModelScope.launch {
+                try {
+                    sendViewContentEvent.execute(channelInfo)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 object MigrationProvider {
+    // migration sql query location(project view): data/build/generated/source/kapt/mobileDebug[main]/com.banglalink .toffee/data/database/ToffeeDatabase_Impl
     
     private val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(database: SupportSQLiteDatabase) {

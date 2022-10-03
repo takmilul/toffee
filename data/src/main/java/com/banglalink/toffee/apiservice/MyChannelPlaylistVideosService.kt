@@ -41,6 +41,9 @@ class MyChannelPlaylistVideosService @AssistedInject constructor(
                     false
                 }
                 localSync.syncData(it)
+                it.isOwner = isOwner == 1
+                it.isPublic = isOwner.xor(1) == 1
+                it.isPlaylist = true
                 it
             }
         } else emptyList()

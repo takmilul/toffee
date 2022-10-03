@@ -25,13 +25,14 @@ class SendViewContentEvent @Inject constructor(
     
     private val gson = Gson()
     
-    suspend fun execute(channel: ChannelInfo, sendToPubSub: Boolean = true) {
+    suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            sendToPubSub(channel.id.toInt(), channel.type ?: "0", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
+            val contentId = channelInfo.getContentId()
+            sendToPubSub(contentId.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
         } else {
-            sendToToffeeServer(channel.id.toInt(), channel.type ?: "0", channel.dataSource ?: "iptv_programs", channel.channel_owner_id.toString())
+            sendToToffeeServer(channelInfo.id.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
         }
-        saveToLocalDb(channel)
+        saveToLocalDb(channelInfo)
     }
     
     private suspend fun saveToLocalDb(channel: ChannelInfo) {

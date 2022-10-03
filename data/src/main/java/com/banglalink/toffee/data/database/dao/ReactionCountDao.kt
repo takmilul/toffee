@@ -7,10 +7,10 @@ import androidx.room.Query
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 
 @Dao
-interface ReactionStatusDao {
+interface ReactionCountDao {
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(reactionStatusItem: ReactionStatusItem): Long
+    suspend fun insert(reactionCount: ReactionStatusItem): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg items: ReactionStatusItem): LongArray

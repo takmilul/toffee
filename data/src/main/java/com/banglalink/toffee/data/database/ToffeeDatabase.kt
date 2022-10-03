@@ -42,7 +42,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getTVChannelsDao(): TVChannelDao
     abstract fun getContentViewProgressDao(): ContentViewProgressDao
     abstract fun getContinueWatchingDao(): ContinueWatchingDao
-    abstract fun getReactionStatusDao(): ReactionStatusDao
+    abstract fun getReactionCountDao(): ReactionCountDao
     abstract fun getSubscriptionDao(): SubscriptionCountDao
     abstract fun getSubscriptionInfoDao(): SubscriptionInfoDao
     abstract fun getShareCountDao(): ShareCountDao
