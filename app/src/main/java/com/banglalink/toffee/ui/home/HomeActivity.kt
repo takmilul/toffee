@@ -106,7 +106,6 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
-import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -694,7 +693,7 @@ class HomeActivity :
         }
         
         binding.sideNavigation.setNavigationItemSelectedListener {
-            drawerHelper.handleMenuItemById(com.google.ads.interactivemedia.v3.internal.it)
+            drawerHelper.handleMenuItemById(it)
         }
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
