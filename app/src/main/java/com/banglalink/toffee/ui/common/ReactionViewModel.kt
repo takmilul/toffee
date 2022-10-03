@@ -21,30 +21,30 @@ class ReactionViewModel @Inject constructor(
     private val sendReactionEvent: SendReactionEvent,
     ): ViewModel() {
 
-    fun insertReaction(reactionInfo: ReactionInfo) {
+    fun insertReaction(channelInfo: ChannelInfo, reactionInfo: ReactionInfo) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = reactionDao.insert(reactionInfo)
             if (id > 0) {
-                sendReactionEvent.execute(reactionInfo.copy(id = id), 1)
+                sendReactionEvent.execute(channelInfo, reactionInfo.copy(id = id), 1)
             }
         }
     }
 
-    fun removeReaction(reactionInfo: ReactionInfo){
+    fun removeReaction(channelInfo: ChannelInfo, reactionInfo: ReactionInfo){
         viewModelScope.launch(Dispatchers.IO) {
             val id = reactionDao.delete(reactionInfo)
             if (id > 0) {
-                sendReactionEvent.execute(reactionInfo, -1)
+                sendReactionEvent.execute(channelInfo, reactionInfo, -1)
             }
         }
     }
     
-    fun updateReaction(newReactionInfo: ReactionInfo, previousReactionInfo: ReactionInfo){
+    fun updateReaction(channelInfo: ChannelInfo, newReactionInfo: ReactionInfo, previousReactionInfo: ReactionInfo){
         viewModelScope.launch(Dispatchers.IO) {
             val id = reactionDao.updateReactionByContentId(newReactionInfo.customerId, newReactionInfo.contentId, newReactionInfo.reactionType)
             if (id > 0) {
-                sendReactionEvent.execute(previousReactionInfo, -1)
-                sendReactionEvent.execute(newReactionInfo, 1)
+                sendReactionEvent.execute(channelInfo, previousReactionInfo, -1)
+                sendReactionEvent.execute(channelInfo, newReactionInfo, 1)
             }
         }
     }

@@ -145,14 +145,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesReactionStatusDao(db: ToffeeDatabase): ReactionStatusDao {
-        return db.getReactionStatusDao()
+    fun providesReactionStatusDao(db: ToffeeDatabase): ReactionCountDao {
+        return db.getReactionCountDao()
     }
 
     @Provides
     @Singleton
-    fun providesReactionStatusRepository(db: ToffeeDatabase, dao: ReactionStatusDao): ReactionStatusRepository {
-        return ReactionStatusRepositoryImpl(db, dao)
+    fun providesReactionStatusRepository(db: ToffeeDatabase, dao: ReactionCountDao): ReactionCountRepository {
+        return ReactionCountRepositoryImpl(db, dao)
     }
 
     @Provides

@@ -2,11 +2,11 @@ package com.banglalink.toffee.data.repository.impl
 
 import androidx.room.withTransaction
 import com.banglalink.toffee.data.database.ToffeeDatabase
-import com.banglalink.toffee.data.database.dao.ReactionStatusDao
+import com.banglalink.toffee.data.database.dao.ReactionCountDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
-import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.ReactionCountRepository
 
-class ReactionStatusRepositoryImpl(private val db: ToffeeDatabase, private val dao: ReactionStatusDao): ReactionStatusRepository {
+class ReactionCountRepositoryImpl(private val db: ToffeeDatabase, private val dao: ReactionCountDao): ReactionCountRepository {
     override suspend fun insert(item: ReactionStatusItem): Long {
         return dao.insert(item)
     }

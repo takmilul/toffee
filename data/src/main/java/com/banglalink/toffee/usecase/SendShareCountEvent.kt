@@ -22,7 +22,8 @@ class SendShareCountEvent @Inject constructor(
 
     suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            val shareCount = ShareData(preference.customerId, channelInfo.id.toLong())
+            val contentId = channelInfo.getContentId()
+            val shareCount = ShareData(preference.customerId, contentId.toLong())
             PubSubMessageUtil.sendMessage(gson.toJson(shareCount), SHARE_COUNT_TOPIC)
             mqttService.sendMessage(gson.toJson(shareCount), SHARE_COUNT_TOPIC)
         } else {

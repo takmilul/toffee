@@ -4,18 +4,18 @@ import android.content.Context
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.ReactionCountRepository
 import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
-import java.util.zip.CRC32
+import java.util.zip.*
 
 
 class DownloadReactionStatusDb(
     private val dbApi: DbApi,
-    private val reactionStatusRepository: ReactionStatusRepository
+    private val reactionCountRepository: ReactionCountRepository
 ) {
     private val reactionList = mutableListOf<ReactionStatusItem>()
 
@@ -59,7 +59,7 @@ class DownloadReactionStatusDb(
 
     private suspend fun updateDb() {
         ToffeeAnalytics.logBreadCrumb("Updating reaction status db")
-        reactionStatusRepository.insertAll(*reactionList.toTypedArray())
+        reactionCountRepository.insertAll(*reactionList.toTypedArray())
         ToffeeAnalytics.logBreadCrumb("Reaction status db updated")
     }
 }

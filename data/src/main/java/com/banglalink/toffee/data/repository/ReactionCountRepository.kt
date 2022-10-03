@@ -2,7 +2,7 @@ package com.banglalink.toffee.data.repository
 
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 
-interface ReactionStatusRepository {
+interface ReactionCountRepository {
     suspend fun insert(item: ReactionStatusItem): Long
     suspend fun insertAll(vararg items: ReactionStatusItem): LongArray
     suspend fun getReactionStatusByChannelId(contentId: Long): List<ReactionStatusItem>?
