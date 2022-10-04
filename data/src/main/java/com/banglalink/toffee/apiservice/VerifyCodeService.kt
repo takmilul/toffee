@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
 import javax.inject.Inject
 
-class VerifyCode @Inject constructor(
+class VerifyCodeService @Inject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {

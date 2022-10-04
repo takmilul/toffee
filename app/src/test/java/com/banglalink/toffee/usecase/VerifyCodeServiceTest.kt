@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.network.response.VerifyCodeResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.apiservice.VerifyCode
+import com.banglalink.toffee.apiservice.VerifyCodeService
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -14,7 +14,7 @@ import org.mockito.Mockito
 import retrofit2.Response
 
 
-class VerifyCodeTest :BaseUseCaseTest(){
+class VerifyCodeServiceTest :BaseUseCaseTest(){
 
     @Test
     fun verify_code_success(){
@@ -22,7 +22,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val verifyCode = VerifyCode(SessionPreference.getInstance(), mockToffeeApi)
+            val verifyCodeService = VerifyCodeService(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                 Response.success(VerifyCodeResponse(
                     CustomerInfoLogin().apply {
@@ -32,7 +32,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                     }
                 )).body())
             //test method
-            verifyCode.execute("12345","LGTY==")
+            verifyCodeService.execute("12345","LGTY==")
             //verify it
             verify(mockToffeeApi).verifyCode(check {
                 assertEquals(it.code,"12345")
@@ -52,7 +52,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
             try{
                 //set up test
                 setupPref()
-                val verifyCode = VerifyCode(SessionPreference.getInstance(), mockToffeeApi)
+                val verifyCodeService = VerifyCodeService(SessionPreference.getInstance(), mockToffeeApi)
                 Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                     Response.success(VerifyCodeResponse(
                         CustomerInfoLogin()
@@ -62,7 +62,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                     }
                     ).body())
                 //test method
-                verifyCode.execute("12345","LGTY==")
+                verifyCodeService.execute("12345","LGTY==")
                 //verify it
                 verify(mockToffeeApi).verifyCode(check {
                     assertEquals(it.code,"12345")
