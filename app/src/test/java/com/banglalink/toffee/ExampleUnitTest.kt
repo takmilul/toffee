@@ -1,12 +1,12 @@
 package com.banglalink.toffee
 
+import com.banglalink.toffee.apiservice.CheckForUpdateService
+import com.banglalink.toffee.data.exception.UpdateRequiredException
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.response.CheckUpdateResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
-import com.banglalink.toffee.data.exception.UpdateRequiredException
-import com.banglalink.toffee.model.CheckUpdateBean
-import com.banglalink.toffee.apiservice.CheckUpdate
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.model.CheckUpdateBean
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -51,7 +51,7 @@ class ExampleUnitTest {
                 }
             } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(2, "msg", "title"))).body()!!
         }
-        val classUnderTest = CheckUpdate(pref, mock)
+        val classUnderTest = CheckForUpdateService(pref, mock)
 
         /* When */
         runBlocking {
@@ -78,7 +78,7 @@ class ExampleUnitTest {
                 }
             } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(1, "msg", "title"))).body()!!
         }
-        val classUnderTest = CheckUpdate(pref, mock)
+        val classUnderTest = CheckForUpdateService(pref, mock)
 
         /* When */
         runBlocking {
@@ -97,7 +97,7 @@ class ExampleUnitTest {
 
         runBlocking {
 
-            val classUnderTest = CheckUpdate(pref, mock)
+            val classUnderTest = CheckForUpdateService(pref, mock)
             whenever(mock.checkForUpdate(any<CheckUpdateRequest>())).thenReturn(Response.success(
                 CheckUpdateResponse(CheckUpdateBean(0, "msg", "title"))
             ).body())

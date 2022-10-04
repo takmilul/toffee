@@ -15,8 +15,11 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Path
 import android.graphics.Point
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -135,6 +138,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
 
@@ -223,6 +231,7 @@ class HomeActivity :
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         setupNavController()
+        observeTopBarBackground()
         initializeDraggableView()
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
@@ -734,7 +743,6 @@ class HomeActivity :
 //        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
         binding.tbar.toolbar.setupWithNavController(navController, appbarConfig)
-        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
@@ -766,6 +774,40 @@ class HomeActivity :
 //            binding.drawerLayout.closeDrawers()
 //            return@setNavigationItemSelectedListener false
 //        }
+    }
+    
+    private fun observeTopBarBackground() {
+        observe(mPref.topBarConfigLiveData) {
+            it?.get(0)?.let {
+                val isActive = try {
+                    it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(
+                        mPref.getSystemTime()
+                    )
+                } catch (e: Exception) {
+                    false
+                }
+                if (isActive) {
+                    if (it.type == "png") {
+                        try {
+                            val bitmap = getDrawableFromUrl(it.imagePath)
+                            bitmap?.let {
+                                val bitmapDrawable = BitmapDrawable(resources, it)
+                                binding.tbar.toolbar.background = bitmapDrawable
+                            }
+                        } catch (e: Exception) {}
+                    }
+                }
+            }
+        }
+    }
+    
+    @Throws(MalformedURLException::class, IOException::class)
+    fun getDrawableFromUrl(url: String?): Bitmap? {
+        val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+        connection.setRequestProperty("User-agent", "Mozilla/4.0")
+        connection.connect()
+        val input: InputStream = connection.inputStream
+        return BitmapFactory.decodeStream(input)
     }
     
     override fun onResume() {

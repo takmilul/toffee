@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.media.MediaDrm
 import android.os.Build
 import android.os.Environment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
@@ -18,7 +17,6 @@ import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_TIMEOUT
 import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAILABLE
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.DecorationConfig
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -35,59 +33,57 @@ class SplashViewModel @Inject constructor(
     val mPref: SessionPreference,
     val cPref: CommonPreference,
     private val apiLoginService: ApiLoginService,
-    private val checkUpdate: CheckUpdate,
-    private val credential: CredentialService,
+    private val credentialService: CredentialService,
     private val sendLoginLogEvent: SendLoginLogEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val sendDrmFallbackLogEvent: SendDrmFallbackEvent,
+    private val checkForUpdateService: CheckForUpdateService,
     private val headerEnrichmentService: HeaderEnrichmentService,
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent
 ) : ViewModel() {
     
-    val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
-    val decorationConfigLiveData = MutableLiveData<Resource<DecorationConfig>>()
-    val headerEnrichmentResponse = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
+    val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
+    val appLaunchConfigLiveData = SingleLiveEvent<Resource<Any>>()
+    val headerEnrichmentLiveData = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
     
     private val reportAppLaunch by lazy {
         ReportAppLaunch()
     }
     
-    fun credentialResponse() {
+    fun getCredential() {
         viewModelScope.launch {
-            val response = resultFromResponse { credential.execute() }
+            val response = resultFromResponse { credentialService.execute() }
             when (response) {
-                is Resource.Failure -> {
-                    apiLoginResponse.value = response
-                }
                 is Resource.Success -> {
-                    loginResponse(false)
+                    getAppLaunchConfig()
+                }
+                is Resource.Failure -> {
+                    appLaunchConfigLiveData.value = response
                 }
             }
         }
     }
     
-    fun loginResponse(skipUpdate: Boolean = false) {
+    fun checkForUpdateStatus() {
+        viewModelScope.launch {
+            val updateResponse = resultFromResponse { checkForUpdateService.execute(BuildConfig.VERSION_CODE.toString()) }
+            updateStatusLiveData.value = updateResponse
+        }
+    }
+    
+    fun getAppLaunchConfig() {
         viewModelScope.launch {
             val response = resultFromResponse { apiLoginService.execute() }
-            if (!skipUpdate) {
-                val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString()) }
-                if (updateResponse is Resource.Failure) {
-                    apiLoginResponse.value = updateResponse
-                    return@launch
-                } else {
-                    decorationConfigLiveData.value = updateResponse
-                }
-            }
-            apiLoginResponse.value = response
+            appLaunchConfigLiveData.value = response
         }
     }
     
     fun getHeaderEnrichment() {
         viewModelScope.launch {
             val response = resultFromResponse { headerEnrichmentService.execute() }
-            headerEnrichmentResponse.value = response
+            headerEnrichmentLiveData.value = response
         }
     }
     
@@ -111,7 +107,8 @@ class SplashViewModel @Inject constructor(
             } else {
                 mPref.isPreviousDbDeleted = true
             }
-        } catch (e: Exception) { }
+        } catch (e: Exception) {
+        }
     }
     
     fun sendLoginLogData() {
@@ -151,7 +148,8 @@ class SplashViewModel @Inject constructor(
                                 else -> level.toString()
                             }
                             ToffeeAnalytics.logBreadCrumb(securityLevel)
-                        } catch (e: Exception) {}
+                        } catch (e: Exception) {
+                        }
                     }
                     MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
                 }.also {

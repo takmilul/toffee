@@ -10,27 +10,27 @@ data class CheckUpdateBean(
     @SerializedName("messageTitle")
     var messageTitle: String,
     @SerializedName("decorationConfig")
-    val decorationConfig : DecorationConfig
-    )
+    val decorationConfig : List<DecorationConfig>? = null
+)
 
 data class DecorationConfig (
     @SerializedName("splashScreen")
-    val splashScreen : List<DecorationData>,
+    val splashScreen : List<DecorationData>?,
     @SerializedName("topBar")
-    val topBar : List<DecorationData>
+    val topBar : List<DecorationData>?
 )
 
 data class DecorationData (
     @SerializedName("type")
     val type : String,
     @SerializedName("is_active")
-    val is_active : Int,
+    val isActive : Int,
     @SerializedName("image_path")
-    val image_path : String,
+    val imagePath : String,
     @SerializedName("start_date")
-    val start_date : String,
+    val startDate : String,
     @SerializedName("end_date")
-    val end_date : String,
+    val endDate : String,
     @SerializedName("duration")
     val duration : Int
 )

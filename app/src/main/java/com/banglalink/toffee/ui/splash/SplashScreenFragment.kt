@@ -13,12 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.ads.identifier.AdvertisingIdClient
 import androidx.ads.identifier.AdvertisingIdInfo
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,16 +27,20 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.exception.CustomerNotFoundError
+import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.DecorationData
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.DecorationConfig
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.today
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures.addCallback
@@ -57,15 +58,16 @@ import javax.net.ssl.SSLContext
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
-    private val binding get() = _binding !!
+    private val binding get() = _binding!!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
+    private var isDynamicSplashActive: Boolean = false
     @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
-
+    
     companion object {
         @JvmStatic
         fun newInstance() = SplashScreenFragment()
@@ -87,7 +89,7 @@ class SplashScreenFragment : BaseFragment() {
             }
         }
         observeApiLogin()
-        observeDecorationConfigData()
+        observeCheckForUpdateStatus()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
@@ -103,15 +105,15 @@ class SplashScreenFragment : BaseFragment() {
             if (it == R.id.secondEnd) {
                 logoGifDrawable?.start()
                 if (isOperationCompleted) {
-                    lifecycleScope.launch { 
+                    lifecycleScope.launch {
                         delay(500)
-                        launchDynamicSplashPage()
+                        forwardToNextScreen()
                     }
                 }
                 isOperationCompleted = true
             }
         }
-        if (!mPref.isPreviousDbDeleted){
+        if (!mPref.isPreviousDbDeleted) {
             viewModel.deletePreviousDatabase()
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
@@ -121,10 +123,12 @@ class SplashScreenFragment : BaseFragment() {
     private fun detectTlsVersion() {
         try {
             val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
-            protocols?.let { 
-                ToffeeAnalytics.logEvent(ToffeeEvents.SUPPORTED_TLS, bundleOf(
-                    "TLS_version" to protocols.contentToString()
-                ))
+            protocols?.let {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.SUPPORTED_TLS, bundleOf(
+                        "TLS_version" to protocols.contentToString()
+                    )
+                )
             }
         } catch (e: Exception) { }
     }
@@ -134,13 +138,12 @@ class SplashScreenFragment : BaseFragment() {
             lifecycleScope.launch(IO + Job()) {
                 runCatching {
                     var adId: String?
-    
+                    
                     if (AdvertisingIdClient.isAdvertisingIdProviderAvailable(appContext)) {
                         val adIdInfoCallback = AdvertisingIdClient.getAdvertisingIdInfo(appContext)
                         
                         addCallback(
-                            adIdInfoCallback,
-                            object : FutureCallback<AdvertisingIdInfo> {
+                            adIdInfoCallback, object : FutureCallback<AdvertisingIdInfo> {
                                 override fun onSuccess(adInfo: AdvertisingIdInfo?) {
                                     adId = adInfo?.id
                                     Log.i("AD_ID", "adId: $adId")
@@ -159,8 +162,7 @@ class SplashScreenFragment : BaseFragment() {
                                     Log.e("AD_ID", "Failed to connect to Advertising ID provider.")
                                     ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
                                 }
-                            },
-                            Executors.newSingleThreadExecutor()
+                            }, Executors.newSingleThreadExecutor()
                         )
                     } else {
                         adId = com.google.android.gms.ads.identifier.AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
@@ -187,42 +189,18 @@ class SplashScreenFragment : BaseFragment() {
             if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
                 viewModel.getHeaderEnrichment()
             } else {
-                requestAppLaunch()
+                viewModel.checkForUpdateStatus()
             }
         } catch (e: Exception) {
-            requestAppLaunch()
+            viewModel.checkForUpdateStatus()
             e.printStackTrace()
-        }
-    }
-
-    private fun observeDecorationConfigData() {
-        observe(viewModel.decorationConfigLiveData) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    val data = response.data
-                    mPref.splashConfigLiveData.value = data.splashScreen
-                    mPref.topBarConfigLiveData.value = data.topBar
-
-                    val isNotActive = data.splashScreen.all {
-                        it.is_active == 0
-                    }
-                    if (isNotActive) {
-
-                    } else {
-                        launchDynamicSplashPage()
-                    }
-                }
-                is Resource.Failure -> {
-
-                }
-            }
         }
     }
     
     private fun observeHeaderEnrichment() {
-        observe(viewModel.headerEnrichmentResponse) { response ->
+        observe(viewModel.headerEnrichmentLiveData) { response ->
             when (response) {
-                is Resource.Success -> {
+                is Success -> {
                     val data = response.data
                     mPref.heUpdateDate = today
                     if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
@@ -239,75 +217,99 @@ class SplashScreenFragment : BaseFragment() {
                         })
                     }
                 }
-                is Resource.Failure -> {
+                is Failure -> {
                     ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
+                        ToffeeEvents.EXCEPTION, bundleOf(
                             "api_name" to "HeaderEnrichment",
                             FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                             "error_code" to response.error.code,
-                            "error_description" to response.error.msg)
+                            "error_description" to response.error.msg
+                        )
                     )
                     mPref.hePhoneNumber = ""
                     mPref.isHeBanglalinkNumber = false
                 }
             }
-            requestAppLaunch()
+            viewModel.checkForUpdateStatus()
         }
     }
     
     private fun requestAppLaunch() {
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
-            viewModel.credentialResponse()
+            viewModel.getCredential()
         } else {
-            viewModel.loginResponse()
+            viewModel.getAppLaunchConfig()
+        }
+    }
+    
+    private fun observeCheckForUpdateStatus() {
+        observe(viewModel.updateStatusLiveData) { it ->
+            when (it) {
+                is Success -> {
+                    val data = it.data as? DecorationConfig
+                    mPref.splashConfigLiveData.value = data?.splashScreen
+                    mPref.topBarConfigLiveData.value = data?.topBar
+                    
+                    isDynamicSplashActive = data?.splashScreen?.any {
+                        it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref
+                            .getSystemTime())
+                    } ?: false
+                    
+                    requestAppLaunch()
+                }
+                is Failure -> {
+                    onResponseFailure(it.error)
+                }
+            }
         }
     }
     
     private fun observeApiLogin() {
-        observe(viewModel.apiLoginResponse) {
+        observe(viewModel.appLaunchConfigLiveData) {
             when (it) {
-                is Resource.Success -> {
+                is Success -> {
                     sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
                     
                     if (isOperationCompleted) {
-                        launchDynamicSplashPage()
+                        forwardToNextScreen()
                     }
                     isOperationCompleted = true
                 }
-                is Resource.Failure -> {
-                    ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
-                            "api_name" to ApiNames.API_LOGIN_V2,
-                            FirebaseParams.BROWSER_SCREEN to "Splash Screen",
-                            "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
-                    )
-                    when (it.error) {
-                        is AppDeprecatedError -> {
-                            (it.error as AppDeprecatedError).let { ade->
-                                showUpdateDialog(ade.title, ade.updateMsg, ade.forceUpdate)
-                            }
-                        }
-                        is CustomerNotFoundError -> {
-                            mPref.clear()
+                is Failure -> {
+                    onResponseFailure(it.error)
+                }
+            }
+        }
+    }
+    
+    private fun onResponseFailure(error: Error) {
+        ToffeeAnalytics.logEvent(
+            ToffeeEvents.EXCEPTION, bundleOf(
+                "api_name" to ApiNames.API_LOGIN_V2,
+                FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                "error_code" to error.code,
+                "error_description" to error.msg
+            )
+        )
+        when (error) {
+            is AppDeprecatedError -> {
+                showUpdateDialog(error.title, error.updateMsg, error.forceUpdate)
+            }
+            is CustomerNotFoundError -> {
+                mPref.clear()
+                requestAppLaunch()
+            }
+            else -> {
+                ToffeeAnalytics.logApiError("apiLoginV2", error.msg)
+                if (error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
+                    mPref.clear()
+                    requestAppLaunch()
+                } else {
+                    binding.root.snack(error.msg) {
+                        action("Retry") { _ ->
                             requestAppLaunch()
-                        }
-                        else -> {
-                            ToffeeAnalytics.logApiError("apiLoginV2", it.error.msg)
-                            if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
-                                mPref.clear()
-                                requestAppLaunch()
-                            } else {
-                                binding.root.snack(it.error.msg) {
-                                    action("Retry") { _ ->
-                                        requestAppLaunch()
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -315,10 +317,15 @@ class SplashScreenFragment : BaseFragment() {
         }
     }
     
-    private fun launchDynamicSplashPage() {
+    private fun forwardToNextScreen() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
-        val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToDynamicSplashScreenFragment()
-        findNavController().navigate(action)
+        if (isDynamicSplashActive) {
+            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToDynamicSplashScreenFragment()
+            findNavController().navigate(action)
+        } else {
+            requireActivity().launchActivity<HomeActivity>()
+            requireActivity().finish()
+        }
     }
     
     private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
@@ -330,32 +337,28 @@ class SplashScreenFragment : BaseFragment() {
                 try {
                     startActivity(
                         Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("market://details?id=${requireActivity().packageName}")
+                            Intent.ACTION_VIEW, Uri.parse("market://details?id=${requireActivity().packageName}")
                         )
                     )
-                }
-                catch (e: ActivityNotFoundException) {
+                } catch (e: ActivityNotFoundException) {
                     startActivity(
                         Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
+                            Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
                         )
                     )
                 }
                 requireActivity().finish()
             }
-//            if (! forceUpdate) {
-//                setNegativeButton("SKIP") { dialogInterface, _ ->
-//                    dialogInterface.dismiss()
-//                    viewModel.loginResponse(true)
-//                }
-//            }
+            if (!forceUpdate) {
+                setNegativeButton("SKIP") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    requestAppLaunch()
+                }
+            }
         }
         val alert = builder.create()
         alert.show()
         val updateButton: Button = alert.getButton(DialogInterface.BUTTON_POSITIVE)
-//        updateButton.setBackgroundColor(Color.parseColor("#FF3988"))
         updateButton.setTextColor(Color.parseColor("#FF3988"))
     }
     

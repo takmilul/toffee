@@ -453,6 +453,7 @@
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
     <string name="try_again_message">Something went wrong. Please try again later.</string>
     <string name="add_bio">Add Bio</string>
+    <string name="dynamic_splash_image_desc">dynamic splash image</string>
 
     <string name="show_button_text">Show Button</string>
     <string name="remove_button_text">Remove Button</string>
