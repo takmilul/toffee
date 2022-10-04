@@ -657,7 +657,7 @@ class HomeActivity :
                 )
             )
         }
-        
+//        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
     }
     
@@ -683,6 +683,7 @@ class HomeActivity :
 //        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
         binding.tbar.toolbar.setupWithNavController(navController, appbarConfig)
+        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
