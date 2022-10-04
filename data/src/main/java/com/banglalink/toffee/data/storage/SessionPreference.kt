@@ -233,6 +233,20 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun setWatchOnlyWifi(value: Boolean) {
         pref.edit().putBoolean(PREF_WATCH_ONLY_WIFI, value).apply()
     }
+
+//    var isBubbleEnabled: Boolean
+//        get() = pref.getBoolean(PREF_BUBBLE_EN, true)
+//        set(value) {
+//            pref.edit().putBoolean(PREF_BUBBLE_EN, value).apply()
+//        }
+
+    fun isBubbleEnabled(): Boolean {
+        return pref.getBoolean(PREF_BUBBLE_ENABLED, true)
+    }
+
+    fun setBubbleEnabled(value: Boolean) {
+        pref.edit { putBoolean(PREF_BUBBLE_ENABLED, value) }
+    }
     
     fun isNotificationEnabled(): Boolean {
         return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
@@ -745,6 +759,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FIREWORK_USER_ID = "firework_user_id"
         private const val PREF_SYSTEM_TIME = "systemTime"
         private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"
+        private const val PREF_BUBBLE_ENABLED = "bubbleEnabled"
         private const val PREF_KEY_NOTIFICATION = "pref_key_notification"
         private const val PREF_SESSION_TOKEN_HEADER = "sessionTokenHeader"
         private const val PREF_SHOULD_OVERRIDE_HLS_URL = "shouldOverrideHlsUrl"

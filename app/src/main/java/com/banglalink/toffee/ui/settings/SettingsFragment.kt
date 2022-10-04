@@ -34,6 +34,7 @@ class SettingsFragment : BaseFragment() {
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
+        binding.bubbleToggleBtn.setOnCheckedChangeListener { _, _ -> handleBubbleToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
         binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
         initializeSettings()
@@ -46,6 +47,7 @@ class SettingsFragment : BaseFragment() {
     }
     
     private fun initializeSettings() {
+        binding.isBubbleEnabled = mPref.isBubbleEnabled()
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
@@ -64,6 +66,11 @@ class SettingsFragment : BaseFragment() {
     private fun handleWatchOnlyWifiToggleBtn() {
         mPref.setWatchOnlyWifi(binding.watchOnlyWifiToggleBtn.isChecked)
         binding.watchWifiOnly = mPref.watchOnlyWifi()
+    }
+
+    private fun handleBubbleToggleBtn() {
+        mPref.setBubbleEnabled(binding.bubbleToggleBtn.isChecked)
+        binding.isBubbleEnabled = mPref.isBubbleEnabled()
     }
     
     private fun setPrefItemListener() {

@@ -20,6 +20,7 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.DisplayMetrics
@@ -31,11 +32,13 @@ import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.*
@@ -84,6 +87,9 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIF
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
+import com.banglalink.toffee.ui.bubble.MyService
+import com.banglalink.toffee.ui.bubble.MyServiceToffee
+import com.banglalink.toffee.ui.bubble.hasDefaultOverlayPermission
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -100,9 +106,7 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
-import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
-import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
@@ -192,6 +196,12 @@ class HomeActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
+
+//        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+//            displayMissingOverlayPermissionDialog()
+//        } else {
+//            startService(Intent(this, MyServiceToffee::class.java))
+//        }
 
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
@@ -370,7 +380,48 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
+
+        if (mPref.isBubbleEnabled()){
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                displayMissingOverlayPermissionDialog()
+            } else {
+                startService(Intent(this, MyServiceToffee::class.java))
+            }
+        }
 //        showDeviceId()
+    }
+
+    private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            displayMissingOverlayPermissionDialog()
+        } else {
+            startService(Intent(this, MyServiceToffee::class.java))
+        }
+    }
+
+    private fun requestOverlayPermission() {
+        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+            startForOverlayPermission.launch(intent)
+        }
+    }
+
+    private fun displayMissingOverlayPermissionDialog() {
+        ToffeeAlertDialogBuilder(
+            this,
+            title = getString(R.string.missing_overlay_permission_dialog_title),
+            text = getString(R.string.missing_overlay_permission_dialog_message),
+            icon = R.drawable.ic_not_verified,
+            positiveButtonTitle = "Allow",
+            positiveButtonListener = {
+                requestOverlayPermission()
+                it?.dismiss()
+            },
+            negativeButtonTitle = "Cancel",
+            negativeButtonListener = {
+                it?.dismiss()
+            }
+        ).create().show()
     }
 
     private fun initConvivaSdk() {
