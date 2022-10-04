@@ -18,6 +18,7 @@ import androidx.ads.identifier.AdvertisingIdInfo
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -268,9 +269,14 @@ class SplashScreenFragment : BaseFragment() {
                         }
                         else -> {
                             ToffeeAnalytics.logApiError("apiLoginV2", it.error.msg)
-                            binding.root.snack(it.error.msg) {
-                                action("Retry") {
-                                    requestAppLaunch()
+                            if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
+                                mPref.clear()
+                                requestAppLaunch()
+                            } else {
+                                binding.root.snack(it.error.msg) {
+                                    action("Retry") { _ ->
+                                        requestAppLaunch()
+                                    }
                                 }
                             }
                         }

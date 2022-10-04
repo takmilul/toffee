@@ -32,7 +32,7 @@ const val DRM_AVAILABILITY_TIMEOUT: Long = 1000
 class SplashViewModel @Inject constructor(
     val mPref: SessionPreference,
     val cPref: CommonPreference,
-    private val apiLogin: ApiLogin,
+    private val apiLoginService: ApiLoginService,
     private val checkUpdate: CheckUpdate,
     private val credential: CredentialService,
     private val sendLoginLogEvent: SendLoginLogEvent,
@@ -67,7 +67,7 @@ class SplashViewModel @Inject constructor(
     
     fun loginResponse(skipUpdate: Boolean = false) {
         viewModelScope.launch {
-            val response = resultFromResponse { apiLogin.execute() }
+            val response = resultFromResponse { apiLoginService.execute() }
             if (!skipUpdate) {
                 val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString()) }
                 if (updateResponse is Resource.Failure) {

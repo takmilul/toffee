@@ -6,7 +6,7 @@ import org.junit.Test
 import org.mockito.Mock
 
 
-class ApiLoginTest{
+class ApiLoginServiceTest{
 
     @Mock
     var mockAuthApi: AuthApi = mock()
