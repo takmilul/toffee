@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.data.exception.ApiException
-import com.banglalink.toffee.apiservice.ApiLogin
+import com.banglalink.toffee.apiservice.ApiLoginService
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -12,7 +12,7 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 
-class ApiLoginTest :BaseUseCaseTest(){
+class ApiLoginServiceTest :BaseUseCaseTest(){
 
     @Mock
     var mockAuthApi:AuthApi = mock()
@@ -23,7 +23,7 @@ class ApiLoginTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
+            val apiLoginService = ApiLoginService(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
 //                Response.success(ApiLoginResponse(
 //                    CustomerInfoLogin().apply {
@@ -38,7 +38,7 @@ class ApiLoginTest :BaseUseCaseTest(){
                     null
                 )
             //test method
-            apiLogin.execute()
+            apiLoginService.execute()
             //verify it
             verify(mockAuthApi).apiLogin(check {
                 assertEquals(it.apiName,"apiLogin")
@@ -62,7 +62,7 @@ class ApiLoginTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
+            val apiLoginService = ApiLoginService(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
 //                Response.success(ApiLoginResponse(
 //                   null
@@ -73,7 +73,7 @@ class ApiLoginTest :BaseUseCaseTest(){
                 null
             )
             //test method
-            apiLogin.execute()
+            apiLoginService.execute()
         }
 
     }

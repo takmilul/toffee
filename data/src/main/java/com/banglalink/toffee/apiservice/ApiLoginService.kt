@@ -8,7 +8,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
 import javax.inject.Inject
 
-class ApiLogin @Inject constructor(private val pref: SessionPreference, private val authApi: AuthApi) {
+class ApiLoginService @Inject constructor(private val pref: SessionPreference, private val authApi: AuthApi) {
 
     suspend fun execute(): CustomerInfoLogin {
         val response = tryIO2 { authApi.apiLogin(getApiLoginRequest()) }
