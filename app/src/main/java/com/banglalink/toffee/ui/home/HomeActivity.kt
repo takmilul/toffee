@@ -41,7 +41,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.*
@@ -90,7 +89,6 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIF
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
-import com.banglalink.toffee.ui.bubble.MyService
 import com.banglalink.toffee.ui.bubble.MyServiceToffee
 import com.banglalink.toffee.ui.bubble.hasDefaultOverlayPermission
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
@@ -109,7 +107,9 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
-import com.banglalink.toffee.ui.widget.*
+import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants

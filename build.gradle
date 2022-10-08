@@ -27,9 +27,9 @@ buildscript {
         pubsubVersion = 'v1-rev452-1.25.0'
         convivaExoPlayerVersion = '4.0.12'
         pahoAndroidServiceVersion = '3.3.8'
-        firebaseMessagingVersion = '23.0.7'
-        firebaseAnalyticsVersion = '21.1.0'
-        firebaseCrashlyticsVersion = '18.2.12'
+        firebaseMessagingVersion = '23.0.8'
+        firebaseAnalyticsVersion = '21.1.1'
+        firebaseCrashlyticsVersion = '18.2.13'
         googleHttpClientGsonVersion = '1.41.8'
     }
 }
