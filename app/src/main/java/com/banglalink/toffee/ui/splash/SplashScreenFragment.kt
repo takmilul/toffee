@@ -251,8 +251,12 @@ class SplashScreenFragment : BaseFragment() {
                     mPref.topBarConfigLiveData.value = data?.topBar
                     
                     isDynamicSplashActive = data?.splashScreen?.any {
-                        it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref
-                            .getSystemTime())
+                        try { 
+                            it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref.getSystemTime())
+                        } catch (e: Exception) {
+                            ToffeeAnalytics.logException(e)
+                            false
+                        }
                     } ?: false
                     
                     requestAppLaunch()

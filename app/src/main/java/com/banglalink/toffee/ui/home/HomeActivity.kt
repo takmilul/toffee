@@ -780,21 +780,25 @@ class HomeActivity :
         observe(mPref.topBarConfigLiveData) {
             it?.get(0)?.let {
                 val isActive = try {
-                    it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(
-                        mPref.getSystemTime()
-                    )
+                    it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
                 if (isActive) {
                     if (it.type == "png") {
-                        try {
-                            val bitmap = getDrawableFromUrl(it.imagePath)
-                            bitmap?.let {
-                                val bitmapDrawable = BitmapDrawable(resources, it)
-                                binding.tbar.toolbar.background = bitmapDrawable
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            try {
+                                val bitmap = getDrawableFromUrl(it.imagePath)
+                                withContext(Dispatchers.Main) {
+                                    bitmap?.let {
+                                        val bitmapDrawable = BitmapDrawable(resources, it)
+                                        binding.tbar.toolbar.background = bitmapDrawable
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                ToffeeAnalytics.logException(e)
                             }
-                        } catch (e: Exception) {}
+                        }
                     }
                 }
             }
