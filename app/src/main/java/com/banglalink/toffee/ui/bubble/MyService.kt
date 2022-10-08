@@ -28,7 +28,7 @@ class MyService: FloatieService(), IFloatieDraggableWindowItemEventListener,
 
 
         val textView = draggableViewLayout.findViewById(R.id.textView11) as TextView
-        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_dot, 0, 0, 0)
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bubble_dot, 0, 0, 0)
         textView.compoundDrawablePadding = 10
 
 //        val currentTime = Calendar.getInstance().time
