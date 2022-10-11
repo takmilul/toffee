@@ -7,11 +7,13 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.banglalink.toffee.R
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
 import com.banglalink.toffee.ui.bubble.listener.IBubbleDraggableWindowItemEventListener
 import com.banglalink.toffee.ui.bubble.listener.IBubbleInteractionListener
+import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
 import java.text.SimpleDateFormat
@@ -20,8 +22,13 @@ import java.util.concurrent.*
 
 class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
-    override fun createFloatie(): Bubble {
-        return Bubble.Builder().with(this).setDraggableItem(createDraggableItem()).setRemoveItem(createRemoveItem()).setListener(this).build()
+    override fun createBubble(): Bubble {
+        return Bubble.Builder()
+            .with(this)
+            .setDraggableItem(createDraggableItem())
+            .setRemoveItem(createRemoveItem())
+            .setListener(this)
+            .build()
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
@@ -87,7 +94,11 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
 //            startActivity(intent)
 //        }
         
-        return BubbleDraggableItem.Builder().setLayout(draggableViewLayout).setGravity(DraggableWindowItemGravity.TOP_RIGHT).setListener(this).build()
+        return BubbleDraggableItem.Builder()
+            .setLayout(draggableViewLayout)
+            .setGravity(DraggableWindowItemGravity.TOP_RIGHT)
+            .setListener(this)
+            .build()
     }
     
     private fun createRemoveItem(): BubbleCloseItem {
@@ -105,11 +116,15 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
         
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
-                val uriUrl: Uri = Uri.parse("https://toffeelive.com/")
-                val intent = Intent(Intent.ACTION_VIEW, uriUrl)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.setPackage("com.android.chrome")
-                startActivity(intent)
+                val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
+                val isTouched = bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                if (isTouched) {
+                    val uriUrl: Uri = Uri.parse("https://toffeelive.com/")
+                    val intent = Intent(Intent.ACTION_VIEW, uriUrl)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome")
+                    startActivity(intent)
+                }
             }
             DraggableWindowItemTouchEvent.DRAG_EVENT -> {
 //                val imageView = view.findViewById<ImageView>(R.id.draggable_view)

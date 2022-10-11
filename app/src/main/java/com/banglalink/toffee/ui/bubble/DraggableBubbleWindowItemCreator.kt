@@ -67,18 +67,20 @@ class DraggableWindowItemCreator {
                     prevTouchX = event.rawX
                     prevTouchY = event.rawY
                     
+//                    Log.i("bubble_", "prevX: $prevX \nprevY: $prevY \nprevTouchX: $prevTouchX \nprevTouchY: $prevTouchY")
+                    
                     lastAction = event.action
                     return true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (lastAction == MotionEvent.ACTION_DOWN) {
+                    if (deltaX > 10 || deltaX < -10 || deltaY > 10 || deltaY < -10) {
                         listener?.onTouchEventChanged(
                             view,
                             Point(params.x, params.y),
                             currentTouchPoint,
                             velocityTrackerHelper.velocityX,
                             velocityTrackerHelper.velocityY,
-                            CLICK_EVENT
+                            DRAG_STOP_EVENT
                         )
                     } else {
                         listener?.onTouchEventChanged(
@@ -87,7 +89,7 @@ class DraggableWindowItemCreator {
                             currentTouchPoint,
                             velocityTrackerHelper.velocityX,
                             velocityTrackerHelper.velocityY,
-                            DRAG_STOP_EVENT
+                            CLICK_EVENT
                         )
                     }
                     
@@ -115,17 +117,22 @@ class DraggableWindowItemCreator {
                     // position because the view gravitates towards the bottom
                     params.y = if (isViewGravityTop(gravity)) prevY + deltaY.toInt() else prevY - deltaY.toInt()
                     
-                    windowManager.updateViewLayout(view, params)
+//                    Log.i("bubble_", "isViewGravityLeft: ${isViewGravityLeft(gravity)} \nisViewGravityTop: ${isViewGravityTop(gravity)}")
+//                    Log.i("bubble_", "event.rawX: ${event.rawX} \nevent.rawY: ${event.rawY} \ndeltaX: $deltaX \ndeltaY: $deltaY \nparams.x: ${params.x} \nparams.y: ${params.y}")
                     
-                    listener?.onTouchEventChanged(
-                        view,
-                        Point(params.x, params.y),
-                        currentTouchPoint,
-                        velocityTrackerHelper.velocityX,
-                        velocityTrackerHelper.velocityY,
-                        DRAG_EVENT
-                    )
-                    
+                    if (deltaX > 10 || deltaX < -10 || deltaY > 10 || deltaY < -10) {
+                        
+                        windowManager.updateViewLayout(view, params)
+                        
+                        listener?.onTouchEventChanged(
+                            view,
+                            Point(params.x, params.y),
+                            currentTouchPoint,
+                            velocityTrackerHelper.velocityX,
+                            velocityTrackerHelper.velocityY,
+                            DRAG_EVENT
+                        )
+                    }
                     lastAction = event.action
                     return true
                 }

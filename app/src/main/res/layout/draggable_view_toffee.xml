@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLay"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="#00FFFFFF">
 
     <androidx.cardview.widget.CardView
@@ -14,10 +14,10 @@
         app:cardBackgroundColor="#C82A8E"
         app:cardCornerRadius="10dp"
         android:layout_gravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView2"
+        app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cardView2"
+        app:layout_constraintTop_toTopOf="@+id/bubbleIconView"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -185,7 +185,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
+        android:id="@+id/bubbleIconView"
         android:layout_width="60dp"
         android:layout_height="70dp"
         app:cardBackgroundColor="#EAE0E6"

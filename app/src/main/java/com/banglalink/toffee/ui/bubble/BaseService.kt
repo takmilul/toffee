@@ -23,7 +23,7 @@ abstract class BaseService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Allow only one Floatie to exist at a time
         if (startId == 1) {
-            bubble = createFloatie()
+            bubble = createBubble()
         }
         return START_STICKY
     }
@@ -35,5 +35,5 @@ abstract class BaseService : Service() {
         bubble?.removeViewFromWindow()
     }
     
-    abstract fun createFloatie(): Bubble
+    abstract fun createBubble(): Bubble
 }
