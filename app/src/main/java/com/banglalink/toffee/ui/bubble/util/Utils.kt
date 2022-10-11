@@ -1,10 +1,10 @@
-package com.banglalink.toffee.ui.bubble.floatie.util
+package com.banglalink.toffee.ui.bubble.util
 
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.ChecksSdkIntAtLeast
-import com.banglalink.toffee.ui.bubble.floatie.DraggableWindowItemGravity
+import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
 internal fun isOreoOrAbove(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O

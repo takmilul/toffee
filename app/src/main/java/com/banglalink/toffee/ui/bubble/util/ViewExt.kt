@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.bubble.floatie.util
+package com.banglalink.toffee.ui.bubble.util
 
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator

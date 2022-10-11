@@ -65,6 +65,7 @@ import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.CdnChannelItem
+import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -80,7 +81,7 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
-import com.banglalink.toffee.notification.PUBSUBMessageStatus
+import com.banglalink.toffee.notification.PUBSUBMessageStatus.OPEN
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.CONTENT_VIEW
@@ -89,8 +90,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIF
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
-import com.banglalink.toffee.ui.bubble.MyServiceToffee
-import com.banglalink.toffee.ui.bubble.hasDefaultOverlayPermission
+import com.banglalink.toffee.ui.bubble.BubbleService
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -111,6 +111,7 @@ import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
+import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
 import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.exoplayer2.ext.cast.CastPlayer
@@ -244,7 +245,7 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
-
+        
         if (mPref.homeIntent.value != null) {
             intent = mPref.homeIntent.value
             mPref.homeIntent.value = null
@@ -257,7 +258,7 @@ class HomeActivity :
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
-
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -394,7 +395,7 @@ class HomeActivity :
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                startService(Intent(this, MyServiceToffee::class.java))
+                startService(Intent(this, BubbleService::class.java))
             }
         }
 //        showDeviceId()
@@ -404,7 +405,7 @@ class HomeActivity :
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             displayMissingOverlayPermissionDialog()
         } else {
-            startService(Intent(this, MyServiceToffee::class.java))
+            startService(Intent(this, BubbleService::class.java))
         }
     }
 
@@ -1274,13 +1275,36 @@ class HomeActivity :
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 getSystemService(NotificationManager::class.java)
             } else {
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             }.cancel(notificationId)
-            
+        
             if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
-                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
+                PubSubMessageUtil.sendNotificationStatus(pubSubId, OPEN)
             }
         }
+        observeAppVersionUpdate(intent)
+        viewModel.checkForUpdateStatus()
+    }
+    
+    private fun observeAppVersionUpdate(intent: Intent) {
+        observe(viewModel.updateStatusLiveData) {
+            when (it) {
+                is Success -> {
+                    handleIntent(intent)
+                }
+                is Failure -> {
+                    if (it.error is AppDeprecatedError) {
+                        finish()
+                        launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+                    } else {
+                        handleIntent(intent)
+                    }
+                }
+            }
+        }
+    }
+    
+    private fun handleIntent(intent: Intent) {
         var newIntent = intent
         if (mPref.homeIntent.value != null) {
             newIntent = mPref.homeIntent.value!!
@@ -1615,11 +1639,11 @@ class HomeActivity :
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name, 0
         )
-        supportFragmentManager.beginTransaction().replace(id, fragment).addToBackStack(tag).commit()
+        supportFragmentManager.beginTransaction().replace(id, fragment).addToBackStack(tag).commitAllowingStateLoss()
     }
     
     private fun loadFragmentById(id: Int, fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(id, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(id, fragment).commitAllowingStateLoss()
     }
     
     private fun initializeDraggableView() {

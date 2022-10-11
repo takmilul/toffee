@@ -549,6 +549,10 @@ object Utils {
         val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
         return DecimalFormat("#,##0.##").format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
+    
+    fun hasDefaultOverlayPermission():Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+    }
 }
 
 const val IMAGE_MAX_SIZE = 500000 // 500KB

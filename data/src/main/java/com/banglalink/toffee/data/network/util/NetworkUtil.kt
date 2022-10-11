@@ -55,7 +55,6 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
             response//seems like all fine ...return the body
         }
     }
-
 }
 
 fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =

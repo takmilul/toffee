@@ -183,15 +183,11 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-8724031649645430~8504153625"/>
-
+        
         <service
-            android:name=".ui.bubble.MyService"
+            android:name=".ui.bubble.BubbleService"
             android:enabled="true"
-            android:process=":sample_service" />
-        <service
-            android:name=".ui.bubble.MyServiceToffee"
-            android:enabled="true"
-            android:process=":sample_service" />
+            android:process="com.banglalink.toffee" />
 
     </application>
 </manifest>
