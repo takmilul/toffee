@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardBgColor">
+    android:background="@android:color/white">
     
     <ImageView
         android:id="@+id/splashLogoImageView"
@@ -20,7 +20,7 @@
         tools:visibility="visible"
         android:contentDescription="@string/dynamic_splash_image_desc" />
     
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/splashGifImageView"
         android:layout_width="300dp"
         android:layout_height="300dp"

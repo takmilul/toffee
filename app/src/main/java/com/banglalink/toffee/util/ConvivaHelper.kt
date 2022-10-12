@@ -47,7 +47,7 @@ class ConvivaHelper private constructor() {
             val contentInfo = mapOf(
                 ConvivaSdkConstants.ASSET_NAME to "[${info.id}] ${info.program_name}",
                 ConvivaSdkConstants.IS_LIVE to info.isLinear,
-                ConvivaSdkConstants.PLAYER_NAME to "Android Exoplayer",
+                ConvivaSdkConstants.PLAYER_NAME to "Toffee Android",
                 ConvivaSdkConstants.VIEWER_ID to customerId.toString(),
                 ConvivaSdkConstants.DURATION to info.durationInSeconds(),
                 ConvivaConstants.APP_VERSION to BuildConfig.VERSION_NAME,

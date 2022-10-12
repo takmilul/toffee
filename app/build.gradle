@@ -138,6 +138,7 @@ dependencies {
     
     //Coil image Lib
     implementation 'io.coil-kt:coil:1.4.0'
+    implementation "io.coil-kt:coil-gif:1.4.0"
     implementation "jp.wasabeef.transformers:coil:1.0.5"
     implementation "jp.wasabeef.transformers:core:1.0.5"
     

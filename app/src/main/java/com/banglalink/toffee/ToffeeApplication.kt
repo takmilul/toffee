@@ -7,11 +7,14 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.databinding.DataBindingUtil
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.imageLoader
 import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
@@ -207,6 +210,13 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         return ImageLoader.Builder(this).apply {
 //            availableMemoryPercentage(0.2)
 //            bitmapPoolPercentage(0.4)
+            componentRegistry {
+                if (SDK_INT >= 28) {
+                    add(ImageDecoderDecoder(this@ToffeeApplication))
+                } else {
+                    add(GifDecoder())
+                }
+            }
             
             okHttpClient {
                 OkHttpClient
