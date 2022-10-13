@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_loginContentFragment2_to_htmlPageViewDialog"
             app:destination="@id/htmlPageViewDialog" />
+        <action
+            android:id="@+id/action_loginContentFragment_to_underDeleteBottomSheetFragment"
+            app:destination="@id/underDeleteBottomSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/verifyLoginFragment"
@@ -44,6 +47,16 @@
             android:id="@+id/action_verifyLoginFragment_to_userInterestFragment"
             app:destination="@id/userInterestFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/underDeleteBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.login.UnderDeleteBottomSheetFragment"
+        android:label="underDeleteBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_under_delete">
+        <argument
+            android:name="deleteMsg"
+            app:argType="string" />
+    </dialog>
+
     <fragment
         android:id="@+id/userInterestFragment"
         tools:layout="@layout/alert_dialog_user_interest"
