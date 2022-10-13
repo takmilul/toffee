@@ -19,6 +19,8 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.usecase.SendContentReportEvent
+import com.banglalink.toffee.usecase.SendFeaturePartnerEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,6 +41,7 @@ class LandingPageViewModel @Inject constructor(
     private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
     private val featuredPartnerAssistedFactory: FeaturedPartnerService.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetEditorsChoiceContents.AssistedFactory,
+    private val sendFeaturePartnerEvent: SendFeaturePartnerEvent,
 ) : ViewModel() {
     var featuredJob: Job? = null
     val categoryId = SingleLiveEvent<Int>()
@@ -204,5 +207,11 @@ class LandingPageViewModel @Inject constructor(
                 featuredPartnerAssistedFactory.create("VOD"), ApiNames.GET_FEATURED_PARTNERS, BrowsingScreens.HOME_PAGE
             )
         }).getList()
+    }
+    
+    fun sendFeaturePartnerReportData(partnerName: String,partnerId:Int) {
+        viewModelScope.launch {
+            sendFeaturePartnerEvent.execute(partnerName,partnerId)
+        }
     }
 }
