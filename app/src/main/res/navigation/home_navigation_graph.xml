@@ -315,6 +315,17 @@
             android:name="url"
             app:argType="string"/>
     </dialog>
+
+<!--    <dialog-->
+<!--        android:id="@+id/underDeleteBottomSheetFragment"-->
+<!--        android:name="com.banglalink.toffee.ui.login.UnderDeleteBottomSheetFragment"-->
+<!--        android:label="underDeleteBottomSheetFragment"-->
+<!--        tools:layout="@layout/bottom_sheet_under_delete">-->
+<!--        <argument-->
+<!--            android:name="deleteMsg"-->
+<!--            app:argType="string"-->
+<!--            />-->
+<!--    </dialog>-->
     
     <fragment
         android:id="@+id/editUploadInfoFragment"

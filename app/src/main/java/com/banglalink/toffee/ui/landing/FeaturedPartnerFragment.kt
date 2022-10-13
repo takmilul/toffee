@@ -14,6 +14,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -34,7 +35,11 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
         fun newInstance() = FeaturedPartnerFragment()
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentFeaturedPartnerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -42,15 +47,16 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = FeaturedPartnerAdapter(this)
-    
+        
         var isInitialized = false
         with(binding.featuredPartnerList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    val isEmpty =
+                        mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
-                    binding.featuredPartnerList.isVisible = ! isEmpty
+                    binding.featuredPartnerList.isVisible = !isEmpty
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
@@ -64,7 +70,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     }
     
     private fun observeFeaturedPartner() {
-        viewLifecycleOwner.lifecycleScope.launch { 
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadFeaturedPartners.collectLatest {
                 mAdapter.submitData(it)
             }
@@ -73,10 +79,29 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     
     override fun onItemClicked(item: FeaturedPartner) {
         super.onItemClicked(item)
-        
-        item.webViewUrl?.let { url->
-            findNavController().navigate(R.id.htmlPageViewFragment, bundleOf("myTitle" to item.featurePartnerName, "url" to url))
-        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+        item.let {
+            viewModel.sendFeaturePartnerReportData(
+                partnerName = it.featurePartnerName.toString(),
+                partnerId = it.id
+            )
+            if (it.isLoginRequired) {
+                requireActivity().checkVerification {
+                    openfeaturePartner(it)
+                }
+            } else {
+                openfeaturePartner(it)
+            }
+        }
+    }
+    
+    private fun openfeaturePartner(fraturePrtner: FeaturedPartner) {
+        (fraturePrtner.webViewUrl?.let { url ->
+            findNavController().navigate(
+                R.id.htmlPageViewFragment,
+                bundleOf("myTitle" to fraturePrtner.featurePartnerName, "url" to url)
+            )
+        }
+            ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null")))
     }
     
     override fun onDestroyView() {

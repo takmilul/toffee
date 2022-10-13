@@ -1927,6 +1927,7 @@ class HomeActivity :
                         mPref.isPaidUser = false
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
+                        mPref.lastLoginDateTime= ""
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false

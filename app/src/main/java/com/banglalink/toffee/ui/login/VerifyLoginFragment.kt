@@ -25,6 +25,7 @@ import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
@@ -100,6 +101,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     }
                     mPref.phoneNumber = phoneNumber
                     ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 1))
+                    mPref.lastLoginDateTime =  System.currentTimeMillis().toFormattedDate()
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
@@ -110,11 +112,12 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
-                        requireContext().showToast("Profile Deleted! ${it.error.msg}", Toast.LENGTH_LONG)
-                    } else {
-                        requireContext().showToast(it.error.msg)
-                    }
+//                    if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
+//                        requireContext().showToast("Profile Deleted! ${it.error.msg}", Toast.LENGTH_LONG)
+//                    } else {
+//                        requireContext().showToast(it.error.msg)
+//                    }
+                    requireContext().showToast(it.error.msg)
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf(
                         "confirm_otp_status" to "0",

@@ -630,6 +630,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get()=pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
         set(value)=pref.edit{putInt(PREF_VIDEO_MAX_DURATION,value)}
     
+    var lastLoginDateTime: String
+        get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, " ") ?: ""
+        set(value) = pref.edit { putString(PREF_LAST_LOGIN_DATE_TIME, value) }
+    
     var isBubbleActive: Boolean
         get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
@@ -845,6 +849,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
         private const val PREF_VIDEO_MIN_DURATION="pref_video_min_duration"
         private const val PREF_VIDEO_MAX_DURATION="pref_video_max_duration"
+        private const val PREF_LAST_LOGIN_DATE_TIME="pref_last_login_date_time"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private var instance: SessionPreference? = null
         
