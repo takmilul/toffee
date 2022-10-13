@@ -87,31 +87,25 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
                 millisUntilFinished -= MINUTES.toMillis(minute)
                 val second = MILLISECONDS.toSeconds(millisUntilFinished)
                 
-                val textView3 = draggableViewLayout.findViewById<TextView>(id.textView3)
-                textView3.text = day.toString()
-                
-                val textView2 = draggableViewLayout.findViewById<TextView>(id.textView2)
-                textView2.text = hour.toString()
-                
-                val textView6 = draggableViewLayout.findViewById<TextView>(id.textView6)
-                textView6.text = minute.toString()
-                
-                val textView = draggableViewLayout.findViewById<TextView>(id.textView)
-                textView.text = second.toString()
+                val dayCount = draggableViewLayout.findViewById<TextView>(id.countDay)
+                dayCount.text = day.toString()
+                val hourCount = draggableViewLayout.findViewById<TextView>(id.countHour)
+                hourCount.text = hour.toString()
+                val minCount = draggableViewLayout.findViewById<TextView>(id.countMin)
+                minCount.text = minute.toString()
+                val secCount = draggableViewLayout.findViewById<TextView>(id.countSec)
+                secCount.text = second.toString()
             }
             
             override fun onFinish() {
-                val textView3 = draggableViewLayout.findViewById<TextView>(id.textView3)
-                textView3.text = "0"
-                
-                val textView2 = draggableViewLayout.findViewById<TextView>(id.textView2)
-                textView2.text = "0"
-                
-                val textView6 = draggableViewLayout.findViewById<TextView>(id.textView6)
-                textView6.text = "0"
-                
-                val textView = draggableViewLayout.findViewById<TextView>(id.textView)
-                textView.text = "0"
+                val daysCounts = draggableViewLayout.findViewById<TextView>(id.countDay)
+                daysCounts.text = "0"
+                val hoursCounts = draggableViewLayout.findViewById<TextView>(id.countHour)
+                hoursCounts.text = "0"
+                val MinsCounts = draggableViewLayout.findViewById<TextView>(id.countMin)
+                MinsCounts.text = "0"
+                val SecCounts = draggableViewLayout.findViewById<TextView>(id.countSec)
+                SecCounts.text = "0"
             }
         }.start()
     }
