@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.login
 
 import android.app.Activity.RESULT_OK
-import android.app.Dialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -12,12 +11,10 @@ import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,7 +26,10 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.enums.InputType.PHONE
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.isValid
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -40,7 +40,6 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class LoginContentFragment : ChildDialogFragment() {
@@ -126,11 +125,11 @@ class LoginContentFragment : ChildDialogFragment() {
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(ToffeeEvents.LOGIN, bundleOf("login_status" to "0"))
                     ToffeeAnalytics.logEvent(ToffeeEvents.LOGIN, bundleOf("login_failure_reason" to it.error.msg))
-//                    requireActivity().showToast(it.error.msg)
                     if ( it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
-                        findNavController().navigate(R.id.underDeleteBottomSheetFragment, Bundle().apply {
-                            putString("deleteMsg", it.error.msg)
-                        })
+                        closeDialog ()
+                        parentFragment?.parentFragment?.parentFragment?.parentFragmentManager?.let { fragmentManager ->
+                            UnderDeleteBottomSheetFragment.newInstance(it.error.msg).show(fragmentManager, null)
+                        }
                     } else {
                         requireContext().showToast(it.error.msg)
                     }

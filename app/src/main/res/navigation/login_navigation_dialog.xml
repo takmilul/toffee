@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_navigation.xml"
     app:startDestination="@id/loginIntroFragment">
+    
     <fragment
         android:id="@+id/loginIntroFragment"
-        tools:layout="@layout/fragment_login_intro"
         android:name="com.banglalink.toffee.ui.login.LoginIntroFragment"
-        android:label="Login">
+        android:label="Login"
+        tools:layout="@layout/fragment_login_intro">
         <action
             android:id="@+id/action_loginIntroFragment_to_loginContentFragment"
             app:destination="@id/loginContentFragment" />
     </fragment>
+    
     <fragment
         android:id="@+id/loginContentFragment"
-        tools:layout="@layout/alert_dialog_login"
         android:name="com.banglalink.toffee.ui.login.LoginContentFragment"
-        android:label="Sign In" >
+        android:label="Sign In"
+        tools:layout="@layout/alert_dialog_login">
         <action
             android:id="@+id/action_loginContentFragment_to_verifyLoginFragment"
             app:destination="@id/verifyLoginFragment"
@@ -25,15 +28,13 @@
         <action
             android:id="@+id/action_loginContentFragment2_to_htmlPageViewDialog"
             app:destination="@id/htmlPageViewDialog" />
-        <action
-            android:id="@+id/action_loginContentFragment_to_underDeleteBottomSheetFragment"
-            app:destination="@id/underDeleteBottomSheetFragment" />
     </fragment>
+    
     <fragment
         android:id="@+id/verifyLoginFragment"
-        tools:layout="@layout/alert_dialog_verify"
         android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment"
-        android:label="VerifyLoginFragment">
+        android:label="VerifyLoginFragment"
+        tools:layout="@layout/alert_dialog_verify">
         <argument
             android:name="phoneNumber"
             app:argType="string" />
@@ -47,27 +48,17 @@
             android:id="@+id/action_verifyLoginFragment_to_userInterestFragment"
             app:destination="@id/userInterestFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/underDeleteBottomSheetFragment"
-        android:name="com.banglalink.toffee.ui.login.UnderDeleteBottomSheetFragment"
-        android:label="underDeleteBottomSheetFragment"
-        tools:layout="@layout/bottom_sheet_under_delete">
-        <argument
-            android:name="deleteMsg"
-            app:argType="string" />
-    </dialog>
-
+    
     <fragment
         android:id="@+id/userInterestFragment"
-        tools:layout="@layout/alert_dialog_user_interest"
         android:name="com.banglalink.toffee.ui.login.UserInterestFragment"
-        android:label="Interests" >
+        android:label="Interests">
 <!--        <argument-->
 <!--            android:name="verifiedUserData"-->
 <!--            app:argType="com.banglalink.toffee.model.CustomerInfoSignIn"-->
 <!--            app:nullable="true" />-->
     </fragment>
-
+    
     <dialog
         android:id="@+id/htmlPageViewDialog"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog"
@@ -78,13 +69,13 @@
             />
         <argument
             android:name="url"
-            app:argType="string"/>
+            app:argType="string" />
     </dialog>
-
+    
     <fragment
         android:id="@+id/dynamicSplashScreenFragment"
         android:name="com.banglalink.toffee.ui.splash.DynamicSplashScreenFragment"
         android:label="DynamicSplashScreenFragment">
     </fragment>
-    
+
 </navigation>

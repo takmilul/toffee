@@ -98,7 +98,7 @@
             android:defaultValue=""
             app:argType="string" />
     </fragment>
-
+    
     <fragment
         android:id="@+id/menu_policies"
         android:name="com.banglalink.toffee.ui.policies.PoliciesFragment"
@@ -265,7 +265,7 @@
             app:popUpTo="@id/uploadMethodFragment"
             app:popUpToInclusive="true" />
     </dialog>
-
+    
     <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
@@ -289,43 +289,32 @@
             android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
             app:destination="@id/menu_channel" />
     </dialog>
-
+    
     <dialog
         android:id="@+id/htmlPageViewDialog_Home"
-        tools:layout="@layout/dialog_html_page_view"
-        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog"
+        tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="myTitle"
             app:argType="string"
             />
         <argument
             android:name="url"
-            app:argType="string"/>
+            app:argType="string" />
     </dialog>
-
+    
     <dialog
         android:id="@+id/htmlPageViewDialogInApp"
-        tools:layout="@layout/dialog_html_page_view"
-        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialogInApp">
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialogInApp"
+        tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="myTitle"
             app:argType="string"
             />
         <argument
             android:name="url"
-            app:argType="string"/>
+            app:argType="string" />
     </dialog>
-
-<!--    <dialog-->
-<!--        android:id="@+id/underDeleteBottomSheetFragment"-->
-<!--        android:name="com.banglalink.toffee.ui.login.UnderDeleteBottomSheetFragment"-->
-<!--        android:label="underDeleteBottomSheetFragment"-->
-<!--        tools:layout="@layout/bottom_sheet_under_delete">-->
-<!--        <argument-->
-<!--            android:name="deleteMsg"-->
-<!--            app:argType="string"-->
-<!--            />-->
-<!--    </dialog>-->
     
     <fragment
         android:id="@+id/editUploadInfoFragment"

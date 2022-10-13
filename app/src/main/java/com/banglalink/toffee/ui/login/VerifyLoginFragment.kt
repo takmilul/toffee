@@ -14,7 +14,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -112,11 +111,6 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
-//                    if (it.error.code == Constants.ACCOUNT_DELETED_ERROR_CODE) {
-//                        requireContext().showToast("Profile Deleted! ${it.error.msg}", Toast.LENGTH_LONG)
-//                    } else {
-//                        requireContext().showToast(it.error.msg)
-//                    }
                     requireContext().showToast(it.error.msg)
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf(
