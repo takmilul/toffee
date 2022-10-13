@@ -62,7 +62,13 @@ object MigrationProvider {
         }
     }
     
+    private val MIGRATION_9_10 = object: Migration(9,10) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BubbleConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `adForwardUrl` TEXT, `adIconUrl` TEXT, `countDownEndTime` TEXT, `isBubbleActive` INTEGER NOT NULL, `isGlobalCountDownActive` INTEGER NOT NULL, `receiveTime` INTEGER NOT NULL, `leftMatchStartTime` TEXT, `leftSubTitle` TEXT, `leftTitle` TEXT, `leftType` TEXT, `rightMatchStartTime` TEXT, `rightSubTitle` TEXT, `rightTitle` TEXT, `rightType` TEXT)")
+        }
+    }
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
     }
 }

@@ -47,7 +47,7 @@ class SettingsFragment : BaseFragment() {
     }
     
     private fun initializeSettings() {
-        binding.isBubbleEnabled = mPref.isBubbleEnabled()
+        binding.isBubbleEnabled = mPref.isBubbleEnabled
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
@@ -69,8 +69,8 @@ class SettingsFragment : BaseFragment() {
     }
 
     private fun handleBubbleToggleBtn() {
-        mPref.setBubbleEnabled(binding.bubbleToggleBtn.isChecked)
-        binding.isBubbleEnabled = mPref.isBubbleEnabled()
+        mPref.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
+        binding.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
     }
     
     private fun setPrefItemListener() {

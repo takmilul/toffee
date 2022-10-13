@@ -10,10 +10,10 @@ import com.banglalink.toffee.ui.bubble.util.REMOVE_ITEM_NO_CONTEXT
 import com.banglalink.toffee.ui.bubble.view.builder.IBubbleRemoveItemBuilder
 
 /**
- * FloatieRemoveItem: The item that represents the destination to drag towards when we wish to stop the service
+ * BubbleRemoveItem: The item that represents the destination to drag towards when we wish to stop the service
  */
 class BubbleCloseItem(builder: Builder) {
-    val removeLayout: View = LayoutInflater.from(builder.context).inflate(R.layout.floatie_remove_layout, null)
+    val removeLayout: View = LayoutInflater.from(builder.context).inflate(R.layout.bubble_remove_layout, null)
     
     val removeCircleView: ImageView = removeLayout.findViewById(R.id.remove_circle)
     val removeXView: ImageView = removeLayout.findViewById(R.id.remove_x)

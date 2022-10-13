@@ -140,7 +140,7 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:contentDescription="@string/txt_icon"
-                    app:srcCompat="@drawable/ic_background_playback" />
+                    app:srcCompat="@drawable/ic_bubble" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"

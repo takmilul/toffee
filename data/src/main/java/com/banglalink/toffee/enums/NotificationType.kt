@@ -7,6 +7,7 @@ enum class NotificationType(val type: String) {
     OVERLAY("overlay"),
     CHANGE_URL("change_cdn"),
     CLEAR_CACHE("clear_cache"),
+    BUBBLE_CONFIG("bubble_config"),
     CONTENT_REFRESH("content_refresh"),
     CHANGE_URL_EXTENDED("change_host_url"),
     DRM_LICENSE_RELEASE("drmLicenseRelease"),

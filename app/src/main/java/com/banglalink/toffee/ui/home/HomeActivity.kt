@@ -390,8 +390,8 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
-
-        if (mPref.isBubbleEnabled()){
+        
+        if (mPref.isBubbleActive && mPref.isBubbleEnabled){
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 displayMissingOverlayPermissionDialog()
             } else {
@@ -400,7 +400,7 @@ class HomeActivity :
         }
 //        showDeviceId()
     }
-
+    
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             displayMissingOverlayPermissionDialog()
@@ -408,7 +408,7 @@ class HomeActivity :
             startService(Intent(this, BubbleService::class.java))
         }
     }
-
+    
     private fun requestOverlayPermission() {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))

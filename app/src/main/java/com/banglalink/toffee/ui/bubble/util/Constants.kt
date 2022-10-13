@@ -1,15 +1,15 @@
 package com.banglalink.toffee.ui.bubble.util
 
 // Bubble Builder
-internal const val FLOATIE_BUIlDER_NO_CONTEXT = "Missing call to with(...) in Floatie.Builder()"
-internal const val FLOATIE_BUIlDER_NO_DRAGGABLE_ITEM = "Missing call to setDraggableItem(...) in Floatie.Builder()"
-internal const val FLOATIE_BUIlDER_NO_REMOVE_ITEM = "Missing call to setRemoveItem(...) in Floatie.Builder()"
+internal const val BUBBLE_BUIlDER_NO_CONTEXT = "Missing call to with(...) in Bubble.Builder()"
+internal const val BUBBLE_BUIlDER_NO_DRAGGABLE_ITEM = "Missing call to setDraggableItem(...) in Bubble.Builder()"
+internal const val BUBBLE_BUIlDER_NO_REMOVE_ITEM = "Missing call to setRemoveItem(...) in Bubble.Builder()"
 
 // BubbleDraggableView Builder
-internal const val DRAGGABLE_ITEM_BUIDLER_NO_LAYOUT = "Missing call to setLayout(...) in FloatieDraggableItem.Builder()"
+internal const val DRAGGABLE_ITEM_BUIDLER_NO_LAYOUT = "Missing call to setLayout(...) in BubbleDraggableItem.Builder()"
 
 // BubbleRemoveView Builder
-internal const val REMOVE_ITEM_NO_CONTEXT = "Missing call to with(...) in FloatieRemoveItem.Builder()"
+internal const val REMOVE_ITEM_NO_CONTEXT = "Missing call to with(...) in BubbleRemoveItem.Builder()"
 
 internal const val INVISIBLE_SCALE = 0F
 internal const val NORMAL_SCALE = 1F

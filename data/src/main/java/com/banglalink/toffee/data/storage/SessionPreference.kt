@@ -38,6 +38,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
+    val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
@@ -236,19 +237,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         pref.edit().putBoolean(PREF_WATCH_ONLY_WIFI, value).apply()
     }
 
-//    var isBubbleEnabled: Boolean
-//        get() = pref.getBoolean(PREF_BUBBLE_EN, true)
-//        set(value) {
-//            pref.edit().putBoolean(PREF_BUBBLE_EN, value).apply()
-//        }
-
-    fun isBubbleEnabled(): Boolean {
-        return pref.getBoolean(PREF_BUBBLE_ENABLED, true)
-    }
-
-    fun setBubbleEnabled(value: Boolean) {
-        pref.edit { putBoolean(PREF_BUBBLE_ENABLED, value) }
-    }
+    var isBubbleEnabled: Boolean
+        get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
+        set(value) = pref.edit().putBoolean(PREF_BUBBLE_ENABLED, value).apply()
     
     fun isNotificationEnabled(): Boolean {
         return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
@@ -638,7 +629,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var videoMaxDuration: Int
         get()=pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
         set(value)=pref.edit{putInt(PREF_VIDEO_MAX_DURATION,value)}
-
+    
+    var isBubbleActive: Boolean
+        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -725,9 +720,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isFallbackActive = it.isFallbackActive
             retryCount = it.retryCount
             retryWaitDuration = it.retryWaitDuration
-            videoMinDuration=it.videoMinDuration
-            videoMaxDuration=it.videoMaxDuration
-    
+            videoMinDuration = it.videoMinDuration
+            videoMaxDuration = it.videoMaxDuration
+            bubbleConfigLiveData.value = it.bubbleConfig
+            isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
+            
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -848,6 +845,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
         private const val PREF_VIDEO_MIN_DURATION="pref_video_min_duration"
         private const val PREF_VIDEO_MAX_DURATION="pref_video_max_duration"
+        private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

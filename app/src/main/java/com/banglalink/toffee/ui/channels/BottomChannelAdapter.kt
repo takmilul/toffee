@@ -43,7 +43,7 @@ class BottomChannelAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.fragment_bottom_channel_item_layout
+        return R.layout.list_item_all_tv_channels
     }
 
     fun setSelectedItem(item: ChannelInfo?) {

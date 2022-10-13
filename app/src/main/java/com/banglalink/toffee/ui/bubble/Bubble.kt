@@ -314,9 +314,9 @@ class Bubble(builder: Builder) {
         override fun setListener(listener: IBubbleInteractionListener) = this.apply { this.listener = listener }
         
         override fun build(): Bubble {
-            if (!this::context.isInitialized) throw IllegalStateException(FLOATIE_BUIlDER_NO_CONTEXT)
-            if (!this::draggableItem.isInitialized) throw IllegalStateException(FLOATIE_BUIlDER_NO_DRAGGABLE_ITEM)
-            if (!this::removeItem.isInitialized) throw IllegalStateException(FLOATIE_BUIlDER_NO_REMOVE_ITEM)
+            if (!this::context.isInitialized) throw IllegalStateException(BUBBLE_BUIlDER_NO_CONTEXT)
+            if (!this::draggableItem.isInitialized) throw IllegalStateException(BUBBLE_BUIlDER_NO_DRAGGABLE_ITEM)
+            if (!this::removeItem.isInitialized) throw IllegalStateException(BUBBLE_BUIlDER_NO_REMOVE_ITEM)
             return Bubble(this)
         }
     }

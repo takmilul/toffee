@@ -6,9 +6,14 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.id
+import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
 import com.banglalink.toffee.ui.bubble.listener.IBubbleDraggableWindowItemEventListener
@@ -16,11 +21,17 @@ import com.banglalink.toffee.ui.bubble.listener.IBubbleInteractionListener
 import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
+import com.banglalink.toffee.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.TimeUnit.*
 
 class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
+    
+    private var bubbleConfig: BubbleConfig? = null
+    private val coroutineScope = CoroutineScope(Default)
     
     override fun createBubble(): Bubble {
         return Bubble.Builder()
@@ -32,73 +43,77 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
-        
         val draggableViewLayout = LayoutInflater.from(this).inflate(R.layout.draggable_view_toffee, null)
         
-//        val textView = draggableViewLayout.findViewById(R.id.textView11) as TextView
-//        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rectangle_39, 0, 0, 0)
-//        textView.compoundDrawablePadding = 10
+//        coroutineScope.launch {
+//            val bubbleConfig = bubbleConfigRepository.getLatestConfig()
+//        }
+        mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
+            this.bubbleConfig = bubbleConfig
+            if (bubbleConfig?.isGlobalCountDownActive == true) {
+                val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
+                bubbleConfig.adIconUrl?.ifNotBlank {
+                    bubbleImageView.load(it)
+                }
+                val currentTime = Calendar.getInstance().time
+                val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
+                val format = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.getDefault())
+                val endDate = format.parse(endDateDay)
+                //milliseconds
+                val different = endDate?.time?.minus(currentTime.time)
+//                withContext(Main) {
+                countDownTimer?.cancel()
+                showCountdown(different, draggableViewLayout)
+//                }
+            }
+        }
         
-        val currentTime = Calendar.getInstance().time
-        val endDateDay = "21/11/2022 16:00:00"
-        val format1 = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault())
-        val endDate = format1.parse(endDateDay)
-        //milliseconds
-        val different = endDate?.time?.minus(currentTime.time)
-        
-        object : CountDownTimer(different!!, 1000) {
+        return BubbleDraggableItem.Builder()
+            .setLayout(draggableViewLayout)
+            .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
+            .setListener(this)
+            .build()
+    }
+    
+    private fun showCountdown(different: Long?, draggableViewLayout: View) {
+        countDownTimer = object : CountDownTimer(different!!, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 var millisUntilFinished = millisUntilFinished
-                val day = TimeUnit.MILLISECONDS.toDays(millisUntilFinished)
-                millisUntilFinished -= TimeUnit.DAYS.toMillis(day)
-                val hour = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-                millisUntilFinished -= TimeUnit.HOURS.toMillis(hour)
-                val minute = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                millisUntilFinished -= TimeUnit.MINUTES.toMillis(minute)
-                val second = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
+                val day = MILLISECONDS.toDays(millisUntilFinished)
+                millisUntilFinished -= DAYS.toMillis(day)
+                val hour = MILLISECONDS.toHours(millisUntilFinished)
+                millisUntilFinished -= HOURS.toMillis(hour)
+                val minute = MILLISECONDS.toMinutes(millisUntilFinished)
+                millisUntilFinished -= MINUTES.toMillis(minute)
+                val second = MILLISECONDS.toSeconds(millisUntilFinished)
                 
-                val textView3 = draggableViewLayout.findViewById<TextView>(R.id.textView3)
+                val textView3 = draggableViewLayout.findViewById<TextView>(id.textView3)
                 textView3.text = day.toString()
                 
-                val textView2 = draggableViewLayout.findViewById<TextView>(R.id.textView2)
+                val textView2 = draggableViewLayout.findViewById<TextView>(id.textView2)
                 textView2.text = hour.toString()
                 
-                val textView6 = draggableViewLayout.findViewById<TextView>(R.id.textView6)
+                val textView6 = draggableViewLayout.findViewById<TextView>(id.textView6)
                 textView6.text = minute.toString()
                 
-                val textView = draggableViewLayout.findViewById<TextView>(R.id.textView)
+                val textView = draggableViewLayout.findViewById<TextView>(id.textView)
                 textView.text = second.toString()
             }
             
             override fun onFinish() {
-                val textView3 = draggableViewLayout.findViewById<TextView>(R.id.textView3)
+                val textView3 = draggableViewLayout.findViewById<TextView>(id.textView3)
                 textView3.text = "0"
                 
-                val textView2 = draggableViewLayout.findViewById<TextView>(R.id.textView2)
+                val textView2 = draggableViewLayout.findViewById<TextView>(id.textView2)
                 textView2.text = "0"
                 
-                val textView6 = draggableViewLayout.findViewById<TextView>(R.id.textView6)
+                val textView6 = draggableViewLayout.findViewById<TextView>(id.textView6)
                 textView6.text = "0"
                 
-                val textView = draggableViewLayout.findViewById<TextView>(R.id.textView)
+                val textView = draggableViewLayout.findViewById<TextView>(id.textView)
                 textView.text = "0"
             }
         }.start()
-        
-//        val cardView2 = draggableViewLayout.findViewById<CardView>(R.id.cardView2)
-//        cardView2.setOnClickListener {
-//            val uriUrl: Uri = Uri.parse("https://toffeelive.com/")
-//            val intent = Intent(Intent.ACTION_VIEW, uriUrl)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            intent.setPackage("com.android.chrome")
-//            startActivity(intent)
-//        }
-        
-        return BubbleDraggableItem.Builder()
-            .setLayout(draggableViewLayout)
-            .setGravity(DraggableWindowItemGravity.TOP_RIGHT)
-            .setListener(this)
-            .build()
     }
     
     private fun createRemoveItem(): BubbleCloseItem {
@@ -116,14 +131,18 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
         
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
-                val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
-                val isTouched = bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
-                if (isTouched) {
-                    val uriUrl: Uri = Uri.parse("https://toffeelive.com/")
-                    val intent = Intent(Intent.ACTION_VIEW, uriUrl)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.setPackage("com.android.chrome")
-                    startActivity(intent)
+                try {
+                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
+                    val isTouched = bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                    if (isTouched) {
+                        val uriUrl: Uri = Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
+                        val intent = Intent(Intent.ACTION_VIEW, uriUrl)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        intent.setPackage("com.android.chrome")
+                        startActivity(intent)
+                    }
+                } catch (e: Exception) {
+                    Log.i("bubble_", "onTouchEventChanged: ${e.message}")
                 }
             }
             DraggableWindowItemTouchEvent.DRAG_EVENT -> {
@@ -136,17 +155,17 @@ class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IB
         }
     }
     
-    override fun onOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem, ) {
+    override fun onOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onNotOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem, ) {
+    override fun onNotOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onDropInRemoveItem(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem, ) {
+    override fun onDropInRemoveItem(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
         // Nothing to do
     }
 }

@@ -120,6 +120,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 view.loadPlaceholder(isCircular = true)
             } else {
                 view.load(channelInfo.channel_logo) {
+                    initListener(view, false)
                     setImageRequestParams(true)
                     transformations(CircleCropTransformation())
                     size(min(80.px, 150), min(80.px, 150))

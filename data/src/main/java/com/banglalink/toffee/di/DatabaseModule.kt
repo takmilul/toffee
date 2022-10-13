@@ -237,4 +237,16 @@ object DatabaseModule {
     fun providesCdnChannelItemRepository(dao: CdnChannelItemDao): CdnChannelItemRepository {
         return CdnChannelItemRepositoryImpl(dao)
     }
+    
+    @Singleton
+    @Provides
+    fun providesBubbleConfigDao(db: ToffeeDatabase): BubbleConfigDao {
+        return db.getBubbleConfigDao()
+    }
+    
+    @Singleton
+    @Provides
+    fun providesBubbleConfigRepository(dao: BubbleConfigDao): BubbleConfigRepository {
+        return BubbleConfigRepositoryImpl(dao)
+    }
 }

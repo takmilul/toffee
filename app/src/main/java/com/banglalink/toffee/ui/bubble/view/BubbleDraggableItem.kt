@@ -7,7 +7,7 @@ import com.banglalink.toffee.ui.bubble.util.DRAGGABLE_ITEM_BUIDLER_NO_LAYOUT
 import com.banglalink.toffee.ui.bubble.view.builder.IBubbleDraggableItemBuilder
 
 /**
- * FloatieDraggableItem: The item that can be dragged around the screen
+ * BubbleDraggableItem: The item that can be dragged around the screen
  */
 class BubbleDraggableItem(builder: Builder) {
     

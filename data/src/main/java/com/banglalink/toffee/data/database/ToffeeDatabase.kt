@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.database.entities.*
+import com.banglalink.toffee.model.BubbleConfig
 
 @Database(
     entities = [
@@ -25,9 +26,10 @@ import com.banglalink.toffee.data.database.entities.*
         DrmLicenseEntity::class,
         SessionPrefData::class,
         PlayerEventData::class,
-        CdnChannelItem::class
+        CdnChannelItem::class,
+        BubbleConfig::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
@@ -50,6 +52,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getSessionPrefDao(): SessionPrefDao
     abstract fun getCustomPlayerEventsDao(): PlayerEventsDao
     abstract fun getCdnChannelItemDao(): CdnChannelItemDao
+    abstract fun getBubbleConfigDao(): BubbleConfigDao
     
     companion object {
         const val DB_NAME = "toffee-db"

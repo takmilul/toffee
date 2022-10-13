@@ -1,9 +1,13 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.banglalink.toffee.data.network.response.BodyResponse
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 class CustomerInfoLogin(
@@ -166,5 +170,52 @@ class CustomerInfoLogin(
     @SerializedName("videoMinDuration")
     val videoMinDuration:Int = -1,
     @SerializedName("videoMaxDuration")
-    val videoMaxDuration:Int = -1
+    val videoMaxDuration:Int = -1,
+    @SerializedName("bubbleConfig")
+    var bubbleConfig: @RawValue BubbleConfig?
 ) : BodyResponse(), Parcelable
+
+@Entity
+data class BubbleConfig(
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    val id: Long? = null,
+    @SerializedName("adForwardUrl")
+    val adForwardUrl: String? = null,
+    @SerializedName("adIconUrl")
+    val adIconUrl: String? = null,
+    @SerializedName("countDownEndTime")
+    val countDownEndTime: String? = null,
+    @SerializedName("isBubbleActive")
+    val isBubbleActive: Boolean = false,
+    @SerializedName("isGlobalCountDownActive")
+    val isGlobalCountDownActive: Boolean = false,
+    @SerializedName("leftSide")
+    @Embedded val leftSideData: LeftSideData? = null,
+    @SerializedName("rightSide")
+    @Embedded val rightSideData: RightSideData? = null,
+    @SerializedName("receiveTime")
+    val receiveTime: Long = System.currentTimeMillis(),
+)
+
+data class LeftSideData(
+    @SerializedName("matchStartTime")
+    val leftMatchStartTime: String? = null,
+    @SerializedName("subTitle")
+    val leftSubTitle: String? = null,
+    @SerializedName("title")
+    val leftTitle: String? = null,
+    @SerializedName("type")
+    val leftType: String? = null
+)
+
+data class RightSideData(
+    @SerializedName("matchStartTime")
+    val rightMatchStartTime: String? = null,
+    @SerializedName("subTitle")
+    val rightSubTitle: String? = null,
+    @SerializedName("title")
+    val rightTitle: String? = null,
+    @SerializedName("type")
+    val rightType: String? = null
+)

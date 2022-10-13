@@ -14,5 +14,6 @@ enum class DraggableWindowItemGravity(val value: Int) {
     TOP_RIGHT(Gravity.TOP or Gravity.RIGHT),
     BOTTOM_LEFT(Gravity.BOTTOM or Gravity.LEFT),
     BOTTOM_RIGHT(Gravity.BOTTOM or Gravity.RIGHT),
-    CENTER(Gravity.TOP or Gravity.CENTER)
+    CENTER_RIGHT(Gravity.CENTER or Gravity.RIGHT),
+    BOTTOM_CENTER(Gravity.BOTTOM or Gravity.CENTER)
 }

@@ -15,12 +15,10 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
@@ -28,7 +26,6 @@ import kotlin.math.min
 class DynamicSplashScreenFragment : BaseFragment() {
     
     private val binding get() = _binding!!
-    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentDynamicSplashScreenBinding? = null
     
     companion object {

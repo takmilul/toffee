@@ -14,4 +14,4 @@
     android:background="@android:color/transparent"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     app:reverseLayout="false"
-    tools:listitem="@layout/fragment_bottom_channel_item_layout" />
+    tools:listitem="@layout/list_item_all_tv_channels" />
