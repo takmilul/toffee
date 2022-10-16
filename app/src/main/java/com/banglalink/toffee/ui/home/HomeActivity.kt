@@ -974,11 +974,15 @@ class HomeActivity :
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
             binding.mainUiFrame.visibility = View.GONE
+            val intent = Intent(this, BubbleService::class.java)
+            stopService(intent)
         } else {
             binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
+            val intent = Intent(this, BubbleService::class.java)
+            startService(intent)
         }
     }
     
