@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit.*
 
-class BubbleService : BaseService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
+class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)

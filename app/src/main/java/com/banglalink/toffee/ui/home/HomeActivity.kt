@@ -48,6 +48,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
@@ -90,6 +91,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIF
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
+import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleService
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
@@ -167,6 +169,7 @@ class HomeActivity :
     private val gson = Gson()
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
+    private var bubbleIntent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -390,22 +393,22 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
-        
+        bubbleIntent = Intent(this, BubbleService::class.java)
         if (mPref.isBubbleActive && mPref.isBubbleEnabled){
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                startService(Intent(this, BubbleService::class.java))
+                startService(bubbleIntent)
             }
         }
 //        showDeviceId()
     }
     
-    private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             displayMissingOverlayPermissionDialog()
         } else {
-            startService(Intent(this, BubbleService::class.java))
+            startService(bubbleIntent)
         }
     }
     
@@ -974,15 +977,17 @@ class HomeActivity :
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
             binding.mainUiFrame.visibility = View.GONE
-            val intent = Intent(this, BubbleService::class.java)
-            stopService(intent)
+            if (BaseBubbleService.isBubbleVisible){
+                stopService(bubbleIntent)
+            }
         } else {
             binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            val intent = Intent(this, BubbleService::class.java)
-            startService(intent)
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
+                startService(bubbleIntent)
+            }
         }
     }
     
@@ -2015,7 +2020,7 @@ class HomeActivity :
             enterPipMode()
         }
     }
-
+    
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
@@ -2031,12 +2036,17 @@ class HomeActivity :
             )
         }
     }
-
-//    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
-//        pipChanged(isInPictureInPictureMode)
-//        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-//    }
-
+    
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+        pipChanged(isInPictureInPictureMode)
+        if (lifecycle.currentState == Lifecycle.State.CREATED) {
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
+                startService(bubbleIntent)
+            }
+        }
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+    }
+    
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
@@ -2046,7 +2056,7 @@ class HomeActivity :
         }
         binding.playerView.onPip(isInPip)
     }
-
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -2084,7 +2094,7 @@ class HomeActivity :
     } else {
         false
     }
-
+    
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
