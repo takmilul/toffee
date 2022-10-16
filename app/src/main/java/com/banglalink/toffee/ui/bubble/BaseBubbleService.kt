@@ -14,7 +14,7 @@ import javax.inject.Inject
  * Foreground service that pops a bubble on top of your screen
  */
 @AndroidEntryPoint
-abstract class BaseService : Service() {
+abstract class BaseBubbleService : Service() {
     
     private var bubble: Bubble? = null
     var countDownTimer: CountDownTimer? = null
@@ -23,7 +23,9 @@ abstract class BaseService : Service() {
     @Inject lateinit var bubbleConfigRepository: BubbleConfigRepository
     
     companion object {
-        lateinit var INSTANCE: BaseService
+        lateinit var INSTANCE: BaseBubbleService
+        var isForceClosed: Boolean = false
+        var isBubbleVisible: Boolean = false
     }
     
     override fun onCreate() {
@@ -34,6 +36,8 @@ abstract class BaseService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Allow only one Bubble to exist at a time
         if (startId == 1) {
+            isForceClosed = false
+            isBubbleVisible = true
             bubble = createBubble()
         }
         return START_STICKY
@@ -43,6 +47,7 @@ abstract class BaseService : Service() {
     
     override fun onDestroy() {
         super.onDestroy()
+        isBubbleVisible = false
         countDownTimer?.cancel()
         bubble?.removeViewFromWindow()
     }

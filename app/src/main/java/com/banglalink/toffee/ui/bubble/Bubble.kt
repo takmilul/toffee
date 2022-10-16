@@ -268,7 +268,8 @@ class Bubble(builder: Builder) {
                             isAnimatingHideRemoveItem.set(false)
                             removeItem.setVisible(shouldShow)
                             if (isInDeleteMode) {
-                                BaseService.INSTANCE.stopSelf() // Stop the Service
+                                BaseBubbleService.isForceClosed = true
+                                BaseBubbleService.INSTANCE.stopSelf() // Stop the Service
                             }
                         }
                     }
