@@ -46,7 +46,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         val draggableViewLayout = LayoutInflater.from(this).inflate(R.layout.draggable_view_toffee, null)
         
 //        coroutineScope.launch {
-//            val bubbleConfig = bubbleConfigRepository.getLatestConfig()
+//            bubbleConfig = bubbleConfigRepository.getLatestConfig()
 //        }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             this.bubbleConfig = bubbleConfig
@@ -55,12 +55,11 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 bubbleConfig.adIconUrl?.ifNotBlank {
                     bubbleImageView.load(it)
                 }
-                val currentTime = Calendar.getInstance().time
+                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
-                val format = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.getDefault())
                 val endDate = format.parse(endDateDay)
                 //milliseconds
-                val different = endDate?.time?.minus(currentTime.time)
+                val different = endDate?.time?.minus(mPref.getSystemTime().time)
 //                withContext(Main) {
                 countDownTimer?.cancel()
                 showCountdown(different, draggableViewLayout)
