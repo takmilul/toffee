@@ -631,7 +631,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value)=pref.edit{putInt(PREF_VIDEO_MAX_DURATION,value)}
     
     var lastLoginDateTime: String
-        get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, " ") ?: ""
+        get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, "") ?: ""
         set(value) = pref.edit { putString(PREF_LAST_LOGIN_DATE_TIME, value) }
     
     var isBubbleActive: Boolean
