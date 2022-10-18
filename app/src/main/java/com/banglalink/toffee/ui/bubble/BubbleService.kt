@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.id
@@ -32,7 +33,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
-    
+
     override fun createBubble(): Bubble {
         return Bubble.Builder()
             .with(this)
@@ -65,8 +66,19 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 showCountdown(different, draggableViewLayout)
 //                }
             }
+            else if (bubbleConfig?.isGlobalCountDownActive == false) {
+                val countDownBoardGroup = draggableViewLayout.findViewById<Group>(R.id.countDownBoard)
+                countDownBoardGroup.visibility= View.GONE
+                val scoreBoardGroup = draggableViewLayout.findViewById<Group>(R.id.scoreBoard)
+                scoreBoardGroup.visibility= View.VISIBLE
+                val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
+                bubbleConfig.adIconUrl?.ifNotBlank {
+                    bubbleImageView.load(it)
+                }
+                leftSideBubbleWing(draggableViewLayout)
+                rightSideBubbleWing(draggableViewLayout)
+            }
         }
-        
         return BubbleDraggableItem.Builder()
             .setLayout(draggableViewLayout)
             .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
@@ -97,6 +109,17 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
             }
             
             override fun onFinish() {
+                val countDownBoardGroup = draggableViewLayout.findViewById<Group>(R.id.countDownBoard)
+                countDownBoardGroup.visibility= View.GONE
+                val scoreBoardGroup = draggableViewLayout.findViewById<Group>(R.id.scoreBoard)
+                scoreBoardGroup.visibility= View.VISIBLE
+                val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
+                bubbleConfig?.adIconUrl?.ifNotBlank {
+                    bubbleImageView.load(it)
+                }
+                leftSideBubbleWing(draggableViewLayout)
+                rightSideBubbleWing(draggableViewLayout)
+
                 val daysCounts = draggableViewLayout.findViewById<TextView>(id.countDay)
                 daysCounts.text = "0"
                 val hoursCounts = draggableViewLayout.findViewById<TextView>(id.countHour)
@@ -107,6 +130,30 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 SecCounts.text = "0"
             }
         }.start()
+    }
+
+    private fun leftSideBubbleWing(draggableViewLayout: View){
+        val leftSideTitle = draggableViewLayout.findViewById<TextView>(id.matchOne)
+        leftSideTitle.text = bubbleConfig?.leftSideData?.leftTitle.toString()
+        val leftSideSubTitle = draggableViewLayout.findViewById<TextView>(id.scoreOne)
+        leftSideSubTitle.text = bubbleConfig?.leftSideData?.leftSubTitle.toString()
+
+        if (bubbleConfig?.leftSideData?.leftType == "running"){
+            leftSideSubTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
+            leftSideSubTitle.compoundDrawablePadding = 10
+        }
+    }
+
+    private fun rightSideBubbleWing(draggableViewLayout: View){
+        val rightSideTitle = draggableViewLayout.findViewById<TextView>(id.matchTwo)
+        rightSideTitle.text = bubbleConfig?.rightSideData?.rightTitle.toString()
+        val rightSideSubTitle = draggableViewLayout.findViewById<TextView>(id.scoreTwo)
+        rightSideSubTitle.text = bubbleConfig?.rightSideData?.rightSubTitle.toString()
+
+        if (bubbleConfig?.rightSideData?.rightType == "running"){
+            rightSideSubTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
+            rightSideSubTitle.compoundDrawablePadding = 10
+        }
     }
     
     private fun createRemoveItem(): BubbleCloseItem {
