@@ -153,7 +153,7 @@ abstract class PlayerPageActivity :
             castContext = try {
                 CastContext.getSharedInstance(applicationContext)
             } catch (ex: Exception) {
-                ToffeeAnalytics.logException(ex)
+//                ToffeeAnalytics.logException(ex)
                 null
             }
         }
@@ -1182,7 +1182,7 @@ abstract class PlayerPageActivity :
             }
             e.printStackTrace()
             if (!isBehindLiveWindow(e)) {
-                ToffeeAnalytics.logException(e)
+//                ToffeeAnalytics.logException(e)
                 ToffeeAnalytics.logBreadCrumb("player error occurred")
             }
             playerErrorMessage = e.message ?: e.cause?.message ?: e.cause?.cause?.message

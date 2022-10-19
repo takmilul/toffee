@@ -235,9 +235,10 @@ class HomeActivity :
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         setupNavController()
-        observeTopBarBackground()
         initializeDraggableView()
         initDrawer()
+        initSideNav()
+        observeTopBarBackground()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
@@ -360,7 +361,6 @@ class HomeActivity :
                 it?.dismiss()
             }).create().show()
         }
-        initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
         configureBottomSheet()
@@ -393,6 +393,7 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
+        mPref.isBubbleActive = true
         bubbleIntent = Intent(this, BubbleService::class.java)
         if (mPref.isBubbleActive && mPref.isBubbleEnabled){
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
@@ -792,7 +793,7 @@ class HomeActivity :
                     if (it.type == "png") {
                         lifecycleScope.launch(Dispatchers.IO) {
                             try {
-                                val bitmap = getDrawableFromUrl(it.imagePath)
+                                val bitmap = getDrawableFromUrl(if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) it.imagePathLight else it.imagePathDark)
                                 withContext(Dispatchers.Main) {
                                     bitmap?.let {
                                         val bitmapDrawable = BitmapDrawable(resources, it)
@@ -2024,16 +2025,20 @@ class HomeActivity :
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
-        toggleNavigation(true)
-        maximizePlayer()
-        if(Build.VERSION.SDK_INT < 26) {
-            enterPictureInPictureMode()
-        } else {
-            enterPictureInPictureMode(
-//                PictureInPictureParams.Builder()
-//                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
-//                    .build()
-            )
+        try {
+            toggleNavigation(true)
+            maximizePlayer()
+            if(Build.VERSION.SDK_INT < 26) {
+                enterPictureInPictureMode()
+            } else {
+                enterPictureInPictureMode(
+    //                PictureInPictureParams.Builder()
+    //                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+    //                    .build()
+                )
+            }
+        } catch (e: Exception) {
+            ToffeeAnalytics.logException(e)
         }
     }
     

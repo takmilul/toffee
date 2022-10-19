@@ -26,7 +26,9 @@ data class DecorationData (
     @SerializedName("is_active")
     val isActive : Int,
     @SerializedName("image_path")
-    val imagePath : String,
+    val imagePathLight : String,
+    @SerializedName("image_path_dark_mode")
+    val imagePathDark : String,
     @SerializedName("start_date")
     val startDate : String,
     @SerializedName("end_date")

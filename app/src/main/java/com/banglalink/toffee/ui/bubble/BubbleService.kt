@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.id
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
@@ -49,21 +50,25 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
 //            bubbleConfig = bubbleConfigRepository.getLatestConfig()
 //        }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
-            this.bubbleConfig = bubbleConfig
-            if (bubbleConfig?.isGlobalCountDownActive == true) {
-                val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
-                bubbleConfig.adIconUrl?.ifNotBlank {
-                    bubbleImageView.load(it)
-                }
-                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
-                val endDate = format.parse(endDateDay)
-                //milliseconds
-                val different = endDate?.time?.minus(mPref.getSystemTime().time)
+            try {
+                this.bubbleConfig = bubbleConfig
+                if (bubbleConfig?.isGlobalCountDownActive == true) {
+                    val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
+                    bubbleConfig.adIconUrl?.ifNotBlank {
+                        bubbleImageView.load(it)
+                    }
+                    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
+                    val endDate = format.parse(endDateDay)
+                    //milliseconds
+                    val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
 //                withContext(Main) {
-                countDownTimer?.cancel()
-                showCountdown(different, draggableViewLayout)
+                    countDownTimer?.cancel()
+                    showCountdown(different, draggableViewLayout)
 //                }
+                }
+            } catch (e: Exception) {
+                ToffeeAnalytics.logException(e)
             }
         }
         
@@ -74,8 +79,8 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
             .build()
     }
     
-    private fun showCountdown(different: Long?, draggableViewLayout: View) {
-        countDownTimer = object : CountDownTimer(different!!, 1000) {
+    private fun showCountdown(different: Long, draggableViewLayout: View) {
+        countDownTimer = object : CountDownTimer(different, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 var millisUntilFinished = millisUntilFinished
                 val day = MILLISECONDS.toDays(millisUntilFinished)

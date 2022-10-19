@@ -26,7 +26,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.HostUrlOverrideType.*
 import com.banglalink.toffee.enums.NotificationType.*
 import com.banglalink.toffee.extension.ifNotBlank
-import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -160,12 +159,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 }
             }
             BUBBLE_CONFIG.type -> {
-                try {
-                    val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
-                    mPref.bubbleConfigLiveData.postValue(bubbleConfig)
-                } catch (e: Exception) {
-                    Log.e(TAG, "bubbleConfig: ${e.message}")
-                }
+//                try {
+//                    val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
+//                    mPref.bubbleConfigLiveData.postValue(bubbleConfig)
+//                } catch (e: Exception) {
+//                    Log.e(TAG, "bubbleConfig: ${e.message}")
+//                }
             }
             else -> {
                 coroutineScope.launch {

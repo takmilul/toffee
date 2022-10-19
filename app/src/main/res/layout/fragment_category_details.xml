@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/screen_bg">
     
     <com.google.android.material.appbar.AppBarLayout
@@ -25,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/screen_bg"
+                tools:layout="@layout/fragment_category_info"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +45,8 @@
             android:id="@+id/latestVideosFragment"
             android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_landing_latest_videos" />
     
     </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -40,16 +40,6 @@ class DynamicSplashScreenFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-//        val displayMetrics = resources.displayMetrics
-//        val height = displayMetrics.heightPixels
-//        val width = displayMetrics.widthPixels
-//        
-//        binding.splashGifImageView.layoutParams.height = height / 2
-//        binding.splashGifImageView.layoutParams.width = width / 2
-//        
-//        binding.splashLogoImageView.layoutParams.height = height / 2
-//        binding.splashLogoImageView.layoutParams.width = width / 2
         observeSplashConfigData()
     }
     
@@ -65,13 +55,13 @@ class DynamicSplashScreenFragment : BaseFragment() {
                 if (isActive) {
                     waitDuration = it.duration * 1_000L
                     if (it.type == "png") {
-                        binding.splashLogoImageView.load(it.imagePath) {
+                        binding.splashLogoImageView.load(it.imagePathLight) {
                             binding.splashLogoImageView.scaleType = CENTER_CROP
                             size(min(360.px, 720), min(202.px, 405))
                         }
                         binding.splashLogoImageView.show()
                     } else {
-                        binding.splashGifImageView.load(it.imagePath) {
+                        binding.splashGifImageView.load(it.imagePathLight) {
                             binding.splashGifImageView.scaleType = CENTER_CROP
                             size(min(200.px, 200))
                         }

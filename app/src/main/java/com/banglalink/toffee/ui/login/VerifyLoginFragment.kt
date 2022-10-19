@@ -43,7 +43,6 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private var otp: String = ""
     private var phoneNumber: String = ""
     private var regSessionToken: String = ""
-    private var resendBtnPressCount: Int = 0
     @Inject lateinit var cacheManager: CacheManager
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoLogin? = null
@@ -84,7 +83,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             skipButton.safeClick({ closeDialog() })
         }
         
-        startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
+        startCountDown()
         initSmsBroadcastReceiver()
     }
     
@@ -143,9 +142,8 @@ class VerifyLoginFragment : ChildDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     regSessionToken = it.data//update reg session token
-                    resendBtnPressCount++
                     binding.resendButton.visibility = View.GONE
-                    startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
+                    startCountDown()
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
@@ -161,10 +159,10 @@ class VerifyLoginFragment : ChildDialogFragment() {
         }
     }
     
-    private fun startCountDown(countDownTimeInMinute: Int) {
+    private fun startCountDown() {
         binding.countdownTextView.visibility = View.VISIBLE
         resendCodeTimer?.cancel()
-        resendCodeTimer = ResendCodeTimer(this, countDownTimeInMinute).also { timer ->
+        resendCodeTimer = ResendCodeTimer(this, 1).also { timer ->
             observe(timer.tickLiveData) {
                 val remainingSecs = it / 1000
                 val minutes = (remainingSecs / 60).toInt()
