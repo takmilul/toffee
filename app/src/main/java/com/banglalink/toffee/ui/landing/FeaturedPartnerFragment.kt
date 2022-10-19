@@ -101,7 +101,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
                 bundleOf(
                     "myTitle" to "Back to TOFFEE",
                     "url" to url,
-                    "isHideToffeeIcon" to false,
+                    "isHideBackIcon" to false,
                     "isHideCloseIcon" to true
                 )
             )

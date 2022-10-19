@@ -3,6 +3,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/screen_bg">
@@ -25,25 +26,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/screen_bg"
+                tools:layout="@layout/fragment_category_info"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
-    
+
     <com.banglalink.toffee.ui.widget.SmartNestedScrollView
         android:id="@+id/generalCategoryNestedScroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:ignore="SpeakableTextPresentCheck">
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/latestVideosFragment"
             android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
+            tools:layout="@layout/fragment_landing_latest_videos"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    
+
     </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

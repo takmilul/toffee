@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.exception.JobCanceledError
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -50,6 +51,7 @@ class LandingPageViewModel @Inject constructor(
     val pageType = MutableLiveData<PageType>()
     val isDramaSeries = MutableLiveData<Boolean>()
     val moviesChannelCount = SingleLiveEvent<Int>()
+    val linearChannelCount = SingleLiveEvent<Int>()
     val selectedHashTag = SingleLiveEvent<String>()
     val hashtagList = SingleLiveEvent<List<String>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
@@ -185,8 +187,20 @@ class LandingPageViewModel @Inject constructor(
         }).getList()
     }
     
+     fun loadLinearChannelByName(name:String) :Flow<PagingData<TVChannelItem>> {
+        return BaseListRepositoryImpl({
+            tvChannelRepo.getLinearChannelsByName(name)
+        }).getList()
+    }
+    
+    fun loadLinearChannelCount(name:String) {
+        viewModelScope.launch {
+            linearChannelCount.postValue(tvChannelRepo.getLinearChannelsCountByName(name))
+        }
+    }
+    
     fun loadPopularMovieChannelsCount() {
-        viewModelScope.launch { 
+        viewModelScope.launch {
             moviesChannelCount.postValue(tvChannelRepo.getPopularMovieChannelsCount())
         }
     }

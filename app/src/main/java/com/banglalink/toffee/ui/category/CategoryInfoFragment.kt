@@ -9,36 +9,56 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.paging.filter
+import androidx.paging.map
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
-import com.banglalink.toffee.extension.handleUrlShare
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
+import com.banglalink.toffee.ui.bubble.util.vibrate
+import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.landing.ChannelAdapter
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CategoryInfoFragment: HomeBaseFragment() {
+class CategoryInfoFragment : HomeBaseFragment() {
     private var selectedSubCategoryId: Int = 0
     private lateinit var categoryInfo: Category
-    @Inject lateinit var bindingUtil: BindingUtil
-    private var _binding: FragmentCategoryInfoBinding ? = null
+    @Inject
+    lateinit var bindingUtil: BindingUtil
+    private var _binding: FragmentCategoryInfoBinding? = null
     private val binding get() = _binding!!
+    
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    private val channelViewModel by activityViewModels<AllChannelsViewModel>()
+    
+    private lateinit var mAdapter: ChannelAdapter
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        categoryInfo = requireParentFragment().requireArguments()
+            .getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,47 +71,63 @@ class CategoryInfoFragment: HomeBaseFragment() {
         binding.categoryShareButton.safeClick({
             categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
+        
+        mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.playContentLiveData.postValue(item)
+            }
+        })
+        
+        with(binding.channelList) {
+            adapter = mAdapter
+        }
+        
+        observeLinearChannelCount()
+        landingViewModel.loadLinearChannelCount(categoryInfo.categoryName)
+    
+        binding.viewAllButton.setOnClickListener {
+            findNavController().navigate(R.id.menu_tv)
+        }
     }
-
+    
     private fun observeSubCategories() {
-        observe(landingViewModel.subCategories){
+        observe(landingViewModel.subCategories) {
             if (it.isNotEmpty()) {
                 binding.subCategoryChipGroup.removeAllViews()
                 val subList = it.sortedBy { sub -> sub.id }
                 subList.let { list ->
-                    list.forEachIndexed{ _, subCategory ->
+                    list.forEachIndexed { _, subCategory ->
                         val newChip = addChip(subCategory).apply {
                             tag = subCategory
                         }
                         binding.subCategoryChipGroup.addView(newChip)
-                        if(subCategory.id == 0L) {
+                        if (subCategory.id == 0L) {
                             binding.subCategoryChipGroup.check(newChip.id)
                         }
                     }
                 }
                 binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
                     val selectedChip = group.findViewById<Chip>(checkedId)
-                    if(selectedChip != null) {
+                    if (selectedChip != null) {
                         val selectedSub = selectedChip.tag as SubCategory
                         selectedSubCategoryId = selectedSub.id.toInt()
                         landingViewModel.subCategoryId.value = selectedSub.id.toInt()
                         landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
                     }
                 }
-            }
-            else {
+            } else {
                 binding.subCategoryChipGroupHolder.hide()
             }
         }
     }
-
-    private fun observeHashTags(){
+    
+    private fun observeHashTags() {
         observe(landingViewModel.hashtagList) {
             if (it.isNotEmpty()) {
                 binding.hashTagChipGroup.removeAllViews()
-                binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
+                binding.hashTagChipGroup.setOnCheckedChangeListener { group, checkedId ->
                     val selectedHashTag = group.findViewById<Chip>(checkedId)
-                    if(selectedHashTag != null) {
+                    if (selectedHashTag != null) {
                         val hashTag = selectedHashTag.tag as String
                         landingViewModel.selectedHashTag.value = hashTag.removePrefix("#")
                     } else {
@@ -99,8 +135,8 @@ class CategoryInfoFragment: HomeBaseFragment() {
                     }
                 }
                 it.let { list ->
-                    list.forEachIndexed{ _, hashTag ->
-                        if(hashTag.isNotBlank()) {
+                    list.forEachIndexed { _, hashTag ->
+                        if (hashTag.isNotBlank()) {
                             val newChip = addHashTagChip(hashTag).apply {
                                 tag = hashTag
                             }
@@ -108,8 +144,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 binding.hashTagChipGroupHolder.hide()
             }
         }
@@ -119,8 +154,12 @@ class CategoryInfoFragment: HomeBaseFragment() {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
-        val chipColor = createStateColor(intColor,foregroundColor)
-        val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, binding.hashTagChipGroup, false) as Chip
+        val chipColor = createStateColor(intColor, foregroundColor)
+        val chip = layoutInflater.inflate(
+            R.layout.hashtag_chip_layout,
+            binding.hashTagChipGroup,
+            false
+        ) as Chip
         chip.text = hashTag
         chip.id = View.generateViewId()
         chip.chipBackgroundColor = chipColor
@@ -128,13 +167,17 @@ class CategoryInfoFragment: HomeBaseFragment() {
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
         return chip
     }
-
+    
     private fun addChip(subCategory: SubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val chipColor = createStateColor(intColor)
         val strokeColor = createStateColor(intColor, textColor)
-        val chip = layoutInflater.inflate(R.layout.category_chip_layout, binding.subCategoryChipGroup, false) as Chip
+        val chip = layoutInflater.inflate(
+            R.layout.category_chip_layout,
+            binding.subCategoryChipGroup,
+            false
+        ) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
@@ -144,16 +187,25 @@ class CategoryInfoFragment: HomeBaseFragment() {
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
         return chip
     }
-
+    
     private fun setCategoryUiInfo() {
         categoryInfo.let {
             binding.categoryName.text = it.categoryName
             bindingUtil.bindCategoryIcon(binding.categoryIcon, categoryInfo)
-            binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
+            binding.categoryIcon.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorAccent2
+                )
+            )
+            binding.channelTv.text=it.categoryName+" Channels"
         }
     }
-
-    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+    
+    private fun createStateColor(
+        selectedColor: Int,
+        unSelectedColor: Int = Color.TRANSPARENT
+    ): ColorStateList {
         return ColorStateList(
             arrayOf(
                 intArrayOf(android.R.attr.state_checked),
@@ -165,6 +217,39 @@ class CategoryInfoFragment: HomeBaseFragment() {
             )
         )
     }
+    
+    private fun observeLinearChannelCount() {
+        observe(landingViewModel.linearChannelCount) {
+            if (it > 0) {
+                observeLinearList()
+            } else {
+                channelViewModel(0, false).run {
+                    observeLinearList()
+                }
+            }
+        }
+    }
+    
+    private fun observeLinearList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            landingViewModel.loadLinearChannelByName(categoryInfo.categoryName).collectLatest {
+                binding.linearGroup.hide()
+                binding.nonLinearGroup.show()
+                
+                mAdapter.submitData(it.filter
+                {
+                    it.channelInfo?.isExpired == false
+                }.map { tvItem ->
+                    binding.placeholder.hide()
+                    binding.channelList.show()
+                    binding.linearGroup.show()
+                    binding.nonLinearGroup.hide()
+                    
+                    tvItem.channelInfo!!
+                })
+            }
+        }
+}
     
     override fun onDestroyView() {
         super.onDestroyView()

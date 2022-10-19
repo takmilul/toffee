@@ -77,11 +77,19 @@
                 </LinearLayout>
 
                 <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/topMovieChannelsFragment"
+                    android:name="com.banglalink.toffee.ui.category.movie.PopularMovieChannelFragment"
+                    app:layout_constraintTop_toBottomOf="@+id/categoryContainer"
+                    app:layout_constraintBottom_toBottomOf="@+id/categoryContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/continueWatchingFragment"
                     android:name="com.banglalink.toffee.ui.category.movie.MoviesContinueWatchingFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/categoryContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/topMovieChannelsFragment"
                     android:background="@drawable/top_round_bg_with_top_space" />
 
                 <androidx.fragment.app.FragmentContainerView
@@ -172,14 +180,6 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/comingSoonFragment"
                     android:background="@color/home_screen_curve_bg_color" />
-
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/topMovieChannelsFragment"
-                    android:name="com.banglalink.toffee.ui.category.movie.PopularMovieChannelFragment"
-                    app:layout_constraintTop_toBottomOf="@+id/telefilmFragment"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>

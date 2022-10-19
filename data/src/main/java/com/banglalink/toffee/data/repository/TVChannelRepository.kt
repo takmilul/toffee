@@ -18,4 +18,6 @@ interface TVChannelRepository {
     fun getAllChannels(isStingray: Boolean): PagingSource<Int, TVChannelItem>
     fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
     suspend fun getPopularMovieChannelsCount(): Int
+     fun getLinearChannelsByName(name:String): PagingSource<Int, TVChannelItem>
+    suspend fun getLinearChannelsCountByName(name:String): Int
 }

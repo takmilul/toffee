@@ -40,12 +40,12 @@ class HtmlPageViewDialog : DialogFragment() {
         ///
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
-        isHideToffeeIcon = HtmlPageViewDialogArgs.fromBundle(requireArguments()).isHideToffeeIcon
-        isHideCloseIcon = HtmlPageViewDialogArgs.fromBundle(requireArguments()).isHideCloseIcon
+        isHideToffeeIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
+        isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon",false) ?: false
         
         binding.titleTv.text = arguments?.getString("myTitle", " ") ?: " "
-        if (isHideToffeeIcon) binding.toffeeLogo.hide() else binding.toffeeLogo.show()
-        if (isHideCloseIcon) binding.closeIv.hide() else binding.closeIv.show()
+        if (isHideToffeeIcon) binding.backIcon.hide() else binding.backIcon.show()
+        if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
         
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -101,7 +101,7 @@ class HtmlPageViewDialog : DialogFragment() {
             dialog?.dismiss()
         }
         
-        binding.toffeeLogo.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             dialog?.dismiss()
         }
         binding.titleTv.setOnClickListener {
