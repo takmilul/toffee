@@ -1,11 +1,6 @@
 package com.banglalink.toffee.ui.common
 
-import android.app.AlertDialog
-import android.app.Dialog
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,18 +10,19 @@ import android.webkit.*
 import androidx.fragment.app.DialogFragment
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
-import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 
 
 class HtmlPageViewDialog : DialogFragment() {
-
-    private var _binding: DialogHtmlPageViewBinding ? = null
+    private var _binding: DialogHtmlPageViewBinding? = null
     private val binding get() = _binding!!
-
+    
     private lateinit var htmlUrl: String
     private var header: String? = ""
-
+    private var isHideToffeeIcon: Boolean = true
+    private var isHideCloseIcon: Boolean = false
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -34,26 +30,29 @@ class HtmlPageViewDialog : DialogFragment() {
             R.style.FullScreenDialogStyle
         )
     }
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogHtmlPageViewBinding.inflate(layoutInflater)
-
         ///
-        htmlUrl= arguments?.getString("url")!!
-        header= arguments?.getString("header")
-
-        binding.titleTv.text = arguments?.getString("myTitle"," ") ?: " "
-
+        htmlUrl = arguments?.getString("url")!!
+        header = arguments?.getString("header")
+        isHideToffeeIcon = HtmlPageViewDialogArgs.fromBundle(requireArguments()).isHideToffeeIcon
+        isHideCloseIcon = HtmlPageViewDialogArgs.fromBundle(requireArguments()).isHideCloseIcon
+        
+        binding.titleTv.text = arguments?.getString("myTitle", " ") ?: " "
+        if (isHideToffeeIcon) binding.toffeeLogo.hide() else binding.toffeeLogo.show()
+        if (isHideCloseIcon) binding.closeIv.hide() else binding.closeIv.show()
+        
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
-
+        
         binding.webview.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 binding.progressBar.progress = newProgress
@@ -61,7 +60,7 @@ class HtmlPageViewDialog : DialogFragment() {
                     binding.progressBar.visibility = View.GONE
                 }
             }
-
+            
             override fun onPermissionRequest(request: PermissionRequest) {
                 val resources = request.resources
                 for (i in resources.indices) {
@@ -73,10 +72,10 @@ class HtmlPageViewDialog : DialogFragment() {
                 super.onPermissionRequest(request)
             }
         }
-
+        
         with(binding.webview.settings) {
             if (Build.VERSION.SDK_INT >= 21) {
-                mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             }
             javaScriptEnabled = true
             setSupportZoom(true)
@@ -90,22 +89,27 @@ class HtmlPageViewDialog : DialogFragment() {
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
         }
-        if(header.isNullOrEmpty()){
+        if (header.isNullOrEmpty()) {
             binding.webview.loadUrl(htmlUrl)
-        }else{
+        } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = header!!
-            binding.webview.loadUrl(htmlUrl,headerMap)
+            binding.webview.loadUrl(htmlUrl, headerMap)
         }
-
+        
         binding.closeIv.setOnClickListener {
-
             dialog?.dismiss()
         }
-
+        
+        binding.toffeeLogo.setOnClickListener {
+            dialog?.dismiss()
+        }
+        binding.titleTv.setOnClickListener {
+            dialog?.dismiss()
+        }
+        
         return binding.root
     }
-
     override fun onStart() {
         super.onStart()
         dialog?.let {
@@ -114,7 +118,7 @@ class HtmlPageViewDialog : DialogFragment() {
             it.window?.setLayout(width, height)
         }
     }
-
+    
     override fun onDestroyView() {
         binding.webview.run {
             clearCache(false)

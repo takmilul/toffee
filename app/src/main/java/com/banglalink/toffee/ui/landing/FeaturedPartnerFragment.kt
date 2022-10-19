@@ -97,8 +97,13 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     private fun openfeaturePartner(fraturePrtner: FeaturedPartner) {
         (fraturePrtner.webViewUrl?.let { url ->
             findNavController().navigate(
-                R.id.htmlPageViewFragment,
-                bundleOf("myTitle" to fraturePrtner.featurePartnerName, "url" to url)
+                R.id.htmlPageViewDialog_Home,
+                bundleOf(
+                    "myTitle" to "Back to TOFFEE",
+                    "url" to url,
+                    "isHideToffeeIcon" to false,
+                    "isHideCloseIcon" to true
+                )
             )
         }
             ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null")))

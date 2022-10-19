@@ -301,6 +301,14 @@
         <argument
             android:name="url"
             app:argType="string" />
+        <argument
+            android:name="isHideToffeeIcon"
+            android:defaultValue="true"
+            app:argType="boolean" />
+        <argument
+            android:name="isHideCloseIcon"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </dialog>
     
     <dialog

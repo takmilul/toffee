@@ -31,12 +31,24 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_close" />
 
+                <ImageView
+                    android:id="@+id/toffee_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_toffee"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginStart="5dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    />
+
                 <TextView
                     android:id="@+id/title_tv"
                     tools:text="Title"
                     android:textSize="20sp"
                     android:layout_marginStart="10dp"
-                    android:layout_alignParentStart="true"
+                    android:layout_toRightOf="@+id/toffee_logo"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/roboto_medium"
                     android:textColor="@color/cardTitleColor"
