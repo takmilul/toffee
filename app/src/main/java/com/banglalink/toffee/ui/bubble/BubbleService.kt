@@ -25,6 +25,7 @@ import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
 import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit.*
@@ -49,6 +50,12 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
 //        coroutineScope.launch {
 //            bubbleConfig = bubbleConfigRepository.getLatestConfig()
 //        }
+        if (mPref.bubbleConfigLiveData.value == null) {
+            coroutineScope.launch {
+                bubbleConfig = bubbleConfigRepository.getLatestConfig()
+                mPref.bubbleConfigLiveData.postValue(bubbleConfig)
+            }
+        }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
                 this.bubbleConfig = bubbleConfig

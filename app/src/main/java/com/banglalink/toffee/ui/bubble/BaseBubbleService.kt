@@ -31,6 +31,7 @@ abstract class BaseBubbleService : Service() {
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
+        isForceClosed = false
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
