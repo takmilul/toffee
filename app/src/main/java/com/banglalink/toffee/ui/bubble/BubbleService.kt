@@ -75,20 +75,20 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                     showCountdown(different, draggableViewLayout)
 //                }
                 }
+                else if (bubbleConfig?.isGlobalCountDownActive == false) {
+                    val countDownBoardGroup = draggableViewLayout.findViewById<Group>(R.id.countDownBoard)
+                    countDownBoardGroup.visibility= View.GONE
+                    val scoreBoardGroup = draggableViewLayout.findViewById<Group>(R.id.scoreBoard)
+                    scoreBoardGroup.visibility= View.VISIBLE
+                    val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
+                    bubbleConfig.adIconUrl?.ifNotBlank {
+                        bubbleImageView.load(it)
+                    }
+                    leftSideBubbleWing(draggableViewLayout)
+                    rightSideBubbleWing(draggableViewLayout)
+                }
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
-            }
-            else if (bubbleConfig?.isGlobalCountDownActive == false) {
-                val countDownBoardGroup = draggableViewLayout.findViewById<Group>(R.id.countDownBoard)
-                countDownBoardGroup.visibility= View.GONE
-                val scoreBoardGroup = draggableViewLayout.findViewById<Group>(R.id.scoreBoard)
-                scoreBoardGroup.visibility= View.VISIBLE
-                val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
-                bubbleConfig.adIconUrl?.ifNotBlank {
-                    bubbleImageView.load(it)
-                }
-                leftSideBubbleWing(draggableViewLayout)
-                rightSideBubbleWing(draggableViewLayout)
             }
         }
         return BubbleDraggableItem.Builder()
@@ -133,13 +133,13 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 rightSideBubbleWing(draggableViewLayout)
 
                 val daysCounts = draggableViewLayout.findViewById<TextView>(id.countDay)
-                daysCounts.text = "0"
+                daysCounts.text = "00"
                 val hoursCounts = draggableViewLayout.findViewById<TextView>(id.countHour)
-                hoursCounts.text = "0"
+                hoursCounts.text = "00"
                 val MinsCounts = draggableViewLayout.findViewById<TextView>(id.countMin)
-                MinsCounts.text = "0"
+                MinsCounts.text = "00"
                 val SecCounts = draggableViewLayout.findViewById<TextView>(id.countSec)
-                SecCounts.text = "0"
+                SecCounts.text = "00"
             }
         }.start()
     }
