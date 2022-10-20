@@ -51,6 +51,7 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -249,7 +250,7 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
-        
+
         if (mPref.homeIntent.value != null) {
             intent = mPref.homeIntent.value
             mPref.homeIntent.value = null
@@ -262,7 +263,7 @@ class HomeActivity :
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
-        
+
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -385,7 +386,7 @@ class HomeActivity :
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
-        
+
         if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
@@ -393,7 +394,7 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
-        
+
         bubbleIntent = Intent(this, BubbleService::class.java)
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
@@ -402,9 +403,21 @@ class HomeActivity :
                 startService(bubbleIntent)
             }
         }
+
+        if (mPref.deleteDialogLiveData.value == true){
+            getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment)
+            mPref.deleteDialogLiveData.value = false
+        }
+
+//        if (mPref.isVerifiedUser && mPref.backToffeeDialogLiveData.value == true){
+//            getNavController().navigate(R.id.backToffeeBottomSheetFragment)
+//            mPref.backToffeeDialogLiveData.value = false
+//        }
+
+        observeLogout()
 //        showDeviceId()
     }
-    
+
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             displayMissingOverlayPermissionDialog()
@@ -412,7 +425,7 @@ class HomeActivity :
             startService(bubbleIntent)
         }
     }
-    
+
     private fun requestOverlayPermission() {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
@@ -708,7 +721,7 @@ class HomeActivity :
             maximizePlayer()
         }
         visibleDestinationId = controller.currentDestination?.id ?: 0
-        
+
 //        if(navController.currentDestination?.id != R.id.searchFragment){
             closeSearchBarIfOpen()
 //        }
@@ -809,7 +822,7 @@ class HomeActivity :
             }
         }
     }
-    
+
     @Throws(MalformedURLException::class, IOException::class)
     fun getDrawableFromUrl(url: String?): Bitmap? {
         val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
@@ -818,7 +831,7 @@ class HomeActivity :
         val input: InputStream = connection.inputStream
         return BitmapFactory.decodeStream(input)
     }
-    
+
     override fun onResume() {
         super.onResume()
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -1287,7 +1300,7 @@ class HomeActivity :
             } else {
                 getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             }.cancel(notificationId)
-        
+
             if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, OPEN)
             }
@@ -1295,7 +1308,7 @@ class HomeActivity :
         observeAppVersionUpdate(intent)
         viewModel.checkForUpdateStatus()
     }
-    
+
     private fun observeAppVersionUpdate(intent: Intent) {
         observe(viewModel.updateStatusLiveData) {
             when (it) {
@@ -1313,7 +1326,7 @@ class HomeActivity :
             }
         }
     }
-    
+
     private fun handleIntent(intent: Intent) {
         var newIntent = intent
         if (mPref.homeIntent.value != null) {
@@ -1484,7 +1497,7 @@ class HomeActivity :
             // do nothing
         }
     }
-    
+
     private fun playContent(detailsInfo: Any?, it: ChannelInfo) {
         if (player is CastPlayer) {
             maximizePlayer()
@@ -2021,7 +2034,7 @@ class HomeActivity :
             enterPipMode()
         }
     }
-    
+
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
@@ -2041,7 +2054,7 @@ class HomeActivity :
             ToffeeAnalytics.logException(e)
         }
     }
-    
+
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
@@ -2051,7 +2064,7 @@ class HomeActivity :
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
-    
+
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
@@ -2061,7 +2074,7 @@ class HomeActivity :
         }
         binding.playerView.onPip(isInPip)
     }
-    
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -2099,7 +2112,7 @@ class HomeActivity :
     } else {
         false
     }
-    
+
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

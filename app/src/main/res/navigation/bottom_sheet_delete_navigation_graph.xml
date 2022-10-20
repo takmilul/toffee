@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_delete_navigation_graph"
+    app:startDestination="@id/deleteProfileDataBottomSheetFragment">
+
+    <fragment
+        android:id="@+id/deleteProfileDataBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.profile.DeleteProfileDataBottomSheetFragment"
+        android:label="DeleteProfileDataBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_detele_profile_data">
+        <action
+            android:id="@+id/action_deleteProfileDataBottomSheetFragment_to_completeDeleteProfileDataBottomSheetFragment"
+            app:destination="@id/completeDeleteProfileDataBottomSheetFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/completeDeleteProfileDataBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.profile.CompleteDeleteProfileDataBottomSheetFragment"
+        android:label="CompleteDeleteProfileDataBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_detele_complete_profile_data">
+    </fragment>
+
+    <fragment
+        android:id="@+id/backToffeeBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.home.BackToffeeBottomSheetFragment"
+        android:label="BackToffeeBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_back_toffee">
+    </fragment>
+
+</navigation>

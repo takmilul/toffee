@@ -460,4 +460,15 @@
     <string name="remove_button_text">Remove Button</string>
     <string name="missing_overlay_permission_dialog_title">New Football Feature</string>
     <string name="missing_overlay_permission_dialog_message">To see countdowns, live match scores, and match schedules for FIFA World Cup Qatar 2022TM, please allow the display over other apps permission now.</string>
+    <string name="delete_button_text">Delete Everything</string>
+    <string name="delete_text_title">Delete Profile &amp; Data</string>
+    <string name="delete_text_1">If you wish to proceed, your profile and data (identification data, channel data, and activities) will deleted permanently. If you have subscribed to any premium content, you will lose access to it. </string>
+    <string name="delete_text_2">You can open a fresh new account with the same mobile number, or continue to enjoy the free content on Toffee without signing in.</string>
+    <string name="delete_text_3">As per our guideline we may keep the data for 90 days before permanent deletion. </string>
+    <string name="delete_text_4">Type DELETE if you are sure you want to continue</string>
+    <string name="delete_process_title">Profile Deleted!</string>
+    <string name="delete_process_text_1">Your profile and data will be deleted permanently within 30 days. You can continue to enjoy the free content on Toffee without a profile.</string>
+    <string name="welcome_title">Hooray! Welcome back to Toffee</string>
+    <string name="welcome_button">Lets Enjoy</string>
+    <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
 </resources>

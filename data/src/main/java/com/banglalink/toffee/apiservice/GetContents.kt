@@ -37,6 +37,7 @@ class GetContents @AssistedInject constructor(
         if (response.response.channels != null) {
             return response.response.channels.map {
                 it.isExpired = try {
+//                    Log.i("SIGN_URL_COOKIE", "signCookie: ${it.signCookie}, signedUrlExpiryDate: ${it.signedUrlExpiryDate}, cdnType: ${it.cdnType}, signCookieDate: ${it.signCookieDate}")
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false

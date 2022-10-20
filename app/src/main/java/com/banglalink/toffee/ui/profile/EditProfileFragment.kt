@@ -96,6 +96,14 @@ class EditProfileFragment : BaseFragment() {
             bindingUtil.bindRoundImage(binding.profileIv, it)
         }
 
+        if(mPref.isVerifiedUser){
+            binding.accountDelete.visibility = View.VISIBLE
+        }
+
+        binding.accountDelete.setOnClickListener(){
+            findNavController().navigate(R.id.bottomSheetDeleteFragment)
+        }
+
         observeThumbnailChange()
     }
 

@@ -39,6 +39,20 @@
             android:name="playlistInfo"
             app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
     </fragment>
+
+    <dialog
+        android:id="@+id/completeDeleteProfileDataBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.profile.CompleteDeleteProfileDataBottomSheetFragment"
+        android:label="CompleteDeleteProfileDataBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_detele_complete_profile_data">
+    </dialog>
+
+    <dialog
+        android:id="@+id/backToffeeBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.home.BackToffeeBottomSheetFragment"
+        android:label="backToffeeBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_back_toffee">
+    </dialog>
     
     <fragment
         android:id="@+id/menu_favorites"
@@ -254,6 +268,18 @@
             android:id="@+id/action_AboutFragment_to_TermsAndConditons"
             app:destination="@id/termsAndConditionFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/bottomSheetDeleteFragment"
+        android:name="com.banglalink.toffee.ui.profile.BottomSheetDeleteFragment"
+        android:label="BottomDelete">
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
+            app:destination="@id/newUploadMethodFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </dialog>
     
     <dialog
         android:id="@+id/uploadMethodFragment"

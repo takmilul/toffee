@@ -328,6 +328,11 @@
         <item name="android:textColor">#ffffff</item>
     </style>
 
+    <style name="ButtonStyleSolidDelete" parent="ToffeeButtonStyle">
+        <item name="backgroundTint">@color/button_bg_color_delete</item>
+        <item name="android:textColor">@color/text_bg_color_delete</item>
+    </style>
+
     <style name="ButtonStyleSolidPurple" parent="ToffeeButtonStyle">
         <item name="backgroundTint">@color/button_bgcolor_purple</item>
         <item name="android:textColor">#ffffff</item>
@@ -350,6 +355,10 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/colorAccent2</item>
         <item name="strokeColor">@color/button_bgcolor_pink</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ButtonDeletePink" parent="ToffeeButtonStyle">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
@@ -476,6 +485,7 @@
         <item name="android:windowFrame">@null</item>
         <item name="behavior_peekHeight">300dp</item>
         <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
     
     <style name="ShimmerStyle" >
