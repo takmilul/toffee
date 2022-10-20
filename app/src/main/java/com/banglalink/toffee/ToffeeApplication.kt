@@ -32,6 +32,7 @@ import com.banglalink.toffee.di.CustomCookieManager
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
@@ -148,6 +149,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         initFireworkSdk()
         initMedalliaSdk()
         mUploadObserver.start()
+        BaseBubbleService.isForceClosed = false
     }
     
     override fun getWorkManagerConfiguration(): Configuration {

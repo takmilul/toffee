@@ -141,14 +141,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("loadPartnerImageFromUrl")
     fun bindPartnerImageFromUrl(view: ImageView, imageUrl: String?) {
-        if (!imageUrl.isNullOrBlank()) {
+        if (imageUrl.isNullOrBlank()) {
             view.loadPlaceholder()
         } else {
             view.load(imageUrl) {
                 transformations(
                     CropCenterEndTransformation(4.1f)
                 )
-                initListener(view)
                 setImageRequestParams()
                 size(min(360.px, 720), min(80.px, 150))
             }

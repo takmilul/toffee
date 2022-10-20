@@ -7,7 +7,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
-import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -66,16 +65,16 @@ open class Html5WebViewClient: WebViewClient() {
         request: WebResourceRequest?,
         error: WebResourceError?
     ) {
-        view?.let {
-//            it.loadUrl("about:blank")
-            it.loadDataWithBaseURL(null,
-                it.context.getString(R.string.web_error_text),
-                "text/html",
-                "UTF-8",
-                null)
-//            it.loadUrl("file:///android_asset/error.html") //TODO: load custom error page from asset
-            it.invalidate()
-        }
+//        view?.let {
+////            it.loadUrl("about:blank")
+//            it.loadDataWithBaseURL(null,
+//                it.context.getString(R.string.web_error_text),
+//                "text/html",
+//                "UTF-8",
+//                null)
+////            it.loadUrl("file:///android_asset/error.html") //TODO: load custom error page from asset
+//            it.invalidate()
+//        }
     }
 }
 

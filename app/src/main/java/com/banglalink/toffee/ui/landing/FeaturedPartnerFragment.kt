@@ -35,11 +35,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
         fun newInstance() = FeaturedPartnerFragment()
     }
     
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFeaturedPartnerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,22 +76,22 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     override fun onItemClicked(item: FeaturedPartner) {
         super.onItemClicked(item)
         item.let {
-            viewModel.sendFeaturePartnerReportData(
-                partnerName = it.featurePartnerName.toString(),
-                partnerId = it.id
-            )
             if (it.isLoginRequired) {
                 requireActivity().checkVerification {
-                    openfeaturePartner(it)
+                    openFeaturePartner(it)
                 }
             } else {
-                openfeaturePartner(it)
+                openFeaturePartner(it)
             }
         }
     }
     
-    private fun openfeaturePartner(fraturePrtner: FeaturedPartner) {
-        (fraturePrtner.webViewUrl?.let { url ->
+    private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
+        featuredPartner.webViewUrl?.let { url ->
+            viewModel.sendFeaturePartnerReportData(
+                partnerName = featuredPartner.featurePartnerName.toString(),
+                partnerId = featuredPartner.id
+            )
             findNavController().navigate(
                 R.id.htmlPageViewDialog_Home,
                 bundleOf(
@@ -105,8 +101,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
                     "isHideCloseIcon" to true
                 )
             )
-        }
-            ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null")))
+        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     
     override fun onDestroyView() {
