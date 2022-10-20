@@ -28,22 +28,22 @@
             tools:ignore="MissingConstraints">
 
             <ImageView
-                android:id="@+id/icon_success"
+                android:id="@+id/iconSuccess"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginTop="24dp"
-                app:layout_constraintBottom_toTopOf="@+id/title_success"
+                app:layout_constraintBottom_toTopOf="@+id/titleSuccess"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_complete_delete" />
 
             <TextView
-                android:id="@+id/title_success"
+                android:id="@+id/titleSuccess"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="24dp"
                 android:fontFamily="@font/roboto_bold"
                 android:text="@string/delete_process_title"
@@ -52,11 +52,12 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/text1"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/icon_success" />
+                app:layout_constraintTop_toBottomOf="@+id/iconSuccess" />
 
             <TextView
-                android:id="@+id/text1"
+                android:id="@+id/subTitleSuccess"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -68,9 +69,9 @@
                 android:textColor="@color/main_text_color"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toTopOf="@+id/okayButton"
-                app:layout_constraintEnd_toEndOf="@+id/title_success"
-                app:layout_constraintStart_toStartOf="@+id/title_success"
-                app:layout_constraintTop_toBottomOf="@+id/title_success" />
+                app:layout_constraintEnd_toEndOf="@+id/titleSuccess"
+                app:layout_constraintStart_toStartOf="@+id/titleSuccess"
+                app:layout_constraintTop_toBottomOf="@+id/titleSuccess" />
 
             <Button
                 android:id="@+id/okayButton"
@@ -81,10 +82,10 @@
                 android:layout_marginBottom="20dp"
                 android:text="Okay"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/text1"
+                app:layout_constraintEnd_toEndOf="@+id/subTitleSuccess"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/text1"
-                app:layout_constraintTop_toBottomOf="@+id/text1" />
+                app:layout_constraintStart_toStartOf="@+id/subTitleSuccess"
+                app:layout_constraintTop_toBottomOf="@+id/subTitleSuccess" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
