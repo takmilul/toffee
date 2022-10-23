@@ -728,8 +728,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             retryWaitDuration = it.retryWaitDuration
             videoMinDuration = it.videoMinDuration
             videoMaxDuration = it.videoMaxDuration
-            bubbleConfigLiveData.value = it.bubbleConfig
             isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
+            bubbleConfigLiveData.value = it.bubbleConfig
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))

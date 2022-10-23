@@ -460,6 +460,12 @@
     <string name="remove_button_text">Remove Button</string>
     <string name="missing_overlay_permission_dialog_title">New Football Feature</string>
     <string name="missing_overlay_permission_dialog_message">To see countdowns, live match scores, and match schedules for FIFA World Cup Qatar 2022TM, please allow the display over other apps permission now.</string>
+    <string name="day">days</string>
+    <string name="hour">hrs</string>
+    <string name="minute">mins</string>
+    <string name="second">sec</string>
+    <string name="separator">separator</string>
+    <string name="bubble_icon">bubble icon</string>
     <string name="delete_button_text">Delete Everything</string>
     <string name="delete_text_title">Delete Profile &amp; Data</string>
     <string name="delete_text_1">If you wish to proceed, your profile and data (identification data, channel data, and activities) will deleted permanently. If you have subscribed to any premium content, you will lose access to it. </string>

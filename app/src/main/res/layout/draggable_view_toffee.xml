@@ -13,8 +13,8 @@
         android:layout_width="200dp"
         android:layout_height="36dp"
         android:layout_gravity="center"
-        app:cardBackgroundColor="#C82A8E"
-        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/bubble_wing_color"
+        app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,26 +26,15 @@
             
             <TextView
                 android:id="@+id/countDay"
-                android:layout_width="24dp"
-                android:layout_height="wrap_content"
+                style="@style/BubbleCountdownTitleStyle"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/dayText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:gravity="center"
-                android:text="days"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
+                style="@style/BubbleCountdownSubtitleStyle"
+                android:text="@string/day"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/countDay"
                 app:layout_constraintStart_toStartOf="@+id/countDay"
@@ -53,100 +42,65 @@
             
             <ImageView
                 android:id="@+id/separator1"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
+                style="@style/BubbleSeparatorStyle"
                 android:layout_marginStart="8dp"
-                android:background="#9C186C"
+                android:contentDescription="@string/separator"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/countDay"
                 app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/countHour"
-                android:layout_width="24dp"
-                android:layout_height="wrap_content"
+                style="@style/BubbleCountdownTitleStyle"
                 android:layout_marginStart="8dp"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/countDay"
                 app:layout_constraintStart_toEndOf="@+id/separator1"
-                app:layout_constraintTop_toTopOf="@+id/countDay" />
+                app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/HourText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="hrs"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="@id/dayText"
+                style="@style/BubbleCountdownSubtitleStyle"
+                android:text="@string/hour"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/countHour"
                 app:layout_constraintStart_toStartOf="@+id/countHour"
-                app:layout_constraintTop_toTopOf="@id/dayText" />
+                app:layout_constraintTop_toBottomOf="@id/countHour" />
             
             <TextView
                 android:id="@+id/countMin"
-                android:layout_width="24dp"
-                android:layout_height="wrap_content"
+                style="@style/BubbleCountdownTitleStyle"
                 android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/countSec"
                 app:layout_constraintEnd_toStartOf="@+id/separator2"
-                app:layout_constraintTop_toTopOf="@+id/countSec" />
+                app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/minText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="mins"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="@id/secText"
+                style="@style/BubbleCountdownSubtitleStyle"
+                android:text="@string/minute"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/countMin"
                 app:layout_constraintStart_toStartOf="@+id/countMin"
-                app:layout_constraintTop_toTopOf="@id/secText" />
+                app:layout_constraintTop_toBottomOf="@id/countMin" />
             
             <ImageView
                 android:id="@+id/separator2"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
+                style="@style/BubbleSeparatorStyle"
                 android:layout_marginEnd="8dp"
-                android:background="#9C186C"
+                android:contentDescription="@string/separator"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/countSec"
                 app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/countSec"
-                android:layout_width="24dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                style="@style/BubbleCountdownTitleStyle"
                 android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/secText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:gravity="center"
-                android:text="sec"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
+                style="@style/BubbleCountdownSubtitleStyle"
+                android:text="@string/second"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/countSec"
                 app:layout_constraintStart_toStartOf="@+id/countSec"
@@ -154,66 +108,37 @@
             
             <TextView
                 android:id="@+id/matchOne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/BubbleFixtureTitleStyle"
                 android:layout_marginStart="6dp"
-                android:layout_marginTop="4dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="BAN vs BAN"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="BAN vs BAN" />
             
             <TextView
                 android:id="@+id/scoreOne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="0 - 0"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
+                style="@style/BubbleFixtureSubtitleStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/matchOne"
                 app:layout_constraintStart_toStartOf="@+id/matchOne"
                 app:layout_constraintTop_toBottomOf="@id/matchOne"
-                tools:text="27 Sep, 8:00 PM" />
+                tools:text="0 - 0" />
             
             <TextView
                 android:id="@+id/matchTwo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                style="@style/BubbleFixtureTitleStyle"
                 android:layout_marginEnd="6dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="BAN vs BAN"
-                android:textColor="@color/text_color_white"
-                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="BAN vs BAN" />
             
             <TextView
                 android:id="@+id/scoreTwo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="27 Sep, 8:00 PM"
-                android:textColor="@color/text_color_white"
-                android:textSize="10sp"
+                style="@style/BubbleFixtureSubtitleStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/matchTwo"
                 app:layout_constraintStart_toStartOf="@+id/matchTwo"
-                app:layout_constraintTop_toBottomOf="@id/matchTwo" />
+                app:layout_constraintTop_toBottomOf="@id/matchTwo"
+                tools:text="27 Sep, 8:00 PM" />
             
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/scoreBoard"
@@ -228,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 app:constraint_referenced_ids="countDay, countHour, countMin, countSec, dayText, HourText, minText, secText, separator1, separator2" />
-        
+            
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
     
@@ -237,7 +162,7 @@
         android:layout_width="42dp"
         android:layout_height="52dp"
         android:layout_gravity="center"
-        app:cardBackgroundColor="#EAE0E6"
+        app:cardBackgroundColor="@color/bubble_icon_color"
         app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -249,8 +174,9 @@
             android:layout_width="30dp"
             android:layout_height="36dp"
             android:layout_gravity="center"
+            android:contentDescription="@string/bubble_icon"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_splash_logo_gif" />
-    
+        
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

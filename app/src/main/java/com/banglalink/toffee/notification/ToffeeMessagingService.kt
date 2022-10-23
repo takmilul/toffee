@@ -161,6 +161,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             BUBBLE_CONFIG.type -> {
 //                try {
 //                    val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
+//                    mPref.isBubbleActive = bubbleConfig.isBubbleActive
 //                    mPref.bubbleConfigLiveData.postValue(bubbleConfig)
 //                } catch (e: Exception) {
 //                    Log.e(TAG, "bubbleConfig: ${e.message}")
