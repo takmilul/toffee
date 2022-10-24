@@ -397,7 +397,9 @@ class HomeActivity :
         bubbleIntent = Intent(this, BubbleService::class.java)
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-                displayMissingOverlayPermissionDialog()
+                if (mPref.bubbleDialogShowCount < 5) {
+                    displayMissingOverlayPermissionDialog()
+                }
             } else {
                 startService(bubbleIntent)
             }
@@ -407,7 +409,9 @@ class HomeActivity :
     
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-            displayMissingOverlayPermissionDialog()
+            if (mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionDialog()
+            }
         } else {
             startService(bubbleIntent)
         }
@@ -421,6 +425,7 @@ class HomeActivity :
     }
 
     private fun displayMissingOverlayPermissionDialog() {
+        mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(
             this,
             title = getString(R.string.missing_overlay_permission_dialog_title),

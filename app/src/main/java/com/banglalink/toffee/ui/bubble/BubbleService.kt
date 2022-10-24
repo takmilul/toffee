@@ -45,7 +45,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
-        val draggableViewLayout = LayoutInflater.from(this).inflate(R.layout.draggable_view_toffee, null)
+        val draggableViewLayout = LayoutInflater.from(this).inflate(R.layout.bubble_view_layout, null)
         
 //        coroutineScope.launch {
 //            bubbleConfig = bubbleConfigRepository.getLatestConfig()

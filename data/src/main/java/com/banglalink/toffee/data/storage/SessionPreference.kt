@@ -625,10 +625,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 
     var videoMinDuration: Int
         get() = pref.getInt(PREF_VIDEO_MIN_DURATION,-1)
-        set(value)=pref.edit{putInt(PREF_VIDEO_MIN_DURATION,value)}
+        set(value) = pref.edit{ putInt(PREF_VIDEO_MIN_DURATION,value) }
+    
     var videoMaxDuration: Int
-        get()=pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
-        set(value)=pref.edit{putInt(PREF_VIDEO_MAX_DURATION,value)}
+        get() = pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
+        set(value) = pref.edit{ putInt(PREF_VIDEO_MAX_DURATION,value) }
     
     var lastLoginDateTime: String
         get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, "") ?: ""
@@ -637,6 +638,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isBubbleActive: Boolean
         get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
+    
+    var bubbleDialogShowCount: Int
+        get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
+        set(value) = pref.edit{ putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT,value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -851,6 +856,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_VIDEO_MAX_DURATION="pref_video_max_duration"
         private const val PREF_LAST_LOGIN_DATE_TIME="pref_last_login_date_time"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
+        private const val PREF_BUBBLE_DIALOG_SHOW_COUNT="pref_bubble_dialog_permission_show_count"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
