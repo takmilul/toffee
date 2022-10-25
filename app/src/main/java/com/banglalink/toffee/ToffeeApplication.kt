@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
@@ -207,6 +208,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
             networkCachePolicy(ENABLED)
             memoryCachePolicy(DISABLED)
             allowHardware(false)
+            bitmapConfig(Bitmap.Config.ARGB_8888)
         }.build()
         
         return ImageLoader.Builder(this).apply {

@@ -983,17 +983,13 @@ class HomeActivity :
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
             binding.mainUiFrame.visibility = View.GONE
-            if (BaseBubbleService.isBubbleVisible){
-                stopService(bubbleIntent)
-            }
+            mPref.bubbleVisibilityLiveData.postValue(false)
         } else {
             binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
-                startService(bubbleIntent)
-            }
+            mPref.bubbleVisibilityLiveData.postValue(true)
         }
     }
     

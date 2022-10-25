@@ -6,13 +6,11 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.id
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.databinding.BubbleViewLayoutBinding
 import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
@@ -34,6 +32,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
+    private lateinit var binding: BubbleViewLayoutBinding
     
     override fun createBubble(): Bubble {
         return Bubble.Builder()
@@ -45,8 +44,8 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
-        val draggableViewLayout = LayoutInflater.from(this).inflate(R.layout.bubble_view_layout, null)
-        
+        binding = BubbleViewLayoutBinding.inflate(LayoutInflater.from(this))
+
 //        coroutineScope.launch {
 //            bubbleConfig = bubbleConfigRepository.getLatestConfig()
 //        }
@@ -59,11 +58,10 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
                 this.bubbleConfig = bubbleConfig
+                bubbleConfig?.adIconUrl?.ifNotBlank {
+                    binding.draggableViewImage.load(it)
+                }
                 if (bubbleConfig?.isGlobalCountDownActive == true) {
-                    val bubbleImageView = draggableViewLayout.findViewById<ImageView>(R.id.draggable_view_image)
-                    bubbleConfig.adIconUrl?.ifNotBlank {
-                        bubbleImageView.load(it)
-                    }
                     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                     val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
                     val endDate = format.parse(endDateDay)
@@ -71,58 +69,88 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                     val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
 //                withContext(Main) {
                     countDownTimer?.cancel()
-                    showCountdown(different, draggableViewLayout)
+                    showCountdown(different)
 //                }
+                } else if (bubbleConfig?.isGlobalCountDownActive == false) {
+                    binding.countDownBoard.visibility = View.GONE
+                    binding.scoreBoard.visibility = View.VISIBLE
+                    leftSideBubbleWing()
+                    rightSideBubbleWing()
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
             }
         }
-        
+        mPref.bubbleVisibilityLiveData.observeForever {
+            it?.let {
+                binding.root.isVisible = it
+            }
+        }
         return BubbleDraggableItem.Builder()
-            .setLayout(draggableViewLayout)
+            .setLayout(binding.root)
             .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
             .setListener(this)
             .build()
     }
     
-    private fun showCountdown(different: Long, draggableViewLayout: View) {
+    private fun showCountdown(different: Long) {
         countDownTimer = object : CountDownTimer(different, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                var millisUntilFinished = millisUntilFinished
-                val day = MILLISECONDS.toDays(millisUntilFinished)
-                millisUntilFinished -= DAYS.toMillis(day)
-                val hour = MILLISECONDS.toHours(millisUntilFinished)
-                millisUntilFinished -= HOURS.toMillis(hour)
-                val minute = MILLISECONDS.toMinutes(millisUntilFinished)
-                millisUntilFinished -= MINUTES.toMillis(minute)
-                val second = MILLISECONDS.toSeconds(millisUntilFinished)
+                var untilFinished = millisUntilFinished
+                val day = MILLISECONDS.toDays(untilFinished)
+                untilFinished -= DAYS.toMillis(day)
+                val hour = MILLISECONDS.toHours(untilFinished)
+                untilFinished -= HOURS.toMillis(hour)
+                val minute = MILLISECONDS.toMinutes(untilFinished)
+                untilFinished -= MINUTES.toMillis(minute)
+                val second = MILLISECONDS.toSeconds(untilFinished)
                 
-                val dayCount = draggableViewLayout.findViewById<TextView>(id.countDay)
-                dayCount.text = day.toString()
-                val hourCount = draggableViewLayout.findViewById<TextView>(id.countHour)
-                hourCount.text = hour.toString()
-                val minCount = draggableViewLayout.findViewById<TextView>(id.countMin)
-                minCount.text = minute.toString()
-                val secCount = draggableViewLayout.findViewById<TextView>(id.countSec)
-                secCount.text = second.toString()
+                binding.countDay.text = day.toString()
+                binding.countHour.text = hour.toString()
+                binding.countMin.text = minute.toString()
+                binding.countSec.text = second.toString()
             }
             
             override fun onFinish() {
-                val daysCounts = draggableViewLayout.findViewById<TextView>(id.countDay)
-                daysCounts.text = "0"
-                val hoursCounts = draggableViewLayout.findViewById<TextView>(id.countHour)
-                hoursCounts.text = "0"
-                val MinsCounts = draggableViewLayout.findViewById<TextView>(id.countMin)
-                MinsCounts.text = "0"
-                val SecCounts = draggableViewLayout.findViewById<TextView>(id.countSec)
-                SecCounts.text = "0"
+                binding.countDay.text = "0"
+                binding.countHour.text = "0"
+                binding.countMin.text = "0"
+                binding.countSec.text = "0"
+                
+                leftSideBubbleWing()
+                rightSideBubbleWing()
+                binding.countDownBoard.visibility = View.GONE
+                binding.scoreBoard.visibility = View.VISIBLE
             }
         }.start()
     }
     
+    private fun leftSideBubbleWing() {
+        binding.matchOne.text = bubbleConfig?.leftSideData?.leftTitle.toString()
+        binding.scoreOne.text = bubbleConfig?.leftSideData?.leftSubTitle.toString()
+        
+        if (bubbleConfig?.leftSideData?.leftType == "running") {
+            binding.scoreOne.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
+            binding.scoreOne.compoundDrawablePadding = 10
+        }
+    }
+    
+    private fun rightSideBubbleWing() {
+        binding.matchTwo.text = bubbleConfig?.rightSideData?.rightTitle.toString()
+        binding.scoreTwo.text = bubbleConfig?.rightSideData?.rightSubTitle.toString()
+        
+        if (bubbleConfig?.rightSideData?.rightType == "running") {
+            binding.scoreTwo.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
+            binding.scoreTwo.compoundDrawablePadding = 10
+        }
+    }
+    
     private fun createRemoveItem(): BubbleCloseItem {
-        return BubbleCloseItem.Builder().with(this).setShouldFollowDrag(true).setExpandable(true).build()
+        return BubbleCloseItem.Builder()
+            .with(this)
+            .setShouldFollowDrag(true)
+            .setExpandable(true)
+            .build()
     }
     
     override fun onTouchEventChanged(
@@ -137,8 +165,8 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
                 try {
-                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
-                    val isTouched = bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+//                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
+                    val isTouched = binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
                         val uriUrl: Uri = Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
