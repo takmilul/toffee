@@ -47,6 +47,7 @@ class MusicDetailsFragmant : BaseFragment() {
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.categoryId.value = category.id.toInt()
+        mPref.categoryId.value = category.id.toInt()
         landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
         ToffeeAnalytics.logEvent(

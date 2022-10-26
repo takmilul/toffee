@@ -11,6 +11,7 @@ import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -24,6 +25,7 @@ import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PopularMovieChannelFragment : BaseFragment() {
@@ -34,6 +36,8 @@ class PopularMovieChannelFragment : BaseFragment() {
     val homeViewModel by activityViewModels<HomeViewModel>()
     val viewModel by activityViewModels<LandingPageViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
+    @Inject
+    lateinit var localSync: LocalSync
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
@@ -64,27 +68,29 @@ class PopularMovieChannelFragment : BaseFragment() {
         with(binding.channelList) {
             adapter = mAdapter
         }
-        observeMoviesChannelCount()
-        viewModel.loadPopularMovieChannelsCount()
+      //  observeMoviesChannelCount()
+       // viewModel.loadPopularMovieChannelsCount()
+        observeList()
     }
     
-    private fun observeMoviesChannelCount() {
-        observe(viewModel.moviesChannelCount) {
-            if (it > 0) {
-                observeList()
-            } else {
-                channelViewModel(0, false).run {
-                    observeList()
-                }
-            }
-        }
-    }
+//    private fun observeMoviesChannelCount() {
+//        observe(viewModel.moviesChannelCount) {
+//            if (it > 0) {
+//                observeList()
+//            } else {
+//                channelViewModel(0, false).run {
+//                    observeList()
+//                }
+//            }
+//        }
+//    }
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadPopularMovieChannels.collectLatest {
-                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false }.map { tvItem ->
-                    tvItem.channelInfo !!
+            viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
+                    localSync.syncData(channel)
+                    channel
                 })
             }
         }

@@ -52,6 +52,7 @@ class MovieFragment : BaseFragment() {
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.categoryId.value = category.id.toInt()
+        mPref.categoryId.value = category.id.toInt()
         landingViewModel.isDramaSeries.value = false
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to category.categoryName))
     }

@@ -35,6 +35,7 @@ class WebSeriesFragment: BaseFragment() {
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.categoryId.value = category.id.toInt()
+        mPref.categoryId.value = category.id.toInt()
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.isDramaSeries.value = true
     }

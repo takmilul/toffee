@@ -150,6 +150,16 @@ class LandingPageViewModel @Inject constructor(
             )
         }).getList().cachedIn(viewModelScope)
     }
+    
+    fun loadCategorywiseContent(categoryId: Int): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", categoryId, "", 0, "LIVE")
+                ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
+            )
+        }).getList().cachedIn(viewModelScope)
+    }
 
     fun loadMostPopularVideos(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
