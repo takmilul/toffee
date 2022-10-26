@@ -281,7 +281,7 @@ class Bubble(builder: Builder) {
     private fun animateRemoveItemExpand(shouldExpand: Boolean) {
         if (isAnimatingResizeRemoveItem.compareAndSet(false, true)) {
             if (shouldExpand && removeItem.expandable) {
-                removeItem.removeCircleView.createResizeAnimator(1.4F, 1.4F, 50L, object : AnimatorListenerAdapter() {
+                removeItem.removeCircleView.createResizeAnimator(1.3F, 1.3F, 50L, object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
                         isAnimatingResizeRemoveItem.set(false)
                         super.onAnimationEnd(animation)

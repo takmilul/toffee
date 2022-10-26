@@ -6,10 +6,11 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.databinding.DraggableViewToffeeBinding
+import com.banglalink.toffee.databinding.BubbleViewLayoutBinding
 import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
@@ -31,7 +32,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
-    private lateinit var binding: DraggableViewToffeeBinding
+    private lateinit var binding: BubbleViewLayoutBinding
     
     override fun createBubble(): Bubble {
         return Bubble.Builder()
@@ -43,7 +44,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
-        binding = DraggableViewToffeeBinding.inflate(LayoutInflater.from(this))
+        binding = BubbleViewLayoutBinding.inflate(LayoutInflater.from(this))
 
 //        coroutineScope.launch {
 //            bubbleConfig = bubbleConfigRepository.getLatestConfig()
@@ -78,6 +79,11 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
+            }
+        }
+        mPref.bubbleVisibilityLiveData.observeForever {
+            it?.let {
+                binding.root.isVisible = it
             }
         }
         return BubbleDraggableItem.Builder()

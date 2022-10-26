@@ -31,6 +31,8 @@ class SettingsFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.bubbleSwitch.isVisible = mPref.isBubbleActive
+        binding.bubbleDivider.isVisible = mPref.isBubbleActive
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }

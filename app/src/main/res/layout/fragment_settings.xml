@@ -131,6 +131,7 @@
                 android:background="@color/colorSettingsDivider" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/bubbleSwitch"
                 style="@style/PrefItemStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -148,17 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/worldcup_fifa_bubble" />
-
-                <!--                <TextView-->
-                <!--                    android:id="@+id/switchStatus"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="match_parent"-->
-                <!--                    android:layout_marginHorizontal="6dp"-->
-                <!--                    android:gravity="center"-->
-                <!--                    android:text='@{enableNotification == true ? "On" : "Off"}'-->
-                <!--                    android:textColor="@color/fixed_second_text_color"-->
-                <!--                    android:textSize="12sp" />-->
-
+                
                 <com.suke.widget.SwitchButton
                     android:id="@+id/bubbleToggleBtn"
                     android:layout_width="36dp"
@@ -176,6 +167,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
+                android:id="@+id/bubbleDivider"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />

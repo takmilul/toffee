@@ -381,7 +381,7 @@ object Utils {
     }
     
     fun formatValidityText(date: Date?): String? {
-        val currentFormatter = SimpleDateFormat("dd MMMM hh:mm aa", Locale.US)
+        val currentFormatter = SimpleDateFormat("dd MMMM HH:mm aa", Locale.US)
         return date?.let { currentFormatter.format(it) }
     }
     
