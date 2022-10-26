@@ -38,6 +38,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
+    val featuredPartnerIdLiveData = MutableLiveData (0)
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
