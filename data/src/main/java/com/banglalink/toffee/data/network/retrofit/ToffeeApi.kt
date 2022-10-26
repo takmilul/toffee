@@ -408,6 +408,11 @@ interface ToffeeApi {
         @Body logoutRequest: LogoutRequest
     ): LogoutResponse
 
+    @POST("/account-deletion")
+    suspend fun accountDelete(
+        @Body AccountDeleteRequest: AccountDeleteRequest
+    ): AccountDeleteResponse
+
     @POST("v2/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getVastTagLists(
         @Path("dbVersion") dbVersion: Int,

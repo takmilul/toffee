@@ -50,9 +50,11 @@ class HomeViewModel @Inject constructor(
     private val reactionDao: ReactionDao,
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
+    private val accountDeleteService: AccountDeleteService,
     private val vastTagService: VastTagService,
     private val updateFavorite: UpdateFavorite,
     private val sendOtpLogEvent: SendOTPLogEvent,
+    private val credentialService: CredentialService,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
@@ -87,7 +89,8 @@ class HomeViewModel @Inject constructor(
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
-    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
+    val logoutLiveData = MutableLiveData<Resource<LogoutBean>>()
+    val accountDeleteLiveData = SingleLiveEvent<Resource<AccountDeleteBean>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
@@ -347,6 +350,13 @@ class HomeViewModel @Inject constructor(
             logoutLiveData.postValue(response)
         }
     }
+
+    fun accountDelete() {
+        viewModelScope.launch {
+            val response = resultFromResponse { accountDeleteService.execute() }
+            accountDeleteLiveData.postValue(response)
+        }
+    }
     
     fun sendUserInterestData(interestList: Map<String, Int>) {
         viewModelScope.launch {
@@ -403,6 +413,12 @@ class HomeViewModel @Inject constructor(
                 )
             }
             if (shouldObserve) vastTagLiveData.value = true
+        }
+    }
+
+    fun getCredential() {
+        viewModelScope.launch {
+            credentialService.execute()
         }
     }
 }
