@@ -33,6 +33,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
 //    https://toffeelive.com?routing=internal&page=categories&catid=9
 //    https://toffeelive.com?routing=internal&page=categories&catid=2
+//    https://toffeelive.com?routing=internal&page=featured_partner&id=5
 //    https://toffeelive.com?routing=internal&page=playlist&listid=99&ownerid=594383
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
 
@@ -131,6 +132,10 @@ class InAppMessageParser @Inject constructor(
                                 inclusive = true
                             }
                         })
+                    }
+                    "featured_partner" -> {
+                        val partnerId = link.getQueryParameter("id")?.toIntOrNull() ?: 0
+                        return RouteV2(partnerId, "Featured Partner")
                     }
                     else -> null
                 }

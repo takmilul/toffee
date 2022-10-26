@@ -1255,9 +1255,11 @@ class HomeActivity :
             when (it.destId) {
                 is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
                 is Int -> {
-                    if(it.destId==R.id.menu_favorites
-                        || it.destId==R.id.menu_activities
-                        || it.destId==R.id.menu_subscriptions){
+                    if (it.name == "Featured Partner") {
+                        mPref.featuredPartnerIdLiveData.value = it.destId
+                    } else if(it.destId == R.id.menu_favorites
+                        || it.destId == R.id.menu_activities
+                        || it.destId == R.id.menu_subscriptions) {
                         checkVerification {
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
