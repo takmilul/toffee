@@ -54,8 +54,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private lateinit var currentItem: ChannelInfo
     private var _binding: FragmentCatchupBinding ? = null
     private val binding get() = _binding!!
-    private lateinit var detailsAdapter: ChannelHeaderAdapter
-    private lateinit var catchupAdapter: CatchUpDetailsAdapter
+    private lateinit var headerAdapter: ChannelHeaderAdapter
+    private lateinit var detailsAdapter: CatchUpDetailsAdapter
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
@@ -85,7 +85,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             localSync.syncData(currentItem)
-            catchupAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
+            detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
                 override fun onItemClicked(item: ChannelInfo) {
                     homeViewModel.playContentLiveData.postValue(item)
                 }
@@ -100,7 +100,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                     homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
                 }
             })
-            detailsAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
+            headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
             binding.listview.addItemDecoration(MarginItemDecoration(12))
             
             observe(homeViewModel.vastTagLiveData) {
@@ -142,11 +142,11 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         val isRecommendedActive = nativeAdSettings?.isActive ?:false
 
         if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, catchupAdapter as Adapter<ViewHolder>, SMALL)
+            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
             val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
-            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
+            mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
         } else {
-            mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
+            mAdapter = ConcatAdapter(headerAdapter, detailsAdapter.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter.retry()}))
         }
         with(binding.listview) {
             layoutManager = LinearLayoutManager(context)
@@ -157,8 +157,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private fun observeListState() {
         var isInitialized = false
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            catchupAdapter.loadStateFlow.collect {
-                val list = catchupAdapter.snapshot()
+            detailsAdapter.loadStateFlow.collect {
+                val list = detailsAdapter.snapshot()
                 val isLoading = it.source.refresh is Loading || !isInitialized
                 val isEmpty = list.size <= 0 && !it.source.refresh.endOfPaginationReached
                 binding.progressBar.isVisible = isLoading && isEmpty
@@ -176,7 +176,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private fun observeMyChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
             myChannelVideosViewModel.getMyChannelVideos(currentItem.channel_owner_id).collectLatest {
-                catchupAdapter.submitData(it.filter { channelInfo -> channelInfo.id != currentItem.id && !channelInfo.isExpired })
+                detailsAdapter.submitData(it.filter { channelInfo -> channelInfo.id != currentItem.id && !channelInfo.isExpired })
             }
         }
     }
@@ -185,7 +185,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         viewLifecycleOwner.lifecycleScope.launch {
             val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, currentItem.categoryId, currentItem.subCategoryId)
             viewModel.loadRelativeContent(catchupParams).collectLatest {
-                catchupAdapter.submitData(it.filter { !it.isExpired })
+                detailsAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
@@ -198,7 +198,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                         isSubscribed = response.data.isSubscribed
                         subscriberCount = response.data.subscriberCount
                     }
-                    detailsAdapter.notifyDataSetChanged()
+                    headerAdapter.notifyDataSetChanged()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)
