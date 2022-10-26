@@ -172,7 +172,9 @@ class CustomerInfoLogin(
     @SerializedName("videoMaxDuration")
     val videoMaxDuration:Int = -1,
     @SerializedName("bubbleConfig")
-    var bubbleConfig: @RawValue BubbleConfig?
+    var bubbleConfig: @RawValue BubbleConfig?,
+    @SerializedName("feature_partner_title")
+    var featuredPartnerTitle: String? = null
 ) : BodyResponse(), Parcelable
 
 @Entity

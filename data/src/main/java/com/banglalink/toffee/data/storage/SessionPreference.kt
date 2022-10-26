@@ -646,6 +646,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
         set(value) = pref.edit{ putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT,value) }
     
+    var featuredPartnerTitle: String
+        get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner") ?: "Featured Partner"
+        set(value) = pref.edit { putString(PREF_FEATURED_PARTNER_TITLE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -860,6 +864,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_LAST_LOGIN_DATE_TIME="pref_last_login_date_time"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private const val PREF_BUBBLE_DIALOG_SHOW_COUNT="pref_bubble_dialog_permission_show_count"
+        private const val PREF_FEATURED_PARTNER_TITLE="pref_featured_partner_title"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

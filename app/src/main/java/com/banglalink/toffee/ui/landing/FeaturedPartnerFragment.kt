@@ -43,7 +43,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = FeaturedPartnerAdapter(this)
-        
+        binding.featuredPartnerHeader.text = mPref.featuredPartnerTitle
         var isInitialized = false
         with(binding.featuredPartnerList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
