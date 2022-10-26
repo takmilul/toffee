@@ -15,6 +15,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -43,18 +44,22 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = FeaturedPartnerAdapter(this)
-        
+        binding.featuredPartnerHeader.text = mPref.featuredPartnerTitle
         var isInitialized = false
         with(binding.featuredPartnerList) {
+            var partnerId: Int
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty =
-                        mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.featuredPartnerList.isVisible = !isEmpty
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
+                    partnerId = mPref.featuredPartnerIdLiveData.value ?: 0
+                    if (!isEmpty && partnerId > 0) {
+                        loadFeaturedPartnerFromDeepLink(mPref.featuredPartnerIdLiveData.value)
+                    }
                 }
             }
             adapter = mAdapter
@@ -62,6 +67,29 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
         }
         if (mPref.isFeaturePartnerActive == "true") {
             observeFeaturedPartner()
+        }
+        
+        observe(mPref.featuredPartnerIdLiveData) {
+            loadFeaturedPartnerFromDeepLink(it)
+        }
+    }
+    
+    private fun loadFeaturedPartnerFromDeepLink(partnerId: Int?) {
+        try {
+            if (mPref.isFeaturePartnerActive == "true" && mAdapter.itemCount > 0 && partnerId != null && partnerId > 0) {
+                for (i in 0 until mAdapter.itemCount) {
+                    mAdapter.getItemByIndex(i)?.let {
+                        if (it.id == partnerId) {
+                            mPref.featuredPartnerIdLiveData.value = 0
+                            onItemClicked(it)
+                            return
+                        }
+                    }
+                }
+                mPref.featuredPartnerIdLiveData.value = 0
+            }
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb(e.message ?: "failed to open featured partner from deep link")
         }
     }
     

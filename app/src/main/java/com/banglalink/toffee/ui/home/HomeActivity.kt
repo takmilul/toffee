@@ -398,7 +398,9 @@ class HomeActivity :
         bubbleIntent = Intent(this, BubbleService::class.java)
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-                displayMissingOverlayPermissionDialog()
+                if (mPref.bubbleDialogShowCount < 5) {
+                    displayMissingOverlayPermissionDialog()
+                }
             } else {
                 startService(bubbleIntent)
             }
@@ -420,7 +422,9 @@ class HomeActivity :
 
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-            displayMissingOverlayPermissionDialog()
+            if (mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionDialog()
+            }
         } else {
             startService(bubbleIntent)
         }
@@ -434,6 +438,7 @@ class HomeActivity :
     }
 
     private fun displayMissingOverlayPermissionDialog() {
+        mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(
             this,
             title = getString(R.string.missing_overlay_permission_dialog_title),
@@ -991,17 +996,13 @@ class HomeActivity :
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
             binding.mainUiFrame.visibility = View.GONE
-            if (BaseBubbleService.isBubbleVisible){
-                stopService(bubbleIntent)
-            }
+            mPref.bubbleVisibilityLiveData.postValue(false)
         } else {
             binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
-                startService(bubbleIntent)
-            }
+            mPref.bubbleVisibilityLiveData.postValue(true)
         }
     }
     
@@ -1254,9 +1255,11 @@ class HomeActivity :
             when (it.destId) {
                 is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
                 is Int -> {
-                    if(it.destId==R.id.menu_favorites
-                        || it.destId==R.id.menu_activities
-                        || it.destId==R.id.menu_subscriptions){
+                    if (it.name == "Featured Partner") {
+                        mPref.featuredPartnerIdLiveData.value = it.destId
+                    } else if(it.destId == R.id.menu_favorites
+                        || it.destId == R.id.menu_activities
+                        || it.destId == R.id.menu_subscriptions) {
                         checkVerification {
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
