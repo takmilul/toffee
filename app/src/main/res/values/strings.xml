@@ -477,4 +477,5 @@
     <string name="welcome_title">Hooray! Welcome back to Toffee</string>
     <string name="welcome_button">Lets Enjoy</string>
     <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
+    <string name="topbar_background">topbar background image</string>
 </resources>

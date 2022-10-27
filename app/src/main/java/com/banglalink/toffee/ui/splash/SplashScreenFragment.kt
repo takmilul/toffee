@@ -68,11 +68,6 @@ class SplashScreenFragment : BaseFragment() {
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
     
-    companion object {
-        @JvmStatic
-        fun newInstance() = SplashScreenFragment()
-    }
-    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.reportAppLaunch()
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
@@ -81,43 +76,49 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
-        if (gif != null && gif is GifDrawable) {
-            logoGifDrawable = gif.apply {
-                stop()
-                seekToFrame(0)
-            }
-        }
-        observeApiLogin()
-        observeCheckForUpdateStatus()
-        observeHeaderEnrichment()
-        requestHeaderEnrichment()
-        binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (it == R.id.firstEnd) {
-                lifecycleScope.launch {
-                    delay(1000)
-                    with(binding.splashScreenMotionLayout) {
-                        setTransition(R.id.firstEnd, R.id.secondEnd)
-                        transitionToEnd()
-                    }
+        if (!mPref.isSplashAlreadyCreated) {
+            mPref.isSplashAlreadyCreated = true
+            
+            val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
+            if (gif != null && gif is GifDrawable) {
+                logoGifDrawable = gif.apply {
+                    stop()
+                    seekToFrame(0)
                 }
             }
-            if (it == R.id.secondEnd) {
-                logoGifDrawable?.start()
-                if (isOperationCompleted) {
+            observeApiLogin()
+            observeCheckForUpdateStatus()
+            observeHeaderEnrichment()
+            requestHeaderEnrichment()
+            binding.splashScreenMotionLayout.onTransitionCompletedListener {
+                if (it == R.id.firstEnd) {
                     lifecycleScope.launch {
-                        delay(500)
-                        forwardToNextScreen()
+                        delay(1000)
+                        runCatching {
+                            with(binding.splashScreenMotionLayout) {
+                                setTransition(R.id.firstEnd, R.id.secondEnd)
+                                transitionToEnd()
+                            }
+                        }
                     }
                 }
-                isOperationCompleted = true
+                if (it == R.id.secondEnd) {
+                    logoGifDrawable?.start()
+                    if (isOperationCompleted) {
+                        lifecycleScope.launch {
+                            delay(500)
+                            forwardToNextScreen()
+                        }
+                    }
+                    isOperationCompleted = true
+                }
             }
+            if (!mPref.isPreviousDbDeleted) {
+                viewModel.deletePreviousDatabase()
+            }
+            ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
+            detectTlsVersion()
         }
-        if (!mPref.isPreviousDbDeleted) {
-            viewModel.deletePreviousDatabase()
-        }
-        ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
-        detectTlsVersion()
     }
     
     private fun detectTlsVersion() {
