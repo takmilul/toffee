@@ -645,6 +645,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
         set(value) = pref.edit{ putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT,value) }
     
+    var isSplashAlreadyCreated: Boolean
+        get() = pref.getBoolean(PREF_IS_SPLASH_CREATED, false)
+        set(value) = pref.edit{ putBoolean(PREF_IS_SPLASH_CREATED,value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -854,11 +858,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_IS_FALLBACK_ACTIVE = "pref_player_is_fallback_active"
         private const val PREF_PLAYER_RETRY_COUNT = "pref_player_retry_Count"
         private const val PREF_PLAYER_RETRY_WAIT_DURATION = "pref_player_retry_wait_duration"
-        private const val PREF_VIDEO_MIN_DURATION="pref_video_min_duration"
-        private const val PREF_VIDEO_MAX_DURATION="pref_video_max_duration"
-        private const val PREF_LAST_LOGIN_DATE_TIME="pref_last_login_date_time"
+        private const val PREF_VIDEO_MIN_DURATION = "pref_video_min_duration"
+        private const val PREF_VIDEO_MAX_DURATION = "pref_video_max_duration"
+        private const val PREF_LAST_LOGIN_DATE_TIME = "pref_last_login_date_time"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
-        private const val PREF_BUBBLE_DIALOG_SHOW_COUNT="pref_bubble_dialog_permission_show_count"
+        private const val PREF_BUBBLE_DIALOG_SHOW_COUNT = "pref_bubble_dialog_permission_show_count"
+        private const val PREF_IS_SPLASH_CREATED = "pref_is_splash_created"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

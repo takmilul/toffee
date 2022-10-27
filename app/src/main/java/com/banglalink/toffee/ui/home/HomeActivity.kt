@@ -19,7 +19,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Path
 import android.graphics.Point
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -56,6 +55,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -214,13 +214,14 @@ class HomeActivity :
 //        } else {
 //            startService(Intent(this, MyServiceToffee::class.java))
 //        }
-
+        mPref.isSplashAlreadyCreated = false
+        
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
             || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
             || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
         ).not()
-
+        
         //disable screen capture
         if (isDisableScreenshot) {
             window.setFlags(
@@ -233,7 +234,7 @@ class HomeActivity :
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        
         setupNavController()
         initializeDraggableView()
         initDrawer()
@@ -241,7 +242,7 @@ class HomeActivity :
         observeTopBarBackground()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-
+        
         ToffeeAnalytics.logUserProperty(
             mapOf(
                 "userId" to mPref.customerId.toString(),
@@ -381,7 +382,7 @@ class HomeActivity :
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
-
+        
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
@@ -798,18 +799,16 @@ class HomeActivity :
                     if (it.type == "png") {
                         lifecycleScope.launch(Dispatchers.IO) {
                             try {
-                                val bitmap = getDrawableFromUrl(if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) it.imagePathLight else it.imagePathDark)
-                                withContext(Dispatchers.Main) {
-                                    bitmap?.let {
-                                        val bitmapDrawable = BitmapDrawable(resources, it)
-                                        binding.tbar.toolbar.background = bitmapDrawable
-                                    }
-                                }
+                                val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) it.imagePathLight else it.imagePathDark
+                                binding.tbar.toolbarImageView.load(imagePath)
                             } catch (e: Exception) {
                                 ToffeeAnalytics.logException(e)
                             }
                         }
                     }
+                } else {
+                    binding.tbar.toolbar.background = getDrawable(R.color.tool_bar_color)
+                    binding.tbar.toolbar.popupTheme = androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dark_ActionBar
                 }
             }
         }
