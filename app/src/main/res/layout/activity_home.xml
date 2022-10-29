@@ -23,36 +23,32 @@
                 android:id="@+id/tbar"
                 layout="@layout/layout_appbar" />
             
-            <FrameLayout
+            <RelativeLayout
                 android:id="@+id/main_ui_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/tbar"
                 android:layout_marginBottom="?attr/actionBarSize">
                 
-                <RelativeLayout
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/home_nav_host"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/home_nav_host"
-                        android:name="androidx.navigation.fragment.NavHostFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_above="@id/home_mini_progress_container"
-                        android:background="@color/screen_bg"
-                        app:defaultNavHost="true"
-                        app:navGraph="@navigation/home_navigation_graph" />
-                    
-                    <include
-                        android:id="@+id/home_mini_progress_container"
-                        layout="@layout/home_mini_upload_progress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:visibility="gone" />
-                </RelativeLayout>
-            </FrameLayout>
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/home_mini_progress_container"
+                    android:background="@color/screen_bg"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/home_navigation_graph" />
+                
+                <include
+                    android:id="@+id/home_mini_progress_container"
+                    layout="@layout/home_mini_upload_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:visibility="gone" />
+                
+            </RelativeLayout>
             
             <FrameLayout
                 android:id="@+id/searchOverlay"
@@ -61,12 +57,14 @@
                 android:layout_below="@id/tbar"
                 android:visibility="gone"
                 android:layout_marginBottom="?attr/actionBarSize">
+                
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#80000000"
                     android:clickable="true"
                     android:focusable="true"/>
+                
             </FrameLayout>
             
             <com.banglalink.toffee.ui.widget.DraggerLayout
