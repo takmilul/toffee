@@ -49,6 +49,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val categoryId = MutableLiveData<Int>()
+    val categoryName = MutableLiveData<String>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

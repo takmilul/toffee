@@ -15,6 +15,7 @@ import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
@@ -33,6 +34,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 class CategoryInfoFragment : HomeBaseFragment() {
@@ -47,6 +49,8 @@ class CategoryInfoFragment : HomeBaseFragment() {
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
     private lateinit var mAdapter: ChannelAdapter
+    @Inject
+    lateinit var localSync: LocalSync
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +86,9 @@ class CategoryInfoFragment : HomeBaseFragment() {
             adapter = mAdapter
         }
         
-        observeLinearChannelCount()
-        landingViewModel.loadLinearChannelCount(categoryInfo.categoryName)
-    
+//        observeLinearChannelCount()
+//        landingViewModel.loadLinearChannelCount(categoryInfo.categoryName)
+        observeLinearList()
         binding.viewAllButton.setOnClickListener {
             findNavController().navigate(R.id.menu_tv)
         }
@@ -231,24 +235,42 @@ class CategoryInfoFragment : HomeBaseFragment() {
     }
     
     private fun observeLinearList() {
+    
         viewLifecycleOwner.lifecycleScope.launch {
-            landingViewModel.loadLinearChannelByName(categoryInfo.categoryName).collectLatest {
+            landingViewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 binding.linearGroup.hide()
                 binding.nonLinearGroup.show()
                 
-                mAdapter.submitData(it.filter
-                {
-                    it.channelInfo?.isExpired == false
-                }.map { tvItem ->
-                    binding.placeholder.hide()
-                    binding.channelList.show()
-                    binding.linearGroup.show()
-                    binding.nonLinearGroup.hide()
-                    
-                    tvItem.channelInfo!!
-                })
+                mAdapter.submitData(
+                    it.filter { !it.isExpired }.map { channel ->
+                        localSync.syncData(channel)
+                        
+                        binding.placeholder.hide()
+                        binding.channelList.show()
+                        binding.linearGroup.show()
+                        binding.nonLinearGroup.hide()
+                        channel
+                    })
             }
         }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            landingViewModel.loadLinearChannelByName(categoryInfo.categoryName).collectLatest {
+//                binding.linearGroup.hide()
+//                binding.nonLinearGroup.show()
+//
+//                mAdapter.submitData(it.filter
+//                {
+//                    it.channelInfo?.isExpired == false
+//                }.map { tvItem ->
+//                    binding.placeholder.hide()
+//                    binding.channelList.show()
+//                    binding.linearGroup.show()
+//                    binding.nonLinearGroup.hide()
+//
+//                    tvItem.channelInfo!!
+//                })
+//            }
+//        }
 }
     
     override fun onDestroyView() {

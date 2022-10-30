@@ -52,9 +52,10 @@ class PopularMovieChannelFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.channelTv.text = "Top Movie Channels"
+        binding.channelTv.text = mPref.categoryName.value+" Channels"
         binding.placeholder.hide()
         binding.channelList.show()
+        binding.root.hide()
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.playContentLiveData.postValue(item)
@@ -88,7 +89,9 @@ class PopularMovieChannelFragment : BaseFragment() {
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
-                mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
+                mAdapter.submitData(
+                    it.filter { !it.isExpired }.map { channel ->
+                        binding.root.show()
                     localSync.syncData(channel)
                     channel
                 })
