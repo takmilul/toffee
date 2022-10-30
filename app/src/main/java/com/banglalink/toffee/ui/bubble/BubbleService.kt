@@ -71,7 +71,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                     countDownTimer?.cancel()
                     showCountdown(different)
 //                }
-                } else if (bubbleConfig?.isGlobalCountDownActive == false) {
+                } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.leftSideData != null && bubbleConfig.rightSideData != null) {
                     binding.countDownBoard.visibility = View.GONE
                     binding.scoreBoard.visibility = View.VISIBLE
                     leftSideBubbleWing()
@@ -116,11 +116,12 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 binding.countHour.text = "0"
                 binding.countMin.text = "0"
                 binding.countSec.text = "0"
-                
-                leftSideBubbleWing()
-                rightSideBubbleWing()
-                binding.countDownBoard.visibility = View.GONE
-                binding.scoreBoard.visibility = View.VISIBLE
+                if (bubbleConfig?.leftSideData != null && bubbleConfig?.rightSideData != null) {
+                    leftSideBubbleWing()
+                    rightSideBubbleWing()
+                    binding.countDownBoard.visibility = View.GONE
+                    binding.scoreBoard.visibility = View.VISIBLE
+                }
             }
         }.start()
     }
