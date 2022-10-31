@@ -40,11 +40,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
-    val featuredPartnerIdLiveData = MutableLiveData (0)
+    val featuredPartnerIdLiveData = MutableLiveData(0)
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
-    val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
+    val shareableHashLiveData =
+        MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
     val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
@@ -100,7 +101,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             val storedToken = pref.getString(PREF_SESSION_TOKEN, "") ?: ""//get stored token
             pref.edit().putString(PREF_SESSION_TOKEN, sessionToken).apply()//save new session token
             if (storedToken.isNotEmpty() && !sessionToken.equals(storedToken, true)) {
-                pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()//Update session token change time
+                pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis())
+                    .apply()//Update session token change time
                 sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
         }
@@ -242,7 +244,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun setWatchOnlyWifi(value: Boolean) {
         pref.edit().putBoolean(PREF_WATCH_ONLY_WIFI, value).apply()
     }
-
+    
     var isBubbleEnabled: Boolean
         get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
         set(value) = pref.edit().putBoolean(PREF_BUBBLE_ENABLED, value).apply()
@@ -350,7 +352,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""
         set(reactionStatusDbUrl) {
             val storedUrl = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""//get stored url
-            pref.edit().putString(PREF_REACTION_STATUS_DB_URL, reactionStatusDbUrl).apply()//save new url
+            pref.edit().putString(PREF_REACTION_STATUS_DB_URL, reactionStatusDbUrl)
+                .apply()//save new url
             if (storedUrl.isEmpty() || !reactionStatusDbUrl.equals(storedUrl, true)) {
                 reactionStatusDbUrlLiveData.postValue(reactionStatusDbUrl)//post if there is mismatch of url
             }
@@ -370,7 +373,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""
         set(subscriberStatusDbUrl) {
             val storedUrl = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""//get stored url
-            pref.edit().putString(PREF_SUBSCRIBER_STATUS_DB_URL, subscriberStatusDbUrl).apply()//save new url
+            pref.edit().putString(PREF_SUBSCRIBER_STATUS_DB_URL, subscriberStatusDbUrl)
+                .apply()//save new url
             if (storedUrl.isEmpty() || !subscriberStatusDbUrl.equals(storedUrl, true)) {
                 subscriberStatusDbUrlLiveData.postValue(subscriberStatusDbUrl)//post if there is mismatch of url
             }
@@ -507,7 +511,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     
     var isPipEnabled: Boolean
         get() = pref.getBoolean(PREF_PIP_ENABLED, true)
-        set(value) = pref.edit{ putBoolean(PREF_PIP_ENABLED, value) }
+        set(value) = pref.edit { putBoolean(PREF_PIP_ENABLED, value) }
     
     var isVastActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
@@ -628,14 +632,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var retryWaitDuration: Int
         get() = pref.getInt(PREF_PLAYER_RETRY_WAIT_DURATION, -1)
         set(value) = pref.edit { putInt(PREF_PLAYER_RETRY_WAIT_DURATION, value) }
-
+    
     var videoMinDuration: Int
-        get() = pref.getInt(PREF_VIDEO_MIN_DURATION,-1)
-        set(value) = pref.edit{ putInt(PREF_VIDEO_MIN_DURATION,value) }
+        get() = pref.getInt(PREF_VIDEO_MIN_DURATION, -1)
+        set(value) = pref.edit { putInt(PREF_VIDEO_MIN_DURATION, value) }
     
     var videoMaxDuration: Int
-        get() = pref.getInt(PREF_VIDEO_MAX_DURATION,-1)
-        set(value) = pref.edit{ putInt(PREF_VIDEO_MAX_DURATION,value) }
+        get() = pref.getInt(PREF_VIDEO_MAX_DURATION, -1)
+        set(value) = pref.edit { putInt(PREF_VIDEO_MAX_DURATION, value) }
     
     var lastLoginDateTime: String
         get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, "") ?: ""
@@ -647,15 +651,24 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     
     var bubbleDialogShowCount: Int
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
-        set(value) = pref.edit{ putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT,value) }
+        set(value) = pref.edit { putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, value) }
     
     var isSplashAlreadyCreated: Boolean
         get() = pref.getBoolean(PREF_IS_SPLASH_CREATED, false)
-        set(value) = pref.edit{ putBoolean(PREF_IS_SPLASH_CREATED,value) }
+        set(value) = pref.edit { putBoolean(PREF_IS_SPLASH_CREATED, value) }
     
     var featuredPartnerTitle: String
-        get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner") ?: "Featured Partner"
+        get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner")
+            ?: "Featured Partner"
         set(value) = pref.edit { putString(PREF_FEATURED_PARTNER_TITLE, value) }
+    
+    var internalTimeOut: Int
+        get() = pref.getInt(PREF_INTERNAL_TIME_OUT, 0)
+        set(value) = pref.edit { putInt(PREF_INTERNAL_TIME_OUT, value) }
+    
+    var externalTimeOut: Int
+        get() = pref.getInt(PREF_EXTERNAL_TIME_OUT, 0)
+        set(value) = pref.edit { putInt(PREF_EXTERNAL_TIME_OUT, value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -693,12 +706,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isFeaturePartnerActive = it.isFeaturePartnerActive ?: "false"
             mqttHost = it.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
             mqttIsActive = it.mqttIsActive == 1
-    
+            
             isCastEnabled = it.isCastEnabled == 1
             isCastUrlOverride = it.isCastUrlOverride == 1
             castReceiverId = it.castReceiverId ?: ""
             castOverrideUrl = it.castOverrideUrl ?: ""
-    
+            
             internetPackUrl = it.internetPackUrl ?: ""
             tusUploadServerUrl = it.tusUploadServerUrl ?: ""
             privacyPolicyUrl = it.privacyPolicyUrl ?: ""
@@ -707,12 +720,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             facebookPageUrl = it.facebookPageUrl
             instagramPageUrl = it.instagramPageUrl
             youtubePageUrl = it.youtubePageUrl
-    
+            
             geoCity = it.geoCity ?: ""
             geoRegion = it.geoRegion ?: geoCity
             geoLocation = it.geoLocation ?: ""
             userIp = it.userIp ?: ""
-    
+            
             forcedUpdateVersions = it.forceUpdateVersionCodes
             isVastActive = it.isVastActive == 1
             vastFrequency = it.vastFrequency
@@ -747,6 +760,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             videoMaxDuration = it.videoMaxDuration
             isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
             bubbleConfigLiveData.value = it.bubbleConfig
+            internalTimeOut = it.internalTimeOut ?: 0
+            externalTimeOut = it.externalTimeout ?: 0
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -848,7 +863,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
         private const val PREF_AD_ID_UPDATE_DATE = "pref_ad_id_update_date"
-        private const val PREF_PIP_ENABLED= "pref_pip_enabled"
+        private const val PREF_PIP_ENABLED = "pref_pip_enabled"
         private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
         private const val PREF_IS_GLOBAL_CID_ACTIVE = "pref_is_global_cid_active"
         private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"
@@ -872,12 +887,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private const val PREF_BUBBLE_DIALOG_SHOW_COUNT = "pref_bubble_dialog_permission_show_count"
         private const val PREF_IS_SPLASH_CREATED = "pref_is_splash_created"
-        private const val PREF_FEATURED_PARTNER_TITLE="pref_featured_partner_title"
+        private const val PREF_FEATURED_PARTNER_TITLE = "pref_featured_partner_title"
+        private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
+        private const val PREF_EXTERNAL_TIME_OUT = "pref_external_time_out"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
             if (instance == null) {
-                instance = SessionPreference(mContext.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE), mContext)
+                instance = SessionPreference(
+                    mContext.getSharedPreferences(
+                        PREF_NAME_IP_TV,
+                        Context.MODE_PRIVATE
+                    ), mContext
+                )
             }
         }
         
