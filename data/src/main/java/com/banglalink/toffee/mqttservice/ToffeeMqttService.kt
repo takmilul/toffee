@@ -122,7 +122,7 @@ class ToffeeMqttService @Inject constructor(
         return MqttConnectOptions().apply {
             isCleanSession = false
             isAutomaticReconnect = false
-            connectionTimeout = 30
+            connectionTimeout = mPref.externalTimeOut
             keepAliveInterval = 300
             socketFactory = SSLSocketFactory.getDefault()
             this.userName = userName

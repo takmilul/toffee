@@ -38,11 +38,11 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar, toffeeDns: ToffeeDns, authInterceptor: 
-    AuthInterceptor): OkHttpClient {
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar, toffeeDns: ToffeeDns, authInterceptor:
+    AuthInterceptor,mpref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
-            connectTimeout(15, TimeUnit.SECONDS)
-            readTimeout(30, TimeUnit.SECONDS)
+            connectTimeout(if(mpref.internalTimeOut==0) 10 else mpref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            readTimeout(if(mpref.internalTimeOut==0) 20 else mpref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
@@ -130,10 +130,10 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @SimpleHttpClient
-    fun providesSimpleHttpClient(@DefaultCache cache: Cache): OkHttpClient {
+    fun providesSimpleHttpClient(@DefaultCache cache: Cache,mpref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(if(mpref.internalTimeOut==0) 10 else mpref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            .readTimeout(if(mpref.internalTimeOut==0) 20 else mpref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
             .cache(cache)
             .build()
     }
