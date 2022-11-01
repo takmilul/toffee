@@ -241,6 +241,10 @@ data class ChannelInfo(
     var isPlaylist: Boolean = false
     
     @IgnoredOnParcel
+    @SerializedName("isFromSportsCategory")
+    var isFromSportsCategory: Boolean = false
+    
+    @IgnoredOnParcel
     @SerializedName("viewProgress")
     var viewProgress: Long = -1L
     

@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.category.movie
+package com.banglalink.toffee.ui.category
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,81 +21,74 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.landing.ChannelAdapter
+import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PopularMovieChannelFragment : BaseFragment() {
+class CategoryWiseLinearChannelFragment : BaseFragment() {
     
-    private lateinit var mAdapter: ChannelAdapter
-    private var _binding: FragmentLandingTvChannelsBinding ? = null
     private val binding get() = _binding!!
+    @Inject lateinit var localSync: LocalSync
+    @Inject lateinit var bindingUtil: BindingUtil
     val homeViewModel by activityViewModels<HomeViewModel>()
     val viewModel by activityViewModels<LandingPageViewModel>()
+    private var _binding: FragmentLandingTvChannelsBinding? = null
+    private lateinit var mAdapter: CategoryWiseLinearChannelAdapter
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
-    @Inject
-    lateinit var localSync: LocalSync
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.channelTv.text = mPref.categoryName.value+" Channels"
+        
+        binding.channelTv.text = mPref.categoryName.value + " Channels"
         binding.placeholder.hide()
         binding.channelList.show()
         binding.root.hide()
-        mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
+        mAdapter = CategoryWiseLinearChannelAdapter(requireContext(), object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.playContentLiveData.postValue(item)
+                homeViewModel.playContentLiveData.postValue(item.apply {
+                    if (isLive && categoryId == 16) {
+                        isFromSportsCategory = true
+                    }}
+                )
             }
-        })
-
+        }, bindingUtil)
+        
         binding.viewAllButton.setOnClickListener {
             findNavController().navigate(R.id.menu_tv)
         }
-
+        
         with(binding.channelList) {
             adapter = mAdapter
         }
-      //  observeMoviesChannelCount()
-       // viewModel.loadPopularMovieChannelsCount()
         observeList()
     }
-    
-//    private fun observeMoviesChannelCount() {
-//        observe(viewModel.moviesChannelCount) {
-//            if (it > 0) {
-//                observeList()
-//            } else {
-//                channelViewModel(0, false).run {
-//                    observeList()
-//                }
-//            }
-//        }
-//    }
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
-                mAdapter.submitData(
-                    it.filter { !it.isExpired }.map { channel ->
-                        binding.root.show()
+                mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
+                    binding.root.show()
                     localSync.syncData(channel)
                     channel
                 })
             }
         }
+        
+        observe(channelViewModel.selectedChannel) {
+            mAdapter.setSelectedItem(it)
+        }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

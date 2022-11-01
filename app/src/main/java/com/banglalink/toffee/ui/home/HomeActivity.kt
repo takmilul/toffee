@@ -50,7 +50,6 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -116,7 +115,6 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -196,25 +194,20 @@ class HomeActivity :
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
-
+    
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
-
+    
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
-
+    
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-
-//        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-//            displayMissingOverlayPermissionDialog()
-//        } else {
-//            startService(Intent(this, MyServiceToffee::class.java))
-//        }
+        
         mPref.isSplashAlreadyCreated = false
         
         val isDisableScreenshot = (
@@ -419,6 +412,13 @@ class HomeActivity :
 
         observeLogout()
 //        showDeviceId()
+//        showCustomDialog("Device ID", cPref.deviceId)
+//        lifecycleScope.launch(IO) {
+//            val installationId = FirebaseAnalytics.getInstance(this@HomeActivity).firebaseInstanceId
+//            withContext(Main) {
+//                showCustomDialog("Firebase Installation ID", installationId)
+//            }
+//        }
     }
 
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -437,7 +437,7 @@ class HomeActivity :
             startForOverlayPermission.launch(intent)
         }
     }
-
+    
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(
@@ -456,32 +456,32 @@ class HomeActivity :
             }
         ).create().show()
     }
-
+    
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
-                val settings: Map<String, Any> = mutableMapOf(
-                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
-                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
-                )
-                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+//                val settings: Map<String, Any> = mutableMapOf(
+//                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+//                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+//                )
+//                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
             } else {
                 ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
             }
             ConvivaHelper.init(applicationContext, true)
         }
     }
-
-    private fun showDeviceId() {
-        ToffeeAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
+    
+    private fun showCustomDialog(title: String, installationId: String) {
+        ToffeeAlertDialogBuilder(this, title = title, text = installationId, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clip: ClipData = ClipData.newPlainText("DeviceId", cPref.deviceId)
+            val clip: ClipData = ClipData.newPlainText("DeviceId", installationId)
             clipboard.setPrimaryClip(clip)
             showToast("copied to clipboard")
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
-
+    
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()
@@ -490,13 +490,13 @@ class HomeActivity :
             && mPref.channelName.isNotBlank()
             && mPref.channelLogo.isNotBlank()
             && mPref.isChannelDetailChecked
-
+    
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
     }
-
+    
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -667,7 +667,7 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
-
+        
 //        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 //            if(insets.hasInsets()) {
 //                Log.e("INSET_T", "Has inset")
@@ -776,8 +776,8 @@ class HomeActivity :
             WindowInsetsCompat.CONSUMED
         }
         
-        binding.sideNavigation.setNavigationItemSelectedListener {
-            drawerHelper.handleMenuItemById(it)
+        binding.sideNavigation.setNavigationItemSelectedListener { menuItem ->
+            drawerHelper.handleMenuItemById(menuItem)
         }
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
@@ -1377,7 +1377,10 @@ class HomeActivity :
         if (channelInfo.isLinear) {
             viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
+        } else {
+            allChannelViewModel.selectedChannel.postValue(null)
         }
+        allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
         addChannelToPlayList(channelInfo)
     }
     
@@ -1606,7 +1609,7 @@ class HomeActivity :
                         R.id.details_viewer, StingrayChannelFragmentNew()
                     )
                 }
-            } else if (info.isLive) {
+            } else if (info.isLive && !info.isFromSportsCategory) {
                 if (fragment !is ChannelFragmentNew) {
                     loadFragmentById(
                         R.id.details_viewer, ChannelFragmentNew()

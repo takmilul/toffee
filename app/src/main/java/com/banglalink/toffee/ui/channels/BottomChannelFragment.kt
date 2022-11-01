@@ -46,25 +46,29 @@ class BottomChannelFragment: BaseFragment() {
                 homeViewModel.playContentLiveData.postValue(item.channelInfo)
             }
         }, bindingUtil)
-
+        
         with(binding.channelList) {
             adapter = mAdapter
         }
-
-        observe(homeViewModel.isStingray) {
-            observeList(it)
-        }
-    }
-
-    private fun observeList(isStingray: Boolean) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadAllChannels(isStingray).collectLatest {
-                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false })
-            }
-        }
-
+        
         observe(viewModel.selectedChannel) {
             mAdapter.setSelectedItem(it)
+        }
+        observe(homeViewModel.isStingray) {
+            observeList(it, false)
+        }
+        observe(viewModel.isFromSportsCategory) {
+            if (it) {
+                observeList(homeViewModel.isStingray.value ?: false, it)
+            }
+        }
+    }
+    
+    private fun observeList(isStingray: Boolean, isFromSportsChannel: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.loadAllChannels(isStingray, isFromSportsChannel).collectLatest {
+                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false })
+            }
         }
     }
 }

@@ -1,12 +1,14 @@
 package com.banglalink.toffee.data.repository.impl
 
 import androidx.paging.PagingSource
+import androidx.room.withTransaction
+import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.TVChannelDao
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import kotlinx.coroutines.flow.Flow
 
-class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepository {
+class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: TVChannelDao): TVChannelRepository {
     override suspend fun insertNewItems(vararg items: TVChannelItem) {
         dao.insertNewItems(*items)
     }
@@ -63,7 +65,19 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
         return dao.getLinearChannelsByName(name)
     }
     
-    override suspend fun getLinearChannelsCountByName(name: String): Int {
-        return dao.getLinearChannelsCountByName(name)
+    override suspend fun getLinearChannelsCount(): Int {
+        return dao.getLinearChannelsCount()
+    }
+    
+    override suspend fun updateIsSportsChannel(channelIdList: List<Long>) {
+        db.withTransaction {
+            channelIdList.forEachIndexed { index, it ->
+                dao.updateIsFromSportsCategory(it, index)
+            }
+        }
+    }
+    
+    override fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem> {
+        return dao.getCategoryWiseSportsChannelList()
     }
 }

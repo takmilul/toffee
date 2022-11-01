@@ -323,6 +323,7 @@ Day 21 - AUS vs IND" />
             android:id="@+id/channelDetailsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="@{data.linear ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="program_name,providerImageView,reactionCountLayout,reactionButton,providerName,shareCount,viewCount" />
 
         <androidx.constraintlayout.widget.Group
@@ -361,12 +362,14 @@ Day 21 - AUS vs IND" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/topMovieChannelsFragment"
-            android:name="com.banglalink.toffee.ui.category.movie.PopularMovieChannelFragment"
-            app:layout_constraintTop_toBottomOf="@+id/video_description"
+            android:name="com.banglalink.toffee.ui.category.CategoryWiseLinearChannelFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_landing_tv_channels"
-            />
+            android:visibility="@{data.categoryId == 16 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/video_description"
+            tools:layout="@layout/fragment_landing_tv_channels" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/relativeStatus"

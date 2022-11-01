@@ -20,7 +20,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.usecase.SendContentReportEvent
 import com.banglalink.toffee.usecase.SendFeaturePartnerEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -205,7 +204,7 @@ class LandingPageViewModel @Inject constructor(
     
     fun loadLinearChannelCount(name:String) {
         viewModelScope.launch {
-            linearChannelCount.postValue(tvChannelRepo.getLinearChannelsCountByName(name))
+            linearChannelCount.postValue(tvChannelRepo.getLinearChannelsCount())
         }
     }
     

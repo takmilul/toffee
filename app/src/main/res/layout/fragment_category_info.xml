@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/categoryListPager"
             android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
@@ -16,87 +17,87 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout="@layout/fragment_landing_featured" />
-
+        
         <View
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@drawable/bottom_round_white_bg"
             android:padding="10dp"
             android:visibility="visible"
-            android:background="@drawable/bottom_round_white_bg"
+            app:layout_constraintBottom_toBottomOf="@id/categoryIcon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryListPager"
-            app:layout_constraintBottom_toBottomOf="@id/categoryIcon" />
-
+            app:layout_constraintTop_toBottomOf="@id/categoryListPager" />
+        
         <View
             android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@drawable/bottom_round_white_bg"
             android:padding="10dp"
             android:visibility="gone"
-            android:background="@drawable/bottom_round_white_bg"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryListPager"
-            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
-
+            app:layout_constraintTop_toBottomOf="@id/categoryListPager" />
+        
         <View
             android:id="@+id/cardView3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
-            android:visibility="visible"
             android:background="@drawable/bottom_round_white_bg"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryIcon"
-            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
-
+            app:layout_constraintTop_toBottomOf="@id/categoryIcon" />
+        
         <ImageView
             android:id="@+id/categoryIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            app:layout_goneMarginBottom="8dp"
-            android:paddingBottom="8dp"
             android:contentDescription="@string/txt_category"
-            tools:src="@drawable/ic_menu_profile"
-            app:layout_constraintVertical_bias="0"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/linearChannelContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/categoryListPager"
-            app:layout_constraintBottom_toBottomOf="@id/linearChannelContainer"/>
-
+            app:layout_constraintVertical_bias="0"
+            app:layout_goneMarginBottom="8dp"
+            tools:src="@drawable/ic_menu_profile" />
+        
         <TextView
             android:id="@+id/categoryName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="Music Videos"
             android:paddingBottom="8dp"
             android:textColor="@color/main_text_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/categoryIcon"
             app:layout_constraintStart_toEndOf="@+id/categoryIcon"
             app:layout_constraintTop_toTopOf="@+id/categoryIcon"
-            app:layout_constraintBottom_toBottomOf="@id/categoryIcon" />
-
+            tools:text="Music Videos" />
+        
         <ImageView
             android:id="@+id/categoryShareButton"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:contentDescription="@string/share_button"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
             android:src="@drawable/ic_share"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="@id/categoryName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/categoryName"
-            android:contentDescription="@string/share_button"
             tools:ignore="UnusedAttribute" />
-
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearChannelContainer"
             android:layout_width="match_parent"
@@ -104,8 +105,7 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryIcon"
-            >
+            app:layout_constraintTop_toBottomOf="@id/categoryIcon">
 
             <TextView
                 android:id="@+id/channel_tv"
@@ -140,6 +140,7 @@
                 <include layout="@layout/placeholder_stingray_item" />
                 <include layout="@layout/placeholder_stingray_item" />
                 <include layout="@layout/placeholder_stingray_item" />
+                
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -159,7 +160,7 @@
                 tools:listitem="@layout/item_stingray_content" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        
         <HorizontalScrollView
             android:id="@+id/subCategoryChipGroupHolder"
             android:layout_width="match_parent"
@@ -167,11 +168,11 @@
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
             android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/hashTagChipGroupHolder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearChannelContainer"
-            app:layout_constraintBottom_toTopOf="@id/hashTagChipGroupHolder">
-
+            app:layout_constraintTop_toBottomOf="@+id/linearChannelContainer">
+            
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/subCategoryChipGroup"
                 android:layout_width="wrap_content"
@@ -181,20 +182,20 @@
                 app:selectionRequired="true"
                 app:singleLine="true"
                 app:singleSelection="true" />
-
+        
         </HorizontalScrollView>
-
+        
         <HorizontalScrollView
             android:id="@+id/hashTagChipGroupHolder"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:scrollbars="none"
             android:layout_marginTop="4dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder">
-
+            
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/hashTagChipGroup"
                 android:layout_width="wrap_content"
@@ -204,19 +205,20 @@
                 app:selectionRequired="false"
                 app:singleLine="true"
                 app:singleSelection="true" />
-
+        
         </HorizontalScrollView>
+        
         <androidx.constraintlayout.widget.Group
             android:id="@+id/linearGroup"
-            app:constraint_referenced_ids="linearChannelContainer,cardView,cardView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            app:constraint_referenced_ids="linearChannelContainer,cardView,cardView3" />
+        
         <androidx.constraintlayout.widget.Group
             android:id="@+id/nonLinearGroup"
-            app:constraint_referenced_ids="cardView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            app:constraint_referenced_ids="cardView2" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

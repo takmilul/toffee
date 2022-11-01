@@ -91,8 +91,8 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideTVChannelsRepository(tvChannelsDao: TVChannelDao): TVChannelRepository {
-        return TVChannelRepositoryImpl(tvChannelsDao)
+    fun provideTVChannelsRepository(db: ToffeeDatabase, tvChannelsDao: TVChannelDao): TVChannelRepository {
+        return TVChannelRepositoryImpl(db, tvChannelsDao)
     }
     
     @Provides

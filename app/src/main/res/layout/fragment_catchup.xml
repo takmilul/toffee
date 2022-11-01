@@ -25,10 +25,12 @@
             android:layout_gravity="center"
             android:text="@string/no_item_found_text"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.85"
+            app:layout_constraintBottom_toBottomOf="@id/listview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/listview"
+            tools:visibility="visible" />
         
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/progress_bar"

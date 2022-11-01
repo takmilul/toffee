@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout="@layout/fragment_landing_featured" />
 
         <View
             android:id="@+id/cardView"
@@ -87,21 +88,21 @@
             app:layout_constraintStart_toEndOf="@+id/categoryIcon"
             app:layout_constraintTop_toTopOf="@+id/categoryIcon"
             app:layout_constraintBottom_toBottomOf="@id/categoryIcon" />
-        
+    
         <ImageView
             android:id="@+id/categoryMusicShare"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:contentDescription="@string/share_button"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
             android:src="@drawable/ic_share"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="@id/categoryName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/categoryName"
-            android:contentDescription="@string/share_button"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="UnusedAttribute,ImageContrastCheck" />
         
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/stingrayFragment"
@@ -111,7 +112,8 @@
             android:visibility="@{isStingray ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryIcon" />
+            app:layout_constraintTop_toBottomOf="@id/categoryIcon"
+            tools:layout="@layout/fragment_stingray" />
 
         <HorizontalScrollView
             android:id="@+id/subCategoryChipGroupHolder"

@@ -31,19 +31,21 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
+    
     <com.banglalink.toffee.ui.widget.SmartNestedScrollView
         android:id="@+id/generalCategoryNestedScroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:ignore="SpeakableTextPresentCheck">
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/latestVideosFragment"
             android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent"
+            tools:layout="@layout/placeholder_latest_videos" />
+    
     </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
