@@ -5,6 +5,8 @@ import com.banglalink.toffee.lib.BuildConfig
 object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
 
+    const val INTERNAL_TIMEOUT = 10
+    const val EXTERNAL_TIMEOUT = 10
     const val LOGIN_ERROR = 103
     const val USER_ACTIVITIES_LIMIT = 150
     const val DEVICE_ID_HEADER = "DEVICE-ID"

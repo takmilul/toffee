@@ -1,6 +1,7 @@
 package com.banglalink.toffee.notification
 
 import android.content.Context
+import com.banglalink.toffee.Constants.EXTERNAL_TIMEOUT
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Log
@@ -56,11 +57,11 @@ object PubSubMessageUtil {
     fun init(context: Context){
         val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
+        val timeout = SessionPreference.getInstance().externalTimeOut.takeIf { it > 0 } ?: EXTERNAL_TIMEOUT
         val credential = GoogleCredential.fromStream(
             context.assets.open("toffee-261507-c7793c98cdfd.json")
-        ).createScoped(PubsubScopes.all())
-        val builder =
-            Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
+        ).setExpirationTimeMilliseconds(timeout * 1_000L).createScoped(PubsubScopes.all())
+        val builder = Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
         client = builder.build()
     }
     
