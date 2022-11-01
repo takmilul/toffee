@@ -72,10 +72,12 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
     }
     
     private fun observeList() {
+        mPref.isCatWiseLinChannelAvailable.value=false
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     binding.root.show()
+                    mPref.isCatWiseLinChannelAvailable.value=true
                     localSync.syncData(channel)
                     channel
                 })
