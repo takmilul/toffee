@@ -95,6 +95,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_I
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleService
+import com.banglalink.toffee.ui.bubble.BubbleServiceV2
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -173,6 +174,7 @@ class HomeActivity :
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
     private var bubbleIntent: Intent? = null
+    private var bubbleV2Intent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -396,13 +398,15 @@ class HomeActivity :
         }
 
         bubbleIntent = Intent(this, BubbleService::class.java)
+        bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 if (mPref.bubbleDialogShowCount < 5) {
                     displayMissingOverlayPermissionDialog()
                 }
             } else {
-                startService(bubbleIntent)
+//                startService(bubbleIntent)
+                startService(bubbleV2Intent)
             }
         }
 
@@ -464,7 +468,8 @@ class HomeActivity :
                 displayMissingOverlayPermissionDialog()
             }
         } else {
-            startService(bubbleIntent)
+//            startService(bubbleIntent)
+            startService(bubbleV2Intent)
         }
     }
     
@@ -2117,7 +2122,8 @@ class HomeActivity :
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
             if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
-                startService(bubbleIntent)
+//                startService(bubbleIntent)
+                startService(bubbleV2Intent)
             }
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)

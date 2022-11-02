@@ -188,42 +188,57 @@ data class BubbleConfig(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     val id: Long? = null,
-    @SerializedName("adForwardUrl")
-    val adForwardUrl: String? = null,
-    @SerializedName("adIconUrl")
-    val adIconUrl: String? = null,
-    @SerializedName("countDownEndTime")
-    val countDownEndTime: String? = null,
     @SerializedName("isBubbleActive")
-    val isBubbleActive: Boolean = false,
+    val isBubbleActive : Boolean,
+    @SerializedName("imageType")
+    val imageType : String,
+    @SerializedName("adIconUrl")
+    val adIconUrl : String,
+    @SerializedName("bubbleText")
+    val bubbleText : String,
+    @SerializedName("adForwardUrl")
+    val adForwardUrl : String,
     @SerializedName("isGlobalCountDownActive")
-    val isGlobalCountDownActive: Boolean = false,
-    @SerializedName("leftSide")
-    @Embedded val leftSideData: LeftSideData? = null,
-    @SerializedName("rightSide")
-    @Embedded val rightSideData: RightSideData? = null,
+    val isGlobalCountDownActive : Boolean,
+    @SerializedName("countDownEndTime")
+    val countDownEndTime : String,
+    @SerializedName("type")
+    val type : String,
+    @SerializedName("matchStartTime")
+    val matchStartTime : String,
+    @SerializedName("venue")
+    val venue : String,
+    @SerializedName("poweredBy")
+    val poweredBy : String,
+    @SerializedName("poweredByIconUrl")
+    val poweredByIconUrl : String,
+    @SerializedName("match")
+    @Embedded val match : Match? = null,
     @SerializedName("receiveTime")
-    val receiveTime: Long = System.currentTimeMillis(),
+    val receiveTime: Long = System.currentTimeMillis()
 )
 
-data class LeftSideData(
-    @SerializedName("matchStartTime")
-    val leftMatchStartTime: String? = null,
-    @SerializedName("subTitle")
-    val leftSubTitle: String? = null,
-    @SerializedName("title")
-    val leftTitle: String? = null,
-    @SerializedName("type")
-    val leftType: String? = null
+data class Match (
+    @SerializedName("homeTeam")
+    @Embedded val homeTeam : HomeTeam? = null,
+    @SerializedName("awayTeam")
+    @Embedded val awayTeam : AwayTeam? = null
 )
 
-data class RightSideData(
-    @SerializedName("matchStartTime")
-    val rightMatchStartTime: String? = null,
-    @SerializedName("subTitle")
-    val rightSubTitle: String? = null,
-    @SerializedName("title")
-    val rightTitle: String? = null,
-    @SerializedName("type")
-    val rightType: String? = null
+data class HomeTeam (
+    @SerializedName("score")
+    val homeScore : Int,
+    @SerializedName("countryName")
+    val homeCountryName : String,
+    @SerializedName("countryFlag")
+    val homeCountryFlag : String
+)
+
+data class AwayTeam (
+    @SerializedName("score")
+    val awayScore : Int,
+    @SerializedName("countryName")
+    val awayCountryName : String,
+    @SerializedName("countryFlag")
+    val awayCountryFlag : String
 )

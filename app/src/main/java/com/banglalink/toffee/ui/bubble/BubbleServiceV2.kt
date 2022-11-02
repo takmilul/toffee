@@ -4,14 +4,19 @@ import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.os.CountDownTimer
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.databinding.BubbleViewLayoutBinding
+import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
@@ -24,15 +29,17 @@ import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit.*
 
-class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
+class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener,
+    IBubbleInteractionListener {
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
-    private lateinit var binding: BubbleViewLayoutBinding
+    private lateinit var binding: BubbleViewV2LayoutBinding
     
     override fun createBubble(): Bubble {
         return Bubble.Builder()
@@ -44,11 +51,11 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
     }
     
     private fun createDraggableItem(): BubbleDraggableItem {
-        binding = BubbleViewLayoutBinding.inflate(LayoutInflater.from(this))
-
-//        coroutineScope.launch {
-//            bubbleConfig = bubbleConfigRepository.getLatestConfig()
-//        }
+        binding = BubbleViewV2LayoutBinding.inflate(LayoutInflater.from(this))
+        
+        coroutineScope.launch {
+            bubbleConfig = bubbleConfigRepository.getLatestConfig()
+        }
         if (mPref.bubbleConfigLiveData.value == null) {
             coroutineScope.launch {
                 bubbleConfig = bubbleConfigRepository.getLatestConfig()
@@ -57,9 +64,9 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
-                this.bubbleConfig = bubbleConfig
-                bubbleConfig?.adIconUrl?.ifNotBlank {
-                    binding.draggableViewImage.load(it)
+                binding.poweredByText.text = bubbleConfig?.poweredBy
+                bubbleConfig?.poweredByIconUrl.ifNotBlank {
+                    binding.poweredByImage.load(it)
                 }
                 if (bubbleConfig?.isGlobalCountDownActive == true) {
                     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -67,17 +74,27 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                     val endDate = format.parse(endDateDay)
                     //milliseconds
                     val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
-//                withContext(Main) {
+                    binding.awayTeamFlag.hide()
+                    this.bubbleConfig = bubbleConfig
+                    bubbleConfig.adIconUrl.ifNotBlank {
+                        binding.homeTeamFlag.load(it)
+                    }
+                    binding.fifaTitleOne.text = bubbleConfig.bubbleText
+                    binding.fifaTitleOne.text = HtmlCompat.fromHtml(
+                        bubbleConfig.bubbleText.trim()
+                            .replace("\n", "<br/>"),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
                     countDownTimer?.cancel()
                     showCountdown(different)
-//                }
-                } else if (bubbleConfig?.isGlobalCountDownActive == false
-//                    && bubbleConfig.leftSideData != null && bubbleConfig.rightSideData != null
-                ) {
-                    binding.countDownBoard.visibility = View.GONE
-                    binding.scoreBoard.visibility = View.VISIBLE
-                    leftSideBubbleWing()
-                    rightSideBubbleWing()
+                } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
+                    binding.awayTeamFlag.show()
+                    binding.livegif.show()
+                    matchRunningState()
+                } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "upcomming") {
+                    binding.awayTeamFlag.show()
+                    binding.livegif.hide()
+                    matchUpcommingState()
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
@@ -107,45 +124,60 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
                 untilFinished -= MINUTES.toMillis(minute)
                 val second = MILLISECONDS.toSeconds(untilFinished)
                 
-                binding.countDay.text = day.toString()
-                binding.countHour.text = hour.toString()
-                binding.countMin.text = minute.toString()
-                binding.countSec.text = second.toString()
+                binding.scoreCard.text = "Starts in $second days"
             }
             
             override fun onFinish() {
-                binding.countDay.text = "0"
-                binding.countHour.text = "0"
-                binding.countMin.text = "0"
-                binding.countSec.text = "0"
-//                if (bubbleConfig?.leftSideData != null && bubbleConfig?.rightSideData != null) {
-//                    leftSideBubbleWing()
-//                    rightSideBubbleWing()
-//                    binding.countDownBoard.visibility = View.GONE
-//                    binding.scoreBoard.visibility = View.VISIBLE
-//                }
+                binding.scoreCard.text = "Starts in 0 days"
+                if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "running") {
+                    binding.awayTeamFlag.show()
+                    binding.livegif.show()
+                    matchRunningState()
+                } else if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "upcomming") {
+                    binding.awayTeamFlag.show()
+                    binding.livegif.hide()
+                    matchUpcommingState()
+                }
             }
         }.start()
     }
     
-    private fun leftSideBubbleWing() {
-//        binding.matchOne.text = bubbleConfig?.leftSideData?.leftTitle.toString()
-//        binding.scoreOne.text = bubbleConfig?.leftSideData?.leftSubTitle.toString()
-//
-//        if (bubbleConfig?.leftSideData?.leftType == "running") {
-//            binding.scoreOne.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
-//            binding.scoreOne.compoundDrawablePadding = 10
-//        }
+    private fun matchRunningState() {
+        binding.livegif.load(getDrawable(R.drawable.bubble_live_gif))
+        bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
+            //  binding.homeTeamFlag.load(it)
+            bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
+        }
+        bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
+            // binding.awayTeamFlag.load(it)
+            bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
+        }
+        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore.toString()
+        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore.toString()
+        binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
+        binding.fifaTitleOne.text = "LIVE"
     }
     
-    private fun rightSideBubbleWing() {
-//        binding.matchTwo.text = bubbleConfig?.rightSideData?.rightTitle.toString()
-//        binding.scoreTwo.text = bubbleConfig?.rightSideData?.rightSubTitle.toString()
-//
-//        if (bubbleConfig?.rightSideData?.rightType == "running") {
-//            binding.scoreTwo.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_score_live, 0, 0, 0)
-//            binding.scoreTwo.compoundDrawablePadding = 10
-//        }
+    private fun matchUpcommingState() {
+        bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
+            //   binding.homeTeamFlag.load(it)
+            bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
+        }
+        bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
+            // binding.awayTeamFlag.load(it)
+            bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
+        }
+        val sampleFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val startDayTime = bubbleConfig?.matchStartTime ?: "2022-11-21 16:00:00"
+        val dateTime = sampleFormat.parse(startDayTime)
+        
+        val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
+        val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
+        binding.fifaTitleOne.text = finalDay
+        
+        val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
+        val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }
+        binding.scoreCard.text = finalTime
     }
     
     private fun createRemoveItem(): BubbleCloseItem {
@@ -168,10 +200,12 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
                 try {
-//                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
-                    val isTouched = binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
+                    val isTouched =
+                        binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
-                        val uriUrl: Uri = Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
+                        val uriUrl: Uri =
+                            Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //                        intent.setPackage("com.android.chrome")
@@ -191,17 +225,26 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         }
     }
     
-    override fun onOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+    override fun onOverlappingRemoveItemOnDrag(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem
+    ) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onNotOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+    override fun onNotOverlappingRemoveItemOnDrag(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem
+    ) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onDropInRemoveItem(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+    override fun onDropInRemoveItem(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem
+    ) {
         // Nothing to do
     }
 }
