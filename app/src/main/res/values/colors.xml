@@ -120,4 +120,5 @@
     <color name="bubble_wing_color">#C82A8E</color>
     <color name="bubble_separator_color">#9C186C</color>
     <color name="bubble_icon_color">#FFFFFF</color>
+    <color name="live_item_bg">#ECECEC</color>
 </resources>

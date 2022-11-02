@@ -466,6 +466,7 @@
     <string name="second">sec</string>
     <string name="separator">separator</string>
     <string name="bubble_icon">bubble icon</string>
+    <string name="topbar_background">topbar background image</string>
     <string name="delete_button_text">Delete Everything</string>
     <string name="delete_text_title">Delete Profile &amp; Data</string>
     <string name="delete_text_1">If you wish to proceed, your profile and data (identification data, channel data, and activities) will deleted permanently. If you have subscribed to any premium content, you will lose access to it. </string>
@@ -477,5 +478,5 @@
     <string name="welcome_title">Hooray! Welcome back to Toffee</string>
     <string name="welcome_button">Lets Enjoy</string>
     <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
-    <string name="topbar_background">topbar background image</string>
+    <string name="circuit_breaker_alert_message">Sorry, this content is currently not available. Please try again later. Thank you.</string>
 </resources>

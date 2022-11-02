@@ -142,13 +142,13 @@ class CustomerInfoLogin(
     @SerializedName("paymentStatus")
     var paymentStatus: Boolean = false,
     @SerializedName("isFireworksActiveForAndroid")
-    var isFireworkActive:Boolean = false,
+    var isFireworkActive: Boolean = false,
     @SerializedName("isStingrayActive")
-    var isStingrayActive:Boolean = false,
+    var isStingrayActive: Boolean = false,
     @SerializedName("isMedalliaActiveForAndroid")
-    var isMedalliaActive:Boolean = false,
+    var isMedalliaActive: Boolean = false,
     @SerializedName("isConvivaActiveForAndroid")
-    var isConvivaActive:Boolean = false,
+    var isConvivaActive: Boolean = false,
     @SerializedName("isNdMonitoringActiveAndroid")
     var isPlayerMonitoringActive: Boolean = false,
     @SerializedName("showBuyInternetForAndroid")
@@ -168,13 +168,19 @@ class CustomerInfoLogin(
     @SerializedName("appWaitDuration")
     var retryWaitDuration: Int = -1,
     @SerializedName("videoMinDuration")
-    val videoMinDuration:Int = -1,
+    val videoMinDuration: Int = -1,
     @SerializedName("videoMaxDuration")
-    val videoMaxDuration:Int = -1,
+    val videoMaxDuration: Int = -1,
     @SerializedName("bubbleConfig")
     var bubbleConfig: @RawValue BubbleConfig?,
     @SerializedName("feature_partner_title")
-    var featuredPartnerTitle: String? = null
+    var featuredPartnerTitle: String? = null,
+    @SerializedName("internalTimeout")
+    var internalTimeOut: Int? = 0,
+    @SerializedName("externalTimeout")
+    var externalTimeout: Int? = 0,
+    @SerializedName("fStoreTblContentBlacklist")
+    var fStoreTblContentBlacklist: String? = null
 ) : BodyResponse(), Parcelable
 
 @Entity

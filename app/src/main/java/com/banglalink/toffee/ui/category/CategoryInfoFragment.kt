@@ -15,50 +15,40 @@ import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
-import com.banglalink.toffee.ui.bubble.util.vibrate
-import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.ChannelAdapter
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryInfoFragment : HomeBaseFragment() {
+    
+    private val binding get() = _binding!!
+    @Inject lateinit var localSync: LocalSync
     private var selectedSubCategoryId: Int = 0
     private lateinit var categoryInfo: Category
-    @Inject
-    lateinit var bindingUtil: BindingUtil
-    private var _binding: FragmentCategoryInfoBinding? = null
-    private val binding get() = _binding!!
-    
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
-    private val channelViewModel by activityViewModels<AllChannelsViewModel>()
-    
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: ChannelAdapter
+    private var _binding: FragmentCategoryInfoBinding? = null
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        categoryInfo = requireParentFragment().requireArguments()
-            .getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
     }
     
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,7 +64,11 @@ class CategoryInfoFragment : HomeBaseFragment() {
         
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.playContentLiveData.postValue(item)
+                homeViewModel.playContentLiveData.postValue(item.apply {
+                    if (isLive && categoryId == 16) {
+                        isFromSportsCategory = true
+                    }
+                })
             }
         })
         
@@ -82,9 +76,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
             adapter = mAdapter
         }
         
-        observeLinearChannelCount()
-        landingViewModel.loadLinearChannelCount(categoryInfo.categoryName)
-    
+        observeLinearList()
         binding.viewAllButton.setOnClickListener {
             findNavController().navigate(R.id.menu_tv)
         }
@@ -202,10 +194,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
         }
     }
     
-    private fun createStateColor(
-        selectedColor: Int,
-        unSelectedColor: Int = Color.TRANSPARENT
-    ): ColorStateList {
+    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
         return ColorStateList(
             arrayOf(
                 intArrayOf(android.R.attr.state_checked),
@@ -218,38 +207,26 @@ class CategoryInfoFragment : HomeBaseFragment() {
         )
     }
     
-    private fun observeLinearChannelCount() {
-        observe(landingViewModel.linearChannelCount) {
-            if (it > 0) {
-                observeLinearList()
-            } else {
-                channelViewModel(0, false).run {
-                    observeLinearList()
-                }
-            }
-        }
-    }
-    
     private fun observeLinearList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            landingViewModel.loadLinearChannelByName(categoryInfo.categoryName).collectLatest {
+            landingViewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 binding.linearGroup.hide()
                 binding.nonLinearGroup.show()
                 
-                mAdapter.submitData(it.filter
-                {
-                    it.channelInfo?.isExpired == false
-                }.map { tvItem ->
-                    binding.placeholder.hide()
-                    binding.channelList.show()
-                    binding.linearGroup.show()
-                    binding.nonLinearGroup.hide()
-                    
-                    tvItem.channelInfo!!
-                })
+                mAdapter.submitData(
+                    it.filter { !it.isExpired }.map { channel ->
+                        localSync.syncData(channel)
+                        
+                        binding.placeholder.hide()
+                        binding.channelList.show()
+                        binding.linearGroup.show()
+                        binding.nonLinearGroup.hide()
+                        channel
+                    }
+                )
             }
         }
-}
+    }
     
     override fun onDestroyView() {
         super.onDestroyView()

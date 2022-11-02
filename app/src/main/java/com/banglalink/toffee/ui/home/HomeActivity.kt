@@ -50,7 +50,6 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -59,6 +58,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -68,6 +68,7 @@ import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.CdnChannelItem
 import com.banglalink.toffee.data.exception.AppDeprecatedError
+import com.banglalink.toffee.data.network.response.CircuitBreakerData
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -117,7 +118,6 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -134,7 +134,9 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
@@ -193,30 +195,26 @@ class HomeActivity :
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-
+    private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
+    
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
-
+    
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
-
+    
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-
-//        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-//            displayMissingOverlayPermissionDialog()
-//        } else {
-//            startService(Intent(this, MyServiceToffee::class.java))
-//        }
+        
         mPref.isSplashAlreadyCreated = false
         
         val isDisableScreenshot = (
@@ -245,6 +243,7 @@ class HomeActivity :
         observeTopBarBackground()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
+        observeCircuitBreaker()
         
         ToffeeAnalytics.logUserProperty(
             mapOf(
@@ -423,8 +422,46 @@ class HomeActivity :
 
         observeLogout()
 //        showDeviceId()
+//        showCustomDialog("Device ID", cPref.deviceId)
+//        lifecycleScope.launch(IO) {
+//            val installationId = FirebaseAnalytics.getInstance(this@HomeActivity).firebaseInstanceId
+//            withContext(Main) {
+//                showCustomDialog("Firebase Installation ID", installationId)
+//            }
+//        }
     }
-
+    
+    private fun observeCircuitBreaker() {
+        mPref.circuitBreakerFirestoreCollectionName?.let {
+            lifecycleScope.launch {
+                val db = Firebase.firestore
+                db.collection(it).addSnapshotListener { value, error ->
+                    error?.let {
+                        return@addSnapshotListener
+                    }
+                    circuitBreakerDataList.clear()
+                    value?.let {
+                        runCatching {
+                            for (doc in value) {
+                                val contentId = doc.getLong("content_id")?.toString()
+                                val isActive = doc.getBoolean("is_active")
+                                val updatedAt = doc.getDate("updated_at")
+                                val expiredAt = doc.getDate("expired_at")
+                                if (contentId != null && isActive != null && updatedAt != null && expiredAt != null) {
+                                    val data = CircuitBreakerData(isActive, updatedAt, expiredAt)
+                                    circuitBreakerDataList[contentId] = data
+                                }
+                            }
+                        }.onFailure {
+                            val message = it.message
+                            Log.i(TAG, "observeCircuitBreaker: $message")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             if (mPref.bubbleDialogShowCount < 5) {
@@ -435,14 +472,14 @@ class HomeActivity :
             startService(bubbleV2Intent)
         }
     }
-
+    
     private fun requestOverlayPermission() {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
             startForOverlayPermission.launch(intent)
         }
     }
-
+    
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(
@@ -461,32 +498,32 @@ class HomeActivity :
             }
         ).create().show()
     }
-
+    
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
-                val settings: Map<String, Any> = mutableMapOf(
-                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
-                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
-                )
-                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+//                val settings: Map<String, Any> = mutableMapOf(
+//                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+//                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+//                )
+//                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
             } else {
                 ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
             }
             ConvivaHelper.init(applicationContext, true)
         }
     }
-
-    private fun showDeviceId() {
-        ToffeeAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
+    
+    private fun showCustomDialog(title: String, installationId: String) {
+        ToffeeAlertDialogBuilder(this, title = title, text = installationId, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clip: ClipData = ClipData.newPlainText("DeviceId", cPref.deviceId)
+            val clip: ClipData = ClipData.newPlainText("DeviceId", installationId)
             clipboard.setPrimaryClip(clip)
             showToast("copied to clipboard")
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
-
+    
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()
@@ -495,13 +532,13 @@ class HomeActivity :
             && mPref.channelName.isNotBlank()
             && mPref.channelLogo.isNotBlank()
             && mPref.isChannelDetailChecked
-
+    
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
     }
-
+    
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -672,7 +709,7 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
-
+        
 //        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 //            if(insets.hasInsets()) {
 //                Log.e("INSET_T", "Has inset")
@@ -781,8 +818,8 @@ class HomeActivity :
             WindowInsetsCompat.CONSUMED
         }
         
-        binding.sideNavigation.setNavigationItemSelectedListener {
-            drawerHelper.handleMenuItemById(it)
+        binding.sideNavigation.setNavigationItemSelectedListener { menuItem ->
+            drawerHelper.handleMenuItemById(menuItem)
         }
         
         navController.addOnDestinationChangedListener(destinationChangeListener)
@@ -1093,7 +1130,17 @@ class HomeActivity :
                     } else {
                         pair = Pair(hash, null)
                     }
-                    mPref.shareableHashLiveData.value = pair
+//                    if (hash.contains("go_to_bkash")) {
+//                        Log.i("IAM_", "handleDeepLink: go_to_bkash")
+////                        "https://bka.sh/next?c=MR&uuid=null&uuid=55daaf78-11bc-45b5-a332-8c0cdba1cf63"
+//                        val urlString = hash.substringAfter("go_to_bkash/")
+//                        val uri = Uri.parse(urlString)
+//                        val intent = Intent(Intent.ACTION_VIEW, uri)
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        startActivity(intent)
+//                    } else {
+                        mPref.shareableHashLiveData.value = pair
+//                    }
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
@@ -1382,7 +1429,10 @@ class HomeActivity :
         if (channelInfo.isLinear) {
             viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
+        } else {
+            allChannelViewModel.selectedChannel.postValue(null)
         }
+        allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
         addChannelToPlayList(channelInfo)
     }
     
@@ -1412,6 +1462,12 @@ class HomeActivity :
                 detailsInfo.currentItem
             }
             else -> null
+        }
+        circuitBreakerDataList[channelInfo?.id]?.let { 
+            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
+                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
+                return
+            }
         }
         MedalliaDigital.disableIntercept()
         channelInfo?.let {
@@ -1611,7 +1667,7 @@ class HomeActivity :
                         R.id.details_viewer, StingrayChannelFragmentNew()
                     )
                 }
-            } else if (info.isLive) {
+            } else if (info.isLive && !info.isFromSportsCategory) {
                 if (fragment !is ChannelFragmentNew) {
                     loadFragmentById(
                         R.id.details_viewer, ChannelFragmentNew()
