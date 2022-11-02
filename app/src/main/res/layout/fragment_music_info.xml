@@ -103,6 +103,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/categoryName"
             tools:ignore="UnusedAttribute,ImageContrastCheck" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/topMusicChannelsFragment"
+            android:name="com.banglalink.toffee.ui.category.CategoryWiseLinearChannelFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/categoryIcon"
+            tools:layout="@layout/fragment_landing_tv_channels" />
         
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/stingrayFragment"
@@ -112,7 +121,7 @@
             android:visibility="@{isStingray ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categoryIcon"
+            app:layout_constraintTop_toBottomOf="@id/topMusicChannelsFragment"
             tools:layout="@layout/fragment_stingray" />
 
         <HorizontalScrollView

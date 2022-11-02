@@ -11,10 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMusicInfoBinding
-import com.banglalink.toffee.extension.handleUrlShare
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -53,6 +50,21 @@ class MusicInfoFragment: HomeBaseFragment() {
         binding.categoryMusicShare.safeClick({
             categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
+        observerCatLinearContent()
+    }
+    
+    private fun observerCatLinearContent(){
+        observe(mPref.isCatWiseLinChannelAvailable){
+            if(it){
+                binding.cardView.show()
+                binding.cardView2.hide()
+                binding.cardView3.show()
+            }else{
+                binding.cardView.hide()
+                binding.cardView2.show()
+                binding.cardView3.hide()
+            }
+        }
     }
 
     private fun observeSubCategories() {

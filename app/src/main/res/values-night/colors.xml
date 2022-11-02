@@ -47,11 +47,12 @@
     <color name="optionMenuColor">#29466B</color>
     <color name="upload_number_color">#FFFFFF</color>
     <color name="upload_button_color">#29466B</color>
-    <color name="delete_button_color">#222F46</color>
+    <color name="delete_button_color">#29466B</color>
     <color name="unseenCardColor">#29466B</color>
     <color name="reaction_selected_bg_color">#29466B</color>
     <color name="placeholder_logo_color">#829AB8</color>
     <color name="redeem_dialog_invalid_header">#1A2E47</color>
     <color name="redeem_dialog_invalid_footer">#111F31</color>
     <color name="native_ad_button_color">#222F46</color>
+    <color name="live_item_bg">#29466B</color>
 </resources>
