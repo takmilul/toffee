@@ -58,6 +58,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -67,6 +68,7 @@ import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.CdnChannelItem
 import com.banglalink.toffee.data.exception.AppDeprecatedError
+import com.banglalink.toffee.data.network.response.CircuitBreakerData
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -131,7 +133,9 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
@@ -189,11 +193,12 @@ class HomeActivity :
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -236,6 +241,7 @@ class HomeActivity :
         observeTopBarBackground()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
+        observeCircuitBreaker()
         
         ToffeeAnalytics.logUserProperty(
             mapOf(
@@ -420,7 +426,38 @@ class HomeActivity :
 //            }
 //        }
     }
-
+    
+    private fun observeCircuitBreaker() {
+        mPref.circuitBreakerFirestoreCollectionName?.let {
+            lifecycleScope.launch {
+                val db = Firebase.firestore
+                db.collection(it).addSnapshotListener { value, error ->
+                    error?.let {
+                        return@addSnapshotListener
+                    }
+                    circuitBreakerDataList.clear()
+                    value?.let {
+                        runCatching {
+                            for (doc in value) {
+                                val contentId = doc.getLong("content_id")?.toString()
+                                val isActive = doc.getBoolean("is_active")
+                                val updatedAt = doc.getDate("updated_at")
+                                val expiredAt = doc.getDate("expired_at")
+                                if (contentId != null && isActive != null && updatedAt != null && expiredAt != null) {
+                                    val data = CircuitBreakerData(isActive, updatedAt, expiredAt)
+                                    circuitBreakerDataList[contentId] = data
+                                }
+                            }
+                        }.onFailure {
+                            val message = it.message
+                            Log.i(TAG, "observeCircuitBreaker: $message")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private val startForOverlayPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             if (mPref.bubbleDialogShowCount < 5) {
@@ -430,7 +467,7 @@ class HomeActivity :
             startService(bubbleIntent)
         }
     }
-
+    
     private fun requestOverlayPermission() {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
@@ -1088,7 +1125,17 @@ class HomeActivity :
                     } else {
                         pair = Pair(hash, null)
                     }
-                    mPref.shareableHashLiveData.value = pair
+//                    if (hash.contains("go_to_bkash")) {
+//                        Log.i("IAM_", "handleDeepLink: go_to_bkash")
+////                        "https://bka.sh/next?c=MR&uuid=null&uuid=55daaf78-11bc-45b5-a332-8c0cdba1cf63"
+//                        val urlString = hash.substringAfter("go_to_bkash/")
+//                        val uri = Uri.parse(urlString)
+//                        val intent = Intent(Intent.ACTION_VIEW, uri)
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        startActivity(intent)
+//                    } else {
+                        mPref.shareableHashLiveData.value = pair
+//                    }
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
@@ -1410,6 +1457,12 @@ class HomeActivity :
                 detailsInfo.currentItem
             }
             else -> null
+        }
+        circuitBreakerDataList[channelInfo?.id]?.let { 
+            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
+                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
+                return
+            }
         }
         MedalliaDigital.disableIntercept()
         channelInfo?.let {

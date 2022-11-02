@@ -179,6 +179,8 @@ class CustomerInfoLogin(
     var internalTimeOut: Int? = 0,
     @SerializedName("externalTimeout")
     var externalTimeout: Int? = 0,
+    @SerializedName("fStoreTblContentBlacklist")
+    var fStoreTblContentBlacklist: String? = null
 ) : BodyResponse(), Parcelable
 
 @Entity

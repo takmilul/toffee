@@ -110,10 +110,10 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         )
         DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
         
-        PubSubMessageUtil.init(this)
         SessionPreference.init(this)
         CommonPreference.init(this)
         PlayerPreference.init(this)
+        PubSubMessageUtil.init(this)
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
         } catch (e: Exception) {

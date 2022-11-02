@@ -658,8 +658,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putBoolean(PREF_IS_SPLASH_CREATED, value) }
     
     var featuredPartnerTitle: String
-        get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner")
-            ?: "Featured Partner"
+        get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner") ?: "Featured Partner"
         set(value) = pref.edit { putString(PREF_FEATURED_PARTNER_TITLE, value) }
     
     var internalTimeOut: Int
@@ -669,6 +668,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var externalTimeOut: Int
         get() = pref.getInt(PREF_EXTERNAL_TIME_OUT, 0)
         set(value) = pref.edit { putInt(PREF_EXTERNAL_TIME_OUT, value) }
+    
+    var circuitBreakerFirestoreCollectionName: String?
+        get() = pref.getString(PREF_FIRESTORE_DB_COLLECTION_NAME, null)
+        set(value) = pref.edit { putString(PREF_FIRESTORE_DB_COLLECTION_NAME, value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -762,6 +765,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bubbleConfigLiveData.value = it.bubbleConfig
             internalTimeOut = it.internalTimeOut ?: 0
             externalTimeOut = it.externalTimeout ?: 0
+            circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -890,6 +894,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FEATURED_PARTNER_TITLE = "pref_featured_partner_title"
         private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
         private const val PREF_EXTERNAL_TIME_OUT = "pref_external_time_out"
+        private const val PREF_FIRESTORE_DB_COLLECTION_NAME = "pref_firestore_db_collection_name"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

@@ -478,4 +478,5 @@
     <string name="welcome_title">Hooray! Welcome back to Toffee</string>
     <string name="welcome_button">Lets Enjoy</string>
     <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
+    <string name="circuit_breaker_alert_message">Sorry, this content is currently not available. Please try again later. Thank you.</string>
 </resources>
