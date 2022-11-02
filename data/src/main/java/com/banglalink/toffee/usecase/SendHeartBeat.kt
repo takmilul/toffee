@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.ifNotBlank
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
@@ -68,9 +69,13 @@ class SendHeartBeat @Inject constructor(
                 )
             )
         }
-        preference.sessionToken = response.response.sessionToken ?: ""
-        preference.setHeaderSessionToken(response.response.headerSessionToken)
-        response.response.systemTime?.let {
+        response.response.sessionToken?.ifNotBlank {
+            preference.sessionToken = it
+        }
+        response.response.headerSessionToken?.ifNotBlank {
+            preference.setHeaderSessionToken(it)
+        }
+        response.response.systemTime?.ifNotBlank {
             preference.setSystemTime(it)
         }
     }

@@ -43,7 +43,9 @@ class BottomChannelFragment: BaseFragment() {
 
         mAdapter = BottomChannelAdapter(requireContext(), object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
-                homeViewModel.playContentLiveData.postValue(item.channelInfo)
+                homeViewModel.playContentLiveData.postValue(item.channelInfo?.apply {
+                    isFromSportsCategory = isLive && item.isFromSportsCategory
+                })
             }
         }, bindingUtil)
         

@@ -55,6 +55,7 @@ class GetContents @AssistedInject constructor(
             it.subCategoryId = requestParams.subcategoryId
             it.subCategory = requestParams.subcategory
             if (!it.isExpired && it.isLive && requestParams.categoryId == 16) {
+                it.isFromSportsCategory = true
                 idList.add(it.id.toLong())
                 dbList.add(
                     TVChannelItem(

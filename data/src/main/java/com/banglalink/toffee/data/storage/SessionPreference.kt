@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.extension.isNotBlank
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -202,14 +203,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
     
     fun getSystemTime(): Date {
-        val dateString = pref.getString(PREF_SYSTEM_TIME, "")
+        val dateString = pref.getString(PREF_SYSTEM_TIME, null)
         val deviceDate = Date()
         try {
-            dateString?.let {
+            dateString?.isNotBlank {
                 val serverDate = Utils.getDate(it)
-                if (serverDate != null) {
-                    return if (deviceDate.after(serverDate)) deviceDate else serverDate//Date is after server date that means server date not updated. In that case use device time
-                }
+                return if (deviceDate.after(serverDate)) deviceDate else serverDate
             }
         } catch (pe: ParseException) {
             pe.printStackTrace()

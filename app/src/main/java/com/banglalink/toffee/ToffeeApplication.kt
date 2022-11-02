@@ -98,11 +98,11 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         } catch (e: Exception) {
             Log.e("CONN_", "Connectivity registration failed: ${e.message}")
         }
-        FirebaseApp.initializeApp(this)
-        if (BuildConfig.DEBUG) {
-            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+        FirebaseApp.initializeApp(this).apply {
+            if (BuildConfig.DEBUG) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+            }
         }
-        
         // (Binding adapter with hilt) https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d
         val dataBindingComponent = bindingComponentProvider.get().build()
         val dataBindingEntryPoint = EntryPoints.get(

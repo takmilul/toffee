@@ -365,7 +365,7 @@ Day 21 - AUS vs IND" />
             android:name="com.banglalink.toffee.ui.category.CategoryWiseLinearChannelFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{data.categoryId == 16 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isFromSportsCategory ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/video_description"
@@ -377,6 +377,8 @@ Day 21 - AUS vs IND" />
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
+            app:layout_goneMarginStart="16dp"
+            android:visibility="visible"
             app:layout_constraintTop_toBottomOf="@id/topMovieChannelsFragment"
             app:layout_constraintStart_toStartOf="@id/providerImageView"
             app:layout_constraintEnd_toStartOf="@id/autoPlayText">
