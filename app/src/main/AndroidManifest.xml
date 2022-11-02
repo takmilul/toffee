@@ -189,5 +189,10 @@
             android:enabled="true"
             android:process="com.banglalink.toffee" />
 
+        <service
+            android:name=".ui.bubble.BubbleServiceV2"
+            android:enabled="true"
+            android:process="com.banglalink.toffee" />
+
     </application>
 </manifest>
