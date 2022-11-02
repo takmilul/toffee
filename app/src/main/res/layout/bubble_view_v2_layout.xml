@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLay"
@@ -8,155 +9,111 @@
     android:background="@android:color/transparent"
     android:clipChildren="false">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:cardBackgroundColor="@color/text_color_white"
-        app:cardCornerRadius="50dp"
-        app:strokeColor="#F3F3F3"
-        app:strokeWidth="1dp"
-        android:theme="@style/Theme.MaterialComponents.Light"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bubbleIconView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_corner_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/fifaTitleOne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="6dp"
-                android:text="FIFA Worldcup Qatar 2022TM"
-                android:textColor="#111F31"
-                android:textSize="10sp"
-                app:layout_constraintEnd_toStartOf="@+id/leftSideImage"
-                app:layout_constraintStart_toEndOf="@+id/rightSideImage"
-                app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/fifaTitleOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginStart="6dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="#111F31"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toStartOf="@+id/awayTeamFlag"
+            app:layout_constraintStart_toEndOf="@+id/homeTeamFlag"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="FIFA Worldcup Qatar 2022TM"/>
 
-            </TextView>
-
-            <TextView
-                android:id="@+id/scoreCard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
-                android:layout_marginBottom="6dp"
-                android:text="Starts in 23 days"
-                android:textColor="#111F31"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/leftSideImage"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/rightSideImage"
-                app:layout_constraintTop_toBottomOf="@+id/fifaTitleOne"
-                app:layout_constraintVertical_bias="0.0">
-
-            </TextView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/rightSideImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                app:cardCornerRadius="50dp"
-                app:strokeColor="#F3F3F3"
-                app:strokeWidth="1dp"
-                android:theme="@style/Theme.MaterialComponents.Light"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/homeTeamFlag"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_splash_logo_gif">
-                </ImageView>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/leftSideImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                app:cardCornerRadius="50dp"
-                app:strokeColor="#F3F3F3"
-                app:strokeWidth="1dp"
-                android:visibility="visible"
-                android:theme="@style/Theme.MaterialComponents.Light"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/awayTeamFlag"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_splash_logo_gif">
-                </ImageView>
-            </com.google.android.material.card.MaterialCardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bubbleIconView"
-        android:layout_width="70dp"
-        android:layout_height="14dp"
-        android:layout_gravity="center"
-        android:clipToPadding="false"
-        app:cardBackgroundColor="@color/text_color_white"
-        app:cardCornerRadius="20dp"
-        app:strokeColor="#F3F3F3"
-        app:strokeWidth="1dp"
-        android:theme="@style/Theme.MaterialComponents.Light"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/cardView"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/poweredByText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="4dp"
-                android:text="Powered by"
-                android:textColor="#111F31"
-                android:textSize="8sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/poweredByImage"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </TextView>
+        <TextView
+            android:id="@+id/scoreCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="start"
+            android:textColor="#111F31"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/awayTeamFlag"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/homeTeamFlag"
+            app:layout_constraintTop_toBottomOf="@+id/fifaTitleOne"
+            tools:text="Starts in 23 days"/>
 
             <ImageView
-                android:id="@+id/poweredByImage"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_splash_logo_gif"
+                android:id="@+id/homeTeamFlag"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/rounded_shape"
+                android:src="@drawable/ic_profile"
+                android:layout_marginStart="6dp"
+                android:padding="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <ImageView
+                android:id="@+id/awayTeamFlag"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/rounded_shape"
+                android:padding="1dp"
+                android:layout_marginEnd="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" />
 
-            </ImageView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp"
+        android:background="@drawable/rounded_corner_shape"
+        app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
+        app:layout_constraintEnd_toEndOf="@+id/bubbleIconView"
+        app:layout_constraintStart_toStartOf="@+id/bubbleIconView"
+        app:layout_constraintTop_toBottomOf="@+id/bubbleIconView">
+
+        <TextView
+            android:id="@+id/poweredByText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="#111F31"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/poweredByImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Powered by"/>
+
+        <ImageView
+            android:id="@+id/poweredByImage"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_splash_logo_gif"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
