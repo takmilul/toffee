@@ -89,9 +89,11 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     showCountdown(different)
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
                     binding.awayTeamFlag.show()
+                    binding.livegif.show()
                     matchRunningState()
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "upcomming") {
                     binding.awayTeamFlag.show()
+                    binding.livegif.hide()
                     matchUpcommingState()
                 }
             } catch (e: Exception) {
@@ -129,9 +131,11 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 binding.scoreCard.text = "Starts in 0 days"
                 if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "running") {
                     binding.awayTeamFlag.show()
+                    binding.livegif.show()
                     matchRunningState()
                 } else if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "upcomming") {
                     binding.awayTeamFlag.show()
+                    binding.livegif.hide()
                     matchUpcommingState()
                 }
             }
@@ -139,6 +143,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     }
     
     private fun matchRunningState() {
+        binding.livegif.load(getDrawable(R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
             //  binding.homeTeamFlag.load(it)
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
@@ -151,13 +156,6 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore.toString()
         binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
         binding.fifaTitleOne.text = "LIVE"
-        binding.fifaTitleOne.setCompoundDrawablesWithIntrinsicBounds(
-            R.drawable.ic_score_live,
-            0,
-            0,
-            0
-        )
-        binding.fifaTitleOne.compoundDrawablePadding = 8
     }
     
     private fun matchUpcommingState() {
