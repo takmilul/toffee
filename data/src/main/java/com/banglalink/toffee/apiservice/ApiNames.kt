@@ -69,7 +69,7 @@ object ApiNames {
     const val GET_OFFENCE_LIST = "getUgcInappropriateHeadList"
     const val UN_VERIFY_USER = "ugcUserUnverified"
     const val ACCOUNT_DELETE = "accountDeletion"
-    const val GET_VAST_TAG_LIST = "vastTagsListV2"
+    const val GET_VAST_TAG_LIST = "vastTagsListV3"
     const val GET_DRM_TOKEN = "drmToken"
     const val UPLOAD_SIGNED_URL = "uploadCloudStorageSigningUrl"
     const val GET_FEATURED_PARTNERS = "getUgcFeaturePartnerList"

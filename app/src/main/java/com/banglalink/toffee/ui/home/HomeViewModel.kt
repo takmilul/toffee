@@ -395,10 +395,10 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 vastTagService.execute().response.let {
-                    mPref.vodVastTagsMutableLiveData.value = it.vodTags
-                    mPref.liveVastTagsMutableLiveData.value = it.liveTags
-                    mPref.stingrayVastTagsMutableLiveData.value = it.stingrayTags
-                    mPref.nativeAdSettings.value = it.nativeAdSettings
+//                    mPref.vodVastTagsMutableLiveData.value = it.vodTags
+//                    mPref.liveVastTagsMutableLiveData.value = it.liveTags
+//                    mPref.stingrayVastTagsMutableLiveData.value = it.stingrayTags
+//                    mPref.nativeAdSettings.value = it.nativeAdSettings
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

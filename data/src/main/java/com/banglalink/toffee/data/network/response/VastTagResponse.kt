@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class VastTagResponse(
     @SerializedName("response")
-    val response: VastTagBean
+    val response: List<VastTagBean>
 ) : BaseResponse()
