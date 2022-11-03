@@ -10,4 +10,4 @@ class RedeemReferralCodeRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest(apiName = ApiNames.REDEEM_REFERRAL_CODEV2)
+) : BaseRequest(apiName = ApiNames.REDEEM_REFERRAL_CODE)

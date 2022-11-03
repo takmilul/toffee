@@ -69,6 +69,7 @@ class SendHeartBeat @Inject constructor(
                 )
             )
         }
+        preference.mqttIsActive = response.response.mqttIsActive == 1
         response.response.sessionToken?.ifNotBlank {
             preference.sessionToken = it
         }

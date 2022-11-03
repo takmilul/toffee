@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.isNotBlank
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
@@ -693,8 +694,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             if (it.isBanglalinkNumber != null) {
                 isBanglalinkNumber = it.isBanglalinkNumber
             }
-            it.dbVersionList?.let {
-                setDBVersion(it)
+            it.dbVersionList?.ifNotNullOrEmpty {
+                setDBVersion(it.toList())
             }
             latitude = it.lat ?: ""
             longitude = it.lon ?: ""

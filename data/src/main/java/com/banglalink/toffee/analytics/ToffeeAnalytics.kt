@@ -74,7 +74,7 @@ object ToffeeAnalytics {
         firebaseAnalytics.logEvent("player_event", params)
     }
     
-    fun logException(e: Exception) {
+    fun logException(e: Throwable) {
         firebaseCrashlytics.recordException(e)
     }
     

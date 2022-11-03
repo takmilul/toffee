@@ -1,6 +1,5 @@
 package com.banglalink.toffee.apiservice
 
-import android.view.WindowManager
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.SearchContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -40,6 +39,7 @@ class SearchContentService @AssistedInject constructor(
             } catch (e: Exception) {
                 false
             }
+            it.isFromSportsCategory = (it.isVOD && it.categoryId == 16)
             it.totalCount = response.response.totalCount
             localSync.syncData(it)
             it
