@@ -39,7 +39,7 @@ class GetContents @AssistedInject constructor(
                 )
             )
         }
-    
+        
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
         val idList = mutableListOf<Long>()
@@ -50,12 +50,8 @@ class GetContents @AssistedInject constructor(
             } catch (e: Exception) {
                 false
             }
-            it.category = requestParams.category
-            it.categoryId = requestParams.categoryId
-            it.subCategoryId = requestParams.subcategoryId
-            it.subCategory = requestParams.subcategory
+            it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
             if (!it.isExpired && it.isLive && requestParams.categoryId == 16) {
-                it.isFromSportsCategory = true
                 idList.add(it.id.toLong())
                 dbList.add(
                     TVChannelItem(

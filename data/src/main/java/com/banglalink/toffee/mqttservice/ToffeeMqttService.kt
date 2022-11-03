@@ -133,9 +133,11 @@ class ToffeeMqttService @Inject constructor(
     
     fun sendMessage(jsonMessage: String, topic: String) {
         try {
-            MqttMessage().apply { 
-                payload = jsonMessage.toByteArray(charset("UTF-8"))
-                client?.publish(topic, payload, 2, true)
+            if(mPref.mqttIsActive) {
+                MqttMessage().apply {
+                    payload = jsonMessage.toByteArray(charset("UTF-8"))
+                    client?.publish(topic, payload, 2, true)
+                }
             }
         }
         catch (e: Exception){

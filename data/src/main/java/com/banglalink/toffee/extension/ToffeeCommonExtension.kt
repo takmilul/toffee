@@ -48,6 +48,18 @@ inline fun String?.isNotBlank(function: ((it: String) -> String?)): String? {
     } else null
 }
 
+inline fun <T: Any> Collection<T>?.ifNotNullOrEmpty(function: (Collection<T>) -> Unit): Unit {
+    if (!this.isNullOrEmpty()) {
+        function(this)
+    }
+}
+
+inline fun <T> Collection<T>?.isNotNullOrEmpty(function: (Collection<T>) -> Collection<T>?): Collection<T>? {
+    return if (!this.isNullOrEmpty()) {
+        function(this)
+    } else null
+}
+
 fun String.overrideUrl(newUrl: String?): String {
     return newUrl?.isNotBlank {
         try {
