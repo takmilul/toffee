@@ -79,10 +79,13 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                         binding.homeTeamFlag.load(it)
                     }
                     binding.fifaTitleOne.text = bubbleConfig.bubbleText
-                    binding.fifaTitleOne.text = HtmlCompat.fromHtml(
-                        bubbleConfig.bubbleText.trim().replace("\n", "<br/>"),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
+                    binding.fifaTitleOne.text =
+                        bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
+                            HtmlCompat.fromHtml(
+                                it,
+                                HtmlCompat.FROM_HTML_MODE_LEGACY
+                            )
+                        }
                     countDownTimer?.cancel()
                     showCountdown(different)
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
@@ -148,8 +151,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
-        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore.toString()
-        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore.toString()
+        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore
+        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore
         binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
         binding.fifaTitleOne.text = "LIVE"
     }

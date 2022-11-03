@@ -191,27 +191,27 @@ data class BubbleConfig(
     @SerializedName("isBubbleActive")
     val isBubbleActive : Boolean,
     @SerializedName("imageType")
-    val imageType : String,
+    val imageType : String? = null,
     @SerializedName("adIconUrl")
-    val adIconUrl : String,
+    val adIconUrl : String? = null,
     @SerializedName("bubbleText")
-    val bubbleText : String,
+    val bubbleText : String? = null,
     @SerializedName("adForwardUrl")
-    val adForwardUrl : String,
+    val adForwardUrl : String? = null,
     @SerializedName("isGlobalCountDownActive")
     val isGlobalCountDownActive : Boolean,
     @SerializedName("countDownEndTime")
-    val countDownEndTime : String,
+    val countDownEndTime : String? = null,
     @SerializedName("type")
-    val type : String,
+    val type : String? = null,
     @SerializedName("matchStartTime")
-    val matchStartTime : String,
+    val matchStartTime : String? = null,
     @SerializedName("venue")
-    val venue : String,
+    val venue : String? = null,
     @SerializedName("poweredBy")
-    val poweredBy : String,
+    val poweredBy : String? = null,
     @SerializedName("poweredByIconUrl")
-    val poweredByIconUrl : String,
+    val poweredByIconUrl : String? = null,
     @SerializedName("match")
     @Embedded val match : Match? = null,
     @SerializedName("receiveTime")
@@ -227,18 +227,18 @@ data class Match (
 
 data class HomeTeam (
     @SerializedName("score")
-    val homeScore : Int,
+    val homeScore : String? = null,
     @SerializedName("countryName")
-    val homeCountryName : String,
+    val homeCountryName : String? = null,
     @SerializedName("countryFlag")
-    val homeCountryFlag : String
+    val homeCountryFlag : String? = null
 )
 
 data class AwayTeam (
     @SerializedName("score")
-    val awayScore : Int,
+    val awayScore : String? = null,
     @SerializedName("countryName")
-    val awayCountryName : String,
+    val awayCountryName : String? = null,
     @SerializedName("countryFlag")
-    val awayCountryFlag : String
+    val awayCountryFlag : String? = null
 )
