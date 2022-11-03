@@ -1,19 +1,12 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.model.NativeAdSettings
-import com.banglalink.toffee.model.VastTag
-
 import com.google.gson.annotations.SerializedName
 
 class VastTagBean(
-    @SerializedName("numOfTags")
-    val numOfTags: Int = 0,
-    @SerializedName("linearTags")
-    val liveTags: List<VastTag>?,
-    @SerializedName("vodTags")
-    val vodTags: List<VastTag>?,
-    @SerializedName("stingrayTags")
-    val stingrayTags: List<VastTag>?,
-    @SerializedName("nativeAdSettings")
-    val nativeAdSettings: List<NativeAdSettings>? = null
+    @SerializedName("id")
+    val id: Int = 0,
+    @SerializedName("adGroup")
+    val adGroup: String,
+    @SerializedName("url")
+    val vodTags: List<String>?,
 )
