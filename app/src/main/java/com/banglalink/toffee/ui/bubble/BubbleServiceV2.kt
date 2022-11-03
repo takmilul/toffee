@@ -75,6 +75,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     //milliseconds
                     val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
                     binding.awayTeamFlag.hide()
+                    binding.livegif.hide()
                     this.bubbleConfig = bubbleConfig
                     bubbleConfig.adIconUrl.ifNotBlank {
                         binding.homeTeamFlag.load(it)
@@ -124,7 +125,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 untilFinished -= MINUTES.toMillis(minute)
                 val second = MILLISECONDS.toSeconds(untilFinished)
                 
-                binding.scoreCard.text = "Starts in $second days"
+                binding.scoreCard.text = "Starts in $day days"
             }
             
             override fun onFinish() {
@@ -145,11 +146,9 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     private fun matchRunningState() {
         binding.livegif.load(getDrawable(R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
-            //  binding.homeTeamFlag.load(it)
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }
         bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
-            // binding.awayTeamFlag.load(it)
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore.toString()
@@ -160,11 +159,9 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     
     private fun matchUpcommingState() {
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
-            //   binding.homeTeamFlag.load(it)
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }
         bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
-            // binding.awayTeamFlag.load(it)
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
         val sampleFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -173,7 +170,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         
         val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
         val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
-        binding.fifaTitleOne.text = finalDay
+        binding.fifaTitleOne.text = finalDay?.toUpperCase()
         
         val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
         val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }
