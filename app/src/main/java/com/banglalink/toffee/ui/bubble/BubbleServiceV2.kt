@@ -4,10 +4,8 @@ import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.os.CountDownTimer
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
@@ -82,8 +80,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     }
                     binding.fifaTitleOne.text = bubbleConfig.bubbleText
                     binding.fifaTitleOne.text = HtmlCompat.fromHtml(
-                        bubbleConfig.bubbleText.trim()
-                            .replace("\n", "<br/>"),
+                        bubbleConfig.bubbleText.trim().replace("\n", "<br/>"),
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
                     countDownTimer?.cancel()
@@ -95,7 +92,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "upcomming") {
                     binding.awayTeamFlag.show()
                     binding.livegif.hide()
-                    matchUpcommingState()
+                    matchUpcomingState()
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
@@ -137,7 +134,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 } else if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "upcomming") {
                     binding.awayTeamFlag.show()
                     binding.livegif.hide()
-                    matchUpcommingState()
+                    matchUpcomingState()
                 }
             }
         }.start()
@@ -157,24 +154,28 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         binding.fifaTitleOne.text = "LIVE"
     }
     
-    private fun matchUpcommingState() {
-        bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
-            bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
+    private fun matchUpcomingState() {
+        runCatching {
+            bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
+                bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
+            }
+            bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
+                bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
+            }
+            val sampleFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val startDayTime = bubbleConfig?.matchStartTime ?: "2022-11-21 16:00:00"
+            val dateTime = sampleFormat.parse(startDayTime)
+            
+            val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
+            val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
+            binding.fifaTitleOne.text = finalDay?.uppercase(Locale.getDefault())
+            
+            val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
+            val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }
+            binding.scoreCard.text = finalTime
+        }.onFailure {
+            Log.i("Bubble_", "matchUpcomingState: ")
         }
-        bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
-            bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
-        }
-        val sampleFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val startDayTime = bubbleConfig?.matchStartTime ?: "2022-11-21 16:00:00"
-        val dateTime = sampleFormat.parse(startDayTime)
-        
-        val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
-        val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
-        binding.fifaTitleOne.text = finalDay?.toUpperCase()
-        
-        val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
-        val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }
-        binding.scoreCard.text = finalTime
     }
     
     private fun createRemoveItem(): BubbleCloseItem {
@@ -197,12 +198,9 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
                 try {
-                    val bubbleIconView = (view as ConstraintLayout).getViewById(R.id.bubbleIconView)
-                    val isTouched =
-                        binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                    val isTouched = binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
-                        val uriUrl: Uri =
-                            Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
+                        val uriUrl: Uri = Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //                        intent.setPackage("com.android.chrome")
@@ -222,26 +220,17 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         }
     }
     
-    override fun onOverlappingRemoveItemOnDrag(
-        removeItem: BubbleCloseItem,
-        draggableItem: BubbleDraggableItem
-    ) {
+    override fun onOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onNotOverlappingRemoveItemOnDrag(
-        removeItem: BubbleCloseItem,
-        draggableItem: BubbleDraggableItem
-    ) {
+    override fun onNotOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
     
-    override fun onDropInRemoveItem(
-        removeItem: BubbleCloseItem,
-        draggableItem: BubbleDraggableItem
-    ) {
+    override fun onDropInRemoveItem(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
         // Nothing to do
     }
 }
