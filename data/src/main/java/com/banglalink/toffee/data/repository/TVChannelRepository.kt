@@ -22,4 +22,5 @@ interface TVChannelRepository {
     suspend fun getLinearChannelsCount(): Int
     suspend fun updateIsSportsChannel(channelIdList: List<Long>)
     fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem>
+    fun isSportsCategoryChannel(channelId: Long): TVChannelItem?
 }

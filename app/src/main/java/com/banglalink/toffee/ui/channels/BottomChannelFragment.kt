@@ -45,6 +45,7 @@ class BottomChannelFragment: BaseFragment() {
             override fun onItemClicked(item: TVChannelItem) {
                 homeViewModel.playContentLiveData.postValue(item.channelInfo?.apply {
                     isFromSportsCategory = isLive && item.isFromSportsCategory
+//                    if (isFromSportsCategory) categoryId = 16
                 })
             }
         }, bindingUtil)

@@ -80,4 +80,8 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
     override fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem> {
         return dao.getCategoryWiseSportsChannelList()
     }
+    
+    override fun isSportsCategoryChannel(channelId: Long): TVChannelItem? {
+        return dao.isSportsCategoryChannel(channelId)
+    }
 }

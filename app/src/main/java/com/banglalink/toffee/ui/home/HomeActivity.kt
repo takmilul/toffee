@@ -1463,8 +1463,6 @@ class HomeActivity :
             }
             else -> null
         }
-        mPref.categoryName.value = channelInfo?.category
-        mPref.categoryId.value = channelInfo?.categoryId
         circuitBreakerDataList[channelInfo?.id]?.let { 
             if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
                 showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))

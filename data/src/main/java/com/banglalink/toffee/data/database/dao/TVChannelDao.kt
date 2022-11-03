@@ -109,4 +109,8 @@ abstract class TVChannelDao {
     
     @Query("UPDATE TVChannelItem SET isFromSportsCategory=1, sportsPriority=:sportsPriority WHERE channelId = :channelId")
     abstract suspend fun updateIsFromSportsCategory(channelId: Long, sportsPriority: Int)
+    
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND isFromSportsCategory==1 AND channelId=:channelId AND categoryName NOT IN (\"Recent\")")
+    abstract fun isSportsCategoryChannel(channelId: Long): TVChannelItem?
+    
 }

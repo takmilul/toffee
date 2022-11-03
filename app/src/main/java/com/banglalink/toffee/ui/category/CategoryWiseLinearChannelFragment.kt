@@ -47,7 +47,7 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        binding.channelTv.text = mPref.categoryName.value + " Channels"
+        binding.channelTv.text = (mPref.categoryName.value?: "Sports") + " Channels"
         binding.placeholder.hide()
         binding.channelList.show()
         binding.root.hide()
@@ -74,7 +74,7 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
     private fun observeList() {
         mPref.isCatWiseLinChannelAvailable.value=false
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
+            viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 16).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     binding.root.show()
                     mPref.isCatWiseLinChannelAvailable.value=true

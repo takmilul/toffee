@@ -44,14 +44,20 @@ class GetChannelWithCategory @Inject constructor(
                 localSync.syncData(it)
                 !it.isExpired
             }?.forEach {
+                val dbChannelInfo = tvChannelRepo.isSportsCategoryChannel(it.id.toLong())
                 dbList.add(TVChannelItem(
                     it.id.toLong(),
                     it.type ?: "LIVE",
                     index + 1,
                     channelCategory.categoryName,
-                    gson.toJson(it),
+                    gson.toJson(it.apply {
+//                        isFromSportsCategory = dbChannelInfo?.isFromSportsCategory ?: false
+//                        if(isFromSportsCategory) categoryId = 16
+                    }),
                     it.view_count?.toLong() ?: 0L,
-                    it.isStingray
+                    it.isStingray,
+                    dbChannelInfo?.isFromSportsCategory ?: false,
+                    dbChannelInfo?.sportsPriority ?: 0
                 ).apply {
                     updateTime = upTime
                 })
