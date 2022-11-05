@@ -39,7 +39,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
     private var selectedSubCategoryId: Int = 0
     private lateinit var categoryInfo: Category
     @Inject lateinit var bindingUtil: BindingUtil
-    private lateinit var mAdapter: ChannelAdapter
+    private lateinit var mAdapter: CategoryWiseLinearChannelAdapter
     private var _binding: FragmentCategoryInfoBinding? = null
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     
@@ -62,7 +62,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
             categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
         
-        mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
+        mAdapter = CategoryWiseLinearChannelAdapter(requireContext(), bindingUtil, object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.playContentLiveData.postValue(item.apply {
                     if (isLive && categoryId == 16) {
@@ -209,7 +209,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
     
     private fun observeLinearList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            landingViewModel.loadCategorywiseContent(mPref.categoryId.value ?: 0).collectLatest {
+            landingViewModel.loadCategoryWiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 binding.linearGroup.hide()
                 binding.nonLinearGroup.show()
                 

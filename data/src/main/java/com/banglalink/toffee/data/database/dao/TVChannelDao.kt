@@ -3,6 +3,7 @@ package com.banglalink.toffee.data.database.dao
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.model.ChannelInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,11 +23,11 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getStingrayItems(): Flow<List<TVChannelItem>?>
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
-    abstract fun getAllChannels(): PagingSource<Int, TVChannelItem>
+    @Query("SELECT payload FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
+    abstract fun getAllChannels(): PagingSource<Int, String>
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
-    abstract fun getStingrayChannels(): PagingSource<Int, TVChannelItem>
+    @Query("SELECT payload FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
+    abstract fun getStingrayChannels(): PagingSource<Int, String>
     
     @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\")")
     abstract suspend fun deleteAllTvItems()
@@ -89,28 +90,6 @@ abstract class TVChannelDao {
         insert(*items)
     }
     
-    @Query("SELECT * FROM TVChannelItem where categoryName=\"Movies\" ORDER BY viewCount DESC")
-    abstract fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
-    
-    @Query("SELECT COUNT(channelId) FROM TVChannelItem where categoryName=\"Movies\" ORDER BY viewCount DESC")
-    abstract suspend fun getPopularMovieChannelsCount(): Int
-    
-    @Query("SELECT * FROM TVChannelItem where categoryName=:name ORDER BY viewCount DESC")
-    abstract fun getLinearChannelsByName(name: String): PagingSource<Int, TVChannelItem>
-    
-    @Query("SELECT COUNT(channelId) FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\")")
-    abstract suspend fun getLinearChannelsCount(): Int
-    
     @Query("SELECT channelId FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getAllChannelList(): List<Long>?
-    
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND isFromSportsCategory==1 AND categoryName NOT IN (\"Recent\") ORDER BY sportsPriority")
-    abstract fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem>
-    
-    @Query("UPDATE TVChannelItem SET isFromSportsCategory=1, sportsPriority=:sportsPriority WHERE channelId = :channelId")
-    abstract suspend fun updateIsFromSportsCategory(channelId: Long, sportsPriority: Int)
-    
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND isFromSportsCategory==1 AND channelId=:channelId AND categoryName NOT IN (\"Recent\")")
-    abstract fun isSportsCategoryChannel(channelId: Long): TVChannelItem?
-    
 }

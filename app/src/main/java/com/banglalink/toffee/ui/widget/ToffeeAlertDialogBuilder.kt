@@ -56,7 +56,7 @@ data class ToffeeAlertDialogBuilder(
                 setView(binding.root)
                 if(icon > 0) binding.dialogIcon.setImageResource(icon) else { binding.dialogIcon.visibility = View.GONE }
                 title?.let { binding.dialogTitle.text = it } ?: run {binding.dialogTitle.visibility = View.GONE}
-                text?.let { binding.dialogText.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT) } ?: run {binding.dialogText.visibility = View.GONE}
+                text?.let { binding.dialogText.text = Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY) } ?: run {binding.dialogText.visibility = View.GONE}
                 positiveButtonTitle.let { binding.dialogPositiveButton.text = it }
                 negativeButtonTitle.let { binding.dialogNegativeButton.text = it }
 

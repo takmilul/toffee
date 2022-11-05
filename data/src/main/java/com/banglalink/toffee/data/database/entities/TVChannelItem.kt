@@ -21,11 +21,7 @@ data class TVChannelItem(
     @SerializedName("viewCount")
     val viewCount: Long,
     @SerializedName("isStingray")
-    val isStingray: Boolean = false,
-    @SerializedName("isFromSportsCategory")
-    var isFromSportsCategory: Boolean = false,
-    @SerializedName("sportsPriority")
-    var sportsPriority: Int = 0
+    val isStingray: Boolean = false
 ) : BaseEntity() {
     @Ignore
     @SerializedName("channelInfo")

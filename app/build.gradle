@@ -145,7 +145,7 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.2.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"

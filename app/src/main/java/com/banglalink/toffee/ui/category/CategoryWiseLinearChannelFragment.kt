@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.filter
@@ -23,6 +24,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +32,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CategoryWiseLinearChannelFragment : BaseFragment() {
     
+    private var job: Job? = null
     private val binding get() = _binding!!
     @Inject lateinit var localSync: LocalSync
     @Inject lateinit var bindingUtil: BindingUtil
@@ -51,15 +54,11 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
         binding.placeholder.hide()
         binding.channelList.show()
         binding.root.hide()
-        mAdapter = CategoryWiseLinearChannelAdapter(requireContext(), object : BaseListItemCallback<ChannelInfo> {
+        mAdapter = CategoryWiseLinearChannelAdapter(requireContext(), bindingUtil, object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.playContentLiveData.postValue(item.apply {
-                    if (isLive && categoryId == 16) {
-                        isFromSportsCategory = true
-                    }}
-                )
+                homeViewModel.playContentLiveData.postValue(item)
             }
-        }, bindingUtil)
+        })
         
         binding.viewAllButton.setOnClickListener {
             findNavController().navigate(R.id.menu_tv)
@@ -73,8 +72,9 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
     
     private fun observeList() {
         mPref.isCatWiseLinChannelAvailable.value=false
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadCategorywiseContent(mPref.categoryId.value ?: 16).collectLatest {
+        job?.cancel()
+        job = viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.loadCategoryWiseContent(mPref.categoryId.value ?: 16).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     binding.root.show()
                     mPref.isCatWiseLinChannelAvailable.value=true
@@ -83,8 +83,7 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
                 })
             }
         }
-        
-        observe(channelViewModel.selectedChannel) {
+        channelViewModel.selectedChannel.observe(viewLifecycleOwner) {
             mAdapter.setSelectedItem(it)
         }
     }

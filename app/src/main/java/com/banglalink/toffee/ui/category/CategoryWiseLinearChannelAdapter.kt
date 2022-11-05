@@ -13,7 +13,9 @@ import com.banglalink.toffee.ui.channels.BottomChannelViewHolder
 import com.banglalink.toffee.util.BindingUtil
 
 class CategoryWiseLinearChannelAdapter(
-    private val context: Context, private val callback: BaseListItemCallback<ChannelInfo>, private val bindingUtil: BindingUtil
+    private val context: Context,
+    private val bindingUtil: BindingUtil,
+    private val callback: BaseListItemCallback<ChannelInfo>
 ) : PagingDataAdapter<ChannelInfo, BottomChannelViewHolder>(ItemComparator()) {
     
     private var selectedItem: ChannelInfo? = null

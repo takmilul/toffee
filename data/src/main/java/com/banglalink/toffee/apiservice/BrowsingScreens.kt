@@ -20,4 +20,5 @@ object BrowsingScreens {
     const val MY_CHANNEL = "MY_CHANNEL_PAGE"
     const val PROFILE = "MY_CHANNEL_PAGE"
     const val SPLASH_SCREEN = "Splash Screen"
+    const val CATEGORY_SCREEN = "Category Screen"
 }

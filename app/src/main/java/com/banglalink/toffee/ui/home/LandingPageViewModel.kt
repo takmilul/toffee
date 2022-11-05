@@ -32,7 +32,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LandingPageViewModel @Inject constructor(
     private val categoryListApi: GetCategories,
-    private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val context: Context,
     private val featuredAssistedFactory: FeatureContentService,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
@@ -49,18 +48,16 @@ class LandingPageViewModel @Inject constructor(
     val subCategoryId = SingleLiveEvent<Int>()
     val pageType = MutableLiveData<PageType>()
     val isDramaSeries = MutableLiveData<Boolean>()
-    val moviesChannelCount = SingleLiveEvent<Int>()
-    val linearChannelCount = SingleLiveEvent<Int>()
     val selectedHashTag = SingleLiveEvent<String>()
     val hashtagList = SingleLiveEvent<List<String>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val subCategories = SingleLiveEvent<List<SubCategory>>()
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
-
+    
     fun loadChannels(): Flow<PagingData<ChannelInfo>> {
         return channelRepo.getList().cachedIn(viewModelScope)
     }
-
+    
     fun loadFeaturedContentList() {
         featuredJob = viewModelScope.launch {
             val response = resultFromResponse { featuredAssistedFactory.loadData("VOD", pageType.value ?: Landing, categoryId.value ?: 0) }
@@ -85,11 +82,11 @@ class LandingPageViewModel @Inject constructor(
             }
         }
     }
-
+    
     fun loadCategories(): Flow<PagingData<Category>> {
         return categoryListRepo.getList().cachedIn(viewModelScope)
     }
-
+    
     fun loadLandingEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
         return editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
@@ -101,7 +98,7 @@ class LandingPageViewModel @Inject constructor(
     fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {
         return userChannelRepo.getList().cachedIn(viewModelScope)
     }
-
+    
     private val userChannelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -111,7 +108,7 @@ class LandingPageViewModel @Inject constructor(
             )
         })
     }
-
+    
     fun loadUserChannelsByCategory(category: Category): Flow<PagingData<UserChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -121,7 +118,7 @@ class LandingPageViewModel @Inject constructor(
             )
         }).getList().cachedIn(viewModelScope)
     }
-
+    
     private val channelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -131,7 +128,7 @@ class LandingPageViewModel @Inject constructor(
             )
         })
     }
-
+    
     private val categoryListRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -139,7 +136,7 @@ class LandingPageViewModel @Inject constructor(
             )
         })
     }
-
+    
     fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -150,7 +147,7 @@ class LandingPageViewModel @Inject constructor(
         }).getList().cachedIn(viewModelScope)
     }
     
-    fun loadCategorywiseContent(categoryId: Int): Flow<PagingData<ChannelInfo>> {
+    fun loadCategoryWiseContent(categoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
@@ -159,7 +156,7 @@ class LandingPageViewModel @Inject constructor(
             )
         }).getList().cachedIn(viewModelScope)
     }
-
+    
     fun loadMostPopularVideos(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -169,7 +166,7 @@ class LandingPageViewModel @Inject constructor(
             )
         }).getList()
     }
-
+    
     private val editorsChoiceRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -179,7 +176,7 @@ class LandingPageViewModel @Inject constructor(
             )
         })
     }
-
+    
     fun loadLatestVideosByCategory(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -188,30 +185,6 @@ class LandingPageViewModel @Inject constructor(
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
         }).getList()
-    }
-
-    val loadPopularMovieChannels by lazy {
-        BaseListRepositoryImpl({
-            tvChannelRepo.getPopularMovieChannels()
-        }).getList()
-    }
-    
-     fun loadLinearChannelByName(name:String) :Flow<PagingData<TVChannelItem>> {
-        return BaseListRepositoryImpl({
-            tvChannelRepo.getLinearChannelsByName(name)
-        }).getList()
-    }
-    
-    fun loadLinearChannelCount(name:String) {
-        viewModelScope.launch {
-            linearChannelCount.postValue(tvChannelRepo.getLinearChannelsCount())
-        }
-    }
-    
-    fun loadPopularMovieChannelsCount() {
-        viewModelScope.launch {
-            moviesChannelCount.postValue(tvChannelRepo.getPopularMovieChannelsCount())
-        }
     }
     
     fun loadHashTagContents(hashTag: String, categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {

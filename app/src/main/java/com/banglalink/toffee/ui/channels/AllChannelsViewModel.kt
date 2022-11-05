@@ -4,10 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.GetChannelWithCategory
-import com.banglalink.toffee.apiservice.GetStingrayContentService
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.model.ChannelInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ class AllChannelsViewModel @Inject constructor(
     private val tvChannelsRepo: TVChannelRepository,
     private val allChannelService: GetChannelWithCategory,
     private val getStingrayContentService: GetStingrayContentService,
+    private val getContentAssistedFactory: GetContents.AssistedFactory,
 ) : ViewModel() {
     
     val selectedChannel = MutableLiveData<ChannelInfo?>()
@@ -40,10 +42,14 @@ class AllChannelsViewModel @Inject constructor(
         return if (isStingray) tvChannelsRepo.getStingrayItems() else tvChannelsRepo.getAllItems()
     }
     
-    fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<TVChannelItem>> {
+    fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<out Any>> {
         return BaseListRepositoryImpl({
             if (isFromSportsCategory) {
-                tvChannelsRepo.getCategoryWiseSportsChannelList()
+                BaseNetworkPagingSource(
+                    getContentAssistedFactory.create(
+                        ChannelRequestParams("Sports", 16, "", 0, "LIVE")
+                    ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
+                )
             } else {
                 tvChannelsRepo.getAllChannels(isStingray)
             }

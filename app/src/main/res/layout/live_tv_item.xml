@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
-
+    
     </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        xmlns:tools="http://schemas.android.com/tools">
-
-
+        android:layout_height="wrap_content">
+        
         <ImageView
-            android:contentDescription="@string/txt_channel"
             android:id="@+id/icon"
+            loadChannelImage="@{data}"
             android:layout_width="@dimen/channel_width"
             android:layout_height="@dimen/channel_height"
-            android:layout_marginStart="8dp"
+            android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            loadChannelImage="@{data}"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/circular_white_bg"
+            android:contentDescription="@string/txt_channel"
             android:src="@drawable/ic_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
+            app:layout_constraintTop_toTopOf="parent" />
+        
         <TextView
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
             android:id="@+id/text"
             android:layout_width="0dp"
-            android:gravity="center|top"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="8dp"
-            android:lines="2"
             android:ellipsize="end"
-            tools:text="@{data.program_name}"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center|top"
+            android:lines="2"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:textColor="#7990AC"
             android:textSize="14sp"
             android:textStyle="normal"
-            android:fontFamily="sans-serif-medium"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/icon"
             app:layout_constraintStart_toStartOf="@+id/icon"
-            app:layout_constraintTop_toBottomOf="@+id/icon"/>
-
+            app:layout_constraintTop_toBottomOf="@+id/icon"
+            tools:text="@{data.program_name}" />
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -64,18 +64,11 @@ object MigrationProvider {
     
     private val MIGRATION_9_10 = object: Migration(9,10) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `TVChannelItem` (`channelId` INTEGER NOT NULL, `type` TEXT NOT NULL, `priority` INTEGER NOT NULL, `categoryName` TEXT NOT NULL, `payload` TEXT NOT NULL, `viewCount` INTEGER NOT NULL, `isStingray` INTEGER NOT NULL, `isFromSportsCategory` INTEGER NOT NULL, `sportsPriority` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)")
-        }
-    }
-
-    private val MIGRATION_10_11 = object: Migration(10,11) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `BubbleConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `adForwardUrl` TEXT, `adIconUrl` TEXT, `countDownEndTime` TEXT, `isBubbleActive` INTEGER NOT NULL, `isGlobalCountDownActive` INTEGER NOT NULL, `receiveTime` INTEGER NOT NULL, `leftMatchStartTime` TEXT, `leftSubTitle` TEXT, `leftTitle` TEXT, `leftType` TEXT, `rightMatchStartTime` TEXT, `rightSubTitle` TEXT, `rightTitle` TEXT, `rightType` TEXT)")
             database.execSQL("CREATE TABLE IF NOT EXISTS `BubbleConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `isBubbleActive` INTEGER NOT NULL, `imageType` TEXT, `adIconUrl` TEXT, `bubbleText` TEXT, `adForwardUrl` TEXT, `isGlobalCountDownActive` INTEGER NOT NULL, `countDownEndTime` TEXT, `type` TEXT, `matchStartTime` TEXT, `venue` TEXT, `poweredBy` TEXT, `poweredByIconUrl` TEXT, `receiveTime` INTEGER NOT NULL, `homeScore` TEXT, `homeCountryName` TEXT, `homeCountryFlag` TEXT, `awayScore` TEXT, `awayCountryName` TEXT, `awayCountryFlag` TEXT)")
         }
     }
-
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
     }
 }

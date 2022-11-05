@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import android.util.Log
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -18,7 +19,6 @@ class GetContents @AssistedInject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
-    private val tvChannelRepo: TVChannelRepository,
     @Assisted private val requestParams: ChannelRequestParams,
 ) : BaseApiService<ChannelInfo> {
     
@@ -40,10 +40,6 @@ class GetContents @AssistedInject constructor(
             )
         }
         
-        val dbList = mutableListOf<TVChannelItem>()
-        val upTime = System.currentTimeMillis()
-        val idList = mutableListOf<Long>()
-        var index = 0
         response.response.channels?.map {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
@@ -51,35 +47,10 @@ class GetContents @AssistedInject constructor(
                 false
             }
             it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
-            if (!it.isExpired && it.isLive && requestParams.categoryId == 16) {
-                idList.add(it.id.toLong())
-                dbList.add(
-                    TVChannelItem(
-                    it.id.toLong(),
-                    it.type ?: "LIVE",
-                    0,
-                    "",
-                    gson.toJson(it),
-                    it.view_count?.toLong() ?: 0L,
-                    it.isStingray,
-                        true,
-                        ++index
-                ).apply {
-                    updateTime = upTime
-                })
-            }
             localSync.syncData(it)
             it
         }
         
-        if (idList.isNotEmpty()) {
-            val count = tvChannelRepo.getLinearChannelsCount()
-            if (count > 0) {
-                tvChannelRepo.updateIsSportsChannel(idList)
-            } else {
-                tvChannelRepo.insertNewItems(*dbList.toTypedArray())
-            }
-        }
         return response.response.channels ?: emptyList()
     }
     

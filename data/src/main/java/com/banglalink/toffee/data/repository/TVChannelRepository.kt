@@ -15,12 +15,5 @@ interface TVChannelRepository {
     fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>
     suspend fun getNonStingrayRecentItems(): List<TVChannelItem>?
     fun getStingrayRecentItems(): Flow<List<TVChannelItem>?>
-    fun getAllChannels(isStingray: Boolean): PagingSource<Int, TVChannelItem>
-    fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
-    suspend fun getPopularMovieChannelsCount(): Int
-    fun getLinearChannelsByName(name:String): PagingSource<Int, TVChannelItem>
-    suspend fun getLinearChannelsCount(): Int
-    suspend fun updateIsSportsChannel(channelIdList: List<Long>)
-    fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem>
-    fun isSportsCategoryChannel(channelId: Long): TVChannelItem?
+    fun getAllChannels(isStingray: Boolean): PagingSource<Int, String>
 }

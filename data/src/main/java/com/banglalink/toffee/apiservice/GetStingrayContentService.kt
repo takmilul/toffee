@@ -52,13 +52,7 @@ class GetStingrayContentService @Inject constructor(
             localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
             dbList.add(
                 TVChannelItem(
-                    it.id.toLong(),
-                    it.type ?: "Stingray",
-                    1,
-                    "Music Playlist",
-                    gson.toJson(it),
-                    it.view_count?.toLong() ?: 0L,
-                    it.isStingray
+                    it.id.toLong(), it.type ?: "Stingray", 1, "Music Playlist", gson.toJson(it), it.view_count?.toLong() ?: 0L, it.isStingray
                 ).apply {
                     updateTime = upTime
                 })

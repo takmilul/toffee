@@ -49,39 +49,7 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
         return dao.getStingrayRecentItemsFlow()
     }
     
-    override fun getAllChannels(isStingray: Boolean): PagingSource<Int, TVChannelItem> {
+    override fun getAllChannels(isStingray: Boolean): PagingSource<Int, String> {
         return if (isStingray) dao.getStingrayChannels() else dao.getAllChannels()
-    }
-
-    override fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem> {
-        return dao.getPopularMovieChannels()
-    }
-    
-    override suspend fun getPopularMovieChannelsCount(): Int {
-        return dao.getPopularMovieChannelsCount()
-    }
-    
-    override  fun getLinearChannelsByName(name:String): PagingSource<Int, TVChannelItem> {
-        return dao.getLinearChannelsByName(name)
-    }
-    
-    override suspend fun getLinearChannelsCount(): Int {
-        return dao.getLinearChannelsCount()
-    }
-    
-    override suspend fun updateIsSportsChannel(channelIdList: List<Long>) {
-        db.withTransaction {
-            channelIdList.forEachIndexed { index, it ->
-                dao.updateIsFromSportsCategory(it, index)
-            }
-        }
-    }
-    
-    override fun getCategoryWiseSportsChannelList(): PagingSource<Int, TVChannelItem> {
-        return dao.getCategoryWiseSportsChannelList()
-    }
-    
-    override fun isSportsCategoryChannel(channelId: Long): TVChannelItem? {
-        return dao.isSportsCategoryChannel(channelId)
     }
 }

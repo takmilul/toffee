@@ -1858,6 +1858,7 @@ class HomeActivity :
             else {
                 ActivityInfo.SCREEN_ORIENTATION_LOCKED
             }
+        allChannelViewModel.isFromSportsCategory.value = allChannelViewModel.isFromSportsCategory.value
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
             if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
