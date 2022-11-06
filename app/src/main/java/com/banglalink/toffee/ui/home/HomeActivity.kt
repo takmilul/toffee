@@ -1131,17 +1131,23 @@ class HomeActivity :
                     } else {
                         pair = Pair(hash, null)
                     }
-//                    if (hash.contains("go_to_bkash")) {
-//                        Log.i("IAM_", "handleDeepLink: go_to_bkash")
-////                        "https://bka.sh/next?c=MR&uuid=null&uuid=55daaf78-11bc-45b5-a332-8c0cdba1cf63"
-//                        val urlString = hash.substringAfter("go_to_bkash/")
-//                        val uri = Uri.parse(urlString)
-//                        val intent = Intent(Intent.ACTION_VIEW, uri)
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                        startActivity(intent)
-//                    } else {
+                    if (hash.contains("promotions")) {
+//                        https://toffeelive.com/promotions?pid=1001&pname="promotionNameHere"&forward="forwardingUrlHere"
+                        runCatching {
+                            val uri = Uri.parse(hash)
+                            val promotionId = uri.getQueryParameter("pid")
+                            val promotionName = uri.getQueryParameter("pname")?.replace("\"", "")
+                            val forwardUrl = hash.substringAfter("forward=", "").replace("\"", "")
+                            if (forwardUrl.isNotBlank()) {
+                                Log.i("IAM_", "promotionId: $promotionId, promotionName: $promotionName, forwardingUrl: $forwardUrl")
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                            }
+                        }
+                    } else {
                         mPref.shareableHashLiveData.value = pair
-//                    }
+                    }
                 }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
