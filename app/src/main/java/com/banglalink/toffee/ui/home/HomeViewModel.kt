@@ -51,7 +51,8 @@ class HomeViewModel @Inject constructor(
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
-    private val vastTagService: VastTagService,
+    private val vastTagServiceV2: VastTagServiceV2,
+    private val vastTagServiceV3: VastTagServiceV3,
     private val updateFavorite: UpdateFavorite,
     private val sendOtpLogEvent: SendOTPLogEvent,
     private val credentialService: CredentialService,
@@ -391,22 +392,22 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getVastTag(shouldObserve: Boolean = true) {
+    fun getVastTagV2(shouldObserve: Boolean = true) {
         viewModelScope.launch {
             try {
-                vastTagService.execute().response.let {
-//                    mPref.vodVastTagsMutableLiveData.value = it.vodTags
-//                    mPref.liveVastTagsMutableLiveData.value = it.liveTags
-//                    mPref.stingrayVastTagsMutableLiveData.value = it.stingrayTags
-//                    mPref.nativeAdSettings.value = it.nativeAdSettings
+                vastTagServiceV2.execute().response.let {
+                    mPref.vodVastTagsV2LiveData.value = it.vodTags
+                    mPref.liveVastTagsV2LiveData.value = it.liveTags
+                    mPref.stingrayVastTagsV2LiveData.value = it.stingrayTags
+                    mPref.nativeAdSettings.value = it.nativeAdSettings
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 val error = getError(e)
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION, bundleOf(
-                        "api_name" to ApiNames.GET_VAST_TAG_LIST,
-                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.SPLASH_SCREEN,
+                        "api_name" to ApiNames.GET_VAST_TAG_LIST_V2,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
                         "error_code" to error.code,
                         "error_description" to error.msg
                     )
@@ -415,7 +416,30 @@ class HomeViewModel @Inject constructor(
             if (shouldObserve) vastTagLiveData.value = true
         }
     }
-
+    
+    fun getVastTagV3(shouldObserve: Boolean = true) {
+        viewModelScope.launch {
+            try {
+                vastTagServiceV3.execute().response.let {
+                    mPref.vastTagListV3LiveData.value = it?.vastTagV3
+                    mPref.nativeAdSettings.value = it?.nativeAdSettings
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                val error = getError(e)
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION, bundleOf(
+                        "api_name" to ApiNames.GET_VAST_TAG_LIST_V3,
+                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
+                        "error_code" to error.code,
+                        "error_description" to error.msg
+                    )
+                )
+            }
+            if (shouldObserve) vastTagLiveData.value = true
+        }
+    }
+    
     fun getCredential() {
         viewModelScope.launch {
             credentialService.execute()

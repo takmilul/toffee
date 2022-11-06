@@ -2,7 +2,7 @@ package com.banglalink.toffee.model
 
 import com.google.gson.annotations.SerializedName
 
-data class VastTag(
+data class VastTagV2(
     @SerializedName("id")
     val id: Int = 0,
     @SerializedName("description")

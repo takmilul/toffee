@@ -13,18 +13,21 @@
         android:id="@+id/bubbleIconView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/rounded_corner_shape"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/custom_drop_shadow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         
         <ImageView
-            android:id="@+id/livegif"
+            android:id="@+id/liveGif"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:layout_marginStart="6dp"
-            app:layout_constraintBottom_toTopOf="@+id/scoreCard"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintEnd_toStartOf="@id/fifaTitleOne"
+            app:layout_constraintBottom_toBottomOf="@id/fifaTitleOne"
             app:layout_constraintStart_toEndOf="@+id/homeTeamFlag"
             app:layout_constraintTop_toTopOf="@id/fifaTitleOne" />
         
@@ -35,12 +38,13 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
+            app:layout_goneMarginStart="6dp"
             android:fontFamily="@font/roboto_medium"
             android:maxLines="1"
             android:textColor="#111F31"
             android:textSize="10sp"
             app:layout_constraintEnd_toStartOf="@+id/awayTeamFlag"
-            app:layout_constraintStart_toEndOf="@+id/livegif"
+            app:layout_constraintStart_toEndOf="@+id/liveGif"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginEnd="12dp"
             tools:text="FIFA Worldcup Qatar 2022TM" />
@@ -97,10 +101,10 @@
         android:layout_height="match_parent"
         android:background="@drawable/rounded_corner_shape"
         android:padding="2dp"
+        android:layout_marginBottom="-4dp"
         app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
         app:layout_constraintEnd_toEndOf="@+id/bubbleIconView"
-        app:layout_constraintStart_toStartOf="@+id/bubbleIconView"
-        app:layout_constraintTop_toBottomOf="@+id/bubbleIconView">
+        app:layout_constraintStart_toStartOf="@+id/bubbleIconView">
         
         <TextView
             android:id="@+id/poweredByText"
@@ -111,6 +115,7 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="#111F31"
             android:textSize="8sp"
+            android:text="Powered by"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/poweredByImage"
             app:layout_constraintStart_toStartOf="parent"

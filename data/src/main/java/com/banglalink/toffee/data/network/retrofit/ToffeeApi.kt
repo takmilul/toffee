@@ -412,12 +412,18 @@ interface ToffeeApi {
     suspend fun accountDelete(
         @Body AccountDeleteRequest: AccountDeleteRequest
     ): AccountDeleteResponse
-
+    
     @POST("v2/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
-    suspend fun getVastTagLists(
+    suspend fun getVastTagListsV2(
         @Path("dbVersion") dbVersion: Int,
-        @Body paymentMethodRequest: VastTagRequest
-    ): VastTagResponse
+        @Body vastTagRequestV2: VastTagRequestV2
+    ): VastTagResponseV2
+    
+    @POST("v3/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
+    suspend fun getVastTagListsV3(
+        @Path("dbVersion") dbVersion: Int,
+        @Body vastTagRequestV3: VastTagRequestV3
+    ): VastTagResponseV3
 
     @POST
     suspend fun getDrmToken(

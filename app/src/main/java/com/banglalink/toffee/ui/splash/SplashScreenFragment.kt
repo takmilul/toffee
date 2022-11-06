@@ -60,8 +60,9 @@ import javax.net.ssl.SSLContext
 class SplashScreenFragment : BaseFragment() {
     private val binding get() = _binding!!
     private var logoGifDrawable: GifDrawable? = null
-    private var isOperationCompleted: Boolean = false
+    private var isAnimationCompleted: Boolean = false
     private var isDynamicSplashActive: Boolean = false
+    private var isApiResponseCompleted: Boolean = false
     @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
@@ -76,49 +77,46 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!mPref.isSplashAlreadyCreated) {
-            mPref.isSplashAlreadyCreated = true
-            
-            val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
-            if (gif != null && gif is GifDrawable) {
-                logoGifDrawable = gif.apply {
-                    stop()
-                    seekToFrame(0)
-                }
+        
+        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
+        if (gif != null && gif is GifDrawable) {
+            logoGifDrawable = gif.apply {
+                stop()
+                seekToFrame(0)
             }
-            observeApiLogin()
-            observeCheckForUpdateStatus()
-            observeHeaderEnrichment()
-            requestHeaderEnrichment()
-            binding.splashScreenMotionLayout.onTransitionCompletedListener {
-                if (it == R.id.firstEnd) {
-                    lifecycleScope.launch {
-                        delay(1000)
-                        runCatching {
-                            with(binding.splashScreenMotionLayout) {
-                                setTransition(R.id.firstEnd, R.id.secondEnd)
-                                transitionToEnd()
-                            }
-                        }
-                    }
-                }
-                if (it == R.id.secondEnd) {
-                    logoGifDrawable?.start()
-                    if (isOperationCompleted) {
-                        lifecycleScope.launch {
-                            delay(500)
-                            forwardToNextScreen()
-                        }
-                    }
-                    isOperationCompleted = true
-                }
-            }
-            if (!mPref.isPreviousDbDeleted) {
-                viewModel.deletePreviousDatabase()
-            }
-            ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
-            detectTlsVersion()
         }
+        observeApiLogin()
+        observeCheckForUpdateStatus()
+        observeHeaderEnrichment()
+        requestHeaderEnrichment()
+        binding.splashScreenMotionLayout.onTransitionCompletedListener {
+            if (it == R.id.firstEnd) {
+                lifecycleScope.launch {
+                    delay(1000)
+                    runCatching {
+                        with(binding.splashScreenMotionLayout) {
+                            setTransition(R.id.firstEnd, R.id.secondEnd)
+                            transitionToEnd()
+                        }
+                    }
+                }
+            }
+            if (it == R.id.secondEnd) {
+                logoGifDrawable?.start()
+                lifecycleScope.launch {
+                    delay(500)
+                    isAnimationCompleted = true
+                    if (isApiResponseCompleted) {
+                        forwardToNextScreen()
+                    }
+                }
+            }
+        }
+        if (!mPref.isPreviousDbDeleted) {
+            viewModel.deletePreviousDatabase()
+        }
+        ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
+        detectTlsVersion()
     }
     
     private fun detectTlsVersion() {
@@ -277,10 +275,10 @@ class SplashScreenFragment : BaseFragment() {
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
                     
-                    if (isOperationCompleted) {
+                    if (isAnimationCompleted) {
                         forwardToNextScreen()
                     }
-                    isOperationCompleted = true
+                    isApiResponseCompleted = true
                 }
                 is Failure -> {
                     onResponseFailure(it.error)

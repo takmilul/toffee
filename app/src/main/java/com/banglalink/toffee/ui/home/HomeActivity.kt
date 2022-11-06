@@ -215,8 +215,6 @@ class HomeActivity :
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
         
-        mPref.isSplashAlreadyCreated = false
-        
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
             || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
@@ -252,20 +250,23 @@ class HomeActivity :
                 "app_version" to BuildConfig.VERSION_CODE.toString()
             )
         )
-
+        
         if (mPref.homeIntent.value != null) {
             intent = mPref.homeIntent.value
             mPref.homeIntent.value = null
         }
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
             handleSharedUrl(intent)
-            viewModel.getVastTag()
+            if (mPref.isVastActive || mPref.isNativeAdActive) {
+//                viewModel.getVastTagV2()
+                viewModel.getVastTagV3()
+            }
         } else {
             mPref.homeIntent.value = intent
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
-
+        
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
@@ -388,7 +389,7 @@ class HomeActivity :
         val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
            it.isActive
         }?.isActive ?: false
-
+        
         if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
 //            val testDeviceIds = listOf("33D01C3F0C238BE4407EB453A72FA7E4", "09B67C1ED8519418B65ECA002058C882")
 //            val configuration =
@@ -396,7 +397,7 @@ class HomeActivity :
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
-
+        
         bubbleIntent = Intent(this, BubbleService::class.java)
         bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
@@ -409,17 +410,17 @@ class HomeActivity :
                 startService(bubbleV2Intent)
             }
         }
-
+        
         if (mPref.deleteDialogLiveData.value == true){
             getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment)
             mPref.deleteDialogLiveData.value = false
         }
-
+        
 //        if (mPref.isVerifiedUser && mPref.backToffeeDialogLiveData.value == true){
 //            getNavController().navigate(R.id.backToffeeBottomSheetFragment)
 //            mPref.backToffeeDialogLiveData.value = false
 //        }
-
+        
         observeLogout()
 //        showDeviceId()
 //        showCustomDialog("Device ID", cPref.deviceId)
@@ -2098,7 +2099,7 @@ class HomeActivity :
             enterPipMode()
         }
     }
-
+    
     @Suppress("DEPRECATION")
     @RequiresApi(24)
     private fun enterPipMode() {
@@ -2118,7 +2119,7 @@ class HomeActivity :
             ToffeeAnalytics.logException(e)
         }
     }
-
+    
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
@@ -2129,7 +2130,7 @@ class HomeActivity :
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
-
+    
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
@@ -2139,7 +2140,7 @@ class HomeActivity :
         }
         binding.playerView.onPip(isInPip)
     }
-
+    
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -2165,7 +2166,7 @@ class HomeActivity :
 //            } catch (e:Exception) {
 //
 //            }
-        } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip() && navController.currentDestination?.id == R.id.menu_feed) {
             enterPipMode()
         } else {
             super.onBackPressed()
@@ -2177,7 +2178,7 @@ class HomeActivity :
     } else {
         false
     }
-
+    
     private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

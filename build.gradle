@@ -1,36 +1,53 @@
 buildscript {
     ext {
-        appVersionCode = 86
-        appVersionName = '4.5.2'
+        appVersionCode = 87
+        appVersionName = '4.6.0'
         
+        // Gradle
+        gradlePluginVersion = '7.2.2'
+        
+        // Player
         exoVersion = '2.18.1'
+        
+        // Hilt
         hiltVersion = '1.0.0'
-        gsonVersion = '2.9.0'
-        roomDbVersion = '2.4.3'
-        okHttpVersion = '4.10.0'
-        pagingVersion = '3.1.1'
+        hiltAndroidVersion = '2.42'
+        
+        // Kotlin
         kotlinVersion = '1.6.21'
-        composeVersion = '1.0.5'
-        retrofitVersion = '2.9.0'
-        espressoVersion = '3.4.0'
         kotlinKtxVersion = '1.8.0'
+        kotlinCoroutineVersion = '1.6.3'
+        
+        // Jetpack
+        roomDbVersion = '2.4.3'
+        pagingVersion = '3.1.1'
+        composeVersion = '1.0.5'
         lifecycleVersion = '2.5.1'
         navigationVersion = '2.4.2'
-        pahoClientVersion = '1.2.5'
-        hiltAndroidVersion = '2.42'
-        convivaSdkVersion = '4.0.20'
-        gradlePluginVersion = '7.2.2'
-        facebookSdkVersion = '13.1.0'
-        firebaseCoreVersion = '19.0.2'
-        kotlinCoroutineVersion = '1.6.3'
+        
+        // Network
+        gsonVersion = '2.9.0'
+        okHttpVersion = '4.10.0'
+        retrofitVersion = '2.9.0'
         googleApiClientVersion = '1.34.1'
-        pubsubVersion = 'v1-rev452-1.25.0'
-        convivaExoPlayerVersion = '4.0.12'
-        pahoAndroidServiceVersion = '3.3.8'
+        googleHttpClientGsonVersion = '1.41.8'
+        
+        // Firebase
+        firebaseCoreVersion = '19.0.2'
         firebaseMessagingVersion = '23.1.0'
         firebaseAnalyticsVersion = '21.2.0'
         firebaseCrashlyticsVersion = '18.3.1'
-        googleHttpClientGsonVersion = '1.41.8'
+        
+        // Reporting
+        facebookSdkVersion = '13.1.0'
+        convivaSdkVersion = '4.0.20'
+        convivaExoPlayerVersion = '4.0.12'
+        pubsubVersion = 'v1-rev452-1.25.0'
+        pahoClientVersion = '1.2.5'
+        pahoAndroidServiceVersion = '3.3.8'
+        
+        // Testing
+        espressoVersion = '3.4.0'
     }
 }
 plugins {

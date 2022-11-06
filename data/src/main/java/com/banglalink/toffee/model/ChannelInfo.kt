@@ -168,7 +168,9 @@ data class ChannelInfo(
     @SerializedName("sign_url_expire")
     var signedUrlExpiryDate: String? =null,
     @SerializedName("cdn_type")
-    var cdnType: String? = null
+    var cdnType: String? = null,
+    @SerializedName("ads_group")
+    var adGroup: String? = null
 //    @SerializedName("sign_cookie")
 //    var signCookie: String? = null,
 //    @SerializedName("sign_cookie_expire")

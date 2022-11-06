@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="oval">
             <solid android:color="@color/tvChannelLogoBg"/>
-            <stroke android:color="@color/screen_bg" android:width="2dp"/>
+            <stroke android:color="@color/live_item_bg" android:width="2dp"/>
             <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
         </shape>
     </item>

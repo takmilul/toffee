@@ -834,17 +834,28 @@ abstract class PlayerPageActivity :
         
         isAdRunning = false
         if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        getVastTagList(channelInfo)
-            ?.randomOrNull()
-            ?.let { tag ->
-                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive && !(isReload && channelInfo.isLinear)
-                val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+        
+        if (mPref.isVastActive && channelInfo.isAdActive) {
+            val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
+            val shouldPlayAd = tag != null && playCounter == 0 && !(isReload && channelInfo.isLinear)
+            if (shouldPlayAd) {
+                val vastTag = if (isReload && !currentlyPlayingVastUrl.isBlank()) currentlyPlayingVastUrl else tag
                 ConvivaHelper.setVastTagUrl(vastTag)
-                if (shouldPlayAd && vastTag.isNotBlank()) {
-                    mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-                    currentlyPlayingVastUrl = vastTag
-                }
+                mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
+                currentlyPlayingVastUrl = vastTag!!
             }
+        }
+//        getVastTagList(channelInfo)
+//            ?.randomOrNull()
+//            ?.let { tag ->
+//                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive && !(isReload && channelInfo.isLinear)
+//                val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+//                if (shouldPlayAd && vastTag.isNotBlank()) {
+//                    ConvivaHelper.setVastTagUrl(vastTag)
+//                    mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
+//                    currentlyPlayingVastUrl = vastTag
+//                }
+//            }
         
         maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
         if (maxBitRate > 0) {
@@ -959,17 +970,23 @@ abstract class PlayerPageActivity :
     
     private fun getVastTagList(channelInfo: ChannelInfo) = when {
         channelInfo.isStingray -> {
-            mPref.stingrayVastTagsMutableLiveData.value
+            mPref.stingrayVastTagsV2LiveData.value
         }
         channelInfo.isLive -> {
-            mPref.liveVastTagsMutableLiveData.value
+            mPref.liveVastTagsV2LiveData.value
         }
         channelInfo.isVOD -> {
-            mPref.vodVastTagsMutableLiveData.value
+            mPref.vodVastTagsV2LiveData.value
         }
         else -> {
             null
         }
+    }
+    
+    private fun getVastTagListV3(adGroup: String): String? {
+        return mPref.vastTagListV3LiveData.value?.filter {
+            it.adGroup == adGroup
+        }?.randomOrNull()?.tags?.randomOrNull()?.trim()
     }
     
     private fun getGeneratedUrl(url: String?): String? {

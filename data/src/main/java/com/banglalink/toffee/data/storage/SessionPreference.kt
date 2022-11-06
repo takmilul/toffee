@@ -36,7 +36,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
     val loginDialogLiveData = SingleLiveEvent<Boolean>()
     val deleteDialogLiveData = SingleLiveEvent<Boolean>()
-    val backToffeeDialogLiveData = SingleLiveEvent<Boolean>()
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
@@ -46,11 +45,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
-    val shareableHashLiveData =
-        MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
-    val vodVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val liveVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
-    val stingrayVastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
+    val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
+    val vodVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
+    val liveVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
+    val stingrayVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
+    val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
     val categoryId = MutableLiveData<Int>()
     val categoryName = MutableLiveData<String>()
     val isCatWiseLinChannelAvailable = MutableLiveData<Boolean>()
@@ -654,10 +653,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
         set(value) = pref.edit { putInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, value) }
     
-    var isSplashAlreadyCreated: Boolean
-        get() = pref.getBoolean(PREF_IS_SPLASH_CREATED, false)
-        set(value) = pref.edit { putBoolean(PREF_IS_SPLASH_CREATED, value) }
-    
     var featuredPartnerTitle: String
         get() = pref.getString(PREF_FEATURED_PARTNER_TITLE, "Featured Partner") ?: "Featured Partner"
         set(value) = pref.edit { putString(PREF_FEATURED_PARTNER_TITLE, value) }
@@ -891,7 +886,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_LAST_LOGIN_DATE_TIME = "pref_last_login_date_time"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private const val PREF_BUBBLE_DIALOG_SHOW_COUNT = "pref_bubble_dialog_permission_show_count"
-        private const val PREF_IS_SPLASH_CREATED = "pref_is_splash_created"
         private const val PREF_FEATURED_PARTNER_TITLE = "pref_featured_partner_title"
         private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
         private const val PREF_EXTERNAL_TIME_OUT = "pref_external_time_out"

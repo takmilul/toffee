@@ -14,6 +14,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.extension.isNotBlank
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
@@ -62,7 +63,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
-                binding.poweredByText.text = bubbleConfig?.poweredBy
+                bubbleConfig?.poweredBy?.ifNotBlank { binding.poweredByText.text = it }
                 bubbleConfig?.poweredByIconUrl.ifNotBlank {
                     binding.poweredByImage.load(it)
                 }
@@ -73,7 +74,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     //milliseconds
                     val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
                     binding.awayTeamFlag.hide()
-                    binding.livegif.hide()
+                    binding.liveGif.hide()
                     this.bubbleConfig = bubbleConfig
                     bubbleConfig.adIconUrl.ifNotBlank {
                         binding.homeTeamFlag.load(it)
@@ -81,20 +82,17 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     binding.fifaTitleOne.text = bubbleConfig.bubbleText
                     binding.fifaTitleOne.text =
                         bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
-                            HtmlCompat.fromHtml(
-                                it,
-                                HtmlCompat.FROM_HTML_MODE_LEGACY
-                            )
+                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
                     countDownTimer?.cancel()
                     showCountdown(different)
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
                     binding.awayTeamFlag.show()
-                    binding.livegif.show()
+                    binding.liveGif.show()
                     matchRunningState()
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "upcomming") {
                     binding.awayTeamFlag.show()
-                    binding.livegif.hide()
+                    binding.liveGif.hide()
                     matchUpcomingState()
                 }
             } catch (e: Exception) {
@@ -132,11 +130,11 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 binding.scoreCard.text = "Starts in 0 days"
                 if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "running") {
                     binding.awayTeamFlag.show()
-                    binding.livegif.show()
+                    binding.liveGif.show()
                     matchRunningState()
                 } else if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "upcomming") {
                     binding.awayTeamFlag.show()
-                    binding.livegif.hide()
+                    binding.liveGif.hide()
                     matchUpcomingState()
                 }
             }
@@ -144,15 +142,15 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     }
     
     private fun matchRunningState() {
-        binding.livegif.load(getDrawable(R.drawable.bubble_live_gif))
+        binding.liveGif.load(getDrawable(R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }
         bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotBlank {
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
-        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore
-        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore
+        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotBlank { it } ?: "0"
+        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotBlank { it } ?: "0"
         binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
         binding.fifaTitleOne.text = "LIVE"
     }

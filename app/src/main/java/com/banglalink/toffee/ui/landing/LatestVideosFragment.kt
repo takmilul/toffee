@@ -84,7 +84,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             initAdapter()
             observeLatestVideosList(category?.id?.toInt() ?: 0)
             if (mPref.nativeAdSettings.value == null) {
-                homeViewModel.getVastTag(false)
+//                homeViewModel.getVastTagV2(false)
+                homeViewModel.getVastTagV3(false)
             }
         }
         if (category?.id?.toInt() == 1) {
