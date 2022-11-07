@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -8,16 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.util.Utils
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class HtmlPageViewDialog : DialogFragment() {
     private var _binding: DialogHtmlPageViewBinding? = null
     private val binding get() = _binding!!
-    
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cPref: CommonPreference
     private lateinit var htmlUrl: String
     private var header: String? = ""
     private var isHideToffeeIcon: Boolean = true
@@ -31,13 +43,9 @@ class HtmlPageViewDialog : DialogFragment() {
         )
     }
     
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogHtmlPageViewBinding.inflate(layoutInflater)
-        ///
+        
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
         isHideToffeeIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
@@ -46,7 +54,7 @@ class HtmlPageViewDialog : DialogFragment() {
         binding.titleTv.text = arguments?.getString("myTitle", " ") ?: " "
         if (isHideToffeeIcon) binding.backIcon.hide() else binding.backIcon.show()
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
-        
+        observeTopBarBackground()
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -110,6 +118,29 @@ class HtmlPageViewDialog : DialogFragment() {
         
         return binding.root
     }
+    
+    private fun observeTopBarBackground() {
+        val isActive = try {
+            mPref.isTopBarActive && Utils.getDate(mPref.topBarStartDate).before(mPref.getSystemTime()) && Utils.getDate(mPref.topBarEndDate).after(mPref.getSystemTime())
+        } catch (e: Exception) {
+            false
+        }
+        if (isActive) {
+            if (mPref.topBarType == "png") {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
+                        if (!imagePath.isNullOrBlank()){
+                            binding.toolbarImageView.load(imagePath)
+                        }
+                    } catch (e: Exception) {
+                        ToffeeAnalytics.logException(e)
+                    }
+                }
+            }
+        }
+    }
+    
     override fun onStart() {
         super.onStart()
         dialog?.let {
