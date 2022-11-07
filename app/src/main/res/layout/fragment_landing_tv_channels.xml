@@ -19,6 +19,7 @@
             android:id="@+id/viewAllButton"
             style="@style/ViewAllTextView"
             android:text="@string/view_all"
+            android:visibility="gone"
             app:drawableEndCompat="@drawable/ic_right_arrow_accent"
             app:layout_constraintTop_toTopOf="@id/channel_tv"
             app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
