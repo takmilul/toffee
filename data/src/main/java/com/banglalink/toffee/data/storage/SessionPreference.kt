@@ -790,6 +790,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             internalTimeOut = it.internalTimeOut ?: 0
             externalTimeOut = it.externalTimeout ?: 0
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
+            featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))

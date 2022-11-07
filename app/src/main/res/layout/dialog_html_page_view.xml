@@ -19,7 +19,14 @@
                 android:background="@color/tool_bar_color"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize">
-
+    
+                <ImageView
+                    android:id="@+id/toolbarImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/topbar_background" />
+    
                 <ImageView
                     android:id="@+id/close_iv"
                     android:layout_width="wrap_content"
