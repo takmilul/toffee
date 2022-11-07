@@ -58,6 +58,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var listJob: Job? = null
     private var category: Category? = null
     @Inject lateinit var localSync: LocalSync
+    private var selectedSubCategoryId: Int = 0
     private var selectedFilter: Int = FEED.value
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: LatestVideosAdapter
@@ -92,6 +93,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             createSubCategoryList()
         }
         
+        observeHashTags()
+        observeSubCategories()
         observeSubCategoryChange()
         observeHashTagChange()
         
@@ -192,6 +195,106 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             }
             initAdapter()
         }
+    }
+    
+    private fun observeSubCategories() {
+        observe(viewModel.subCategories) {
+            if (it.isNotEmpty()) {
+                binding.subCategoryChipGroup.removeAllViews()
+                binding.subCategoryChipGroupHolder.show()
+                val subList = it.sortedBy { sub -> sub.id }
+                subList.let { list ->
+                    list.forEachIndexed { _, subCategory ->
+                        val newChip = addChipNew(subCategory).apply {
+                            tag = subCategory
+                        }
+                        binding.subCategoryChipGroup.addView(newChip)
+                        if (subCategory.id == 0L) {
+                            binding.subCategoryChipGroup.check(newChip.id)
+                        }
+                    }
+                }
+                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedChip = group.findViewById<Chip>(checkedId)
+                    if (selectedChip != null) {
+                        val selectedSub = selectedChip.tag as SubCategory
+                        selectedSubCategoryId = selectedSub.id.toInt()
+                        viewModel.subCategoryId.value = selectedSub.id.toInt()
+                        viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+                    }
+                }
+            } else {
+                binding.subCategoryChipGroupHolder.hide()
+            }
+        }
+    }
+    
+    private fun observeHashTags() {
+        observe(viewModel.hashtagList) {
+            if (it.isNotEmpty() && viewModel.categoryId.value != 1) {
+                binding.hashTagChipGroup.removeAllViews()
+                binding.hashTagChipGroupHolder.show()
+                binding.hashTagChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedHashTag = group.findViewById<Chip>(checkedId)
+                    if (selectedHashTag != null) {
+                        val hashTag = selectedHashTag.tag as String
+                        viewModel.selectedHashTag.value = hashTag.removePrefix("#")
+                    } else {
+                        viewModel.subCategoryId.value = selectedSubCategoryId
+                    }
+                }
+                it.let { list ->
+                    list.forEachIndexed { _, hashTag ->
+                        if (hashTag.isNotBlank()) {
+                            val newChip = addHashTagChip(hashTag).apply {
+                                tag = hashTag
+                            }
+                            binding.hashTagChipGroup.addView(newChip)
+                        }
+                    }
+                }
+            } else {
+                binding.hashTagChipGroupHolder.hide()
+            }
+        }
+    }
+    
+    private fun addHashTagChip(hashTag: String): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
+        val chipColor = createStateColor(intColor, foregroundColor)
+        val chip = layoutInflater.inflate(
+            R.layout.hashtag_chip_layout,
+            binding.hashTagChipGroup,
+            false
+        ) as Chip
+        chip.text = hashTag
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.rippleColor = chipColor
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
+        return chip
+    }
+    
+    private fun addChipNew(subCategory: SubCategory): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val chipColor = createStateColor(intColor)
+        val strokeColor = createStateColor(intColor, textColor)
+        val chip = layoutInflater.inflate(
+            R.layout.category_chip_layout,
+            binding.subCategoryChipGroup,
+            false
+        ) as Chip
+        chip.text = subCategory.name
+        chip.typeface = Typeface.DEFAULT_BOLD
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.chipStrokeColor = strokeColor
+        chip.rippleColor = chipColor
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
+        return chip
     }
     
     private fun getEmptyViewInfo(): Pair<Int, String?> {

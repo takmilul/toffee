@@ -23,7 +23,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.landing.ChannelAdapter
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,8 +55,8 @@ class CategoryInfoFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setCategoryUiInfo()
-        observeHashTags()
-        observeSubCategories()
+//        observeHashTags()
+//        observeSubCategories()
         binding.categoryShareButton.safeClick({
             categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })

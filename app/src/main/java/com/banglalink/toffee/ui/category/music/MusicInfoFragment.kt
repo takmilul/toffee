@@ -45,8 +45,8 @@ class MusicInfoFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setCategoryUiInfo()
-        observeHashTags()
-        observeSubCategories()
+//        observeHashTags()
+//        observeSubCategories()
         binding.categoryMusicShare.safeClick({
             categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })

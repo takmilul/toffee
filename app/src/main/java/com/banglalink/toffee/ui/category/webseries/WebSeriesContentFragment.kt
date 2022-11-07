@@ -1,16 +1,22 @@
 package com.banglalink.toffee.ui.category.webseries
 
+import android.R.attr
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
+import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentWebSeriesContentBinding
@@ -19,24 +25,23 @@ import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showLoadingAnimation
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.SeriesPlaybackInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
+    private val binding get() = _binding!!
     private var category: Category? = null
+    private var selectedSubCategoryId: Int = 0
     private var selectedFilter: Int = FEED.value
     private var _binding: FragmentWebSeriesContentBinding? = null
     private lateinit var mAdapter: WebSeriesListAdapter<ChannelInfo>
-    private val binding get() = _binding!!
     private val viewModel by viewModels<WebSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     
@@ -58,7 +63,9 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
         mAdapter = WebSeriesListAdapter(this)
         binding.latestVideosList.adapter = mAdapter
         landingPageViewModel.isDramaSeries.value = true
-
+        
+        observeHashTags()
+        observeSubCategories()
         observe(landingPageViewModel.subCategoryId) {
             binding.placeholder.show()
             binding.latestVideosList.hide()
@@ -158,6 +165,117 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
         )
         homeViewModel.playContentLiveData.postValue(
             seriesData
+        )
+    }
+    
+    private fun observeSubCategories() {
+        observe(landingPageViewModel.subCategories) {
+            if (it.isNotEmpty()) {
+                binding.subCategoryChipGroup.removeAllViews()
+                val subList = it.sortedBy { sub -> sub.id }
+                subList.let { list ->
+                    list.forEachIndexed { _, subCategory ->
+                        val newChip = addChip(subCategory).apply {
+                            tag = subCategory
+                        }
+                        binding.subCategoryChipGroup.addView(newChip)
+                        if (subCategory.id == 0L) {
+                            binding.subCategoryChipGroup.check(newChip.id)
+                        }
+                    }
+                }
+                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedChip = group.findViewById<Chip>(checkedId)
+                    if (selectedChip != null) {
+                        val selectedSub = selectedChip.tag as SubCategory
+                        selectedSubCategoryId = selectedSub.id.toInt()
+                        landingPageViewModel.subCategoryId.value = selectedSub.id.toInt()
+                        landingPageViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+                    }
+                }
+            } else {
+                binding.subCategoryChipGroupHolder.hide()
+            }
+        }
+    }
+    
+    private fun observeHashTags() {
+        observe(landingPageViewModel.hashtagList) {
+            if (it.isNotEmpty()) {
+                binding.hashTagChipGroup.removeAllViews()
+                binding.hashTagChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedHashTag = group.findViewById<Chip>(checkedId)
+                    if (selectedHashTag != null) {
+                        val hashTag = selectedHashTag.tag as String
+                        landingPageViewModel.selectedHashTag.value = hashTag.removePrefix("#")
+                    } else {
+                        landingPageViewModel.subCategoryId.value = selectedSubCategoryId
+                    }
+                }
+                it.let { list ->
+                    list.forEachIndexed { _, hashTag ->
+                        if (hashTag.isNotBlank()) {
+                            val newChip = addHashTagChip(hashTag).apply {
+                                tag = hashTag
+                            }
+                            binding.hashTagChipGroup.addView(newChip)
+                        }
+                    }
+                }
+            } else {
+                binding.hashTagChipGroupHolder.hide()
+            }
+        }
+    }
+    
+    private fun addHashTagChip(hashTag: String): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
+        val chipColor = createStateColor(intColor, foregroundColor)
+        val chip = layoutInflater.inflate(
+            R.layout.hashtag_chip_layout,
+            binding.hashTagChipGroup,
+            false
+        ) as Chip
+        chip.text = hashTag
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.rippleColor = chipColor
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
+        return chip
+    }
+    
+    private fun addChip(subCategory: SubCategory): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val chipColor = createStateColor(intColor)
+        val strokeColor = createStateColor(intColor, textColor)
+        val chip = layoutInflater.inflate(
+            R.layout.category_chip_layout,
+            binding.subCategoryChipGroup,
+            false
+        ) as Chip
+        chip.text = subCategory.name
+        chip.typeface = Typeface.DEFAULT_BOLD
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.chipStrokeColor = strokeColor
+        chip.rippleColor = chipColor
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
+        return chip
+    }
+    
+    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selectedColor,
+                unSelectedColor
+            )
         )
     }
     

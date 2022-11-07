@@ -52,6 +52,29 @@
         
     </HorizontalScrollView>
     
+    <HorizontalScrollView
+        android:id="@+id/hashTagChipGroupHolder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder">
+        
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/hashTagChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:selectionRequired="false"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    
+    </HorizontalScrollView>
+    
     <LinearLayout
         android:id="@+id/placeholder"
         android:layout_width="match_parent"
@@ -61,7 +84,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
+        app:layout_constraintTop_toBottomOf="@+id/hashTagChipGroupHolder"
         tools:visibility="gone">
         
         <include layout="@layout/placeholder_latest_videos" />
@@ -83,7 +106,7 @@
         app:layout_constraintBottom_toTopOf="@id/footerLoader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
+        app:layout_constraintTop_toBottomOf="@+id/hashTagChipGroupHolder"
         app:reverseLayout="false"
         tools:visibility="visible"
         tools:listitem="@layout/list_item_videos"/>

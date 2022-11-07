@@ -34,6 +34,51 @@
         app:layout_constraintStart_toEndOf="@id/latestVideosHeader"
         app:layout_constraintTop_toTopOf="@id/latestVideosHeader" />
     
+    <HorizontalScrollView
+        android:id="@+id/subCategoryChipGroupHolder"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader">
+        
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/subCategoryChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    
+    </HorizontalScrollView>
+    
+    <HorizontalScrollView
+        android:id="@+id/hashTagChipGroupHolder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder">
+        
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/hashTagChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:selectionRequired="false"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    
+    </HorizontalScrollView>
+    
     <LinearLayout
         android:id="@+id/placeholder"
         android:layout_width="match_parent"
@@ -43,7 +88,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        app:layout_constraintTop_toBottomOf="@+id/hashTagChipGroupHolder"
         tools:visibility="gone">
         
         <include layout="@layout/placeholder_drama_series" />
@@ -64,7 +109,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        app:layout_constraintTop_toBottomOf="@+id/hashTagChipGroupHolder"
         app:reverseLayout="false"
         tools:visibility="visible"
         tools:listitem="@layout/list_item_drama_feed" />
