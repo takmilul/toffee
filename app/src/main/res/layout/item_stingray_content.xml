@@ -21,8 +21,8 @@
         <ImageView
             android:id="@+id/icon"
             loadImageFromUrlRounded="@{data.channel_logo}"
-            android:layout_width="@dimen/stingray_content_width"
-            android:layout_height="@dimen/stingray_content_height"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_margin="8dp"
             android:background="@drawable/circular_white_bg"
             android:contentDescription="@string/txt_icon"
