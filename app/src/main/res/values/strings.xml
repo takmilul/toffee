@@ -474,7 +474,7 @@
     <string name="delete_text_3">As per our guideline we may keep the data for 90 days before permanent deletion. </string>
     <string name="delete_text_4">Type DELETE if you are sure you want to continue</string>
     <string name="delete_process_title">Profile Deleted!</string>
-    <string name="delete_process_text_1">Your profile and data will be deleted permanently within 30 days. You can continue to enjoy the free content on Toffee without a profile.</string>
+    <string name="delete_process_text_1">Your profile and data will be deleted permanently within 60 days. You can continue to enjoy the free content on Toffee without a profile.</string>
     <string name="welcome_title">Hooray! Welcome back to Toffee</string>
     <string name="welcome_button">Lets Enjoy</string>
     <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
