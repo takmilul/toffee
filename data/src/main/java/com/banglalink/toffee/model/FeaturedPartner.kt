@@ -12,6 +12,8 @@ data class FeaturedPartner(
     val webViewUrl: String? = null,
     @SerializedName("feature_partner_name")
     val featurePartnerName: String? = null,
+    @SerializedName("display_title")
+    val partnerName: String? = "",
     @SerializedName("feature_partner_description")
     val featurePartnerDescription: String? = null,
     @SerializedName("sorting")

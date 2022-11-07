@@ -151,6 +151,7 @@ class SplashScreenFragment : BaseFragment() {
                                             it.phoneNumber = mPref.phoneNumber
                                             it.isBlNumber = mPref.isBanglalinkNumber
                                         })
+                                        mPref.adId = it
                                         mPref.adIdUpdateDate = today
                                     } ?: run {
                                         ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
@@ -171,6 +172,7 @@ class SplashScreenFragment : BaseFragment() {
                                 it.phoneNumber = mPref.phoneNumber
                                 it.isBlNumber = mPref.isBanglalinkNumber
                             })
+                            mPref.adId = it
                             mPref.adIdUpdateDate = today
                         } ?: run {
                             ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)

@@ -8,6 +8,7 @@
         <variable
             name="data"
             type="com.banglalink.toffee.model.FeaturedPartner" />
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
@@ -17,29 +18,30 @@
         android:id="@+id/featuredPartnerCardView"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:layout_margin="8dp"
+        android:onClick="@{()->callback.onItemClicked(data)}"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        android:layout_margin="8dp"
-        app:cardUseCompatPadding="false"
-        android:onClick="@{()->callback.onItemClicked(data)}">
+        app:cardUseCompatPadding="false">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
+            
             <ImageView
                 android:id="@+id/partnerBanner"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                loadPartnerImageFromUrl="@{data.bannerUrl}"
                 android:contentDescription="@string/featured_partner_banner"
+                android:scaleType="centerCrop"
+                loadPartnerImageFromUrl="@{data.bannerUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/placeholder" />
+            
             <ImageView
                 android:id="@+id/icon"
                 loadImageFromUrlRounded="@{data.profileUrl}"
@@ -50,7 +52,8 @@
                 android:src="@drawable/ic_profile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_menu_profile" />
             
             <TextView
                 android:id="@+id/text"
@@ -60,16 +63,16 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginEnd="16dp"
                 android:maxLines="1"
-                android:textSize="@dimen/input_field_text_size"
-                android:text="@{data.featurePartnerName}"
+                android:text="@{data.partnerName}"
                 android:textColor="@android:color/white"
+                android:textSize="@dimen/input_field_text_size"
                 app:layout_constraintBottom_toBottomOf="@+id/icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/icon"
                 app:layout_constraintTop_toTopOf="@+id/icon"
-                tools:text="Imagine Radio" />
-        
+                tools:text="Featured Partner" />
+            
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

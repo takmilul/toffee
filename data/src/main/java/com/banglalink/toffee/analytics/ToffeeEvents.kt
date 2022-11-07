@@ -43,4 +43,5 @@ object ToffeeEvents {
     const val EXCEPTION ="exception"
     const val UGC_UPLOAD ="ugc_upload"
     const val SUPPORTED_TLS = "supported_TLS"
+    const val PROMOTION = "tof_promotion"
 }

@@ -33,7 +33,7 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="-16dp"
                 android:background="@drawable/fragment_bg_bottom"
-                app:layout_constraintBottom_toBottomOf="@id/topMovieChannelsFragment"
+                app:layout_constraintBottom_toBottomOf="@id/categoryIcon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/featuredFragment" />
@@ -90,6 +90,8 @@
                 android:name="com.banglalink.toffee.ui.category.CategoryWiseLinearChannelFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/fragment_bg_bottom"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/categoryIcon"
                 tools:layout="@layout/fragment_landing_tv_channels" />
@@ -110,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/home_screen_curve_bg_color"
                 app:layout_constraintTop_toBottomOf="@+id/continueWatchingFragment"
-                app:layout_goneMarginTop="24dp"
+                app:layout_goneMarginTop="10dp"
                 tools:layout="@layout/layout_horizontal_content_container" />
             
             <androidx.fragment.app.FragmentContainerView

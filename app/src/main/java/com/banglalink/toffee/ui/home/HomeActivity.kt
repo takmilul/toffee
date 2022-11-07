@@ -1140,6 +1140,19 @@ class HomeActivity :
                             val forwardUrl = hash.substringAfter("forward=", "").replace("\"", "")
                             if (forwardUrl.isNotBlank()) {
                                 Log.i("IAM_", "promotionId: $promotionId, promotionName: $promotionName, forwardingUrl: $forwardUrl")
+                                ToffeeAnalytics.logEvent(
+                                    ToffeeEvents.PROMOTION, bundleOf(
+                                        "promotion_id" to promotionId,
+                                        "promotion_name" to promotionName,
+                                        "msisdn" to mPref.phoneNumber,
+                                        "device_id" to cPref.deviceId,
+                                        "device_type" to 1,
+                                        "ad_id" to mPref.adId,
+                                        "redirection_link" to forwardUrl,
+                                        "app_version" to cPref.appVersionName,
+                                        "timestamp" to currentDateTime
+                                    )
+                                )
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
