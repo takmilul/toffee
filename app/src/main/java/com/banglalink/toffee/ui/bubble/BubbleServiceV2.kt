@@ -123,7 +123,14 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 untilFinished -= MINUTES.toMillis(minute)
                 val second = MILLISECONDS.toSeconds(untilFinished)
                 
-                binding.scoreCard.text = "Starts in $day days"
+
+                if (day == 1L || day == 0L){
+                    binding.scoreCard.text = "Starts in $day day"
+                }
+                else{
+                    binding.scoreCard.text = "Starts in $day days"
+                }
+//                Log.i("DAY_", "$day")
             }
             
             override fun onFinish() {
