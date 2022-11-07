@@ -59,6 +59,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 bubbleConfig?.poweredByIconUrl.ifNotBlank {
                     binding.poweredByImage.load(it)
                 }
+                countDownTimer?.cancel()
                 if (bubbleConfig?.isGlobalCountDownActive == true) {
                     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                     val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
@@ -75,7 +76,6 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                         bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
                             HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
-                    countDownTimer?.cancel()
                     showCountdown(different)
                 } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
                     binding.awayTeamFlag.show()
