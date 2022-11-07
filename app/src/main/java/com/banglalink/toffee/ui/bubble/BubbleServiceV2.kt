@@ -52,17 +52,9 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     private fun createDraggableItem(): BubbleDraggableItem {
         binding = BubbleViewV2LayoutBinding.inflate(LayoutInflater.from(this))
         
-        coroutineScope.launch {
-            bubbleConfig = bubbleConfigRepository.getLatestConfig()
-        }
-        if (mPref.bubbleConfigLiveData.value == null) {
-            coroutineScope.launch {
-                bubbleConfig = bubbleConfigRepository.getLatestConfig()
-                mPref.bubbleConfigLiveData.postValue(bubbleConfig)
-            }
-        }
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
+                this.bubbleConfig = bubbleConfig
                 bubbleConfig?.poweredBy?.ifNotBlank { binding.poweredByText.text = it }
                 bubbleConfig?.poweredByIconUrl.ifNotBlank {
                     binding.poweredByImage.load(it)
@@ -75,7 +67,6 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                     val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
                     binding.awayTeamFlag.hide()
                     binding.liveGif.hide()
-                    this.bubbleConfig = bubbleConfig
                     bubbleConfig.adIconUrl.ifNotBlank {
                         binding.homeTeamFlag.load(it)
                     }
@@ -104,6 +95,12 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 binding.root.isVisible = it
             }
         }
+        if (mPref.bubbleConfigLiveData.value == null) {
+            coroutineScope.launch {
+                bubbleConfig = bubbleConfigRepository.getLatestConfig()
+                mPref.bubbleConfigLiveData.postValue(bubbleConfig)
+            }
+        }
         return BubbleDraggableItem.Builder()
             .setLayout(binding.root)
             .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
@@ -123,18 +120,16 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 untilFinished -= MINUTES.toMillis(minute)
                 val second = MILLISECONDS.toSeconds(untilFinished)
                 
-
-                if (day == 1L || day == 0L){
+                if (day <= 1L){
                     binding.scoreCard.text = "Starts in $day day"
                 }
                 else{
                     binding.scoreCard.text = "Starts in $day days"
                 }
-//                Log.i("DAY_", "$day")
             }
             
             override fun onFinish() {
-                binding.scoreCard.text = "Starts in 0 days"
+                binding.scoreCard.text = "Starts in 0 day"
                 if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "running") {
                     binding.awayTeamFlag.show()
                     binding.liveGif.show()

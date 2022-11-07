@@ -73,6 +73,7 @@ class SettingsFragment : BaseFragment() {
     private fun handleBubbleToggleBtn() {
         mPref.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
         binding.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
+        mPref.startBubbleService.value = mPref.isBubbleEnabled
     }
     
     private fun setPrefItemListener() {

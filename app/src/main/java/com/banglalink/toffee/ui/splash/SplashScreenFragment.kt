@@ -249,8 +249,14 @@ class SplashScreenFragment : BaseFragment() {
                 is Success -> {
                     val data = it.data as? DecorationConfig
                     mPref.splashConfigLiveData.value = data?.splashScreen
-                    mPref.topBarConfigLiveData.value = data?.topBar
-                    
+                    data?.topBar?.getOrNull(0)?.let {
+                        mPref.isTopBarActive = it.isActive == 1
+                        mPref.topBarImagePathLight = it.imagePathLight
+                        mPref.topBarImagePathDark = it.imagePathDark
+                        mPref.topBarStartDate = it.startDate
+                        mPref.topBarEndDate = it.endDate
+                        mPref.topBarType = it.type
+                    }
                     isDynamicSplashActive = data?.splashScreen?.any {
                         try { 
                             it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref.getSystemTime())

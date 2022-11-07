@@ -165,7 +165,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     mPref.isBubbleActive = bubbleConfig.isBubbleActive
                     mPref.bubbleConfigLiveData.postValue(bubbleConfig)
                 } catch (e: Exception) {
-                    Log.e(TAG, "bubbleConfig: ${e.message}")
+                    Log.e("Bubble_", "bubbleConfig: ${e.message}")
                 }
             }
             else -> {

@@ -79,6 +79,17 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         }
     }
     
+    @BindingAdapter("loadImageFromUrlRoundedOrEmpty")
+    fun bindRoundImageOrEmpty(view: ImageView, imageUrl: String?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
+            view.load(imageUrl) {
+                transformations(CircleCropTransformation())
+                size(min(80.px, 150), min(80.px, 150))
+            }
+        }
+    }
+    
     @BindingAdapter("loadImageResource")
     fun loadImageFromResource(view: ImageView, image: Int) {
         view.load(image) {

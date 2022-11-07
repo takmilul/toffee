@@ -37,6 +37,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.R.style
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
@@ -58,6 +59,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -94,7 +96,6 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_S
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
-import com.banglalink.toffee.ui.bubble.BubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
@@ -365,6 +366,14 @@ class HomeActivity :
                 it?.dismiss()
             }).create().show()
         }
+        observe(mPref.startBubbleService) {
+            if (it) {
+                startBubbleService()
+            } else {
+//                stopService(bubbleIntent)
+                stopService(bubbleV2Intent)
+            }
+        }
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
         configureBottomSheet()
@@ -398,18 +407,7 @@ class HomeActivity :
             MobileAds.initialize(this)
         }
         
-        bubbleIntent = Intent(this, BubbleService::class.java)
-        bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-        if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-                if (mPref.bubbleDialogShowCount < 5) {
-                    displayMissingOverlayPermissionDialog()
-                }
-            } else {
-//                startService(bubbleIntent)
-                startService(bubbleV2Intent)
-            }
-        }
+        startBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true){
             getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment)
@@ -430,6 +428,21 @@ class HomeActivity :
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
+    }
+    
+    private fun startBubbleService() {
+//        bubbleIntent = Intent(this, BubbleService::class.java)
+        bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
+        if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                if (mPref.bubbleDialogShowCount < 5) {
+                    displayMissingOverlayPermissionDialog()
+                }
+            } else {
+//                startService(bubbleIntent)
+                startService(bubbleV2Intent)
+            }
+        }
     }
     
     private fun observeCircuitBreaker() {
@@ -844,32 +857,37 @@ class HomeActivity :
     }
     
     private fun observeTopBarBackground() {
-        observe(mPref.topBarConfigLiveData) {
-            it?.get(0)?.let {
-                val isActive = try {
-                    it.isActive == 1 && Utils.getDate(it.startDate).before(mPref.getSystemTime()) && Utils.getDate(it.endDate).after(mPref.getSystemTime())
-                } catch (e: Exception) {
-                    false
-                }
-                if (isActive) {
-                    if (it.type == "png") {
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            try {
-                                val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) it.imagePathLight else it.imagePathDark
-                                binding.tbar.toolbarImageView.load(imagePath)
-                            } catch (e: Exception) {
-                                ToffeeAnalytics.logException(e)
-                            }
+        val isActive = try {
+            mPref.isTopBarActive && Utils.getDate(mPref.topBarStartDate).before(mPref.getSystemTime()) && Utils.getDate(mPref.topBarEndDate).after(mPref.getSystemTime())
+        } catch (e: Exception) {
+            false
+        }
+        if (isActive) {
+            if (mPref.topBarType == "png") {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
+                        if (!imagePath.isNullOrBlank()){
+                            binding.tbar.toolbarImageView.load(imagePath)
+                        } else {
+                            loadDefaultTopBarColor()
                         }
+                    } catch (e: Exception) {
+                        ToffeeAnalytics.logException(e)
+                        loadDefaultTopBarColor()
                     }
-                } else {
-                    binding.tbar.toolbar.background = getDrawable(R.color.tool_bar_color)
-                    binding.tbar.toolbar.popupTheme = androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dark_ActionBar
                 }
             }
+        } else {
+            loadDefaultTopBarColor()
         }
     }
-
+    
+    private fun loadDefaultTopBarColor() {
+        binding.tbar.toolbar.background = getDrawable(color.tool_bar_color)
+        binding.tbar.toolbar.popupTheme = style.ThemeOverlay_AppCompat_Dark_ActionBar
+    }
+    
     @Throws(MalformedURLException::class, IOException::class)
     fun getDrawableFromUrl(url: String?): Bitmap? {
         val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection

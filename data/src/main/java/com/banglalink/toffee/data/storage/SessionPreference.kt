@@ -30,7 +30,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val splashConfigLiveData = MutableLiveData<List<DecorationData>?>()
-    val topBarConfigLiveData = MutableLiveData<List<DecorationData>?>()
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
@@ -53,6 +52,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val categoryId = MutableLiveData<Int>()
     val categoryName = MutableLiveData<String>()
     val isCatWiseLinChannelAvailable = MutableLiveData<Boolean>()
+    val startBubbleService = MutableLiveData<Boolean>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
@@ -673,6 +673,30 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_FIRESTORE_DB_COLLECTION_NAME, null)
         set(value) = pref.edit { putString(PREF_FIRESTORE_DB_COLLECTION_NAME, value) }
     
+    var isTopBarActive: Boolean
+        get() = pref.getBoolean(PREF_IS_TOP_BAR_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_TOP_BAR_ACTIVE, value) }
+    
+    var topBarImagePathLight: String?
+        get() = pref.getString(PREF_TOP_BAR_IMAGE_PATH_LIGHT, null)
+        set(value) = pref.edit { putString(PREF_TOP_BAR_IMAGE_PATH_LIGHT, value) }
+    
+    var topBarImagePathDark: String?
+        get() = pref.getString(PREF_TOP_BAR_IMAGE_PATH_DARK, null)
+        set(value) = pref.edit { putString(PREF_TOP_BAR_IMAGE_PATH_DARK, value) }
+    
+    var topBarStartDate: String?
+        get() = pref.getString(PREF_TOP_BAR_START_DATE, null)
+        set(value) = pref.edit { putString(PREF_TOP_BAR_START_DATE, value) }
+    
+    var topBarEndDate: String?
+        get() = pref.getString(PREF_TOP_BAR_END_DATE, null)
+        set(value) = pref.edit { putString(PREF_TOP_BAR_END_DATE, value) }
+    
+    var topBarType: String?
+        get() = pref.getString(PREF_TOP_BAR_TYPE, null)
+        set(value) = pref.edit { putString(PREF_TOP_BAR_TYPE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -895,6 +919,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
         private const val PREF_EXTERNAL_TIME_OUT = "pref_external_time_out"
         private const val PREF_FIRESTORE_DB_COLLECTION_NAME = "pref_firestore_db_collection_name"
+        private const val PREF_IS_TOP_BAR_ACTIVE = "pref_top_bar_is_active"
+        private const val PREF_TOP_BAR_IMAGE_PATH_LIGHT = "pref_top_bar_image_path_light"
+        private const val PREF_TOP_BAR_IMAGE_PATH_DARK = "pref_top_bar_image_path_dark"
+        private const val PREF_TOP_BAR_START_DATE = "pref_top_bar_start_date"
+        private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
+        private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

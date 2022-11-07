@@ -108,7 +108,8 @@ class HomeViewModel @Inject constructor(
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        FirebaseMessaging.getInstance().subscribeToTopic("fifa-score")
+        FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
+        FirebaseMessaging.getInstance().subscribeToTopic("prod-fifa-score")
         
         // Disable this in production.
         if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
