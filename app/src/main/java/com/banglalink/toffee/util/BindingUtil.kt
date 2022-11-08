@@ -156,9 +156,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             view.loadPlaceholder()
         } else {
             view.load(imageUrl) {
-                transformations(
-                    CropCenterEndTransformation(4.1f)
-                )
+//                transformations(
+//                    CropCenterEndTransformation(4.1f)
+//                )
                 setImageRequestParams()
                 size(min(360.px, 720), min(80.px, 150))
             }

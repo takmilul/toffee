@@ -34,7 +34,7 @@
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/featured_partner_banner"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 loadPartnerImageFromUrl="@{data.bannerUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
