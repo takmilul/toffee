@@ -4,16 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-       android:background="@color/screen_bg">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:background="@drawable/fragment_bg_bottom"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/channel_tv"
@@ -28,6 +19,7 @@
             android:id="@+id/viewAllButton"
             style="@style/ViewAllTextView"
             android:text="@string/view_all"
+            android:visibility="gone"
             app:drawableEndCompat="@drawable/ic_right_arrow_accent"
             app:layout_constraintTop_toTopOf="@id/channel_tv"
             app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
