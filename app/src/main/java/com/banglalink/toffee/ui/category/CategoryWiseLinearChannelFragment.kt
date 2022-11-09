@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.filter
@@ -14,9 +13,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentCategoryWiseLinearChannelBinding
-import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -75,7 +72,7 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
         mPref.isCatWiseLinChannelAvailable.value=false
         job?.cancel()
         job = viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadCategoryWiseContent(mPref.categoryId.value ?: 16).collectLatest {
+            viewModel.loadCategoryWiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     binding.root.show()
                     mPref.isCatWiseLinChannelAvailable.value=true

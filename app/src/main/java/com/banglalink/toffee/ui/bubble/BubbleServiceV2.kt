@@ -61,29 +61,21 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 }
                 countDownTimer?.cancel()
                 if (bubbleConfig?.isGlobalCountDownActive == true) {
-                    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                    val endDateDay = bubbleConfig.countDownEndTime ?: "2022-11-21 16:00:00"
-                    val endDate = format.parse(endDateDay)
-                    //milliseconds
-                    val different = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
                     binding.awayTeamFlag.hide()
                     binding.liveGif.hide()
                     bubbleConfig.adIconUrl.ifNotBlank {
                         binding.homeTeamFlag.load(it)
                     }
                     binding.fifaTitleOne.text = bubbleConfig.bubbleText
-                    binding.fifaTitleOne.text =
-                        bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
-                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        }
-                    showCountdown(different)
-                } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "running") {
-                    binding.awayTeamFlag.show()
-                    binding.liveGif.show()
+                    binding.fifaTitleOne.text = bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
+                        HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    }
+                    
+                    val day = setCountDownTime()
+                    showCountdown(day)
+                } else if (bubbleConfig?.type == "running") {
                     matchRunningState()
-                } else if (bubbleConfig?.isGlobalCountDownActive == false && bubbleConfig.type == "upcomming") {
-                    binding.awayTeamFlag.show()
-                    binding.liveGif.hide()
+                } else if (bubbleConfig?.type == "upcomming") {
                     matchUpcomingState()
                 }
             } catch (e: Exception) {
@@ -111,39 +103,35 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     private fun showCountdown(different: Long) {
         countDownTimer = object : CountDownTimer(different, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                var untilFinished = millisUntilFinished
-                val day = MILLISECONDS.toDays(untilFinished)
-                untilFinished -= DAYS.toMillis(day)
-                val hour = MILLISECONDS.toHours(untilFinished)
-                untilFinished -= HOURS.toMillis(hour)
-                val minute = MILLISECONDS.toMinutes(untilFinished)
-                untilFinished -= MINUTES.toMillis(minute)
-                val second = MILLISECONDS.toSeconds(untilFinished)
-                
-                if (day <= 1L){
-                    binding.scoreCard.text = "Starts in $day day"
-                }
-                else{
-                    binding.scoreCard.text = "Starts in $day days"
-                }
+                setCountDownTime()
             }
             
-            override fun onFinish() {
-                binding.scoreCard.text = "Starts in 0 day"
-                if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "running") {
-                    binding.awayTeamFlag.show()
-                    binding.liveGif.show()
-                    matchRunningState()
-                } else if (bubbleConfig?.isGlobalCountDownActive == true && bubbleConfig!!.type == "upcomming") {
-                    binding.awayTeamFlag.show()
-                    binding.liveGif.hide()
-                    matchUpcomingState()
-                }
-            }
+            override fun onFinish() {}
         }.start()
     }
     
+    private fun setCountDownTime(): Long {
+        val endDateDay: String = bubbleConfig?.countDownEndTime ?: "2022-11-20 16:00:00"
+        val today = Date().apply {
+            hours = 0
+            minutes = 0
+            seconds = 0
+        }
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: today
+        val endDay: Date = dateFormat.parse(endDateDay) ?: today
+        val day = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
+        if (day <= 1L) {
+            binding.scoreCard.text = "Starts in $day day"
+        } else {
+            binding.scoreCard.text = "Starts in $day days"
+        }
+        return day
+    }
+    
     private fun matchRunningState() {
+        binding.awayTeamFlag.show()
+        binding.liveGif.show()
         binding.liveGif.load(getDrawable(R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
@@ -159,6 +147,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     
     private fun matchUpcomingState() {
         runCatching {
+            binding.awayTeamFlag.show()
+            binding.liveGif.hide()
             bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotBlank {
                 bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
             }

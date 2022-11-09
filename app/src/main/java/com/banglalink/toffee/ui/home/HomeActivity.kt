@@ -1470,6 +1470,10 @@ class HomeActivity :
         } else {
             allChannelViewModel.selectedChannel.postValue(null)
         }
+        if (channelInfo.categoryId == 16) {
+            mPref.categoryName.value = channelInfo.category
+            mPref.categoryId.value = channelInfo.categoryId
+        }
         allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
         addChannelToPlayList(channelInfo)
     }
