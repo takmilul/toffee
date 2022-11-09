@@ -208,7 +208,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
             networkCachePolicy(ENABLED)
             memoryCachePolicy(DISABLED)
             allowHardware(false)
-            bitmapConfig(Bitmap.Config.ARGB_8888)
         }.build()
         
         return ImageLoader.Builder(this).apply {

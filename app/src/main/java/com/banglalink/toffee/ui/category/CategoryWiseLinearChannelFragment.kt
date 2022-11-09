@@ -13,6 +13,7 @@ import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.databinding.FragmentCategoryWiseLinearChannelBinding
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -38,12 +39,12 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
     @Inject lateinit var bindingUtil: BindingUtil
     val homeViewModel by activityViewModels<HomeViewModel>()
     val viewModel by activityViewModels<LandingPageViewModel>()
-    private var _binding: FragmentLandingTvChannelsBinding? = null
+    private var _binding: FragmentCategoryWiseLinearChannelBinding? = null
     private lateinit var mAdapter: CategoryWiseLinearChannelAdapter
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoryWiseLinearChannelBinding.inflate(inflater, container, false)
         return binding.root
     }
     
