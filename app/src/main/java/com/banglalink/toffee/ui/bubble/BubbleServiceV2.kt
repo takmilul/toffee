@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
@@ -25,6 +26,7 @@ import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
 import com.banglalink.toffee.util.Log
+import com.google.ads.interactivemedia.v3.internal.it
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
@@ -33,8 +35,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit.*
 
-class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener,
-    IBubbleInteractionListener {
+class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
@@ -53,33 +54,38 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         binding = BubbleViewV2LayoutBinding.inflate(LayoutInflater.from(this))
         
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
-            try {
-                this.bubbleConfig = bubbleConfig
-                bubbleConfig?.poweredBy?.ifNotBlank { binding.poweredByText.text = it }
-                bubbleConfig?.poweredByIconUrl.ifNotBlank {
-                    binding.poweredByImage.load(it)
-                }
-                countDownTimer?.cancel()
-                if (bubbleConfig?.isGlobalCountDownActive == true) {
-                    binding.awayTeamFlag.hide()
-                    binding.liveGif.hide()
-                    bubbleConfig.adIconUrl.ifNotBlank {
-                        binding.homeTeamFlag.load(it)
+            runCatching {
+                bubbleConfig?.let {
+                    this.bubbleConfig = it
+                    it.poweredBy?.ifNotBlank { binding.poweredByText.text = it }
+                    it.poweredByIconUrl.ifNotBlank {
+                        binding.poweredByImage.load(it)
                     }
-                    binding.fifaTitleOne.text = bubbleConfig.bubbleText
-                    binding.fifaTitleOne.text = bubbleConfig.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
-                        HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    countDownTimer?.cancel()
+                    if (it.isGlobalCountDownActive) {
+                        binding.awayTeamFlag.hide()
+                        binding.liveGif.hide()
+                        it.adIconUrl.ifNotBlank {
+                            binding.homeTeamFlag.load(it)
+                        }
+                        binding.fifaTitleOne.text = it.bubbleText
+                        binding.fifaTitleOne.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
+                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        }
+                        
+                        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        val dateTimeDifference = dateTimeFormat.parse(
+                            it.countDownEndTime ?: "2022-11-20 16:00:00"
+                        )?.time?.minus(mPref.getSystemTime().time) ?: 0L
+                        showCountdown(dateTimeDifference)
+                    } else if (it.type == "running") {
+                        matchRunningState()
+                    } else if (it.type == "upcomming") {
+                        matchUpcomingState()
                     }
-                    
-                    val day = setCountDownTime()
-                    showCountdown(day)
-                } else if (bubbleConfig?.type == "running") {
-                    matchRunningState()
-                } else if (bubbleConfig?.type == "upcomming") {
-                    matchUpcomingState()
                 }
-            } catch (e: Exception) {
-                ToffeeAnalytics.logException(e)
+            }.onFailure {
+                ToffeeAnalytics.logException(it)
             }
         }
         mPref.bubbleVisibilityLiveData.observeForever {
@@ -100,33 +106,39 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             .build()
     }
     
-    private fun showCountdown(different: Long) {
-        countDownTimer = object : CountDownTimer(different, 1000) {
+    private fun showCountdown(dateTimeDifference: Long) {
+        countDownTimer = object : CountDownTimer(dateTimeDifference, 10000) {
             override fun onTick(millisUntilFinished: Long) {
                 setCountDownTime()
             }
             
-            override fun onFinish() {}
+            override fun onFinish() {
+                setCountDownTime()
+            }
         }.start()
     }
     
-    private fun setCountDownTime(): Long {
-        val endDateDay: String = bubbleConfig?.countDownEndTime ?: "2022-11-20 16:00:00"
-        val today = Date().apply {
-            hours = 0
-            minutes = 0
-            seconds = 0
+    private fun setCountDownTime() {
+        runCatching {
+            val countDownEndTime: String = bubbleConfig?.countDownEndTime ?: "2022-11-20 16:00:00"
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val currentDate = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+            val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
+            val endDay: Date = dateFormat.parse(countDownEndTime) ?: currentDate
+            val remainingDays = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
+            if (remainingDays <= 1L) {
+                binding.scoreCard.text = "Starts in 1 day"
+            } else {
+                binding.scoreCard.text = "Starts in $remainingDays days"
+            }
+        }.onFailure {
+            ToffeeAnalytics.logException(it)
         }
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: today
-        val endDay: Date = dateFormat.parse(endDateDay) ?: today
-        val day = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
-        if (day <= 1L) {
-            binding.scoreCard.text = "Starts in $day day"
-        } else {
-            binding.scoreCard.text = "Starts in $day days"
-        }
-        return day
     }
     
     private fun matchRunningState() {
@@ -167,7 +179,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }
             binding.scoreCard.text = finalTime
         }.onFailure {
-            Log.i("Bubble_", "matchUpcomingState: ")
+            ToffeeAnalytics.logException(it)
         }
     }
     
