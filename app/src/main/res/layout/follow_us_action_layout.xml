@@ -56,6 +56,7 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="center"
+        android:visibility="gone"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintStart_toEndOf="@id/instagramButton"
         app:layout_constraintTop_toTopOf="@id/facebookButton"

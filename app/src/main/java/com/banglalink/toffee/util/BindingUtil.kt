@@ -9,6 +9,7 @@ import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ImageView.ScaleType.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -159,6 +160,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 //                transformations(
 //                    CropCenterEndTransformation(4.1f)
 //                )
+                listener(onStart = {
+                    view.scaleType = CENTER_CROP
+                }, onError = { _, _ ->
+                    view.scaleType = CENTER_CROP
+                }, onSuccess = { _, _ ->
+                    view.scaleType = FIT_XY
+                })
                 setImageRequestParams()
                 size(min(360.px, 720), min(80.px, 150))
             }
