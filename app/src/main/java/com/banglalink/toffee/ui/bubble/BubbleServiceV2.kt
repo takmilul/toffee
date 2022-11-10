@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
@@ -26,7 +25,6 @@ import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
 import com.banglalink.toffee.util.Log
-import com.google.ads.interactivemedia.v3.internal.it
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
@@ -107,7 +105,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     }
     
     private fun showCountdown(dateTimeDifference: Long) {
-        countDownTimer = object : CountDownTimer(dateTimeDifference, 10000) {
+        countDownTimer = object : CountDownTimer(dateTimeDifference, 10_000) {
             override fun onTick(millisUntilFinished: Long) {
                 setCountDownTime()
             }

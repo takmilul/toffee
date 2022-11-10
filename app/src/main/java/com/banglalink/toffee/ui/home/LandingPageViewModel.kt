@@ -9,11 +9,9 @@ import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
-import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.exception.JobCanceledError
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.showToast
@@ -197,8 +195,8 @@ class LandingPageViewModel @Inject constructor(
         }).getList()
     }
     
-    val loadFeaturedPartners by lazy {
-        BaseListRepositoryImpl({
+    fun loadFeaturedPartners (): Flow<PagingData<FeaturedPartner>> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 featuredPartnerAssistedFactory.create("VOD"), ApiNames.GET_FEATURED_PARTNERS, BrowsingScreens.HOME_PAGE
             )

@@ -131,10 +131,10 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @SimpleHttpClient
-    fun providesSimpleHttpClient(@DefaultCache cache: Cache,mpref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+    fun providesSimpleHttpClient(@DefaultCache cache: Cache, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(if(mpref.internalTimeOut==0) 10 else mpref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            .readTimeout(if(mpref.internalTimeOut==0) 20 else mpref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
+            .connectTimeout(if(mPref.internalTimeOut==0) 10 else mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            .readTimeout(if(mPref.internalTimeOut==0) 20 else mPref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
             .cache(cache)
             .build()
     }

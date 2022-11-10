@@ -95,7 +95,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
     
     private fun observeFeaturedPartner() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadFeaturedPartners.collectLatest {
+            viewModel.loadFeaturedPartners().collectLatest {
                 mAdapter.submitData(it)
             }
         }
