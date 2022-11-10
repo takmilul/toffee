@@ -129,11 +129,14 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
             val endDay: Date = dateFormat.parse(countDownEndTime) ?: currentDate
             val remainingDays = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
-            if (remainingDays <= 1L) {
-                binding.scoreCard.text = "Starts in 1 day"
+            val remainingDaysText = if (remainingDays < 1L) {
+                "0 day"
+            } else if (remainingDays == 1L) {
+                "1 day"
             } else {
-                binding.scoreCard.text = "Starts in $remainingDays days"
+                "$remainingDays days"
             }
+            binding.scoreCard.text = "Starts in $remainingDaysText"
         }.onFailure {
             ToffeeAnalytics.logException(it)
         }
