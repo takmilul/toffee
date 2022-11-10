@@ -42,14 +42,14 @@
                 
                 <ImageView
                     android:id="@+id/back_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="6dp"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_arrow_back" />
                 
@@ -58,7 +58,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:layout_toEndOf="@+id/back_icon"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -66,7 +65,7 @@
                     android:textColor="@color/cardTitleColor"
                     tools:ignore="RelativeOverlap"
                     tools:text="Title" />
-            
+                
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
         

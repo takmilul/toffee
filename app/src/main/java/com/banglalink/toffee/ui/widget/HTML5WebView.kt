@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -12,37 +13,69 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.webkit.WebChromeClient.CustomViewCallback
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.util.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("SetJavaScriptEnabled")
 class HTML5WebView @JvmOverloads constructor(
     private val mContext: Context, 
+    pageTitle: String? = null,
     attrs: AttributeSet? = null, 
     defStyle: Int = 0
 ) : WebView(mContext, attrs, defStyle) {
     
+    private val mPref = SessionPreference.getInstance()
+    private val cPref = CommonPreference.getInstance()
     val layout: FrameLayout = FrameLayout(context)
     private var mCustomView: View? = null
     private val mCustomViewContainer: FrameLayout
     private val mWebChromeClient: MyWebChromeClient
+    private val topBarImageView: ImageView
     private lateinit var mCustomViewCallback: CustomViewCallback
     private val _showProgressMutableLiveData = MutableLiveData<Boolean>()
     var showProgressLiveData: LiveData<Boolean> = _showProgressMutableLiveData
+    private val coroutineScope : CoroutineScope = CoroutineScope(Dispatchers.Default)
     
     init {
         val param = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         val mBrowserFrameLayout = LayoutInflater.from(mContext).inflate(R.layout.custom_screen, null, false) as FrameLayout
+        topBarImageView = mBrowserFrameLayout.findViewById(R.id.toolbarImageView)
+        val toffeeIconView = mBrowserFrameLayout.findViewById<ImageView>(R.id.logo_iv)
+        val titleTextView = mBrowserFrameLayout.findViewById<TextView>(R.id.title_tv)
+        val backIcon = mBrowserFrameLayout.findViewById<ImageView>(R.id.back_icon)
         val mContentView = mBrowserFrameLayout.findViewById<View>(R.id.main_content) as FrameLayout
         mCustomViewContainer = mBrowserFrameLayout.findViewById<View>(R.id.fullscreen_custom_content) as FrameLayout
-        layout.addView(mBrowserFrameLayout, param)
+        toffeeIconView.setImageResource(R.drawable.ic_toffee)
+        pageTitle?.let { titleTextView.text = it }
+        observeTopBarBackground()
         
+        toffeeIconView.setOnClickListener {
+            (mContext as Html5PlayerViewActivity).finish()
+        }
+        backIcon.setOnClickListener {
+            (mContext as Html5PlayerViewActivity).finish()
+        }
+//        titleTextView.setOnClickListener {
+//            (mContext as Html5PlayerViewActivity).finish()
+//        }
+        
+        layout.addView(mBrowserFrameLayout, param)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             focusable = FOCUSABLE_AUTO
         }
         isFocusableInTouchMode = true
-        
         settings.apply {
             setSupportZoom(true)
             databaseEnabled = true
@@ -65,6 +98,28 @@ class HTML5WebView @JvmOverloads constructor(
         scrollBarStyle = SCROLLBARS_INSIDE_OVERLAY
         mContentView.addView(this)
         _showProgressMutableLiveData.postValue(true)
+    }
+    
+    private fun observeTopBarBackground() {
+        val isActive = try {
+            mPref.isTopBarActive && Utils.getDate(mPref.topBarStartDate).before(mPref.getSystemTime()) && Utils.getDate(mPref.topBarEndDate).after(mPref.getSystemTime())
+        } catch (e: Exception) {
+            false
+        }
+        if (isActive) {
+            if (mPref.topBarType == "png") {
+                coroutineScope.launch(Dispatchers.IO) {
+                    try {
+                        val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
+                        if (!imagePath.isNullOrBlank()){
+                            topBarImageView.load(imagePath)
+                        }
+                    } catch (e: Exception) {
+                        ToffeeAnalytics.logException(e)
+                    }
+                }
+            }
+        }
     }
     
     fun inCustomView(): Boolean {

@@ -21,6 +21,7 @@ import kotlin.system.exitProcess
 @AndroidEntryPoint
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
+    private var title: String? = null
     private var htmlUrl: String? = null
     private var shareableUrl: String? = null
     private lateinit var mWebView: HTML5WebView
@@ -32,6 +33,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     companion object {
         const val CONTENT_URL = "content_url"
         const val SHAREABLE_URL = "shareable_url"
+        const val TITLE = "title"
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,10 +41,11 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         MedalliaDigital.disableIntercept()
         val extras = intent.extras
         if (extras != null) {
+            title = extras.getString(TITLE)
             htmlUrl = extras.getString(CONTENT_URL)!!
             shareableUrl = extras.getString(SHAREABLE_URL)
         }
-        mWebView = HTML5WebView(this)
+        mWebView = HTML5WebView(this, title)
 
         if (savedInstanceState != null) {
             mWebView.restoreState(savedInstanceState)

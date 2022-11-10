@@ -1648,6 +1648,7 @@ class HomeActivity :
             launchActivity<Html5PlayerViewActivity> {
                 putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
                 putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)
+                putExtra(Html5PlayerViewActivity.TITLE, it.program_name)
             }
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
