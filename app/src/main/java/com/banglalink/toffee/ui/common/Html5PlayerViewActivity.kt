@@ -89,8 +89,8 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
             }
             PLAY_CONTENT.value -> {
                 mPref.isPaidUser = true
-                shareableUrl?.run {
-                    mPref.shareableUrlLiveData.postValue(this)
+                url?.let {
+                    mPref.shareableUrlLiveData.postValue(it)
                 }
             }
             DEEP_LINK.value -> {

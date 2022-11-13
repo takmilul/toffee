@@ -528,10 +528,10 @@ class HomeActivity :
         }
     }
     
-    private fun showCustomDialog(title: String, installationId: String) {
-        ToffeeAlertDialogBuilder(this, title = title, text = installationId, positiveButtonTitle = "copy", positiveButtonListener = {
+    private fun showCustomDialog(title: String, message: String) {
+        ToffeeAlertDialogBuilder(this, title = title, text = message, positiveButtonTitle = "copy", positiveButtonListener = {
             val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clip: ClipData = ClipData.newPlainText("DeviceId", installationId)
+            val clip: ClipData = ClipData.newPlainText(title, message)
             clipboard.setPrimaryClip(clip)
             showToast("copied to clipboard")
             it?.dismiss()
@@ -1644,7 +1644,7 @@ class HomeActivity :
         showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hls_url_mobile}")
         it.getHlsLink()?.let { url ->
             viewModel.sendViewContentEvent(it.copy(id = "0"))
-            val shareableUrl = if (it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == PAYMENT) it.video_share_url else null
+            val shareableUrl = it.video_share_url
             launchActivity<Html5PlayerViewActivity> {
                 putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
                 putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)

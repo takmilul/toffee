@@ -15,7 +15,7 @@ class GetContentFromShareableUrl @Inject constructor (private val preference: Se
         }
         
         return if(response.response.channels==null) null else response.response.channels[0].apply {
-            isFromSportsCategory = (isVOD && categoryId == 16)
+            isFromSportsCategory = (categoryId == 16)
         }
     }
 }
