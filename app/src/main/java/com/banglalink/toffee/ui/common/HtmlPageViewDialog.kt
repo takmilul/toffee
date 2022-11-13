@@ -32,7 +32,7 @@ class HtmlPageViewDialog : DialogFragment() {
     @Inject lateinit var cPref: CommonPreference
     private lateinit var htmlUrl: String
     private var header: String? = ""
-    private var isHideToffeeIcon: Boolean = true
+    private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,11 +48,11 @@ class HtmlPageViewDialog : DialogFragment() {
         
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
-        isHideToffeeIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
+        isHideBackIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon",false) ?: false
         
         binding.titleTv.text = arguments?.getString("myTitle", " ") ?: " "
-        if (isHideToffeeIcon) binding.backIcon.hide() else binding.backIcon.show()
+        if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
         observeTopBarBackground()
         binding.webview.webViewClient = object : WebViewClient() {

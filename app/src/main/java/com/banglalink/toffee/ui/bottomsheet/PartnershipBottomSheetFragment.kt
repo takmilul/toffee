@@ -36,6 +36,8 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
         val args = Bundle().apply {
             putString("myTitle", "Creators Policy")
             putString("url", mPref.creatorsPolicyUrl)
+            putBoolean("isHideBackIcon", false)
+            putBoolean("isHideCloseIcon", true)
         }
         findNavController().navigate(R.id.htmlPageViewDialog, args)
     }
