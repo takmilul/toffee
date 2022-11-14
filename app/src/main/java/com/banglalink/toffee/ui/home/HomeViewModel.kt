@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
+import android.os.Build
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
@@ -24,6 +26,7 @@ import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.SimpleHttpClient
+import com.banglalink.toffee.extension.isTestEnvironment
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
@@ -49,6 +52,7 @@ class HomeViewModel @Inject constructor(
     private val setFcmToken: SetFcmToken,
     private val reactionDao: ReactionDao,
     private val cacheManager: CacheManager,
+    private var toffeeConfig: ToffeeConfig,
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
     private val vastTagServiceV2: VastTagServiceV2,
@@ -108,9 +112,13 @@ class HomeViewModel @Inject constructor(
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
-        FirebaseMessaging.getInstance().subscribeToTopic("prod-fifa-score")
-        
+        if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) {
+            FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("prod-fifa-score")
+        } else {
+            FirebaseMessaging.getInstance().subscribeToTopic("prod-fifa-score")
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("test-fifa-score")
+        }
         // Disable this in production.
         if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
             FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
