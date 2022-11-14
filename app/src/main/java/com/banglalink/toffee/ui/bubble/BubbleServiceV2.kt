@@ -91,6 +91,11 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                 binding.root.isVisible = it
             }
         }
+        mPref.startBubbleService.observeForever {
+            if (!it) {
+                stopSelf()
+            }
+        }
         if (mPref.bubbleConfigLiveData.value == null) {
             coroutineScope.launch {
                 bubbleConfig = bubbleConfigRepository.getLatestConfig()

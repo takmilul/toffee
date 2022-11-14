@@ -79,6 +79,9 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     @JavascriptInterface
     fun webCallback(type: Int, message: String? = null, url: String? = null) {
         when (type) {
+            HOME_SCREEN.value -> {
+                finish()
+            }
             LOGIN_DIALOG.value -> {
                 mPref.loginDialogLiveData.postValue(true)
             }
@@ -89,7 +92,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
             }
             PLAY_CONTENT.value -> {
                 mPref.isPaidUser = true
-                url?.let {
+                shareableUrl?.let {
                     mPref.shareableUrlLiveData.postValue(it)
                 }
             }
