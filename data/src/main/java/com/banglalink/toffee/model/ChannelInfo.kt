@@ -170,7 +170,9 @@ data class ChannelInfo(
     @SerializedName("cdn_type")
     var cdnType: String? = null,
     @SerializedName("ads_group")
-    var adGroup: String? = null
+    var adGroup: String? = null,
+    @SerializedName("featured_banner_code")
+    var bannerEventName: String? = null
 //    @SerializedName("sign_cookie")
 //    var signCookie: String? = null,
 //    @SerializedName("sign_cookie_expire")

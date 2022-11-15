@@ -44,6 +44,7 @@ class CategoryDetailsFragment : BaseFragment() {
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
+        landingViewModel.featuredPageName.value = category.categoryName + " Page"
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.categoryId.value = category.id.toInt()
         mPref.categoryId.value = category.id.toInt()

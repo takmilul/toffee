@@ -47,6 +47,7 @@ class LandingPageViewModel @Inject constructor(
     val pageType = MutableLiveData<PageType>()
     val isDramaSeries = MutableLiveData<Boolean>()
     val selectedHashTag = SingleLiveEvent<String>()
+    val featuredPageName = MutableLiveData<String>()
     val hashtagList = SingleLiveEvent<List<String>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val subCategories = SingleLiveEvent<List<SubCategory>>()

@@ -65,6 +65,7 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
         landingViewModel.pageName.value = BrowsingScreens.HOME_PAGE
+        landingViewModel.featuredPageName.value = "Home Page"
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"

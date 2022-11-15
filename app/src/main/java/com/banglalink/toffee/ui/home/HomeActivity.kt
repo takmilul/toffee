@@ -1164,7 +1164,7 @@ class HomeActivity :
                                         "promotion_name" to promotionName,
                                         "msisdn" to mPref.phoneNumber,
                                         "device_id" to cPref.deviceId,
-                                        "device_type" to 1,
+                                        "device_type" to "1",
                                         "ad_id" to mPref.adId,
                                         "redirection_link" to forwardUrl,
                                         "app_version" to cPref.appVersionName,
