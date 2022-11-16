@@ -68,7 +68,22 @@ object MigrationProvider {
         }
     }
     
+    private val MIGRATION_10_11 = object: Migration(10,11) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("DROP TABLE IF EXISTS `BubbleConfig`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BubbleConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `isBubbleActive` INTEGER NOT NULL, `imageType` TEXT, `adIconUrl` TEXT, `bubbleText` TEXT, `adForwardUrl` TEXT, `isGlobalCountDownActive` INTEGER NOT NULL, `countDownEndTime` TEXT, `type` TEXT, `matchStartTime` TEXT, `venue` TEXT, `poweredBy` TEXT, `poweredByIconUrl` TEXT, `receiveTime` INTEGER NOT NULL, `homeScore` TEXT, `homeCountryName` TEXT, `homeCountryFlag` TEXT, `awayScore` TEXT, `awayCountryName` TEXT, `awayCountryFlag` TEXT)")
+        }
+    }
+    
+    private val MIGRATION_11_12 = object: Migration(11,12) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("DROP TABLE IF EXISTS `BubbleConfig`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `BubbleConfig` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `isBubbleActive` INTEGER NOT NULL, `imageType` TEXT, `adIconUrl` TEXT, `bubbleText` TEXT, `adForwardUrl` TEXT, `isGlobalCountDownActive` INTEGER NOT NULL, `countDownEndTime` TEXT, `type` TEXT, `matchStartTime` TEXT, `venue` TEXT, `poweredBy` TEXT, `poweredByIconUrl` TEXT, `receiveTime` INTEGER NOT NULL, `homeScore` TEXT, `homeCountryName` TEXT, `homeCountryFlag` TEXT, `awayScore` TEXT, `awayCountryName` TEXT, `awayCountryFlag` TEXT)")
+        }
+    }
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, 
+            MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
     }
 }

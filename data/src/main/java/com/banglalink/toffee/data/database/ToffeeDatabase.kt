@@ -29,7 +29,7 @@ import com.banglalink.toffee.model.BubbleConfig
         CdnChannelItem::class,
         BubbleConfig::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
