@@ -36,19 +36,19 @@ fun String.toMD5(): String {
     }
 }
 
-inline fun String?.ifNotBlank(function: ((it: String) -> Unit)) {
-    if (!this.isNullOrBlank()) {
+inline fun String?.doIfNotNullOrEmpty(function: ((it: String) -> Unit)) {
+    if (!this.isNullOrBlank() && !this.equals("null", true)) {
         function(this)
     }
 }
 
-inline fun String?.isNotBlank(function: ((it: String) -> String?)): String? {
-    return if (!this.isNullOrBlank()) {
+inline fun String?.isNotNullBlank(function: ((it: String) -> String?)): String? {
+    return if (!this.isNullOrBlank() && !this.equals("null", true)) {
         function(this)
     } else null
 }
 
-inline fun <T: Any> Collection<T>?.ifNotNullOrEmpty(function: (Collection<T>) -> Unit): Unit {
+inline fun <T: Any> Collection<T>?.doIfNotNullOrEmpty(function: (Collection<T>) -> Unit): Unit {
     if (!this.isNullOrEmpty()) {
         function(this)
     }
@@ -61,7 +61,7 @@ inline fun <T> Collection<T>?.isNotNullOrEmpty(function: (Collection<T>) -> Coll
 }
 
 fun String.overrideUrl(newUrl: String?): String {
-    return newUrl?.isNotBlank {
+    return newUrl?.isNotNullBlank {
         try {
             val url = URL(this)
             var path = url.path

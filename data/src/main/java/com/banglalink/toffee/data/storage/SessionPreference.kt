@@ -7,8 +7,8 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.extension.ifNotNullOrEmpty
-import com.banglalink.toffee.extension.isNotBlank
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.isNotNullBlank
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -159,7 +159,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
     
     val netType: String
-        get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
+        get() = Utils.checkWifiOnAndConnected(context.applicationContext)
     
     var isSubscriptionActive: String
         get() = "false"
@@ -206,7 +206,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         val dateString = pref.getString(PREF_SYSTEM_TIME, null)
         val deviceDate = Date()
         try {
-            dateString?.isNotBlank {
+            dateString?.isNotNullBlank {
                 val serverDate = Utils.getDate(it)
                 return if (deviceDate.after(serverDate)) deviceDate else serverDate
             }
@@ -717,7 +717,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             if (it.isBanglalinkNumber != null) {
                 isBanglalinkNumber = it.isBanglalinkNumber
             }
-            it.dbVersionList?.ifNotNullOrEmpty {
+            it.dbVersionList?.doIfNotNullOrEmpty {
                 setDBVersion(it.toList())
             }
             latitude = it.lat ?: ""

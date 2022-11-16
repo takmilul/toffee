@@ -8,10 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
 import coil.load
-import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewLayoutBinding
-import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
@@ -58,7 +57,7 @@ class BubbleService : BaseBubbleService(), IBubbleDraggableWindowItemEventListen
         mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
             try {
                 this.bubbleConfig = bubbleConfig
-                bubbleConfig?.adIconUrl?.ifNotBlank {
+                bubbleConfig?.adIconUrl?.doIfNotNullOrEmpty {
                     binding.draggableViewImage.load(it)
                 }
                 if (bubbleConfig?.isGlobalCountDownActive == true) {

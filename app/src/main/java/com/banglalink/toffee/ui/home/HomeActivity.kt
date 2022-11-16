@@ -446,16 +446,16 @@ class HomeActivity :
     }
     
     private fun observeCircuitBreaker() {
-        mPref.circuitBreakerFirestoreCollectionName?.let {
+        mPref.circuitBreakerFirestoreCollectionName?.doIfNotNullOrEmpty {
             lifecycleScope.launch {
-                val db = Firebase.firestore
-                db.collection(it).addSnapshotListener { value, error ->
-                    error?.let {
-                        return@addSnapshotListener
-                    }
-                    circuitBreakerDataList.clear()
-                    value?.let {
-                        runCatching {
+                runCatching {
+                    val db = Firebase.firestore
+                    db.collection(it).addSnapshotListener { value, error ->
+                        error?.let {
+                            return@addSnapshotListener
+                        }
+                        circuitBreakerDataList.clear()
+                        value?.let {
                             for (doc in value) {
                                 val contentId = doc.getLong("content_id")?.toString()
                                 val isActive = doc.getBoolean("is_active")
@@ -466,11 +466,11 @@ class HomeActivity :
                                     circuitBreakerDataList[contentId] = data
                                 }
                             }
-                        }.onFailure {
-                            val message = it.message
-                            Log.i(TAG, "observeCircuitBreaker: $message")
                         }
                     }
+                }.onFailure {
+                    val message = it.message
+                    Log.i(TAG, "observeCircuitBreaker: $message")
                 }
             }
         }
@@ -488,9 +488,11 @@ class HomeActivity :
     }
     
     private fun requestOverlayPermission() {
-        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-            startForOverlayPermission.launch(intent)
+        runCatching {
+            if (! hasDefaultOverlayPermission() && ! Settings.canDrawOverlays(this)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                startForOverlayPermission.launch(intent)
+            }
         }
     }
     

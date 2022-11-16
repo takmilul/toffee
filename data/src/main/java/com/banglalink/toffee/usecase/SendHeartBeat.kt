@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
@@ -70,13 +70,13 @@ class SendHeartBeat @Inject constructor(
             )
         }
         preference.mqttIsActive = response.response.mqttIsActive == 1
-        response.response.sessionToken?.ifNotBlank {
+        response.response.sessionToken?.doIfNotNullOrEmpty {
             preference.sessionToken = it
         }
-        response.response.headerSessionToken?.ifNotBlank {
+        response.response.headerSessionToken?.doIfNotNullOrEmpty {
             preference.setHeaderSessionToken(it)
         }
-        response.response.systemTime?.ifNotBlank {
+        response.response.systemTime?.doIfNotNullOrEmpty {
             preference.setSystemTime(it)
         }
     }

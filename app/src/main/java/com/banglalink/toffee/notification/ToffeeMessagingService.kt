@@ -25,7 +25,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.HostUrlOverrideType.*
 import com.banglalink.toffee.enums.NotificationType.*
-import com.banglalink.toffee.extension.ifNotBlank
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
@@ -280,7 +280,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     NOTIFICATION_ID to notificationId,
                     ACTION_NAME to if (!hasActionButton) CONTENT_VIEW else { if (isWatchNow) WATCH_NOW else WATCH_LATER }
                 ))
-                playingUrl?.ifNotBlank { data = Uri.parse(it) }
+                playingUrl?.doIfNotNullOrEmpty { data = Uri.parse(it) }
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val requestCode = if (hasActionButton) { if (isWatchNow) 1 else 2 } else 0 // watchNow = 1, watchLater = 2, else = 0

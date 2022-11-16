@@ -2,6 +2,7 @@ package com.banglalink.toffee.util
 
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -27,6 +28,7 @@ import android.view.WindowManager.LayoutParams
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.PackageInfoCompat
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -429,14 +431,25 @@ object Utils {
         return if (diffHours >= 24) "${diffHours / 24} days" else "$diffHours hours"
     }
     
-    fun checkWifiOnAndConnected(context: Context): Boolean {
-        val wifiMgr = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        return if (wifiMgr.isWifiEnabled) { // Wi-Fi adapter is ON
-            val wifiInfo = wifiMgr.connectionInfo
-            wifiInfo.networkId != -1
-        } else {
-            false // Wi-Fi adapter is OFF
+    fun checkWifiOnAndConnected(context: Context): String {
+        val netType = try {
+            when(ConnectionWatcher(context as Application).netType) {
+                "WiFi" -> "WIFI"
+                "2G","3G","4G","5G" -> "CELLULAR"
+                else -> ""
+            }
+        } catch (e: Exception) {
+            ""
         }
+        android.util.Log.i("netType", "checkWifiOnAndConnected: $netType")
+        return netType
+//        val wifiMgr = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+//        return if (wifiMgr.isWifiEnabled) { // Wi-Fi adapter is ON
+//            val wifiInfo = wifiMgr.connectionInfo
+//            if (wifiInfo.networkId != -1) "WIFI" else ""
+//        } else {
+//            "CELLULAR" // Wi-Fi adapter is OFF
+//        }
     }
     
     fun getTime(dateTime: String?): String? {
