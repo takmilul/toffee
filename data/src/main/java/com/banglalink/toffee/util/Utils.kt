@@ -432,7 +432,7 @@ object Utils {
     }
     
     fun checkWifiOnAndConnected(context: Context): String {
-        val netType = try {
+        return try {
             when(ConnectionWatcher(context as Application).netType) {
                 "WiFi" -> "WIFI"
                 "2G","3G","4G","5G" -> "CELLULAR"
@@ -441,8 +441,6 @@ object Utils {
         } catch (e: Exception) {
             ""
         }
-        android.util.Log.i("netType", "checkWifiOnAndConnected: $netType")
-        return netType
 //        val wifiMgr = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 //        return if (wifiMgr.isWifiEnabled) { // Wi-Fi adapter is ON
 //            val wifiInfo = wifiMgr.connectionInfo

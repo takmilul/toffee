@@ -431,16 +431,18 @@ class HomeActivity :
     }
     
     private fun startBubbleService() {
+        runCatching {
 //        bubbleIntent = Intent(this, BubbleService::class.java)
-        bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-        if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-                if (mPref.bubbleDialogShowCount < 5) {
-                    displayMissingOverlayPermissionDialog()
-                }
-            } else {
+            bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
+            if (! BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+                if (! hasDefaultOverlayPermission() && ! Settings.canDrawOverlays(this)) {
+                    if (mPref.bubbleDialogShowCount < 5) {
+                        displayMissingOverlayPermissionDialog()
+                    }
+                } else {
 //                startService(bubbleIntent)
-                startService(bubbleV2Intent)
+                    startService(bubbleV2Intent)
+                }
             }
         }
     }

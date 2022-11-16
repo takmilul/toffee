@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingFeaturedBinding
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
@@ -18,6 +19,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.currentDateTime
+import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -72,15 +74,15 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     }
     
     override fun onItemClicked(item: ChannelInfo) {
-        item.bannerEventName?.let {
+        item.bannerEventName?.doIfNotNullOrEmpty {
             ToffeeAnalytics.logEvent(it, bundleOf(
                 "timestamp" to currentDateTime,
-                "banner-code" to it,
+                "banner_code" to it,
                 "page" to viewModel.featuredPageName.value,
-                "content-id" to item.id,
-                "app-version" to cPref.appVersionName,
-                "device-type" to "1",
-                "device-id" to cPref.deviceId,
+                "content_id" to item.id,
+                "app_version" to cPref.appVersionName,
+                "device_type" to "1",
+                "device_id" to cPref.deviceId,
                 "msisdn" to mPref.phoneNumber
             ))
         }
