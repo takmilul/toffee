@@ -21,30 +21,34 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HtmlPageViewFragment : BaseFragment() {
     
+    private var title: String? = ""
     private var header: String? = ""
     private lateinit var htmlUrl: String
-    private var _binding: FragmentHtmlPageViewBinding ? = null
     private val binding get() = _binding!!
-
+    private var _binding: FragmentHtmlPageViewBinding ? = null
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        title = arguments?.getString("myTitle")
+        htmlUrl = arguments?.getString("url")!!
+        header = arguments?.getString("header")
+        requireActivity().title = title
+        
         listenBackStack()
-        htmlUrl= arguments?.getString("url")!!
-        header= arguments?.getString("header")
         binding.webview.webViewClient = object : Html5WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
-
+        
         binding.webview.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 binding.progressBar.progress = newProgress
@@ -52,7 +56,7 @@ class HtmlPageViewFragment : BaseFragment() {
                     binding.progressBar.visibility = View.GONE
                 }
             }
-
+            
             override fun onPermissionRequest(request: PermissionRequest) {
                 val resources = request.resources
                 for (i in resources.indices) {
@@ -64,7 +68,7 @@ class HtmlPageViewFragment : BaseFragment() {
                 super.onPermissionRequest(request)
             }
         }
-
+        
         with(binding.webview.settings) {
             setSupportZoom(true)
             databaseEnabled = true
@@ -81,9 +85,9 @@ class HtmlPageViewFragment : BaseFragment() {
             mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
-        if(header.isNullOrEmpty()){
+        if (header.isNullOrEmpty()) {
             binding.webview.loadUrl(htmlUrl)
-        }else{
+        } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl,headerMap)

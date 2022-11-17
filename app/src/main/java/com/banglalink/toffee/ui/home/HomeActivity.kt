@@ -448,31 +448,33 @@ class HomeActivity :
     }
     
     private fun observeCircuitBreaker() {
-        mPref.circuitBreakerFirestoreCollectionName?.doIfNotNullOrEmpty {
-            lifecycleScope.launch {
-                runCatching {
-                    val db = Firebase.firestore
-                    db.collection(it).addSnapshotListener { value, error ->
-                        error?.let {
-                            return@addSnapshotListener
-                        }
-                        circuitBreakerDataList.clear()
-                        value?.let {
-                            for (doc in value) {
-                                val contentId = doc.getLong("content_id")?.toString()
-                                val isActive = doc.getBoolean("is_active")
-                                val updatedAt = doc.getDate("updated_at")
-                                val expiredAt = doc.getDate("expired_at")
-                                if (contentId != null && isActive != null && updatedAt != null && expiredAt != null) {
-                                    val data = CircuitBreakerData(isActive, updatedAt, expiredAt)
-                                    circuitBreakerDataList[contentId] = data
+        if (mPref.isCircuitBreakerActive) {
+            mPref.circuitBreakerFirestoreCollectionName?.doIfNotNullOrBlank {
+                lifecycleScope.launch {
+                    runCatching {
+                        val db = Firebase.firestore
+                        db.collection(it).addSnapshotListener { value, error ->
+                            error?.let {
+                                return@addSnapshotListener
+                            }
+                            circuitBreakerDataList.clear()
+                            value?.let {
+                                for (doc in value) {
+                                    val contentId = doc.getLong("content_id")?.toString()
+                                    val isActive = doc.getBoolean("is_active")
+                                    val updatedAt = doc.getDate("updated_at")
+                                    val expiredAt = doc.getDate("expired_at")
+                                    if (contentId != null && isActive != null && updatedAt != null && expiredAt != null) {
+                                        val data = CircuitBreakerData(isActive, updatedAt, expiredAt)
+                                        circuitBreakerDataList[contentId] = data
+                                    }
                                 }
                             }
                         }
+                    }.onFailure {
+                        val message = it.message
+                        Log.i(TAG, "observeCircuitBreaker: $message")
                     }
-                }.onFailure {
-                    val message = it.message
-                    Log.i(TAG, "observeCircuitBreaker: $message")
                 }
             }
         }

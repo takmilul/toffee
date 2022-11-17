@@ -180,7 +180,9 @@ class CustomerInfoLogin(
     @SerializedName("externalTimeout")
     var externalTimeout: Int? = 0,
     @SerializedName("fStoreTblContentBlacklist")
-    var fStoreTblContentBlacklist: String? = null
+    var fStoreTblContentBlacklist: String? = null,
+    @SerializedName("isfireStoreTblContentBlacklist")
+    var isCircuitBreakerActive: Boolean = false
 ) : BodyResponse(), Parcelable
 
 @Entity

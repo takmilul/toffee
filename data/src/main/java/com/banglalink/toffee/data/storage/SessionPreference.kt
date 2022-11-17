@@ -697,6 +697,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_TOP_BAR_TYPE, null)
         set(value) = pref.edit { putString(PREF_TOP_BAR_TYPE, value) }
     
+    var isCircuitBreakerActive: Boolean
+        get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -791,6 +795,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             externalTimeOut = it.externalTimeout ?: 0
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
+            isCircuitBreakerActive = it.isCircuitBreakerActive
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -926,6 +931,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_TOP_BAR_START_DATE = "pref_top_bar_start_date"
         private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
         private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
+        private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

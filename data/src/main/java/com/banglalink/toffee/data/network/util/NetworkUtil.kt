@@ -5,6 +5,7 @@ import androidx.lifecycle.liveData
 import com.banglalink.toffee.Constants.MULTI_DEVICE_LOGIN_ERROR_CODE
 import com.banglalink.toffee.Constants.OUTSIDE_OF_BD_ERROR_CODE
 import com.banglalink.toffee.Constants.UN_ETHICAL_ACTIVITIES_ERROR_CODE
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.exception.CustomerNotFoundException
 import com.banglalink.toffee.data.exception.OutsideOfBDException
@@ -63,7 +64,7 @@ fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
             val response = networkCall.invoke()
             emit(Resource.Success(response))
         } catch (e:Exception){
-            emit(Resource.Failure<T>(getError(e)))
+            emit(Resource.Failure(getError(e)))
         }
     }
 
@@ -72,5 +73,6 @@ suspend fun <T> resultFromResponse(networkCall: suspend () -> T): Resource<T> =
         val response = networkCall.invoke()
         Resource.Success(response)
     } catch (e:Exception){
-        Resource.Failure<T>(getError(e))
+        ToffeeAnalytics.logBreadCrumb(e.message ?: "")
+        Resource.Failure(getError(e))
     }

@@ -36,7 +36,7 @@ fun String.toMD5(): String {
     }
 }
 
-inline fun String?.doIfNotNullOrEmpty(function: ((it: String) -> Unit)) {
+inline fun String?.doIfNotNullOrBlank(function: ((it: String) -> Unit)) {
     if (!this.isNullOrBlank() && !this.equals("null", true)) {
         function(this)
     }
@@ -48,7 +48,7 @@ inline fun String?.isNotNullBlank(function: ((it: String) -> String?)): String? 
     } else null
 }
 
-inline fun <T: Any> Collection<T>?.doIfNotNullOrEmpty(function: (Collection<T>) -> Unit): Unit {
+inline fun <T: Any> Collection<T>?.doIfNotNullOrEmpty(function: (Collection<T>) -> Unit) {
     if (!this.isNullOrEmpty()) {
         function(this)
     }

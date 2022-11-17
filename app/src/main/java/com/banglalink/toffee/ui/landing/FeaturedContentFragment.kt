@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.landing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingFeaturedBinding
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.doIfNotNullOrBlank
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
@@ -19,7 +18,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.currentDateTime
-import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -74,7 +72,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     }
     
     override fun onItemClicked(item: ChannelInfo) {
-        item.bannerEventName?.doIfNotNullOrEmpty {
+        item.bannerEventName?.doIfNotNullOrBlank {
             ToffeeAnalytics.logEvent(it, bundleOf(
                 "timestamp" to currentDateTime,
                 "banner_code" to it,
