@@ -37,13 +37,13 @@ fun String.toMD5(): String {
 }
 
 inline fun String?.doIfNotNullOrBlank(function: ((it: String) -> Unit)) {
-    if (!this.isNullOrBlank() && !this.equals("null", true)) {
+    if (!this.isNullOrBlank() && !this.trim().equals("null", true)) {
         function(this)
     }
 }
 
 inline fun String?.isNotNullBlank(function: ((it: String) -> String?)): String? {
-    return if (!this.isNullOrBlank() && !this.equals("null", true)) {
+    return if (!this.isNullOrBlank() && !this.trim().equals("null", true)) {
         function(this)
     } else null
 }

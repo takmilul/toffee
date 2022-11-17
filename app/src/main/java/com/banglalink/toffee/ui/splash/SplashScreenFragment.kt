@@ -331,8 +331,7 @@ class SplashScreenFragment : BaseFragment() {
     private fun forwardToNextScreen() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
         if (isDynamicSplashActive) {
-            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToDynamicSplashScreenFragment()
-            findNavController().navigate(action)
+            findNavController().navigate(R.id.dynamicSplashScreenFragment)
         } else {
             requireActivity().launchActivity<HomeActivity>()
             requireActivity().finish()
