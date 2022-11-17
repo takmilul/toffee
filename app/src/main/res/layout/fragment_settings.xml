@@ -148,7 +148,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/worldcup_fifa_bubble" />
+                    android:text="@string/fifa_bubble_text" />
                 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/bubbleToggleBtn"

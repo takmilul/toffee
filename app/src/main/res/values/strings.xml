@@ -327,7 +327,7 @@
     <string name="wifi_profile_text">WiFi Profile</string>
     <string name="watch_only_when_wifi_available_text">Watch only when Wifi is available</string>
     <string name="play_on_wifi_only">Play on WIFI only</string>
-    <string name="worldcup_fifa_bubble">Worldcup Fifa Bubble</string>
+    <string name="fifa_bubble_text">FIFA World Cup Bubble</string>
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
