@@ -220,7 +220,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     
     fun setDBVersion(dbVersionList: List<DBVersionV2>) {
         for (dbVersion in dbVersionList) {
-            pref.edit().putInt(dbVersion.apiName, dbVersion.dbVersion).apply()
+            val prefDbVersion = pref.getInt(dbVersion.apiName, 0)
+            if (dbVersion.dbVersion > prefDbVersion) {
+                pref.edit().putInt(dbVersion.apiName, dbVersion.dbVersion).apply()
+            }
         }
     }
     
