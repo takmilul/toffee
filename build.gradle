@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        appVersionCode = 90
+        appVersionCode = 91
         appVersionName = '4.7.0'
         
         // Gradle
