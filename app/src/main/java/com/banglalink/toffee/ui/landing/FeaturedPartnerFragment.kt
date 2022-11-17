@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
@@ -123,7 +124,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
             findNavController().navigate(
                 R.id.htmlPageViewDialog_Home,
                 bundleOf(
-                    "myTitle" to "Back to TOFFEE",
+                    "myTitle" to getString(string.back_to_toffee_text),
                     "url" to url,
                     "isHideBackIcon" to false,
                     "isHideCloseIcon" to true

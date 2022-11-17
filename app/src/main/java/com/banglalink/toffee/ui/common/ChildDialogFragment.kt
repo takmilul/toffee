@@ -4,8 +4,10 @@ import androidx.fragment.app.DialogFragment
 
 open class ChildDialogFragment: BaseFragment() {
     fun closeDialog() {
-        parentFragment?.parentFragment?.let {
-            if(it is DialogFragment) it.dismiss()
+        runCatching {
+            parentFragment?.parentFragment?.let {
+                if (it is DialogFragment) it.dismiss()
+            }
         }
     }
 }

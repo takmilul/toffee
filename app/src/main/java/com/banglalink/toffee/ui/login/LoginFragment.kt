@@ -38,10 +38,12 @@ class LoginFragment : DialogFragment(), DefaultLifecycleObserver {
         navController = navHostFragment.navController
         ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG)
         binding.closeIv.safeClick({
-            dismiss().let {
-                if (mPref.isVerifiedUser) {
-                    requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also { 
-                        requireActivity().recreate()
+            runCatching {
+                dismiss().let {
+                    if (mPref.isVerifiedUser) {
+                        requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
+                            requireActivity().recreate()
+                        }
                     }
                 }
             }

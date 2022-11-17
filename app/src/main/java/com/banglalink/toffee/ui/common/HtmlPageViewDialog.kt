@@ -26,6 +26,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HtmlPageViewDialog : DialogFragment() {
+    private var title: String? = null
     private var _binding: DialogHtmlPageViewBinding? = null
     private val binding get() = _binding!!
     @Inject lateinit var mPref: SessionPreference
@@ -48,10 +49,11 @@ class HtmlPageViewDialog : DialogFragment() {
         
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
+        title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon",false) ?: false
         
-        binding.titleTv.text = arguments?.getString("myTitle", " ") ?: " "
+        binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
         observeTopBarBackground()
@@ -104,18 +106,19 @@ class HtmlPageViewDialog : DialogFragment() {
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl, headerMap)
         }
-        
-        binding.closeIv.setOnClickListener {
-            dialog?.dismiss()
+        runCatching {
+            binding.closeIv.setOnClickListener {
+                dialog?.dismiss()
+            }
+            binding.backIcon.setOnClickListener {
+                dialog?.dismiss()
+            }
+            if (title == getString(R.string.back_to_toffee_text)) {
+                binding.titleTv.setOnClickListener {
+                    dialog?.dismiss()
+                }
+            }
         }
-        
-        binding.backIcon.setOnClickListener {
-            dialog?.dismiss()
-        }
-        binding.titleTv.setOnClickListener {
-            dialog?.dismiss()
-        }
-        
         return binding.root
     }
     
