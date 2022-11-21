@@ -1352,6 +1352,9 @@ class HomeActivity :
                 is Int -> {
                     if (it.name == "Featured Partner") {
                         mPref.featuredPartnerIdLiveData.value = it.destId
+                        if (navController.currentDestination?.id != R.id.menu_feed) {
+                            navController.navigate(R.id.menu_feed)
+                        }
                     } else if(it.destId == R.id.menu_favorites
                         || it.destId == R.id.menu_activities
                         || it.destId == R.id.menu_subscriptions) {
