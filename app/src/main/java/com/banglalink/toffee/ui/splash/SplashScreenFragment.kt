@@ -19,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import coil.load
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -78,13 +79,13 @@ class SplashScreenFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
-        if (gif != null && gif is GifDrawable) {
-            logoGifDrawable = gif.apply {
-                stop()
-                seekToFrame(0)
-            }
-        }
+//        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
+//        if (gif != null && gif is GifDrawable) {
+//            logoGifDrawable = gif.apply {
+//                stop()
+//                seekToFrame(0)
+//            }
+//        }
         observeApiLogin()
         observeCheckForUpdateStatus()
         observeHeaderEnrichment()
@@ -102,7 +103,8 @@ class SplashScreenFragment : BaseFragment() {
                 }
             }
             if (it == R.id.secondEnd) {
-                logoGifDrawable?.start()
+//                logoGifDrawable?.start()
+                binding.splashLogoImageView.load(R.drawable.ic_splash_logo_gif)
                 lifecycleScope.launch {
                     delay(500)
                     isAnimationCompleted = true

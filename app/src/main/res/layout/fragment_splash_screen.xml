@@ -53,13 +53,13 @@
         app:layout_constraintStart_toStartOf="@id/splashLineImageView"
         app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
     
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/splashLogoImageView"
         android:layout_width="80dp"
         android:layout_height="56dp"
         android:alpha="0.3"
         android:contentDescription="@string/txt_splash_logo"
-        android:src="@drawable/ic_splash_logo_gif"
+        android:src="@drawable/ic_toffee"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
         app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
