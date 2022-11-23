@@ -40,6 +40,7 @@ class LandingPageViewModel @Inject constructor(
     private val editorsChoiceAssistedFactory: GetEditorsChoiceContents.AssistedFactory,
     private val sendFeaturePartnerEvent: SendFeaturePartnerEvent,
 ) : ViewModel() {
+    
     var featuredJob: Job? = null
     val categoryId = SingleLiveEvent<Int>()
     val pageName = MutableLiveData<String>()
@@ -52,6 +53,7 @@ class LandingPageViewModel @Inject constructor(
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val subCategories = SingleLiveEvent<List<SubCategory>>()
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
+    val featuredPartnerDeeplinkLiveData = SingleLiveEvent<FeaturedPartner>()
     
     fun loadChannels(): Flow<PagingData<ChannelInfo>> {
         return channelRepo.getList().cachedIn(viewModelScope)
@@ -202,6 +204,15 @@ class LandingPageViewModel @Inject constructor(
                 featuredPartnerAssistedFactory.create("VOD"), ApiNames.GET_FEATURED_PARTNERS, BrowsingScreens.HOME_PAGE
             )
         }).getList()
+    }
+    
+    fun loadFeaturedPartnerList (partnerId: Int) {
+        viewModelScope.launch {
+            val result = resultFromResponse { featuredPartnerAssistedFactory.create("VOD").loadData(0, 30) }
+            if (result is Success) {
+                featuredPartnerDeeplinkLiveData.postValue(result.data.find { it.id == partnerId })
+            }
+        }
     }
     
     fun sendFeaturePartnerReportData(partnerName: String,partnerId:Int) {

@@ -199,6 +199,7 @@ class HomeActivity :
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val landingPageViewModel by viewModels<LandingPageViewModel>()
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
@@ -321,6 +322,13 @@ class HomeActivity :
         }
         observe(viewModel.addToPlayListMutableLiveData) { item ->
             setPlayList(item)
+        }
+        observe(landingPageViewModel.featuredPartnerDeeplinkLiveData) {
+            it?.let {
+                if (mPref.isFeaturePartnerActive) {
+                    onFeaturedPartnerClick(it)
+                }
+            }
         }
         observe(mPref.shareableUrlLiveData) {
             handleDeepLink(it)
@@ -542,6 +550,35 @@ class HomeActivity :
             showToast("copied to clipboard")
             it?.dismiss()
         }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
+    }
+    
+    private fun onFeaturedPartnerClick(item: FeaturedPartner) {
+        if (item.isLoginRequired) {
+            checkVerification {
+                openFeaturePartner(item)
+            }
+        } else {
+            openFeaturePartner(item)
+        }
+    }
+    
+    private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
+        if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
+            featuredPartner.webViewUrl?.let { url ->
+                landingPageViewModel.sendFeaturePartnerReportData(
+                    partnerName = featuredPartner.featurePartnerName.toString(),
+                    partnerId = featuredPartner.id
+                )
+                navController.navigate(
+                    R.id.htmlPageViewDialog_Home, bundleOf(
+                        "myTitle" to getString(string.back_to_toffee_text),
+                        "url" to url,
+                        "isHideBackIcon" to false,
+                        "isHideCloseIcon" to true
+                    )
+                )
+            } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+        }
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
@@ -1351,10 +1388,7 @@ class HomeActivity :
                 is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
                 is Int -> {
                     if (it.name == "Featured Partner") {
-                        mPref.featuredPartnerIdLiveData.value = it.destId
-                        if (navController.currentDestination?.id != R.id.menu_feed) {
-                            navController.navigate(R.id.menu_feed)
-                        }
+                        landingPageViewModel.loadFeaturedPartnerList(it.destId)
                     } else if(it.destId == R.id.menu_favorites
                         || it.destId == R.id.menu_activities
                         || it.destId == R.id.menu_subscriptions) {

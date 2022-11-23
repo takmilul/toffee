@@ -167,10 +167,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }
     
-    var isFeaturePartnerActive: String
-        get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "false") ?: "false"
+    var isFeaturePartnerActive: Boolean
+        get() = pref.getBoolean(PREF_FEATURE_PARTNER_ACTIVE, false)
         set(isActive) {
-            pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
+            pref.edit().putBoolean(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
         }
     
     fun getFireworkUserId(): String {
@@ -737,7 +737,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             subscriberStatusDbUrl = it.subscriberStatusDbUrl ?: ""
             shareCountDbUrl = it.shareCountDbUrl ?: ""
             isAllTvChannelMenuEnabled = it.isAllTvChannelsMenuEnabled
-            isFeaturePartnerActive = it.isFeaturePartnerActive ?: "false"
+            isFeaturePartnerActive = it.isFeaturePartnerActive == "true"
             mqttHost = it.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
             mqttIsActive = it.mqttIsActive == 1
             
@@ -829,7 +829,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_WIFI = "WIFI"
         private const val PREF_CELLULAR = "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE = "subscription_active"
-        private const val PREF_FEATURE_PARTNER_ACTIVE = "is_feature_partner_active"
+        private const val PREF_FEATURE_PARTNER_ACTIVE = "is_feature_partner_active_new"
         private const val PREF_FIREWORK_USER_ID = "firework_user_id"
         private const val PREF_SYSTEM_TIME = "systemTime"
         private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"

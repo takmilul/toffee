@@ -25,12 +25,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment() {
+    
     private var appbarOffset = 0
     private var _binding: FragmentLandingPageBinding ? = null
     @Inject @ApplicationContext lateinit var appContext: Context
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-
+    
     companion object {
         fun newInstance(): LandingPageFragment {
             return LandingPageFragment()
@@ -54,11 +55,11 @@ class LandingPageFragment : HomeBaseFragment() {
         })
         return binding.root
     }
-
+    
     private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
         appbarOffset = verticalOffset
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = getString(R.string.app_name_short)
@@ -68,21 +69,9 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.featuredPageName.value = "Home Page"
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
-        binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
+        binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive
         observe(mPref.isFireworkInitialized) { isInitialized ->
-            val isActive = mPref.isFireworkActive && isInitialized
-            if (isActive) {
-                _binding?.fireworkFragment?.isVisible = isActive
-//                try {
-//                    val url = requireActivity().intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
-//                    url?.let {
-//                        FwSDK.play(it)
-//                    }
-//                }
-//                catch (e: Exception) {
-//                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
-//                }
-            }
+            _binding?.fireworkFragment?.isVisible = mPref.isFireworkActive && isInitialized
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to "home"))
     }
