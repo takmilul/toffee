@@ -97,8 +97,11 @@ interface ToffeeApi {
     @POST("content-share-log")
     suspend fun sendShareLog(@Body shareableRequest: ContentShareLogRequest):ContentShareLogResponse
 
-    @POST("heart-beat")
-    suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):HeartBeatResponse
+    @POST("v2/heart-beat/{dbVersion}")
+    suspend fun sendHeartBeat(
+        @Path("dbVersion") dbVersion: Int,
+        @Body heartBeatRequest: HeartBeatRequest
+    ):HeartBeatResponse
 
     @POST("packages-with-subscription")
     suspend fun getPackageList(@Body packageListRequest: PackageListRequest):PackageListResponse

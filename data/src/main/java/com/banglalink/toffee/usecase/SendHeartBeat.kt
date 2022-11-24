@@ -2,6 +2,7 @@ package com.banglalink.toffee.usecase
 
 import android.os.Build
 import com.banglalink.toffee.Constants
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -57,6 +58,7 @@ class SendHeartBeat @Inject constructor(
         }
         val response = tryIO2 {
             toffeeApi.sendHeartBeat(
+                preference.getDBVersionByApiName(ApiNames.SEND_HEART_BEAT),
                 HeartBeatRequest(
                     contentId,
                     contentType,
