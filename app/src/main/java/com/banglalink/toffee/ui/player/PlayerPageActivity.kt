@@ -877,7 +877,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             }
-            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
+            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id)
             it.playWhenReady = !isReload || it.playWhenReady
             
             if (isReload) { //We need to start where we left off for VODs

@@ -41,10 +41,12 @@ import androidx.appcompat.R.style
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
@@ -59,8 +61,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.color
-import com.banglalink.toffee.R.string
+import com.banglalink.toffee.R.*
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -115,6 +116,7 @@ import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
@@ -189,6 +191,7 @@ class HomeActivity :
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
     private val viewModel: HomeViewModel by viewModels()
+    private lateinit var navHostFragment: NavHostFragment
     @Inject lateinit var uploadRepo: UploadInfoRepository
     private lateinit var appbarConfig: AppBarConfiguration
     @Inject lateinit var uploadManager: UploadStateManager
@@ -203,6 +206,7 @@ class HomeActivity :
     @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -845,7 +849,7 @@ class HomeActivity :
     }
     
     private fun setupNavController() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
         
         appbarConfig = AppBarConfiguration(
@@ -2189,8 +2193,6 @@ class HomeActivity :
     @RequiresApi(24)
     private fun enterPipMode() {
         try {
-            toggleNavigation(true)
-            maximizePlayer()
             if(Build.VERSION.SDK_INT < 26) {
                 enterPictureInPictureMode()
             } else {
@@ -2219,6 +2221,11 @@ class HomeActivity :
     private fun pipChanged(isInPip: Boolean) {
         if(isInPip) {
             toggleNavigation(true)
+            val fragment = navHostFragment.childFragmentManager.fragments.last()
+            if (fragment is DialogFragment) {
+                progressDialog.dismiss()
+                fragment.dismiss()
+            }
             binding.draggableView.maximize()
             binding.draggableView.visibility = View.VISIBLE
             maximizePlayer()
