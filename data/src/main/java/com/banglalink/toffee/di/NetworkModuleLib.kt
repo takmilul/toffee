@@ -2,7 +2,6 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
-import com.banglalink.toffee.Constants.INTERNAL_TIMEOUT
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -40,10 +39,10 @@ object NetworkModuleLib {
     @Singleton
     @EncryptedHttpClient
     fun providesEncryptedHttpClient(@DefaultCache cache: Cache, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar, toffeeDns: ToffeeDns, authInterceptor:
-    AuthInterceptor,mpref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+    AuthInterceptor, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
-            connectTimeout(if(mpref.internalTimeOut==0) INTERNAL_TIMEOUT.toLong() else mpref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            readTimeout(if(mpref.internalTimeOut==0) INTERNAL_TIMEOUT.toLong() * 2 else mpref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
+            connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {

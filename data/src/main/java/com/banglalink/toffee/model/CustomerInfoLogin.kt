@@ -176,9 +176,9 @@ class CustomerInfoLogin(
     @SerializedName("feature_partner_title")
     var featuredPartnerTitle: String? = null,
     @SerializedName("internalTimeout")
-    var internalTimeOut: Int? = 0,
+    var internalTimeOut: Int? = 60,
     @SerializedName("externalTimeout")
-    var externalTimeout: Int? = 0,
+    var externalTimeout: Int? = 60,
     @SerializedName("fStoreTblContentBlacklist")
     var fStoreTblContentBlacklist: String? = null,
     @SerializedName("isfireStoreTblContentBlacklist")

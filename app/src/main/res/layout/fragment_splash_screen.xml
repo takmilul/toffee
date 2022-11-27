@@ -66,6 +66,22 @@
         app:layout_constraintStart_toStartOf="@id/splashLineImageView"
         app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
     
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="32dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="1"
+        app:indicatorColor="@color/colorAccent2"
+        app:trackColor="@color/lightGray"
+        app:trackCornerRadius="100dp"
+        app:layout_constraintWidth_percent="0.30"
+        app:layout_constraintEnd_toEndOf="@id/splashLogoImageView"
+        app:layout_constraintStart_toStartOf="@id/splashLogoImageView"
+        app:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />
+    
     <ImageView
         android:id="@+id/splashLogoTitleImageView"
         android:layout_width="126dp"

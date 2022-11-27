@@ -53,6 +53,7 @@ class HeartBeatManager @Inject constructor(
     private var contentId = 0
     private var dataSource = ""
     private var contentType = "0"
+    private var isFirstLaunch = true
     private var isAppForeGround = false
     private lateinit var coroutineScope :CoroutineScope
     private lateinit var coroutineScope3 :CoroutineScope
@@ -216,7 +217,10 @@ class HeartBeatManager @Inject constructor(
         _networkChangeEventLiveData.postValue(true)
         coroutineScope2.launch {
             delay(1500)
-            sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)
+            if (!isFirstLaunch) {
+                sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)
+            }
+            isFirstLaunch = false
         }
     }
 }

@@ -48,6 +48,7 @@ import com.google.common.util.concurrent.Futures.addCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,6 +60,7 @@ import javax.net.ssl.SSLContext
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
+    
     private val binding get() = _binding!!
     private var logoGifDrawable: GifDrawable? = null
     private var isAnimationCompleted: Boolean = false
@@ -86,10 +88,6 @@ class SplashScreenFragment : BaseFragment() {
 //                seekToFrame(0)
 //            }
 //        }
-        observeApiLogin()
-        observeCheckForUpdateStatus()
-        observeHeaderEnrichment()
-        requestHeaderEnrichment()
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {
@@ -114,15 +112,25 @@ class SplashScreenFragment : BaseFragment() {
                 }
             }
         }
+        
         if (!mPref.isPreviousDbDeleted) {
             viewModel.deletePreviousDatabase()
         }
+        
+        observe(viewModel.apiLoadingProgress) {
+            binding.progressBar.progress = it
+        }
+        observeApiLogin()
+        observeCheckForUpdateStatus()
+        viewModel.checkForUpdateStatus(mPref.customerId == 0 || mPref.password.isBlank())
+        observeHeaderEnrichment()
+        requestHeaderEnrichment()
         ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
         detectTlsVersion()
     }
     
     private fun detectTlsVersion() {
-        try {
+        runCatching {
             val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
             protocols?.let {
                 ToffeeAnalytics.logEvent(
@@ -131,7 +139,7 @@ class SplashScreenFragment : BaseFragment() {
                     )
                 )
             }
-        } catch (e: Exception) { }
+        }
     }
     
     private fun sendAdIdLog() {
@@ -191,11 +199,8 @@ class SplashScreenFragment : BaseFragment() {
         try {
             if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
                 viewModel.getHeaderEnrichment()
-            } else {
-                viewModel.checkForUpdateStatus()
             }
         } catch (e: Exception) {
-            viewModel.checkForUpdateStatus()
             e.printStackTrace()
         }
     }
@@ -233,7 +238,6 @@ class SplashScreenFragment : BaseFragment() {
                     mPref.isHeBanglalinkNumber = false
                 }
             }
-            viewModel.checkForUpdateStatus()
         }
     }
     
@@ -321,7 +325,7 @@ class SplashScreenFragment : BaseFragment() {
                     requestAppLaunch()
                 } else {
                     binding.root.snack(error.msg) {
-                        action("Retry") { _ ->
+                        action("Retry") {
                             requestAppLaunch()
                         }
                     }
@@ -332,11 +336,14 @@ class SplashScreenFragment : BaseFragment() {
     
     private fun forwardToNextScreen() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
-        if (isDynamicSplashActive) {
-            findNavController().navigate(R.id.dynamicSplashScreenFragment)
-        } else {
-            requireActivity().launchActivity<HomeActivity>()
-            requireActivity().finish()
+        lifecycleScope.launch(Main) {
+            delay(50)
+            if (isDynamicSplashActive) {
+                findNavController().navigate(R.id.dynamicSplashScreenFragment)
+            } else {
+                requireActivity().launchActivity<HomeActivity>()
+                requireActivity().finish()
+            }
         }
     }
     
@@ -362,8 +369,8 @@ class SplashScreenFragment : BaseFragment() {
                 requireActivity().finish()
             }
             if (!forceUpdate) {
-                setNegativeButton("SKIP") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
+                setNegativeButton("SKIP") { dialog, _ ->
+                    dialog.dismiss()
                     requestAppLaunch()
                 }
             }

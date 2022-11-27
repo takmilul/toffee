@@ -18,6 +18,8 @@ import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAIL
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.exoplayer2.C
@@ -44,6 +46,7 @@ class SplashViewModel @Inject constructor(
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent
 ) : ViewModel() {
     
+    val apiLoadingProgress = SingleLiveEvent<Int>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
     val appLaunchConfigLiveData = SingleLiveEvent<Resource<Any>>()
     val headerEnrichmentLiveData = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
@@ -54,28 +57,38 @@ class SplashViewModel @Inject constructor(
     
     fun getCredential() {
         viewModelScope.launch {
+//            delay(2000)
             val response = resultFromResponse { credentialService.execute() }
             when (response) {
-                is Resource.Success -> {
+                is Success -> {
+                    apiLoadingProgress.value = (100 / 3) * 2
                     getAppLaunchConfig()
                 }
-                is Resource.Failure -> {
+                is Failure -> {
                     appLaunchConfigLiveData.value = response
                 }
             }
         }
     }
     
-    fun checkForUpdateStatus() {
+    fun checkForUpdateStatus(isNewUser: Boolean) {
         viewModelScope.launch {
+//            delay(3000)
             val updateResponse = resultFromResponse { checkForUpdateService.execute(BuildConfig.VERSION_CODE.toString()) }
+            if (updateResponse is Success) {
+                apiLoadingProgress.value = if (isNewUser) 100 / 3 else 100 / 2
+            }
             updateStatusLiveData.value = updateResponse
         }
     }
     
     fun getAppLaunchConfig() {
         viewModelScope.launch {
+//            delay(2000)
             val response = resultFromResponse { apiLoginService.execute() }
+            if (response is Success) {
+                apiLoadingProgress.value = 100
+            }
             appLaunchConfigLiveData.value = response
         }
     }
@@ -98,7 +111,7 @@ class SplashViewModel @Inject constructor(
     }
     
     fun deletePreviousDatabase() {
-        try {
+        runCatching {
             val data: File = Environment.getDataDirectory()
             val previousDBPath = "/data/com.banglalink.toffee/databases/" + "toffee_database"
             val previousDB = File(data, previousDBPath)
@@ -107,7 +120,6 @@ class SplashViewModel @Inject constructor(
             } else {
                 mPref.isPreviousDbDeleted = true
             }
-        } catch (e: Exception) {
         }
     }
     
@@ -137,7 +149,7 @@ class SplashViewModel @Inject constructor(
             withTimeout(DRM_AVAILABILITY_TIMEOUT) {
                 withContext(Dispatchers.IO + Job()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        try {
+                        runCatching {
                             val securityLevel = when (val level = MediaDrm.getMaxSecurityLevel()) {
                                 MediaDrm.SECURITY_LEVEL_UNKNOWN -> MediaDrm.SECURITY_LEVEL_UNKNOWN.toString()
                                 MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO.toString()
@@ -148,7 +160,6 @@ class SplashViewModel @Inject constructor(
                                 else -> level.toString()
                             }
                             ToffeeAnalytics.logBreadCrumb(securityLevel)
-                        } catch (e: Exception) {
                         }
                     }
                     MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)

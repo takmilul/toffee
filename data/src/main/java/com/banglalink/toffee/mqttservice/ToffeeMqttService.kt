@@ -1,7 +1,6 @@
 package com.banglalink.toffee.mqttservice
 
 import android.content.Context
-import com.banglalink.toffee.Constants.EXTERNAL_TIMEOUT
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.ShareCount
@@ -123,7 +122,7 @@ class ToffeeMqttService @Inject constructor(
         return MqttConnectOptions().apply {
             isCleanSession = false
             isAutomaticReconnect = false
-            connectionTimeout = mPref.externalTimeOut.takeIf { it > 0 } ?: EXTERNAL_TIMEOUT
+            connectionTimeout = mPref.externalTimeOut
             keepAliveInterval = 300
             socketFactory = SSLSocketFactory.getDefault()
             this.userName = userName

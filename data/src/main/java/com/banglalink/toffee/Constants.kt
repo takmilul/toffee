@@ -4,11 +4,7 @@ import com.banglalink.toffee.lib.BuildConfig
 
 object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
-
-    const val INTERNAL_TIMEOUT = 10
-    const val EXTERNAL_TIMEOUT = 10
-    const val LOGIN_ERROR = 103
-    const val USER_ACTIVITIES_LIMIT = 150
+    
     const val DEVICE_ID_HEADER = "DEVICE-ID"
     const val OUTSIDE_OF_BD_ERROR_CODE = 403
     const val INVALID_REFERRAL_ERROR_CODE = -100
@@ -59,7 +55,7 @@ object Constants {
             return String(buf)
         }
     }.toString()
-
+    
     val HE_KEY = object : Any() {
         var t = 0
         override fun toString(): String {

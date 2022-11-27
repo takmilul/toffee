@@ -665,11 +665,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putString(PREF_FEATURED_PARTNER_TITLE, value) }
     
     var internalTimeOut: Int
-        get() = pref.getInt(PREF_INTERNAL_TIME_OUT, 0)
+        get() = pref.getInt(PREF_INTERNAL_TIME_OUT, 60)
         set(value) = pref.edit { putInt(PREF_INTERNAL_TIME_OUT, value) }
     
     var externalTimeOut: Int
-        get() = pref.getInt(PREF_EXTERNAL_TIME_OUT, 0)
+        get() = pref.getInt(PREF_EXTERNAL_TIME_OUT, 60)
         set(value) = pref.edit { putInt(PREF_EXTERNAL_TIME_OUT, value) }
     
     var circuitBreakerFirestoreCollectionName: String?
@@ -794,8 +794,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             videoMaxDuration = it.videoMaxDuration
             isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
             bubbleConfigLiveData.value = it.bubbleConfig
-            internalTimeOut = it.internalTimeOut ?: 0
-            externalTimeOut = it.externalTimeout ?: 0
+            internalTimeOut = it.internalTimeOut?.takeIf { it >=5 } ?: 60
+            externalTimeOut = it.externalTimeout?.takeIf { it >=5 } ?: 60
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
