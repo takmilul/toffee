@@ -56,7 +56,13 @@ class LandingPageViewModel @Inject constructor(
     val featuredPartnerDeeplinkLiveData = SingleLiveEvent<FeaturedPartner>()
     
     fun loadChannels(): Flow<PagingData<ChannelInfo>> {
-        return channelRepo.getList().cachedIn(viewModelScope)
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "LIVE")
+                ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
+            )
+        }).getList().cachedIn(viewModelScope)
     }
     
     fun loadFeaturedContentList() {
@@ -85,7 +91,11 @@ class LandingPageViewModel @Inject constructor(
     }
     
     fun loadCategories(): Flow<PagingData<Category>> {
-        return categoryListRepo.getList().cachedIn(viewModelScope)
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                categoryListApi, ApiNames.GET_CATEGORIES, pageName.value ?: BrowsingScreens.HOME_PAGE
+            )
+        }).getList().cachedIn(viewModelScope)
     }
     
     fun loadLandingEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
@@ -118,24 +128,6 @@ class LandingPageViewModel @Inject constructor(
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
         }).getList().cachedIn(viewModelScope)
-    }
-    
-    private val channelRepo by lazy {
-        BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                getContentAssistedFactory.create(
-                    ChannelRequestParams("", 0, "", 0, "LIVE")
-                ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
-            )
-        })
-    }
-    
-    private val categoryListRepo by lazy {
-        BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                categoryListApi, ApiNames.GET_CATEGORIES, pageName.value ?: BrowsingScreens.HOME_PAGE
-            )
-        })
     }
     
     fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {

@@ -41,20 +41,24 @@ class GetChannelWithCategory @Inject constructor(
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
+                if (!it.isExpired) {
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT, response.isFromCache)
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_CDN_CONTENT, response.isFromCache)
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY, response.isFromCache)
+                    
+                    dbList.add(TVChannelItem(
+                        it.id.toLong(),
+                        it.type ?: "LIVE",
+                        index + 1,
+                        channelCategory.categoryName,
+                        gson.toJson(it),
+                        it.view_count?.toLong() ?: 0L,
+                        it.isStingray,
+                    ).apply {
+                        updateTime = upTime
+                    })
+                }
                 !it.isExpired
-            }?.forEach {
-                dbList.add(TVChannelItem(
-                    it.id.toLong(),
-                    it.type ?: "LIVE",
-                    index + 1,
-                    channelCategory.categoryName,
-                    gson.toJson(it),
-                    it.view_count?.toLong() ?: 0L,
-                    it.isStingray,
-                ).apply {
-                    updateTime = upTime
-                })
             }
         }
         tvChannelRepo.getNonStingrayRecentItems()?.forEach { tvChannelItem ->

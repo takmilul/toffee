@@ -2,7 +2,6 @@ package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
 
-
 open class BaseResponse {
     @SerializedName("status")
     var status: Int = 0
@@ -27,4 +26,7 @@ open class BaseResponse {
     
     @SerializedName("displayMsg")
     var displayMsg: String? = null
+    
+    @SerializedName("isFromCache")
+    var isFromCache: Boolean = false
 }

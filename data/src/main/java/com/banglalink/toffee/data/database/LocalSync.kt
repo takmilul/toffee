@@ -34,15 +34,16 @@ class LocalSync @Inject constructor(
 ) {
     val gson = Gson()
     
-    suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL) {
+    suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL, isFromCache: Boolean = false) {
         val contentId = channelInfo.getContentId()
         
+        if (channelInfo.isVOD) {
+            channelInfo.viewProgress = viewProgressRepo.getProgressByContent(contentId.toLong())?.progress ?: 0L
+        }
         if(syncFlag and SYNC_FLAG_VIEW_COUNT == SYNC_FLAG_VIEW_COUNT) {
             val viewCount = viewCountRepo.getViewCountByChannelId(contentId.toInt())
             channelInfo.view_count = viewCount?.toString() ?: channelInfo.view_count
         }
-        // We always need to capture viewProgress
-        channelInfo.viewProgress = viewProgressRepo.getProgressByContent(contentId.toLong())?.progress ?: 0L
         if(syncFlag and SYNC_FLAG_SUB_COUNT == SYNC_FLAG_SUB_COUNT) {
             channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id)
         }
@@ -78,7 +79,7 @@ class LocalSync @Inject constructor(
                 channelInfo.favorite = fav.toString()
             }
         }
-        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
+        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT && !isFromCache) {
             tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
                 val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbRecentPayload.equals(channelInfo)) {
@@ -92,7 +93,7 @@ class LocalSync @Inject constructor(
                 }
             }
         }
-        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
+        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY && !isFromCache) {
             userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
                 val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbUserActivityPayload.equals(channelInfo)) {
@@ -104,17 +105,16 @@ class LocalSync @Inject constructor(
                 }
             }
         }
-        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
+        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT && !isFromCache) {
             if (channelInfo.urlType == 3) {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
-                    try {
+                    runCatching {
                         if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate))) {
                             cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo))
                         }
-                    } catch (_: Exception) {}
+                    }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson
-                        (channelInfo)))
+                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo)))
                 }
             }
         }

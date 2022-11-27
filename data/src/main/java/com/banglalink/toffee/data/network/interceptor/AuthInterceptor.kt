@@ -86,7 +86,10 @@ class AuthInterceptor @Inject constructor(
             Log.i("Network", "FROM NETWORK")
         }
         try {
-            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string())
+            val isFromCacheJson = ",\"isFromCache\":${response.cacheResponse != null}"
+            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).let {
+                it.replaceRange(it.lastIndex, it.lastIndex, isFromCacheJson)
+            }
             ToffeeAnalytics.logBreadCrumb("response: $responseJsonString")
             val contentType = response.body!!.contentType()
             val body = responseJsonString.toResponseBody(contentType)

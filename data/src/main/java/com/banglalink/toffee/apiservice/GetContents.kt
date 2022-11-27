@@ -2,12 +2,10 @@ package com.banglalink.toffee.apiservice
 
 import android.util.Log
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
@@ -40,18 +38,24 @@ class GetContents @AssistedInject constructor(
             )
         }
         
-        response.response.channels?.map {
+        return response.response.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
-            it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
-            localSync.syncData(it)
-            it
-        }
-        
-        return response.response.channels ?: emptyList()
+            if (!it.isExpired) {
+                it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
+                if (it.isLinear) {
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT, response.isFromCache)
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_CDN_CONTENT, response.isFromCache)
+                    localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY, response.isFromCache)
+                } else {
+                    localSync.syncData(it, isFromCache = response.isFromCache)
+                }
+            }
+            !it.isExpired
+        } ?: emptyList()
     }
     
     @dagger.assisted.AssistedFactory

@@ -320,17 +320,11 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
-                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
-                        localSync.syncData(channel)
-                        channel
-                    })
+                    mAdapter.submitData(it)
                 }
             } else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
-                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
-                        localSync.syncData(channel)
-                        channel
-                    })
+                    mAdapter.submitData(it)
                 }
             }
         }
@@ -341,10 +335,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
-                mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
-                    localSync.syncData(channel)
-                    channel
-                })
+                mAdapter.submitData(it)
             }
         }
     }

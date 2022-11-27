@@ -40,16 +40,18 @@ class GetMostPopularContents @AssistedInject constructor(
                 )
             )
         }
-
+        
         return if (response.response.channels != null) {
-            response.response.channels.map {
+            response.response.channels.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
-                it
+                if (!it.isExpired) {
+                    localSync.syncData(it, isFromCache = response.isFromCache)
+                }
+                !it.isExpired
             }
         } else emptyList()
     }

@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.FeatureContentBean
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
@@ -33,14 +34,15 @@ class FeatureContentService @Inject constructor(
         }
         return response.response.apply {
             channels?.filter {
-                try {
-                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+                it.isExpired = try {
+                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
-                    true
+                    false
                 }
-            }?.map {
-                localSync.syncData(it)
-                it
+                if (!it.isExpired) {
+                    localSync.syncData(it, isFromCache = response.isFromCache)
+                }
+                !it.isExpired
             }
         }
     }
