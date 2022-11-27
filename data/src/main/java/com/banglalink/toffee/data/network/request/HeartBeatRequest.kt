@@ -11,7 +11,7 @@ data class HeartBeatRequest(
     @SerializedName("data_source")
     val dataSource: String? = "iptv_programs",
     @SerializedName("channel_owner_id")
-    val ownerId: String? = "0",
+    val ownerId: Int = 0,
     @SerializedName("customerId")
     val customerId: Int,
     @SerializedName("password")

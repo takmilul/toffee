@@ -25,7 +25,8 @@ class SendHeartBeat @Inject constructor(
     
     private val gson = Gson()
     
-    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = true) {
+    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: Boolean = false, 
+                        sendToPubSub: Boolean = true) {
         withContext(Dispatchers.IO) {
             if (sendToPubSub) {
                 sendToPubSub(contentId, contentType, dataSource, ownerId)
@@ -35,7 +36,7 @@ class SendHeartBeat @Inject constructor(
         }
     }
     
-    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
+    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: Int) {
         val heartBeatData = HeartBeatData(
             customerId = preference.customerId,
             contentId = contentId,
@@ -51,7 +52,8 @@ class SendHeartBeat @Inject constructor(
         PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), HEARTBEAT_TOPIC)
     }
     
-    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String, isNetworkSwitch: Boolean = false) {
+    private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: 
+    Boolean = false) {
         var needToRefreshSessionToken = isNetworkSwitch
         if (System.currentTimeMillis() - preference.getSessionTokenSaveTimeInMillis() > preference.getSessionTokenLifeSpanInMillis()) {
             needToRefreshSessionToken = true// we need to refresh token by setting isNetworkSwitch = true
@@ -101,7 +103,7 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("data_source")
         val dataSource: String? = "iptv_programs",
         @SerializedName("channel_owner_id")
-        val ownerId: String? = "0",
+        val ownerId: Int = 0,
         @SerializedName("lat")
         val latitude: String,
         @SerializedName("lon")

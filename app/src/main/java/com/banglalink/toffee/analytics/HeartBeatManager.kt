@@ -49,7 +49,7 @@ class HeartBeatManager @Inject constructor(
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
-    private var ownerId = "0"
+    private var ownerId = 0
     private var contentId = 0
     private var dataSource = ""
     private var contentType = "0"
@@ -197,7 +197,8 @@ class HeartBeatManager @Inject constructor(
         }
     }
     
-    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String, channelOwnerId: String) {
+    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String, channelOwnerId: 
+    Int) {
         contentId = playingContentId
         contentType = playingContentType
         dataSource = contentDataSource
@@ -206,7 +207,7 @@ class HeartBeatManager @Inject constructor(
     
     fun triggerEventViewingContentStop() {
         contentId = 0
-        ownerId = "0"
+        ownerId = 0
         contentType = "0"
         dataSource = ""
     }
