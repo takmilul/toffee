@@ -2232,6 +2232,7 @@ class HomeActivity :
             binding.draggableView.maximize()
             binding.draggableView.visibility = View.VISIBLE
             maximizePlayer()
+            binding.homeBottomSheet.bottomSheet.hide()
         }
         binding.playerView.onPip(isInPip)
     }
