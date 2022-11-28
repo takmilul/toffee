@@ -52,7 +52,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pl.droidsonroids.gif.GifDrawable
 import java.util.concurrent.*
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
@@ -62,7 +61,6 @@ import javax.net.ssl.SSLContext
 class SplashScreenFragment : BaseFragment() {
     
     private val binding get() = _binding!!
-    private var logoGifDrawable: GifDrawable? = null
     private var isAnimationCompleted: Boolean = false
     private var isDynamicSplashActive: Boolean = false
     private var isApiResponseCompleted: Boolean = false
@@ -81,13 +79,6 @@ class SplashScreenFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-//        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
-//        if (gif != null && gif is GifDrawable) {
-//            logoGifDrawable = gif.apply {
-//                stop()
-//                seekToFrame(0)
-//            }
-//        }
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {
@@ -101,13 +92,15 @@ class SplashScreenFragment : BaseFragment() {
                 }
             }
             if (it == R.id.secondEnd) {
-//                logoGifDrawable?.start()
                 binding.splashLogoImageView.load(R.drawable.ic_splash_logo_gif)
                 lifecycleScope.launch {
                     delay(500)
                     isAnimationCompleted = true
                     if (isApiResponseCompleted) {
                         forwardToNextScreen()
+                    } else {
+                        delay(1000)
+                        _binding?.progressBar?.show()
                     }
                 }
             }

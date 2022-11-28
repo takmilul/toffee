@@ -263,7 +263,7 @@
             android:id="@id/progressBar"
             android:layout_width="0dp"
             android:layout_height="4dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:layout_marginTop="32dp"
             motion:layout_constraintWidth_percent="0.30"
             motion:layout_constraintEnd_toEndOf="@id/splashLogoImageView"

@@ -1260,7 +1260,7 @@ abstract class PlayerPageActivity :
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
-                    val message = getString(R.string.try_again_message)
+                    val message = getString(R.string.technical_error_message)
                     showToast(message, Toast.LENGTH_LONG)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }

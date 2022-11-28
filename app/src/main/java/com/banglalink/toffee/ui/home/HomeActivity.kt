@@ -41,7 +41,6 @@ import androidx.appcompat.R.style
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.*
@@ -1678,13 +1677,17 @@ class HomeActivity :
     }
     
     private fun openInExternalBrowser(it: ChannelInfo) {
-        it.getHlsLink()?.let { url ->
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW, Uri.parse(url)
+        runCatching {
+            it.getHlsLink()?.let { url ->
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW, Uri.parse(url)
+                    )
                 )
-            )
-        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+            } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+        }.onFailure {
+            showToast(it.message)
+        }
     }
     
     private fun playInWebView(it: ChannelInfo) {
