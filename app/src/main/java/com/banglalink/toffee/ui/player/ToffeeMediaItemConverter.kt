@@ -24,6 +24,7 @@ class ToffeeMediaItemConverter(
     private val isOverWifi: Boolean,
     private val mPref: SessionPreference,
 ): MediaItemConverter {
+    
     companion object {
         private const val KEY_MEDIA_ITEM = "mediaItem"
         const val KEY_CHANNEL_INFO = "channel_info"
@@ -36,8 +37,7 @@ class ToffeeMediaItemConverter(
         private const val KEY_LICENSE_URI = "licenseUri"
         private const val KEY_REQUEST_HEADERS = "requestHeaders"
     }
-
-
+    
     override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
         val tag = mediaItem.localConfiguration?.tag as ChannelInfo?
         Log.i("MEDIA_T", "Tag -> $tag")
@@ -45,13 +45,11 @@ class ToffeeMediaItemConverter(
     }
 
     override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
-
         // `item` came from `toMediaQueueItem()` so the custom JSON data must be set.
         val mediaInfo: MediaInfo = mediaQueueItem.media!!
         val customData = mediaQueueItem.customData
         Assertions.checkNotNull(mediaInfo)
         return getMediaItem(Assertions.checkNotNull(mediaInfo.customData), customData!!)!!
-//
 //
 //        Log.e("MEDIA_T", "toMediaItem")
 //        val customData = mediaQueueItem.customData!!
@@ -219,7 +217,7 @@ class ToffeeMediaItemConverter(
     }
 
     @Throws(JSONException::class)
-    fun getDrmConfigurationJson(drmConfiguration: DrmConfiguration): JSONObject? {
+    fun getDrmConfigurationJson(drmConfiguration: DrmConfiguration): JSONObject {
         val json = JSONObject()
         json.put(KEY_UUID, drmConfiguration.scheme)
         json.put(KEY_LICENSE_URI, drmConfiguration.licenseUri)
@@ -232,9 +230,7 @@ class ToffeeMediaItemConverter(
 
     @Throws(JSONException::class)
     private fun getPlayerConfigJson(mediaItem: MediaItem): JSONObject? {
-        if (mediaItem.localConfiguration == null
-            || mediaItem.localConfiguration!!.drmConfiguration == null
-        ) {
+        if (mediaItem.localConfiguration == null || mediaItem.localConfiguration!!.drmConfiguration == null) {
             return null
         }
         val drmConfiguration = mediaItem.localConfiguration!!.drmConfiguration

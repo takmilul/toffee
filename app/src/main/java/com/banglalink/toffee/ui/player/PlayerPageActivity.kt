@@ -10,7 +10,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.MediaSessionCompat.Callback
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.State
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
@@ -794,12 +793,12 @@ abstract class PlayerPageActivity :
         maximizePlayer()
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && mPref.watchOnlyWifi()) {
-            showPlayerError("Please connect to Wifi or disable “Watch only when Wifi is available“ from settings", true)
+            showPlayerErrorImage("Please connect to Wifi or disable “Watch only when Wifi is available“ from settings", true)
             return@launch
         }
 //        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)
         val channelInfo = playlistManager.getCurrentChannel() ?: run {
-            showPlayerError("Content not found")
+            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg_vod))
             return@launch
         }
         val isExpired = try {
@@ -817,7 +816,7 @@ abstract class PlayerPageActivity :
         } else {
             getHlsMediaItem(channelInfo)
         } ?: run {
-            showPlayerError("Content url is null")
+            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg_vod))
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
@@ -1016,7 +1015,7 @@ abstract class PlayerPageActivity :
         return pingData
     }
     
-    private fun showPlayerError(errorMessage: String, showMessage: Boolean = false) {
+    private fun showPlayerErrorImage(errorMessage: String, showMessage: Boolean = false) {
         lifecycleScope.launch {
             playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
             playerEventHelper.setPlayerEvent(errorMessage)
@@ -1031,6 +1030,10 @@ abstract class PlayerPageActivity :
         ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", errorMessage)
         maximizePlayer()
         heartBeatManager.triggerEventViewingContentStop()
+    }
+    
+    protected open fun showPlayerCustomErrorMessage(errorMessage: String? = null) {
+        //subclass will hook into it
     }
     
     //This will be called due to session token change while playing content or after init of player
@@ -1209,7 +1212,7 @@ abstract class PlayerPageActivity :
                 reloadCounter = 0
                 fallbackCounter = 0
                 val message = "Please check your internet and try again later."
-                showToast(message, Toast.LENGTH_LONG)
+                showPlayerCustomErrorMessage(message)
             } else if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
@@ -1260,8 +1263,9 @@ abstract class PlayerPageActivity :
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
-                    val message = getString(R.string.technical_error_message)
-                    showToast(message, Toast.LENGTH_LONG)
+                    val message = if (playlistManager.getCurrentChannel()?.isLinear == true) getString(R.string.player_custom_error_msg_live)
+                     else getString(R.string.player_custom_error_msg_vod)
+                    showPlayerCustomErrorMessage(message)
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }
             }

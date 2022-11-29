@@ -38,7 +38,7 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar, toffeeDns: ToffeeDns, authInterceptor:
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, cookieJar: CustomCookieJar, toffeeDns: ToffeeDns, authInterceptor:
     AuthInterceptor, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
@@ -59,8 +59,7 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
-    @com.banglalink.toffee.di.CustomCookieJar
-    fun providesCookieJar(): CookieJar {
+    fun providesCustomCookieJar(): CustomCookieJar {
         return CustomCookieJar()
     }
     
@@ -141,7 +140,7 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @DnsHttpClient
-    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns, @com.banglalink.toffee.di.CustomCookieJar cookieJar: CookieJar): OkHttpClient {
+    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns, cookieJar: CustomCookieJar): OkHttpClient {
         return simpleHttpClient.newBuilder()
             .dns(toffeeDns)
             .cookieJar(cookieJar)

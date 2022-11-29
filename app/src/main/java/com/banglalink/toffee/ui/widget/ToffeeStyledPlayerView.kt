@@ -14,12 +14,12 @@ import android.widget.ImageView
 import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.mediarouter.app.MediaRouteButton
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.getChannelMetadata
-import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
@@ -94,8 +94,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var textCasting: AppCompatTextView
     private var mPlayListListener: PlaylistListener? = null
     protected lateinit var playerOverlay: PlayerOverlayView
+    private lateinit var errorMessageView: AppCompatTextView
     private lateinit var autoplayProgress: CircularProgressBar
     protected lateinit var doubleTapInterceptor: PlayerPreview
+    private lateinit var errorMessageContainer: ConstraintLayout
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
     private lateinit var playerControlView: StyledPlayerControlView
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -135,6 +137,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         playerOverlay = findViewById(R.id.playerOverlay)
         textCasting = findViewById(R.id.text_casting)
         debugContainer = findViewById(R.id.debug_container)
+        errorMessageView = findViewById(R.id.error_message_view)
+        errorMessageContainer = findViewById(R.id.error_message_container)
         playerBottomSpace = findViewById(R.id.player_bottom_space)
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         fullscreenButton = findViewById(R.id.fullscreen)
@@ -639,9 +643,15 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor.setOnClickListener(null)
     }
     
+    fun showCustomErrorMessage(errorMessage: String? = null) {
+        errorMessageContainer.show()
+        errorMessage?.doIfNotNullOrBlank { errorMessageView.text = it }
+    }
+    
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
+                errorMessageContainer.hide()
                 previewImage.setImageResource(0)
                 playPause.visibility = View.GONE
                 doubleTapInterceptor.setOnClickListener(this)
@@ -670,6 +680,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 playerEventHelper.setPlayerEvent("Player is idle")
             }
             Player.STATE_READY -> {
+                errorMessageContainer.hide()
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
                 val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
@@ -762,8 +773,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(Utils.getRealScreenSize(context))
             
-            rotateButton.visibility =
-                if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
+            rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {

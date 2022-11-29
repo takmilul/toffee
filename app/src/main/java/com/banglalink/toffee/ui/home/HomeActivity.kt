@@ -1053,6 +1053,10 @@ class HomeActivity :
         binding.playerView.showContentExpiredMessage()
     }
     
+    override fun showPlayerCustomErrorMessage(errorMessage: String?) {
+        binding.playerView.showCustomErrorMessage(errorMessage)
+    }
+    
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, appbarConfig) || super.onSupportNavigateUp()
     }

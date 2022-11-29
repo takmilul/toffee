@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.ads.identifier.AdvertisingIdClient
 import androidx.ads.identifier.AdvertisingIdInfo
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -111,7 +112,7 @@ class SplashScreenFragment : BaseFragment() {
         }
         
         observe(viewModel.apiLoadingProgress) {
-            binding.progressBar.progress = it
+            _binding?.progressBar?.progress = it
         }
         observeApiLogin()
         observeCheckForUpdateStatus()
@@ -317,8 +318,9 @@ class SplashScreenFragment : BaseFragment() {
                     mPref.clear()
                     requestAppLaunch()
                 } else {
-                    binding.root.snack(error.msg) {
-                        action("Retry") {
+                    val errorMessage = error.msg.ifBlank { "High user traffic. Please try again after some time." }
+                    binding.root.snack(errorMessage) {
+                        action("Retry", ContextCompat.getColor(requireContext(), R.color.colorAccent2)) {
                             requestAppLaunch()
                         }
                     }
