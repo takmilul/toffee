@@ -19,13 +19,13 @@ fun getError(e: Exception): Error {
     ToffeeAnalytics.logException(e)
     when (e) {
         is HttpException -> {
-            return Error(e.code(), e.message())
+            return Error(e.code(), e.message().ifBlank { "High user traffic. Please try again after some time." })
         }
         is IOException -> {
-            return Error(-1, "Unable to connect server")
+            return Error(-1, "Please check your internet connection and try again later.")
         }
         is SocketTimeoutException -> {
-            return Error(-1, "Connection time out")
+            return Error(-1, "High user traffic. Please try again after some time.")
         }
         is ApiException -> {
             return Error(e.errorCode, e.errorMessage)

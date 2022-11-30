@@ -112,7 +112,9 @@ class SplashScreenFragment : BaseFragment() {
         }
         
         observe(viewModel.apiLoadingProgress) {
-            _binding?.progressBar?.progress = it
+            if (connectionWatcher.isOnline) {
+                _binding?.progressBar?.progress = it
+            }
         }
         observeApiLogin()
         observeCheckForUpdateStatus()
@@ -318,8 +320,7 @@ class SplashScreenFragment : BaseFragment() {
                     mPref.clear()
                     requestAppLaunch()
                 } else {
-                    val errorMessage = error.msg.ifBlank { "High user traffic. Please try again after some time." }
-                    binding.root.snack(errorMessage) {
+                    binding.root.snack(error.msg) {
                         action("Retry", ContextCompat.getColor(requireContext(), R.color.colorAccent2)) {
                             requestAppLaunch()
                         }
