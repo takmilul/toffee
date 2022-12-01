@@ -98,6 +98,7 @@ class HtmlPageViewDialog : DialogFragment() {
             setSupportMultipleWindows(true)
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
+            mediaPlaybackRequiresUserGesture = false
         }
         if (header.isNullOrEmpty()) {
             binding.webview.loadUrl(htmlUrl)
