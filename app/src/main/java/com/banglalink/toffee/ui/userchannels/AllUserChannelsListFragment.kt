@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.data.database.LocalSync
@@ -65,6 +67,8 @@ class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCal
         
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
         mAdapter = AllUserChannelsListAdapter(this)
+        binding.progressBar.load(R.drawable.content_loader)
+        binding.footerLoader.load(R.drawable.content_loader)
         
         with(binding) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {

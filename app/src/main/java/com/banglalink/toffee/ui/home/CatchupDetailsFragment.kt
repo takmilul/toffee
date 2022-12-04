@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -157,6 +158,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     
     private fun observeListState() {
         var isInitialized = false
+        binding.progressBar.load(R.drawable.content_loader)
+        
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             detailsAdapter.loadStateFlow.collect {
                 val list = detailsAdapter.snapshot()

@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.exception.*
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
-import java.util.concurrent.CancellationException
+import java.util.concurrent.*
 
 //this will use non synchronized lazy method
 fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{
@@ -21,11 +21,11 @@ fun getError(e: Exception): Error {
         is HttpException -> {
             return Error(e.code(), e.message().ifBlank { "High user traffic. Please try again after some time." })
         }
-        is IOException -> {
-            return Error(-1, "Please check your internet connection and try again later.")
-        }
         is SocketTimeoutException -> {
             return Error(-1, "High user traffic. Please try again after some time.")
+        }
+        is IOException -> {
+            return Error(-1, "Unable to connect server.")
         }
         is ApiException -> {
             return Error(e.errorCode, e.errorMessage)

@@ -52,11 +52,6 @@ class ReferAFriendFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         getMyReferralCode()
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
     
     private fun getMyReferralCode() {
         progressDialog.show()
@@ -64,6 +59,7 @@ class ReferAFriendFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    progressDialog.dismiss()
                     binding.data = it.data
                     if (it.data.promotionMessage.isNotEmpty()) {
                         binding.policyText.setTextColor(Color.parseColor(it.data.fontColor))
@@ -88,6 +84,7 @@ class ReferAFriendFragment : BaseFragment() {
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
+                    progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
                 }
             }
@@ -172,4 +169,9 @@ class ReferAFriendFragment : BaseFragment() {
 //    override fun getAssets(): AssetManager {
 //        return resources.assets
 //    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

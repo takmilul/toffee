@@ -12,6 +12,8 @@ import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
@@ -38,9 +40,7 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
     open val verticalPadding = Pair(0, 0)
     open val horizontalPadding = Pair(0, 0)
     
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -105,6 +105,7 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
             
             updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
+            binding.progressBar.load(R.drawable.content_loader)
             
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow

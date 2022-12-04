@@ -21,6 +21,7 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -221,6 +222,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     private fun observeListState() {
         var isInitialized = false
+        binding.progressBar.load(R.drawable.content_loader)
+    
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             playlistAdapter.loadStateFlow.collectLatest {
                 val isLoading = it.source.refresh is LoadState.Loading || !isInitialized

@@ -86,7 +86,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
     
-        <pl.droidsonroids.gif.GifImageView
+        <ImageView
             android:id="@+id/progressBar"
             android:layout_width="40dp"
             android:layout_height="40dp"

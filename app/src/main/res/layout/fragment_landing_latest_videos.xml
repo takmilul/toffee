@@ -111,7 +111,7 @@
         tools:visibility="visible"
         tools:listitem="@layout/list_item_videos"/>
     
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/progress_bar"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -125,7 +125,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/latestVideosList" />
     
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/footerLoader"
         android:layout_width="40dp"
         android:layout_height="40dp"

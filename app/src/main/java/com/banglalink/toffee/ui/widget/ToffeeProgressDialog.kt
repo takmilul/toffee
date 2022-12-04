@@ -3,11 +3,11 @@ package com.banglalink.toffee.ui.widget
 import android.app.Dialog
 import android.content.Context
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import coil.load
 import com.banglalink.toffee.R
-
+import com.banglalink.toffee.databinding.GifLayoutNewBinding
 
 class ToffeeProgressDialog(context: Context) : Dialog(context, R.style.TransparentProgressDialog) {
 
@@ -24,9 +24,10 @@ class ToffeeProgressDialog(context: Context) : Dialog(context, R.style.Transpare
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-
-        layout.addView(LayoutInflater.from(context).inflate(R.layout.gif_layout_new, null), params)
+        
+        val binding = GifLayoutNewBinding.inflate(this.layoutInflater)
+        binding.progressBar.load(R.drawable.screen_loader)
+        layout.addView(binding.root, params)
         addContentView(layout, params)
     }
-
 }

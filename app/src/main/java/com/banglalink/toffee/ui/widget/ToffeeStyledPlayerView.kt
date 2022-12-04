@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.mediarouter.app.MediaRouteButton
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -69,6 +70,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var controllerBg: View
     private lateinit var playNext: ImageView
     private lateinit var playPrev: ImageView
+    private lateinit var buffering: ImageView
     private var timer: CountDownTimer? = null
     private lateinit var playPause: ImageView
     private lateinit var exoPosition: TextView
@@ -148,6 +150,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         
         playNext = findViewById(R.id.play_next)
         playPrev = findViewById(R.id.play_prev)
+        buffering = findViewById(R.id.exo_buffering)
         
         exoDuration = findViewById(com.google.android.exoplayer2.ui.R.id.exo_duration)
         exoTimeSeparator = findViewById(R.id.time_seperator)
@@ -651,6 +654,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
+                buffering.load(R.drawable.player_loader)
                 errorMessageContainer.hide()
                 previewImage.setImageResource(0)
                 playPause.visibility = View.GONE

@@ -30,7 +30,7 @@
                 app:reverseLayout="false"
                 tools:listitem="@layout/list_item_my_channel_videos" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/progress_bar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

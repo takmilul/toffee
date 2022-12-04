@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -224,6 +225,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         }, currentItem)
 
         with(binding.listview) {
+            binding.progressBar.load(R.drawable.content_loader)
             addItemDecoration(MarginItemDecoration(8))
             adapter = ConcatAdapter(detailsAdapter, mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() }))
 

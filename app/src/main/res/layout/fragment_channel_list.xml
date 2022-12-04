@@ -14,14 +14,15 @@
         
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:cacheColorHint="@android:color/transparent"
             android:clipToPadding="false"
             android:paddingHorizontal="@dimen/tv_channels_padding"
             android:paddingBottom="20dp"
             android:scrollbars="none"
+            android:animateLayoutChanges="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +60,7 @@
         
         </LinearLayout>
         
-        <pl.droidsonroids.gif.GifImageView
+        <ImageView
             android:id="@+id/progress_bar"
             android:layout_width="40dp"
             android:layout_height="40dp"

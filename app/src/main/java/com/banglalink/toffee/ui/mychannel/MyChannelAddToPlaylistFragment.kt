@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import coil.load
+import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -103,6 +105,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+        binding.progressBar.load(R.drawable.content_loader)
         with(binding) {
             var isInitialized = false
             lifecycleScope.launchWhenStarted {

@@ -18,6 +18,7 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -217,6 +218,8 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     }
     
     private fun observeListState() {
+        binding.progressBar.load(R.drawable.content_loader)
+    
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             playlistAdapter.loadStateFlow.collect {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading

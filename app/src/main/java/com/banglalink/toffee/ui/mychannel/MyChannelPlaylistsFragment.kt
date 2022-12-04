@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -90,6 +91,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         super.onViewCreated(view, savedInstanceState)
         setEmptyView()
         with(binding.myChannelPlaylists) {
+            binding.progressBar.load(R.drawable.content_loader)
             addItemDecoration(MarginItemDecoration(12))
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {

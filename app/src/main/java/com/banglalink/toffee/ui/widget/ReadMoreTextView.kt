@@ -302,6 +302,22 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         trimTextSize = textSize
     }
     
+    override fun performLongClick(): Boolean {
+        return try {
+            super.performLongClick()
+        } catch (e: Exception) {
+            true
+        }
+    }
+    
+    override fun performLongClick(x: Float, y: Float): Boolean {
+        return try {
+            super.performLongClick(x, y)
+        } catch (e: Exception) {
+            true
+        }
+    }
+    
     inner class CustomTypefaceSpan(private val typeface: Typeface?) : MetricAffectingSpan() {
         override fun updateDrawState(ds: TextPaint) {
             applyCustomTypeFace(ds, typeface)

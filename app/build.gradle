@@ -129,8 +129,6 @@ dependencies {
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     
-    //GIF imageview
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
     // Crop Image
     implementation 'com.github.yalantis:ucrop:2.2.8'
     implementation 'com.mikhaellopez:circularprogressbar:3.1.0'

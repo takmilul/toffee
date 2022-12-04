@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -86,6 +87,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         title?.let {
             activity?.title = it
         }
+        _binding?.progressBar?.load(R.drawable.content_loader)
         _binding?.progressBar?.show()
         homeViewModel.isStingray.postValue(isStingray)
         setupEmptyView()
@@ -94,6 +96,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         
         _binding?.listview?.apply{
             setHasFixedSize(true)
+            itemAnimator = null
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)
             gridLayoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
             layoutManager = gridLayoutManager

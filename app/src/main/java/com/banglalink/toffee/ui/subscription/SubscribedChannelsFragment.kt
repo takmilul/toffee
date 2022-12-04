@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
+import coil.load
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
@@ -50,6 +52,7 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
         
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST)
         mAdapter = AllSubscribedChannelAdapter(this)
+        binding.progressBar.load(R.drawable.content_loader)
     
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             var isInitialized = false

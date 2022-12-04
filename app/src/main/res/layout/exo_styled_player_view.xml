@@ -91,7 +91,7 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
     
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/exo_buffering"
         android:layout_width="40dp"
         android:layout_height="40dp"
