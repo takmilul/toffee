@@ -72,6 +72,7 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
                 }
             }
             adapter = mAdapter
+            itemAnimator = null
             setHasFixedSize(true)
         }
         if (mPref.isStingrayActive) {

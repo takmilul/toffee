@@ -73,6 +73,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
         
         with(binding.channelList) {
             adapter = mAdapter
+            itemAnimator = null
         }
         
         observeLinearList()

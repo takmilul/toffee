@@ -39,12 +39,6 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         return binding.root
     }
 
-    override fun onDestroyView() {
-        binding.channelList.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
@@ -75,6 +69,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
                 }
             }
             adapter = mAdapter
+            itemAnimator = null
             setHasFixedSize(true)
         }
 
@@ -97,5 +92,11 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         if (item.id.isNotBlank()) {
             homeViewModel.playContentLiveData.postValue(item)
         }
+    }
+    
+    override fun onDestroyView() {
+        binding.channelList.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

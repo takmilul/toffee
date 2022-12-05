@@ -64,6 +64,7 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
         
         with(binding.channelList) {
             adapter = mAdapter
+            itemAnimator = null
         }
         observeList()
     }

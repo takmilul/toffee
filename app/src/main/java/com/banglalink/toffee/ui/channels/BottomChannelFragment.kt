@@ -55,6 +55,7 @@ class BottomChannelFragment : BaseFragment() {
         
         with(binding.channelList) {
             adapter = mAdapter
+            itemAnimator = null
             setHasFixedSize(true)
         }
         
