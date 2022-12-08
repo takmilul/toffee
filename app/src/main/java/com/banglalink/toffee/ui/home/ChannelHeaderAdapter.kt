@@ -67,7 +67,7 @@ class ChannelHeaderAdapter(
             }
             is SeriesPlaybackInfo -> {
                 holder.seasonInfoHeader.visibility = View.VISIBLE
-                holder.seasonInfoHeader.text = "${"S%02d \u2022 E%02d".format(channelInfo?.seasonNo, channelInfo?.episodeNo)}"
+                holder.seasonInfoHeader.text = "S%02d \u2022 E%02d".format(channelInfo?.seasonNo, channelInfo?.episodeNo)
                 holder.seasonSpinnerWrap.visibility = View.VISIBLE
                 holder.bottomPanelStatus.visibility = View.GONE
                 holder.seasonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

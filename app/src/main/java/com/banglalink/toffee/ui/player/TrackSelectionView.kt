@@ -313,14 +313,7 @@ class TrackSelectionView @JvmOverloads constructor(
                     overrides.put(groupIndex, SelectionOverride(groupIndex, *tracks))
                 }
             } else if (!isCurrentlySelected) {
-                if (false) {
-                    // Add new track to adaptive override.
-                    val tracks = getTracksAdding(overrideTracks, trackIndex)
-                    overrides.put(groupIndex, SelectionOverride(groupIndex, *tracks))
-                } else {
-                    // Replace existing track in override.
-                    overrides.put(groupIndex, SelectionOverride(groupIndex, trackIndex))
-                }
+                overrides.put(groupIndex, SelectionOverride(groupIndex, trackIndex))
             }
         }
     }

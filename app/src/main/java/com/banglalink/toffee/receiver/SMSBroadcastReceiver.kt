@@ -4,18 +4,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import java.lang.Exception
 
 class SMSBroadcastReceiver : BroadcastReceiver() {
 
-    private val _otpLiveData = SingleLiveEvent<String>();
+    private val _otpLiveData = SingleLiveEvent<String>()
     val otpLiveData = _otpLiveData.toLiveData()
 
     private val TAG = "SMSBroadcastReceiver"

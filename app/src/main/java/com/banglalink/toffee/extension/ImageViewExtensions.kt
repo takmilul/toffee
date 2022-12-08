@@ -3,10 +3,6 @@ package com.banglalink.toffee.extension
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import coil.load
-import coil.transform.CircleCropTransformation
-import com.banglalink.toffee.R
 
 fun ImageView.loadBase64(data: String) {
     try {

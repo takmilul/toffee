@@ -49,7 +49,7 @@ const val FEATURE_PARTNER_LOG = "projects/$PROJECT_ID/topics/featured_partner_lo
 object PubSubMessageUtil {
 
     private lateinit var client:Pubsub
-    private val TAG = "PubSubMessageUtil"
+    private const val TAG = "PubSubMessageUtil"
     private val coroutineContext = IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
 

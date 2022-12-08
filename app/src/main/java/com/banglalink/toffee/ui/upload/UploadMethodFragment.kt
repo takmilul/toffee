@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import com.banglalink.toffee.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +25,7 @@ import com.banglalink.toffee.databinding.UploadMethodFragmentBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -89,7 +89,12 @@ class UploadMethodFragment : DialogFragment() {
         lifecycleScope.launch {
             try {
                 if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
-                    galleryResultLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI).setType("video/mp4"),)
+                    galleryResultLauncher.launch(
+                        Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                        ).setType("video/mp4"),
+                    )
                 }
             }
             catch (e: PermissionException) {

@@ -1,12 +1,9 @@
 package com.banglalink.toffee.ui.widget
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.AttributeSet
-import android.util.Log
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import kotlin.system.measureTimeMillis
 
 class ToffeeDrawerLayout @JvmOverloads constructor(context: Context,
                          attrs: AttributeSet? = null,

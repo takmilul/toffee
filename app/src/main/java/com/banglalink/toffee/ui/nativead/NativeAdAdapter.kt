@@ -45,7 +45,7 @@ class NativeAdAdapter private constructor(
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return if (viewType == mParam.adViewLayoutRes) {
-            onCreateAdViewHolder(parent, viewType)
+            onCreateAdViewHolder(parent)
         } else super.onCreateViewHolder(parent, viewType)
     }
     
@@ -66,7 +66,7 @@ class NativeAdAdapter private constructor(
     
     private fun isAdPosition(position: Int) = (position + 1) % (mParam.adItemInterval + 1) == 0
     
-    private fun onCreateAdViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    private fun onCreateAdViewHolder(parent: ViewGroup): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val adLayoutOutline = inflater.inflate(mParam.itemContainerLayoutRes, parent, false)
         val vg = adLayoutOutline.findViewById<ViewGroup>(mParam.itemContainerId)
@@ -148,11 +148,9 @@ class NativeAdAdapter private constructor(
         }
         
         nativeAd.mediaContent?.let {
-            adView.mediaView?.setMediaContent(it)
+            adView.mediaView?.mediaContent = it
             adView.mediaView?.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
             if (nativeAd.mediaContent?.hasVideoContent() == true) {
-                val videoController = it.videoController
-                val mediaAspectRatio: Float = it.aspectRatio
                 val duration: String = Utils.getDuration(it.duration.toInt())
                 adContainerView.duration.show()
                 adContainerView.duration.text = duration

@@ -6,23 +6,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.FirebaseParams
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.BottomSheetDeteleProfileDataBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.splash.SplashViewModel
-import kotlinx.coroutines.launch
-
 
 class DeleteProfileDataBottomSheetFragment : ChildDialogFragment() {
     private val homeViewModel by activityViewModels<HomeViewModel>()

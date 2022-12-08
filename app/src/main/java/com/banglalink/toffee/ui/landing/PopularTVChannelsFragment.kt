@@ -34,7 +34,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     private val binding get() = _binding!!
     val viewModel by activityViewModels<LandingPageViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
         return binding.root
     }

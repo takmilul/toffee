@@ -29,7 +29,8 @@
         <item name="android:textColor">@color/cardTitleColor</item>
         <item name="colorBackgroundFloating">@color/cardBgColor</item>
         <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:autofilledHighlight">@android:color/transparent</item>
+        <item name="android:autofilledHighlight"
+            tools:ignore="NewApi">@android:color/transparent</item>
     </style>
     
     <style name="TabTheme">
@@ -645,7 +646,8 @@
     <style name="BubbleSeparatorStyle">
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginVertical">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
         <item name="android:background">@color/bubble_separator_color</item>
     </style>
     

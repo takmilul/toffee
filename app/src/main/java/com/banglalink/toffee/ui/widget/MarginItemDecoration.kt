@@ -12,7 +12,7 @@ class MarginItemDecoration(spaceHeightDp: Int, private val clipBottom: Boolean =
     override fun getItemOffsets(outRect: Rect, view: View,
                                 parent: RecyclerView, state: RecyclerView.State) {
         with(outRect) {
-            if(!clipBottom || parent.getChildAdapterPosition(view) != parent.adapter?.itemCount?.minus(1) ?: -1) {
+            if(!clipBottom || parent.getChildAdapterPosition(view) != (parent.adapter?.itemCount?.minus(1) ?: -1)) {
                 bottom = spaceHeight
             }
         }

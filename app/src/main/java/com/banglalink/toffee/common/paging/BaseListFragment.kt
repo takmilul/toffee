@@ -140,16 +140,13 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
                 mAdapter.submitData(it.filter {
                     (!(it is ChannelInfo && it.isExpired) && !(it is UserActivities && gson.fromJson(it.payload, ChannelInfo::class.java).isExpired))
                 }.map {
-                    var isHeaderTextSet = false
                     if (it is ChannelInfo) {
                         localSync.syncData(it as ChannelInfo)
-                        if(it.totalCount > 1 && !isHeaderTextSet) {
+                        if(it.totalCount > 1) {
                             setResultView("${it.totalCount} results found")
-                            isHeaderTextSet = true
                         }
-                        else if(it.totalCount == 1 && !isHeaderTextSet) {
+                        else if(it.totalCount == 1) {
                             setResultView("${it.totalCount} result found")
-                            isHeaderTextSet = true
                         }
                     }
                     it

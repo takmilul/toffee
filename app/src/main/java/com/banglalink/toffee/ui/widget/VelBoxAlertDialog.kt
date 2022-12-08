@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.banglalink.toffee.R
 
 fun showAlertDialog(context: Context, title: String, message: String, cancellable: Boolean) {
@@ -28,7 +27,7 @@ fun showAlertDialog(context: Context, title: String, message: String, cancellabl
         (alertView.findViewById(R.id.message_tv) as TextView).text = message
     }
     alertView.findViewById<TextView>(R.id.ok_button)
-        .setOnClickListener(View.OnClickListener { alertDialog.dismiss() })
+        .setOnClickListener { alertDialog.dismiss() }
     alertDialog.show()
 }
 

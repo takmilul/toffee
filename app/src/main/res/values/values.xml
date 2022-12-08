@@ -3,4 +3,5 @@
     <declare-styleable name="ExpandableTextView">
         <attr format="integer" name="animation_duration"/>
     </declare-styleable>
+    <drawable name="exo_styled_controls_speed">@drawable/exo_ic_speed</drawable>
 </resources>

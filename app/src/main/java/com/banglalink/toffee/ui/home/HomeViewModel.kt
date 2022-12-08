@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import android.os.Build
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

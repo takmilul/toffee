@@ -1,18 +1,12 @@
 package com.banglalink.toffee.ui.widget
 
 import android.content.Context
-import android.content.res.Resources
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.px
-import com.loopnow.fireworklibrary.views.VideoFeedView
-import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 class RedeemBulletCardView @JvmOverloads constructor(
     context: Context,

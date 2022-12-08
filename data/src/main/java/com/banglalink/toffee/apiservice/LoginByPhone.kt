@@ -23,6 +23,6 @@ class LoginByPhone @Inject constructor(private val preference: SessionPreference
         /*if (response.response.authorize) {
             preference.phoneNumber = phoneNumber
         }*/
-        return response.response.regSessionToken;
+        return response.response.regSessionToken
     }
 }

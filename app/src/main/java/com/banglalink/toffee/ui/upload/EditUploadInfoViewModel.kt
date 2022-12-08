@@ -151,7 +151,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 it.first?.let { thumb ->
                     thumbnailData.value = thumb
                 }
-                orientationData.value = it.second!!
+                orientationData.value = it.second
             }
         }
     }
@@ -173,7 +173,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             actualFileName?.substring(idx) ?: ".mp4"
         } else ".mp4"
 //
-        fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + if(ext.isNotBlank()) ext else ".mp4"
+        fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext.ifBlank { ".mp4" }
 
 //        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
 //

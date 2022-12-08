@@ -14,7 +14,6 @@ import android.graphics.BitmapFactory.Options
 import android.graphics.Point
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -145,7 +144,7 @@ object Utils {
     suspend fun fileNameFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
         context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
-                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: 0)
+                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME).takeIf { it >=0 } ?: 0)
             }
             else {
                 null
@@ -160,7 +159,7 @@ object Utils {
         else {
             context.contentResolver.query(uri, null, null, null, null)?.use {
                 if(it.moveToFirst()) {
-                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE) ?: 0)
+                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE).takeIf { it >= 0 } ?: 0)
                 }
                 else {
                     0L

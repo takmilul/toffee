@@ -7,7 +7,6 @@ import com.banglalink.toffee.apiservice.GetFireWorkApiService
 import com.banglalink.toffee.data.network.response.FireworkResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.TermsAndCondition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

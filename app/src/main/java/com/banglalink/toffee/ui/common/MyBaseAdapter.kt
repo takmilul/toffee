@@ -2,13 +2,10 @@ package com.banglalink.toffee.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.ChannelInfo
 
 abstract class MyBaseAdapter<T: Any>(val callback: BaseListItemCallback<T>? = null) :RecyclerView.Adapter<MyViewHolder>() {
 

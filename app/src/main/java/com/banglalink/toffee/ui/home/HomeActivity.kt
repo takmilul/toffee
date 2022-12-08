@@ -872,7 +872,7 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
-        binding.sideNavigation.setBackgroundColor(resources.getColor(R.color.cardBgColor))
+        binding.sideNavigation.setBackgroundColor(ContextCompat.getColor(this, R.color.cardBgColor))
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
             WindowInsetsCompat.CONSUMED
@@ -2379,15 +2379,15 @@ class HomeActivity :
             )
             background = ContextCompat.getDrawable(context, R.drawable.searchview_input_bg)
             hint = "Search"
-            setHintTextColor(resources.getColor(R.color.searchview_hint_text_color));
+            setHintTextColor(ContextCompat.getColor(context, R.color.searchview_hint_text_color))
             compoundDrawablePadding = 10
             addTextChangedListener { text ->
                 val leftIcon = R.drawable.ic_search_new
-                val rightIcon = if (text?.length ?: 0 <= 0) 0 else R.drawable.ic_clear_search
+                val rightIcon = if ((text?.length ?: 0) <= 0) 0 else R.drawable.ic_clear_search
                 if (compoundPaddingRight != rightIcon) {
                     setCompoundDrawablesWithIntrinsicBounds(leftIcon, 0, rightIcon, 0)
                 }
-                searchAutoComplete.setOnTouchListener(View.OnTouchListener { v, event ->
+                searchAutoComplete.setOnTouchListener(View.OnTouchListener { _, event ->
                     val DRAWABLE_LEFT = 0
                     val DRAWABLE_TOP = 1
                     val DRAWABLE_RIGHT = 2

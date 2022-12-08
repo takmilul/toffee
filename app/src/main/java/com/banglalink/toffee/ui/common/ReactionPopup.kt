@@ -76,7 +76,7 @@ class ReactionPopup: Fragment() {
         val bottomLocation = iconLocation[1].plus(iconHeight + 8)
         
         val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2) ?: 0
-        val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < parentFragment?.view?.height?:0) || topLocation < binding.root.measuredHeight) {
+        val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < (parentFragment?.view?.height ?: 0)) || topLocation < binding.root.measuredHeight) {
             bottomLocation
         } else {
             topLocation

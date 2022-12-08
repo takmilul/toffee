@@ -99,7 +99,8 @@
         <item
             android:id="@+id/menu_follow_us"
             app:actionLayout="@layout/follow_us_action_layout"
-            app:showAsAction="always">
+            app:showAsAction="always"
+            android:title="">
         </item>
 
     </group>

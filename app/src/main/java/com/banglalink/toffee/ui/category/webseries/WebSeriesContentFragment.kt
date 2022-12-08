@@ -45,7 +45,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     private val viewModel by viewModels<WebSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWebSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -3,7 +3,6 @@ package com.banglalink.toffee.data.database.dao
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.banglalink.toffee.data.database.entities.TVChannelItem
-import com.banglalink.toffee.model.ChannelInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao

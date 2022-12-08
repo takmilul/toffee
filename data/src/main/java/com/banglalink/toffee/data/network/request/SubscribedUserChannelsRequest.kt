@@ -1,7 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.facebook.internal.gatekeeper.AppID
 import com.google.gson.annotations.SerializedName
 
 data class SubscribedUserChannelsRequest(

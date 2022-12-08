@@ -1,7 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter

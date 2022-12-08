@@ -1,7 +1,6 @@
 package com.banglalink.toffee.data.database.dao
 
 import androidx.room.*
-import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.data.database.entities.SubscribedItem
 
 @Dao

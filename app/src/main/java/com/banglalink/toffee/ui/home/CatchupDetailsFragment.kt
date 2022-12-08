@@ -226,7 +226,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                 else{
                     view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                 }
-                Log.e(ReactionPopup.TAG, "setReaction: icon", )
+                Log.e(ReactionPopup.TAG, "setReaction: icon")
             }
         })
         }

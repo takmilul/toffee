@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.upload
 
 import android.content.Context
-import android.os.Parcelable
 import net.gotev.uploadservice.HttpUploadRequest
 import net.gotev.uploadservice.UploadTask
 import net.gotev.uploadservice.data.UploadFile

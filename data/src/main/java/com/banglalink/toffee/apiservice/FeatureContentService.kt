@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.FeatureContentBean
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 

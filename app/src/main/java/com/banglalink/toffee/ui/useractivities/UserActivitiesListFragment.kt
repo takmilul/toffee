@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.useractivities
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +14,6 @@ import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.google.ads.interactivemedia.v3.internal.it
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

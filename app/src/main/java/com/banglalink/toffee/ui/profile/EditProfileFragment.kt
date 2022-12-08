@@ -100,7 +100,7 @@ class EditProfileFragment : BaseFragment() {
             binding.accountDelete.visibility = View.VISIBLE
         }
 
-        binding.accountDelete.setOnClickListener(){
+        binding.accountDelete.setOnClickListener {
             findNavController().navigate(R.id.bottomSheetDeleteFragment)
         }
 

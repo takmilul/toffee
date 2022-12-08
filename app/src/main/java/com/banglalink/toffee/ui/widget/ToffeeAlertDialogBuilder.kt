@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog

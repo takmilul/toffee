@@ -195,7 +195,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private fun getTrimmedText(): CharSequence? {
 //        Log.i(TAG, "getTrimmedText: ")
         if (trimMode == TRIM_MODE_LENGTH) {
-            if (!mainText.isNullOrBlank() && mainText?.length ?: 0 > trimLength) {
+            if (!mainText.isNullOrBlank() && (mainText?.length ?: 0) > trimLength) {
                 return if (readMore) {
                     updateCollapsedText()
                 } else {

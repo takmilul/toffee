@@ -71,7 +71,7 @@ class AuthInterceptor @Inject constructor(
         }
         if (!response.isSuccessful) {
             if (response.code == 403) {
-                val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access.";
+                val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access."
                 return response.newBuilder()
                     .code(response.code)
                     .message(msg)

@@ -24,15 +24,15 @@ private fun rotateImageIfRequired(context: Context, img: Bitmap?, selectedImage:
         e.printStackTrace()
         return null
     }
-
-    if (rotation != 0) {
+    
+    return if (rotation != 0) {
         val matrix = Matrix()
         matrix.postRotate(rotation.toFloat())
         val rotatedImg = Bitmap.createBitmap(img!!, 0, 0, img.width, img.height, matrix, true)
         img.recycle()
-        return rotatedImg
+        rotatedImg
     } else {
-        return img
+        img
     }
 }
 
@@ -64,8 +64,8 @@ fun getRotation(context: Context, selectedImage: Uri): Int {
     return rotation
 }
 
-private val MAX_HEIGHT = 1024
-private val MAX_WIDTH = 1024
+private const val MAX_HEIGHT = 1024
+private const val MAX_WIDTH = 1024
 @Throws(IOException::class)
 fun decodeSampledBitmap(context: Context, selectedImage: Uri): Bitmap? {
 
