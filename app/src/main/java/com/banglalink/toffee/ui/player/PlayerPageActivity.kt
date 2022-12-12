@@ -798,7 +798,7 @@ abstract class PlayerPageActivity :
         }
 //        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)
         val channelInfo = playlistManager.getCurrentChannel() ?: run {
-            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg_vod))
+            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg))
             return@launch
         }
         val isExpired = try {
@@ -816,7 +816,7 @@ abstract class PlayerPageActivity :
         } else {
             getHlsMediaItem(channelInfo)
         } ?: run {
-            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg_vod))
+            showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg))
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
@@ -1211,8 +1211,7 @@ abstract class PlayerPageActivity :
                 retryCounter = 0
                 reloadCounter = 0
                 fallbackCounter = 0
-                val message = "Please check your internet and try again later."
-                showPlayerCustomErrorMessage(message)
+                showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg))
             } else if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
@@ -1263,9 +1262,7 @@ abstract class PlayerPageActivity :
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
-                    val message = if (playlistManager.getCurrentChannel()?.isLinear == true) getString(R.string.player_custom_error_msg_live)
-                     else getString(R.string.player_custom_error_msg_vod)
-                    showPlayerCustomErrorMessage(message)
+                    showPlayerCustomErrorMessage(getString(R.string.player_custom_error_msg))
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "")
                 }
             }
