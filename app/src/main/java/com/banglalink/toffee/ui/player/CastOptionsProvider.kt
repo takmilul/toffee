@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.player
 
 import android.content.Context
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.google.android.gms.cast.CastMediaControlIntent
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
@@ -15,7 +16,7 @@ internal class CastOptionsProvider : OptionsProvider {
                     if (it.isNotBlank()) {
                         setReceiverApplicationId(SessionPreference.getInstance().castReceiverId)
                     } else {
-                        setReceiverApplicationId(APP_ID_DEFAULT_RECEIVER_WITH_DRM)
+                        setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
                     }
                 }
 //            .setSupportedNamespaces(supportedNamespaces)
@@ -27,7 +28,7 @@ internal class CastOptionsProvider : OptionsProvider {
     }
     
     companion object {
-        const val APP_ID_DEFAULT_RECEIVER_WITH_DRM = "A12D4273"
+//        const val APP_ID_DEFAULT_RECEIVER_WITH_DRM = "A12D4273"
         const val CUSTOM_NAMESPACE = "urn:x-cast:toffee"
     }
 }

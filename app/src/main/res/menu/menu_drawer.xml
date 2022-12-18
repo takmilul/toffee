@@ -2,106 +2,106 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    
     <group
         android:id="@+id/group1"
         android:checkableBehavior="single">
-
+        
         <item
             android:id="@+id/ic_menu_internet_packs"
             android:icon="@drawable/ic_menu_internet_packs"
             android:title="@string/menu_internet_pack" />
-
+        
         <item
             android:id="@+id/menu_tv"
             android:icon="@drawable/ic_menu_tv_normal"
             android:title="@string/menu_all_tv_channels" />
-
+        
         <item
             android:id="@+id/menu_activities"
             android:icon="@drawable/ic_menu_activites"
             android:title="@string/menu_activities" />
-
+        
         <item
             android:id="@+id/menu_playlist"
             android:icon="@drawable/ic_menu_playlist"
             android:title="@string/menu_playlists" />
-
+        
         <item
             android:id="@+id/menu_favorites"
             android:icon="@drawable/ic_menu_favorites"
             android:title="@string/menu_favorites" />
-
+        
         <item
             android:id="@+id/menu_subscriptions"
             android:icon="@drawable/ic_menu_subscriptions"
             android:title="@string/menu_subscriptions" />
-
+    
     </group>
-
+    
     <group
         android:id="@+id/group2"
         android:checkableBehavior="single">
-
+        
         <item
             android:id="@+id/menu_invite"
             android:icon="@drawable/ic_menu_invite"
             android:title="@string/refer_a_friend_txt" />
-
+        
         <item
             android:id="@+id/menu_redeem"
             android:icon="@drawable/ic_menu_redeem"
             android:title="@string/redeem_code_txt" />
-
+    
     </group>
-
+    
     <group
         android:id="@+id/group3"
         android:checkableBehavior="single">
-
+        
         <item
             android:id="@+id/menu_settings"
             android:icon="@drawable/ic_side_menu_settings"
             android:title="@string/menu_settings" />
-
+        
         <item
             android:id="@+id/menu_change_theme"
             android:icon="@drawable/ic_menu_dark_mode"
             android:title="@string/menu_dark_mode" />
-
+    
     </group>
-
+    
     <group
         android:id="@+id/group4"
         android:checkableBehavior="single">
-
+        
         <item
             android:id="@+id/menu_policies"
             android:icon="@drawable/ic_policies"
             android:title="@string/menu_policies" />
-
+        
         <item
             android:id="@+id/menu_login"
             android:icon="@drawable/ic_menu_sign_in"
             android:title="@string/menu_sign_in" />
-
+        
         <item
             android:id="@+id/menu_logout"
             android:icon="@drawable/ic_menu_log_out"
             android:title="@string/menu_log_out" />
-
+        
     </group>
-
+    
     <group
         android:id="@+id/group5"
         android:checkableBehavior="single">
-
+        
         <item
             android:id="@+id/menu_follow_us"
+            android:title="@null"
             app:actionLayout="@layout/follow_us_action_layout"
-            app:showAsAction="always"
-            android:title="">
+            app:showAsAction="always">
         </item>
-
+        
     </group>
 </menu>
