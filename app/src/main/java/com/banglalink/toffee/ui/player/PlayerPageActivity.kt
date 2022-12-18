@@ -638,7 +638,7 @@ abstract class PlayerPageActivity :
         Log.i("DRM_T", "Existing -> $existingLicense")
         if (existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "Using existing license")
-            showDebugMessage("Using existing license")
+//            showDebugMessage("Using existing license")
             return existingLicense.license
         } else if (existingLicense != null && !isLicenseExpired(existingLicense.expiryTime)) {
             Log.i("DRM_T", "License almost expired. requesting new one, but using old one.")
@@ -673,7 +673,7 @@ abstract class PlayerPageActivity :
                 null
             } ?: return null
             Log.i("DRM_T", "Downloading offline license")
-            showDebugMessage("Downloading offline license")
+//            showDebugMessage("Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
 //                    .newBuilder()
@@ -1487,7 +1487,7 @@ abstract class PlayerPageActivity :
                 val errorMessage = it.adData["errorMessage"] ?: "Unknown error occurred."
                 playerEventHelper.setAdData(it.ad, LOG.name, errorMessage)
                 ConvivaHelper.onAdFailed(errorMessage, it.ad)
-                showDebugMessage("AdLoadFailureMessage: $errorMessage")
+//                showDebugMessage("AdLoadFailureMessage: $errorMessage")
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
             AD_BUFFERING -> {
@@ -1543,7 +1543,7 @@ abstract class PlayerPageActivity :
     private fun onAdErrorListener(it: AdErrorEvent?) {
         val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
 //        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
-        showDebugMessage("AdLoadFailureMessage: $errorMessage")
+//        showDebugMessage("AdLoadFailureMessage: $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)
         playerEventHelper.setAdData(null, null, isReset = true)
