@@ -178,7 +178,7 @@ class Bubble(builder: Builder) {
                 windowManager.updateViewLayout(view, params)
                 
             }, object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     isFlingAnimationLocked.set(false)
                     super.onAnimationEnd(animation)
                 }
@@ -248,7 +248,7 @@ class Bubble(builder: Builder) {
                     DURATION_IN_MILLIS,
                     null,
                     object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
+                        override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
                             isAnimatingShowRemoveItem.set(false)
                         }
@@ -263,7 +263,7 @@ class Bubble(builder: Builder) {
                     DURATION_IN_MILLIS,
                     null,
                     object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
+                        override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
                             isAnimatingHideRemoveItem.set(false)
                             removeItem.setVisible(shouldShow)
@@ -282,7 +282,7 @@ class Bubble(builder: Builder) {
         if (isAnimatingResizeRemoveItem.compareAndSet(false, true)) {
             if (shouldExpand && removeItem.expandable) {
                 removeItem.removeCircleView.createResizeAnimator(1.3F, 1.3F, 50L, object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
+                    override fun onAnimationEnd(animation: Animator) {
                         isAnimatingResizeRemoveItem.set(false)
                         super.onAnimationEnd(animation)
                     }
@@ -290,7 +290,7 @@ class Bubble(builder: Builder) {
             } else {
                 isAnimatingResizeRemoveItem.set(true)
                 removeItem.removeCircleView.createResizeAnimator(1F, 1F, 50L, object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
+                    override fun onAnimationEnd(animation: Animator) {
                         isAnimatingResizeRemoveItem.set(false)
                         super.onAnimationEnd(animation)
                     }

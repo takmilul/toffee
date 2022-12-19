@@ -18,7 +18,6 @@ android {
         versionName appVersionName
         applicationId "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
-        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
     }
     
@@ -78,7 +77,7 @@ android {
             ]
         }
     }
-
+    
 //    composeOptions {
 //        kotlinCompilerExtensionVersion = composeVersion
 //    }
@@ -93,9 +92,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation "androidx.core:core-ktx:$kotlinKtxVersion"
-    implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'net.gotev:uploadservice:4.7.0'
     implementation 'net.gotev:uploadservice-okhttp:4.7.0'
@@ -122,10 +121,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-
+    
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     
@@ -149,7 +148,7 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
     
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
     
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.jakewharton:butterknife:10.2.3'
@@ -165,8 +164,8 @@ dependencies {
     implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
     
     // Cast
-    implementation 'androidx.mediarouter:mediarouter:1.3.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:21.0.1'
+    implementation 'androidx.mediarouter:mediarouter:1.3.1'
+    implementation 'com.google.android.gms:play-services-cast-framework:21.2.0'
     
     // Paging
     implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
@@ -199,7 +198,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
     implementation 'com.google.android.play:core:1.10.3'
     
@@ -240,29 +239,28 @@ dependencies {
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-    implementation 'com.google.android.gms:play-services-ads:21.3.0'
+    implementation 'com.google.android.gms:play-services-ads:21.4.0'
     implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
     implementation('com.google.guava:guava:31.0.1-android')
     
     //medallia
     implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
     
-    def test_core = '1.4.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.2')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     
     //Androidx Core library
-    androidTestImplementation("androidx.test:core-ktx:$test_core")
+    androidTestImplementation("androidx.test:core-ktx:$testCore")
     
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation("androidx.test:runner:$test_core")
+    androidTestImplementation("androidx.test:runner:1.5.1")
     testImplementation 'org.robolectric:robolectric:4.8.1'
 //    testImplementation "androidx.arch.core:core-testing:2.1.0"
-    androidTestImplementation("androidx.test:rules:$test_core")
+    androidTestImplementation("androidx.test:rules:$testCore")
     
     // Assertions
-    androidTestImplementation('androidx.test.ext:junit-ktx:1.1.3')
-    androidTestImplementation("androidx.test.ext:truth:$test_core")
+    androidTestImplementation('androidx.test.ext:junit-ktx:1.1.4')
+    androidTestImplementation("androidx.test.ext:truth:$testCore")
     androidTestImplementation('com.google.truth:truth:1.1.3')
     
     // Espresso dependencies
@@ -274,9 +272,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espressoVersion")
     
     // Fragment testing
-    debugImplementation("androidx.fragment:fragment-testing:1.4.1")
+    debugImplementation("androidx.fragment:fragment-testing:1.5.5")
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion"
-
+    
 //    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
     androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espressoVersion")
     

@@ -2214,7 +2214,8 @@ class HomeActivity :
         }
     }
     
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+    @SuppressLint("MissingSuperCall")
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
             if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
@@ -2433,7 +2434,7 @@ class HomeActivity :
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
+        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
         
         observeNotification()
         return true

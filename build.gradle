@@ -4,7 +4,7 @@ buildscript {
         appVersionName = '4.7.4'
         
         // Gradle
-        gradlePluginVersion = '7.2.2'
+        gradlePluginVersion = '7.3.1'
         
         // Player
         exoVersion = '2.18.1'
@@ -14,7 +14,7 @@ buildscript {
         hiltAndroidVersion = '2.42'
         
         // Kotlin
-        kotlinVersion = '1.6.21'
+        kotlinVersion = '1.7.10'
         kotlinKtxVersion = '1.8.0'
         kotlinCoroutineVersion = '1.6.3'
         
@@ -23,7 +23,7 @@ buildscript {
         pagingVersion = '3.1.1'
         composeVersion = '1.0.5'
         lifecycleVersion = '2.5.1'
-        navigationVersion = '2.4.2'
+        navigationVersion = '2.5.3'
         
         // Network
         gsonVersion = '2.9.0'
@@ -34,7 +34,7 @@ buildscript {
         
         // Firebase
         firebaseCoreVersion = '19.0.2'
-        firebaseMessagingVersion = '23.1.0'
+        firebaseMessagingVersion = '23.1.1'
         firebaseAnalyticsVersion = '21.2.0'
         firebaseCrashlyticsVersion = '18.3.2'
         
@@ -47,7 +47,11 @@ buildscript {
         pahoAndroidServiceVersion = '3.3.8'
         
         // Testing
-        espressoVersion = '3.4.0'
+        testCore = '1.5.0'
+        espressoVersion = '3.5.0'
+    }
+    repositories {
+        google()
     }
 }
 plugins {

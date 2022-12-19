@@ -537,7 +537,7 @@ abstract class PlayerPageActivity :
                 
                 val obj = field.get(it)
                 if (obj is SessionManagerListener<*>) {
-                    castContext?.sessionManager?.removeSessionManagerListener(obj, CastSession::class.java)
+                    castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
                 }
             }
         } catch (ex: Exception) {

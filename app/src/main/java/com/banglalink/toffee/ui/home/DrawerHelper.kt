@@ -62,17 +62,17 @@ class DrawerHelper(
     
     private fun followUsAction() {
         val actionView = binding.sideNavigation.menu.findItem(R.id.menu_follow_us).actionView
-        actionView.findViewById<ImageView>(R.id.facebookButton).setOnClickListener {
+        actionView?.findViewById<ImageView>(R.id.facebookButton)?.setOnClickListener {
             val fbAppUrl = "fb://page${mPref.facebookPageUrl.replaceBeforeLast("/", "").replace("Toffee.Bangladesh", "100869298504557", true)}"
             val doesHandledUrl = activity.openUrlToExternalApp(fbAppUrl)
             if (!doesHandledUrl) {
                 activity.openUrlToExternalApp(mPref.facebookPageUrl)
             }
         }
-        actionView.findViewById<ImageView>(R.id.instagramButton).setOnClickListener {
+        actionView?.findViewById<ImageView>(R.id.instagramButton)?.setOnClickListener {
             activity.openUrlToExternalApp(mPref.instagramPageUrl)
         }
-        actionView.findViewById<ImageView>(R.id.youtubeButton).setOnClickListener {
+        actionView?.findViewById<ImageView>(R.id.youtubeButton)?.setOnClickListener {
             activity.openUrlToExternalApp(mPref.youtubePageUrl)
         }
     }
