@@ -1423,6 +1423,7 @@ class HomeActivity :
         }
     }
     
+    @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {
@@ -2214,7 +2215,7 @@ class HomeActivity :
         }
     }
     
-    @SuppressLint("MissingSuperCall")
+    @SuppressLint("MissingSuperCall", "NewApi")
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {

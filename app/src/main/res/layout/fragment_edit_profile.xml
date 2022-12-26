@@ -170,8 +170,7 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:textColor="@color/switchUnCheckedColor"
-                        tools:text="01xxxxxxxxx"
-                        app:drawableEndCompat="@drawable/ic_verified" />
+                        tools:text="01xxxxxxxxx" />
     
                 </LinearLayout>
                 

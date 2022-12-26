@@ -90,7 +90,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation "androidx.core:core-ktx:$kotlinKtxVersion"

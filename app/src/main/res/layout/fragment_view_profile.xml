@@ -130,8 +130,7 @@
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
-                        tools:text="01xxxxxxxxx"
-                        android:drawableEnd="@{TextUtils.isEmpty(data.phoneNo)?@drawable/ic_not_verified : @drawable/ic_verified}" />
+                        tools:text="01xxxxxxxxx" />
                     
                 </LinearLayout>
 
