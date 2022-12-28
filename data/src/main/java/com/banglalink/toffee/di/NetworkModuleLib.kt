@@ -52,7 +52,7 @@ object NetworkModuleLib {
             addInterceptor(authInterceptor)
             dns(toffeeDns)
             cache(cache)
-            cookieJar(cookieJar)
+//            cookieJar(cookieJar)
         }
         return clientBuilder.build()
     }
@@ -143,7 +143,7 @@ object NetworkModuleLib {
     fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns, cookieJar: CustomCookieJar): OkHttpClient {
         return simpleHttpClient.newBuilder()
             .dns(toffeeDns)
-            .cookieJar(cookieJar)
+//            .cookieJar(cookieJar)
             .build()
     }
 

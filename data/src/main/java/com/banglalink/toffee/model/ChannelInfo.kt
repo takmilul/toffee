@@ -172,13 +172,13 @@ data class ChannelInfo(
     @SerializedName("ads_group")
     var adGroup: String? = null,
     @SerializedName("featured_banner_code")
-    var bannerEventName: String? = null
-//    @SerializedName("sign_cookie")
-//    var signCookie: String? = null,
-//    @SerializedName("sign_cookie_expire")
-//    var signCookieDate: String? =null,
-
-) :Parcelable {
+    var bannerEventName: String? = null,
+    @SerializedName("sign_cookie")
+    var signCookie: String? = null,
+    @SerializedName("sign_cookie_expire")
+    var signCookieExpiryDate: String? =null,
+    
+    ) :Parcelable {
     
     @get:SerializedName("isApproved")
     val isApproved: Int

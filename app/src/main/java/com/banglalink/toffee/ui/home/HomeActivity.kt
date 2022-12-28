@@ -1602,7 +1602,7 @@ class HomeActivity :
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if(channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value){
+        if(channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value){
             lifecycleScope.launch {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
                     val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
@@ -1612,22 +1612,24 @@ class HomeActivity :
                                 is Success -> {
                                     val newChannelInfo = cdnChannelItem.channelInfo?.apply {
                                         signedUrlExpiryDate = it.data?.signedUrlExpiryDate
-                                        if (channelInfo.urlTypeExt == PAYMENT) {
-                                            paidPlainHlsUrl = it.data?.signUrl
-                                        } else {
-                                            hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
-                                                if (index == 0) {
-                                                    hlsLinks.hls_url_mobile = it.data?.signUrl
+                                        signCookieExpiryDate = it.data?.signCookieExpiryDate
+                                        if (channelInfo.cdnType == CdnType.SIGNED_URL.value) {
+                                            if (channelInfo.urlTypeExt == PAYMENT) {
+                                                paidPlainHlsUrl = it.data?.signUrl
+                                            } else {
+                                                hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
+                                                    if (index == 0) {
+                                                        hlsLinks.hls_url_mobile = it.data?.signUrl
+                                                    }
+                                                    hlsLinks
                                                 }
-                                                hlsLinks
                                             }
                                         }
                                     }
-                                    cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate
+                                    cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate ?: it.data?.signCookieExpiryDate
                                     cdnChannelItem.payload = gson.toJson(newChannelInfo)
                                     lifecycleScope.launch {
-                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate, 
-                                            cdnChannelItem.payload)
+                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate, cdnChannelItem.payload)
                                     }
                                     newChannelInfo?.let { item -> 
                                         playContent(detailsInfo, item)
@@ -1643,11 +1645,12 @@ class HomeActivity :
                         playContent(detailsInfo, channelInfo)
                     }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo)))
+                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo
+                        .signedUrlExpiryDate ?: channelInfo.signCookieExpiryDate, gson.toJson(channelInfo)))
                     playContent(detailsInfo, channelInfo)
                 }
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing

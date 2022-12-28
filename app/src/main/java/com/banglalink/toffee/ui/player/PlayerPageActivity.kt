@@ -766,7 +766,7 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)
         }
-        val playingUrl = getGeneratedUrl(uri)
+        val playingUrl = getGeneratedUrl(uri, channelInfo.signCookie)
         return MediaItem.Builder().apply {
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
             setUri(playingUrl)
@@ -988,7 +988,7 @@ abstract class PlayerPageActivity :
         }?.randomOrNull()?.tags?.randomOrNull()?.trim()
     }
     
-    private fun getGeneratedUrl(url: String?): String? {
+    private fun getGeneratedUrl(url: String?, signCookie: String?): String? {
         return if (playlistManager.getCurrentChannel()?.isStingray == true) {
             val userAgentString = "Mozilla/5.0 (Linux; Android 4.2.1; SMART-TV; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko; googleweblight) Chrome/38.0.1025.166 Mobile Safari/535.19"
             val encodedUserAgent = URLEncoder.encode(userAgentString, "UTF-8")
@@ -1000,8 +1000,10 @@ abstract class PlayerPageActivity :
                 ?.replace("[IP]", mPref.userIp)
                 ?.replace("[%UA%]", encodedUserAgent)
         } else {
+            val headerMap = mutableMapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!)
+            signCookie?.let { headerMap.put("Cookie", it) }
             httpDataSourceFactory?.setUserAgent(toffeeHeader)
-            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+            httpDataSourceFactory?.setDefaultRequestProperties(headerMap)
             url
         }
     }
