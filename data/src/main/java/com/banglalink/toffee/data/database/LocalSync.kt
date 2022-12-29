@@ -109,12 +109,15 @@ class LocalSync @Inject constructor(
             if (channelInfo.urlType == 3) {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     runCatching {
-                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate))) {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo))
+                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo
+                                .signCookieExpiryDate))) {
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo
+                                .signCookieExpiryDate, gson.toJson(channelInfo))
                         }
                     }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate, gson.toJson(channelInfo)))
+                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
+                        .signCookieExpiryDate, gson.toJson(channelInfo)))
                 }
             }
         }
