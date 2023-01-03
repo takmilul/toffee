@@ -160,15 +160,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 //                transformations(
 //                    CropCenterEndTransformation(4.1f)
 //                )
-                listener(onStart = {
-                    view.scaleType = CENTER_CROP
-                }, onError = { _, _ ->
-                    view.scaleType = CENTER_CROP
-                }, onSuccess = { _, _ ->
-                    view.scaleType = FIT_XY
-                })
+                initListener(view, false)
                 setImageRequestParams()
-                size(min(360.px, 720), min(80.px, 150))
+                size(min(288.px, 540), min(80.px, 150))
             }
         }
     }

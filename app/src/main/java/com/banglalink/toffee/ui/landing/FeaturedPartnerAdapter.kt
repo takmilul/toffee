@@ -25,11 +25,7 @@ class FeaturedPartnerAdapter(
             if (itemCount > 1 && this is ListItemFeaturedPartnerBinding) {
                 val screenWidth = Resources.getSystem().displayMetrics.widthPixels
                 val calculatedWidth = screenWidth * 0.7
-//                imageFrameLayout.layoutParams.width = calculatedWidth.toInt()
-//                partnerBanner.layoutParams.width = screenWidth - 32.dp
                 featuredPartnerCardView.layoutParams.width = ceil(calculatedWidth).toInt()
-                
-                
             }
         }
     }
