@@ -40,10 +40,10 @@ class MyChannelPlaylistVideosService @AssistedInject constructor(
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
                 it.isOwner = isOwner == 1
                 it.isPublic = isOwner.xor(1) == 1
                 it.isPlaylist = true
+                localSync.syncData(it)
                 it
             }
         } else emptyList()

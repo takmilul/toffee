@@ -86,12 +86,6 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
-    override fun onDestroyView() {
-        binding.myChannelVideos.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -277,5 +271,11 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private fun reloadVideosList() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
+    }
+    
+    override fun onDestroyView() {
+        binding.myChannelVideos.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

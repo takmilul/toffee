@@ -40,9 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import android.view.MotionEvent
 
 import android.view.View.OnTouchListener
-
-
-
+import java.util.*
 
 @AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
@@ -76,18 +74,6 @@ class MyChannelVideosEditFragment : BaseFragment() {
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        binding.ageGroupSpinner.adapter = null
-        binding.categorySpinner.adapter = null
-        binding.subCategorySpinner.adapter = null
-        binding.uploadTitle.removeTextChangedListener(titleTextWatcher)
-        binding.uploadDescription.removeTextChangedListener(descWatcher)
-        titleTextWatcher = null
-        descWatcher = null
-        super.onDestroyView()
-        _binding = null
     }
     
     @SuppressLint("ClickableViewAccessibility")
@@ -277,7 +263,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             viewModel.saveThumbnail(it)
         }
     }
-
+    
     private fun setupTagView() {
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(com.pchmn.materialchips.R.id.chips_recycler)
         chipRecycler.setPadding(0)
@@ -288,7 +274,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             override fun onTextChanged(text: CharSequence?) {
                 if (text?.endsWith(" ") == true) {
                     text.let {
-                        val chipText = it.toString().trim().capitalize()
+                        val chipText = it.toString().trim().capitalize(Locale.getDefault())
                         binding.uploadTags.addChip(chipText, null)
                     }
                 }
@@ -355,5 +341,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 }
             }
         }
+    }
+    
+    override fun onDestroyView() {
+        binding.ageGroupSpinner.adapter = null
+        binding.categorySpinner.adapter = null
+        binding.subCategorySpinner.adapter = null
+        binding.uploadTitle.removeTextChangedListener(titleTextWatcher)
+        binding.uploadDescription.removeTextChangedListener(descWatcher)
+        titleTextWatcher = null
+        descWatcher = null
+        super.onDestroyView()
+        _binding = null
     }
 }

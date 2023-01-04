@@ -48,9 +48,9 @@ class MyChannelVideosService @AssistedInject constructor(
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
                 it.isOwner = isOwner == 1
                 it.isPublic = isOwner.xor(1) == 1
+                localSync.syncData(it)
                 it
             }
         }
