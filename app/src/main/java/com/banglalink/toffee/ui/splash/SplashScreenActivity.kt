@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.splash
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
@@ -20,6 +21,9 @@ class SplashScreenActivity : BaseAppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         MedalliaDigital.disableIntercept()
+        intent.getStringExtra("resourceUrl")?.let {
+            mPref.homeIntent.value = intent.setData(Uri.parse(it))
+        }
     }
     
     override fun onDetachedFromWindow() {
