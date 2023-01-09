@@ -98,7 +98,9 @@
         android:layout_gravity="center"
         android:background="@drawable/gif_round_border"
         android:src="@drawable/player_loader"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:contentDescription="@string/txt_content_loader" />
     
     <View
         android:id="@id/exo_controller_placeholder"

@@ -172,6 +172,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         
         controllerShowTimeoutMs = 3000
         
+        buffering.load(R.drawable.player_loader)
         setControllerVisibilityListener(ControllerVisibilityListener { ctrlVisibility ->
             when (ctrlVisibility) {
                 View.VISIBLE -> {
@@ -654,7 +655,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-                buffering.load(R.drawable.player_loader)
                 errorMessageContainer.hide()
                 previewImage.setImageResource(0)
                 playPause.visibility = View.GONE

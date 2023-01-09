@@ -84,10 +84,10 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding?.progressBar?.load(R.drawable.content_loader)
         title?.let {
             activity?.title = it
         }
-        _binding?.progressBar?.load(R.drawable.content_loader)
         _binding?.progressBar?.show()
         homeViewModel.isStingray.postValue(isStingray)
         setupEmptyView()
