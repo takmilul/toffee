@@ -52,8 +52,10 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -166,12 +168,10 @@ const val PLAYER_EVENT_TAG = "PLAYER_EVENT"
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
-class HomeActivity :
-    PlayerPageActivity(),
+class HomeActivity : PlayerPageActivity(),
     SearchView.OnQueryTextListener,
     DraggerLayout.OnPositionChangedListener,
-    OnBackStackChangedListener
-{
+    OnBackStackChangedListener {
     private val gson = Gson()
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
@@ -180,6 +180,7 @@ class HomeActivity :
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
+    private lateinit var navOptions: NavOptions
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
@@ -220,11 +221,10 @@ class HomeActivity :
         super.onCreate(savedInstanceState)
 //        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
         
-        val isDisableScreenshot = (
-            mPref.screenCaptureEnabledUsers.contains(cPref.deviceId)
-            || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString())
-            || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
-        ).not()
+        val isDisableScreenshot =
+            (mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
+                mPref.phoneNumber
+            )).not()
         
         //disable screen capture
         if (isDisableScreenshot) {
@@ -278,7 +278,11 @@ class HomeActivity :
                 checkChannelDetailAndUpload()
             }
         }
-        val mqttClientId = try { EncryptionUtil.decryptResponse(mPref.mqttClientId) } catch (e: Exception) { "" }
+        val mqttClientId = try {
+            EncryptionUtil.decryptResponse(mPref.mqttClientId)
+        } catch (e: Exception) {
+            ""
+        }
         if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
             mPref.mqttHost = ""
             mPref.mqttClientId = ""
@@ -369,7 +373,7 @@ class HomeActivity :
         }
         observe(mPref.loginDialogLiveData) {
             if (it) {
-                navController.navigate(R.id.loginDialog)
+                navController.navigate(R.id.loginDialog, null, navOptions)
             }
         }
         observe(mPref.messageDialogLiveData) { message ->
@@ -406,8 +410,8 @@ class HomeActivity :
             initConvivaSdk()
         }
         
-        val isAnyNativeSectionActive= mPref.nativeAdSettings.value?.find {
-           it.isActive
+        val isAnyNativeSectionActive = mPref.nativeAdSettings.value?.find {
+            it.isActive
         }?.isActive ?: false
         
         if (isAnyNativeSectionActive && mPref.isNativeAdActive) {
@@ -420,11 +424,11 @@ class HomeActivity :
         
         startBubbleService()
         
-        if (mPref.deleteDialogLiveData.value == true){
-            getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment)
+        if (mPref.deleteDialogLiveData.value == true) {
+            getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment, null, navOptions)
             mPref.deleteDialogLiveData.value = false
         }
-        
+
 //        if (mPref.isVerifiedUser && mPref.backToffeeDialogLiveData.value == true){
 //            getNavController().navigate(R.id.backToffeeBottomSheetFragment)
 //            mPref.backToffeeDialogLiveData.value = false
@@ -445,8 +449,8 @@ class HomeActivity :
         runCatching {
 //        bubbleIntent = Intent(this, BubbleService::class.java)
             bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-            if (! BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-                if (! hasDefaultOverlayPermission() && ! Settings.canDrawOverlays(this)) {
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+                if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                     if (mPref.bubbleDialogShowCount < 5) {
                         displayMissingOverlayPermissionDialog()
                     }
@@ -504,7 +508,7 @@ class HomeActivity :
     
     private fun requestOverlayPermission() {
         runCatching {
-            if (! hasDefaultOverlayPermission() && ! Settings.canDrawOverlays(this)) {
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
                 startForOverlayPermission.launch(intent)
             }
@@ -513,8 +517,7 @@ class HomeActivity :
     
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
-        ToffeeAlertDialogBuilder(
-            this,
+        ToffeeAlertDialogBuilder(this,
             title = getString(R.string.missing_overlay_permission_dialog_title),
             text = getString(R.string.missing_overlay_permission_dialog_message),
             icon = R.drawable.ic_not_verified,
@@ -526,8 +529,7 @@ class HomeActivity :
             negativeButtonTitle = "Cancel",
             negativeButtonListener = {
                 it?.dismiss()
-            }
-        ).create().show()
+            }).create().show()
     }
     
     private fun initConvivaSdk() {
@@ -569,29 +571,19 @@ class HomeActivity :
         if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
             featuredPartner.webViewUrl?.let { url ->
                 landingPageViewModel.sendFeaturePartnerReportData(
-                    partnerName = featuredPartner.featurePartnerName.toString(),
-                    partnerId = featuredPartner.id
+                    partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                 )
                 navController.navigate(
                     R.id.htmlPageViewDialog_Home, bundleOf(
-                        "myTitle" to getString(string.back_to_toffee_text),
-                        "url" to url,
-                        "isHideBackIcon" to false,
-                        "isHideCloseIcon" to true
-                    )
+                        "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+                    ), navOptions
                 )
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }
     }
     
-    private fun isChannelComplete() = mPref.customerName.isNotBlank()
-            && mPref.customerEmail.isNotBlank()
-            && mPref.customerAddress.isNotBlank()
-            && mPref.customerDOB.isNotBlank()
-            && mPref.customerNID.isNotBlank()
-            && mPref.channelName.isNotBlank()
-            && mPref.channelLogo.isNotBlank()
-            && mPref.isChannelDetailChecked
+    private fun isChannelComplete() =
+        mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.channelName.isNotBlank() && mPref.channelLogo.isNotBlank() && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
@@ -610,7 +602,7 @@ class HomeActivity :
                             mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
                             mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-
+                            
                             appScope.launch {
                                 val mqttDir = withContext(Dispatchers.IO + Job()) {
                                     val mqttTag = "MqttConnection"
@@ -715,7 +707,7 @@ class HomeActivity :
                 if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
-                navController.navigate(R.id.uploadMethodFragment)
+                navController.navigate(R.id.uploadMethodFragment, null, navOptions)
             }
         } else {
             if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
@@ -729,7 +721,7 @@ class HomeActivity :
                 if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
                     navController.popBackStack()
                 }
-                navController.navigate(R.id.bottomSheetUploadFragment)
+                navController.navigate(R.id.bottomSheetUploadFragment, null, navOptions)
             }
         }
         return false
@@ -769,7 +761,7 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
-        
+
 //        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 //            if(insets.hasInsets()) {
 //                Log.e("INSET_T", "Has inset")
@@ -831,7 +823,7 @@ class HomeActivity :
         visibleDestinationId = controller.currentDestination?.id ?: 0
 
 //        if(navController.currentDestination?.id != R.id.searchFragment){
-            closeSearchBarIfOpen()
+        closeSearchBarIfOpen()
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
@@ -849,6 +841,7 @@ class HomeActivity :
     
     private fun setupNavController() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
+        navOptions = navOptions { launchSingleTop = true }
         navController = navHostFragment.navController
         
         appbarConfig = AppBarConfiguration(
@@ -873,7 +866,7 @@ class HomeActivity :
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
         binding.sideNavigation.setBackgroundColor(ContextCompat.getColor(this, R.color.cardBgColor))
-
+        
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
             WindowInsetsCompat.CONSUMED
         }
@@ -885,14 +878,15 @@ class HomeActivity :
         navController.addOnDestinationChangedListener(destinationChangeListener)
         binding.tabNavigator.setOnItemSelectedListener {
             closeSearchBarIfOpen()
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.menu_feed -> {
-                    navController.popBackStack(R.id.menu_feed, true)
-                    navController.navigate(R.id.menu_feed)
+                    navController.navigate(R.id.menu_feed, null, navOptions {
+                        popUpTo(R.id.menu_feed) { inclusive = true }
+                    })
                 }
-                R.id.menu_tv -> navController.navigate(R.id.menu_tv) 
-                R.id.menu_explore -> navController.navigate(R.id.menu_explore) 
-                R.id.menu_channel -> navController.navigate(R.id.menu_channel)
+                R.id.menu_tv -> navController.navigate(R.id.menu_tv, null, navOptions)
+                R.id.menu_explore -> navController.navigate(R.id.menu_explore, null, navOptions)
+                R.id.menu_channel -> navController.navigate(R.id.menu_channel, null, navOptions)
             }
             return@setOnItemSelectedListener true
         }
@@ -904,7 +898,8 @@ class HomeActivity :
     
     private fun observeTopBarBackground() {
         val isActive = try {
-            mPref.isTopBarActive && Utils.getDate(mPref.topBarStartDate).before(mPref.getSystemTime()) && Utils.getDate(mPref.topBarEndDate).after(mPref.getSystemTime())
+            mPref.isTopBarActive && Utils.getDate(mPref.topBarStartDate).before(mPref.getSystemTime()) && Utils.getDate(mPref.topBarEndDate)
+                .after(mPref.getSystemTime())
         } catch (e: Exception) {
             false
         }
@@ -912,8 +907,9 @@ class HomeActivity :
             if (mPref.topBarType == "png") {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
-                        if (!imagePath.isNullOrBlank()){
+                        val imagePath =
+                            if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
+                        if (!imagePath.isNullOrBlank()) {
                             binding.tbar.toolbarImageView.load(imagePath)
                         } else {
                             loadDefaultTopBarColor()
@@ -942,7 +938,7 @@ class HomeActivity :
         val input: InputStream = connection.inputStream
         return BitmapFactory.decodeStream(input)
     }
-
+    
     override fun onResume() {
         super.onResume()
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -951,7 +947,7 @@ class HomeActivity :
         }
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
-        if(Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= 24) {
             pipChanged(isInPictureInPictureMode)
         }
         setPlayerInPlayerView()
@@ -1015,7 +1011,7 @@ class HomeActivity :
         If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
         so player can't reset scale completely. Manually resetting player scale value
          */
-        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) {
 //            binding.playerView.resizeView(Point(newConfig.screenWidthDp.px, newConfig.screenHeightDp.px))
             pipChanged(isInPictureInPictureMode)
 //            maximizePlayer()
@@ -1062,7 +1058,7 @@ class HomeActivity :
     }
     
     private fun updateFullScreenState() {
-        if(Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) return
+        if (Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode) return
         val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
@@ -1165,9 +1161,9 @@ class HomeActivity :
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
-                        val encryptedUrl =EncryptionUtil.decryptResponse(newHash).trimIndent()
+                        val encryptedUrl = EncryptionUtil.decryptResponse(newHash).trimIndent()
                         shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
-                        when(shareableData?.type) {
+                        when (shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
                                     pair = Pair(shareableData?.stingrayShareUrl, SharingType.STINGRAY.value)
@@ -1283,21 +1279,22 @@ class HomeActivity :
             else -> url
         }
     }
-
-    private fun getWebPlaylistShare(url:String):String{
+    
+    private fun getWebPlaylistShare(url: String): String {
         val ownerId = url.substringAfter("owner_id=").substringBefore("&").toInt()
-        val isOwner= if(ownerId==mPref.customerId) 1 else 0
+        val isOwner = if (ownerId == mPref.customerId) 1 else 0
         val playlistId = url.substringAfter("pl_id=").substringBefore("&").toInt()
         val playlistName = url.substringAfter("name=").substringBefore("&")
-        val newUrl ="https://toffeelive.com/#video/data="
-
-        val sharableData = ShareableData("playlist",0,null,null,
-        0, isOwner, ownerId, playlistId, playlistName)
-        val json = gson.toJson(sharableData,ShareableData::class.java)
+        val newUrl = "https://toffeelive.com/#video/data="
+        
+        val sharableData = ShareableData(
+            "playlist", 0, null, null, 0, isOwner, ownerId, playlistId, playlistName
+        )
+        val json = gson.toJson(sharableData, ShareableData::class.java)
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
-        return newUrl+shareableJsonData
+        return newUrl + shareableJsonData
     }
-
+    
     private fun playPlaylistShareable() {
         observe(viewModel.playlistShareableLiveData) { response ->
             when (response) {
@@ -1307,7 +1304,7 @@ class HomeActivity :
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
                                 shareableData?.channelOwnerId ?: 0,
-                                shareableData?.name ?: response.data.name ?: "" ,
+                                shareableData?.name ?: response.data.name ?: "",
                                 response.data.totalCount,
                                 playlistShareableUrl,
                                 1,
@@ -1396,13 +1393,11 @@ class HomeActivity :
                 is Int -> {
                     if (it.name == "Featured Partner") {
                         landingPageViewModel.loadFeaturedPartnerList(it.destId)
-                    } else if(it.destId == R.id.menu_favorites
-                        || it.destId == R.id.menu_activities
-                        || it.destId == R.id.menu_subscriptions) {
+                    } else if (it.destId == R.id.menu_favorites || it.destId == R.id.menu_activities || it.destId == R.id.menu_subscriptions) {
                         checkVerification {
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
-                    } else{
+                    } else {
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -1443,7 +1438,7 @@ class HomeActivity :
             } else {
                 getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             }.cancel(notificationId)
-
+            
             if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
                 PubSubMessageUtil.sendNotificationStatus(pubSubId, OPEN)
             }
@@ -1451,7 +1446,7 @@ class HomeActivity :
         observeAppVersionUpdate(intent)
         viewModel.checkForUpdateStatus()
     }
-
+    
     private fun observeAppVersionUpdate(intent: Intent) {
         observe(viewModel.updateStatusLiveData) {
             when (it) {
@@ -1469,7 +1464,7 @@ class HomeActivity :
             }
         }
     }
-
+    
     private fun handleIntent(intent: Intent) {
         var newIntent = intent
         if (mPref.homeIntent.value != null) {
@@ -1493,7 +1488,7 @@ class HomeActivity :
 //        navController.navigate(Uri.parse("app.toffee://search/$query"))
         navController.navigate(R.id.searchFragment, Bundle().apply {
             putString(SearchFragment.SEARCH_KEYWORD, query)
-        })
+        }, navOptions)
     }
     
     private fun handleVoiceSearchEvent(query: String) {
@@ -1556,7 +1551,7 @@ class HomeActivity :
             }
             else -> null
         }
-        circuitBreakerDataList[channelInfo?.id]?.let { 
+        circuitBreakerDataList[channelInfo?.id]?.let {
             if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
                 showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
                 return
@@ -1602,12 +1597,12 @@ class HomeActivity :
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if(channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value){
+        if (channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
             lifecycleScope.launch {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
                     val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
-                    if(isExpired) {
-                        observe(viewModel.mediaCdnSignUrlData){
+                    if (isExpired) {
+                        observe(viewModel.mediaCdnSignUrlData) {
                             when (it) {
                                 is Success -> {
                                     val newChannelInfo = cdnChannelItem.channelInfo?.apply {
@@ -1629,11 +1624,15 @@ class HomeActivity :
                                     cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate ?: it.data?.signCookieExpiryDate
                                     cdnChannelItem.payload = gson.toJson(newChannelInfo)
                                     lifecycleScope.launch {
-                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(cdnChannelItem.channelId, cdnChannelItem.expiryDate, cdnChannelItem.payload)
+                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(
+                                            cdnChannelItem.channelId,
+                                            cdnChannelItem.expiryDate,
+                                            cdnChannelItem.payload
+                                        )
                                     }
-                                    newChannelInfo?.let { item -> 
+                                    newChannelInfo?.let { item ->
                                         playContent(detailsInfo, item)
-                                    } ?: run { 
+                                    } ?: run {
                                         showToast(getString(R.string.try_again_message))
                                     }
                                 }
@@ -1641,12 +1640,18 @@ class HomeActivity :
                             }
                         }
                         viewModel.getMediaCdnSignUrl(channelInfo.id)
-                    } else{
+                    } else {
                         playContent(detailsInfo, channelInfo)
                     }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo
-                        .signedUrlExpiryDate ?: channelInfo.signCookieExpiryDate, gson.toJson(channelInfo)))
+                    cdnChannelItemRepository.insert(
+                        CdnChannelItem(
+                            channelInfo.id.toLong(),
+                            channelInfo.urlType,
+                            channelInfo.signedUrlExpiryDate ?: channelInfo.signCookieExpiryDate,
+                            gson.toJson(channelInfo)
+                        )
+                    )
                     playContent(detailsInfo, channelInfo)
                 }
             }
@@ -1656,7 +1661,7 @@ class HomeActivity :
             // do nothing
         }
     }
-
+    
     private fun playContent(detailsInfo: Any?, it: ChannelInfo) {
         if (player is CastPlayer) {
             maximizePlayer()
@@ -1738,7 +1743,7 @@ class HomeActivity :
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
     }
-    
+
 //    private fun resetPlayer() {
 //        releasePlayer()
 //        initializePlayer()
@@ -1782,16 +1787,15 @@ class HomeActivity :
         } else if (info is PlaylistPlaybackInfo) {
             when {
                 /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ !info.isUserPlaylist -> {
-                    loadFragmentById(
-                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                    )
-                }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info
-                .isUserPlaylist -> {
-                    loadFragmentById(
-                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
-                    )
-                }
+                loadFragmentById(
+                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                )
+            }
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info.isUserPlaylist -> {
+                loadFragmentById(
+                    R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                )
+            }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
@@ -2095,7 +2099,7 @@ class HomeActivity :
             }
             .show()
     }
-
+    
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when (it) {
@@ -2115,7 +2119,7 @@ class HomeActivity :
                         mPref.isPaidUser = false
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
-                        mPref.lastLoginDateTime= ""
+                        mPref.lastLoginDateTime = ""
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
@@ -2156,11 +2160,12 @@ class HomeActivity :
     
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        requestedOrientation = if (!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
-            ActivityInfo.SCREEN_ORIENTATION_LOCKED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        }
+        requestedOrientation =
+            if (!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
+                ActivityInfo.SCREEN_ORIENTATION_LOCKED
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            }
         updateFullScreenState()
         return true
     }
@@ -2174,28 +2179,29 @@ class HomeActivity :
         }
     }
     
-     fun closeSearchBarIfOpen() {
+    fun closeSearchBarIfOpen() {
         if (searchView?.isIconified == false) {
             searchView?.onActionViewCollapsed()
         }
     }
-
+    
     fun openSearchBarIfClose() {
         if (searchView?.isIconified == true) {
             searchView?.onActionViewExpanded()
         }
     }
-    fun hideSearchOverlay(){
+    
+    fun hideSearchOverlay() {
         binding.searchOverlay.hide()
     }
     
-    fun clearSearViewFocus(){
+    fun clearSearViewFocus() {
         searchView?.clearFocus()
     }
     
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         }
     }
@@ -2204,13 +2210,13 @@ class HomeActivity :
     @RequiresApi(24)
     private fun enterPipMode() {
         try {
-            if(Build.VERSION.SDK_INT < 26) {
+            if (Build.VERSION.SDK_INT < 26) {
                 enterPictureInPictureMode()
             } else {
                 enterPictureInPictureMode(
-    //                PictureInPictureParams.Builder()
-    //                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
-    //                    .build()
+                    //                PictureInPictureParams.Builder()
+                    //                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+                    //                    .build()
                 )
             }
         } catch (e: Exception) {
@@ -2222,7 +2228,7 @@ class HomeActivity :
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)){
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)) {
 //                startService(bubbleIntent)
                 startService(bubbleV2Intent)
             }
@@ -2231,7 +2237,7 @@ class HomeActivity :
     }
     
     private fun pipChanged(isInPip: Boolean) {
-        if(isInPip) {
+        if (isInPip) {
             toggleNavigation(true)
             val fragment = navHostFragment.childFragmentManager.fragments.last()
             if (fragment is DialogFragment) {
@@ -2271,7 +2277,7 @@ class HomeActivity :
 //            } catch (e:Exception) {
 //
 //            }
-        } else if(player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip() && navController.currentDestination?.id == R.id.menu_feed) {
+        } else if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip() && navController.currentDestination?.id == R.id.menu_feed) {
             enterPipMode()
         } else {
             super.onBackPressed()
@@ -2319,7 +2325,11 @@ class HomeActivity :
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                navController.navigate(R.id.menu_feed)
+                navController.navigate(R.id.menu_feed, null, navOptions {
+                    popUpTo(R.id.menu_feed) {
+                        inclusive = true
+                    }
+                })
                 return true
             }
             R.id.action_avatar -> {
@@ -2329,7 +2339,9 @@ class HomeActivity :
         }
         return super.onOptionsItemSelected(item)
     }
-    lateinit var close:ImageView
+    
+    lateinit var close: ImageView
+    
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -2360,21 +2372,21 @@ class HomeActivity :
         
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
-
+        
         searchIv.setOnClickListener {
             searchView?.onActionViewExpanded()
-            if(navController.currentDestination?.id!=R.id.searchFragment) {
+            if (navController.currentDestination?.id != R.id.searchFragment) {
                 navController.navigate(R.id.searchFragment, Bundle().apply {
                     putString(SearchFragment.SEARCH_KEYWORD, "")
-                })
+                }, navOptions)
             }
         }
-
+        
         val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
         
         val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(R.id.search_src_text)
-
+        
         searchAutoComplete.apply {
             textSize = 16f
             setTextColor(
@@ -2398,7 +2410,7 @@ class HomeActivity :
                     val DRAWABLE_RIGHT = 2
                     val DRAWABLE_BOTTOM = 3
                     if (event.action == MotionEvent.ACTION_UP) {
-                        if (searchAutoComplete.compoundDrawables[DRAWABLE_RIGHT] != null ){
+                        if (searchAutoComplete.compoundDrawables[DRAWABLE_RIGHT] != null) {
                             if (event.rawX >= searchAutoComplete.right - searchAutoComplete.compoundDrawables[DRAWABLE_RIGHT].bounds.width()) {
                                 searchAutoComplete.setText("")
                                 setCompoundDrawablesWithIntrinsicBounds(leftIcon, 0, 0, 0)
@@ -2431,7 +2443,7 @@ class HomeActivity :
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
             if (navController.currentDestination?.id != R.id.notificationDropdownFragment) {
-                navController.navigate(R.id.notificationDropdownFragment)
+                navController.navigate(R.id.notificationDropdownFragment, null, navOptions)
             }
         }
         searchView?.setOnQueryTextListener(this)
@@ -2443,11 +2455,12 @@ class HomeActivity :
         observeNotification()
         return true
     }
+    
     fun Int.toPx(context: Context) = this * context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (!query.isNullOrBlank()) {
             navigateToSearch(query)
-           // openSearchBarIfClose()
+            // openSearchBarIfClose()
             return true
         }
         return false
@@ -2526,7 +2539,7 @@ class HomeActivity :
     private fun observeMyChannelNavigation() {
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.menu_channel || channelOwnerId != it.channelOwnerId) {
-                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}/false"))
+                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}/false"), navOptions)
             } else {
                 minimizePlayer()
             }

@@ -40,6 +40,7 @@ class InAppMessageParser @Inject constructor(
     suspend fun parseUrlV2(url: String): RouteV2? {
         try {
             val link = Uri.parse(url)
+            val navOptions = navOptions { launchSingleTop = true }
             val page = link.getQueryParameter("page")
             page?.let { name ->
                 when(name) {
@@ -74,13 +75,14 @@ class InAppMessageParser @Inject constructor(
                             Bundle().also {
                                 it.putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, catList[0])
                                 it.putString(CategoryDetailsFragment.ARG_TITLE, catList[0].categoryName)
-                            }
+                            },
+                            navOptions
                         )
                     }
                     "search" -> {
                         val keyword = link.getQueryParameter("keyword") ?: return null
                         return RouteV2(Uri.parse("app.toffee://search/${keyword}"),
-                            "Search (${keyword})")
+                            "Search (${keyword})", null, navOptions)
                     }
 //                    "playlist" -> {
 //                        val playlistId = link.getQueryParameter("listid") ?: return null
@@ -91,40 +93,40 @@ class InAppMessageParser @Inject constructor(
 //
 //                    }
                     "settings" -> {
-                        return RouteV2(R.id.menu_settings, "Settings")
+                        return RouteV2(R.id.menu_settings, "Settings", null, navOptions)
                     }
                     "redeem" -> {
-                        return RouteV2(R.id.menu_redeem, "Redeem Code")
+                        return RouteV2(R.id.menu_redeem, "Redeem Code", null, navOptions)
                     }
                     "tv_channels" -> {
-                        return RouteV2(R.id.menu_tv, "Tv Channels")
+                        return RouteV2(R.id.menu_tv, "Tv Channels", null, navOptions)
                     }
                     "explore" -> {
-                        return RouteV2(R.id.menu_explore, "Explore")
+                        return RouteV2(R.id.menu_explore, "Explore", null, navOptions)
                     }
                     "subscription" -> {
-                        return RouteV2(R.id.menu_subscriptions, "Subscriptions")
+                        return RouteV2(R.id.menu_subscriptions, "Subscriptions", null, navOptions)
                     }
                     "invite" -> {
-                        return RouteV2(R.id.menu_invite, "Invite Friends")
+                        return RouteV2(R.id.menu_invite, "Invite Friends", null, navOptions)
                     }
                     "favorites" -> {
-                        return RouteV2(R.id.menu_favorites, "Favorites")
+                        return RouteV2(R.id.menu_favorites, "Favorites", null, navOptions)
                     }
                     "activities" -> {
-                        return RouteV2(R.id.menu_activities, "Activities")
+                        return RouteV2(R.id.menu_activities, "Activities", null, navOptions)
                     }
                     "profile" -> {
-                        return RouteV2(R.id.profileFragment, "Profile")
+                        return RouteV2(R.id.profileFragment, "Profile", null, navOptions)
                     }
                     "notification" -> {
-                        return RouteV2(R.id.notificationDropdownFragment, "Notification")
+                        return RouteV2(R.id.notificationDropdownFragment, "Notification", null, navOptions)
                     }
                     "ugc_all_channel" -> {
-                        return RouteV2(R.id.allUserChannelsFragment, "All UGC Channels")
+                        return RouteV2(R.id.allUserChannelsFragment, "All UGC Channels", null, navOptions)
                     }
                     "login" -> {
-                        return RouteV2(R.id.loginDialog, "Login")
+                        return RouteV2(R.id.loginDialog, "Login", null, navOptions)
                     }
                     "home" -> {
                         return RouteV2(R.id.menu_feed, "Home", options = navOptions { 
@@ -135,7 +137,7 @@ class InAppMessageParser @Inject constructor(
                     }
                     "featured_partner" -> {
                         val partnerId = link.getQueryParameter("id")?.toIntOrNull() ?: 0
-                        return RouteV2(partnerId, "Featured Partner")
+                        return RouteV2(partnerId, "Featured Partner", null, navOptions)
                     }
                     else -> null
                 }
