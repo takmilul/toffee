@@ -47,6 +47,7 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         
         arguments?.getString(ARG_TITLE)?.let {
             activity?.title = it
@@ -105,7 +106,6 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
             
             updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
-            binding.progressBar.load(R.drawable.content_loader)
             
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow

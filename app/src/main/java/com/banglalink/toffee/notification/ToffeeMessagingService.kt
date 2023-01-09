@@ -322,10 +322,10 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 if (!ignoreContentIntent) {
                     setContentIntent(getPendingIntent())
                 }
-                if (button == "true") {
-                    addAction(android.R.drawable.ic_media_play, "Watch Now", getPendingIntent(hasActionButton = true, isWatchNow = true))
-                    addAction(android.R.drawable.ic_delete, "Watch Later", getPendingIntent(hasActionButton = true))
-                }
+//                if (button == "true") {
+//                    addAction(android.R.drawable.ic_media_play, "Watch Now", getPendingIntent(hasActionButton = true, isWatchNow = true))
+//                    addAction(android.R.drawable.ic_delete, "Watch Later", getPendingIntent(hasActionButton = true))
+//                }
             }
         }
         

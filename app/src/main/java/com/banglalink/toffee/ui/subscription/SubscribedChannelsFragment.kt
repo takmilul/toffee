@@ -49,10 +49,10 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         
         ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST)
         mAdapter = AllSubscribedChannelAdapter(this)
-        binding.progressBar.load(R.drawable.content_loader)
     
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             var isInitialized = false

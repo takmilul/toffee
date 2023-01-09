@@ -112,6 +112,7 @@ class HomeViewModel @Inject constructor(
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) {
+            FirebaseMessaging.getInstance().subscribeToTopic("test-fcm")
             FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
             FirebaseMessaging.getInstance().unsubscribeFromTopic("prod-fifa-score")
         } else {

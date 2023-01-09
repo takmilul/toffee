@@ -1,18 +1,27 @@
 package com.banglalink.toffee.ui.splash
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : BaseAppCompatActivity() {
     
     private var _binding: ActivitySplashScreenBinding? = null
     private val binding get() = _binding!!
+    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +31,31 @@ class SplashScreenActivity : BaseAppCompatActivity() {
         setContentView(binding.root)
         MedalliaDigital.disableIntercept()
         intent.getStringExtra("resourceUrl")?.let {
+            saveNotification(intent)
             mPref.homeIntent.value = intent.setData(Uri.parse(it))
+        }
+    }
+    
+    private fun saveNotification(intent: Intent?) {
+        intent?.extras?.run {
+            val pubSubId = getString("notificationId")
+            val playNowUrl = getString("playNowUrl")
+            val thumbnailUrl = getString("thumbnail")
+            val resourceUrl = getString("resourceUrl")
+            val notificationType = getString("notificationType")
+            val watchLaterUrl = getString("watchLaterUrl")
+            val customerId = getString("customerId")?.ifBlank { mPref.customerId }?.toString()?.toInt() ?: mPref.customerId
+            val title = getString("notificationHeader")
+            val content = getString("notificationText")
+            val imageUrl = getString("image")
+            
+            val notificationInfo = NotificationInfo(null, customerId, notificationType, pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl, seenTime = System.currentTimeMillis(), isSeen = true)
+            
+            lifecycleScope.launch {
+                runCatching {
+                    notificationInfoRepository.insert(notificationInfo)
+                }
+            }
         }
     }
     

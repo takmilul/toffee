@@ -89,9 +89,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         setEmptyView()
         with(binding.myChannelVideos) {
-            binding.progressBar.load(R.drawable.content_loader)
             addItemDecoration(MarginItemDecoration(12))
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {

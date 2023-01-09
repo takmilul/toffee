@@ -94,6 +94,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         
         initAdapter()
         observeListState()
@@ -218,8 +219,6 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     }
     
     private fun observeListState() {
-        binding.progressBar.load(R.drawable.content_loader)
-    
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             playlistAdapter.loadStateFlow.collect {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading

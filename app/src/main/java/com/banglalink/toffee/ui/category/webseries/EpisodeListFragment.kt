@@ -90,6 +90,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         setSubscriptionStatus()
         setupHeader()
         setupList()
@@ -225,7 +226,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         }, currentItem)
 
         with(binding.listview) {
-            binding.progressBar.load(R.drawable.content_loader)
             addItemDecoration(MarginItemDecoration(8))
             adapter = ConcatAdapter(detailsAdapter, mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() }))
 

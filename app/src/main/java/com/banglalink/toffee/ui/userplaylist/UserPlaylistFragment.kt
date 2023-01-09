@@ -71,9 +71,9 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         with(binding) {
             var isInitialized = false
-            binding.progressBar.load(R.drawable.content_loader)
             myChannelPlaylists.addItemDecoration(MarginItemDecoration(12))
             
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {

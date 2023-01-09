@@ -100,12 +100,12 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
+        binding.progressBar.load(R.drawable.content_loader)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
-        binding.progressBar.load(R.drawable.content_loader)
         with(binding) {
             var isInitialized = false
             lifecycleScope.launchWhenStarted {

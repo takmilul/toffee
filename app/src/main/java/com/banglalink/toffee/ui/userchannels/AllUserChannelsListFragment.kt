@@ -59,6 +59,7 @@ class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCal
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         var isInitialized = false
         requireActivity().title = "User Channels"
         landingViewModel.pageType.value = PageType.Channel
@@ -67,7 +68,6 @@ class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCal
         
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
         mAdapter = AllUserChannelsListAdapter(this)
-        binding.progressBar.load(R.drawable.content_loader)
         binding.footerLoader.load(R.drawable.content_loader)
         
         with(binding) {

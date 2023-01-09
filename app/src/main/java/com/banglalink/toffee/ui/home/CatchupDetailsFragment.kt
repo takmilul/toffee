@@ -84,6 +84,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.progressBar.load(R.drawable.content_loader)
         lifecycleScope.launch {
             localSync.syncData(currentItem)
             detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
@@ -158,7 +159,6 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     
     private fun observeListState() {
         var isInitialized = false
-        binding.progressBar.load(R.drawable.content_loader)
         
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             detailsAdapter.loadStateFlow.collect {
