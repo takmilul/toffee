@@ -30,13 +30,7 @@
             android:background="@color/screen_bg"
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
-
-            <View
-                android:id="@+id/policiesDivider"
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="@color/colorSettingsDivider" />
-
+            
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/pref_policies"
                 style="@style/PrefItemStyle"

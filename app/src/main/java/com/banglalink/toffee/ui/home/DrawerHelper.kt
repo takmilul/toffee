@@ -142,7 +142,7 @@ class DrawerHelper(
                 activity.getNavController().navigate(
                     R.id.menu_creators_policy, bundleOf(
                         "myTitle" to "Creators Policy", "url" to mPref.creatorsPolicyUrl
-                    )
+                    ), navOptions { launchSingleTop = true }
                 )
                 binding.drawerLayout.closeDrawers()
                 return true
@@ -225,7 +225,7 @@ class DrawerHelper(
             }
         }
         return run {
-            activity.getNavController().navigate(item.itemId)
+            activity.getNavController().navigate(item.itemId, null, navOptions { launchSingleTop = true })
             binding.drawerLayout.closeDrawers()
             return@run true
 //            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
