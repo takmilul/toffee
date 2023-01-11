@@ -22,9 +22,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     
     val homeIntent = MutableLiveData<Intent?>()
     val viewCountDbUrlLiveData = SingleLiveEvent<String>()
-    val reactionDbUrlLiveData = SingleLiveEvent<String>()
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
-    val subscribeDbUrlLiveData = SingleLiveEvent<String>()
     val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
     val shareCountDbUrlLiveData = SingleLiveEvent<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -341,16 +339,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
         }
     
-    var reactionDbUrl: String
-        get() = pref.getString(PREF_REACTION_DB_URL, "") ?: ""
-        set(reactionDbUrl) {
-            val storedUrl = pref.getString(PREF_REACTION_DB_URL, "") ?: ""//get stored url
-            pref.edit().putString(PREF_REACTION_DB_URL, reactionDbUrl).apply()//save new url
-            if (storedUrl.isEmpty() || !reactionDbUrl.equals(storedUrl, true)) {
-                reactionDbUrlLiveData.postValue(reactionDbUrl)//post if there is mismatch of url
-            }
-        }
-    
     var reactionStatusDbUrl: String
         get() = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""
         set(reactionStatusDbUrl) {
@@ -359,16 +347,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 .apply()//save new url
             if (storedUrl.isEmpty() || !reactionStatusDbUrl.equals(storedUrl, true)) {
                 reactionStatusDbUrlLiveData.postValue(reactionStatusDbUrl)//post if there is mismatch of url
-            }
-        }
-    
-    var subscribeDbUrl: String
-        get() = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""
-        set(subscribeDbUrl) {
-            val storedUrl = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""//get stored url
-            pref.edit().putString(PREF_SUBSCRIBE_DB_URL, subscribeDbUrl).apply()//save new url
-            if (storedUrl.isEmpty() || !subscribeDbUrl.equals(storedUrl, true)) {
-                subscribeDbUrlLiveData.postValue(subscribeDbUrl)//post if there is mismatch of url
             }
         }
     
@@ -731,9 +709,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             longitude = it.lon ?: ""
             isSubscriptionActive = it.isSubscriptionActive ?: "false"
             viewCountDbUrl = it.viewCountDbUrl ?: ""
-            reactionDbUrl = it.reactionDbUrl ?: ""
             reactionStatusDbUrl = it.reactionStatusDbUrl ?: ""
-            subscribeDbUrl = it.subscribeDbUrl ?: ""
             subscriberStatusDbUrl = it.subscriberStatusDbUrl ?: ""
             shareCountDbUrl = it.shareCountDbUrl ?: ""
             isAllTvChannelMenuEnabled = it.isAllTvChannelsMenuEnabled

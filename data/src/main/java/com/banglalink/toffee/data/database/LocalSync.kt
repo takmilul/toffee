@@ -42,13 +42,13 @@ class LocalSync @Inject constructor(
         }
         if(syncFlag and SYNC_FLAG_VIEW_COUNT == SYNC_FLAG_VIEW_COUNT) {
             val viewCount = viewCountRepo.getViewCountByChannelId(contentId.toInt())
-            channelInfo.view_count = viewCount?.toString() ?: channelInfo.view_count
+            channelInfo.view_count = viewCount?.toString() ?: "0"
         }
         if(syncFlag and SYNC_FLAG_SUB_COUNT == SYNC_FLAG_SUB_COUNT) {
             channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id)
         }
         if(syncFlag and SYNC_FLAG_SHARE_COUNT == SYNC_FLAG_SHARE_COUNT) {
-            channelInfo.shareCount = shareCountRepository.getShareCountByContentId(contentId.toInt()) ?: channelInfo.shareCount
+            channelInfo.shareCount = shareCountRepository.getShareCountByContentId(contentId.toInt()) ?: 0L
         }
         if(syncFlag and SYNC_FLAG_REACT == SYNC_FLAG_REACT) {
             val reactionList = reactionCountRepo.getReactionStatusByChannelId(contentId.toLong())

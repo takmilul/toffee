@@ -173,6 +173,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         controllerShowTimeoutMs = 3000
         
         buffering.load(R.drawable.player_loader)
+        
         setControllerVisibilityListener(ControllerVisibilityListener { ctrlVisibility ->
             when (ctrlVisibility) {
                 View.VISIBLE -> {

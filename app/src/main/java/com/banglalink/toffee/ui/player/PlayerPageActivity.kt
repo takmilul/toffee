@@ -313,7 +313,7 @@ abstract class PlayerPageActivity :
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
-                .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(120_000, 120_000, 2_500, 5_000).build())
+                .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(180_000, 180_000, 2_500, 5_000).build())
                 .build()
                 .apply {
                     addAnalyticsListener(playerAnalyticsListener!!)
@@ -1248,12 +1248,12 @@ abstract class PlayerPageActivity :
                     fallbackCounter++
                     showDebugMessage("fallback... $fallbackCounter")
                     val channelInfo = playlistManager.getCurrentChannel()
-                    if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
+                    /*if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
                         playlistManager.getCurrentChannel()?.is_drm_active = 1
-                    } else {
-                        val hlsUrl = if (channelInfo?.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                    } else*/ if (channelInfo?.isDrmActive == true) {
+                        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
                             channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo?.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                        } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
                             channelInfo.hlsLinks?.get(0)?.hls_url_mobile
                         } else null
                         hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
@@ -1323,7 +1323,7 @@ abstract class PlayerPageActivity :
                 } else {
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
                 }
-                Log.i("PLAYER BYTES", "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB")
+                Log.i(PLAYER_EVENT_TAG, "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB")
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
