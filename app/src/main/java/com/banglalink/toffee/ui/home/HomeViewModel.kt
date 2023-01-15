@@ -54,7 +54,6 @@ class HomeViewModel @Inject constructor(
     private var toffeeConfig: ToffeeConfig,
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
-    private val vastTagServiceV2: VastTagServiceV2,
     private val vastTagServiceV3: VastTagServiceV3,
     private val updateFavorite: UpdateFavorite,
     private val sendOtpLogEvent: SendOTPLogEvent,
@@ -91,6 +90,7 @@ class HomeViewModel @Inject constructor(
     val vastTagLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
+    val bottomChannelTouchState = SingleLiveEvent<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
     val logoutLiveData = MutableLiveData<Resource<LogoutBean>>()
@@ -166,12 +166,6 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun populateReactionDb(url: String) {
-        appScope.launch {
-            DownloadReactionDb(dbApi, reactionDao, mPref).execute(mContext, url)
-        }
-    }
-    
     fun populateReactionStatusDb(url: String) {
         appScope.launch {
             DownloadReactionStatusDb(dbApi, reactionCountRepository).execute(mContext, url)
@@ -192,16 +186,16 @@ class HomeViewModel @Inject constructor(
     
     private fun getProfile() {
         viewModelScope.launch {
-            val respoense = resultFromResponse {
+            val response = resultFromResponse {
                 profileApi()
             }
-            if (respoense is Resource.Failure) {
+            if (response is Resource.Failure) {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.EXCEPTION, bundleOf(
                         "api_name" to ApiNames.GET_USER_PROFILE,
                         FirebaseParams.BROWSER_SCREEN to "Profile Screen",
-                        "error_code" to respoense.error.code,
-                        "error_description" to respoense.error.msg
+                        "error_code" to response.error.code,
+                        "error_description" to response.error.msg
                     )
                 )
             }
@@ -237,7 +231,7 @@ class HomeViewModel @Inject constructor(
     }
     
     fun sendViewContentEvent(channelInfo: ChannelInfo) {
-        if (channelInfo.isApproved == 1) {
+        if (channelInfo.isApproved == 1 && channelInfo.channel_owner_id != mPref.customerId) {
             viewModelScope.launch {
                 try {
                     sendViewContentEvent.execute(channelInfo)
@@ -288,8 +282,11 @@ class HomeViewModel @Inject constructor(
     }
     
     fun sendShareLog(channelInfo: ChannelInfo) {
-        viewModelScope.launch {
-            sendShareCountEvent.execute(channelInfo)
+        if (channelInfo.isApproved == 1 && channelInfo.channel_owner_id != mPref.customerId) {
+            ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
+            viewModelScope.launch {
+                sendShareCountEvent.execute(channelInfo)
+            }
         }
     }
     
@@ -398,31 +395,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { mediaCdnSignUrlService.execute(contentId) }
             mediaCdnSignUrlData.postValue(response)
-        }
-    }
-    
-    fun getVastTagV2(shouldObserve: Boolean = true) {
-        viewModelScope.launch {
-            try {
-                vastTagServiceV2.execute().response.let {
-                    mPref.vodVastTagsV2LiveData.value = it.vodTags
-                    mPref.liveVastTagsV2LiveData.value = it.liveTags
-                    mPref.stingrayVastTagsV2LiveData.value = it.stingrayTags
-                    mPref.nativeAdSettings.value = it.nativeAdSettings
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                val error = getError(e)
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.EXCEPTION, bundleOf(
-                        "api_name" to ApiNames.GET_VAST_TAG_LIST_V2,
-                        FirebaseParams.BROWSER_SCREEN to BrowsingScreens.HOME_PAGE,
-                        "error_code" to error.code,
-                        "error_description" to error.msg
-                    )
-                )
-            }
-            if (shouldObserve) vastTagLiveData.value = true
         }
     }
     

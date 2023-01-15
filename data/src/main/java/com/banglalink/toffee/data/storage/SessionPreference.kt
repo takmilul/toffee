@@ -43,9 +43,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
-    val vodVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
-    val liveVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
-    val stingrayVastTagsV2LiveData = MutableLiveData<List<VastTagV2>?>()
     val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
     val categoryId = MutableLiveData<Int>()
     val categoryName = MutableLiveData<String>()
@@ -392,8 +389,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putBoolean(PREF_HAS_REACTION_DB, value) }
     
     var mqttIsActive: Boolean
-        get() = pref.getBoolean(PREF_MQTT_IS_ACTIVE, true)
+        get() = pref.getBoolean(PREF_MQTT_IS_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_MQTT_IS_ACTIVE, value) }
+    
+    var isMqttRealtimeSyncActive: Boolean
+        get() = pref.getBoolean(PREF_IS_MQTT_REALTIME_SYNC_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_MQTT_REALTIME_SYNC_ACTIVE, value) }
     
     var mqttHost: String
         get() = pref.getString(PREF_MQTT_HOST, "") ?: ""  //ssl://im.toffeelive.com:1883
@@ -716,6 +717,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isFeaturePartnerActive = it.isFeaturePartnerActive == "true"
             mqttHost = it.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
             mqttIsActive = it.mqttIsActive == 1
+            isMqttRealtimeSyncActive = it.isMqttRealtimeSyncActive == 1
             
             isCastEnabled = it.isCastEnabled == 1
             isCastUrlOverride = it.isCastUrlOverride == 1
@@ -840,6 +842,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
         private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
         private const val PREF_MQTT_IS_ACTIVE = "pref_mqtt_is_active"
+        private const val PREF_IS_MQTT_REALTIME_SYNC_ACTIVE = "pref_is_mqtt_realtime_sync_active"
         private const val PREF_MQTT_HOST = "pref_mqtt_host"
         private const val PREF_MQTT_CLIENT_ID = "pref_mqtt_client_id"
         private const val PREF_MQTT_USER_NAME = "pref_mqtt_user_name"
