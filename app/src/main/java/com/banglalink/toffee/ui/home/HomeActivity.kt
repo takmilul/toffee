@@ -30,10 +30,7 @@ import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.AutoCompleteTextView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -115,10 +112,7 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
-import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
-import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
@@ -263,7 +257,6 @@ class HomeActivity : PlayerPageActivity(),
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
             handleSharedUrl(intent)
             if (mPref.isVastActive || mPref.isNativeAdActive) {
-//                viewModel.getVastTagV2()
                 viewModel.getVastTagV3()
             }
         } else {
@@ -357,6 +350,13 @@ class HomeActivity : PlayerPageActivity(),
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
+        observe(viewModel.isBottomChannelScrolling) {
+            if (it) {
+                getPlayerView().showController()
+            } else {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
             observe(profileViewModel.loadCustomerProfile()) {
@@ -368,7 +368,7 @@ class HomeActivity : PlayerPageActivity(),
         if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
             handlePackageSubscribe()
         }
-        if (mPref.isVerifiedUser && mPref.mqttIsActive) {
+        if (mPref.isVerifiedUser && mPref.mqttIsActive && mPref.isMqttRealtimeSyncActive) {
             initMqtt()
         }
         observe(mPref.loginDialogLiveData) {
@@ -1951,7 +1951,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     override fun onControllerInVisible() {
-        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN && viewModel.isBottomChannelScrolling.value == false) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }

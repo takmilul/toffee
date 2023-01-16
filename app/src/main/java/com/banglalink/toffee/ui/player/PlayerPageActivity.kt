@@ -967,21 +967,6 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun getVastTagList(channelInfo: ChannelInfo) = when {
-        channelInfo.isStingray -> {
-            mPref.stingrayVastTagsV2LiveData.value
-        }
-        channelInfo.isLive -> {
-            mPref.liveVastTagsV2LiveData.value
-        }
-        channelInfo.isVOD -> {
-            mPref.vodVastTagsV2LiveData.value
-        }
-        else -> {
-            null
-        }
-    }
-    
     private fun getVastTagListV3(adGroup: String): String? {
         return mPref.vastTagListV3LiveData.value?.filter {
             it.adGroup == adGroup

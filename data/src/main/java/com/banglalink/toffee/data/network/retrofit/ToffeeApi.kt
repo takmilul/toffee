@@ -416,12 +416,6 @@ interface ToffeeApi {
         @Body AccountDeleteRequest: AccountDeleteRequest
     ): AccountDeleteResponse
     
-    @POST("v2/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
-    suspend fun getVastTagListsV2(
-        @Path("dbVersion") dbVersion: Int,
-        @Body vastTagRequestV2: VastTagRequestV2
-    ): VastTagResponseV2
-    
     @POST("v3/vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getVastTagListsV3(
         @Path("dbVersion") dbVersion: Int,
@@ -438,7 +432,7 @@ interface ToffeeApi {
     @POST("/media-cdn-sign-url")
     suspend fun getMediaCdnSignUrl(
         @Body mediaCdnSignUrlRequest: MediaCdnSignUrlRequest
-    ):MediaCdnSignUrlResponse
+    ): MediaCdnSignUrlResponse
 
     @POST
     suspend fun getHeaderEnrichment(

@@ -8,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.filter
 import androidx.paging.map
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentBottomTvChannelsBinding
 import com.banglalink.toffee.extension.observe
@@ -17,9 +18,9 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.BindingUtil
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,6 +28,7 @@ class BottomChannelFragment : BaseFragment() {
     
     private val gson = Gson()
     private var job: Job? = null
+    var coroutineScope: CoroutineScope? = null
     private val binding get() = _binding !!
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: BottomChannelAdapter
@@ -70,6 +72,25 @@ class BottomChannelFragment : BaseFragment() {
                 observeList(homeViewModel.isStingray.value ?: false, it)
             }
         }
+        
+        binding.channelList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                when(newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        coroutineScope?.cancel()
+                        homeViewModel.isBottomChannelScrolling.value = true
+                    }
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        coroutineScope = CoroutineScope(Main)
+                        coroutineScope!!.launch {
+                            delay(4000)
+                            homeViewModel.isBottomChannelScrolling.value = false
+                        }
+                    }
+                }
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
     
     private fun observeList(isStingray: Boolean, isFromSportsChannel: Boolean) {

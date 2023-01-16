@@ -127,7 +127,6 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
 }
 
 fun Activity.handleShare(item: ChannelInfo) {
-    ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }

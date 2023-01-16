@@ -108,8 +108,11 @@ class ReactionPopup: Fragment() {
             angryButton.setOnClickListener { react(Angry, R.drawable.ic_reaction_angry_no_shadow) }
         }
     }
-
+    
     private fun react(reaction: Reaction, reactIcon: Int) {
+        if (channelInfo?.channel_owner_id == preference.customerId) {
+            return
+        }
         ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
         requireActivity().checkVerification {
             reactionPopupWindow?.dismiss()

@@ -114,7 +114,6 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                     observeList()
                 }
                 if (mPref.nativeAdSettings.value == null) {
-//                    homeViewModel.getVastTagV2(false)
                     homeViewModel.getVastTagV3(false)
                 }
             }

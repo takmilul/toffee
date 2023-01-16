@@ -62,7 +62,9 @@ class CustomerInfoLogin(
     @SerializedName("isFeaturePartnerActive")
     val isFeaturePartnerActive: String? = "false",
     @SerializedName("mqttIsActive")
-    var mqttIsActive: Int = 1,
+    var mqttIsActive: Int = 0,
+    @SerializedName("mqttIsRealtimeSync")
+    var isMqttRealtimeSyncActive: Int = 0,
     @SerializedName("mqttUrl")
     var mqttUrl: String? = null,
     @SerializedName("isCastEnable")
