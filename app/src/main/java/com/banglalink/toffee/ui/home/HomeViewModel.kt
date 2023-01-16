@@ -90,7 +90,6 @@ class HomeViewModel @Inject constructor(
     val vastTagLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-    val isBottomChannelScrolling = SingleLiveEvent<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
     val logoutLiveData = MutableLiveData<Resource<LogoutBean>>()
@@ -105,6 +104,7 @@ class HomeViewModel @Inject constructor(
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
+    val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     
     init {
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {

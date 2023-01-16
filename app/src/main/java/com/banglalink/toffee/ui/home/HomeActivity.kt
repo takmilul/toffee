@@ -351,9 +351,7 @@ class HomeActivity : PlayerPageActivity(),
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
         observe(viewModel.isBottomChannelScrolling) {
-            if (it) {
-                getPlayerView().showController()
-            } else {
+            if (!it) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }

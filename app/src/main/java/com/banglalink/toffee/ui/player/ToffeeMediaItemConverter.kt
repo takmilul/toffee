@@ -132,6 +132,7 @@ class ToffeeMediaItemConverter(
                 e.printStackTrace()
             }
         }
+        Log.i("Cast_T", "getCastUrl: $newUrl")
         return newUrl
     }
 

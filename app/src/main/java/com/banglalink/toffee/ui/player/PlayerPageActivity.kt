@@ -277,10 +277,8 @@ abstract class PlayerPageActivity :
     
     private fun initializeLocalPlayer() {
         if (exoPlayer == null) {
-            val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory()
-            defaultTrackSelector = DefaultTrackSelector(this, adaptiveTrackSelectionFactory).apply {
-                parameters = trackSelectorParameters!!
-            }
+            val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory(25_000, 5_000, 25_000, 0.6F)
+            defaultTrackSelector = DefaultTrackSelector(this, trackSelectorParameters!!, adaptiveTrackSelectionFactory)
             playerAnalyticsListener = PlayerAnalyticsListener()
             httpDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient.apply {
@@ -1309,6 +1307,17 @@ abstract class PlayerPageActivity :
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
                 }
                 Log.i(PLAYER_EVENT_TAG, "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB")
+                
+                val format = mediaLoadData.trackFormat
+                format?.let {
+                    val bitrate = Utils.readableFileSize(it.bitrate.toLong())
+                    val profile = "${it.width}x${it.height}"
+                    val profileTitle = if (it.width == -1 || it.height == -1) "audio" else "video"
+                    if (profileTitle == "video") {
+                        Log.i("TEST_S", "profile: $profile, bitrate: $bitrate")
+                        Log.i("TEST_S", "url: ${loadEventInfo.uri}")
+                    }
+                }
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
