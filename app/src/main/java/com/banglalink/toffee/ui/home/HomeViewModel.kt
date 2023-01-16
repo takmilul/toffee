@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(
     val vastTagLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-    val bottomChannelTouchState = SingleLiveEvent<Boolean>()
+    val isBottomChannelScrolling = SingleLiveEvent<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
     val logoutLiveData = MutableLiveData<Resource<LogoutBean>>()
