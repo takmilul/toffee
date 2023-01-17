@@ -1,9 +1,9 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    id 'kotlin-parcelize'
-    id 'dagger.hilt.android.plugin'
+    id "com.android.library"
+    id "kotlin-kapt"
+    id "kotlin-parcelize"
+    id "dagger.hilt.android.plugin"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {
@@ -20,18 +20,18 @@ android {
     productFlavors {
         mobile {
             dimension "lib"
-            buildConfigField 'int', 'DEVICE_TYPE', "1"
+            buildConfigField "int", "DEVICE_TYPE", "1"
         }
         tv {
             dimension "lib"
-            buildConfigField 'int', 'DEVICE_TYPE', "4"
+            buildConfigField "int", "DEVICE_TYPE", "4"
         }
     }
     
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     
@@ -41,10 +41,10 @@ android {
     }
     
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
     
-    namespace 'com.banglalink.toffee.lib'
+    namespace "com.banglalink.toffee.lib"
 }
 
 dependencies {
@@ -87,24 +87,24 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
     
     implementation("com.google.apis:google-api-services-pubsub:$pubsubVersion") {
-        exclude group: 'com.google.code.findbugs'
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'org.json'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
-//        exclude module: 'google-http-client-jackson2'
+        exclude group: "com.google.code.findbugs"
+        exclude group: "org.apache.httpcomponents"
+        exclude group: "org.json"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
+//        exclude module: "google-http-client-jackson2"
     }
     implementation("com.google.api-client:google-api-client-android:$googleApiClientVersion") {
-        exclude module: 'httpclient'
-        exclude group: 'com.google.code.findbugs'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
+        exclude module: "httpclient"
+        exclude group: "com.google.code.findbugs"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
     }
     implementation("com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion") {
-        exclude module: 'httpclient'
-        exclude group: 'com.google.code.findbugs'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
+        exclude module: "httpclient"
+        exclude group: "com.google.code.findbugs"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
     }
     
     //mqtt library
@@ -112,7 +112,7 @@ dependencies {
     implementation "com.github.hannesa2:paho.mqtt.android:$pahoAndroidServiceVersion"
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:$junitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
 }

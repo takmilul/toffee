@@ -3,8 +3,6 @@ package com.banglalink.toffee.model
 import android.os.Parcelable
 import android.text.Spanned
 import android.util.Base64
-import android.util.Log
-import android.util.Patterns
 import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
@@ -12,10 +10,9 @@ import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import okio.ByteString.Companion.encode
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Pattern
+import java.util.regex.*
 
 @KeepName
 @Parcelize
@@ -280,23 +277,21 @@ data class ChannelInfo(
         if(viewProgress > durationInt) return 1000
         return ((viewProgress.toDouble() / durationInt) * 1000L).toInt()
     }
-
+    
     fun getDescriptionDecoded(): Spanned? {
         return try {
-            val obtainedUrls: MutableList<String> = ArrayList()
+//            val obtainedUrls: MutableList<String> = ArrayList()
             var descriptionDecoded = String(Base64.decode(description, Base64.NO_WRAP))
-            val pattern = Pattern.compile(Patterns.WEB_URL.toString())
-            val matcher = pattern.matcher(descriptionDecoded)
-            while (matcher.find()) {
-                obtainedUrls.add(matcher.group())
-            }
-
-            for (obtainedUrls in obtainedUrls) {
-                val lowerCaseUrl = obtainedUrls.lowercase()
-                descriptionDecoded = descriptionDecoded.replace(obtainedUrls, lowerCaseUrl)
-            }
-//            Log.i("description_", "getDescriptionDecoded: ${String(Base64.decode(description, Base64.NO_WRAP))} ")
-//            Log.i("description_", "getDescriptionDecoded: ${String(Base64.decode(descriptionDecoded, Base64.NO_WRAP))} ")
+//            val pattern = Pattern.compile(Patterns.WEB_URL.toString())
+//            val matcher = pattern.matcher(descriptionDecoded)
+//            while (matcher.find()) {
+//                obtainedUrls.add(matcher.group())
+//            }
+//
+//            for (obtainedUrl in obtainedUrls) {
+//                val lowerCaseUrl = obtainedUrl.lowercase()
+//                descriptionDecoded = descriptionDecoded.replace(obtainedUrl, lowerCaseUrl)
+//            }
             HtmlCompat.fromHtml(descriptionDecoded
                 .trim()
                 .replace("\n", "<br/>"),

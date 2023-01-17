@@ -1,14 +1,14 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-parcelize'
-    id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
-    id 'androidx.navigation.safeargs'
+    id "com.android.application"
+    id "kotlin-parcelize"
+    id "kotlin-kapt"
+    id "dagger.hilt.android.plugin"
+    id "androidx.navigation.safeargs"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {
-    namespace 'com.banglalink.toffee'
+    namespace "com.banglalink.toffee"
     compileSdkVersion 32
     
     defaultConfig {
@@ -25,7 +25,7 @@ android {
     productFlavors {
         mobile {
             dimension "lib"
-            buildConfigField 'int', 'DEVICE_TYPE', "1"
+            buildConfigField "int", "DEVICE_TYPE", "1"
         }
     }
     
@@ -49,12 +49,12 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
         debug {
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     
@@ -62,18 +62,18 @@ android {
         jniLibs {
             useLegacyPackaging = true
             excludes += [
-                'lib/*/librsjni.so',
-                'lib/*/libRSSupport.so',
-                'lib/*/librsjni_androidx.so'
+                "lib/*/librsjni.so",
+                "lib/*/libRSSupport.so",
+                "lib/*/librsjni_androidx.so"
             ]
         }
         resources {
-            excludes += ['META-INF/*.kotlin_module']
+            excludes += ["META-INF/*.kotlin_module"]
             pickFirsts += [
-                'META-INF/LICENSE',
-                'META-INF/INDEX.LIST',
-                'META-INF/io.netty.versions.properties',
-                'META-INF/annotation-experimental_release.kotlin_module'
+                "META-INF/LICENSE",
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/annotation-experimental_release.kotlin_module"
             ]
         }
     }
@@ -89,15 +89,15 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation "androidx.appcompat:appcompat:1.5.1"
     implementation "androidx.core:core-ktx:$kotlinKtxVersion"
     implementation "androidx.fragment:fragment-ktx:1.5.5"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'net.gotev:uploadservice:4.7.0'
-    implementation 'net.gotev:uploadservice-okhttp:4.7.0'
-    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "net.gotev:uploadservice:4.7.0"
+    implementation "net.gotev:uploadservice-okhttp:4.7.0"
+    implementation "androidx.core:core-splashscreen:1.0.0"
     
     //Compose
 //    implementation "androidx.compose.runtime:runtime:$composeVersion"
@@ -107,7 +107,6 @@ dependencies {
 //    implementation "androidx.compose.foundation:foundation-layout:$composeVersion"
 //    implementation "androidx.compose.material:material:$composeVersion"
 //    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
-//    implementation "androidx.compose.ui:ui-tooling:$composeVersion"
 //    implementation "com.google.android.material:compose-theme-adapter:1.1.2"
     
     //Retrofit
@@ -121,19 +120,19 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
     
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
     
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation "com.google.android.material:material:1.7.0"
     //Switch Lib
-    implementation 'com.github.zcweng:switch-button:0.0.3@aar'
+    implementation "com.github.zcweng:switch-button:0.0.3@aar"
     
     // Crop Image
-    implementation 'com.github.yalantis:ucrop:2.2.8'
-    implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
-    implementation 'com.xfinity:dahdit:0.9.3'
+    implementation "com.github.yalantis:ucrop:2.2.8"
+    implementation "com.mikhaellopez:circularprogressbar:3.1.0"
+    implementation "com.xfinity:dahdit:0.9.3"
     
     //Coil image Lib
-    implementation 'io.coil-kt:coil:1.4.0'
+    implementation "io.coil-kt:coil:1.4.0"
     implementation "io.coil-kt:coil-gif:1.4.0"
     implementation "jp.wasabeef.transformers:coil:1.0.5"
     implementation "jp.wasabeef.transformers:core:1.0.5"
@@ -141,17 +140,17 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
+    implementation "com.google.firebase:firebase-inappmessaging-display:20.0.0"
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
     
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
+    implementation "com.google.firebase:firebase-firestore-ktx:24.4.1"
     
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "com.jakewharton:butterknife:10.2.3"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
     
     //Exo Player
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
@@ -163,8 +162,8 @@ dependencies {
     implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
     
     // Cast
-    implementation 'androidx.mediarouter:mediarouter:1.3.1'
-    implementation 'com.google.android.gms:play-services-cast-framework:21.2.0'
+    implementation "androidx.mediarouter:mediarouter:1.3.1"
+    implementation "com.google.android.gms:play-services-cast-framework:21.2.0"
     
     // Paging
     implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
@@ -190,99 +189,98 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     
     //Permission extension
-//    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
+//    implementation "com.github.florent37:runtime-permission-kotlin:1.1.2"
     
     //Facebook SDK
 //    implementation "com.facebook.android:facebook-android-sdk:$facebookSdkVersion"
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation "com.facebook.shimmer:shimmer:0.5.0"
     
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.4.0'
-    implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
-    implementation 'com.google.android.play:core:1.10.3'
+    implementation "de.hdodenhof:circleimageview:3.1.0"
+    implementation "com.google.android.gms:play-services-auth:20.4.0"
+    implementation "com.google.android.gms:play-services-auth-api-phone:18.0.1"
+    implementation "com.google.android.play:core:1.10.3"
     
     //firework sdk
-    implementation('com.github.loopsocial:firework_sdk:v5.10.0') {
+    implementation("com.github.loopsocial:firework_sdk:v5.10.0") {
         exclude module: "picasso-transformations"
     }
-    implementation 'com.github.loopsocial:AndroidAdsService:v20.0.0'
+    implementation "com.github.loopsocial:AndroidAdsService:v20.0.0"
     
     //conviva sdk
     implementation "com.conviva.sdk:conviva-core-sdk:$convivaSdkVersion"
     implementation "com.conviva.sdk:conviva-exoplayer-sdk:$convivaExoPlayerVersion"
     
     implementation("com.google.apis:google-api-services-pubsub:$pubsubVersion") {
-        exclude group: 'com.google.code.findbugs'
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'org.json'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
+        exclude group: "com.google.code.findbugs"
+        exclude group: "org.apache.httpcomponents"
+        exclude group: "org.json"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
     }
     implementation("com.google.api-client:google-api-client-android:$googleApiClientVersion") {
-        exclude module: 'httpclient'
-        exclude group: 'com.google.code.findbugs'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
+        exclude module: "httpclient"
+        exclude group: "com.google.code.findbugs"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
     }
     implementation("com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion") {
-        exclude module: 'httpclient'
-        exclude group: 'com.google.code.findbugs'
-        exclude module: 'support-annotations'
-        exclude group: 'com.google.guava'
+        exclude module: "httpclient"
+        exclude group: "com.google.code.findbugs"
+        exclude module: "support-annotations"
+        exclude group: "com.google.guava"
     }
-    implementation project(path: ':data')
+    implementation project(path: ":data")
     
     //mqtt library
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$pahoClientVersion"
     implementation "com.github.hannesa2:paho.mqtt.android:$pahoAndroidServiceVersion"
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
-    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-    implementation 'com.google.android.gms:play-services-ads:21.4.0'
-    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
-    implementation('com.google.guava:guava:31.0.1-android')
+    implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
+    implementation "com.google.android.gms:play-services-ads:21.4.0"
+    implementation "androidx.ads:ads-identifier:1.0.0-alpha04"
+    implementation "com.google.guava:guava:31.0.1-android"
     
     //medallia
-    implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
+    implementation "com.medallia.digital.mobilesdk:android-sdk:3.9.1"
     
-    testImplementation('com.squareup.okhttp3:mockwebserver:4.9.2')
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.2"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     
     //Androidx Core library
-    androidTestImplementation("androidx.test:core-ktx:$testCore")
+    androidTestImplementation "androidx.test:core-ktx:$testCoreVersion"
     
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation("androidx.test:runner:1.5.1")
-    testImplementation 'org.robolectric:robolectric:4.8.1'
+    androidTestImplementation "androidx.test:runner:1.5.2"
+    testImplementation "org.robolectric:robolectric:4.8.1"
 //    testImplementation "androidx.arch.core:core-testing:2.1.0"
-    androidTestImplementation("androidx.test:rules:$testCore")
+    androidTestImplementation "androidx.test:rules:$testCoreVersion"
     
     // Assertions
-    androidTestImplementation('androidx.test.ext:junit-ktx:1.1.4')
-    androidTestImplementation("androidx.test.ext:truth:$testCore")
-    androidTestImplementation('com.google.truth:truth:1.1.3')
+    androidTestImplementation "androidx.test.ext:junit-ktx:$junitVersion"
+    androidTestImplementation "androidx.test.ext:truth:$testCoreVersion"
+    androidTestImplementation "com.google.truth:truth:1.1.3"
     
     // Espresso dependencies
-    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:$espressoVersion")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:$espressoVersion")
-    androidTestImplementation("androidx.test.espresso:espresso-accessibility:$espressoVersion")
-    androidTestImplementation("androidx.test.espresso:espresso-web:$espressoVersion")
-    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espressoVersion")
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-accessibility:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-web:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:$espressoVersion"
     
     // Fragment testing
-    debugImplementation("androidx.fragment:fragment-testing:1.5.5")
+    debugImplementation "androidx.fragment:fragment-testing:1.5.5"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion"
     
-//    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
-    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espressoVersion")
+//    testImplementation "androidx.test.espresso:espresso-idling-resource:3.1.0"
+    androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
     
-    def mockk_version = '1.12.4'
-    testImplementation "io.mockk:mockk:$mockk_version"
-    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
+    testImplementation "io.mockk:mockk:$mockkVersion"
+    androidTestImplementation "io.mockk:mockk-android:$mockkVersion"
     
     // Leak Canary
-    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    //debugImplementation "com.squareup.leakcanary:leakcanary-android:2.7"
 }
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
