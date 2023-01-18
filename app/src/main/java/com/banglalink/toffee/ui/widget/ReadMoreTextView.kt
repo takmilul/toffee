@@ -27,9 +27,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.ui.home.CatchupDetailsFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
@@ -48,6 +50,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private var trimCollapsedText: CharSequence
     private var textWatcher: TextWatcher? = null
     private val viewMoreSpan: ReadMoreClickableSpan
+    @Inject lateinit var mPref: SessionPreference
     
     val TAG = "READ_"
     
@@ -264,6 +267,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private inner class ReadMoreClickableSpan : ClickableSpan() {
         override fun onClick(widget: View) {
             readMore = !readMore
+            mPref.isShowMoreToggled.value = !readMore
             setText()
         }
         

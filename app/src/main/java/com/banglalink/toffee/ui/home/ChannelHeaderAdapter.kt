@@ -28,6 +28,7 @@ class ChannelHeaderAdapter(
 ) : RecyclerView.Adapter<ChannelHeaderAdapter.HeaderViewHolder>() {
 
     private var channelInfo: ChannelInfo? = null
+    private var viewHolder: HeaderViewHolder? = null
 
     init {
         when (headerData) {
@@ -39,6 +40,16 @@ class ChannelHeaderAdapter(
         }
     }
 
+    fun toggleShowMore(showMore: Boolean?) {
+        viewHolder?.let {
+            if (showMore == true) {
+                it.title.maxLines = 10
+            } else {
+                it.title.maxLines = 2
+            }
+        }
+    }
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeaderViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
@@ -52,6 +63,7 @@ class ChannelHeaderAdapter(
     }
 
     override fun onBindViewHolder(holder: HeaderViewHolder, position: Int) {
+        viewHolder = holder
         channelInfo?.let {
             holder.bind(it, cb, position, viewModel)
         }
@@ -114,6 +126,7 @@ class ChannelHeaderAdapter(
         val autoplaySwitch: SwitchButton = binding.root.findViewById(R.id.autoPlaySwitch)
         val bottomPanelStatus: TextView = binding.root.findViewById(R.id.bottom_panel_status)
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
+        val title: TextView = binding.root.findViewById(R.id.program_name)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)
         val seasonSpinnerWrap: RelativeLayout = binding.root.findViewById(R.id.seasonSpinnerWrap)
         val playlistShareButton: ImageView = binding.root.findViewById(R.id.playlistShareButton)

@@ -48,6 +48,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val categoryName = MutableLiveData<String>()
     val isCatWiseLinChannelAvailable = MutableLiveData<Boolean>()
     val startBubbleService = MutableLiveData<Boolean>()
+    val isShowMoreToggled = SingleLiveEvent<Boolean>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

@@ -47,6 +47,7 @@
             android:text="@{data.program_name}"
             android:textColor="@color/main_text_color"
             android:textSize="16sp"
+            android:ellipsize="end"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/providerImageView"

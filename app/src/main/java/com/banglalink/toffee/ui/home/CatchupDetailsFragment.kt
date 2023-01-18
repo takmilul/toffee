@@ -120,6 +120,10 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             observeListState()
             observeSubscribeChannel()
         }
+    
+        observe(mPref.isShowMoreToggled) {
+            headerAdapter.toggleShowMore(it)
+        }
     }
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
