@@ -121,7 +121,7 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{data.formattedViewCount() + ` Views`}"
+            android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="18K views" />

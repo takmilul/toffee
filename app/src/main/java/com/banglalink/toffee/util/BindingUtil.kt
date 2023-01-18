@@ -206,7 +206,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("bindViewCount")
     fun bindViewCount(view: TextView, channelInfo: ChannelInfo?) {
-        view.text = channelInfo?.formattedViewCount() ?: ""
+        view.text = if (channelInfo?.isApproved == 1) channelInfo.formattedViewCount() else ""
     }
     
     @BindingAdapter("packageExpiryText")
@@ -364,7 +364,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             like + love + haha + wow + sad + angry
         } ?: 0L
         if (item.myReaction > 0) react++
-        view.text = Utils.getFormattedViewsText(react.toString())
+        view.text = Utils.getFormattedViewsText(if (item.isApproved == 1) react.toString() else "0")
     }
     
     @BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)

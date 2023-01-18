@@ -132,7 +132,7 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{data.formattedViewCount() + ` Views`}"
+            android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
             app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/name"
