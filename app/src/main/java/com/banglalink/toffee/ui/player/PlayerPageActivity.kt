@@ -15,18 +15,11 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.FirebaseParams
-import com.banglalink.toffee.analytics.HeartBeatManager
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.analytics.*
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.DrmTokenService
-import com.banglalink.toffee.data.database.entities.ContentViewProgress
-import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
-import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
-import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
-import com.banglalink.toffee.data.repository.ContinueWatchingRepository
-import com.banglalink.toffee.data.repository.DrmLicenseRepository
+import com.banglalink.toffee.data.database.entities.*
+import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
@@ -40,6 +33,7 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.util.*
+import com.banglalink.toffee.util.Log
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
@@ -48,30 +42,21 @@ import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.Player.PositionInfo
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
+import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException
-import com.google.android.exoplayer2.drm.DrmSessionEventListener
-import com.google.android.exoplayer2.drm.DrmSessionManager
-import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.LoadEventInfo
-import com.google.android.exoplayer2.source.MediaLoadData
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.EventLogger
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.exoplayer2.util.Util
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.android.exoplayer2.util.*
+import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -1485,6 +1470,10 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAdFailed(errorMessage, it.ad)
 //                showDebugMessage("AdLoadFailureMessage: $errorMessage")
                 playerEventHelper.setAdData(null, null, isReset = true)
+            }
+            LOADED -> {
+                playerEventHelper.setAdData(it.ad, LOADED.name)
+                ConvivaHelper.onAdBuffering(it.ad)
             }
             AD_BUFFERING -> {
                 playerEventHelper.setAdData(it.ad, AD_BUFFERING.name)
