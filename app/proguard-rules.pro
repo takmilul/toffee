@@ -37,10 +37,9 @@
 -keep class com.yalantis.ucrop** { *; }
 -keep interface com.yalantis.ucrop** { *; }
 
--keep class com.banglalink.toffee.ui.common** { *; }
+#-keep class com.banglalink.toffee.ui.common** { *; }
 
-
--keepnames public class * extends androidx.fragment.app.Fragment
+#-keepnames public class * extends androidx.fragment.app.Fragment
 #-keepnames public class * extends com.google.android.material.appbar.AppBarLayout.*
 #-keep class com.banglalink.toffee.ui.widget.AppBarLayoutBehavior {
 #    public <methods>;
@@ -50,7 +49,7 @@
     private java.lang.Runnable flingRunnable;
     android.widget.OverScroller scroller;
 }
--keep class androidx.navigation** { *; }
+#-keep class androidx.navigation** { *; }
 
 -keepnames class com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener
 -keepclassmembers class com.google.android.exoplayer2.ext.cast.CastPlayer {
