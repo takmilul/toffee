@@ -3,11 +3,8 @@ package com.banglalink.toffee.util
 import android.content.Context
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.model.ChannelInfo
-import com.conviva.sdk.ConvivaAdAnalytics
-import com.conviva.sdk.ConvivaAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
+import com.conviva.sdk.*
 import com.conviva.sdk.ConvivaSdkConstants.AdPosition.*
-import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.android.exoplayer2.ExoPlayer
@@ -115,6 +112,11 @@ class ConvivaHelper private constructor() {
             isAdSessionActive = true
         }
         
+        fun onAdLoaded(ad: Ad?) {
+            instance.convivaAdAnalytics?.reportAdLoaded()
+            reportAdMetrics(ad)
+        }
+        
         fun onAdBuffering(ad: Ad?) {
             reportAdMetrics(ad, isBuffering = true)
         }
@@ -169,8 +171,7 @@ class ConvivaHelper private constructor() {
             isAdFailureActive = false
         }
         
-        private fun reportAdMetrics(ad: Ad?, isBuffering: Boolean = false, isPlaying: Boolean = false, isPaused: Boolean = false, isResumed: Boolean = 
-            false) {
+        private fun reportAdMetrics(ad: Ad?, isBuffering: Boolean = false, isPlaying: Boolean = false, isPaused: Boolean = false, isResumed: Boolean = false) {
             if (isAdSessionActive) {
                 when {
                     isBuffering -> {
