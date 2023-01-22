@@ -83,7 +83,7 @@
             android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{data.isApproved == 1 ? data.formattedSubscriberCount : `0`}"
+            android:text="@{data.formattedSubscriberCount}"
             android:fontFamily="@font/roboto_medium"
             android:textSize="@dimen/default_text_size"
             tools:text="15K"
