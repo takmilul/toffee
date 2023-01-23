@@ -91,3 +91,6 @@
 -dontwarn retrofit2.**
 
 -keep class com.google.protobuf.** { *; }
+
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
