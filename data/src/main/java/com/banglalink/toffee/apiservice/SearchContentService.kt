@@ -19,6 +19,8 @@ class SearchContentService @AssistedInject constructor(
 ) : BaseApiService<ChannelInfo> {
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
+        if (keyword.isBlank()) return emptyList()
+        
         val response = tryIO2 {
             toffeeApi.searchContent(
                 offset,
