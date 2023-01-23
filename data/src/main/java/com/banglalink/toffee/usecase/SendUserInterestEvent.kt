@@ -32,4 +32,6 @@ data class InterestData(
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
     val interestDateTime: String = currentDateTime,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )

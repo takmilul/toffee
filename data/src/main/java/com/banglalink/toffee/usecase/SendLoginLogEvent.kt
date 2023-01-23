@@ -55,4 +55,6 @@ data class LoginLogData(
     val customerId:Long = SessionPreference.getInstance().customerId.toLong(),
     @SerializedName("date_time")
     val dateTime: String = currentDateTime,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )

@@ -43,4 +43,6 @@ data class CategoryChannelShareData(
     val appVersion: String = CommonPreference.getInstance().appVersionName,
     @SerializedName("date_time")
     val shareDateTime: String = currentDateTime,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )
