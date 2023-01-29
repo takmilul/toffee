@@ -290,7 +290,7 @@ Day 21 - AUS vs IND" />
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
-            android:text="@{data.isApproved == 1 ? data.formattedSubscriberCount : `0`}"
+            android:text="@{data.formattedSubscriberCount}"
             tools:text="14K"
             app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
             app:layout_constraintEnd_toStartOf="@+id/subscribe_button"

@@ -47,5 +47,7 @@ data class ReportInAppropriateVideoData(
     @SerializedName("app_version")
     val appVersion : String = CommonPreference.getInstance().appVersionName,
     @SerializedName("os_version")
-    val osVersion :String = "android "+ Build.VERSION.RELEASE
+    val osVersion :String = "android "+ Build.VERSION.RELEASE,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )

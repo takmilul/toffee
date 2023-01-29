@@ -182,7 +182,7 @@
     
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-8724031649645430~8504153625"/>
+            android:value="@string/ads_app_id"/>
         
 <!--        <service-->
 <!--            android:name=".ui.bubble.BubbleService"-->

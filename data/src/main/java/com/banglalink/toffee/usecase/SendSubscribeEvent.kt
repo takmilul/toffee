@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -33,5 +34,7 @@ data class SubscriptionCountData(
     @SerializedName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
-    val date_time: String
+    val date_time: String,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )

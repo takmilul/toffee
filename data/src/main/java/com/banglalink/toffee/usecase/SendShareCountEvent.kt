@@ -43,4 +43,6 @@ data class ShareData(
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
     val shareDateTime: String = currentDateTime,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )

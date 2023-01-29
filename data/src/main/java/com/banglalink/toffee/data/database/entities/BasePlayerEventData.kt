@@ -4,6 +4,7 @@ import android.os.Build
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.currentDateTimeMillis
 import com.google.gson.annotations.SerializedName
 
@@ -63,4 +64,6 @@ abstract class BasePlayerEventData {
     @SerializedName("dateTime")
     var dateTime: String = currentDateTimeMillis
     
+    @SerializedName("reportingTime")
+    var reportingTime: String = currentDateTime
 }

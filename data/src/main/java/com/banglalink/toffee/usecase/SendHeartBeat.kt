@@ -121,6 +121,8 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerializedName("date_time")
-        val dateTime: String = currentDateTime
+        val dateTime: String = currentDateTime,
+        @SerializedName("reportingTime")
+        val reportingTime: String = currentDateTime
     )
 }

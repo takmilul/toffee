@@ -29,10 +29,14 @@ import com.banglalink.toffee.model.BubbleConfig
         CdnChannelItem::class,
         BubbleConfig::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
+    companion object {
+        const val DB_NAME = "toffee-db"
+    }
+    
     abstract fun getUploadDao(): UploadDao
     abstract fun getViewCountDao(): ViewCountDAO
     abstract fun getNotificationDao(): NotificationDao
@@ -53,8 +57,4 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getCustomPlayerEventsDao(): PlayerEventsDao
     abstract fun getCdnChannelItemDao(): CdnChannelItemDao
     abstract fun getBubbleConfigDao(): BubbleConfigDao
-    
-    companion object {
-        const val DB_NAME = "toffee-db"
-    }
 }

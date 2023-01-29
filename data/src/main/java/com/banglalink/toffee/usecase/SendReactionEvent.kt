@@ -6,6 +6,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.REACTION_TOPIC
+import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -69,5 +70,7 @@ data class ReactionData(
     @SerializedName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("reaction_time")
-    val reactionTime: String
+    val reactionTime: String,
+    @SerializedName("reportingTime")
+    val reportingTime: String = currentDateTime
 )
