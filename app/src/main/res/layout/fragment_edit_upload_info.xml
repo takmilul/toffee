@@ -148,7 +148,7 @@
                 style="@style/MultilineInputFieldStyle"
                 android:layout_marginTop="4dp"
                 android:hint="@string/description_hint"
-                android:maxLength="600"
+                android:maxLength="2000"
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
