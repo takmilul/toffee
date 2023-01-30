@@ -49,6 +49,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isCatWiseLinChannelAvailable = MutableLiveData<Boolean>()
     val startBubbleService = MutableLiveData<Boolean>()
     val isShowMoreToggled = SingleLiveEvent<Boolean>()
+    val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
+    val preLoginDestinationId = SingleLiveEvent<Int?>()
+    val doActionBeforeReload = MutableLiveData<Boolean>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

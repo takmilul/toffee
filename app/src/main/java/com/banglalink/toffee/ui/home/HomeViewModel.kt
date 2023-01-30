@@ -82,6 +82,7 @@ class HomeViewModel @Inject constructor(
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
 ) : ViewModel() {
     
+    val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
     val isStingray = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
