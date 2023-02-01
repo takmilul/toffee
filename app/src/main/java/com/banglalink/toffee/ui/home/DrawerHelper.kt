@@ -55,6 +55,7 @@ class DrawerHelper(
         }
         
         setProfileInfo()
+//        setToffeePremium()
         followUsAction()
     }
     
@@ -78,35 +79,58 @@ class DrawerHelper(
     
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
-        val profileName = header.findViewById(R.id.profile_name) as TextView
+//        val profileName = header.findViewById(R.id.profile_name) as TextView
         val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
         
         if (mPref.isVerifiedUser) {
-            if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
+//            if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
             if (!mPref.userImageUrl.isNullOrBlank()) bindingUtil.bindRoundImage(profileImageView, mPref.userImageUrl)
             
-            activity.observe(mPref.customerNameLiveData) {
-                when {
-                    it.isBlank() -> profileName.text = activity.getString(R.string.profile)
-                    else -> {
-                        profileName.text = mPref.customerName
-                    }
-                }
-            }
+//            activity.observe(mPref.customerNameLiveData) {
+//                when {
+//                    it.isBlank() -> profileName.text = activity.getString(R.string.profile)
+//                    else -> {
+//                        profileName.text = mPref.customerName
+//                    }
+//                }
+//            }
             activity.observe(mPref.profileImageUrlLiveData) {
                 bindingUtil.bindRoundImage(profileImageView, it)
             }
         }
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Profile"))
-            activity.getNavController().let {
-                if (it.currentDestination?.id != R.id.profileFragment) {
-                    it.navigate(R.id.profileFragment)
+            if (!mPref.isVerifiedUser) {
+                activity.checkVerification()
+                binding.drawerLayout.closeDrawers()
+            } else {
+                activity.getNavController().let {
+                    if (it.currentDestination?.id != R.id.accountFragment) {
+                        it.navigate(R.id.accountFragment)
+                    }
                 }
             }
             binding.drawerLayout.closeDrawers()
         }
     }
+
+//    private fun setToffeePremium() {
+//        val header = binding.sideNavigation.getHeaderView(0)
+//        header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
+//            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
+//            if (!mPref.isVerifiedUser) {
+//                activity.checkVerification()
+//                binding.drawerLayout.closeDrawers()
+//            } else {
+//                activity.getNavController().let {
+//                    if (it.currentDestination?.id != R.id.accountFragment) {
+//                        it.navigate(R.id.accountFragment)
+//                    }
+//                }
+//            }
+//            binding.drawerLayout.closeDrawers()
+//        }
+//    }
     
     fun handleMenuItemById(item: MenuItem): Boolean {
         when (item.itemId) {

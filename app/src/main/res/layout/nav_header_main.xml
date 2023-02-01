@@ -4,72 +4,120 @@
 <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
 <!--    android:layout_width="match_parent"-->
 <!--    android:layout_height="wrap_content">-->
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/menu_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_marginTop="20dp"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp" >
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/profile_picture"
-            android:contentDescription="@string/txt_profile_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="32dp"
-            android:src="@drawable/ic_menu_profile"
-            android:layout_gravity="center_vertical"/>
+            android:contentDescription="@string/txt_profile_image"
+            android:src="@drawable/ic_menu_profile" />
 
         <TextView
-            android:layout_gravity="center_vertical"
             android:id="@+id/profile_name"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="14sp"
-            android:textStyle="normal"
-            android:text="@string/profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/side_menu_color_selector" />
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/profile"
+            android:textColor="@color/side_menu_color_selector"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:visibility="gone">-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/customer_name_tv"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:ellipsize="end"-->
-<!--                android:text="Customer Name"-->
-<!--                android:textColor="@android:color/white"-->
-<!--                android:textStyle="bold"/>-->
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:visibility="gone">-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/credit_tv"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="end"-->
-<!--                android:text="Credit: 100"-->
-<!--                android:textColor="@android:color/white"/>-->
+        <!--            <TextView-->
+        <!--                android:id="@+id/customer_name_tv"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:ellipsize="end"-->
+        <!--                android:text="Customer Name"-->
+        <!--                android:textColor="@android:color/white"-->
+        <!--                android:textStyle="bold"/>-->
 
-<!--        </LinearLayout>-->
+        <!--            <TextView-->
+        <!--                android:id="@+id/credit_tv"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:gravity="end"-->
+        <!--                android:text="Credit: 100"-->
+        <!--                android:textColor="@android:color/white"/>-->
+
+        <!--        </LinearLayout>-->
 
 
     </LinearLayout>
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/menu_toffee_premium"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="?attr/selectableItemBackground"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingStart="16dp"-->
+<!--        android:paddingTop="12dp"-->
+<!--        android:paddingEnd="16dp"-->
+<!--        android:paddingBottom="12dp">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/toffee_premium_picture"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginEnd="32dp"-->
+<!--            android:contentDescription="@string/txt_profile_image"-->
+<!--            android:src="@drawable/ic_menu_toffee_premium" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/title_name"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:fontFamily="@font/roboto_regular"-->
+<!--            android:text="@string/toffee_premium"-->
+<!--            android:textColor="@color/colorAccent2"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textStyle="normal" />-->
+<!--    </LinearLayout>-->
+
+    <View
+        android:id="@+id/menuToffeePremiumDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:background="@color/list_divider_side_nav" />
+
+</LinearLayout>
 
 <!--    <ImageView-->
 <!--        android:id="@+id/nav_bar_close"-->
@@ -83,3 +131,4 @@
 <!--        android:src="@drawable/close"-->
 <!--        app:tint="@android:color/white" />-->
 <!--</FrameLayout>-->
+

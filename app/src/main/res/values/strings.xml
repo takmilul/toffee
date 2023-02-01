@@ -63,7 +63,8 @@
     <string name="add_your_phone">Add Your Phone Number</string>
     <string name="add_your_name">Add Your Name</string>
     <string name="change_password_button">Change Password</string>
-    <string name="profile">Profile</string>
+    <string name="profile">Account</string>
+    <string name="toffee_premium">Toffee Premium</string>
     <string name="profile_edit">Profile - Edit</string>
     <string name="cancel">Cancel</string>
     <string name="save_changes">Save Changes</string>
@@ -101,6 +102,7 @@
     <string name="menu_faqs_text">FAQs</string>
     <string name="views">views</string>
     <string name="refer_a_friend_txt">Refer a Friend</string>
+    <string name="menu_toffee_premium">Toffee Premium</string>
     <string name="redeem_code_txt">Redeem Referral Code</string>
     <string name="invite_friends_txt">Refer Friends</string>
     <string name="redeem_button">Redeem</string>
@@ -413,9 +415,11 @@
     <string name="menu_all_tv_channels">All TV Channels</string>
     <string name="menu_activities">Activities</string>
     <string name="menu_playlists">My Playlist</string>
+    <string name="menu_payment_history">Payment History</string>
     <string name="menu_favorites">Favorites</string>
     <string name="menu_subscriptions">Subscriptions</string>
     <string name="menu_creators_policy">Creators Policy</string>
+    <string name="menu_my_profile">My profile</string>
     <string name="menu_policies">Policies</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_sign_in">Sign in</string>

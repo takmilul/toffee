@@ -217,6 +217,12 @@
             android:defaultValue=""
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.banglalink.toffee.ui.account.AccountFragment"
+        android:label="Account">
+    </fragment>
     
     <fragment
         android:id="@+id/profileFragment"

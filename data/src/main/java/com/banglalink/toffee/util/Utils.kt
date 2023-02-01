@@ -423,6 +423,33 @@ object Utils {
             else -> "Just Now!"
         }
     }
+
+//    fun getDateDiffInDayOrHourOrMinute(time: Long): String {
+//        val second  = 1
+//        val minute  = 60 * second
+//        val hour  = 60 * minute
+//        val day = 24 * hour
+//        val week = 7 * day
+//        val month = 30 * day
+//        val year = 12 * month
+//        val diff = (Date().time - Date(time).time) / 1000
+//        return when {
+////            diff < minute -> "Just now"
+////            diff < 2 * minute -> "a minute ago"
+////            diff < 60 * minute -> "${diff / minute} minutes ago"
+//            diff < 60 * minute -> "Just now"
+//            diff < 2 * hour -> "1 hour ago"
+//            diff < 24 * hour -> "${diff / hour} hours ago"
+//            diff < 2 * day -> "1 day ago"
+//            diff < 7 * day -> "${diff / day} days ago"
+//            diff < 2 * week -> "1 week ago"
+//            diff < 5 * week -> "${diff / week} weeks ago"
+//            diff < 2 * month -> "1 month ago"
+//            diff < 12 * month -> "${diff / month} months ago"
+//            diff < 2 * year -> "1 year ago"
+//            else -> "${diff / year} years ago"
+//        }
+//    }
     
     fun getDateDiffInDayOrHour(stopDate: Date): String {
         val diff = stopDate.time - Date().time

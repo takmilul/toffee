@@ -17,42 +17,43 @@
             android:icon="@drawable/ic_menu_tv_normal"
             android:title="@string/menu_all_tv_channels" />
         
-        <item
-            android:id="@+id/menu_activities"
-            android:icon="@drawable/ic_menu_activites"
-            android:title="@string/menu_activities" />
-        
-        <item
-            android:id="@+id/menu_playlist"
-            android:icon="@drawable/ic_menu_playlist"
-            android:title="@string/menu_playlists" />
-        
-        <item
-            android:id="@+id/menu_favorites"
-            android:icon="@drawable/ic_menu_favorites"
-            android:title="@string/menu_favorites" />
-        
-        <item
-            android:id="@+id/menu_subscriptions"
-            android:icon="@drawable/ic_menu_subscriptions"
-            android:title="@string/menu_subscriptions" />
+<!--        <item-->
+<!--            android:id="@+id/menu_activities"-->
+<!--            android:icon="@drawable/ic_menu_activites"-->
+<!--            android:title="@string/menu_activities" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/menu_playlist"-->
+<!--            android:icon="@drawable/ic_menu_playlist"-->
+<!--            android:title="@string/menu_playlists" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/menu_favorites"-->
+<!--            android:icon="@drawable/ic_menu_favorites"-->
+<!--            android:title="@string/menu_favorites" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/menu_subscriptions"-->
+<!--            android:icon="@drawable/ic_menu_subscriptions"-->
+<!--            android:title="@string/menu_subscriptions" />-->
     
     </group>
     
     <group
         android:id="@+id/group2"
         android:checkableBehavior="single">
-        
+
         <item
             android:id="@+id/menu_invite"
+
             android:icon="@drawable/ic_menu_invite"
             android:title="@string/refer_a_friend_txt" />
-        
+
         <item
             android:id="@+id/menu_redeem"
             android:icon="@drawable/ic_menu_redeem"
             android:title="@string/redeem_code_txt" />
-    
+
     </group>
     
     <group
