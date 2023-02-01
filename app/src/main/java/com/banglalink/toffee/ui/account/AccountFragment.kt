@@ -51,22 +51,29 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClickProfile() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Profile"))
         findNavController().navigate(R.id.profileFragment)
     }
     
     private fun onClickActivities() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_activities)))
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
         findNavController().navigate(R.id.menu_activities)
     }
 
     private fun onClickMyPlaylist() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_playlists)))
         findNavController().navigate(R.id.menu_playlist)
     }
 
     private fun onClickFavorites() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_favorites)))
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
         findNavController().navigate(R.id.menu_favorites)
     }
 
     private fun onClickSubscriptions() {
+        ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_subscriptions)))
         findNavController().navigate(R.id.menu_subscriptions)
     }
 
