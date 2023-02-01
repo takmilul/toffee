@@ -4,7 +4,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
@@ -100,10 +99,7 @@ class DrawerHelper(
         }
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Profile"))
-            if (!mPref.isVerifiedUser) {
-                activity.checkVerification()
-                binding.drawerLayout.closeDrawers()
-            } else {
+            activity.checkVerification {
                 activity.getNavController().let {
                     if (it.currentDestination?.id != R.id.accountFragment) {
                         it.navigate(R.id.accountFragment)
