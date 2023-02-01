@@ -262,7 +262,7 @@ abstract class PlayerPageActivity :
     
     private fun initializeLocalPlayer() {
         if (exoPlayer == null) {
-            val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory(25_000, 5_000, 25_000, 0.6F)
+            val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory(25_000, 5_000, 25_000, 0.7F)
             defaultTrackSelector = DefaultTrackSelector(this, trackSelectorParameters!!, adaptiveTrackSelectionFactory)
             playerAnalyticsListener = PlayerAnalyticsListener()
             httpDataSourceFactory = OkHttpDataSource.Factory(

@@ -110,8 +110,7 @@ class UserInterestFragment : ChildDialogFragment() {
             else {
                 progressDialog.hide()
                 closeDialog()
-                requireActivity().recreate()
-                //requireContext().showToast("Unable to load data!")
+//                requireActivity().recreate()
                 requireContext().showToast("Oops! Something went wrong.")
             }
         }
@@ -121,7 +120,8 @@ class UserInterestFragment : ChildDialogFragment() {
         closeDialog()
         cacheManager.clearAllCache()
         requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
-            requireActivity().recreate()
+//            requireActivity().recreate()
+            homeViewModel.postLoginEvent.value = true
         }
     }
 

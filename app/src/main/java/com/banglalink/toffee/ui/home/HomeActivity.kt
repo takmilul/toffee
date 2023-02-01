@@ -250,12 +250,9 @@ class HomeActivity : PlayerPageActivity(),
             )
         )
         
-        if (mPref.homeIntent.value != null) {
-            intent = mPref.homeIntent.value
-            mPref.homeIntent.value = null
-        }
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
-            handleSharedUrl(intent)
+            handleSharedUrl(mPref.homeIntent.value ?: intent)
+            mPref.homeIntent.value = null
             if (mPref.isVastActive || mPref.isNativeAdActive) {
                 viewModel.getVastTagV3()
             }
@@ -271,17 +268,16 @@ class HomeActivity : PlayerPageActivity(),
                 checkChannelDetailAndUpload()
             }
         }
-        val mqttClientId = try {
-            EncryptionUtil.decryptResponse(mPref.mqttClientId)
-        } catch (e: Exception) {
-            ""
+        runCatching {
+            val mqttClientId = EncryptionUtil.decryptResponse(mPref.mqttClientId)
+            if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
+                mPref.mqttHost = ""
+                mPref.mqttClientId = ""
+                mPref.mqttUserName = ""
+                mPref.mqttPassword = ""
+            }
         }
-        if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
-            mPref.mqttHost = ""
-            mPref.mqttClientId = ""
-            mPref.mqttUserName = ""
-            mPref.mqttPassword = ""
-        }
+        
         observe(viewModel.playContentLiveData) {
 //            resetPlayer()
             onDetailsFragmentLoad(it)
@@ -355,20 +351,6 @@ class HomeActivity : PlayerPageActivity(),
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
-        if (!isChannelComplete() && mPref.isVerifiedUser) {
-            viewModel.getChannelDetail(mPref.customerId)
-            observe(profileViewModel.loadCustomerProfile()) {
-                if (it is Success) {
-                    profileViewModel.profileForm.value = it.data
-                }
-            }
-        }
-        if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
-            handlePackageSubscribe()
-        }
-        if (mPref.isVerifiedUser && mPref.mqttIsActive && mPref.isMqttRealtimeSyncActive) {
-            initMqtt()
-        }
         observe(mPref.loginDialogLiveData) {
             if (it) {
                 navController.navigate(R.id.loginDialog, null, navOptions)
@@ -387,7 +369,14 @@ class HomeActivity : PlayerPageActivity(),
                 stopService(bubbleV2Intent)
             }
         }
+        
+        if (intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)) {
+            handlePackageSubscribe()
+        }
+        
         lifecycle.addObserver(heartBeatManager)
+        loadUserInfo()
+        initMqtt()
         observeInAppMessage()
         configureBottomSheet()
         observeUpload2()
@@ -433,6 +422,7 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         
         observeLogout()
+        onLoginSuccess()
 //        showDeviceId()
 //        showCustomDialog("Device ID", cPref.deviceId)
 //        lifecycleScope.launch(IO) {
@@ -441,6 +431,42 @@ class HomeActivity : PlayerPageActivity(),
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
+    }
+    
+    private fun loadUserInfo() {
+        if (!isChannelComplete() && mPref.isVerifiedUser) {
+            viewModel.getChannelDetail(mPref.customerId)
+            observe(profileViewModel.loadCustomerProfile()) {
+                if (it is Success) {
+                    profileViewModel.profileForm.value = it.data
+                }
+            }
+        }
+    }
+    
+    private fun onLoginSuccess() {
+        observe(viewModel.postLoginEvent) {
+            initDrawer()
+            initSideNav()
+            loadUserInfo()
+            lifecycleScope.launch {
+                if (mPref.doActionBeforeReload.value == true) {
+                    mPref.postLoginEventAction.value?.invoke()
+                    delay(300)
+                    mPref.preLoginDestinationId.value?.let {
+                        navController.popBackStack(it, true)
+                        navController.navigate(it)
+                    }
+                } else {
+                    mPref.preLoginDestinationId.value?.let {
+                        navController.popBackStack(it, true)
+                        navController.navigate(it)
+                    }
+                    mPref.postLoginEventAction.value?.invoke()
+                }
+            }
+            initMqtt()
+        }
     }
     
     private fun startBubbleService() {
@@ -590,7 +616,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun initMqtt() {
-        if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
+        if (mPref.isVerifiedUser && mPref.mqttIsActive && mPref.isMqttRealtimeSyncActive && mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
                 when (it) {
                     is Success -> {
@@ -1853,13 +1879,9 @@ class HomeActivity : PlayerPageActivity(),
             subMenu?.isVisible = false
         }
         binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
-        if (mPref.isVerifiedUser) {
-            val login = binding.sideNavigation.menu.findItem(R.id.menu_login)
-            login?.isVisible = false
-        } else {
-            val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
-            logout?.isVisible = false
-        }
+        binding.sideNavigation.menu.findItem(R.id.menu_login).isVisible = !mPref.isVerifiedUser
+        binding.sideNavigation.menu.findItem(R.id.menu_logout).isVisible = mPref.isVerifiedUser
+        
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

@@ -92,9 +92,12 @@ val Float.px: Float get() {
     return (this * Resources.getSystem().displayMetrics.density)
 }
 
-fun Activity.checkVerification(block: (()-> Unit)? = null) {
+fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBeforeReload: Boolean = false, block: (()-> Unit)? = null) {
     if (this is HomeActivity && !mPref.isVerifiedUser) {
+        mPref.doActionBeforeReload.value = doActionBeforeReload
+        mPref.preLoginDestinationId.value = currentDestinationId ?: this.getNavController().currentDestination?.id
         this.getNavController().navigate(R.id.loginDialog)
+        mPref.postLoginEventAction.value = block
     } else {
         block?.invoke()
     }
