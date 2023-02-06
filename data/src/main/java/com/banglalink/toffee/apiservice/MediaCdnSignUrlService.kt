@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.data.network.request.MediaCdnSignUrlRequest
 import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -15,7 +16,7 @@ class MediaCdnSignUrlService  @Inject constructor(private val pref: SessionPrefe
                     pref.customerId.toString(),
                     pref.password,
                     contentId,
-                    3,
+                    PLAY_CDN,
                     pref.getDBVersionByApiName(ApiNames.MEDIA_CDN_SIGN_URL)
                 )
             )

@@ -101,7 +101,7 @@ class HomeViewModel @Inject constructor(
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
-    val mediaCdnSignUrlData = MutableLiveData<Resource<MediaCdnSignUrl?>>()
+    val mediaCdnSignUrlData = SingleLiveEvent<Resource<MediaCdnSignUrl?>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
