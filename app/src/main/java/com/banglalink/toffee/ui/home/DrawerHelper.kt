@@ -78,27 +78,14 @@ class DrawerHelper(
     
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
-//        val profileName = header.findViewById(R.id.profile_name) as TextView
         val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
-        
         if (mPref.isVerifiedUser) {
-//            if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
             if (!mPref.userImageUrl.isNullOrBlank()) bindingUtil.bindRoundImage(profileImageView, mPref.userImageUrl)
-            
-//            activity.observe(mPref.customerNameLiveData) {
-//                when {
-//                    it.isBlank() -> profileName.text = activity.getString(R.string.profile)
-//                    else -> {
-//                        profileName.text = mPref.customerName
-//                    }
-//                }
-//            }
             activity.observe(mPref.profileImageUrlLiveData) {
                 bindingUtil.bindRoundImage(profileImageView, it)
             }
         }
-        header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
-            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Profile"))
+        header.findViewById<LinearLayout>(R.id.menu_account).setOnClickListener {
             activity.checkVerification {
                 activity.getNavController().let {
                     if (it.currentDestination?.id != R.id.accountFragment) {
@@ -114,33 +101,17 @@ class DrawerHelper(
 //        val header = binding.sideNavigation.getHeaderView(0)
 //        header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
 //            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-//            if (!mPref.isVerifiedUser) {
-//                activity.checkVerification()
-//                binding.drawerLayout.closeDrawers()
-//            } else {
 //                activity.getNavController().let {
 //                    if (it.currentDestination?.id != R.id.accountFragment) {
 //                        it.navigate(R.id.accountFragment)
 //                    }
 //                }
-//            }
 //            binding.drawerLayout.closeDrawers()
 //        }
 //    }
-    
+//
     fun handleMenuItemById(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_subscriptions -> {
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.MENU_CLICK,
-                    bundleOf("selected_menu" to activity.getString(R.string.menu_subscriptions))
-                )
-                if (!mPref.isVerifiedUser) {
-                    activity.checkVerification()
-                    binding.drawerLayout.closeDrawers()
-                    return true
-                }
-            }
             R.id.ic_menu_internet_packs -> {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.MENU_CLICK,
@@ -193,32 +164,6 @@ class DrawerHelper(
                     }
                 }
                 return true
-            }
-            R.id.menu_favorites -> {
-                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_favorites)))
-                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
-                if (!mPref.isVerifiedUser) {
-                    activity.checkVerification()
-                    binding.drawerLayout.closeDrawers()
-                    return true
-                }
-            }
-            R.id.menu_activities -> {
-                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_activities)))
-                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
-                if (!mPref.isVerifiedUser) {
-                    activity.checkVerification()
-                    binding.drawerLayout.closeDrawers()
-                    return true
-                }
-            }
-            R.id.menu_playlist -> {
-                ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_playlists)))
-                if (!mPref.isVerifiedUser) {
-                    activity.checkVerification()
-                    binding.drawerLayout.closeDrawers()
-                    return true
-                }
             }
             R.id.menu_invite -> {
                 ToffeeAnalytics.logEvent(
