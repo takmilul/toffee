@@ -51,6 +51,7 @@
 }
 #-keep class androidx.navigation** { *; }
 
+-keep class androidx.mediarouter.app.MediaRouteActionProvider {*;}
 -keepnames class com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener
 -keepclassmembers class com.google.android.exoplayer2.ext.cast.CastPlayer {
     private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
@@ -91,6 +92,11 @@
 -dontwarn retrofit2.**
 
 -keep class com.google.protobuf.** { *; }
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+-keep class io.invertase.firebase.** { *; }
+-dontwarn io.invertase.firebase.**
+-keep class io.invertase.firebase.messaging.** { *; }
 
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception

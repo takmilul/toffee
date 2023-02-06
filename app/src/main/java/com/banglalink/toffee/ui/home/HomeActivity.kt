@@ -58,6 +58,14 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
+import com.banglalink.toffee.Constants.NON_PAYMENT
+import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
+import com.banglalink.toffee.Constants.PAYMENT
+import com.banglalink.toffee.Constants.PLAY_CDN
+import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
+import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.*
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -150,16 +158,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
-
-const val PAYMENT = 1
-const val NON_PAYMENT = 0
-const val PLAY_IN_WEB_VIEW = 1
-const val PLAY_CDN = 3
-const val STINGRAY_CONTENT = 10
-const val PLAY_IN_NATIVE_PLAYER = 0
-const val OPEN_IN_EXTERNAL_BROWSER = 2
-const val PLAYER_EVENT_TAG = "PLAYER_EVENT"
-const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -1596,67 +1594,74 @@ class HomeActivity : PlayerPageActivity(),
             )
         )
         if (channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
-            lifecycleScope.launch {
-                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
-                    val isExpired = cdnChannelItem.expiryDate?.isExpiredFrom(mPref.getSystemTime()) ?: false
-                    if (isExpired) {
-                        observe(viewModel.mediaCdnSignUrlData) {
-                            when (it) {
-                                is Success -> {
-                                    val newChannelInfo = cdnChannelItem.channelInfo?.apply {
-                                        signedUrlExpiryDate = it.data?.signedUrlExpiryDate
-                                        signCookieExpiryDate = it.data?.signCookieExpiryDate
-                                        if (channelInfo.cdnType == CdnType.SIGNED_URL.value) {
-                                            if (channelInfo.urlTypeExt == PAYMENT) {
-                                                paidPlainHlsUrl = it.data?.signUrl
-                                            } else {
-                                                hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
-                                                    if (index == 0) {
-                                                        hlsLinks.hls_url_mobile = it.data?.signUrl
-                                                    }
-                                                    hlsLinks
-                                                }
-                                            }
-                                        }
-                                    }
-                                    cdnChannelItem.expiryDate = it.data?.signedUrlExpiryDate ?: it.data?.signCookieExpiryDate
-                                    cdnChannelItem.payload = gson.toJson(newChannelInfo)
-                                    lifecycleScope.launch {
-                                        cdnChannelItemRepository.updateCdnChannelItemByChannelId(
-                                            cdnChannelItem.channelId,
-                                            cdnChannelItem.expiryDate,
-                                            cdnChannelItem.payload
-                                        )
-                                    }
-                                    newChannelInfo?.let { item ->
-                                        playContent(detailsInfo, item)
-                                    } ?: run {
-                                        showToast(getString(R.string.try_again_message))
-                                    }
-                                }
-                                is Failure -> showToast(getString(R.string.try_again_message))
-                            }
-                        }
-                        viewModel.getMediaCdnSignUrl(channelInfo.id)
-                    } else {
-                        playContent(detailsInfo, channelInfo)
-                    }
-                } ?: run {
-                    cdnChannelItemRepository.insert(
-                        CdnChannelItem(
-                            channelInfo.id.toLong(),
-                            channelInfo.urlType,
-                            channelInfo.signedUrlExpiryDate ?: channelInfo.signCookieExpiryDate,
-                            gson.toJson(channelInfo)
-                        )
-                    )
-                    playContent(detailsInfo, channelInfo)
-                }
+            checkAndUpdateMediaCdnConfig(channelInfo) {
+                playContent(detailsInfo, it)
             }
         } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
+        }
+    }
+    
+    private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        lifecycleScope.launch {
+            cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
+                loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
+            } ?: run {
+                cdnChannelItemRepository.insert(
+                    CdnChannelItem(
+                        channelInfo.id.toLong(),
+                        channelInfo.urlType,
+                        channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
+                        gson.toJson(channelInfo)
+                    )
+                )
+                loadMediaCdnConfig(channelInfo, onSuccess)
+            }
+        }
+    }
+    
+    private fun loadMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        val isExpired = (channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate)?.isExpiredFrom(mPref.getSystemTime()) ?: false
+        if (isExpired) {
+            observe(viewModel.mediaCdnSignUrlData) { mediaCdnInfo ->
+                when (mediaCdnInfo) {
+                    is Success -> {
+                        val mediaCdnData = mediaCdnInfo.data
+                        val expiryDate = mediaCdnData?.signedUrlExpiryDate ?: mediaCdnData?.signedCookieExpiryDate
+                        val newChannelInfo = channelInfo.apply {
+                            signedUrlExpiryDate = mediaCdnData?.signedUrlExpiryDate?.let {
+                                if (channelInfo.urlTypeExt == PAYMENT) {
+                                    paidPlainHlsUrl = mediaCdnData.signedUrl
+                                } else {
+                                    hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
+                                        if (index == 0) {
+                                            hlsLinks.hls_url_mobile = mediaCdnData.signedUrl
+                                        }
+                                        hlsLinks
+                                    }
+                                }
+                                it
+                            }
+                            signedCookieExpiryDate = mediaCdnData?.signedCookieExpiryDate?.let {
+                                signedCookie = mediaCdnData.signedCookie
+                                it
+                            }
+                        }
+                        lifecycleScope.launch {
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(
+                                channelInfo.id.toLong(), expiryDate, gson.toJson(newChannelInfo)
+                            )
+                        }
+                        onSuccess(newChannelInfo)
+                    }
+                    is Failure -> showToast(getString(string.try_again_message))
+                }
+            }
+            viewModel.getMediaCdnSignUrl(channelInfo.id)
+        } else {
+            onSuccess(channelInfo)
         }
     }
     
@@ -1712,6 +1717,10 @@ class HomeActivity : PlayerPageActivity(),
                 putExtra(Html5PlayerViewActivity.TITLE, it.program_name)
             }
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+    }
+    
+    override fun updateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        loadMediaCdnConfig(channelInfo, onSuccess)
     }
     
     override fun playNext() {

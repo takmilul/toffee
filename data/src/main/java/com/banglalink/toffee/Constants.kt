@@ -5,6 +5,16 @@ import com.banglalink.toffee.lib.BuildConfig
 object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
     
+    const val PAYMENT = 1
+    const val NON_PAYMENT = 0
+    const val PLAY_IN_WEB_VIEW = 1
+    const val PLAY_CDN = 3
+    const val STINGRAY_CONTENT = 10
+    const val PLAY_IN_NATIVE_PLAYER = 0
+    const val OPEN_IN_EXTERNAL_BROWSER = 2
+    const val PLAYER_EVENT_TAG = "PLAYER_EVENT"
+    const val IN_APP_UPDATE_REQUEST_CODE = 0x100
+    
     const val DEVICE_ID_HEADER = "DEVICE-ID"
     const val OUTSIDE_OF_BD_ERROR_CODE = 403
     const val INVALID_REFERRAL_ERROR_CODE = -100

@@ -14,6 +14,7 @@ import androidx.work.NetworkType.CONNECTED
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -21,7 +22,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import com.banglalink.toffee.ui.home.PLAYER_EVENT_TAG
 import com.banglalink.toffee.ui.player.PlayerEventWorker
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.Log
