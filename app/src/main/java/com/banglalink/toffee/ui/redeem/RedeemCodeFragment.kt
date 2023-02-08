@@ -42,6 +42,7 @@ class RedeemCodeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.title = "Redeem Referral Code"
         binding.redeemBtn.setOnClickListener { _ -> handleRedeemCodeButton() }
     }
 

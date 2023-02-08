@@ -66,6 +66,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserPlaylistBinding.inflate(inflater, container, false)
+        activity?.title = "Playlists"
         return binding.root
     }
 
