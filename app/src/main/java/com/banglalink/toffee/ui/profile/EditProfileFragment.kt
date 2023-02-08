@@ -67,7 +67,7 @@ class EditProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        activity?.title = "Edit Profile"
         observeCategory()
         with(binding) {
             profileForm = args.data
