@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database
 
+import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.CdnChannelItem
@@ -7,6 +8,7 @@ import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
@@ -105,19 +107,26 @@ class LocalSync @Inject constructor(
                 }
             }
         }
-        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT && !isFromCache) {
-            if (channelInfo.urlType == 3) {
-                cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
+        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
+            if (channelInfo.urlType == PLAY_CDN) {
+                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let {
                     runCatching {
-                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo
-                                .signCookieExpiryDate))) {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo
-                                .signCookieExpiryDate, gson.toJson(channelInfo))
+                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate))) {
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(channelInfo.id.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate, gson.toJson(channelInfo))
+                        } else {
+                            if (channelInfo.cdnType == CdnType.SIGNED_URL.value) {
+                                channelInfo.signedUrlExpiryDate = it.expiryDate
+                                channelInfo.hlsLinks = it.channelInfo?.hlsLinks
+                                channelInfo.paidPlainHlsUrl = it.channelInfo?.paidPlainHlsUrl
+                            } else {
+                                channelInfo.signedCookieExpiryDate = it.expiryDate
+                                channelInfo.signedCookie = it.channelInfo?.signedCookie
+                            }
                         }
                     }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
-                        .signCookieExpiryDate, gson.toJson(channelInfo)))
+                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
+                        .signedCookieExpiryDate, gson.toJson(channelInfo)))
                 }
             }
         }

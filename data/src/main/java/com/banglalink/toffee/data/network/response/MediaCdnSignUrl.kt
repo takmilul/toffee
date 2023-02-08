@@ -12,11 +12,11 @@ class MediaCdnSignUrl {
     @SerializedName("content_id")
     val contentId:Int = 0
     @SerializedName("sign_url")
-    val signUrl: String? = null
+    val signedUrl: String? = null
     @SerializedName("sign_url_expire")
     var signedUrlExpiryDate: String? = null
     @SerializedName("sign_cookie")
-    var signCookie: String? = null
+    var signedCookie: String? = null
     @SerializedName("sign_cookie_expire")
-    var signCookieExpiryDate: String? = null
+    var signedCookieExpiryDate: String? = null
 }

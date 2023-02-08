@@ -14,6 +14,13 @@ import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.Constants.NON_PAYMENT
+import com.banglalink.toffee.Constants.PAYMENT
+import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
+import com.banglalink.toffee.Constants.PLAY_CDN
+import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
+import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.*
 import com.banglalink.toffee.apiservice.ApiNames
@@ -24,6 +31,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
+import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
@@ -65,6 +73,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.URLEncoder
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
@@ -749,7 +758,7 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)
         }
-        val playingUrl = getGeneratedUrl(uri, channelInfo.signCookie)
+        val playingUrl = getGeneratedUrl(uri, channelInfo.signedCookie)
         return MediaItem.Builder().apply {
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
             setUri(playingUrl)
@@ -1164,6 +1173,8 @@ abstract class PlayerPageActivity :
         return false
     }
     
+    abstract fun updateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit)
+    
     private inner class PlayerEventListener : Player.Listener {
         override fun onPlayerError(e: PlaybackException) {
             lifecycleScope.launch {
@@ -1206,6 +1217,23 @@ abstract class PlayerPageActivity :
                     reloadChannel()
                 }
             } else {
+                val channelInfo = playlistManager.getCurrentChannel()
+                
+                if (channelInfo?.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_COOKIE.value && channelInfo.signedCookieExpiryDate?.isExpiredFrom(mPref.getSystemTime()) == true) {
+                    updateMediaCdnConfig(channelInfo) { newChannelInfo ->
+                        playlistManager.getCurrentChannel()?.apply {
+                            signedUrlExpiryDate = newChannelInfo.signedUrlExpiryDate?.let {
+                                hlsLinks = newChannelInfo.hlsLinks
+                                it
+                            }
+                            signedCookieExpiryDate = newChannelInfo.signedCookieExpiryDate?.let {
+                                signedCookie = newChannelInfo.signedCookie
+                                it
+                            }
+                        }
+                    }
+                }
+                
                 val retryCount = if (mPref.retryCount <= 0) 5 else mPref.retryCount
                 if (mPref.isRetryActive && retryCounter < retryCount) {
                     retryCounter++
@@ -1215,10 +1243,7 @@ abstract class PlayerPageActivity :
                 } else if (mPref.isFallbackActive && fallbackCounter < retryCount) {
                     fallbackCounter++
                     showDebugMessage("fallback... $fallbackCounter")
-                    val channelInfo = playlistManager.getCurrentChannel()
-                    /*if (channelInfo?.isDrmActive != true && !channelInfo?.getDrmUrl(connectionWatcher.isOverCellular).isNullOrBlank() && !mPref.drmWidevineLicenseUrl.isNullOrBlank() && (!mPref.globalCidName.isNullOrBlank() || !channelInfo?.drmCid.isNullOrBlank())) {
-                        playlistManager.getCurrentChannel()?.is_drm_active = 1
-                    } else*/ if (channelInfo?.isDrmActive == true) {
+                    if (channelInfo?.isDrmActive == true) {
                         val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
                             channelInfo.paidPlainHlsUrl
                         } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
