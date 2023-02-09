@@ -146,7 +146,7 @@ class LoginContentFragment : ChildDialogFragment() {
     }
     
     private fun setSpannableTermsAndConditions() {
-        val ss = SpannableString(getString(R.string.terms_of_use))
+        val ss = SpannableString(getString(R.string.terms_and_conditions))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 showTermsAndConditionDialog()

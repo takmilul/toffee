@@ -8,7 +8,7 @@
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
     <string name="sign_in_text">Sign In</string>
-    <string name="without_sign_in_text">Continue without Sign In</string>
+    <string name="without_sign_in_text">Continue without Sign in</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
     <string name="sign_in_countdown_text">Resend OTP in %ss</string>   
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -243,11 +243,11 @@
     <string name="done_text">Done</string>
     <string name="verify_text">Verify</string>
     <string name="submit_button_text">Submit</string>
-    <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
-    <string name="sign_in_intro_title">Sign in to Access All Features</string>
+    <string name="sign_in_intro_desc">like- Reaction, Upload, \nReferral etc.</string>
+    <string name="sign_in_intro_title">Sign-in to Access All Features</string>
     <string name="login_with_phone_text">Login with Phone</string>
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
-    <string name="i_agree_with_text">&#160;&#160;I agree with&#160;</string>
+    <string name="i_agree_with_text">&#160;&#160;I agree to the&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_logged_in_text">Successfully Logged In!</string>
