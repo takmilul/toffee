@@ -295,11 +295,8 @@ abstract class PlayerPageActivity :
 //                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
-                .setAdsLoaderProvider {
-                    adsLoader
-                }
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
-                .setAdViewProvider(getPlayerView())
+                .setLocalAdInsertionComponents({adsLoader}, getPlayerView())
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
             
             exoPlayer = Builder(this)
