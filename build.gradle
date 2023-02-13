@@ -36,7 +36,7 @@ buildscript {
         firebaseCoreVersion = '19.0.2'
         firebaseMessagingVersion = '23.1.1'
         firebaseAnalyticsVersion = '21.2.0'
-        firebaseCrashlyticsVersion = '18.3.2'
+        firebaseCrashlyticsVersion = '18.3.3'
         
         // Reporting
         facebookSdkVersion = '13.1.0'
