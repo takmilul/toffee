@@ -95,6 +95,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Edit Details"
         binding.container.setOnClickListener(this)
         progressDialog.show()
         observeChannelDetail()

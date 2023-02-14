@@ -29,6 +29,7 @@ class AboutFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "About"
         _binding?.versionTv?.text = getVersionText()
         _binding?.checkUpdate?.setOnClickListener {
             onClickCheckUpdateButton()

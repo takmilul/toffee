@@ -81,6 +81,7 @@ import com.banglalink.toffee.data.network.response.CircuitBreakerData
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
+import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -147,10 +148,6 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -158,6 +155,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -188,6 +189,7 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var appbarConfig: AppBarConfiguration
     @Inject lateinit var uploadManager: UploadStateManager
     private lateinit var appUpdateManager: AppUpdateManager
+    @Inject lateinit var tvChannelsRepo: TVChannelRepository
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
@@ -2130,6 +2132,9 @@ class HomeActivity : PlayerPageActivity(),
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
+                        lifecycleScope.launch {
+                            tvChannelsRepo.deleteAllRecentItems()
+                        }
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
                         navController.popBackStack(R.id.menu_feed, false).let {

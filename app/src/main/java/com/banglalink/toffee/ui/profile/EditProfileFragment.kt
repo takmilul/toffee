@@ -27,7 +27,11 @@ import com.banglalink.toffee.apiservice.ApiRoutes.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
@@ -67,6 +71,7 @@ class EditProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Edit Profile"
 
         observeCategory()
         with(binding) {

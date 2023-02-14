@@ -49,6 +49,7 @@ class ViewProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Profile"
         observeCategory()
         if (mPref.isVerifiedUser) {
             phoneNumber = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber

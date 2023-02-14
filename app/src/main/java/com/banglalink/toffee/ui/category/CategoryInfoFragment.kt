@@ -17,7 +17,11 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.handleUrlShare
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
@@ -26,9 +30,9 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryInfoFragment : HomeBaseFragment() {
@@ -55,6 +59,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setCategoryUiInfo()
+        requireActivity().title = categoryInfo.categoryName
 //        observeHashTags()
 //        observeSubCategories()
         binding.categoryShareButton.safeClick({

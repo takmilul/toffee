@@ -11,7 +11,13 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleAddToPlaylist
+import com.banglalink.toffee.extension.handleFavorite
+import com.banglalink.toffee.extension.handleReport
+import com.banglalink.toffee.extension.handleShare
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
@@ -62,9 +68,8 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-       // activity?.title = "Search"
+        requireActivity().title = "Search"
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.title = "Search"
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
         if(requireActivity() is HomeActivity) {
             (requireActivity() as HomeActivity).openSearchBarIfClose()
