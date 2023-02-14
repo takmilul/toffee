@@ -25,6 +25,8 @@ class CheckForUpdateService @Inject constructor(private val preference: SessionP
                 checkUpdateBean.updateAvailable == 2
             )
         }
-        return response.response.decorationConfig?.get(0)
+        return response.response.decorationConfig?.get(0)?.apply { 
+            isFromCache = response.isFromCache
+        }
     }
 }

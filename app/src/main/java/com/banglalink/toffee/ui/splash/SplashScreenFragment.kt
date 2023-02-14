@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.splash
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
@@ -23,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -48,27 +50,25 @@ import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures.addCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.concurrent.*
+import javax.inject.Inject
+import javax.net.ssl.SSLContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.*
-import javax.inject.Inject
-import javax.net.ssl.SSLContext
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
     
-    private val binding get() = _binding!!
-    private var isAnimationCompleted: Boolean = false
     private var isDynamicSplashActive: Boolean = false
-    private var isApiResponseCompleted: Boolean = false
-    @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
+    @Inject @ApplicationContext lateinit var appContext: Context
+    private val binding get() = _binding!!
     private val viewModel by activityViewModels<SplashViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -79,161 +79,53 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    
+        observeLoadingProgress()
         
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (it == R.id.firstEnd) {
-                lifecycleScope.launch {
-                    delay(1000)
-                    runCatching {
-                        with(binding.splashScreenMotionLayout) {
-                            setTransition(R.id.firstEnd, R.id.secondEnd)
-                            transitionToEnd()
-                        }
-                    }
+            when (it) {
+                R.id.firstEnd -> {
+                    onFirstTransitionCompletion()
                 }
-            }
-            if (it == R.id.secondEnd) {
-                binding.splashLogoImageView.load(R.drawable.ic_splash_logo_gif)
-                lifecycleScope.launch {
-                    delay(500)
-                    isAnimationCompleted = true
-                    if (isApiResponseCompleted) {
-                        forwardToNextScreen()
-                    } else {
-                        delay(1000)
-                        _binding?.progressBar?.show()
-                    }
+                R.id.secondEnd -> {
+                    onSecondTransitionCompletion()
                 }
             }
         }
         
-        if (!mPref.isPreviousDbDeleted) {
-            viewModel.deletePreviousDatabase()
-        }
-        
-        observe(viewModel.apiLoadingProgress) {
-            if (connectionWatcher.isOnline) {
-                _binding?.progressBar?.progress = it
-            }
-        }
-        observeApiLogin()
-        observeCheckForUpdateStatus()
-        viewModel.checkForUpdateStatus(mPref.customerId == 0 || mPref.password.isBlank())
+        sendAdIdLog()
+        detectTlsVersion()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
-        ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
-        detectTlsVersion()
     }
     
-    private fun detectTlsVersion() {
-        runCatching {
-            val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
-            protocols?.let {
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.SUPPORTED_TLS, bundleOf(
-                        "TLS_version" to protocols.contentToString()
-                    )
-                )
-            }
+    private fun observeLoadingProgress() {
+        observe(viewModel.apiLoadingProgress) {
+            val progressValue = if (connectionWatcher.isOnline) it else 1
+            ObjectAnimator.ofInt(_binding?.progressBar, "progress", progressValue).start()
         }
     }
     
-    private fun sendAdIdLog() {
-        if (mPref.adIdUpdateDate != today) {
-            lifecycleScope.launch(IO + Job()) {
-                runCatching {
-                    var adId: String?
-                    
-                    if (AdvertisingIdClient.isAdvertisingIdProviderAvailable(appContext)) {
-                        val adIdInfoCallback = AdvertisingIdClient.getAdvertisingIdInfo(appContext)
-                        
-                        addCallback(
-                            adIdInfoCallback, object : FutureCallback<AdvertisingIdInfo> {
-                                override fun onSuccess(adInfo: AdvertisingIdInfo?) {
-                                    adId = adInfo?.id
-                                    Log.i("AD_ID", "adId: $adId")
-                                    adId?.let {
-                                        viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
-                                            it.phoneNumber = mPref.phoneNumber
-                                            it.isBlNumber = mPref.isBanglalinkNumber
-                                        })
-                                        mPref.adId = it
-                                        mPref.adIdUpdateDate = today
-                                    } ?: run {
-                                        ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
-                                    }
-                                }
-                                
-                                override fun onFailure(t: Throwable) {
-                                    Log.e("AD_ID", "Failed to connect to Advertising ID provider.")
-                                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
-                                }
-                            }, Executors.newSingleThreadExecutor()
-                        )
-                    } else {
-                        adId = com.google.android.gms.ads.identifier.AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
-                        Log.i("AD_ID", "adId: $adId")
-                        adId?.let {
-                            viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
-                                it.phoneNumber = mPref.phoneNumber
-                                it.isBlNumber = mPref.isBanglalinkNumber
-                            })
-                            mPref.adId = it
-                            mPref.adIdUpdateDate = today
-                        } ?: run {
-                            ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
-                        }
-                    }
-                }.onFailure {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
+    private fun onFirstTransitionCompletion() {
+        lifecycleScope.launch {
+            delay(800)
+            runCatching {
+                with(binding.splashScreenMotionLayout) {
+                    setTransition(R.id.firstEnd, R.id.secondEnd)
+                    transitionToEnd()
                 }
             }
         }
     }
     
-    private fun requestHeaderEnrichment() {
-        try {
-            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
-                viewModel.getHeaderEnrichment()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-    
-    private fun observeHeaderEnrichment() {
-        observe(viewModel.headerEnrichmentLiveData) { response ->
-            when (response) {
-                is Success -> {
-                    val data = response.data
-                    mPref.heUpdateDate = today
-                    if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
-                        mPref.latitude = data.lat ?: ""
-                        mPref.longitude = data.lon ?: ""
-                        mPref.userIp = data.userIp ?: ""
-                        mPref.geoCity = data.geoCity ?: ""
-                        mPref.geoLocation = data.geoLocation ?: ""
-                        mPref.hePhoneNumber = data.phoneNumber
-                        mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
-                        viewModel.sendHeLogData(HeaderEnrichmentLogData().also {
-                            it.phoneNumber = mPref.hePhoneNumber
-                            it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
-                        })
-                    }
-                }
-                is Failure -> {
-                    ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION, bundleOf(
-                            "api_name" to "HeaderEnrichment",
-                            FirebaseParams.BROWSER_SCREEN to "Splash Screen",
-                            "error_code" to response.error.code,
-                            "error_description" to response.error.msg
-                        )
-                    )
-                    mPref.hePhoneNumber = ""
-                    mPref.isHeBanglalinkNumber = false
-                }
-            }
+    private fun onSecondTransitionCompletion() {
+        binding.splashLogoImageView.load(drawable.ic_splash_logo_gif)
+        lifecycleScope.launch {
+            delay(100)
+            _binding?.progressBar?.show()
+            observeApiLogin()
+            observeCheckForUpdateStatus()
+            viewModel.checkForUpdateStatus(mPref.customerId == 0 || mPref.password.isBlank())
         }
     }
     
@@ -281,14 +173,9 @@ class SplashScreenFragment : BaseFragment() {
         observe(viewModel.appLaunchConfigLiveData) {
             when (it) {
                 is Success -> {
-                    sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
-                    
-                    if (isAnimationCompleted) {
-                        forwardToNextScreen()
-                    }
-                    isApiResponseCompleted = true
+                    forwardToNextScreen()
                 }
                 is Failure -> {
                     onResponseFailure(it.error)
@@ -333,7 +220,7 @@ class SplashScreenFragment : BaseFragment() {
     private fun forwardToNextScreen() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
         lifecycleScope.launch(Main) {
-            delay(50)
+            delay(200)
             if (isDynamicSplashActive) {
                 findNavController().navigate(R.id.dynamicSplashScreenFragment)
             } else {
@@ -375,6 +262,115 @@ class SplashScreenFragment : BaseFragment() {
         alert.show()
         val updateButton: Button = alert.getButton(DialogInterface.BUTTON_POSITIVE)
         updateButton.setTextColor(Color.parseColor("#FF3988"))
+    }
+    
+    private fun sendAdIdLog() {
+        if (mPref.adIdUpdateDate != today) {
+            lifecycleScope.launch(IO + Job()) {
+                runCatching {
+                    var adId: String?
+                    
+                    if (AdvertisingIdClient.isAdvertisingIdProviderAvailable(appContext)) {
+                        val adIdInfoCallback = AdvertisingIdClient.getAdvertisingIdInfo(appContext)
+                        addCallback(
+                            adIdInfoCallback, object : FutureCallback<AdvertisingIdInfo> {
+                                override fun onSuccess(adInfo: AdvertisingIdInfo?) {
+                                    adId = adInfo?.id
+                                    Log.i("AD_ID", "adId: $adId")
+                                    adId?.takeUnless { it.startsWith("0000") }?.let {
+                                        viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
+                                            it.phoneNumber = mPref.phoneNumber
+                                            it.isBlNumber = mPref.isBanglalinkNumber
+                                        })
+                                        mPref.adId = it
+                                        mPref.adIdUpdateDate = today
+                                    } ?: run {
+                                        ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
+                                    }
+                                }
+                                
+                                override fun onFailure(t: Throwable) {
+                                    Log.e("AD_ID", "Failed to connect to Advertising ID provider.")
+                                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
+                                }
+                            }, Executors.newSingleThreadExecutor()
+                        )
+                    } else {
+                        adId = com.google.android.gms.ads.identifier.AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
+                        Log.i("AD_ID", "adId: $adId")
+                        adId?.takeUnless { it.startsWith("0000") }?.let {
+                            viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
+                                it.phoneNumber = mPref.phoneNumber
+                                it.isBlNumber = mPref.isBanglalinkNumber
+                            })
+                            mPref.adId = it
+                            mPref.adIdUpdateDate = today
+                        } ?: run {
+                            ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
+                        }
+                    }
+                }.onFailure {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.FETCHING_AD_ID_FAILED)
+                }
+            }
+        }
+    }
+    
+    private fun requestHeaderEnrichment() {
+        runCatching {
+            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
+                viewModel.getHeaderEnrichment()
+            }
+        }
+    }
+    
+    private fun observeHeaderEnrichment() {
+        observe(viewModel.headerEnrichmentLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    val data = response.data
+                    mPref.heUpdateDate = today
+                    if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                        mPref.latitude = data.lat ?: ""
+                        mPref.longitude = data.lon ?: ""
+                        mPref.userIp = data.userIp ?: ""
+                        mPref.geoCity = data.geoCity ?: ""
+                        mPref.geoLocation = data.geoLocation ?: ""
+                        mPref.hePhoneNumber = data.phoneNumber
+                        mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
+                        viewModel.sendHeLogData(HeaderEnrichmentLogData().also {
+                            it.phoneNumber = mPref.hePhoneNumber
+                            it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
+                        })
+                    }
+                }
+                is Failure -> {
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION, bundleOf(
+                            "api_name" to "HeaderEnrichment",
+                            FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                            "error_code" to response.error.code,
+                            "error_description" to response.error.msg
+                        )
+                    )
+                    mPref.hePhoneNumber = ""
+                    mPref.isHeBanglalinkNumber = false
+                }
+            }
+        }
+    }
+    
+    private fun detectTlsVersion() {
+        runCatching {
+            val protocols = SSLContext.getDefault().defaultSSLParameters.protocols
+            protocols?.let {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.SUPPORTED_TLS, bundleOf(
+                        "TLS_version" to protocols.contentToString()
+                    )
+                )
+            }
+        }
     }
     
     override fun onDestroyView() {

@@ -10,16 +10,16 @@ import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
@@ -33,7 +33,6 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         
-//        Log.i("Path", request.url.encodedPath)
         ToffeeAnalytics.logBreadCrumb("apiName: ${request.url.encodedPath.substringAfter("/").substringBefore("/")}")
         val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
@@ -79,12 +78,14 @@ class AuthInterceptor @Inject constructor(
             }
             return response.newBuilder().removeHeader("Pragma").build()
         }
+        
         if (response.cacheResponse != null) {
-            Log.i("Network", "FROM CACHE")
+            Log.i("API_LOG", "FROM CACHE  : ${response.request.url}")
         }
         if (response.networkResponse != null) {
-            Log.i("Network", "FROM NETWORK")
+            Log.i("API_LOG", "FROM NETWORK: ${response.request.url}")
         }
+        
         try {
             val isFromCacheJson = ",\"isFromCache\":${response.cacheResponse != null}"
             val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).let {
