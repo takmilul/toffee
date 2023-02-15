@@ -21,7 +21,7 @@ class GetChannelWithCategory @Inject constructor(
 ) {
     val gson = Gson()
     
-    suspend operator fun invoke(subcategoryId: Int) {
+    suspend fun loadData(subcategoryId: Int) {
         val response = tryIO2 {
             toffeeApi.getChannels(
                 preference.getDBVersionByApiName(ApiNames.GET_ALL_TV_CHANNELS),

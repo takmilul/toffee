@@ -4,7 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.apiservice.GetChannelWithCategory
+import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetStingrayContentService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.TVChannelItem
@@ -12,9 +16,9 @@ import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.model.ChannelInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AllChannelsViewModel @Inject constructor(
@@ -27,11 +31,11 @@ class AllChannelsViewModel @Inject constructor(
     val selectedChannel = MutableLiveData<ChannelInfo?>()
     val isFromSportsCategory = MutableLiveData<Boolean>()
     
-    operator fun invoke(subcategoryId: Int, isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
+    fun getChannels(subcategoryId: Int, isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
                 if (!isStingray) {
-                    allChannelService(subcategoryId)
+                    allChannelService.loadData(subcategoryId)
                 } else {
                     getStingrayContentService.loadData(0, 100)
                 }

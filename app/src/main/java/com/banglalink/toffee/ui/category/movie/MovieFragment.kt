@@ -48,7 +48,6 @@ class MovieFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.featuredPageName.value = category.categoryName + " Page"
@@ -66,6 +65,7 @@ class MovieFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = category.categoryName
         setCategoryIcon()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail(category.id.toInt())

@@ -23,11 +23,11 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
@@ -107,7 +107,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel(0, isStingray)){
+            with(channelViewModel.getChannels(0, isStingray)){
                 collectLatest { tvList ->
                     val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName }?.map {
                         val categoryName = it.key

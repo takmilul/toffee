@@ -17,7 +17,9 @@ data class DecorationConfig (
     @SerializedName("splashScreen")
     val splashScreen : List<DecorationData>?,
     @SerializedName("topBar")
-    val topBar : List<DecorationData>?
+    val topBar : List<DecorationData>?,
+    @SerializedName("isFromCache")
+    var isFromCache: Boolean = true
 )
 
 data class DecorationData (

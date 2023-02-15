@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        appVersionCode = 96
-        appVersionName = '4.8.1'
+        appVersionCode = 97
+        appVersionName = '4.8.2'
         
         // Gradle
         gradlePluginVersion = '7.4.0'
@@ -48,7 +48,7 @@ buildscript {
         
         // Testing
         junitVersion = '1.1.5'
-        testCoreVersion = '1.5.1'
+        testCoreVersion = '1.5.0'
         espressoVersion = '3.5.1'
         mockkVersion = '1.12.4'
     }
