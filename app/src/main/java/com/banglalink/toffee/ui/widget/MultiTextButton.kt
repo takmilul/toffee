@@ -16,7 +16,7 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
     private var subAmountView: TextView
 
     companion object {
-        val subStatusText = listOf("SUBSCRIBE", "SUBSCRIBED")
+        val subStatusText = listOf("FOLLOW", "FOLLOWING")
     }
 
     init {

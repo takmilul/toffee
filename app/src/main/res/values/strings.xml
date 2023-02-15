@@ -146,7 +146,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     
     <string name="grant_storage_permission">This feature needs Storage permission</string>
-    <string name="text_unsubscribe_title">Are You Sure to Unsubscribe?</string>
+    <string name="text_unsubscribe_title">Are You Sure to Unfollow?</string>
     <string name="upload_selection_heading">Upload FREE from\nBanglalink Internet!</string>
     <string name="thumb_selection_heading">Set Video Thumbnail</string>
     <string name="txt_learn_more">Learn More</string>
@@ -335,7 +335,7 @@
     <string name="floating_player_text">Floating Player</string>
     <string name="keep_aspect_ratio">Keep Aspect Ratio (User Videos)</string>
     <string name="clear_activities_text">Clear Activities</string>
-    <string name="subscribed_channel_text">Subscribed Channels</string>
+    <string name="subscribed_channel_text">My Following</string>
     <string name="watched_text">Watched</string>
     <string name="lets_fill_some_basic_info_text">Let\'s fill in some basics to start off…</string>
     <string name="set_your_channel_logo">Set Your Channel Logo</string>
@@ -417,7 +417,7 @@
     <string name="menu_playlists">My Playlist</string>
     <string name="menu_payment_history">Payment History</string>
     <string name="menu_favorites">Favorites</string>
-    <string name="menu_subscriptions">Subscriptions</string>
+    <string name="menu_subscriptions">Following</string>
     <string name="menu_creators_policy">Creators Policy</string>
     <string name="menu_my_profile">My profile</string>
     <string name="menu_policies">Policies</string>

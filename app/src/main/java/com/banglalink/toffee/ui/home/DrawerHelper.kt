@@ -86,11 +86,12 @@ class DrawerHelper(
             }
         }
         header.findViewById<LinearLayout>(R.id.menu_account).setOnClickListener {
-            activity.checkVerification {
-                activity.getNavController().let {
-                    if (it.currentDestination?.id != R.id.accountFragment) {
-                        it.navigate(R.id.accountFragment)
-                    }
+//            activity.checkVerification {
+//
+//            }
+            activity.getNavController().let {
+                if (it.currentDestination?.id != R.id.accountFragment) {
+                    it.navigate(R.id.accountFragment)
                 }
             }
             binding.drawerLayout.closeDrawers()
