@@ -29,19 +29,27 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleUrlShare
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.mychannel.*
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistAdapter
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistCreateViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistDeleteViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
@@ -72,6 +80,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Playlists"
         binding.progressBar.load(R.drawable.content_loader)
         with(binding) {
             var isInitialized = false

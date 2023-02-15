@@ -8,7 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiLoginService
+import com.banglalink.toffee.apiservice.CheckForUpdateService
+import com.banglalink.toffee.apiservice.CredentialService
+import com.banglalink.toffee.apiservice.HeaderEnrichmentService
+import com.banglalink.toffee.apiservice.ReportAppLaunch
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -20,15 +25,28 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.usecase.AdvertisingIdLogData
+import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.usecase.SendAdvertisingIdLogEvent
+import com.banglalink.toffee.usecase.SendDrmFallbackEvent
+import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
+import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
+import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.exoplayer2.C
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import java.io.File
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
-const val DRM_AVAILABILITY_TIMEOUT: Long = 1000
+const val MAX_PROGRESS_VALUE: Int = 10_000
+const val DRM_AVAILABILITY_TIMEOUT: Long = 1_000
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -57,11 +75,10 @@ class SplashViewModel @Inject constructor(
     
     fun getCredential() {
         viewModelScope.launch {
-//            delay(2000)
             val response = resultFromResponse { credentialService.execute() }
             when (response) {
                 is Success -> {
-                    apiLoadingProgress.value = (100 / 3) * 2
+                    apiLoadingProgress.value = (MAX_PROGRESS_VALUE / 3) * 2
                     getAppLaunchConfig()
                 }
                 is Failure -> {
@@ -73,10 +90,9 @@ class SplashViewModel @Inject constructor(
     
     fun checkForUpdateStatus(isNewUser: Boolean) {
         viewModelScope.launch {
-//            delay(3000)
             val updateResponse = resultFromResponse { checkForUpdateService.execute(BuildConfig.VERSION_CODE.toString()) }
-            if (updateResponse is Success) {
-                apiLoadingProgress.value = if (isNewUser) 100 / 3 else 100 / 2
+            if (updateResponse is Success && updateResponse.data?.isFromCache == false) {
+                apiLoadingProgress.value = if (isNewUser) MAX_PROGRESS_VALUE / 3 else MAX_PROGRESS_VALUE / 2
             }
             updateStatusLiveData.value = updateResponse
         }
@@ -84,10 +100,9 @@ class SplashViewModel @Inject constructor(
     
     fun getAppLaunchConfig() {
         viewModelScope.launch {
-//            delay(2000)
             val response = resultFromResponse { apiLoginService.execute() }
             if (response is Success) {
-                apiLoadingProgress.value = 100
+                apiLoadingProgress.value = MAX_PROGRESS_VALUE
             }
             appLaunchConfigLiveData.value = response
         }
@@ -104,6 +119,7 @@ class SplashViewModel @Inject constructor(
         appScope.launch {
             try {
                 reportAppLaunch.execute()
+                ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")
             }

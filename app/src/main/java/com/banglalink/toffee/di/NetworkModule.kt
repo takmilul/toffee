@@ -11,8 +11,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
 import javax.inject.Singleton
+import okhttp3.Cache
 
 @InstallIn(SingletonComponent::class)
 @Module

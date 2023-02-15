@@ -14,8 +14,8 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingsFragment : BaseFragment() {
@@ -31,7 +31,7 @@ class SettingsFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Settings"
+        requireActivity().title = "Settings"
         binding.bubbleSwitch.isVisible = mPref.isBubbleActive
         binding.bubbleDivider.isVisible = mPref.isBubbleActive
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface TVChannelRepository {
     suspend fun insertNewItems(vararg items: TVChannelItem)
     suspend fun deleteItems(item: TVChannelItem)
+    suspend fun deleteAllRecentItems()
     suspend fun insertRecentItems(item: TVChannelItem)
     suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem?
     suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String)

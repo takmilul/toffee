@@ -16,6 +16,10 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
         return dao.delete(item)
     }
     
+    override suspend fun deleteAllRecentItems() {
+        return dao.deleteAllRecentItems()
+    }
+    
     override suspend fun insertRecentItems(item: TVChannelItem) {
         dao.insertRecentItem(item)
     }

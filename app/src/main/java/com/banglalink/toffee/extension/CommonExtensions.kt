@@ -38,6 +38,7 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 import java.util.*
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
@@ -263,4 +264,11 @@ fun String.isExpiredFrom(comparedDate: Date): Boolean {
     } catch (e: Exception) {
         false
     }
+}
+
+fun String.hexToResourceName(resources: Resources): String {
+    val id = BigInteger(this.removePrefix("0x"), 16).toInt()
+    val resourceName = resources.getResourceName(id)
+    Log.i("RES_", resourceName)
+    return resourceName
 }

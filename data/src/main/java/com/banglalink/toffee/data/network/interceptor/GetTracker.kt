@@ -1,10 +1,9 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import com.banglalink.toffee.Constants
-import com.banglalink.toffee.util.Log
-import okhttp3.internal.immutableListOf
 import javax.inject.Inject
 import javax.inject.Singleton
+import okhttp3.internal.immutableListOf
 
 @Singleton
 class GetTracker @Inject constructor():IGetMethodTracker {
@@ -49,11 +48,9 @@ class GetTracker @Inject constructor():IGetMethodTracker {
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {
-        Log.i("PATH PATH",urlEncodedFragmentString)
         val resultString = getUrlList.find {
             urlEncodedFragmentString.contains(it)
         }
-        Log.i("PATH",resultString?:"No String")
         return !resultString.isNullOrEmpty()
     }
 }

@@ -26,7 +26,7 @@ class PoliciesFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Policies"
+        requireActivity().title = "Policies"
         setPrefItemListener()
     }
     

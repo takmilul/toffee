@@ -59,6 +59,9 @@ abstract class TVChannelDao {
             "(SELECT id from TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
     abstract suspend fun deleteExtraRecent()
 
+    @Query("DELETE FROM TVChannelItem WHERE categoryName=\"Recent\"")
+    abstract suspend fun deleteAllRecentItems()
+
     @Query("DELETE FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" AND id NOT IN " +
             "(SELECT id from TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
     abstract suspend fun deleteExtraStingrayRecent()
