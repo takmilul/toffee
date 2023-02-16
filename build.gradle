@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        appVersionCode = 97
-        appVersionName = '4.8.2'
+        appVersionCode = 98
+        appVersionName = '4.8.3'
         
         // Gradle
         gradlePluginVersion = '7.4.0'
