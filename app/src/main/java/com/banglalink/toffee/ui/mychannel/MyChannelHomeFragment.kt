@@ -148,7 +148,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
-                binding.channelDetailView.subscriptionButton.isEnabled = false
                 if (isSubscribed == 0) {
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
                 } else {
