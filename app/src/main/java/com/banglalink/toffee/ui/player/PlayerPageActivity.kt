@@ -65,7 +65,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Paramet
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.*
 import com.google.android.gms.cast.framework.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -387,7 +386,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
         cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
         && mPref.isDrmActive && channelInfo.isDrmActive
         && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty())
@@ -1087,20 +1086,23 @@ abstract class PlayerPageActivity :
     
     override fun onOptionMenuPressed(): Boolean {
         if (defaultTrackSelector == null || defaultTrackSelector?.currentMappedTrackInfo == null) return false
-        val bottomSheetDialog = TrackSelectionDialog(this)
-        val maxBitRate = if (connectionWatcher.isOverWifi) mPref.maxBitRateWifi else mPref.maxBitRateCellular
-        bottomSheetDialog.init(defaultTrackSelector, maxBitRate)
-        lifecycle.addObserver(bottomSheetDialog)
-        bottomSheetDialog.setOnDismissListener {
-            lifecycle.removeObserver(bottomSheetDialog)
-            onTrackerDialogDismissed()
-        }
-        bottomSheetDialog.setOnCancelListener {
-            lifecycle.removeObserver(bottomSheetDialog)
-            onTrackerDialogDismissed()
-        }
+//        val bottomSheetDialog = TrackSelectionDialog(this)
+//        val maxBitRate = if (connectionWatcher.isOverWifi) mPref.maxBitRateWifi else mPref.maxBitRateCellular
+//        bottomSheetDialog.init(defaultTrackSelector, maxBitRate)
+//        lifecycle.addObserver(bottomSheetDialog)
+//        bottomSheetDialog.setOnDismissListener {
+//            lifecycle.removeObserver(bottomSheetDialog)
+//            onTrackerDialogDismissed()
+//        }
+//        bottomSheetDialog.setOnCancelListener {
+//            lifecycle.removeObserver(bottomSheetDialog)
+//            onTrackerDialogDismissed()
+//        }
+//        bottomSheetDialog.show()
+//        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        val bottomSheetDialog = TrackSelectionDialog2(this)
+        bottomSheetDialog.initialize(player!!, null)
         bottomSheetDialog.show()
-        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         return true
     }
     
