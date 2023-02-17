@@ -4,39 +4,49 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.banglalink.toffee.R
+import com.banglalink.toffee.ui.player.TrackSelectionView.Companion.filterOverrides
 import com.banglalink.toffee.ui.player.TrackSelectionView.TrackSelectionListener
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Tracks.Group
+import com.google.android.exoplayer2.source.TrackGroup
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), DefaultLifecycleObserver {
-    fun init(defaultTrackSelector: DefaultTrackSelector?, maxBitRate: Int = -1) {
-        val trackGroupArray = defaultTrackSelector?.currentMappedTrackInfo?.getTrackGroups(0)
-        val initialOverride = trackGroupArray?.let { defaultTrackSelector.parameters.getSelectionOverride(0, it) }
+    
+    fun init(player: Player, maxBitRate: Int = -1, ) {
+        val trackSelectionParameters = player.trackSelectionParameters
         val bottomView = layoutInflater.inflate(R.layout.track_selection_dialog, null) as TrackSelectionView
-        bottomView.init(
-            defaultTrackSelector?.currentMappedTrackInfo,
-            0,
-            false,
-            initialOverride?.let { listOf(it) } ?: emptyList(),
-            maxBitRate,
+        val trackType = C.TRACK_TYPE_VIDEO
+        val trackGroups = ArrayList<Group>()
+        for (trackGroup in player.currentTracks.groups) {
+            if (trackGroup.type == trackType) {
+                trackGroups.add(trackGroup)
+            }
+        }
+        val isDisabled = player.trackSelectionParameters.disabledTrackTypes.contains(trackType)
+        val overrides = HashMap(filterOverrides(player.trackSelectionParameters.overrides, trackGroups, false))
+        
+        bottomView.init(maxBitRate, isDisabled, trackGroups, overrides,
             object : TrackSelectionListener {
-                override fun onTrackSelectionChanged(isDisabled: Boolean, overrides: List<SelectionOverride>?) {
-                    defaultTrackSelector?.currentMappedTrackInfo?.let {
-                        val builder = defaultTrackSelector.parameters.buildUpon()
-                        builder.clearSelectionOverrides(0)
-                        builder.setRendererDisabled(0, isDisabled)
-                        if (!overrides.isNullOrEmpty()) {
-                            builder.setSelectionOverride(0,
-                                defaultTrackSelector.currentMappedTrackInfo!!.getTrackGroups(0),
-                                overrides[0])
+                override fun onTrackSelectionChanged(isDisabled: Boolean, overrides: Map<TrackGroup, TrackSelectionOverride>?, ) {
+                    val builder = trackSelectionParameters.buildUpon()
+                    builder.setTrackTypeDisabled(trackType,
+                        trackGroups.isNotEmpty() && trackSelectionParameters.disabledTrackTypes.contains(trackType))
+                    builder.clearOverridesOfType(trackType)
+                    overrides?.values?.let {
+                        for (override in it) {
+                            builder.addOverride(override)
                         }
-                        defaultTrackSelector.setParameters(builder)
+                    }
+                    builder.build().let {
+                        player.trackSelectionParameters = it
                     }
                     dismiss()
                 }
             }
-        ) 
+        )
         setContentView(bottomView)
     }
     
