@@ -1,10 +1,10 @@
 buildscript {
     ext {
-        appVersionCode = 98
+        appVersionCode = 99
         appVersionName = '4.8.3'
         
         // Gradle
-        gradlePluginVersion = '7.4.0'
+        gradlePluginVersion = '7.4.1'
         
         // Player
         exoVersion = '2.18.1'

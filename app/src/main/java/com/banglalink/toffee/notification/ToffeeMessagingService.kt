@@ -295,7 +295,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         suspend fun getNotificationBuilder(ignoreContentIntent: Boolean = false): NotificationCompat.Builder? {
             loadImageDrawable()
             pubSubId?.let {
-                notificationInfoRepository.getNotificationById(it.toInt())?.let {
+                try {
+                    notificationInfoRepository.getNotificationById(it.toInt())?.let {
+                        return null
+                    }
+                } catch (e: Exception) {
                     return null
                 }
             }

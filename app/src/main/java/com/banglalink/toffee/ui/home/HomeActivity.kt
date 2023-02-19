@@ -148,6 +148,10 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -155,10 +159,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -1608,12 +1608,12 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
         lifecycleScope.launch {
-            cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
+            cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.getContentId().toLong())?.let { cdnChannelItem ->
                 loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
             } ?: run {
                 cdnChannelItemRepository.insert(
                     CdnChannelItem(
-                        channelInfo.id.toLong(),
+                        channelInfo.getContentId().toLong(),
                         channelInfo.urlType,
                         channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
                         gson.toJson(channelInfo)
@@ -1654,7 +1654,7 @@ class HomeActivity : PlayerPageActivity(),
                             }
                         }
                         lifecycleScope.launch {
-                            content?.id?.toLong()?.let {
+                            content?.getContentId()?.toLong()?.let {
                                 cdnChannelItemRepository.updateCdnChannelItemByChannelId(
                                     it, expiryDate, gson.toJson(newChannelInfo)
                                 )
@@ -1667,7 +1667,7 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
             content = channelInfo
-            viewModel.getMediaCdnSignUrl(channelInfo.id)
+            viewModel.getMediaCdnSignUrl(channelInfo.getContentId())
         } else {
             onSuccess(channelInfo)
         }
