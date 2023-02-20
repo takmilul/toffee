@@ -68,15 +68,15 @@ import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
@@ -387,7 +387,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
         cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
         && mPref.isDrmActive && channelInfo.isDrmActive
         && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList()?.randomOrNull().isNullOrEmpty())
@@ -1086,10 +1086,10 @@ abstract class PlayerPageActivity :
     }
     
     override fun onOptionMenuPressed(): Boolean {
-        if (defaultTrackSelector == null || defaultTrackSelector?.currentMappedTrackInfo == null) return false
-        val bottomSheetDialog = TrackSelectionDialog(this)
+        if (player == null) return false
         val maxBitRate = if (connectionWatcher.isOverWifi) mPref.maxBitRateWifi else mPref.maxBitRateCellular
-        bottomSheetDialog.init(defaultTrackSelector, maxBitRate)
+        val bottomSheetDialog = TrackSelectionDialog(this)
+        bottomSheetDialog.init(player!!, maxBitRate)
         lifecycle.addObserver(bottomSheetDialog)
         bottomSheetDialog.setOnDismissListener {
             lifecycle.removeObserver(bottomSheetDialog)

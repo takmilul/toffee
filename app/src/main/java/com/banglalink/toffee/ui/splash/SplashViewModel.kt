@@ -9,11 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.ApiLoginService
-import com.banglalink.toffee.apiservice.CheckForUpdateService
-import com.banglalink.toffee.apiservice.CredentialService
-import com.banglalink.toffee.apiservice.HeaderEnrichmentService
-import com.banglalink.toffee.apiservice.ReportAppLaunch
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -25,25 +21,13 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.usecase.AdvertisingIdLogData
-import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
-import com.banglalink.toffee.usecase.SendAdvertisingIdLogEvent
-import com.banglalink.toffee.usecase.SendDrmFallbackEvent
-import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
-import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
-import com.banglalink.toffee.usecase.SendLoginLogEvent
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.exoplayer2.C
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import java.io.File
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 
 const val MAX_PROGRESS_VALUE: Int = 10_000
 const val DRM_AVAILABILITY_TIMEOUT: Long = 1_000
@@ -164,8 +148,8 @@ class SplashViewModel @Inject constructor(
             cPref.isDrmModuleAvailable = CommonPreference.DRM_TIMEOUT
             withTimeout(DRM_AVAILABILITY_TIMEOUT) {
                 withContext(Dispatchers.IO + Job()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        runCatching {
+                    runCatching {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             val securityLevel = when (val level = MediaDrm.getMaxSecurityLevel()) {
                                 MediaDrm.SECURITY_LEVEL_UNKNOWN -> MediaDrm.SECURITY_LEVEL_UNKNOWN.toString()
                                 MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO -> MediaDrm.SECURITY_LEVEL_SW_SECURE_CRYPTO.toString()
@@ -177,12 +161,11 @@ class SplashViewModel @Inject constructor(
                             }
                             ToffeeAnalytics.logBreadCrumb(securityLevel)
                         }
-                    }
-                    MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
-                }.also {
-                    cPref.isDrmModuleAvailable = if (it) DRM_AVAILABLE else DRM_UNAVAILABLE
-                    if (!it) {
-                        sendDrmUnavailableLogEvent.execute()
+                        val isSupported = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
+                        cPref.isDrmModuleAvailable = if (isSupported) DRM_AVAILABLE else DRM_UNAVAILABLE
+                        if (!isSupported) {
+                            sendDrmUnavailableLogEvent.execute()
+                        }
                     }
                 }
             }
