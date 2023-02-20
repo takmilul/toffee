@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/payment_navigation_graph"
+    app:startDestination="@id/paymentPackages">
+    <fragment
+        android:id="@+id/paymentPackages"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentOptionFragment"
+        android:label="PartnershipBottomSheetFragment"
+        tools:layout="@layout/buttom_sheet_payment_option"
+        >
+        <action
+            android:id="@+id/action_payment_to_pack"
+            app:destination="@id/choosePackages"
+          />
+        <action
+            android:id="@+id/action_payment_to_trail"
+            app:destination="@id/trailPack"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/choosePackages"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentChoosePackFragment"
+        android:label="PartnershipBottomSheetFragmentPack"
+        tools:layout="@layout/buttom_sheet_choose_pack"
+        >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/trailPack"
+        android:name="com.banglalink.toffee.ui.premium.payment.TrailFragment"
+        android:label="PartnershipBottomSheetFragmentPack"
+        tools:layout="@layout/buttom_sheet_enable_trail"
+        >
+
+    </fragment>
+    <dialog
+        android:id="@+id/htmlPageViewDialog"
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
+    </dialog>
+</navigation>

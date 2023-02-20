@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <ImageView
+            android:id="@+id/backImg"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pack_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Choose Pack"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/pack_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:minHeight="300dp"
+            android:animateLayoutChanges="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/tv_channels_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pack_title"
+            app:reverseLayout="false"
+            android:paddingBottom="24dp"
+            tools:itemCount="3"
+            tools:listitem="@layout/list_item_choose_pack" />
+
+        <TextView
+            android:id="@+id/terms_and_conditions_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:background="@null"
+            android:checked="true"
+            android:gravity="center_vertical"
+            android:text="By clicking next you are agreeing the "
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pack_list"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:id="@+id/terms_and_conditions_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="36dp"
+            android:text="@string/terms_and_conditions"
+            android:textColor="@color/colorAccent"
+            android:textColorLink="@drawable/text_selector2"
+            android:textSize="12sp"
+            android:background="?selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_one"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/terms_and_conditions_one"
+            app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_one"
+            android:visibility="gone"
+            />
+<!--        <TextView-->
+<!--            android:id="@+id/terms_msg"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--            android:fontFamily="@font/roboto_regular"-->
+<!--            android:text="By clicking next you are agreeing the Term’s &amp; Conditions"-->
+<!--            android:textColor="@color/cardTitleColor"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/pack_list"-->
+<!--           />-->
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buyNow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="87dp"
+            android:layout_marginBottom="48dp"
+            android:backgroundTint="#FF3988"
+            android:fontFamily="@font/roboto_bold"
+
+            android:text="BUY NOW"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
+            android:visibility="gone"
+           />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

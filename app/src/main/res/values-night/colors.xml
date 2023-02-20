@@ -55,4 +55,13 @@
     <color name="redeem_dialog_invalid_footer">#111F31</color>
     <color name="native_ad_button_color">#222F46</color>
     <color name="live_item_bg">#111F31</color>
+
+    <color name="TextInsideImgColor">#6781A1</color>
+    <color name="payment_option_card_bg">#1A2E47</color>
+
+    <color name="button_sheet_bg">#111F31</color>
+    <color name="TextClrInImg">#BED6F3</color>
+    <color name="TrailBg">#111F31</color>
+    <color name="TrailBgTransparent">#B3000000</color>
+    <color name="TrailTxt">#BED6F3</color>
 </resources>

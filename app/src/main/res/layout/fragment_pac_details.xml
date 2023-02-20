@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/premContentScroller"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/screen_bg">
+            <ImageView
+                android:id="@+id/premItemPoster"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/prem_img"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <View
+                android:id="@+id/bgView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/premium_card_bg_three"
+                app:layout_constraintBottom_toBottomOf="@+id/premItemPoster"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/premItemPoster"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/premItemPoster"
+                app:layout_constraintEnd_toStartOf="@+id/premItemIcon"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/pac_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:maxLines="2"
+                    android:maxLength="46"
+                    android:text="Super saver bundle"
+                    android:textColor="@color/TextClrInImg"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/pac_price"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/premItemIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/prem_icon_two"
+                app:layout_constraintBottom_toBottomOf="@+id/premItemPoster"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/activatedIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/activeted"
+                app:layout_constraintBottom_toBottomOf="@+id/premItemPoster"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
+            <TextView
+                android:id="@+id/pac_linear_channels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:maxLines="2"
+                android:text="Premium TV channels"
+                android:textColor="@color/categoryNameColor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/premItemPoster" />
+
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/lineaChannelFragment"
+                android:name="com.banglalink.toffee.ui.premium.PremiumChannelFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+
+                android:layout_marginEnd="16dp"
+                android:background="@color/screen_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pac_linear_channels"
+                tools:layout="@layout/fragment_prem_channels" />
+
+            <TextView
+                android:id="@+id/pac_linear_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:maxLines="2"
+                android:text="Premium video contents"
+                android:textColor="@color/categoryNameColor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lineaChannelFragment" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/featuredFragment"
+                android:name="com.banglalink.toffee.ui.premium.PremiumContentFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/screen_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pac_linear_content"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout="@layout/fragment_prem_content" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF3988"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/mini_upload_progress_text"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:text="Starts from 10 BDT"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/add_upload_info_button"
+            app:layout_constraintEnd_toStartOf="@+id/add_upload_info_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_upload_info_button" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_upload_info_button"
+            style="@style/ButtonStyleRing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Pay Now"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutTrail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/TrailBg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/trailMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Your trial is activated"
+            android:textColor="@color/categoryNameColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/trailExp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Expires on 24 Feb, 2021"
+            android:textColor="@color/categoryNameColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trailMsg" />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutPayed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/TrailBgTransparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/payedMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="You have bought 1 GB for 3 days pack"
+            android:textColor="@color/TrailTxt"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/payedExp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Expires on 24 Feb, 2023"
+            android:textColor="@color/TrailTxt"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payedMsg" />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+</layout>

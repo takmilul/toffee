@@ -54,7 +54,7 @@ class DrawerHelper(
         }
         
         setProfileInfo()
-//        setToffeePremium()
+        setToffeePremium()
         followUsAction()
     }
     
@@ -98,19 +98,19 @@ class DrawerHelper(
         }
     }
 
-//    private fun setToffeePremium() {
-//        val header = binding.sideNavigation.getHeaderView(0)
-//        header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
-//            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-//                activity.getNavController().let {
-//                    if (it.currentDestination?.id != R.id.accountFragment) {
-//                        it.navigate(R.id.accountFragment)
-//                    }
-//                }
-//            binding.drawerLayout.closeDrawers()
-//        }
-//    }
-//
+    private fun setToffeePremium() {
+        val header = binding.sideNavigation.getHeaderView(0)
+        header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
+            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
+                activity.getNavController().let {
+                    if (it.currentDestination?.id != R.id.premiumFragment) {
+                        it.navigate(R.id.premiumFragment)
+                    }
+                }
+            binding.drawerLayout.closeDrawers()
+        }
+    }
+
     fun handleMenuItemById(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.ic_menu_internet_packs -> {

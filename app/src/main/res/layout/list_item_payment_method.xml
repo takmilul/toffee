@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+    </data>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="12dp"
+        android:backgroundTint="@color/payment_option_card_bg"
+        android:onClick="@{() -> callback.onItemClicked(data)}"
+
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="20dp"
+            >
+
+
+            <TextView
+                android:id="@+id/passName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="5dp"
+                android:maxLines="2"
+                android:text="Premium Pass"
+                android:textColor="@color/cardTitleColor"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/passImg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/passPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="7.5dp"
+                android:text="Starting from BDT 20"
+                android:textColor="@color/cardTitleColor"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/passName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/passName" />
+
+            <TextView
+                android:id="@+id/passUsers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:text="For all users"
+                android:textColor="@color/cardTitleColor"
+                android:textSize="11sp"
+                android:textStyle="italic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/passName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/passPrice" />
+<!--            <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                android:id="@+id/linearLayoutCompat2"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="16dp"-->
+<!--                android:orientation="vertical"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/radioItem"-->
+<!--                app:layout_constraintTop_toTopOf="parent">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/passName"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Premium Pass Premium Pass "-->
+<!--                    android:textColor="#BED6F3"-->
+<!--                    android:maxLines="2"-->
+<!--                    android:textSize="14sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/passPrice"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="7.5dp"-->
+<!--                    android:text="Starting from BDT 20"-->
+<!--                    android:textColor="#BED6F3"-->
+<!--                    android:textSize="12sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/passUsers"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="For all users"-->
+<!--                    android:textColor="#BED6F3"-->
+<!--                    android:textSize="11sp"-->
+<!--                    android:textStyle="italic" />-->
+<!--            </androidx.appcompat.widget.LinearLayoutCompat>-->
+
+            <ImageView
+                android:id="@+id/passImg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/bkash"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
+
+

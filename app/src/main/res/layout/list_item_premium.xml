@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+    </data>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <com.banglalink.toffee.ui.widget.CustomImageView
+                android:id="@+id/premIcon"
+                loadChannelImage="@{data}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:minHeight="200dp"
+                app:layout_constraintDimensionRatio="W,16:9"
+                app:layout_constraintBottom_toTopOf="@id/pac_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintVertical_chainStyle="packed"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/placeholder" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/premium_card_bg_five"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent">
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/pac_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginHorizontal="16dp"
+                android:text="@{data.program_name}"
+                android:textColor="@color/TextClrInImg"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintEnd_toStartOf="@id/packageDetails"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/pac_price"
+                tools:text="program name"/>
+
+            <TextView
+                android:id="@+id/pac_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Starting from 20 BDT"
+                android:textColor="@color/TextClrInImg"
+                android:textSize="16sp"
+                android:maxLines="1"
+                app:layout_constraintEnd_toEndOf="@id/pac_name"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/pac_name" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/packageDetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#FF3988"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/pac_details_btn"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                android:onClick="@{() -> callback.onItemClicked(data)}"
+                android:textColor="@color/fw_gnt_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+            <ImageView
+                android:id="@+id/premCorner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/premiumcorner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/premActivatedCorner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/activatedcorner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>
+

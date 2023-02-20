@@ -64,7 +64,7 @@
     <string name="add_your_name">Add Your Name</string>
     <string name="change_password_button">Change Password</string>
     <string name="profile">Account</string>
-    <string name="toffee_premium">Toffee Premium</string>
+    <string name="toffee_premium">Premium Packs</string>
     <string name="profile_edit">Profile - Edit</string>
     <string name="cancel">Cancel</string>
     <string name="save_changes">Save Changes</string>
@@ -487,4 +487,8 @@
     <string name="welcome_text_1">Your data and profile have been stopped from being deleted. Keep enjoying Toffee.</string>
     <string name="circuit_breaker_alert_message">Sorry, this content is currently not available. Please try again later. Thank you.</string>
     <string name="back_to_toffee_text">Back to TOFFEE</string>
+    <string name="prem_content_title">Choose any of the following bundles to avail the content</string>
+    <string name="pac_name">Super saver bundle</string>
+    <string name="pac_price">Starting from 20 BDT</string>
+    <string name="pac_details_btn">SEE DETAILS</string>
 </resources>

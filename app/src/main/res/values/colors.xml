@@ -99,7 +99,7 @@
     <color name="cardBgColor">#FFFFFF</color>
     <color name="cardTitleColor">#29466B</color>
     <color name="list_divider_side_nav">#BED6F3</color>
-    <color name="categoryNameColor">#6781A1</color>
+    <color name="categoryNameColor">#29466B</color>
     <color name="tvChannelTitleColor">#111F31</color>
     <color name="round_bg_tv_color">#f8f9f9</color>
     <color name="poster_container_bg_color">#f8f9f9</color>
@@ -121,4 +121,13 @@
     <color name="bubble_separator_color">#9C186C</color>
     <color name="bubble_icon_color">#FFFFFF</color>
     <color name="live_item_bg">#ECECEC</color>
+
+    <color name="TextInsideImgColor">#FFFFFF</color>
+
+    <color name="payment_option_card_bg">#FFFFFF</color>
+    <color name="button_sheet_bg">#F2F2F2</color>
+    <color name="TextClrInImg">#BED6F3</color>
+    <color name="TrailBg">#FFFFFF</color>
+    <color name="TrailBgTransparent">#4D000000</color>
+    <color name="TrailTxt">#FFFFFF</color>
 </resources>

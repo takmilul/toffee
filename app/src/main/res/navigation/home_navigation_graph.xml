@@ -223,6 +223,12 @@
         android:name="com.banglalink.toffee.ui.account.AccountFragment"
         android:label="Account">
     </fragment>
+
+    <fragment
+        android:id="@+id/premiumFragment"
+        android:name="com.banglalink.toffee.ui.premium.PremiumFragment"
+        android:label="Toffee Premium">
+    </fragment>
     
     <fragment
         android:id="@+id/profileFragment"
@@ -564,4 +570,19 @@
             android:defaultValue="Category"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/packDetailsFragment"
+        android:name="com.banglalink.toffee.ui.premium.PackDetailsFragment"
+        android:label="Pack Details" />
+
+    <dialog
+        android:id="@+id/bottomSheetPaymentMethods"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodFragment"
+        android:label="Add To Playlist" />
+    <dialog
+        android:id="@+id/startWatchingDialog"
+        android:name="com.banglalink.toffee.ui.premium.StartWatchingDialog"
+        android:label="DeleteAccountFragment"
+        tools:layout="@layout/start_watching_msg" />
 </navigation>

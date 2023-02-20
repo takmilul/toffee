@@ -369,6 +369,12 @@
         <item name="strokeColor">@android:color/white</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+    <style name="ButtonStyleRing" parent="ToffeeButtonStyle">
+        <item name="strokeWidth">1dp</item>
+        <item name="backgroundTint">@android:color/white</item>
+        <item name="strokeColor">@android:color/white</item>
+        <item name="android:textColor">@color/colorAccent2</item>
+    </style>
     
     <style name="ButtonStyleRingAccent" parent="ToffeeButtonStyle">
         <item name="strokeWidth">1dp</item>
