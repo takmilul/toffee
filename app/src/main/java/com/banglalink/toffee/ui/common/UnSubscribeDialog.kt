@@ -12,7 +12,7 @@ object UnSubscribeDialog {
             context,
             text = context.getString(string.text_unsubscribe_title),
             icon = drawable.ic_unsubscribe_alert,
-            positiveButtonTitle = "Unsubscribe",
+            positiveButtonTitle = "Unfollow",
             positiveButtonListener = {
                 positiveButtonListener()
                 it?.dismiss()
