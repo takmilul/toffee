@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardCornerRadius="8dp"
-
-
-        >
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="8dp">
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent">
-
-
+            
             <TextView
-                android:id="@+id/pac_linear_channels"
-                android:layout_width="wrap_content"
+                android:id="@+id/packActivationTextView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="16dp"
                 android:maxLines="2"
-                android:text="Tap any of the content to start watching"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                tools:text="Tap any of the content to start watching"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
+                android:fontFamily="@font/roboto_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/closeDialog"/>
+            
             <ImageView
-
                 android:id="@+id/closeDialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginVertical="16dp"
                 android:scaleType="center"
                 android:src="@drawable/cross_vector"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/txt_close" />
+            
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
-
 </layout>

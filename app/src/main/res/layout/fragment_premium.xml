@@ -1,101 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/premContentScroller"
+    
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/premContentScroller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/screen_bg"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+            
+            <ImageView
+                android:id="@+id/packBannerImageView"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="premium Pack Poster"
+                android:scaleType="centerCrop"
+                android:src="@drawable/prem_top_img"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <ImageView
+                android:id="@+id/packBannerLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="pack banner logo"
+                android:src="@drawable/prem_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+                android:id="@+id/title_msg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Available Premium Packs"
+                android:textColor="@color/categoryNameColor"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/packBannerImageView" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/premiumBundleList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
                 android:background="@color/screen_bg"
-                android:focusableInTouchMode="true"
-                android:focusable="true"
-                android:descendantFocusability="blocksDescendants"
-                >
-
-                <ImageView
-                    android:id="@+id/premItemPoster"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/prem_top_img"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/premIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/prem_icon"
-                    app:layout_constraintBottom_toBottomOf="@+id/premItemPoster"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <TextView
-                    android:id="@+id/title_msg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Available Premium Packs"
-                    android:textColor="@color/categoryNameColor"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/premItemPoster" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusableInTouchMode="true"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_msg"
-                    >
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/premiumBundleList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/screen_bg"
-                        android:clipToPadding="false"
-                        android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:reverseLayout="false"
-                        tools:listitem="@layout/list_item_premium"
-                        tools:visibility="visible"
-
-
-                        />
-                </LinearLayout>
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-
-
-
-
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_msg"
+                app:reverseLayout="false"
+                tools:listitem="@layout/list_item_premium"
+                tools:visibility="visible" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

@@ -14,25 +14,23 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import javax.inject.Inject
 
-class PaymentMethodFragment : BottomSheetDialogFragment(){
-    @Inject
-    lateinit var mPref: SessionPreference
-    @Inject
-    lateinit var cacheManager: CacheManager
+class PaymentMethodFragment : BottomSheetDialogFragment() {
+    
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cacheManager: CacheManager
     private lateinit var navController: NavController
-
-
+    
     companion object {
         const val TAG = "BottomSheetDialog"
     }
-
+    
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         val dialogBinding = FragmentPaymentMethodBinding.inflate(layoutInflater)
-
+        
         val navHostFragment = childFragmentManager.findFragmentById(R.id.bottomSheetFragmentPayments) as NavHostFragment
         navController = navHostFragment.navController
-
+        
         dialog.setContentView(dialogBinding.root)
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
@@ -41,6 +39,6 @@ class PaymentMethodFragment : BottomSheetDialogFragment(){
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         return dialog
     }
-
+    
     override fun getTheme(): Int = R.style.SheetDialog
 }

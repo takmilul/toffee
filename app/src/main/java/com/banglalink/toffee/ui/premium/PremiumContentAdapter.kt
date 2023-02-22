@@ -6,11 +6,11 @@ import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
 
-class PremiumContentAdapter ( cb: ProviderIconCallback<ChannelInfo>
-): BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
-
+class PremiumContentAdapter(
+    cb: ProviderIconCallback<ChannelInfo>
+) : BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
+    
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_prem_content
     }
-
 }
