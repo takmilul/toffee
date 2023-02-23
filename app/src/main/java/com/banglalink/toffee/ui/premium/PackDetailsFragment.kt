@@ -15,6 +15,8 @@ import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.BaseFragment
 
 class PackDetailsFragment : BaseFragment() {

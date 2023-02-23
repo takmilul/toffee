@@ -78,4 +78,5 @@ object ApiNames {
     const val MEDIA_CDN_SIGN_URL="mediaCdnSignUrl"
     const val GET_PREMIUM_PACK_LIST = "premiumPackages"
     const val GET_PREMIUM_PACK_DETAIL = "packageDetails"
+    const val PREMIUM_DATA_PACK_STATUS = "dataPackStatus"
 }

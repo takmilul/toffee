@@ -431,6 +431,7 @@ class HomeActivity : PlayerPageActivity(),
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
+        viewModel.getPackStatus(100)
     }
     
     private fun loadUserInfo() {
