@@ -31,9 +31,9 @@
 
     <fragment
         android:id="@+id/trailPack"
-        android:name="com.banglalink.toffee.ui.premium.payment.TrailFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.TrialFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/buttom_sheet_enable_trail"
+        tools:layout="@layout/buttom_sheet_enable_trial"
         >
 
     </fragment>

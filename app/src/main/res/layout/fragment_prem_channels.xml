@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/premiumChannelListview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:itemCount="13"
-
+            android:adjustViewBounds="true"
             android:clipToPadding="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/list_item_prem_channels"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            android:orientation="vertical"
             app:spanCount="5"
-            android:adjustViewBounds="true"
-
-
-
-            />
+            tools:itemCount="13"
+            tools:listitem="@layout/list_item_prem_channels" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

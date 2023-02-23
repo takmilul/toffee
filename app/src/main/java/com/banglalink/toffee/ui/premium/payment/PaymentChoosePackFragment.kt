@@ -33,10 +33,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<ChannelInfo> {
 
-    private var _binding: ButtomSheetChoosePackBinding?=null
+    private var _binding: ButtomSheetChoosePackBinding? = null
     private val binding get() = _binding!!
     private lateinit var mAdapter: ChoosePackAdapter
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
@@ -59,17 +58,12 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = ChoosePackAdapter(this)
+        mAdapter = ChoosePackAdapter(requireContext(), this)
 
-        with(binding.packList){
-
-            adapter=mAdapter
-            binding.backImg.safeClick( {findNavController().popBackStack()})
-
-            binding.termsAndConditionsTwo.safeClick({
-                showTermsAndConditionDialog()
-            })
-
+        with(binding.packList) {
+            adapter = mAdapter
+            binding.backImg.safeClick({ findNavController().popBackStack() })
+            binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         }
 
         binding.buyNow.safeClick({

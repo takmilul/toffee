@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-
-        >
+        android:layout_marginTop="12dp">
+        
         <FrameLayout
             android:id="@+id/iconHolder"
             android:layout_width="62dp"
@@ -16,10 +17,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+            
             <ImageView
-
-                android:id="@+id/icon"
+                android:id="@+id/channelImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/circuler_back"
@@ -27,20 +27,22 @@
                 android:src="@drawable/star_plus_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="channel image" />
+        
         </FrameLayout>
-
-
+        
         <ImageView
-            android:id="@+id/premItemIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
+            android:id="@+id/premiumStatusIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="-6dp"
             android:adjustViewBounds="true"
             android:src="@drawable/prem_icon_three"
             app:layout_constraintEnd_toEndOf="@+id/iconHolder"
             app:layout_constraintStart_toStartOf="@+id/iconHolder"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="premium status icon" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

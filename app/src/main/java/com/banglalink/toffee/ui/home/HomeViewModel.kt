@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -80,8 +81,9 @@ class HomeViewModel @Inject constructor(
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
+    private val premiumPackStatusService: PremiumPackStatusService
 ) : ViewModel() {
-    
+
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
     val isStingray = MutableLiveData<Boolean>()
@@ -294,6 +296,13 @@ class HomeViewModel @Inject constructor(
     fun sendCategoryChannelShareLog(contentType: String, contentId: Int, sharedUrl: String) {
         viewModelScope.launch {
             sendCategoryChannelShareCountEvent.execute(contentType, contentId, sharedUrl)
+        }
+    }
+
+    fun getPackStatus( contentId: Int) {
+        viewModelScope.launch {
+            premiumPackStatusService.loadData(contentId)
+            Log.d(TAG, "getPackStatus: "+ contentId.toString())
         }
     }
     

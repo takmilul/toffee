@@ -464,4 +464,13 @@ interface ToffeeApi {
         @Path("offset") offset: Int,
         @Body playlistRequest: PlaylistShareableRequest
     ): MyChannelPlaylistVideosResponse
+
+
+    @POST("/data-pack-status/{isBlNumber}/{contentId}/{dbVersion}")
+    suspend fun getPremiumStatus(
+        @Path("isBlNumber") isBlNumber: Int,
+        @Path("contentId") contentId: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body premiumPackStatusRequest: PremiumPackStatusRequest
+    ): PremiumPackStatusResponse
 }
