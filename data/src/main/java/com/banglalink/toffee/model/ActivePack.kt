@@ -4,14 +4,16 @@ import com.google.gson.annotations.SerializedName
 
 //@Entity
 data class ActivePack(
-    @SerializedName("pack_id")
+    @SerializedName("packId")
     val packId: Int = 0,
     @SerializedName("contents")
     val contents: List<Int?>? = null,
-    @SerializedName("is_subscription_active")
+    @SerializedName("isSubscriptionActive")
     val isActive: Boolean = false,
-    @SerializedName("subscription_expiry")
+    @SerializedName("expiryDate")
     val expiryDate: String? = null,
-    @SerializedName("subscription_pack_details")
-    val packDetails: String? = null
+    @SerializedName("dataPackDetails")
+    val packDetails: String? = null,
+    @SerializedName("isFreeUsed")
+    val isFreeUsed: Boolean = false
 )
