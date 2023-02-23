@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -32,6 +33,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+        
+        <ImageView
+            android:id="@+id/premiumStatusIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="4dp"
+            android:adjustViewBounds="true"
+            android:visibility="@{(data.urlTypeExt == 1) ? View.VISIBLE : View.GONE}"
+            android:src="@drawable/prem_icon_three"
+            app:layout_constraintEnd_toEndOf="@+id/icon"
+            app:layout_constraintStart_toStartOf="@+id/icon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="premium status icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

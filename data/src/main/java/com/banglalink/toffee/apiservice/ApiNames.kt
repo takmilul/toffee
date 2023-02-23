@@ -76,4 +76,6 @@ object ApiNames {
     const val GET_STINGRAY_CONTENTS = "getStingrayContents"
     const val GET_FIREWORK_LIST = "getUgcFireworksList"
     const val MEDIA_CDN_SIGN_URL="mediaCdnSignUrl"
+    const val GET_PREMIUM_PACK_LIST = "premiumPackages"
+    const val GET_PREMIUM_PACK_DETAIL = "packageDetails"
 }

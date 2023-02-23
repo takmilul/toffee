@@ -27,7 +27,8 @@ import com.banglalink.toffee.model.BubbleConfig
         SessionPrefData::class,
         PlayerEventData::class,
         CdnChannelItem::class,
-        BubbleConfig::class
+        BubbleConfig::class,
+//        PremiumPackItem::class
     ],
     version = 13,
     exportSchema = false)
@@ -57,4 +58,5 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getCustomPlayerEventsDao(): PlayerEventsDao
     abstract fun getCdnChannelItemDao(): CdnChannelItemDao
     abstract fun getBubbleConfigDao(): BubbleConfigDao
+//    abstract fun getPremiumPackDao(): PremiumPackDao
 }

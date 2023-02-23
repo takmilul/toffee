@@ -14,8 +14,8 @@ import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.Constants.NON_PAYMENT
-import com.banglalink.toffee.Constants.PAYMENT
+import com.banglalink.toffee.Constants.NON_PREMIUM
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
@@ -741,9 +741,9 @@ abstract class PlayerPageActivity :
     }
     
     private fun getHlsMediaItem(channelInfo: ChannelInfo): MediaItem? {
-        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType in listOf(PLAY_IN_WEB_VIEW, PLAY_CDN) && mPref.isPaidUser) {
+        val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM && channelInfo.urlType in listOf(PLAY_IN_WEB_VIEW, PLAY_CDN) && mPref.isPaidUser) {
             channelInfo.paidPlainHlsUrl
-        } else if (channelInfo.urlTypeExt == NON_PAYMENT && channelInfo.urlType in listOf(PLAY_IN_NATIVE_PLAYER, PLAY_CDN, STINGRAY_CONTENT)) {
+        } else if (channelInfo.urlTypeExt == NON_PREMIUM && channelInfo.urlType in listOf(PLAY_IN_NATIVE_PLAYER, PLAY_CDN, STINGRAY_CONTENT)) {
             channelInfo.hlsLinks?.get(0)?.hls_url_mobile
         } else {
             null
@@ -1241,9 +1241,9 @@ abstract class PlayerPageActivity :
                     fallbackCounter++
                     showDebugMessage("fallback... $fallbackCounter")
                     if (channelInfo?.isDrmActive == true) {
-                        val hlsUrl = if (channelInfo.urlTypeExt == PAYMENT && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
+                        val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM && channelInfo.urlType == PLAY_IN_WEB_VIEW && mPref.isPaidUser) {
                             channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo.urlTypeExt == NON_PAYMENT && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
+                        } else if (channelInfo.urlTypeExt == NON_PREMIUM && (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT)) {
                             channelInfo.hlsLinks?.get(0)?.hls_url_mobile
                         } else null
                         hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }

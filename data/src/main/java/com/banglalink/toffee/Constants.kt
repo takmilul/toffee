@@ -5,8 +5,8 @@ import com.banglalink.toffee.lib.BuildConfig
 object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
     
-    const val PAYMENT = 1
-    const val NON_PAYMENT = 0
+    const val PREMIUM = 1
+    const val NON_PREMIUM = 0
     const val PLAY_IN_WEB_VIEW = 1
     const val PLAY_CDN = 3
     const val STINGRAY_CONTENT = 10

@@ -1,16 +1,15 @@
 package com.banglalink.toffee.ui.premium
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BasePagingDataAdapter
-import com.banglalink.toffee.common.paging.ItemComparator
-import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.MyBaseAdapter
 
 class PremiumContentAdapter(
-    cb: ProviderIconCallback<ChannelInfo>
-) : BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
+    cb: BaseListItemCallback<ChannelInfo>
+) : MyBaseAdapter<ChannelInfo>(cb) {
     
-    override fun getItemViewType(position: Int): Int {
+    override fun getLayoutIdForPosition(position: Int): Int {
         return R.layout.list_item_prem_content
     }
 }

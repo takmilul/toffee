@@ -59,9 +59,9 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
-import com.banglalink.toffee.Constants.NON_PAYMENT
+import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
-import com.banglalink.toffee.Constants.PAYMENT
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
@@ -1584,7 +1584,7 @@ class HomeActivity : PlayerPageActivity(),
         MedalliaDigital.disableIntercept()
         channelInfo?.let {
             when {
-                it.urlTypeExt == PAYMENT -> {
+                it.urlTypeExt == PREMIUM -> {
                     checkVerification {
                         when {
                             mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
@@ -1593,19 +1593,19 @@ class HomeActivity : PlayerPageActivity(),
                         }
                     }
                 }
-                it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PAYMENT -> {
+                it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PREMIUM -> {
                     playInWebView(it)
                 }
-                it.urlType == OPEN_IN_EXTERNAL_BROWSER && it.urlTypeExt == NON_PAYMENT -> {
+                it.urlType == OPEN_IN_EXTERNAL_BROWSER && it.urlTypeExt == NON_PREMIUM -> {
                     openInExternalBrowser(it)
                 }
-                it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
+                it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
-                it.urlType == PLAY_CDN && it.urlTypeExt == NON_PAYMENT -> {
+                it.urlType == PLAY_CDN && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
-                it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PAYMENT -> {
+                it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
             }
@@ -1662,7 +1662,7 @@ class HomeActivity : PlayerPageActivity(),
                         val expiryDate = mediaCdnData?.signedUrlExpiryDate ?: mediaCdnData?.signedCookieExpiryDate
                         val newChannelInfo = content?.apply {
                             signedUrlExpiryDate = mediaCdnData?.signedUrlExpiryDate?.let {
-                                if (content?.urlTypeExt == PAYMENT) {
+                                if (content?.urlTypeExt == PREMIUM) {
                                     paidPlainHlsUrl = mediaCdnData.signedUrl
                                 } else {
                                     hlsLinks = content?.hlsLinks?.mapIndexed { index, hlsLinks ->

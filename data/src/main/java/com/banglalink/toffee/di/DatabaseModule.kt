@@ -249,4 +249,16 @@ object DatabaseModule {
     fun providesBubbleConfigRepository(dao: BubbleConfigDao): BubbleConfigRepository {
         return BubbleConfigRepositoryImpl(dao)
     }
+    
+//    @Singleton
+//    @Provides
+//    fun providesPremiumPackDao(db: ToffeeDatabase): PremiumPackDao {
+//        return db.getPremiumPackDao()
+//    }
+    
+//    @Singleton
+//    @Provides
+//    fun providesPremiumPackRepository(dao: PremiumPackDao): PremiumPackRepository {
+//        return PremiumPackRepositoryImpl(dao)
+//    }
 }

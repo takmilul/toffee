@@ -4,10 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="12dp"
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}">
         
         <FrameLayout
             android:id="@+id/iconHolder"
@@ -24,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/circuler_back"
                 android:scaleType="center"
-                android:src="@drawable/star_plus_icon"
+                loadChannelImage="@{data}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

@@ -5,28 +5,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumBinding
-import com.banglalink.toffee.enums.PageType
-import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class PremiumFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
+class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     
     private var _binding: FragmentPremiumBinding? = null
     private val binding get() = _binding!!
     private lateinit var mAdapter: PremiumAdapter
+    private val viewModel by viewModels<PremiumViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -51,7 +57,7 @@ class PremiumFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
         }
         
         observeList()
-
+        viewModel.getPremiumPackList()
 //        (requireActivity() as HomeActivity).binding.tabNavigator.hide()
 //        (requireActivity() as HomeActivity).binding.uploadButton.hide()
 //        (requireActivity() as HomeActivity).binding.homeBottomSheet.bottomSheet.hide()
@@ -61,19 +67,23 @@ class PremiumFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
-                landingPageViewModel.loadLandingEditorsChoiceContent()
-            } else {
-                landingPageViewModel.loadEditorsChoiceContent()
-            }
-            content.collectLatest {
-                mAdapter.submitData(it)
+            observe(viewModel.premiumPackListLiveData) {
+                when(it) {
+                    is Success -> {
+                        it.data.doIfNotNullOrEmpty { packList ->
+                            mAdapter.addAll(packList.toList())
+                        }
+                    }
+                    is Failure -> {
+                        requireContext().showToast(it.error.msg)
+                    }
+                }
             }
         }
     }
     
-    override fun onItemClicked(item: ChannelInfo) {
-        findNavController().navigate(R.id.packDetailsFragment)
+    override fun onItemClicked(item: PremiumPack) {
+        findNavController().navigate(R.id.packDetailsFragment, bundleOf("packId" to item.id))
     }
     
     override fun onDestroyView() {

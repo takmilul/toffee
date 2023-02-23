@@ -1,9 +1,9 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import com.banglalink.toffee.Constants
+import okhttp3.internal.immutableListOf
 import javax.inject.Inject
 import javax.inject.Singleton
-import okhttp3.internal.immutableListOf
 
 @Singleton
 class GetTracker @Inject constructor():IGetMethodTracker {
@@ -44,7 +44,9 @@ class GetTracker @Inject constructor():IGetMethodTracker {
         "/ugc-fireworks-list/${Constants.DEVICE_TYPE}",
         "/stingray-contents/${Constants.DEVICE_TYPE}",
         "/playlist-shareable/${Constants.DEVICE_TYPE}",
-        "/ugc-search-content-v2/${Constants.DEVICE_TYPE}"
+        "/ugc-search-content-v2/${Constants.DEVICE_TYPE}",
+        "/premium-packages",
+        "/package-details"
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

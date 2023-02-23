@@ -11,8 +11,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import okhttp3.Cache
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -20,10 +20,10 @@ object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false
     
-    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
+//    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //    private const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
 //    private const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-//    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
+    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
     
     @Provides
     @Singleton

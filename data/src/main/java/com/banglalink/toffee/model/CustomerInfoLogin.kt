@@ -170,7 +170,9 @@ class CustomerInfoLogin(
     @SerializedName("fStoreTblContentBlacklist")
     var fStoreTblContentBlacklist: String? = null,
     @SerializedName("isfireStoreTblContentBlacklist")
-    var isCircuitBreakerActive: Boolean = false
+    var isCircuitBreakerActive: Boolean = false,
+    @SerializedName("premium_packages")
+    var activePackList: @RawValue List<ActivePack>? = null
 ) : BodyResponse(), Parcelable
 
 @Entity

@@ -3,12 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        app:cardCornerRadius="6dp">
+        app:cardCornerRadius="6dp"
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -20,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="164dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/content_img"
+                loadChannelImage="@{data}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"

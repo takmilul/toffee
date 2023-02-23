@@ -7,17 +7,18 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelInfo" />
+            type="com.banglalink.toffee.data.network.response.PremiumPack" />
         
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
+        android:onClick="@{() -> callback.onItemClicked(data)}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +30,7 @@
             
             <com.banglalink.toffee.ui.widget.CustomImageView
                 android:id="@+id/packBannerImageView"
-                loadChannelImage="@{data}"
+                loadImageFromUrl="@{data.packImage}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
@@ -65,7 +66,7 @@
                 android:layout_marginBottom="5dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{data.program_name}"
+                android:text="@{data.packTitle}"
                 android:textColor="@color/TextClrInImg"
                 android:textSize="16sp"
                 android:fontFamily="@font/roboto_regular"
@@ -81,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:maxLines="1"
+                android:text="@{data.packDescription}"
                 tools:text="Starting from 20 BDT"
                 android:textColor="@color/TextClrInImg"
                 android:textSize="16sp"

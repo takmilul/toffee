@@ -12,7 +12,8 @@ import javax.inject.Inject
 class VerifyCodeService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val preference: SessionPreference,
-    private val bubbleConfigRepository: BubbleConfigRepository
+    private val bubbleConfigRepository: BubbleConfigRepository,
+//    private val premiumPackRepository: PremiumPackRepository
 ) {
     
     suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoLogin {
@@ -21,6 +22,9 @@ class VerifyCodeService @Inject constructor(
         response.customerInfoLogin.also {
             preference.saveCustomerInfo(it)
             try {
+//                it.premiumPacks?.doIfNotNullOrEmpty {
+//                    premiumPackRepository.insertAll(*it.toTypedArray())
+//                }
                 it.bubbleConfig?.let { bubbleConfigRepository.insert(it) }
             } catch (e: Exception) {
                 Log.i("bubble_", "execute: ${e.message}")
