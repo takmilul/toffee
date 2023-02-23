@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+
 import android.content.res.AssetManager
 import android.os.Bundle
 import android.webkit.JavascriptInterface
@@ -35,7 +36,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         const val SHAREABLE_URL = "shareable_url"
         const val TITLE = "title"
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MedalliaDigital.disableIntercept()
