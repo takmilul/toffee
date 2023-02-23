@@ -15,5 +15,5 @@ data class ActivePack(
     @SerializedName("dataPackDetails")
     val packDetails: String? = null,
     @SerializedName("isFreeUsed")
-    val isFreeUsed: Boolean = false
+    val isTrialPackUsed: Boolean = false
 )
