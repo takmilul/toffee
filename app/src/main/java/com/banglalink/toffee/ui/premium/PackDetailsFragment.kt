@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.BaseFragment
 
 class PackDetailsFragment : BaseFragment() {
@@ -31,11 +32,12 @@ class PackDetailsFragment : BaseFragment() {
         
 //        findNavController()?.navigate(R.id.startWatchingDialog)
         with(binding) {
-            payNowButton.setOnClickListener {
+            payNowButton.safeClick( {
                 activity?.checkVerification {
                     findNavController().navigate(R.id.bottomSheetPaymentMethods)
                 }
             }
+            )
         }
     }
     
