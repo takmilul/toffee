@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?selectableItemBackgroundBorderless">
     
     <ImageView
@@ -18,15 +19,23 @@
         android:layout_marginBottom="8dp"
         android:adjustViewBounds="true"
         android:background="@drawable/circular_white_bg"
-        tools:src="@drawable/ic_profile" />
+        tools:src="@drawable/ic_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
     
     <ImageView
-        android:contentDescription="@string/txt_icon"
-        android:id="@+id/premium_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:visibility="gone"
-        android:layout_gravity="bottom|center_horizontal"
-        android:src="@drawable/ic_vip_badge" />
-</FrameLayout>
+        android:id="@+id/premiumStatusIcon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/prem_icon_three"
+        app:layout_constraintEnd_toEndOf="@+id/icon"
+        app:layout_constraintStart_toStartOf="@+id/icon"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="premium status icon" />
+    
+</androidx.constraintlayout.widget.ConstraintLayout>
 

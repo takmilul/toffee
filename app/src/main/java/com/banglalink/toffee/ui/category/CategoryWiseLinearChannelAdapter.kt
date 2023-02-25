@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -24,6 +25,7 @@ class CategoryWiseLinearChannelAdapter(
         val obj = getItem(position)
         obj?.let {
             bindingUtil.bindChannel(holder.imageView, it)
+            holder.premiumIcon.isVisible = it.urlTypeExt == 1
             if (it.id == selectedItem?.id.toString()) {
                 holder.imageView.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
             } else {

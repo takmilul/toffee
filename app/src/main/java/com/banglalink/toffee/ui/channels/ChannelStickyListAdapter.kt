@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
@@ -101,6 +102,7 @@ class ChannelStickyListAdapter(
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
         
         bindingUtil.bindChannel(liveTvViewHolder.icon, item)
+        liveTvViewHolder.premiumIcon.isVisible = item.urlTypeExt == 1
         
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
@@ -124,7 +126,7 @@ class ChannelStickyListAdapter(
     internal class LiveTvViewHolder(itemView: View) :
         ItemViewHolder(itemView) {
         var icon: ImageView = itemView.findViewById(R.id.icon)
-        var premiumIcon: ImageView = itemView.findViewById(R.id.premium_icon)
+        var premiumIcon: ImageView = itemView.findViewById(R.id.premiumStatusIcon)
     }
 
     interface OnItemClickListener {

@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPremChannelsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.LandingPageViewModel
-import kotlinx.coroutines.launch
 
 class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -20,7 +17,6 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     private var _binding: FragmentPremChannelsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremChannelsBinding.inflate(layoutInflater)
@@ -39,17 +35,9 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     }
     
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launch {
-//            val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
-//                landingPageViewModel.loadChannels()
-//            } else {
-//                landingPageViewModel.loadChannels()
-//            }
-//            content.collectLatest {
-//                mAdapter.submitData(it)
-//            }
-            observe(viewModel.premiumPackLinearContentListLiveData) { linearChannelList ->
-                linearChannelList?.let { mAdapter.addAll(it) }
+        observe(viewModel.premiumPackLinearContentListState) { linearChannelList ->
+            linearChannelList?.let {
+                mAdapter.addAll(it)
             }
         }
     }

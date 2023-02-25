@@ -138,15 +138,15 @@ dependencies {
     implementation "jp.wasabeef.transformers:core:1.0.5"
     
     //Firebase Push Notification
-    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
+    implementation "com.google.firebase:firebase-messaging-ktx:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation "com.google.firebase:firebase-inappmessaging-display:20.3.0"
+    implementation "com.google.firebase:firebase-inappmessaging-display-ktx:20.3.0"
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
-    implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
-    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
+    implementation "com.google.firebase:firebase-analytics-ktx:$firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics-ktx:$firebaseCrashlyticsVersion"
     
-    implementation "com.google.firebase:firebase-firestore-ktx:24.4.2"
+    implementation "com.google.firebase:firebase-firestore-ktx:24.4.3"
     
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "com.jakewharton:butterknife:10.2.3"
@@ -237,7 +237,7 @@ dependencies {
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
-    implementation "com.google.android.gms:play-services-ads:21.4.0"
+    implementation "com.google.android.gms:play-services-ads:21.5.0"
     implementation "androidx.ads:ads-identifier:1.0.0-alpha04"
     implementation "com.google.guava:guava:31.0.1-android"
     

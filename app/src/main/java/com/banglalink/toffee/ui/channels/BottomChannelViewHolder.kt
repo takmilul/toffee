@@ -5,8 +5,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 
-class BottomChannelViewHolder(view: View)
-    :RecyclerView.ViewHolder(view) {
-
-    val imageView = itemView.findViewById<ImageView>(R.id.icon)!!
+class BottomChannelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    val imageView: ImageView = itemView.findViewById(R.id.icon)
+    val premiumIcon: ImageView = itemView.findViewById(R.id.premiumStatusIcon)
 }

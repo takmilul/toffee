@@ -6,24 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.BaseFragment
 
 class PackDetailsFragment : BaseFragment() {
+    
     private var _binding: FragmentPackDetailsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var navController: NavController
-    private lateinit var navOptions: NavOptions
     private val args by navArgs<PackDetailsFragmentArgs>()
     private val viewModel by activityViewModels<PremiumViewModel>()
     
@@ -34,8 +33,7 @@ class PackDetailsFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        changeToolBar()
+        changeToolbarIcon()
         
         observePremiumPackDetail()
         viewModel.getPremiumPackDetail(args.packId)
@@ -51,24 +49,24 @@ class PackDetailsFragment : BaseFragment() {
     }
     
     private fun observePremiumPackDetail() {
-        observe(viewModel.premiumPackDetailLiveData) {
-            when(it) {
+        observe(viewModel.premiumPackDetailState) { response ->
+            when (response) {
                 is Success -> {
-                    it.data?.linearChannelList?.doIfNotNullOrEmpty { linearChannelList ->
-                        viewModel.premiumPackLinearContentListLiveData.value = linearChannelList.toList()
+                    response.data?.linearChannelList?.doIfNotNullOrEmpty {
+                        viewModel.setLinearContentState(it.toList())
                     }
-                    it.data?.vodChannelList?.doIfNotNullOrEmpty { vodChannelList ->
-                        viewModel.premiumPackVodContentListLiveData.value = vodChannelList.toList()
+                    response.data?.vodChannelList?.doIfNotNullOrEmpty {
+                        viewModel.setVodContentState(it.toList())
                     }
                 }
                 is Failure -> {
-                    requireActivity().showToast(it.error.msg)
+                    requireActivity().showToast(response.error.msg)
                 }
             }
         }
     }
     
-    private fun changeToolBar() {
+    private fun changeToolbarIcon() {
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
         toolbar?.setNavigationOnClickListener {
