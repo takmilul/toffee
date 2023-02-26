@@ -78,7 +78,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     override fun onItemClicked(item: PremiumPack) {
-        findNavController().navigate(R.id.packDetailsFragment, bundleOf("packId" to item.id))
+        findNavController().navigate(R.id.packDetailsFragment, bundleOf("pack" to item))
     }
     
     override fun onDestroyView() {

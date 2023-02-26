@@ -492,4 +492,8 @@
     <string name="pack_price">Starting from 20 BDT</string>
     <string name="pack_details_btn">SEE DETAILS</string>
     <string name="pack_active_btn">ACTIVE</string>
+    <string name="pay_now_button_text">Pay Now</string>
+    <string name="premium_tv_channels_title">Premium TV channels</string>
+    <string name="premium_video_contents_title">Premium video contents</string>
+    <string name="pack_status_icon">pack status icon</string>
 </resources>

@@ -1,24 +1,33 @@
 package com.banglalink.toffee.ui.player
 
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Log
 
 class PlaylistManager {
+    
     var playlistId: Long = -1L
     private val playList: MutableList<ChannelInfo> = mutableListOf()
     private var playlistIndex = -1
-
+    
     fun getCurrentChannel(): ChannelInfo? {
         return playList.getOrNull(playlistIndex)
     }
-
+    
+    fun getNextChannel(): ChannelInfo? {
+        return if (hasNext()) playList.getOrNull(playlistIndex + 1) else null
+    }
+    
+    fun getPreviousChannel(): ChannelInfo? {
+        return if (hasPrevious()) playList.getOrNull(playlistIndex - 1) else null
+    }
+    
     fun setPlaylist(channelInfo: ChannelInfo) {
         playList.clear()
         playList.add(channelInfo)
         playlistIndex = 0
         playlistId = -1
     }
-
+    
     fun setPlayList(pdata: AddToPlaylistData) {
         if(pdata.playlistId == -1L) {
             playList.clear()
@@ -52,25 +61,34 @@ class PlaylistManager {
             }
         }
     }
-
+    
     fun clearPlaylist() {
         playList.clear()
         playlistIndex = -1
         playlistId = -1
     }
-
+    
     fun hasPrevious() = if(playlistId < 0) false else playlistIndex > 0
+    
     fun hasNext() = playlistIndex < playList.size - 1
-
+    
     fun setIndex(index: Int) {
         playlistIndex = index
     }
-
+    
+    fun isNextChannelPremium(): Boolean {
+        return hasNext() && playList.getOrNull(playlistIndex + 1)?.urlTypeExt == 1 
+    }
+    
+    fun isPreviousChannelPremium(): Boolean {
+        return hasPrevious() && playList.getOrNull(playlistIndex - 1)?.urlTypeExt == 1 
+    }
+    
     fun setChannelId(channelId: Int) {
         playlistIndex = playList.indexOfFirst { it.id.toInt() == channelId }
         if(playlistIndex < 0 && playList.isNotEmpty()) playlistIndex = 0
     }
-
+    
     fun nextChannel() {
         if(playlistId < 0) {
             if(playList.size > 1) {
@@ -80,6 +98,7 @@ class PlaylistManager {
         }
         if(hasNext()) playlistIndex++
     }
+    
     fun previousChannel() {
         if(hasPrevious()) playlistIndex--
     }

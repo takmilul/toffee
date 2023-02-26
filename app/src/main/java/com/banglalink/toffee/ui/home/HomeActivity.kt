@@ -148,10 +148,6 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -159,6 +155,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -1600,10 +1600,28 @@ class HomeActivity : PlayerPageActivity(),
                                                 contentId = it.getContentId(),
                                                 systemDate = mPref.getSystemTime(),
                                                 onSuccess = { playInNativePlayer(detailsInfo, it) },
-                                                onFailure = { navController.navigate(R.id.premiumFragment, bundleOf("contentId" to it.getContentId())) }
+                                                onFailure = {
+                                                    navController.navigate(
+                                                        R.id.premiumFragment,
+                                                        bundleOf("contentId" to it.getContentId()),
+                                                        navOptions {
+                                                            popUpTo(R.id.premiumFragment) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+                                                    )
+                                                }
                                             )
                                             activePackList
-                                        } ?: navController.navigate(R.id.premiumFragment, bundleOf("contentId" to it.getContentId()))
+                                        } ?: navController.navigate(
+                                            R.id.premiumFragment,
+                                            bundleOf("contentId" to it.getContentId()),
+                                            navOptions {
+                                                popUpTo(R.id.premiumFragment) {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        )
                                     }
                                     is Failure -> {
                                         showToast(response.error.msg)
@@ -1785,8 +1803,13 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playNext() {
         super.playNext()
-        if (playlistManager.playlistId == -1L) {
-            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+        if (playlistManager.playlistId == -1L || playlistManager.isNextChannelPremium()) {
+            val nextChannel = if (playlistManager.isNextChannelPremium()) {
+                playlistManager.getNextChannel()
+            } else {
+                playlistManager.getCurrentChannel()
+            }
+            viewModel.playContentLiveData.postValue(nextChannel)
             return
         }
         ConvivaHelper.endPlayerSession()
@@ -1801,6 +1824,10 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playPrevious() {
         super.playPrevious()
+        if (playlistManager.isPreviousChannelPremium()) {
+            viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
+            return
+        }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()

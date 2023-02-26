@@ -9,11 +9,11 @@ data class ActivePack(
     @SerializedName("contents")
     val contents: List<Int>? = null,
     @SerializedName("isSubscriptionActive")
-    val isActive: Boolean = false,
+    var isActive: Boolean = false,
     @SerializedName("expiryDate")
     val expiryDate: String? = null,
     @SerializedName("dataPackDetails")
-    val packDetails: String? = null,
+    val packDetail: String? = null,
     @SerializedName("isFreeUsed")
     val isTrialPackUsed: Boolean = false
 )
