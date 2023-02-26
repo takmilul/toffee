@@ -138,15 +138,15 @@ dependencies {
     implementation "jp.wasabeef.transformers:core:1.0.5"
     
     //Firebase Push Notification
-    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
+    implementation "com.google.firebase:firebase-messaging-ktx:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation "com.google.firebase:firebase-inappmessaging-display:20.3.0"
+    implementation "com.google.firebase:firebase-inappmessaging-display-ktx:20.3.0"
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
     
-    implementation "com.google.firebase:firebase-firestore-ktx:24.4.2"
+    implementation "com.google.firebase:firebase-firestore-ktx:24.4.3"
     
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "com.jakewharton:butterknife:10.2.3"
