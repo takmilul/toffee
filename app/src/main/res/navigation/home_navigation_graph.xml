@@ -228,6 +228,10 @@
         android:id="@+id/premiumFragment"
         android:name="com.banglalink.toffee.ui.premium.PremiumFragment"
         android:label="Toffee Premium">
+        <argument
+            android:name="contentId"
+            app:argType="string"
+            android:defaultValue="0" />
     </fragment>
     
     <fragment

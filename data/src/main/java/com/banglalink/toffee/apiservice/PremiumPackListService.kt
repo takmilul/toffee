@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
 class PremiumPackListService @Inject constructor(
@@ -23,6 +24,12 @@ class PremiumPackListService @Inject constructor(
                 )
             )
         }
-        return response.response?.premiumPacks ?: emptyList()
+        return response.response?.premiumPacks?.map {premiumPack ->
+            preference.activePremiumPackList.value?.firstOrNull { it.packId == premiumPack.id }?.let {
+                premiumPack.isPackPurchased = true
+                premiumPack.expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}"
+            }
+            premiumPack
+        } ?: emptyList()
     }
 }

@@ -61,10 +61,10 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
-import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.*
@@ -431,7 +431,6 @@ class HomeActivity : PlayerPageActivity(),
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
-        viewModel.getPackStatus(100)
     }
     
     private fun loadUserInfo() {
@@ -1587,11 +1586,37 @@ class HomeActivity : PlayerPageActivity(),
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        when {
-                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
-                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
-                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
+                        mPref.activePremiumPackList.value?.checkPackPurchased(
+                            contentId = it.getContentId(),
+                            systemDate = mPref.getSystemTime(),
+                            onSuccess = { playInNativePlayer(detailsInfo, it) }
+                        ) {
+                            observe(viewModel.activePackListLiveData) { response ->
+                                when (response) {
+                                    is Success -> {
+                                        response.data.isNotNullOrEmpty { activePackList ->
+                                            mPref.activePremiumPackList.value = activePackList.toList()
+                                            activePackList.toList().checkPackPurchased(
+                                                contentId = it.getContentId(),
+                                                systemDate = mPref.getSystemTime(),
+                                                onSuccess = { playInNativePlayer(detailsInfo, it) },
+                                                onFailure = { navController.navigate(R.id.premiumFragment, bundleOf("contentId" to it.getContentId())) }
+                                            )
+                                            activePackList
+                                        } ?: navController.navigate(R.id.premiumFragment, bundleOf("contentId" to it.getContentId()))
+                                    }
+                                    is Failure -> {
+                                        showToast(response.error.msg)
+                                    }
+                                }
+                            }
+                            viewModel.getPackStatus(it.getContentId().toInt())
                         }
+//                        when {
+//                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
+//                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
+//                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
+//                        }
                     }
                 }
                 it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PREMIUM -> {

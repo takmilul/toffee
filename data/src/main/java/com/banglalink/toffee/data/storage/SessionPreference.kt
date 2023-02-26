@@ -8,7 +8,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.isNotNullBlank
+import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -206,7 +206,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         val dateString = pref.getString(PREF_SYSTEM_TIME, null)
         val deviceDate = Date()
         try {
-            dateString?.isNotNullBlank {
+            dateString?.isNotNullOrBlank {
                 val serverDate = Utils.getDate(it)
                 return if (deviceDate.after(serverDate)) deviceDate else serverDate
             }

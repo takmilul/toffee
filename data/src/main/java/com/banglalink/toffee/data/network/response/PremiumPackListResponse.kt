@@ -26,5 +26,9 @@ data class PremiumPack(
     @SerializedName("isPurchaseAvailable")
     val isPurchaseAvailable: Int = 0,
     @SerializedName("isAvailableFreePeriod")
-    val isAvailableFreePeriod: Int = 0
+    val isAvailableFreePeriod: Int = 0,
+    @SerializedName("isPackPurchased")
+    var isPackPurchased: Boolean = false,
+    @SerializedName("expiryDate")
+    var expiryDate: String
 )

@@ -7,7 +7,7 @@ data class ActivePack(
     @SerializedName("packId")
     val packId: Int = 0,
     @SerializedName("contents")
-    val contents: List<Int?>? = null,
+    val contents: List<Int>? = null,
     @SerializedName("isSubscriptionActive")
     val isActive: Boolean = false,
     @SerializedName("expiryDate")
