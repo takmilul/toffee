@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremContentBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
@@ -38,7 +37,7 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     }
     
     private fun observeList() {
-        observe(viewModel.premiumPackVodContentListState) { vodContentList ->
+        observe(viewModel.packContentListState) { vodContentList ->
             vodContentList?.let {
                 mAdapter.addAll(it)
             }
@@ -47,8 +46,8 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        parentFragment?.arguments?.get("pack")?.let {
-            if (it is PremiumPack && it.isPackPurchased) {
+        viewModel.selectedPack.value?.let {
+            if (it.isPackPurchased) {
                 homeViewModel.playContentLiveData.value = item
             }
         }

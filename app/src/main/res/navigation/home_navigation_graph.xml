@@ -578,11 +578,7 @@
     <fragment
         android:id="@+id/packDetailsFragment"
         android:name="com.banglalink.toffee.ui.premium.PackDetailsFragment"
-        android:label="Pack Details">
-        <argument
-            android:name="pack"
-            app:argType="com.banglalink.toffee.data.network.response.PremiumPack" />
-    </fragment>
+        android:label="Pack Details" />
 
     <dialog
         android:id="@+id/bottomSheetPaymentMethods"

@@ -148,10 +148,6 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -159,6 +155,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -837,6 +837,9 @@ class HomeActivity : PlayerPageActivity(),
     
     fun getHomeViewModel() = viewModel
     
+    var currentFragmentDestinationId: Int? = 0
+    var bottomNavBarHideState = false
+    
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
@@ -858,7 +861,11 @@ class HomeActivity : PlayerPageActivity(),
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
                 )
             )
+            currentFragmentDestinationId = controller.currentDestination?.id
         }
+        
+        bottomNavBarHideState = currentFragmentDestinationId == R.id.packDetailsFragment
+        toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
     }
@@ -1121,18 +1128,36 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun toggleNavigation(state: Boolean) {
+        if (!bottomNavBarHideState) {
+            if (state) {
+                supportActionBar?.hide()
+                binding.bottomAppBar.hide()
+                binding.uploadButton.hide()
+                binding.mainUiFrame.visibility = View.GONE
+                mPref.bubbleVisibilityLiveData.postValue(false)
+            } else {
+                binding.mainUiFrame.visibility = View.VISIBLE
+                supportActionBar?.show()
+                binding.bottomAppBar.show()
+                binding.uploadButton.show()
+                mPref.bubbleVisibilityLiveData.postValue(true)
+            }
+        }
+    }
+    
+    fun toggleBottomNavBar(state: Boolean) {
         if (state) {
-            supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
-            binding.mainUiFrame.visibility = View.GONE
-            mPref.bubbleVisibilityLiveData.postValue(false)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> { 
+                bottomMargin = 0
+            }
         } else {
-            binding.mainUiFrame.visibility = View.VISIBLE
-            supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            mPref.bubbleVisibilityLiveData.postValue(true)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
+                bottomMargin = 56.dp
+            }
         }
     }
     

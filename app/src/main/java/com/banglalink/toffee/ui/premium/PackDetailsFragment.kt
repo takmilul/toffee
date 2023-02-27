@@ -9,12 +9,17 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -26,7 +31,6 @@ class PackDetailsFragment : BaseFragment() {
     private var pack: PremiumPack? = null
     private var _binding: FragmentPackDetailsBinding? = null
     private val binding get() = _binding!!
-    private val args by navArgs<PackDetailsFragmentArgs>()
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
@@ -38,9 +42,8 @@ class PackDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-        binding.progressBar.show()
         changeToolbarIcon()
-        pack = args.pack
+        pack = viewModel.selectedPack.value
         
         pack?.let {
             observePremiumPackDetail()
@@ -63,6 +66,9 @@ class PackDetailsFragment : BaseFragment() {
                     })
                 }
             }
+        } ?: run { 
+            binding.progressBar.hide()
+            requireContext().showToast(getString(R.string.try_again_message))
         }
         
 //        findNavController()?.navigate(R.id.startWatchingDialog)
@@ -86,15 +92,12 @@ class PackDetailsFragment : BaseFragment() {
                                 expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
                                 packDetail = if (pack!!.isAvailableFreePeriod == 1) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
                             )
-                            parentFragment?.let {
-                                arguments = bundleOf("pack" to purchasedPack)
-                            }
+                            viewModel.selectedPack.value = purchasedPack
                             findNavController().popBackStack(R.id.packDetailsFragment, true)
                             findNavController().navigate(R.id.packDetailsFragment)
                         } ?: run {
                             observePaymentMethodList()
                             viewModel.getPackPaymentMethodList(pack!!.id)
-//                            findNavController().navigate(R.id.bottomSheetPaymentMethods)
                         }
                     }
                 }
@@ -119,7 +122,7 @@ class PackDetailsFragment : BaseFragment() {
     }
     
     private fun observePremiumPackDetail() {
-        observe(viewModel.premiumPackDetailState) { response ->
+        observe(viewModel.packDetailState) { response ->
             when (response) {
                 is Success -> {
                     binding.progressBar.hide()

@@ -5,17 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -26,8 +28,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     private lateinit var mAdapter: PremiumAdapter
     private var _binding: FragmentPremiumBinding? = null
     private val binding get() = _binding!!
-    private val args by navArgs<PremiumFragmentArgs>()
-    private val viewModel by viewModels<PremiumViewModel>()
+    private val viewModel by activityViewModels<PremiumViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumBinding.inflate(layoutInflater)
@@ -38,7 +39,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
         changeToolbarIcon()
-        val contentId = args.contentId
+        val contentId = arguments?.getString("contentId")
         
         mAdapter = PremiumAdapter(this)
         
@@ -49,7 +50,8 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         }
         
         observeList()
-        viewModel.getPremiumPackList(contentId)
+        viewModel.selectedPack.value = null
+        viewModel.getPremiumPackList(contentId ?: "0")
     }
     
     private fun changeToolbarIcon() {
@@ -63,7 +65,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     private fun observeList() {
-        observe(viewModel.premiumPackListState) { response ->
+        observe(viewModel.packListState) { response ->
             when(response) {
                 is Success -> {
                     binding.progressBar.hide()
@@ -82,7 +84,8 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     override fun onItemClicked(item: PremiumPack) {
-        findNavController().navigate(R.id.packDetailsFragment, bundleOf("pack" to item))
+        viewModel.selectedPack.value = item
+        findNavController().navigate(R.id.packDetailsFragment)
     }
     
     override fun onDestroyView() {
