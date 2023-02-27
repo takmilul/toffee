@@ -487,4 +487,12 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body premiumPackDetailRequest: PremiumPackDetailRequest
     ): PremiumPackDetailResponse
+
+    @POST("/package-wise-data-pack/{isBlNumber}/{packageId}/{dbVersion}")
+    suspend fun getPackageWisePremiumDataPack(
+        @Path("isBlNumber") isBlNumber: Int,
+        @Path("packageId") packId: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body packageWisePremiumPackRequest: PackageWisePremiumPackRequest
+    ): PackageWisePremiumPackResponse
 }

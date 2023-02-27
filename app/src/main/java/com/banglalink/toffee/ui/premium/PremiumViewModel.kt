@@ -2,8 +2,11 @@ package com.banglalink.toffee.ui.premium
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.PackageWisePremiumDataPackService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
+import com.banglalink.toffee.data.network.response.PackageWisePremiumPackResponse
+import com.banglalink.toffee.data.network.response.PaymentPackDetails
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -19,6 +22,7 @@ import kotlinx.coroutines.launch
 class PremiumViewModel @Inject constructor(
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
+    private val packageWisePremiumDataPackService: PackageWisePremiumDataPackService
 ) : ViewModel() {
     
     private var _premiumPackListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -32,6 +36,11 @@ class PremiumViewModel @Inject constructor(
     
     private var _premiumPackVodContentListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
     var premiumPackVodContentListState = _premiumPackVodContentListMutableState.asSharedFlow()
+
+    private var _premiumDataPackState = MutableSharedFlow<Resource<PackageWisePremiumPackResponse.PackageWisePremiumPackBean>>()
+    val premiumDataPackState = _premiumDataPackState.asSharedFlow()
+
+
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -58,4 +67,11 @@ class PremiumViewModel @Inject constructor(
             _premiumPackVodContentListMutableState.emit(vodContentList)
         }
     }
+    fun getPremiumDataPackList(packageId: Int){
+            viewModelScope.launch {
+                val response = resultFromResponse { packageWisePremiumDataPackService.loadData(packageId) }
+                _premiumDataPackState.emit(response)
+        }
+    }
+
 }

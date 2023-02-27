@@ -302,7 +302,7 @@ class HomeViewModel @Inject constructor(
     fun getPackStatus( contentId: Int) {
         viewModelScope.launch {
             premiumPackStatusService.loadData(contentId)
-            Log.d(TAG, "getPackStatus: "+ contentId.toString())
+
         }
     }
     

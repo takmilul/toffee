@@ -33,7 +33,7 @@ class PremiumPackStatusService @Inject constructor (
              isBlNumber=0
 
          }
-         Log.d(TAG, "getPackStatus: "+ isBlNumber.toString())
+
          val response = tryIO2 {
              toffeeApi.getPremiumStatus(
                  isBlNumber,
@@ -42,7 +42,7 @@ class PremiumPackStatusService @Inject constructor (
                  request
              )
          }
-         Log.d(TAG, "getPackStatus: "+ response)
+
          return response.response.loginRelatedSubsHistory
 
     }

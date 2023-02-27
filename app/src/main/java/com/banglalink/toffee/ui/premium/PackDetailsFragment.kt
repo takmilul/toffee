@@ -42,6 +42,7 @@ class PackDetailsFragment : BaseFragment() {
         with(binding) {
             payNowButton.safeClick({
                 activity?.checkVerification {
+                    viewModel.getPremiumDataPackList(args.packId)
                     findNavController().navigate(R.id.bottomSheetPaymentMethods)
                 }
             })
@@ -65,6 +66,7 @@ class PackDetailsFragment : BaseFragment() {
             }
         }
     }
+
     
     private fun changeToolbarIcon() {
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
