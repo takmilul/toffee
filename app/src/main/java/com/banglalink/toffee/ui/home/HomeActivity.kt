@@ -61,10 +61,10 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
-import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.*
@@ -148,10 +148,6 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -159,6 +155,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -431,7 +431,6 @@ class HomeActivity : PlayerPageActivity(),
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
-        viewModel.getPackStatus(100)
     }
     
     private fun loadUserInfo() {
@@ -1587,11 +1586,55 @@ class HomeActivity : PlayerPageActivity(),
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        when {
-                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
-                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
-                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
+                        mPref.activePremiumPackList.value?.checkPackPurchased(
+                            contentId = it.getContentId(),
+                            systemDate = mPref.getSystemTime(),
+                            onSuccess = { playInNativePlayer(detailsInfo, it) }
+                        ) {
+                            observe(viewModel.activePackListLiveData) { response ->
+                                when (response) {
+                                    is Success -> {
+                                        response.data.isNotNullOrEmpty { activePackList ->
+                                            mPref.activePremiumPackList.value = activePackList.toList()
+                                            activePackList.toList().checkPackPurchased(
+                                                contentId = it.getContentId(),
+                                                systemDate = mPref.getSystemTime(),
+                                                onSuccess = { playInNativePlayer(detailsInfo, it) },
+                                                onFailure = {
+                                                    navController.navigate(
+                                                        R.id.premiumFragment,
+                                                        bundleOf("contentId" to it.getContentId()),
+                                                        navOptions {
+                                                            popUpTo(R.id.premiumFragment) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+                                                    )
+                                                }
+                                            )
+                                            activePackList
+                                        } ?: navController.navigate(
+                                            R.id.premiumFragment,
+                                            bundleOf("contentId" to it.getContentId()),
+                                            navOptions {
+                                                popUpTo(R.id.premiumFragment) {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        )
+                                    }
+                                    is Failure -> {
+                                        showToast(response.error.msg)
+                                    }
+                                }
+                            }
+                            viewModel.getPackStatus(it.getContentId().toInt())
                         }
+//                        when {
+//                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
+//                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
+//                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
+//                        }
                     }
                 }
                 it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PREMIUM -> {
@@ -1760,8 +1803,13 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playNext() {
         super.playNext()
-        if (playlistManager.playlistId == -1L) {
-            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+        if (playlistManager.playlistId == -1L || playlistManager.isNextChannelPremium()) {
+            val nextChannel = if (playlistManager.isNextChannelPremium()) {
+                playlistManager.getNextChannel()
+            } else {
+                playlistManager.getCurrentChannel()
+            }
+            viewModel.playContentLiveData.postValue(nextChannel)
             return
         }
         ConvivaHelper.endPlayerSession()
@@ -1776,6 +1824,10 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playPrevious() {
         super.playPrevious()
+        if (playlistManager.isPreviousChannelPremium()) {
+            viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
+            return
+        }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()

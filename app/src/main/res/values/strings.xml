@@ -488,7 +488,12 @@
     <string name="circuit_breaker_alert_message">Sorry, this content is currently not available. Please try again later. Thank you.</string>
     <string name="back_to_toffee_text">Back to TOFFEE</string>
     <string name="prem_content_title">Choose any of the following bundles to avail the content</string>
-    <string name="pac_name">Super saver bundle</string>
-    <string name="pac_price">Starting from 20 BDT</string>
-    <string name="pac_details_btn">SEE DETAILS</string>
+    <string name="pack_name">Super saver bundle</string>
+    <string name="pack_price">Starting from 20 BDT</string>
+    <string name="pack_details_btn">SEE DETAILS</string>
+    <string name="pack_active_btn">ACTIVE</string>
+    <string name="pay_now_button_text">Pay Now</string>
+    <string name="premium_tv_channels_title">Premium TV channels</string>
+    <string name="premium_video_contents_title">Premium video contents</string>
+    <string name="pack_status_icon">pack status icon</string>
 </resources>

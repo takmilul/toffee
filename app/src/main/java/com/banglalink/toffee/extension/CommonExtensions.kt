@@ -28,7 +28,12 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.enums.InputType.ADDRESS
+import com.banglalink.toffee.enums.InputType.DESCRIPTION
+import com.banglalink.toffee.enums.InputType.EMAIL
+import com.banglalink.toffee.enums.InputType.PHONE
+import com.banglalink.toffee.enums.InputType.TITLE
+import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -37,9 +42,9 @@ import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
-import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.util.*
+import kotlinx.coroutines.launch
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]{1,256}+@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}+\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25}+(?:\\.[a-zA-Z]{1,4})?$"
@@ -271,4 +276,23 @@ fun String.hexToResourceName(resources: Resources): String {
     val resourceName = resources.getResourceName(id)
     Log.i("RES_", resourceName)
     return resourceName
+}
+
+fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    this?.isNotNullOrEmpty { packList ->
+        packList.firstOrNull { pack ->
+            pack.contents?.contains(contentId.toInt()) ?: false
+        }?.let { activePack ->
+            try {
+                if (activePack.isActive && Utils.getDate(activePack.expiryDate).after(systemDate)) {
+                    onSuccess()
+                } else {
+                    onFailure()
+                }
+            } catch (_: Exception) {
+                onFailure()
+            }
+        } ?: onFailure()
+        packList
+    } ?: onFailure()
 }

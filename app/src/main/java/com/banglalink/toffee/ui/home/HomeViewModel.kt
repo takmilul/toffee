@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -106,6 +105,7 @@ class HomeViewModel @Inject constructor(
     val mediaCdnSignUrlData = SingleLiveEvent<Resource<MediaCdnSignUrl?>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
+    val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     
@@ -298,11 +298,11 @@ class HomeViewModel @Inject constructor(
             sendCategoryChannelShareCountEvent.execute(contentType, contentId, sharedUrl)
         }
     }
-
+    
     fun getPackStatus( contentId: Int) {
         viewModelScope.launch {
-            premiumPackStatusService.loadData(contentId)
-
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }
+            activePackListLiveData.value = response
         }
     }
     

@@ -15,11 +15,11 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.NON_PREMIUM
-import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.*
@@ -590,15 +590,17 @@ abstract class PlayerPageActivity :
     }
     
     override fun playNext() {
-        playlistManager.nextChannel()
-        if (playlistManager.playlistId != -1L) {
+        if (playlistManager.playlistId != -1L && !playlistManager.isNextChannelPremium()) {
+            playlistManager.nextChannel()
             playChannel(false)
         }
     }
     
     override fun playPrevious() {
-        playlistManager.previousChannel()
-        playChannel(false)
+        if (!playlistManager.isPreviousChannelPremium()) {
+            playlistManager.previousChannel()
+            playChannel(false)
+        }
     }
     
     protected fun addChannelToPlayList(info: ChannelInfo) {

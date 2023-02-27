@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -26,6 +27,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     private lateinit var mAdapter: PremiumAdapter
     private var _binding: FragmentPremiumBinding? = null
     private val binding get() = _binding!!
+    private val args by navArgs<PremiumFragmentArgs>()
     private val viewModel by viewModels<PremiumViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -36,7 +38,8 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeToolbarIcon()
-    
+        val contentId = args.contentId ?: "0"
+        
         mAdapter = PremiumAdapter(this)
         
         with(binding.premiumPackList) {
@@ -46,7 +49,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         }
         
         observeList()
-        viewModel.getPremiumPackList()
+        viewModel.getPremiumPackList(contentId)
     }
     
     private fun changeToolbarIcon() {
@@ -75,7 +78,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     override fun onItemClicked(item: PremiumPack) {
-        findNavController().navigate(R.id.packDetailsFragment, bundleOf("packId" to item.id))
+        findNavController().navigate(R.id.packDetailsFragment, bundleOf("pack" to item))
     }
     
     override fun onDestroyView() {

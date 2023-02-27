@@ -228,6 +228,10 @@
         android:id="@+id/premiumFragment"
         android:name="com.banglalink.toffee.ui.premium.PremiumFragment"
         android:label="Toffee Premium">
+        <argument
+            android:name="contentId"
+            app:argType="string"
+            android:defaultValue="0" />
     </fragment>
     
     <fragment
@@ -576,9 +580,8 @@
         android:name="com.banglalink.toffee.ui.premium.PackDetailsFragment"
         android:label="Pack Details">
         <argument
-            android:name="packId"
-            android:defaultValue="0"
-            app:argType="integer" />
+            android:name="pack"
+            app:argType="com.banglalink.toffee.data.network.response.PremiumPack" />
     </fragment>
 
     <dialog

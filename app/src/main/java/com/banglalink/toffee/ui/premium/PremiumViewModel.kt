@@ -49,7 +49,7 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun getPremiumPackDetail(packId: Int = 0) {
+    fun getPremiumPackDetail(packId: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackDetailService.loadData(packId) }
             _premiumPackDetailState.emit(response)
