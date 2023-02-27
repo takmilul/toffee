@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
+            android:fitsSystemWindows="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,9 +29,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
                     android:adjustViewBounds="true"
-                    android:contentDescription="pack banner"
+                    android:contentDescription="@string/pack_banner"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/placeholder"
+                    tools:srcCompat="@drawable/placeholder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -71,7 +72,7 @@
                     android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/pack_status_icon"
-                    tools:src="@drawable/ic_premium"
+                    tools:srcCompat="@drawable/ic_premium"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
                     app:layout_constraintEnd_toEndOf="parent" />
                 
@@ -85,8 +86,8 @@
                     android:maxLines="2"
                     android:text="@string/premium_tv_channels_title"
                     android:textColor="@color/categoryNameColor"
-                    android:textSize="12sp"
                     android:textStyle="bold"
+                    android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/packBannerImageView" />
@@ -113,8 +114,8 @@
                     android:maxLines="2"
                     android:text="@string/premium_video_contents_title"
                     android:textColor="@color/categoryNameColor"
-                    android:textSize="12sp"
                     android:textStyle="bold"
+                    android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -134,6 +135,37 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumContentListTitle"
                     tools:layout="@layout/fragment_prem_content" />
+                
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/premiumChannelGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:constraint_referenced_ids="premiumChannelListTitle,premiumChannelFragment" />
+                
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/premiumContentGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:constraint_referenced_ids="premiumContentListTitle,premiumContentFragment" />
+                
+                <ImageView
+                    android:id="@+id/progress_bar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/gif_round_border"
+                    android:elevation="2dp"
+                    tools:srcCompat="@drawable/content_loader"
+                    android:visibility="visible"
+                    tools:visibility="gone"
+                    android:contentDescription="@string/txt_content_loader"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/packBannerImageView" />
                 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

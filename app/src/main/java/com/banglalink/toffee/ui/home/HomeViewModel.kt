@@ -299,7 +299,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getPackStatus( contentId: Int) {
+    fun getPackStatus( contentId: Int = 0) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }
             activePackListLiveData.value = response

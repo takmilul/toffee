@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -19,6 +20,7 @@ class PaymentMethodFragment : BottomSheetDialogFragment() {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var navController: NavController
+    private val args by navArgs<PaymentMethodFragmentArgs>()
     
     companion object {
         const val TAG = "BottomSheetDialog"

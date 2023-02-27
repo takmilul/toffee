@@ -50,14 +50,14 @@ import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures.addCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.concurrent.*
-import javax.inject.Inject
-import javax.net.ssl.SSLContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.*
+import javax.inject.Inject
+import javax.net.ssl.SSLContext
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
@@ -101,8 +101,10 @@ class SplashScreenFragment : BaseFragment() {
     
     private fun observeLoadingProgress() {
         observe(viewModel.apiLoadingProgress) {
-            val progressValue = if (connectionWatcher.isOnline) it else 1
-            ObjectAnimator.ofInt(_binding?.progressBar, "progress", progressValue).start()
+            runCatching {
+                val progressValue = if (connectionWatcher.isOnline) it else 1
+                ObjectAnimator.ofInt(_binding?.progressBar, "progress", progressValue).start()
+            }
         }
     }
     

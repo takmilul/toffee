@@ -489,10 +489,10 @@ interface ToffeeApi {
     ): PremiumPackDetailResponse
 
     @POST("/package-wise-data-pack/{isBlNumber}/{packageId}/{dbVersion}")
-    suspend fun getPackageWisePremiumDataPack(
+    suspend fun getPackPaymentMethods(
         @Path("isBlNumber") isBlNumber: Int,
         @Path("packageId") packId: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body packageWisePremiumPackRequest: PackageWisePremiumPackRequest
-    ): PackageWisePremiumPackResponse
+        @Body packPaymentMethodRequest: PackPaymentMethodRequest
+    ): PackPaymentMethodResponse
 }

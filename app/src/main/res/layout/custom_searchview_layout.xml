@@ -1,4 +1,6 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_bar"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
@@ -22,7 +24,7 @@
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
         android:focusable="true"
-        android:src="@drawable/ic_menu_search"
+        app:srcCompat="@drawable/ic_menu_search"
         android:contentDescription="@string/abc_searchview_description_search" />
     
     <LinearLayout
@@ -94,7 +96,7 @@
                 android:visibility="visible"
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip"
-                android:src="@drawable/ic_close" />
+                app:srcCompat="@drawable/ic_close" />
             
         </LinearLayout>
         
@@ -127,7 +129,7 @@
                 android:focusable="true"
                 android:paddingLeft="16dip"
                 android:paddingRight="16dip"
-                android:src="@drawable/ic_menu_microphone" />
+                app:srcCompat="@drawable/ic_menu_microphone" />
 
         </LinearLayout>
     </LinearLayout>

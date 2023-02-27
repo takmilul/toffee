@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremChannelsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 
 class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -17,6 +19,7 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     private var _binding: FragmentPremChannelsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremChannelsBinding.inflate(layoutInflater)
@@ -38,6 +41,15 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         observe(viewModel.premiumPackLinearContentListState) { linearChannelList ->
             linearChannelList?.let {
                 mAdapter.addAll(it)
+            }
+        }
+    }
+    
+    override fun onItemClicked(item: ChannelInfo) {
+        super.onItemClicked(item)
+        parentFragment?.arguments?.get("pack")?.let {
+            if (it is PremiumPack && it.isPackPurchased) {
+                homeViewModel.playContentLiveData.value = item
             }
         }
     }

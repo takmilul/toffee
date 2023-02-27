@@ -9,14 +9,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumBinding
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -37,8 +36,9 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.load(R.drawable.content_loader)
         changeToolbarIcon()
-        val contentId = args.contentId ?: "0"
+        val contentId = args.contentId
         
         mAdapter = PremiumAdapter(this)
         
@@ -66,11 +66,15 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         observe(viewModel.premiumPackListState) { response ->
             when(response) {
                 is Success -> {
+                    binding.progressBar.hide()
                     response.data.doIfNotNullOrEmpty {
+                        binding.packListHeader.show()
+                        binding.premiumPackList.show()
                         mAdapter.addAll(it.toList())
                     }
                 }
                 is Failure -> {
+                    binding.progressBar.hide()
                     requireContext().showToast(response.error.msg)
                 }
             }

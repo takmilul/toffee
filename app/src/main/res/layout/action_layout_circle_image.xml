@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="?attr/actionButtonStyle"
     android:layout_width="46dp"
     android:layout_height="46dp"
@@ -12,7 +13,7 @@
         android:id="@+id/view_avatar"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:src="@drawable/ic_menu_profile"
+        app:srcCompat="@drawable/ic_menu_profile"
         android:layout_gravity="center"
         android:contentDescription="@string/txt_avatar" />
 

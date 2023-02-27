@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremContentBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 
 class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -17,6 +19,7 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     private var _binding: FragmentPremContentBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremContentBinding.inflate(layoutInflater)
@@ -38,6 +41,15 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         observe(viewModel.premiumPackVodContentListState) { vodContentList ->
             vodContentList?.let {
                 mAdapter.addAll(it)
+            }
+        }
+    }
+    
+    override fun onItemClicked(item: ChannelInfo) {
+        super.onItemClicked(item)
+        parentFragment?.arguments?.get("pack")?.let {
+            if (it is PremiumPack && it.isPackPurchased) {
+                homeViewModel.playContentLiveData.value = item
             }
         }
     }

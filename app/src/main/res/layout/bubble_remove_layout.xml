@@ -16,14 +16,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:src="@drawable/circle" />
+        app:srcCompat="@drawable/circle" />
     
     <ImageView
         android:id="@+id/remove_x"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="center"
-        android:src="@drawable/cross"
+        app:srcCompat="@drawable/cross"
         android:scaleType="fitXY"
         app:layout_constraintLeft_toLeftOf="@id/remove_circle"
         app:layout_constraintRight_toRightOf="@id/remove_circle"

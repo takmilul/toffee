@@ -23,7 +23,6 @@
             android:id="@+id/iconHolder"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -35,11 +34,11 @@
                 android:background="@drawable/circuler_back"
                 android:scaleType="centerCrop"
                 loadChannelImage="@{data}"
-                tools:src="@drawable/ic_profile"
+                tools:srcCompat="@drawable/ic_profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="channel image" />
+                android:contentDescription="@string/channel_image" />
         
         </FrameLayout>
         
@@ -49,11 +48,11 @@
             android:layout_height="28dp"
             android:layout_marginTop="-6dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/prem_icon_three"
+            app:srcCompat="@drawable/prem_icon_three"
             app:layout_constraintEnd_toEndOf="@+id/iconHolder"
             app:layout_constraintStart_toStartOf="@+id/iconHolder"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="premium status icon" />
+            android:contentDescription="@string/premium_status_icon" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -27,7 +27,7 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/circular_white_bg"
                     android:contentDescription="@string/txt_icon"
-                    android:src="@drawable/ic_profile"
+                    app:srcCompat="@drawable/ic_profile"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

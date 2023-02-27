@@ -44,7 +44,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 app:layout_constraintVertical_chainStyle="packed"
-                tools:src="@drawable/placeholder" />
+                tools:srcCompat="@drawable/placeholder" />
             
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayoutCompat"
@@ -107,7 +107,9 @@
                 android:textStyle="bold"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:backgroundTint="@color/colorAccent2"
+                tools:text="@string/pack_details_btn"/>
             
             <ImageView
                 android:id="@+id/packStatusIcon"
@@ -118,9 +120,9 @@
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="Pack Status Icon" />
+                android:contentDescription="@string/pack_status_icon"
+                tools:srcCompat="@drawable/ic_premium_corner"/>
             
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>
-
