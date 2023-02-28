@@ -16,6 +16,8 @@ data class PremiumPackStatusResponse(
 
 {
     data class PremiumPackStatusBean(
+        @SerializedName("status")
+        var status : Int?,
         @SerializedName("login_related_subs_history")
         val loginRelatedSubsHistory: List<ActivePack>?
     )

@@ -481,6 +481,11 @@ interface ToffeeApi {
         @Body premiumPackListRequest: PremiumPackListRequest
     ): PremiumPackListResponse
     
+    @POST("/data-pack-purchase")
+    suspend fun purchaseDataPack(
+        @Body premiumPackListRequest: DataPackPurchaseRequest
+    ): PremiumPackStatusResponse
+    
     @POST("/package-details/{packageId}/{dbVersion}")
     suspend fun getPremiumPackDetail(
         @Path("packageId") packId: Int,
