@@ -1,12 +1,12 @@
 package com.banglalink.toffee.ui.premium
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.PackageWisePremiumDataPackService
+import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
-import com.banglalink.toffee.data.network.response.PackageWisePremiumPackResponse
-import com.banglalink.toffee.data.network.response.PaymentPackDetails
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -22,56 +22,60 @@ import kotlinx.coroutines.launch
 class PremiumViewModel @Inject constructor(
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
-    private val packageWisePremiumDataPackService: PackageWisePremiumDataPackService
+    private val packPaymentMethodService: PackPaymentMethodService
 ) : ViewModel() {
     
-    private var _premiumPackListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
-    val premiumPackListState = _premiumPackListState.asSharedFlow()
+    private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
+    val packListState = _packListState.asSharedFlow()
     
-    private var _premiumPackDetailState = MutableSharedFlow<Resource<PremiumPackDetailBean?>>()
-    val premiumPackDetailState = _premiumPackDetailState.asSharedFlow()
+    private var _packDetailState = MutableSharedFlow<Resource<PremiumPackDetailBean?>>()
+    val packDetailState = _packDetailState.asSharedFlow()
     
-    private val _premiumPackLinearContentListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
-    val premiumPackLinearContentListState = _premiumPackLinearContentListMutableState.asSharedFlow()
+    private val _packChannelListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
+    val packChannelListState = _packChannelListMutableState.asSharedFlow()
     
-    private var _premiumPackVodContentListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
-    var premiumPackVodContentListState = _premiumPackVodContentListMutableState.asSharedFlow()
-
-    private var _premiumDataPackState = MutableSharedFlow<Resource<PackageWisePremiumPackResponse.PackageWisePremiumPackBean>>()
-    val premiumDataPackState = _premiumDataPackState.asSharedFlow()
-
-
+    private var _packContentListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
+    var packContentListState = _packContentListMutableState.asSharedFlow()
+    
+//    private var _packContentListsMutableState = MutableStateFlow<List<ChannelInfo>?>(null)
+//    var packContentListsState = _packContentListsMutableState.asSharedFlow()
+    
+    private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean>>()
+    val paymentMethodState = _paymentMethodState.asSharedFlow()
+    
+    var selectedPack = MutableLiveData<PremiumPack>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
-            _premiumPackListState.emit(response)
+            _packListState.emit(response)
         }
     }
     
     fun getPremiumPackDetail(packId: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackDetailService.loadData(packId) }
-            _premiumPackDetailState.emit(response)
+            _packDetailState.emit(response)
         }
     }
     
     fun setLinearContentState(linearContentList: List<ChannelInfo>) {
         viewModelScope.launch {
-            _premiumPackLinearContentListMutableState.emit(linearContentList)
+            _packChannelListMutableState.emit(linearContentList)
         }
     }
     
     fun setVodContentState(vodContentList: List<ChannelInfo>) {
         viewModelScope.launch {
-            _premiumPackVodContentListMutableState.emit(vodContentList)
+//            _packContentListsMutableState.value = (vodContentList)
+            _packContentListMutableState.emit(vodContentList)
         }
     }
-    fun getPremiumDataPackList(packageId: Int){
-            viewModelScope.launch {
-                val response = resultFromResponse { packageWisePremiumDataPackService.loadData(packageId) }
-                _premiumDataPackState.emit(response)
+    
+    fun getPackPaymentMethodList(packageId: Int){
+        viewModelScope.launch {
+            val response = resultFromResponse { packPaymentMethodService.loadData(packageId) }
+            _paymentMethodState.emit(response)
         }
     }
-
 }

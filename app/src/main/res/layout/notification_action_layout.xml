@@ -6,14 +6,15 @@
     android:layout_height="46dp"
     android:clipToPadding="false"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:contentDescription="@string/txt_menu"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_menu_notification"/>
+        app:srcCompat="@drawable/ic_menu_notification"/>
 
     <TextView
         android:id="@+id/notification_badge"

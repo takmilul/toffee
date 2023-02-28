@@ -837,6 +837,9 @@ class HomeActivity : PlayerPageActivity(),
     
     fun getHomeViewModel() = viewModel
     
+    var currentFragmentDestinationId: Int? = 0
+    var bottomNavBarHideState = false
+    
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
@@ -858,7 +861,11 @@ class HomeActivity : PlayerPageActivity(),
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
                 )
             )
+            currentFragmentDestinationId = controller.currentDestination?.id
         }
+        
+        bottomNavBarHideState = currentFragmentDestinationId == R.id.packDetailsFragment
+        toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
     }
@@ -1121,18 +1128,36 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun toggleNavigation(state: Boolean) {
+        if (!bottomNavBarHideState) {
+            if (state) {
+                supportActionBar?.hide()
+                binding.bottomAppBar.hide()
+                binding.uploadButton.hide()
+                binding.mainUiFrame.visibility = View.GONE
+                mPref.bubbleVisibilityLiveData.postValue(false)
+            } else {
+                binding.mainUiFrame.visibility = View.VISIBLE
+                supportActionBar?.show()
+                binding.bottomAppBar.show()
+                binding.uploadButton.show()
+                mPref.bubbleVisibilityLiveData.postValue(true)
+            }
+        }
+    }
+    
+    fun toggleBottomNavBar(state: Boolean) {
         if (state) {
-            supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
-            binding.mainUiFrame.visibility = View.GONE
-            mPref.bubbleVisibilityLiveData.postValue(false)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> { 
+                bottomMargin = 0
+            }
         } else {
-            binding.mainUiFrame.visibility = View.VISIBLE
-            supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            mPref.bubbleVisibilityLiveData.postValue(true)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
+                bottomMargin = 56.dp
+            }
         }
     }
     
@@ -1586,42 +1611,12 @@ class HomeActivity : PlayerPageActivity(),
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        mPref.activePremiumPackList.value?.checkPackPurchased(
-                            contentId = it.getContentId(),
-                            systemDate = mPref.getSystemTime(),
-                            onSuccess = { playInNativePlayer(detailsInfo, it) }
-                        ) {
+                        checkPurchaseBeforePlay(it, detailsInfo,null, onFailure = {
                             observe(viewModel.activePackListLiveData) { response ->
                                 when (response) {
                                     is Success -> {
-                                        response.data.isNotNullOrEmpty { activePackList ->
-                                            mPref.activePremiumPackList.value = activePackList.toList()
-                                            activePackList.toList().checkPackPurchased(
-                                                contentId = it.getContentId(),
-                                                systemDate = mPref.getSystemTime(),
-                                                onSuccess = { playInNativePlayer(detailsInfo, it) },
-                                                onFailure = {
-                                                    navController.navigate(
-                                                        R.id.premiumFragment,
-                                                        bundleOf("contentId" to it.getContentId()),
-                                                        navOptions {
-                                                            popUpTo(R.id.premiumFragment) {
-                                                                inclusive = true
-                                                            }
-                                                        }
-                                                    )
-                                                }
-                                            )
-                                            activePackList
-                                        } ?: navController.navigate(
-                                            R.id.premiumFragment,
-                                            bundleOf("contentId" to it.getContentId()),
-                                            navOptions {
-                                                popUpTo(R.id.premiumFragment) {
-                                                    inclusive = true
-                                                }
-                                            }
-                                        )
+                                        mPref.activePremiumPackList.value = response.data.toList()
+                                        checkPurchaseBeforePlay(it, detailsInfo)
                                     }
                                     is Failure -> {
                                         showToast(response.error.msg)
@@ -1629,7 +1624,7 @@ class HomeActivity : PlayerPageActivity(),
                                 }
                             }
                             viewModel.getPackStatus(it.getContentId().toInt())
-                        }
+                        })
 //                        when {
 //                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
 //                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
@@ -1654,6 +1649,34 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
         }
+    }
+    
+    private fun checkPurchaseBeforePlay(
+        channelInfo: ChannelInfo,
+        detailsInfo: Any?,
+        onSuccess: (() -> Unit)? = null,
+        onFailure: (() -> Unit)? = null
+    ) {
+        mPref.activePremiumPackList.value.checkPackPurchased(
+            contentId = channelInfo.getContentId(),
+            systemDate = mPref.getSystemTime(),
+            onSuccess = {
+                onSuccess?.invoke()
+                playInNativePlayer(detailsInfo, channelInfo)
+            },
+            onFailure = {
+                onFailure?.invoke()
+                navController.navigate(
+                    id.premiumFragment,
+                    bundleOf("contentId" to channelInfo.getContentId()),
+                    navOptions {
+                        popUpTo(id.premiumFragment) {
+                            inclusive = true
+                        }
+                    }
+                )
+            }
+        )
     }
     
     private fun playInNativePlayer(detailsInfo: Any?, channelInfo: ChannelInfo) {

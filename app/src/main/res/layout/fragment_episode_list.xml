@@ -54,7 +54,7 @@
             android:contentDescription="@string/txt_content_loader"
             android:layout_marginBottom="16dp"
             android:background="@drawable/gif_round_border"
-            android:src="@drawable/content_loader"
+            app:srcCompat="@drawable/content_loader"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -98,7 +98,7 @@
             android:contentDescription="@string/share_button"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_share"
+            app:srcCompat="@drawable/ic_share"
             app:layout_constraintBottom_toBottomOf="@id/categoryName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/categoryName"

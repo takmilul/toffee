@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.facebook.shimmer.ShimmerFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/ShimmerStyle">
     
     <com.banglalink.toffee.ui.widget.CustomImageView
@@ -11,6 +12,6 @@
         android:contentDescription="@string/txt_featured_image"
         android:minHeight="200dp"
         android:scaleType="fitXY"
-        android:src="@drawable/placeholder" />
+        app:srcCompat="@drawable/placeholder" />
 
 </com.facebook.shimmer.ShimmerFrameLayout>

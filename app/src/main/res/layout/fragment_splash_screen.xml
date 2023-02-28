@@ -101,7 +101,7 @@
         android:alpha="0.5"
         android:fontFamily="@font/roboto_medium"
         android:gravity="center"
-        android:text="Watch FREE\non Any Network!"
+        android:text="@string/app_slogan"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

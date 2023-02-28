@@ -509,5 +509,13 @@
 
     <string name="your_request_is_under_process">Your Request is Under Process</string>
     <string name="please_wait_for_confirmation_message">Please wait for confirmation message and try again later.</string>
-    
+
+    <string name="premium_pack_list_title">Available Premium Packs</string>
+    <string name="pack_banner_logo">pack banner logo</string>
+    <string name="premium_pack_poster">premium Pack Poster</string>
+    <string name="channel_image">channel image</string>
+    <string name="premium_status_icon">premium status icon</string>
+    <string name="pass_brand_image_view">pass brand image view</string>
+    <string name="pack_banner">pack banner</string>
+    <string name="app_slogan">Watch FREE\non Any Network!</string>
 </resources>

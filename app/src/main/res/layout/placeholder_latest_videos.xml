@@ -20,7 +20,7 @@
             android:contentDescription="@string/txt_placeholder"
             android:minHeight="200dp"
             android:scaleType="fitXY"
-            android:src="@drawable/placeholder"
+            app:srcCompat="@drawable/placeholder"
             app:layout_constraintBottom_toTopOf="@id/name"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"

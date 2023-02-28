@@ -85,7 +85,7 @@
             android:layout_marginBottom="8dp"
             android:elevation="2dp"
             android:visibility="gone"
-            android:src="@drawable/content_loader"
+            app:srcCompat="@drawable/content_loader"
             android:contentDescription="@string/txt_content_loader"
             android:background="@drawable/gif_round_border"
             app:layout_constraintBottom_toBottomOf="parent"
