@@ -29,6 +29,7 @@ import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -271,4 +272,20 @@ fun String.hexToResourceName(resources: Resources): String {
     val resourceName = resources.getResourceName(id)
     Log.i("RES_", resourceName)
     return resourceName
+}
+
+fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    if (!this.isNullOrEmpty()) {
+        this.find {
+            try {
+                (it.contents?.contains(contentId.toInt()) == true) && it.isActive && systemDate.before(Utils.getDate(it.expiryDate))
+            } catch (e: Exception) {
+                false
+            }
+        }?.let {
+            onSuccess()
+        } ?: onFailure()
+    } else {
+        onFailure()
+    }
 }

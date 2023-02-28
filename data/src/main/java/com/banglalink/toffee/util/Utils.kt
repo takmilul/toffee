@@ -386,6 +386,22 @@ object Utils {
         return date?.let { currentFormatter.format(it) }
     }
     
+    fun formatPackExpiryDate(dateTime: String?): String? {
+        if (TextUtils.isEmpty(dateTime)) {
+            return ""
+        }
+        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US) //2016-10-20 06:45:29
+        val dateObj: Date?
+        return try {
+            dateObj = dateTime?.let { currentFormatter.parse(it) }
+            val postFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.US)
+            dateObj?.let { postFormatter.format(it) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            dateTime
+        }
+    }
+    
     fun getDate(dateTime: String?): Date {
         val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
         return try {

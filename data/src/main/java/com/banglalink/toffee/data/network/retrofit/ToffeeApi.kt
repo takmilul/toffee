@@ -481,10 +481,23 @@ interface ToffeeApi {
         @Body premiumPackListRequest: PremiumPackListRequest
     ): PremiumPackListResponse
     
+    @POST("/data-pack-purchase")
+    suspend fun purchaseDataPack(
+        @Body premiumPackListRequest: DataPackPurchaseRequest
+    ): PremiumPackStatusResponse
+    
     @POST("/package-details/{packageId}/{dbVersion}")
     suspend fun getPremiumPackDetail(
         @Path("packageId") packId: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body premiumPackDetailRequest: PremiumPackDetailRequest
     ): PremiumPackDetailResponse
+
+    @POST("/package-wise-data-pack/{isBlNumber}/{packageId}/{dbVersion}")
+    suspend fun getPackPaymentMethods(
+        @Path("isBlNumber") isBlNumber: Int,
+        @Path("packageId") packId: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body packPaymentMethodRequest: PackPaymentMethodRequest
+    ): PackPaymentMethodResponse
 }

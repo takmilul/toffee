@@ -61,10 +61,10 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
-import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.*
@@ -148,10 +148,6 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -159,6 +155,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -431,7 +431,6 @@ class HomeActivity : PlayerPageActivity(),
 //                showCustomDialog("Firebase Installation ID", installationId)
 //            }
 //        }
-        viewModel.getPackStatus(100)
     }
     
     private fun loadUserInfo() {
@@ -838,6 +837,9 @@ class HomeActivity : PlayerPageActivity(),
     
     fun getHomeViewModel() = viewModel
     
+    var currentFragmentDestinationId: Int? = 0
+    var bottomNavBarHideState = false
+    
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
         if (binding.draggableView.isMaximized()) {
             minimizePlayer()
@@ -859,7 +861,11 @@ class HomeActivity : PlayerPageActivity(),
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
                 )
             )
+            currentFragmentDestinationId = controller.currentDestination?.id
         }
+        
+        bottomNavBarHideState = currentFragmentDestinationId == R.id.packDetailsFragment
+        toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
     }
@@ -1122,18 +1128,36 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun toggleNavigation(state: Boolean) {
+        if (!bottomNavBarHideState) {
+            if (state) {
+                supportActionBar?.hide()
+                binding.bottomAppBar.hide()
+                binding.uploadButton.hide()
+                binding.mainUiFrame.visibility = View.GONE
+                mPref.bubbleVisibilityLiveData.postValue(false)
+            } else {
+                binding.mainUiFrame.visibility = View.VISIBLE
+                supportActionBar?.show()
+                binding.bottomAppBar.show()
+                binding.uploadButton.show()
+                mPref.bubbleVisibilityLiveData.postValue(true)
+            }
+        }
+    }
+    
+    fun toggleBottomNavBar(state: Boolean) {
         if (state) {
-            supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
-            binding.mainUiFrame.visibility = View.GONE
-            mPref.bubbleVisibilityLiveData.postValue(false)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> { 
+                bottomMargin = 0
+            }
         } else {
-            binding.mainUiFrame.visibility = View.VISIBLE
-            supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
-            mPref.bubbleVisibilityLiveData.postValue(true)
+            binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
+                bottomMargin = 56.dp
+            }
         }
     }
     
@@ -1587,11 +1611,25 @@ class HomeActivity : PlayerPageActivity(),
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        when {
-                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
-                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
-                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
-                        }
+                        checkPurchaseBeforePlay(it, detailsInfo,null, onFailure = {
+                            observe(viewModel.activePackListLiveData) { response ->
+                                when (response) {
+                                    is Success -> {
+                                        mPref.activePremiumPackList.value = response.data.toList()
+                                        checkPurchaseBeforePlay(it, detailsInfo)
+                                    }
+                                    is Failure -> {
+                                        showToast(response.error.msg)
+                                    }
+                                }
+                            }
+                            viewModel.getPackStatus(it.getContentId().toInt())
+                        })
+//                        when {
+//                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
+//                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
+//                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
+//                        }
                     }
                 }
                 it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PREMIUM -> {
@@ -1611,6 +1649,34 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
         }
+    }
+    
+    private fun checkPurchaseBeforePlay(
+        channelInfo: ChannelInfo,
+        detailsInfo: Any?,
+        onSuccess: (() -> Unit)? = null,
+        onFailure: (() -> Unit)? = null
+    ) {
+        mPref.activePremiumPackList.value.checkPackPurchased(
+            contentId = channelInfo.getContentId(),
+            systemDate = mPref.getSystemTime(),
+            onSuccess = {
+                onSuccess?.invoke()
+                playInNativePlayer(detailsInfo, channelInfo)
+            },
+            onFailure = {
+                onFailure?.invoke()
+                navController.navigate(
+                    id.premiumFragment,
+                    bundleOf("contentId" to channelInfo.getContentId()),
+                    navOptions {
+                        popUpTo(id.premiumFragment) {
+                            inclusive = true
+                        }
+                    }
+                )
+            }
+        )
     }
     
     private fun playInNativePlayer(detailsInfo: Any?, channelInfo: ChannelInfo) {
@@ -1760,8 +1826,13 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playNext() {
         super.playNext()
-        if (playlistManager.playlistId == -1L) {
-            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+        if (playlistManager.playlistId == -1L || playlistManager.isNextChannelPremium()) {
+            val nextChannel = if (playlistManager.isNextChannelPremium()) {
+                playlistManager.getNextChannel()
+            } else {
+                playlistManager.getCurrentChannel()
+            }
+            viewModel.playContentLiveData.postValue(nextChannel)
             return
         }
         ConvivaHelper.endPlayerSession()
@@ -1776,6 +1847,10 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playPrevious() {
         super.playPrevious()
+        if (playlistManager.isPreviousChannelPremium()) {
+            viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
+            return
+        }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()

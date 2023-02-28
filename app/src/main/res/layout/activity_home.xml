@@ -132,7 +132,7 @@
             android:layout_marginBottom="22dp"
             android:backgroundTint="@color/fab_icon_bg"
             android:contentDescription="@string/tab_upload_label"
-            android:src="@drawable/ic_upload_menu_plus"
+            app:srcCompat="@drawable/ic_upload_menu_plus"
             app:backgroundTint="@color/colorAccent2"
             app:borderWidth="2dp"
             app:elevation="0dp"

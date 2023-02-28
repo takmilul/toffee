@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <item 
         android:id="@android:id/background" >
-        <bitmap android:src="@drawable/ic_rating_line" />
+        <bitmap app:srcCompat="@drawable/ic_rating_line" />
     </item>
     
     <!--<item 
@@ -12,7 +14,7 @@
     
     <item 
         android:id="@android:id/progress" >
-        <bitmap android:src="@drawable/ic_rating_fill" />
+        <bitmap app:srcCompat="@drawable/ic_rating_fill" />
     </item>
     
 </layer-list>

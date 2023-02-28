@@ -180,7 +180,7 @@
             android:layout_gravity="center"
             android:contentDescription="@string/bubble_icon"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_splash_logo_gif" />
+            app:srcCompat="@drawable/ic_splash_logo_gif" />
         
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

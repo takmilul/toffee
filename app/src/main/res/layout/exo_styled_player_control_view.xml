@@ -17,7 +17,7 @@
             android:layout_marginTop="16dp"
             android:contentDescription="@string/txt_drawer"
             android:padding="8dp"
-            android:src="@drawable/ic_drawer_player"
+            app:srcCompat="@drawable/ic_drawer_player"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         
@@ -34,7 +34,7 @@
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:src="@drawable/ic_option_drawer"
+            app:srcCompat="@drawable/ic_option_drawer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         
@@ -44,7 +44,7 @@
             android:layout_height="32dp"
             android:contentDescription="@string/txt_share"
             android:padding="8dp"
-            android:src="@drawable/ic_player_share"
+            app:srcCompat="@drawable/ic_player_share"
             app:layout_constraintBottom_toBottomOf="@+id/video_option"
             app:layout_constraintEnd_toStartOf="@+id/video_option"
             app:layout_constraintTop_toTopOf="@+id/video_option" />
@@ -153,7 +153,7 @@
             android:layout_height="32dp"
             android:contentDescription="@string/txt_rotation"
             android:padding="8dp"
-            android:src="@drawable/ic_screen_rotate"
+            app:srcCompat="@drawable/ic_screen_rotate"
             app:layout_constraintBottom_toBottomOf="@+id/minimize"
             app:layout_constraintEnd_toStartOf="@+id/minimize"
             app:layout_constraintTop_toTopOf="@+id/minimize" />
@@ -164,7 +164,7 @@
             android:layout_height="32dp"
             android:contentDescription="@string/txt_minimize"
             android:padding="8dp"
-            android:src="@drawable/ic_player_minimize"
+            app:srcCompat="@drawable/ic_player_minimize"
             app:layout_constraintBottom_toBottomOf="@+id/fullscreen"
             app:layout_constraintEnd_toStartOf="@+id/fullscreen"
             app:layout_constraintTop_toTopOf="@+id/fullscreen" />
@@ -177,7 +177,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/txt_full_screen"
             android:padding="8dp"
-            android:src="@drawable/exo_styled_controls_fullscreen_enter"
+            app:srcCompat="@drawable/exo_styled_controls_fullscreen_enter"
             app:layout_constraintBottom_toTopOf="@id/exo_progress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_goneMarginBottom="8dp" />

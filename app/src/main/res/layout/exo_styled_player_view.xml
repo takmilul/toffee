@@ -21,7 +21,7 @@
             android:id="@+id/exo_shutter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@null" />
+            app:srcCompat="@null" />
     
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
     
@@ -97,7 +97,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:background="@drawable/gif_round_border"
-        android:src="@drawable/player_loader"
+        app:srcCompat="@drawable/player_loader"
         android:visibility="gone"
         tools:visibility="visible"
         android:contentDescription="@string/txt_content_loader" />
