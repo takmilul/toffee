@@ -1154,11 +1154,17 @@ class HomeActivity : PlayerPageActivity(),
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> { 
                 bottomMargin = 0
             }
+            binding.detailsViewer.updateLayoutParams<RelativeLayout.LayoutParams> {
+                bottomMargin = 0
+            }
         } else {
             binding.bottomAppBar.show()
             binding.uploadButton.show()
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
                 bottomMargin = 56.dp
+            }
+            binding.detailsViewer.updateLayoutParams<RelativeLayout.LayoutParams> {
+                bottomMargin = 248.dp
             }
         }
     }
@@ -2052,6 +2058,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     override fun onPlayerMinimize() {
+        premiumViewModel.togglePremiumFooterLiveData.value = true
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding.playerView.clearDebugWindow()
@@ -2085,6 +2092,7 @@ class HomeActivity : PlayerPageActivity(),
                 it?.let { showPlayerOverlay(it) }
             }
         }
+        premiumViewModel.hidePremiumFooterLiveData.value = true
 //        showPlayerOverlay()
     }
     
@@ -2410,7 +2418,6 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun minimizePlayer() {
         binding.draggableView.minimize()
-        premiumViewModel.togglePremiumFooterLiveData.value = true
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
     
@@ -2423,7 +2430,6 @@ class HomeActivity : PlayerPageActivity(),
     override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
-        premiumViewModel.hidePremiumFooterLiveData.value = true
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
     
