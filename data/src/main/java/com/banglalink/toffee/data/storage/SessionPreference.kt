@@ -687,7 +687,36 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isCircuitBreakerActive: Boolean
         get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
-    
+
+    var blDataPackTermsAndConditionsUrl: String
+        get() = pref.getString(PREF_BL_DATA_PACK_TERMS_AND_CONDITIONS_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BL_DATA_PACK_TERMS_AND_CONDITIONS_URL, value) }
+
+    var bkashDataPackTermsAndConditionsUrl: String
+        get() = pref.getString(PREF_BKASH_DATA_PACK_TERMS_AND_CONDITIONS_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_DATA_PACK_TERMS_AND_CONDITIONS_URL, value) }
+
+    var bkashApiUrl: String
+        get() = pref.getString(PREF_BKASH_API_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_API_URL, value) }
+
+    var bkashGrantTokenUrl: String
+        get() = pref.getString(PREF_BKASH_GRANT_TOKEN_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_GRANT_TOKEN_URL, value) }
+
+    var bkashRefreshTokenUrl: String
+        get() = pref.getString(PREF_BKASH_REFRESH_TOKEN_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_REFRESH_TOKEN_URL, value) }
+
+    var bkashCreateUrl: String
+        get() = pref.getString(PREF_BKASH_CREATE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_CREATE_URL, value) }
+
+    var bkashCallbackUrl: String
+        get() = pref.getString(PREF_BKASH_CALL_BACK_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_CALL_BACK_URL, value) }
+
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -783,7 +812,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
             activePremiumPackList.value = it.activePackList
-            
+            blDataPackTermsAndConditionsUrl = it.blDataPackTermsAndConditionsUrl!!
+            bkashDataPackTermsAndConditionsUrl = it.bkashDataPackTermsAndConditionsUrl!!
+            bkashApiUrl = it.bkashApiUrl!!
+            bkashGrantTokenUrl = it.bkashGrantTokenUrl.toString()
+            bkashRefreshTokenUrl = it.bkashRefreshTokenUrl.toString()
+            bkashCreateUrl = it.bkashCreateUrl.toString()
+            bkashCallbackUrl = it.bkashCallbackUrl.toString()
+
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -920,6 +956,13 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
         private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
         private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
+        private const val PREF_BL_DATA_PACK_TERMS_AND_CONDITIONS_URL = "pref_bl_data_pack_terms_and_conditions_url"
+        private const val PREF_BKASH_DATA_PACK_TERMS_AND_CONDITIONS_URL = "pref_bkash_data_pack_terms_and_conditions_url"
+        private const val PREF_BKASH_API_URL= "pref_bkash_api_url"
+        private const val PREF_BKASH_GRANT_TOKEN_URL= "pref_bkash_grant_token_url"
+        private const val PREF_BKASH_REFRESH_TOKEN_URL= "pref_bkash_refresh_token_url"
+        private const val PREF_BKASH_CREATE_URL= "pref_bkash_create_url"
+        private const val PREF_BKASH_CALL_BACK_URL= "pref_bkash_call_back_url"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.bkash.api
 
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.ui.bkash.model.CreatePaymentResponse
 import com.banglalink.toffee.ui.bkash.model.GrantTokenResponse
 import com.banglalink.toffee.ui.bkash.model.CreatePaymentBodyRequest
@@ -7,17 +8,18 @@ import com.banglalink.toffee.ui.bkash.model.GrantTokenBodyRequest
 import retrofit2.Call
 import retrofit2.http.*
 
-
 interface ApiInterface {
-    @POST("/v1.2.0-beta/tokenized/checkout/token/grant")
+    @POST
     fun postGrantToken(
+        @Url url: String?,
         @Header("username") username: String?,
         @Header("password") password: String?,
         @Body signup: GrantTokenBodyRequest
     ): Call<GrantTokenResponse>
 
-    @POST("/v1.2.0-beta/tokenized/checkout/create")
+    @POST
     fun postPaymentCreate(
+        @Url url: String?,
         @Header("authorization") authorization: String?,
         @Header("x-app-key") xAppKey: String?,
         @Body createPaymentBody: CreatePaymentBodyRequest

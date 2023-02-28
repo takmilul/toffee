@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.provider.Settings
 import androidx.core.content.edit
 import com.banglalink.toffee.util.Utils
@@ -57,6 +58,8 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
         set(themeMode){
             pref.edit().putInt(PREF_APP_THEME, themeMode).apply()
         }
+
+    var appTheme: String = if(appThemeMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
     
     var isAlreadyForceLoggedOut: Boolean
         get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT, false)
