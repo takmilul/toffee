@@ -13,10 +13,10 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
@@ -44,6 +44,10 @@ class PremiumViewModel @Inject constructor(
     val paymentMethodState = _paymentMethodState.asSharedFlow()
     
     var selectedPack = MutableLiveData<PremiumPack>()
+    var paymentMethod = MutableLiveData<PackPaymentMethodBean>()
+//    var selectedPaymentMethod = MutableLiveData<PackPaymentMethodBean>()
+    var togglePremiumFooterLiveData = MutableLiveData<Boolean>()
+    var hidePremiumFooterLiveData = MutableLiveData<Boolean>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {

@@ -6,20 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -28,9 +21,8 @@ import com.banglalink.toffee.util.Utils
 
 class PackDetailsFragment : BaseFragment() {
     
-    private var pack: PremiumPack? = null
     private var _binding: FragmentPackDetailsBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
@@ -43,28 +35,24 @@ class PackDetailsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
         changeToolbarIcon()
-        pack = viewModel.selectedPack.value
+        if (viewModel.selectedPack.value?.isPackPurchased == false) {
+            checkPackPurchased()
+        }
+        binding.data = viewModel.selectedPack.value
         
-        pack?.let {
-            observePremiumPackDetail()
+        observeHideAllFooter()
+        observeToggleFooter()
+        observePaymentStatus()
+        observePremiumPackDetail()
+        
+        viewModel.selectedPack.value?.let {
             viewModel.getPremiumPackDetail(it.id)
             with(binding) {
-                packBannerImageView.load(it.packImage)
-                packStatusIcon.load(if (it.isPackPurchased) R.drawable.ic_premium_activated else R.drawable.ic_premium)
-                packNameTextView.text = it.packTitle
-                packPriceTextView.text = it.packSubtitle
-                packExpiryDateTextView.text = it.expiryDate
-                packPurchaseMsgTextView.text = it.packDetail
-                footerBuyNowBar.isVisible = !it.isPackPurchased
-                footerPaymentStatus.isVisible = it.isPackPurchased
-                with(binding) {
-                    payNowButton.safeClick({
-                        requireActivity().checkVerification {
-                            observePaymentStatus()
-                            homeViewModel.getPackStatus()
-                        }
-                    })
-                }
+                payNowButton.safeClick({
+                    requireActivity().checkVerification {
+                        homeViewModel.getPackStatus()
+                    }
+                })
             }
         } ?: run { 
             binding.progressBar.hide()
@@ -79,26 +67,12 @@ class PackDetailsFragment : BaseFragment() {
             when(it) {
                 is Success -> {
                     mPref.activePremiumPackList.value = it.data
-                    if (pack != null) {
-                        it.data.find {
-                            try {
-                                it.packId == pack!!.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
-                            } catch (e: Exception) {
-                                false
-                            }
-                        }?.let {activePack ->
-                            val purchasedPack = pack!!.copy(
-                                isPackPurchased = activePack.isActive,
-                                expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
-                                packDetail = if (pack!!.isAvailableFreePeriod == 1) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
-                            )
-                            viewModel.selectedPack.value = purchasedPack
-                            findNavController().popBackStack(R.id.packDetailsFragment, true)
-                            findNavController().navigate(R.id.packDetailsFragment)
-                        } ?: run {
+                    val isPurchased = checkPackPurchased()
+                    if (!isPurchased) {
+                        viewModel.selectedPack.value?.id?.let {
                             observePaymentMethodList()
-                            viewModel.getPackPaymentMethodList(pack!!.id)
-                        }
+                            viewModel.getPackPaymentMethodList(it)
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {
@@ -108,11 +82,36 @@ class PackDetailsFragment : BaseFragment() {
         }
     }
     
+    private fun checkPackPurchased(): Boolean {
+        return if (mPref.isVerifiedUser) {
+            viewModel.selectedPack.value?.let { pack ->
+                mPref.activePremiumPackList.value?.find {
+                    try {
+                        it.packId == pack.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
+                    } catch (e: Exception) {
+                        false
+                    }
+                }?.let {
+                    viewModel.selectedPack.value = pack.copy(
+                        isPackPurchased = it.isActive,
+                        expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
+                        packDetail = if (pack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${it.packDetail} pack"
+                    )
+                    binding.data = viewModel.selectedPack.value
+                    true
+                } ?: false
+            } ?: false
+        } else false
+    }
+    
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
             when(it) {
                 is Success -> {
-                    findNavController().navigate(R.id.bottomSheetPaymentMethods, bundleOf("paymentMethods" to it.data))
+                    viewModel.paymentMethod.value = it.data
+                    findNavController().navigate(R.id.bottomSheetPaymentMethods, bundleOf("paymentMethods" to it.data), navOptions {
+                        popUpTo(R.id.bottomSheetPaymentMethods) { inclusive = true }
+                    })
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -150,6 +149,25 @@ class PackDetailsFragment : BaseFragment() {
             runCatching {
                 findNavController().popBackStack()
             }
+        }
+    }
+    
+    private fun observeToggleFooter() {
+        observe(viewModel.togglePremiumFooterLiveData) {
+            if (viewModel.selectedPack.value?.isPackPurchased == false) {
+                binding.footerBuyNowBar.show()
+                binding.footerPaymentStatus.hide()
+            } else {
+                binding.footerBuyNowBar.hide()
+                binding.footerPaymentStatus.show()
+            }
+        }
+    }
+    
+    private fun observeHideAllFooter() {
+        observe(viewModel.hidePremiumFooterLiveData) {
+            binding.footerBuyNowBar.hide()
+            binding.footerPaymentStatus.hide()
         }
     }
     

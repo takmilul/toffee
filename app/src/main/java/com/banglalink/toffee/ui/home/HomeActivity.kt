@@ -115,6 +115,7 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
@@ -148,6 +149,10 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -155,10 +160,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -201,6 +202,7 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    private val premiumViewModel by viewModels<PremiumViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -864,7 +866,7 @@ class HomeActivity : PlayerPageActivity(),
             currentFragmentDestinationId = controller.currentDestination?.id
         }
         
-        bottomNavBarHideState = currentFragmentDestinationId == R.id.packDetailsFragment
+        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumFragment, id.packDetailsFragment)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
@@ -2408,6 +2410,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun minimizePlayer() {
         binding.draggableView.minimize()
+        premiumViewModel.togglePremiumFooterLiveData.value = true
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
     
@@ -2420,6 +2423,7 @@ class HomeActivity : PlayerPageActivity(),
     override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
+        premiumViewModel.hidePremiumFooterLiveData.value = true
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
     

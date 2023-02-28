@@ -4,6 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="com.banglalink.toffee.data.network.response.PremiumPack" />
+    </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -31,6 +38,7 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/pack_banner"
                     android:scaleType="centerCrop"
+                    loadImageFromUrl="@{data.packImage}"
                     tools:srcCompat="@drawable/placeholder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -59,6 +67,7 @@
                     android:maxLines="2"
                     android:textColor="@color/TextClrInImg"
                     android:textSize="24sp"
+                    android:text="@{data.packTitle}"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
                     app:layout_constraintEnd_toStartOf="@+id/packStatusIcon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -72,6 +81,7 @@
                     android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/pack_status_icon"
+                    setPremiumStatusIcon="@{data.isPackPurchased}"
                     tools:srcCompat="@drawable/ic_premium"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -175,6 +185,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FF3988"
+            android:visibility="@{data.isPackPurchased ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -187,6 +198,7 @@
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
+                android:text="@{data.packSubtitle}"
                 tools:text="Starts from 10 BDT"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="@+id/payNowButton"
@@ -215,7 +227,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/TrailBgTransparent"
-            android:visibility="gone"
+            android:visibility="@{data.isPackPurchased ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -229,6 +241,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:maxLines="1"
+                android:text="@{data.packDetail}"
                 tools:text="You have bought 1 GB for 3 days pack"
                 android:textColor="@color/TrailTxt"
                 android:textSize="16sp"
@@ -249,6 +262,7 @@
                 tools:text="Expires on 24 Feb, 2023"
                 android:textColor="@color/TrailTxt"
                 android:textSize="12sp"
+                android:text="@{data.expiryDate}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

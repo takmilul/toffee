@@ -583,11 +583,7 @@
     <dialog
         android:id="@+id/bottomSheetPaymentMethods"
         android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodFragment"
-        android:label="Add To Playlist" >
-        <argument
-            android:name="paymentMethods"
-            app:argType="com.banglalink.toffee.data.network.response.PackPaymentMethodBean" />
-    </dialog>
+        android:label="Add To Playlist" />
     <dialog
         android:id="@+id/startWatchingDialog"
         android:name="com.banglalink.toffee.ui.premium.StartWatchingDialog"

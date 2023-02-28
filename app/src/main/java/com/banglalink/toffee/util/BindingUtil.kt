@@ -431,4 +431,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             constraintLayout.endToStart = R.id.guideline3
         }
     }
+    
+    @BindingAdapter("setPremiumStatusIcon")
+    fun setPremiumStatusIcon(view: ImageView, isPurchased: Boolean) {
+        if (isPurchased) {
+            view.setImageResource(R.drawable.ic_premium_activated)
+        } else {
+            view.setImageResource(R.drawable.ic_premium)
+        }
+    }
 }
