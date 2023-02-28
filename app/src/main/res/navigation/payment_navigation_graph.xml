@@ -4,27 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/payment_navigation_graph"
     app:startDestination="@id/paymentPackages">
+<!--    <fragment-->
+<!--        android:id="@+id/paymentPackages"-->
+<!--        android:name="com.banglalink.toffee.ui.premium.payment.PaymentOptionFragment"-->
+<!--        android:label="PartnershipBottomSheetFragment"-->
+<!--        tools:layout="@layout/buttom_sheet_payment_option"-->
+<!--        >-->
+<!--        <action-->
+<!--            android:id="@+id/action_payment_to_pack"-->
+<!--            app:destination="@id/choosePackages"-->
+<!--          />-->
+<!--        <action-->
+<!--            android:id="@+id/action_payment_to_trail"-->
+<!--            app:destination="@id/trailPack"-->
+<!--            />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/choosePackages"-->
+<!--        android:name="com.banglalink.toffee.ui.premium.payment.PaymentChoosePackFragment"-->
+<!--        android:label="PartnershipBottomSheetFragmentPack"-->
+<!--        tools:layout="@layout/buttom_sheet_choose_pack"-->
+<!--        >-->
+
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/trailPack"-->
+<!--        android:name="com.banglalink.toffee.ui.premium.payment.TrialFragment"-->
+<!--        android:label="PartnershipBottomSheetFragmentPack"-->
+<!--        tools:layout="@layout/buttom_sheet_enable_trial"-->
+<!--        >-->
+
+<!--    </fragment>-->
     <fragment
         android:id="@+id/paymentPackages"
-        android:name="com.banglalink.toffee.ui.premium.payment.PaymentOptionFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.PackPaymentOptionFragment"
         android:label="PartnershipBottomSheetFragment"
-        tools:layout="@layout/buttom_sheet_payment_option"
+        tools:layout="@layout/buttom_sheet_pack_payment_option"
         >
         <action
             android:id="@+id/action_payment_to_pack"
             app:destination="@id/choosePackages"
-          />
+            />
         <action
             android:id="@+id/action_payment_to_trail"
             app:destination="@id/trailPack"
             />
     </fragment>
-
     <fragment
         android:id="@+id/choosePackages"
-        android:name="com.banglalink.toffee.ui.premium.payment.PaymentChoosePackFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.ChooseDataPackFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/buttom_sheet_choose_pack"
+        tools:layout="@layout/buttom_sheet_choose_data_pack"
         >
 
     </fragment>

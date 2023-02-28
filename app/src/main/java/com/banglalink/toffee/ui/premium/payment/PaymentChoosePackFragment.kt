@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ButtomSheetChoosePackBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.launchActivity
@@ -33,11 +36,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<ChannelInfo> {
+class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<ChannelInfo>,BaseListItemCallback<ChannelInfo> {
 
     private var _binding: ButtomSheetChoosePackBinding? = null
     private val binding get() = _binding!!
     private lateinit var mAdapter: ChoosePackAdapter
+    private lateinit var nAdapter: ChoosePackPostPaidAdapter
+
+
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy {
         ToffeeProgressDialog(requireContext())
@@ -59,9 +65,12 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = ChoosePackAdapter(requireContext(), this)
+        nAdapter = ChoosePackPostPaidAdapter(requireContext(), this)
 
-        with(binding.packList) {
-            adapter = mAdapter
+
+        with(binding) {
+            packList.adapter = mAdapter
+            packPostpaid.adapter=nAdapter
             binding.backImg.safeClick({ findNavController().popBackStack() })
             binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         }
@@ -84,6 +93,18 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
             }
             content.collectLatest {
                 mAdapter.submitData(it)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
+                landingPageViewModel.loadLandingEditorsChoiceContent()
+            }
+            else {
+                landingPageViewModel.loadEditorsChoiceContent()
+            }
+            content.collectLatest {
+                nAdapter.submitData(it)
             }
         }
     }
@@ -155,6 +176,10 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
         binding.termsAndConditionsOne.visibility=View.VISIBLE
         binding.termsAndConditionsTwo.visibility=View.VISIBLE
         binding.buyNow.visibility=View.VISIBLE
+
+        mAdapter.notifyDataSetChanged()
+        nAdapter.notifyDataSetChanged()
+
 
     }
     override fun onDestroyView() {

@@ -52,18 +52,18 @@ class PackDetailsFragment : BaseFragment() {
                 packPurchaseMsgTextView.text = it.packDetail
                 footerBuyNowBar.isVisible = !it.isPackPurchased
                 footerPaymentStatus.isVisible = it.isPackPurchased
+                payNowButton.safeClick({
+                    activity?.checkVerification {
+                        viewModel.getPremiumDataPackList(it.id)
+                        findNavController().navigate(R.id.bottomSheetPaymentMethods)
+                    }
+                })
+
             }
         }
         
 //        findNavController()?.navigate(R.id.startWatchingDialog)
-        with(binding) {
-            payNowButton.safeClick({
-                activity?.checkVerification {
-                    viewModel.getPremiumDataPackList(args.packId)
-                    findNavController().navigate(R.id.bottomSheetPaymentMethods)
-                }
-            })
-        }
+
     }
     
     private fun observePremiumPackDetail() {

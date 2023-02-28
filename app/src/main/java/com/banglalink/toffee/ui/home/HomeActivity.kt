@@ -1586,7 +1586,7 @@ class HomeActivity : PlayerPageActivity(),
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        mPref.activePremiumPackList.value?.checkPackPurchased(
+                        mPref.activePremiumPackList.value.checkPackPurchased(
                             contentId = it.getContentId(),
                             systemDate = mPref.getSystemTime(),
                             onSuccess = { playInNativePlayer(detailsInfo, it) }

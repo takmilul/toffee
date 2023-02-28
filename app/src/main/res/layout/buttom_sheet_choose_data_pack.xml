@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <ImageView
+            android:id="@+id/backImg"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toTopOf="@+id/scrollView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pack_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Choose Plan"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.banglalink.toffee.ui.widget.SmartNestedScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pack_title">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/bkashLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:orientation="vertical">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bkashCardOne"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/payment_option_card_bg"
+                    app:cardCornerRadius="12dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/bkashConstraintOne"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/bkashRadioButtonOne"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="4dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLength="50"
+                            android:maxLines="2"
+                            android:text="3 Days"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/bkashPackAmountOne"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/bkashPackAmountOne"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLines="2"
+                            android:text="BDT 30"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/bkashRadioButtonOne"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bkashCardTwo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/payment_option_card_bg"
+                    app:cardCornerRadius="12dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/bkashConstraintTwo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/bkashRadioButtonTwo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="4dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLength="50"
+                            android:maxLines="2"
+                            android:text="3 Days"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/bkashPackAmountTwo"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/bkashPackAmountTwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLines="2"
+                            android:text="BDT 30"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/bkashRadioButtonTwo"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bkashCardThree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/payment_option_card_bg"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="4dp"
+                    >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/bkashConstraintThree"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/bkashRadioButtonThree"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="4dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLength="50"
+                            android:maxLines="2"
+                            android:text="3 Days"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/bkashPackAmountThree"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/bkashPackAmountThree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLines="2"
+                            android:text="BDT 30"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/bkashRadioButtonThree"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bkashCardFour"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="@color/payment_option_card_bg"
+                    app:cardCornerRadius="12dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/bkashConstraintFour"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/bkashRadioButtonFour"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="4dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLength="50"
+                            android:maxLines="2"
+                            android:text="3 Days"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/bkashPackAmountFour"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/bkashPackAmountFour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:maxLines="2"
+                            android:text="BDT 30"
+                            android:textColor="@color/cardTitleColor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/bkashRadioButtonFour"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+                <TextView
+                    android:id="@+id/prepaid_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Banglalink Prepaid Packs"
+                    android:textAllCaps="true"
+                    android:textColor="@color/cardTitleColor"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+
+                    />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/prePaidLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+
+
+                    >
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/prePaidOne"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/payment_option_card_bg"
+                        app:cardCornerRadius="12dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/packOptionContainerOne"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <RadioButton
+                                android:id="@+id/prepaidRadioButtonOne"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="12dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLength="50"
+                                android:maxLines="2"
+                                android:text="3 Days"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/prePaidPackOneAmount"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/prePaidPackOneAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLines="2"
+                                android:text="BDT 30"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/prepaidRadioButtonOne"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/prePaidTwo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/payment_option_card_bg"
+                        app:cardCornerRadius="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/packOptionContainerTwo"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <RadioButton
+                                android:id="@+id/prepaidRadioButtonTwo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="12dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLength="50"
+                                android:maxLines="2"
+                                android:text="3 Days"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/prePaidPackTwoAmount"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/prePaidPackTwoAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLines="2"
+                                android:text="BDT 30"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/prepaidRadioButtonTwo"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <TextView
+                    android:id="@+id/postpaid_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Banglalink Postpaid Packs"
+                    android:textAllCaps="true"
+                    android:textColor="@color/cardTitleColor"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+
+                    />
+
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/postPaidLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+
+                    >
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/postPaidOne"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/payment_option_card_bg"
+                        app:cardCornerRadius="12dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/postOptionContainerOne"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <RadioButton
+                                android:id="@+id/postPaidRadioButtonOne"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="12dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLength="50"
+                                android:maxLines="2"
+                                android:text="3 Days"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/postPaidPackOneAmount"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/postPaidPackOneAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLines="2"
+                                android:text="BDT 30"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/postPaidRadioButtonOne"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/postPaidTwo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/payment_option_card_bg"
+                        app:cardCornerRadius="12dp"
+                        android:layout_marginBottom="4dp"
+                        >
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/postPackOptionContainerTwo"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <RadioButton
+                                android:id="@+id/postPaidRadioButtonTwo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="12dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLength="50"
+                                android:maxLines="2"
+                                android:text="3 Days"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/postPaidPackTwoAmount"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/postPaidPackTwoAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:maxLines="2"
+                                android:text="BDT 30"
+                                android:textColor="@color/cardTitleColor"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/postPaidRadioButtonTwo"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
+
+
+        <TextView
+            android:id="@+id/terms_and_conditions_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:background="@null"
+            android:checked="true"
+            android:gravity="center_vertical"
+            android:text="By clicking next you are agreeing the "
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView" />
+
+        <TextView
+            android:id="@+id/terms_and_conditions_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="36dp"
+            android:text="@string/terms_and_conditions"
+            android:textColor="@color/colorAccent"
+            android:textColorLink="@drawable/text_selector2"
+            android:textSize="12sp"
+            android:background="?selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_one"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/terms_and_conditions_one"
+            app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_one"
+            android:visibility="gone"
+            />
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buyNow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="87dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#FF3988"
+            android:fontFamily="@font/roboto_bold"
+            android:text="BUY NOW"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
+            android:visibility="gone"
+           />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
