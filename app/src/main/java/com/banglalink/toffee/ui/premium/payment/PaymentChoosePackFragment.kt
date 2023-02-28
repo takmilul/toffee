@@ -1,7 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,22 +9,25 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.ButtomSheetChoosePackBinding
+import com.banglalink.toffee.di.SessionPreference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.ui.bkash.api.ApiInterface
 import com.banglalink.toffee.ui.bkash.api.BkashApiClient
 import com.banglalink.toffee.ui.bkash.model.CreatePaymentBodyRequest
 import com.banglalink.toffee.ui.bkash.model.CreatePaymentResponse
 import com.banglalink.toffee.ui.bkash.model.GrantTokenBodyRequest
 import com.banglalink.toffee.ui.bkash.model.GrantTokenResponse
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -36,14 +39,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<ChannelInfo>,BaseListItemCallback<ChannelInfo> {
+class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<ChannelInfo> {
 
     private var _binding: ButtomSheetChoosePackBinding? = null
     private val binding get() = _binding!!
     private lateinit var mAdapter: ChoosePackAdapter
-    private lateinit var nAdapter: ChoosePackPostPaidAdapter
-
-
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy {
         ToffeeProgressDialog(requireContext())
@@ -65,12 +65,9 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = ChoosePackAdapter(requireContext(), this)
-        nAdapter = ChoosePackPostPaidAdapter(requireContext(), this)
 
-
-        with(binding) {
-            packList.adapter = mAdapter
-            packPostpaid.adapter=nAdapter
+        with(binding.packList) {
+            adapter = mAdapter
             binding.backImg.safeClick({ findNavController().popBackStack() })
             binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         }
@@ -95,23 +92,12 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
                 mAdapter.submitData(it)
             }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
-                landingPageViewModel.loadLandingEditorsChoiceContent()
-            }
-            else {
-                landingPageViewModel.loadEditorsChoiceContent()
-            }
-            content.collectLatest {
-                nAdapter.submitData(it)
-            }
-        }
     }
 
     private fun grantBkashToken() {
         val apiService = BkashApiClient.client!!.create(ApiInterface::class.java)
         val call: Call<GrantTokenResponse> = apiService.postGrantToken(
+            mPref.bkashGrantTokenUrl,
             bkashSandboxUsername,
             bkashSandboxPassword,
             GrantTokenBodyRequest(
@@ -137,16 +123,17 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
             }
         })
     }
-
+//    URL/bkash/callback/{packageId}/{dataPackId}/{subscriberId}/{password}/{msisdn}/{isBlNumber}/{deviceType}/{deviceId}/{netType}/{osVersion}/{appVersion}/{appMode}
     private fun createBkashPayment() {
         val apiService = BkashApiClient.client!!.create(ApiInterface::class.java)
         val call: Call<CreatePaymentResponse> = apiService.postPaymentCreate(
+            mPref.bkashCreateUrl,
             "Bearer $sessionIdToken",
             bkashSandboxAppKey,
             CreatePaymentBodyRequest(
                 "0011",
                 "01770618575",
-                "http://192.168.1.154:8080/pgw-revamp/Payment.php",
+                "${mPref.bkashCallbackUrl}1/1/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_"+ Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}",
                 "MI05MID54RF09123456One",
                 "30",
                 "BDT",
@@ -176,10 +163,6 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
         binding.termsAndConditionsOne.visibility=View.VISIBLE
         binding.termsAndConditionsTwo.visibility=View.VISIBLE
         binding.buyNow.visibility=View.VISIBLE
-
-        mAdapter.notifyDataSetChanged()
-        nAdapter.notifyDataSetChanged()
-
 
     }
     override fun onDestroyView() {

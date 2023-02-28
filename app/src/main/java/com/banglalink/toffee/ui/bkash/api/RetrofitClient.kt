@@ -5,10 +5,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 object BkashApiClient {
     private const val BKASH_BASE_URL = "https://tokenized.sandbox.bka.sh"
-//   private const val BKASH_BASE_URL = "https://checkout.pay.bka.sh/"
     var loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
     var okHttpClient = OkHttpClient.Builder()

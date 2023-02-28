@@ -110,7 +110,7 @@
                 android:layout_height="26dp"
                 android:visibility="gone"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_channel_noti_on"
+                app:srcCompat="@drawable/ic_channel_noti_on"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/subscribe_count"

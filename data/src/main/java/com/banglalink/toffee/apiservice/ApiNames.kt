@@ -80,4 +80,5 @@ object ApiNames {
     const val GET_PREMIUM_PACK_DETAIL = "packageDetails"
     const val PREMIUM_DATA_PACK_STATUS = "dataPackStatus"
     const val PACKAGE_WISE_PREMIUM_PACK = "packageWiseDataPack"
+    const val DATA_PACK_PURCHASE = "dataPackPurchase"
 }

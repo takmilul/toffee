@@ -44,7 +44,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:padding="5dp"
-                    android:src="@drawable/ic_close"
+                    app:srcCompat="@drawable/ic_close"
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_close"
                     app:layout_constraintEnd_toEndOf="parent"

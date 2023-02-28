@@ -10,7 +10,7 @@
         android:id="@+id/bullet_imave_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_dot"
+        app:srcCompat="@drawable/ic_dot"
         android:layout_marginStart="2dp"
         app:layout_constraintBottom_toBottomOf="@+id/bullet_title"
         app:layout_constraintStart_toStartOf="parent"

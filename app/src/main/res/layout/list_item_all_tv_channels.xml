@@ -27,7 +27,7 @@
         android:layout_height="28dp"
         android:layout_marginTop="4dp"
         android:adjustViewBounds="true"
-        android:src="@drawable/prem_icon_three"
+        app:srcCompat="@drawable/prem_icon_three"
         app:layout_constraintEnd_toEndOf="@+id/icon"
         app:layout_constraintStart_toStartOf="@+id/icon"
         app:layout_constraintTop_toTopOf="parent"

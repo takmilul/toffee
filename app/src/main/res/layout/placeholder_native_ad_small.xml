@@ -18,7 +18,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/txt_poster"
             android:scaleType="fitXY"
-            android:src="@drawable/placeholder"
+            app:srcCompat="@drawable/placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toStartOf="@id/guideline"

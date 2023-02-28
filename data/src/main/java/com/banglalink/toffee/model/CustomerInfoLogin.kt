@@ -172,7 +172,22 @@ class CustomerInfoLogin(
     @SerializedName("isfireStoreTblContentBlacklist")
     var isCircuitBreakerActive: Boolean = false,
     @SerializedName("premium_packages")
-    var activePackList: @RawValue List<ActivePack>? = null
+    var activePackList: @RawValue List<ActivePack>? = null,
+    @SerializedName("blDataPackTermsAndConditionsUrl")
+    var blDataPackTermsAndConditionsUrl : String? = null,
+    @SerializedName("bkashDataPackTermsAndConditionsUrl")
+    var bkashDataPackTermsAndConditionsUrl : String? = null,
+    @SerializedName("bkashApiUrl")
+    var bkashApiUrl : String? = null,
+    @SerializedName("bkashGrantTokenUrl")
+    var bkashGrantTokenUrl : String? = null,
+    @SerializedName("bkashRefreshTokenUrl")
+    var bkashRefreshTokenUrl : String? = null,
+    @SerializedName("bkashCreateUrl")
+    var bkashCreateUrl : String? = null,
+    @SerializedName("bkashCallbackUrl")
+    var bkashCallbackUrl : String? = null,
+
 ) : BodyResponse(), Parcelable
 
 @Entity
