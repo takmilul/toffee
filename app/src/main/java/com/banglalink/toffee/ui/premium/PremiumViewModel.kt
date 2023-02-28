@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
@@ -13,13 +13,14 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
+    private val savedState: SavedStateHandle,
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
     private val packPaymentMethodService: PackPaymentMethodService
@@ -43,11 +44,9 @@ class PremiumViewModel @Inject constructor(
     private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean>>()
     val paymentMethodState = _paymentMethodState.asSharedFlow()
     
-    var selectedPack = MutableLiveData<PremiumPack>()
-    var paymentMethod = MutableLiveData<PackPaymentMethodBean>()
+    var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
+    var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
 //    var selectedPaymentMethod = MutableLiveData<PackPaymentMethodBean>()
-    var togglePremiumFooterLiveData = MutableLiveData<Boolean>()
-    var hidePremiumFooterLiveData = MutableLiveData<Boolean>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {

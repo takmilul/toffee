@@ -49,7 +49,6 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         viewModel.selectedPack.value?.let {
             if (it.isPackPurchased) {
                 homeViewModel.playContentLiveData.value = item
-                viewModel.hidePremiumFooterLiveData.value = true
             }
         }
     }

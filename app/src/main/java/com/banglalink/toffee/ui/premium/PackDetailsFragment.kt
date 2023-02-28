@@ -12,7 +12,13 @@ import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -40,8 +46,6 @@ class PackDetailsFragment : BaseFragment() {
         }
         binding.data = viewModel.selectedPack.value
         
-        observeHideAllFooter()
-        observeToggleFooter()
         observePaymentStatus()
         observePremiumPackDetail()
         
@@ -149,25 +153,6 @@ class PackDetailsFragment : BaseFragment() {
             runCatching {
                 findNavController().popBackStack()
             }
-        }
-    }
-    
-    private fun observeToggleFooter() {
-        observe(viewModel.togglePremiumFooterLiveData) {
-            if (viewModel.selectedPack.value?.isPackPurchased == false) {
-                binding.footerBuyNowBar.show()
-                binding.footerPaymentStatus.hide()
-            } else {
-                binding.footerBuyNowBar.hide()
-                binding.footerPaymentStatus.show()
-            }
-        }
-    }
-    
-    private fun observeHideAllFooter() {
-        observe(viewModel.hidePremiumFooterLiveData) {
-            binding.footerBuyNowBar.hide()
-            binding.footerPaymentStatus.hide()
         }
     }
     
