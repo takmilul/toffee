@@ -2,12 +2,15 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="com.banglalink.toffee.ui.premium.PremiumViewModel"/>
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-
         >
 
         <TextView
@@ -53,12 +56,13 @@
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
                     android:textColor="@color/cardTitleColor"
+
                     app:layout_constraintBottom_toTopOf="@id/trailPrice"
                     app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
-                    android:text="Premium Pass" />
+             />
 
                 <TextView
                     android:id="@+id/trailPrice"
@@ -66,29 +70,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="Starting from BDT 0"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toTopOf="@id/trailDetails"
                     app:layout_constraintEnd_toEndOf="@+id/trailTitle"
                     app:layout_constraintStart_toStartOf="@id/trailTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/trailTitle"
-                    android:text="Starting from BDT 20" />
+                    app:layout_constraintTop_toBottomOf="@+id/trailTitle" />
 
                 <TextView
                     android:id="@+id/trailDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/cardTitleColor"
+                    android:textColor="@color/blClr"
                     android:textSize="12sp"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/trailTitle"
-                    app:layout_constraintStart_toStartOf="@id/trailTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/trailPrice"
-                    android:text="For all users" />
+                    app:layout_constraintEnd_toEndOf="@+id/trailPrice"
+                    app:layout_constraintStart_toStartOf="@+id/trailPrice"
+                    app:layout_constraintTop_toBottomOf="@+id/trailPrice" />
 
                 <ImageView
                     android:id="@+id/passBrandImageView"
@@ -129,13 +131,14 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
+                    android:text="Pay by Banglalink"
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintBottom_toTopOf="@id/blPackPrice"
                     app:layout_constraintEnd_toStartOf="@+id/blImg"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
-                    android:text="Premium Pass" />
+                    />
 
                 <TextView
                     android:id="@+id/blPackPrice"
@@ -145,27 +148,29 @@
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toTopOf="@id/blPackDetails"
                     app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
                     app:layout_constraintStart_toStartOf="@id/blPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
-                    android:text="Starting from BDT 20" />
+
+
+                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle" />
 
                 <TextView
                     android:id="@+id/blPackDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="Only for Banglalink Subscribers"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
-                    app:layout_constraintStart_toStartOf="@id/blPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
-                    android:text="For all users" />
+                    app:layout_constraintEnd_toEndOf="@+id/blPackPrice"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/blPackPrice"
+                    app:layout_constraintTop_toBottomOf="@+id/blPackPrice"
+                    app:layout_constraintVertical_bias="0.4" />
 
                 <ImageView
                     android:id="@+id/blImg"
@@ -215,37 +220,39 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
-                    android:text="Premium Pass" />
+                    android:text="Pay by Bkash"
+                    />
 
                 <TextView
                     android:id="@+id/bkashPackPrice"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toTopOf="@id/bkashPackDetails"
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
-                    android:text="Starting from BDT 20" />
+                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle" />
 
                 <TextView
                     android:id="@+id/bkashPackDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="For all users"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
-                    android:text="For all users" />
+                    app:layout_constraintTop_toBottomOf="@+id/bkashPackPrice" />
 
                 <ImageView
                     android:id="@+id/bkashImg"

@@ -131,4 +131,5 @@
     <color name="TrailBgTransparent">#4D000000</color>
     <color name="TrailTxt">#FFFFFF</color>
     <color name="pack_active_button_color">#1AAF3D</color>
+    <color name="blClr">#FF8D23</color>
 </resources>
