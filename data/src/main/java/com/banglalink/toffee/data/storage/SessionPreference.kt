@@ -60,6 +60,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
+    val paymentName= MutableLiveData<String>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

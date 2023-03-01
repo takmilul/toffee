@@ -64,4 +64,5 @@
     <color name="TrailBg">#111F31</color>
     <color name="TrailBgTransparent">#B3000000</color>
     <color name="TrailTxt">#BED6F3</color>
+    <color name="blClr">#FF8D23</color>
 </resources>

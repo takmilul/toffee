@@ -1,11 +1,13 @@
 package com.banglalink.toffee.ui.premium
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
@@ -46,8 +48,9 @@ class PremiumViewModel @Inject constructor(
     
     var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
-//    var selectedPaymentMethod = MutableLiveData<PackPaymentMethodBean>()
-    
+    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
+
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
