@@ -22,17 +22,13 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.Utils
-import javax.inject.Inject
 
 class PackDetailsFragment : BaseFragment() {
     
     private var _binding: FragmentPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
-
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPackDetailsBinding.inflate(layoutInflater)
@@ -48,7 +44,6 @@ class PackDetailsFragment : BaseFragment() {
         }
         binding.data = viewModel.selectedPack.value
         
-        observePaymentStatus()
         observePremiumPackDetail()
         
         viewModel.selectedPack.value?.let {
@@ -56,7 +51,8 @@ class PackDetailsFragment : BaseFragment() {
             with(binding) {
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
-                        homeViewModel.getPackStatus()
+                        observePackStatus()
+                        viewModel.getPackStatus()
                     }
                 })
             }
@@ -68,8 +64,8 @@ class PackDetailsFragment : BaseFragment() {
 //        findNavController()?.navigate(R.id.startWatchingDialog)
     }
     
-    private fun observePaymentStatus() {
-        observe(homeViewModel.activePackListLiveData) {
+    private fun observePackStatus() {
+        observe(viewModel.activePackListLiveData) {
             when(it) {
                 is Success -> {
                     mPref.activePremiumPackList.value = it.data

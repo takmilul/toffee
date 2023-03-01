@@ -869,7 +869,7 @@ class HomeActivity : PlayerPageActivity(),
         bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumFragment, id.packDetailsFragment)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
-        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+        binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) drawable.ic_arrow_back else drawable.ic_toffee)
     }
     
     private fun setupNavController() {
