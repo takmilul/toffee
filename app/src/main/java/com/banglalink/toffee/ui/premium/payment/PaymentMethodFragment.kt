@@ -1,17 +1,14 @@
 package com.banglalink.toffee.ui.premium.payment
 
-import android.app.Dialog
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import androidx.navigation.NavController
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentPaymentMethodBinding
-import com.banglalink.toffee.extension.showToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -28,22 +25,17 @@ class PaymentMethodFragment : BottomSheetDialogFragment() {
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
-       val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        dialog.setOnKeyListener { _, keyCode, keyEvent ->
+            if(keyCode == KeyEvent.KEYCODE_BACK && keyEvent.action == KeyEvent.ACTION_UP && navController.currentDestination?.id != R.id.paymentPackages) {
+                navController.popBackStack()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
         val dialogBinding = FragmentPaymentMethodBinding.inflate(layoutInflater)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.bottomSheetFragmentPayments) as NavHostFragment
         navController = navHostFragment.navController
-        
-        val bottomDialog = object : BottomSheetDialog(requireContext()) {
-            override fun onBackPressed() {
-                if (navController.currentDestination?.id == R.id.paymentPackages) {
-                    super.onBackPressed()
-                } else {
-                    navController.popBackStack()
-                }
-            }
-        }
-        
     
         dialog.setContentView(dialogBinding.root)
         dialog.setCancelable(false)
