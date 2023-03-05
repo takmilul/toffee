@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.databinding.ButtomSheetPackPaymentOptionBinding
 import androidx.navigation.fragment.findNavController
@@ -55,21 +56,20 @@ class PackPaymentOptionFragment : ChildDialogFragment() {
                     else viewModel.selectedPaymentMethod.postValue(paymentTypes.free?.get(0))
 
                     mPref.paymentName.value="trail"
-
                     findNavController().navigate(R.id.action_payment_to_trail)
                 }
                 blPackCard.setOnClickListener {
 //                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bl?.pREPAID)
 //                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bl?.pOSTPAID)
-                    mPref.paymentName.value="blPack"
+                   // mPref.paymentName.value="blPack"
                     viewModel.selectedPaymentMethod.postValue(paymentTypes.bl?.pREPAID?.get(0))
-                    findNavController().navigate(R.id.action_payment_to_pack)
+                    findNavController().navigate(R.id.action_payment_to_pack, bundleOf("paymentName" to "blPack"))
                 }
                 bkashPackCard.setOnClickListener {
                     viewModel.selectedPaymentMethod.postValue(paymentTypes.bkash?.dataPacks?.get(0))
 //                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bkash?.dataPacks)
-                    mPref.paymentName.value="bKash"
-                    findNavController().navigate(R.id.action_payment_to_pack)
+                    //mPref.paymentName.value="bKash"
+                    findNavController().navigate(R.id.action_payment_to_pack,bundleOf("paymentName" to "bKash"))
 
                 }
             }

@@ -40,24 +40,36 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = DataPackAdapter(this)
-        binding.recyclerView.adapter = mAdapter
-        
+        hidePaymentOption()
+        viewModel.selectedPaymentMethod2.value=null
+        val paymentName = arguments?.getString("paymentName", "") ?: ""
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.pREPAID
             val postPaid = paymentTypes.bl?.pOSTPAID
-            if (prePaid != null && prePaid.isNotEmpty()) {
-                packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
-                packPaymentMethodList.addAll(prePaid)
+            val bkash = paymentTypes.bkash?.dataPacks
+            
+            if(paymentName=="bKash"){
+                packPaymentMethodList.clear()
+                if (bkash != null && bkash.isNotEmpty()) {
+                    packPaymentMethodList.addAll(bkash)
+                }
+            } else if(paymentName=="blPack"){
+                packPaymentMethodList.clear()
+                if (prePaid != null && prePaid.isNotEmpty()) {
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
+                    packPaymentMethodList.addAll(prePaid)
+                }
+    
+                if (postPaid != null && postPaid.isNotEmpty()) {
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
+                    packPaymentMethodList.addAll(postPaid)
+                }
             }
             
-            if (postPaid != null && postPaid.isNotEmpty()) {
-                packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
-                packPaymentMethodList.addAll(postPaid)
-            }
-    
             packPaymentMethodList.let {
+                mAdapter = DataPackAdapter(this)
+                binding.recyclerView.adapter = mAdapter
                 mAdapter.addAll(it.toList())
             }
         }
@@ -105,7 +117,11 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
         binding.buyNow.show()
         
     }
-    
+    fun hidePaymentOption(){
+        binding.termsAndConditionsOne.hide()
+        binding.termsAndConditionsTwo.hide()
+        binding.buyNow.hide()
+    }
     private fun showTermsAndConditionDialog() {
         findNavController().navigate(
             R.id.htmlPageViewDialog, bundleOf(

@@ -60,6 +60,7 @@
             android:textColor="@color/main_text_color"
             android:textSize="12sp"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
@@ -81,6 +82,7 @@
             app:layout_constraintStart_toEndOf="@id/terms_and_conditions_one"
             app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_one"
             android:visibility="gone"
+            tools:visibility="visible"
             />
 
 
@@ -105,6 +107,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
             android:visibility="gone"
+            tools:visibility="visible"
            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -67,7 +67,10 @@
         android:label="PartnershipBottomSheetFragmentPack"
         tools:layout="@layout/buttom_sheet_enable_trial"
         >
-
+        <argument
+            android:name="paymentName"
+            app:argType="string"
+            />
     </fragment>
     <dialog
         android:id="@+id/htmlPageViewDialog"
