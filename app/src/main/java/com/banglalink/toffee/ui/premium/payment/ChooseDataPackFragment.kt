@@ -44,13 +44,13 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
         binding.recyclerView.adapter = mAdapter
         
         viewModel.paymentMethod.value?.let { paymentTypes ->
-            val payemntMethidList = mutableListOf<PackPaymentMethod>()
+            val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.pREPAID
             val postPaid = paymentTypes.bl?.pOSTPAID
-            if (prePaid != null) {
-                payemntMethidList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
+            if (prePaid != null && prePaid.isNotEmpty()) {
+                packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
                 prePaid.forEach {
-                    payemntMethidList.add(
+                    packPaymentMethodList.add(
                         PackPaymentMethod(
                             dataPackId = it.dataPackId,
                             paymentMethodId = it.paymentMethodId,
@@ -66,10 +66,10 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
                 }
             }
             
-            if (postPaid != null) {
-                payemntMethidList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
+            if (postPaid != null && postPaid.isNotEmpty()) {
+                packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
                 postPaid.forEach {
-                    payemntMethidList.add(
+                    packPaymentMethodList.add(
                         PackPaymentMethod(
                             dataPackId = it.dataPackId,
                             paymentMethodId = it.paymentMethodId,
@@ -84,12 +84,12 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
                     )
                 }
             }
-            
-            payemntMethidList.let {
+    
+            packPaymentMethodList.let {
                 mAdapter.addAll(it.toList())
             }
         }
-        observe(viewModel.selectedPaymentMathod2){
+        observe(viewModel.selectedPaymentMethod2){
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
                 showPaymentOption()
@@ -119,7 +119,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     
     override fun onItemClicked(item: PackPaymentMethod) {
         super.onItemClicked(item)
-        viewModel.selectedPaymentMathod2.value = item
+        viewModel.selectedPaymentMethod2.value = item
     }
     
     override fun onDestroyView() {

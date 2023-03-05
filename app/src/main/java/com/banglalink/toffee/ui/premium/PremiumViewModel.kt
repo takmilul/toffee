@@ -61,7 +61,7 @@ class PremiumViewModel @Inject constructor(
     
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
     
-    var selectedPaymentMathod2 = MutableLiveData<PackPaymentMethod>()
+    var selectedPaymentMethod2 = MutableLiveData<PackPaymentMethod>()
     var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
     
     
@@ -105,7 +105,6 @@ class PremiumViewModel @Inject constructor(
             _activePackListLiveData.emit(response)
         }
     }
-    
     fun purchaseDataPack() {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -113,11 +112,11 @@ class PremiumViewModel @Inject constructor(
                     packId = selectedPack.value?.id,
                     packTitle = selectedPack.value?.packTitle,
                     contentList = selectedPack.value?.contentId,
-                    paymentMethodId = selectedPaymentMathod2.value?.paymentMethodId,
-                    packCode = selectedPaymentMathod2.value?.packCode,
-                    packDetails = selectedPaymentMathod2.value?.packDetails,
-                    packPrice = selectedPaymentMathod2.value?.packPrice,
-                    packDuration = selectedPaymentMathod2.value?.packDuration
+                    paymentMethodId = selectedPaymentMethod2.value?.paymentMethodId,
+                    packCode = selectedPaymentMethod2.value?.packCode,
+                    packDetails = selectedPaymentMethod2.value?.packDetails,
+                    packPrice = selectedPaymentMethod2.value?.packPrice,
+                    packDuration = selectedPaymentMethod2.value?.packDuration
                 )
             }
             packPurchaseResponseCode.value=response

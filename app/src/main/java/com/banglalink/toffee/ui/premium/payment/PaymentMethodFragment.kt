@@ -27,13 +27,14 @@ class PaymentMethodFragment : BottomSheetDialogFragment() {
         const val TAG = "BottomSheetDialog"
     }
     
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
+       val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         
         val dialogBinding = FragmentPaymentMethodBinding.inflate(layoutInflater)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.bottomSheetFragmentPayments) as NavHostFragment
         navController = navHostFragment.navController
         
-        val dialog = object : BottomSheetDialog(requireContext()) {
+        val bottomDialog = object : BottomSheetDialog(requireContext()) {
             override fun onBackPressed() {
                 if (navController.currentDestination?.id == R.id.paymentPackages) {
                     super.onBackPressed()
@@ -43,6 +44,7 @@ class PaymentMethodFragment : BottomSheetDialogFragment() {
             }
         }
         
+    
         dialog.setContentView(dialogBinding.root)
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
