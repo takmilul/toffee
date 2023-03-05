@@ -49,40 +49,12 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             val postPaid = paymentTypes.bl?.pOSTPAID
             if (prePaid != null && prePaid.isNotEmpty()) {
                 packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
-                prePaid.forEach {
-                    packPaymentMethodList.add(
-                        PackPaymentMethod(
-                            dataPackId = it.dataPackId,
-                            paymentMethodId = it.paymentMethodId,
-                            isNonBlFree = it.isNonBlFree,
-                            packCode = it.packCode,
-                            packDetails = it.packDetails,
-                            packPrice = it.packPrice,
-                            packDuration = it.packDuration,
-                            sortByCode = it.sortByCode,
-                            isPrepaid = it.isPrepaid,
-                        )
-                    )
-                }
+                packPaymentMethodList.addAll(prePaid)
             }
             
             if (postPaid != null && postPaid.isNotEmpty()) {
                 packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
-                postPaid.forEach {
-                    packPaymentMethodList.add(
-                        PackPaymentMethod(
-                            dataPackId = it.dataPackId,
-                            paymentMethodId = it.paymentMethodId,
-                            isNonBlFree = it.isNonBlFree,
-                            packCode = it.packCode,
-                            packDetails = it.packDetails,
-                            packPrice = it.packPrice,
-                            packDuration = it.packDuration,
-                            sortByCode = it.sortByCode,
-                            isPrepaid = it.isPrepaid,
-                        )
-                    )
-                }
+                packPaymentMethodList.addAll(postPaid)
             }
     
             packPaymentMethodList.let {
