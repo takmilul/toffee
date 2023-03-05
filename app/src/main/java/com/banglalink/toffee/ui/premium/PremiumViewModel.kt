@@ -9,7 +9,13 @@ import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
 import com.banglalink.toffee.data.network.response.*
+import com.banglalink.toffee.apiservice.PremiumPackStatusService
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
+import com.banglalink.toffee.data.network.response.PremiumPack
+import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.google.api.client.util.Sleeper
@@ -25,7 +31,8 @@ class PremiumViewModel @Inject constructor(
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
     private val packPaymentMethodService: PackPaymentMethodService,
-    private val dataPackPurchaseService: DataPackPurchaseService
+    private val dataPackPurchaseService: DataPackPurchaseService,
+    private val premiumPackStatusService: PremiumPackStatusService
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -46,12 +53,17 @@ class PremiumViewModel @Inject constructor(
     private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean>>()
     val paymentMethodState = _paymentMethodState.asSharedFlow()
     
+    private val _activePackListLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
+    val activePackListLiveData = _activePackListLiveData.asSharedFlow()
+    
     var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
+    
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
     
     var selectedPaymentMathod2 = MutableLiveData<PackPaymentMethod>()
     var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
+    
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -75,7 +87,7 @@ class PremiumViewModel @Inject constructor(
     
     fun setVodContentState(vodContentList: List<ChannelInfo>) {
         viewModelScope.launch {
-//            _packContentListsMutableState.value = (vodContentList)
+//            _packContentListsMutableState.value = vodContentList
             _packContentListMutableState.emit(vodContentList)
         }
     }
@@ -84,6 +96,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { packPaymentMethodService.loadData(packageId) }
             _paymentMethodState.emit(response)
+        }
+    }
+    
+    fun getPackStatus(contentId: Int = 0) {
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }
+            _activePackListLiveData.emit(response)
         }
     }
     
