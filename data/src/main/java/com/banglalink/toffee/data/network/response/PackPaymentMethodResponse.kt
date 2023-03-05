@@ -19,20 +19,22 @@ data class PackPaymentMethodResponse(
 @Parcelize
 data class PackPaymentMethodBean(
     @SerializedName("BKASH")
-    val bkash: @RawValue BKASH?,
+    val bkash: BKASH?,
     @SerializedName("BL")
     val bl: @RawValue BL?,
     @SerializedName("FREE")
     val free: @RawValue List<PackPaymentMethod>?
 ) : Parcelable
 
+@Parcelize
 data class BKASH(
     @SerializedName("data_packs")
     val dataPacks: List<PackPaymentMethod>?,
     @SerializedName("minimum_price")
     val minimumPrice: Int
-)
+): Parcelable
 
+@Parcelize
 data class BL(
     @SerializedName("minimum_price")
     val minimumPrice: Int,
@@ -40,25 +42,27 @@ data class BL(
     val pOSTPAID: List<PackPaymentMethod>?,
     @SerializedName("PREPAID")
     val pREPAID: List<PackPaymentMethod>?
-)
-
+): Parcelable
+@Parcelize
 data class PackPaymentMethod(
     @SerializedName("data_pack_id")
-    val dataPackId: Int,
+    val dataPackId: Int? =null,
     @SerializedName("payment_method_id")
-    val paymentMethodId: Int,
+    val paymentMethodId: Int?=null,
     @SerializedName("is_non_bl_free")
-    val isNonBlFree: Int,
+    val isNonBlFree: Int?=null,
     @SerializedName("pack_code")
     val packCode: String? = null,
     @SerializedName("pack_details")
     val packDetails: String? = null,
     @SerializedName("pack_price")
-    val packPrice: Int,
+    val packPrice: Int?=null,
     @SerializedName("pack_duration")
-    val packDuration: Int,
+    val packDuration: Int?=null,
     @SerializedName("sort_by_code")
-    val sortByCode: Int,
+    val sortByCode: Int?=null,
     @SerializedName("is_prepaid")
-    val isPrepaid: Int
-)
+    val isPrepaid: Int?=null,
+    @SerializedName("listTitle")
+    val listTitle:String?=null,
+): Parcelable

@@ -14,7 +14,7 @@ class DataPackPurchaseService @Inject constructor(
     private val preference: SessionPreference
 ) {
     
-    suspend fun loadData(packId:Int?,packTitle:String?,contentList:List<Int>?,paymentMethodId:Int?,packCode:String?,packDetails:String,packPrice:Int?,packDuration:Int?)
+    suspend fun loadData(packId:Int?,packTitle:String?,contentList:List<Int>?,paymentMethodId:Int?,packCode:String?,packDetails:String?,packPrice:Int?,packDuration:Int?)
     : PremiumPackStatusResponse.PremiumPackStatusBean {
        
         val isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0

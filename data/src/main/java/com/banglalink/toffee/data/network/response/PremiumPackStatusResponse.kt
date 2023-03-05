@@ -12,12 +12,10 @@ data class PremiumPackStatusResponse(
     val debugMsg: String,
     @SerializedName("response")
     val response: PremiumPackStatusBean,
-): BaseResponse()
-
-{
+) : BaseResponse() {
     data class PremiumPackStatusBean(
         @SerializedName("status")
-        var status : Int?,
+        var status: Int?,
         @SerializedName("login_related_subs_history")
         val loginRelatedSubsHistory: List<ActivePack>?
     )

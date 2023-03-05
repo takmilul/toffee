@@ -4,16 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.DataPackPurchaseService
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
-import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
-import com.banglalink.toffee.data.network.response.PremiumPack
-import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
+import com.banglalink.toffee.data.network.response.*
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.google.api.client.util.Sleeper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,7 +24,8 @@ class PremiumViewModel @Inject constructor(
     private val savedState: SavedStateHandle,
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
-    private val packPaymentMethodService: PackPaymentMethodService
+    private val packPaymentMethodService: PackPaymentMethodService,
+    private val dataPackPurchaseService: DataPackPurchaseService
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -39,7 +39,7 @@ class PremiumViewModel @Inject constructor(
     
     private var _packContentListMutableState = MutableSharedFlow<List<ChannelInfo>?>()
     var packContentListState = _packContentListMutableState.asSharedFlow()
-    
+
 //    private var _packContentListsMutableState = MutableStateFlow<List<ChannelInfo>?>(null)
 //    var packContentListsState = _packContentListsMutableState.asSharedFlow()
     
@@ -49,8 +49,10 @@ class PremiumViewModel @Inject constructor(
     var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
-
-
+    
+    var selectedPaymentMathod2 = MutableLiveData<PackPaymentMethod>()
+    var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
+    
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -78,10 +80,28 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun getPackPaymentMethodList(packageId: Int){
+    fun getPackPaymentMethodList(packageId: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { packPaymentMethodService.loadData(packageId) }
             _paymentMethodState.emit(response)
+        }
+    }
+    
+    fun purchaseDataPack() {
+        viewModelScope.launch {
+            val response = resultFromResponse {
+                dataPackPurchaseService.loadData(
+                    packId = selectedPack.value?.id,
+                    packTitle = selectedPack.value?.packTitle,
+                    contentList = selectedPack.value?.contentId,
+                    paymentMethodId = selectedPaymentMathod2.value?.paymentMethodId,
+                    packCode = selectedPaymentMathod2.value?.packCode,
+                    packDetails = selectedPaymentMathod2.value?.packDetails,
+                    packPrice = selectedPaymentMathod2.value?.packPrice,
+                    packDuration = selectedPaymentMathod2.value?.packDuration
+                )
+            }
+            packPurchaseResponseCode.value=response
         }
     }
 }
