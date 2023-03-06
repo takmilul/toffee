@@ -33,5 +33,5 @@
 }
 #********************************End rules for gson****************************************#
 
--keep class com.google.obf.** { *; }
--keep interface com.google.obf.** { *; }
+#-keep class com.google.obf.** { *; }
+#-keep interface com.google.obf.** { *; }
