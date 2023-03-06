@@ -9,6 +9,7 @@ import com.banglalink.toffee.data.network.interceptor.IGetMethodTracker
 import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.network.retrofit.ExternalApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
@@ -59,6 +60,25 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
+    @PlainHttpClient
+    fun providesPlainHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+        val clientBuilder = OkHttpClient.Builder().apply {
+            connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            retryOnConnectionFailure(false)
+            if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
+                addInterceptor(HttpLoggingInterceptor().also {
+                    it.level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
+            dns(toffeeDns)
+            cache(cache)
+        }
+        return clientBuilder.build()
+    }
+    
+    @Provides
+    @Singleton
     fun providesCustomCookieJar(): CustomCookieJar {
         return CustomCookieJar()
     }
@@ -87,11 +107,28 @@ object NetworkModuleLib {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
+    
+    @Provides
+    @Singleton
+    @ExternalApiRetrofit
+    fun providesExternalApiRetrofit(@PlainHttpClient httpClient: OkHttpClient, toffeeConfig: ToffeeConfig): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(toffeeConfig.toffeeBaseUrl)
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+    
     @Provides
     @Singleton
     fun providesToffeeApi(retrofit: Retrofit): ToffeeApi {
         return retrofit.create(ToffeeApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun providesExternalApi(@ExternalApiRetrofit retrofit: Retrofit): ExternalApi {
+        return retrofit.create(ExternalApi::class.java)
     }
 
     @Provides
