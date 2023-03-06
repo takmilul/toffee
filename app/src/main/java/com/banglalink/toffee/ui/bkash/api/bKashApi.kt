@@ -12,8 +12,8 @@ interface ApiInterface {
     @POST
     fun postGrantToken(
         @Url url: String?,
-        @Header("username") username: String?,
-        @Header("password") password: String?,
+        @Header("username") bkashUsername: String?,
+        @Header("password") bkashPassword: String?,
         @Body signup: GrantTokenBodyRequest
     ): Call<GrantTokenResponse>
 
