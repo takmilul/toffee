@@ -18,7 +18,6 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.google.api.client.util.Sleeper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,9 +58,9 @@ class PremiumViewModel @Inject constructor(
     var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
-    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
+//    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
     
-    var selectedPaymentMethod2 = MutableLiveData<PackPaymentMethod>()
+    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
     var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
     
     
@@ -112,11 +111,11 @@ class PremiumViewModel @Inject constructor(
                     packId = selectedPack.value?.id,
                     packTitle = selectedPack.value?.packTitle,
                     contentList = selectedPack.value?.contentId,
-                    paymentMethodId = selectedPaymentMethod2.value?.paymentMethodId,
-                    packCode = selectedPaymentMethod2.value?.packCode,
-                    packDetails = selectedPaymentMethod2.value?.packDetails,
-                    packPrice = selectedPaymentMethod2.value?.packPrice,
-                    packDuration = selectedPaymentMethod2.value?.packDuration
+                    paymentMethodId = this@PremiumViewModel.selectedPaymentMethod.value?.paymentMethodId,
+                    packCode = this@PremiumViewModel.selectedPaymentMethod.value?.packCode,
+                    packDetails = this@PremiumViewModel.selectedPaymentMethod.value?.packDetails,
+                    packPrice = this@PremiumViewModel.selectedPaymentMethod.value?.packPrice,
+                    packDuration = this@PremiumViewModel.selectedPaymentMethod.value?.packDuration
                 )
             }
             packPurchaseResponseCode.value=response

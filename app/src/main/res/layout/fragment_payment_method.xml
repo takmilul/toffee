@@ -6,7 +6,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/views"
-        android:background="@drawable/bottom_round_bg"
+        android:background="@drawable/bottom_round_bg_payment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

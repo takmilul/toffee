@@ -4,24 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.ButtomSheetChooseDataPackBinding
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.PaymentMethodBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.DataPackAdapter
-import com.banglalink.toffee.ui.premium.PremiumChannelAdapter
 import com.banglalink.toffee.ui.premium.PremiumViewModel
-import okhttp3.internal.notify
 
 class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackPaymentMethod> {
     private lateinit var mAdapter: DataPackAdapter
@@ -41,7 +35,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hidePaymentOption()
-        viewModel.selectedPaymentMethod2.value=null
+        viewModel.selectedPaymentMethod.value=null
         val paymentName = arguments?.getString("paymentName", "") ?: ""
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
@@ -68,12 +62,12 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             }
             
             packPaymentMethodList.let {
-                mAdapter = DataPackAdapter(this)
+                mAdapter = DataPackAdapter(requireContext(),this)
                 binding.recyclerView.adapter = mAdapter
                 mAdapter.addAll(it.toList())
             }
         }
-        observe(viewModel.selectedPaymentMethod2){
+        observe(viewModel.selectedPaymentMethod){
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
                 showPaymentOption()
@@ -92,6 +86,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
                 }
             }
         }
+        binding.recyclerView.setPadding(0,0,0,24)
         
         binding.backImg.safeClick({ findNavController().popBackStack() })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
@@ -103,7 +98,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     
     override fun onItemClicked(item: PackPaymentMethod) {
         super.onItemClicked(item)
-        viewModel.selectedPaymentMethod2.value = item
+        viewModel.selectedPaymentMethod.value = item
     }
     
     override fun onDestroyView() {
@@ -112,12 +107,14 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     }
     
     fun showPaymentOption() {
+        binding.recyclerView.setPadding(0,0,0,8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
         binding.buyNow.show()
         
     }
     fun hidePaymentOption(){
+        binding.recyclerView.setPadding(0,0,0,24)
         binding.termsAndConditionsOne.hide()
         binding.termsAndConditionsTwo.hide()
         binding.buyNow.hide()

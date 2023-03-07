@@ -1,7 +1,8 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,10 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.databinding.ButtomSheetPackPaymentOptionBinding
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 class PackPaymentOptionFragment : ChildDialogFragment() {
 
@@ -29,6 +28,7 @@ class PackPaymentOptionFragment : ChildDialogFragment() {
         return binding.root
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,19 +37,47 @@ class PackPaymentOptionFragment : ChildDialogFragment() {
         viewModel.paymentMethod.value?.let {paymentTypes->
 
             with(binding) {
-                val isBlNumber = if (mPref.isBanglalinkNumber == "true")
-                {
-                    trailTitle.setText(paymentTypes.free?.get(1)?.packDetails)
-                    trailDetails.setText("Includes 15 days extra for Banglalink subscribers")
-                } else {
-                    trailTitle.setText(paymentTypes.free?.get(0)?.packDetails)
-                    trailDetails.setText("Extra 15 days for Banglalink users")
+                if (paymentTypes.free!=null){
+                    val isBlNumber = if (mPref.isBanglalinkNumber == "true")
+                    {
+                        trailTitle.text=paymentTypes.free?.get(1)?.packDetails.toString()
+                        trailDetails.text="Includes 15 days extra for Banglalink subscribers"
+                    } else {
+                        trailTitle.text=paymentTypes.free?.get(0)?.packDetails.toString()
+                        trailDetails.text="Extra 15 days for Banglalink users"
+
+
+                    }
+                }else{
+
+                    trailCard.hide()
+                }
+
+                if (paymentTypes.bl!=null){
+
+                    blPackPrice.text="Starting from BDT "+ paymentTypes.bl?.minimumPrice?.toString()
+                }else{
+
+                    blPackCard.hide()
+                }
+                if (paymentTypes.bkash!=null){
+
+                    bkashPackPrice.text="Starting from BDT "+ paymentTypes.bkash?.minimumPrice?.toString()
+                }else{
+
+                    bkashPackCard.hide()
                 }
 
 
-                blPackPrice.setText("Starting from BDT "+ paymentTypes.bl?.minimumPrice?.toString())
-                bkashPackPrice.setText("Starting from BDT "+ paymentTypes.bkash?.minimumPrice?.toString())
+                //Disable Banglalink DataPack Option
+                if (mPref.isBanglalinkNumber == "false")
+                {
+                    blPackLayout.isEnabled=false
+                    blPackCard.isClickable=false
+                    blPackCard.isEnabled=false
+                    blPackLayout.setAlpha(.3f)
 
+                }
 
                 trailCard.setOnClickListener {
                    if (mPref.isBanglalinkNumber == "true")   viewModel.selectedPaymentMethod.postValue(paymentTypes.free?.get(1))
