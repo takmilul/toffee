@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import javax.inject.Inject
 
-class PaymentMethodFragment : BottomSheetDialogFragment() {
+class PaymentMethodBottomSheetFragment : BottomSheetDialogFragment() {
     
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager

@@ -12,13 +12,7 @@ import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -43,15 +37,16 @@ class PackDetailsFragment : BaseFragment() {
             checkPackPurchased()
         }
         binding.data = viewModel.selectedPack.value
-        
+    
+        observePaymentMethodList()
+        observePackStatus()
         observePremiumPackDetail()
-        
+    
         viewModel.selectedPack.value?.let {
             viewModel.getPremiumPackDetail(it.id)
             with(binding) {
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
-                        observePackStatus()
                         viewModel.getPackStatus()
                     }
                 })
@@ -79,7 +74,6 @@ class PackDetailsFragment : BaseFragment() {
                     val isPurchased = checkPackPurchased()
                     if (!isPurchased) {
                         viewModel.selectedPack.value?.id?.let {
-                            observePaymentMethodList()
                             viewModel.getPackPaymentMethodList(it)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }

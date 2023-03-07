@@ -9,16 +9,16 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.banglalink.toffee.databinding.StartWatchingMsgBinding
+import com.banglalink.toffee.databinding.DialogSuccessfulPurchaseTopBarBinding
 
-class StartWatchingDialog : DialogFragment() {
+class SuccessfulPurchaseTopBarDialog : DialogFragment() {
     
-    private var _binding: StartWatchingMsgBinding? = null
+    private var _binding: DialogSuccessfulPurchaseTopBarBinding? = null
     private val binding get() = _binding!!
     private lateinit var alertDialog: AlertDialog
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = StartWatchingMsgBinding.inflate(this.layoutInflater)
+        _binding = DialogSuccessfulPurchaseTopBarBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         
         alertDialog = dialogBuilder.create().apply {

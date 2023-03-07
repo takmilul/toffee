@@ -12,42 +12,37 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
-import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.databinding.ButtomSheetChooseDataPackBinding
+import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
-import com.banglalink.toffee.ui.common.DataPackPurchaseDialog
-import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.premium.DataPackAdapter
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
-class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackPaymentMethod> {
+class PaymentDataPackOptionFragment : ChildDialogFragment(), BaseListItemCallback<PackPaymentMethod> {
     var sessionIdToken = ""
-    private lateinit var mAdapter: DataPackAdapter
-    private var _binding: ButtomSheetChooseDataPackBinding? = null
+    private lateinit var mAdapter: PaymentDataPackOptionAdapter
+    private var _binding: FragmentPaymentDataPackOptionBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private var paymentName: String? = null
-    private var bkashPaymentID: String? = null
+    private var bKashPaymentId: String? = null
     private val progressDialog by unsafeLazy {
         ToffeeProgressDialog(requireContext())
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = ButtomSheetChooseDataPackBinding.inflate(inflater, container, false)
+        _binding = FragmentPaymentDataPackOptionBinding.inflate(inflater, container, false)
         return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hidePaymentOption()
-        viewModel.selectedPaymentMethod.value=null
+        viewModel.selectedPaymentMethod.value = null
         paymentName = arguments?.getString("paymentName", "") ?: ""
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
@@ -55,18 +50,17 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             val postPaid = paymentTypes.bl?.pOSTPAID
             val bkash = paymentTypes.bkash?.dataPacks
             
-            if(paymentName=="bKash"){
+            if (paymentName == "bKash") {
                 packPaymentMethodList.clear()
                 if (bkash != null && bkash.isNotEmpty()) {
                     packPaymentMethodList.addAll(bkash)
                 }
-            } else if(paymentName=="blPack"){
+            } else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
                 if (prePaid != null && prePaid.isNotEmpty()) {
                     packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
                     packPaymentMethodList.addAll(prePaid)
                 }
-
                 if (postPaid != null && postPaid.isNotEmpty()) {
                     packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
                     packPaymentMethodList.addAll(postPaid)
@@ -74,12 +68,12 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             }
             
             packPaymentMethodList.let {
-                mAdapter = DataPackAdapter(requireContext(),this)
+                mAdapter = PaymentDataPackOptionAdapter(requireContext(), this)
                 binding.recyclerView.adapter = mAdapter
                 mAdapter.addAll(it.toList())
             }
         }
-        observe(viewModel.selectedPaymentMethod){
+        observe(viewModel.selectedPaymentMethod) {
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
                 showPaymentOption()
@@ -89,8 +83,8 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             progressDialog.hide()
             when (it) {
                 is Success -> {
-                    if(it.data.status==DataPackPurchaseDialog.SUCCESS){
-                        mPref.activePremiumPackList.value=it.data.loginRelatedSubsHistory
+                    if (it.data.status == PostPurchaseStatusDialog.SUCCESS) {
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                     }
                     val args = Bundle().apply {
                         putInt("errorLogicCode", it.data.status ?: 0)
@@ -102,8 +96,8 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
                 }
             }
         }
-        binding.recyclerView.setPadding(0,0,0,24)
-
+        binding.recyclerView.setPadding(0, 0, 0, 24)
+        
         binding.backImg.safeClick({ findNavController().popBackStack() })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
@@ -116,7 +110,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             }
         }
     }
-
+    
     private fun grantBkashToken() {
         observe(viewModel.bKashGrandTokenState) { response ->
             when (response) {
@@ -136,25 +130,27 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
         }
         viewModel.bkashGrandToken()
     }
-
+    
     //    URL/bkash/callback/{packageId}/{dataPackId}/{subscriberId}/{password}/{msisdn}/{isBlNumber}/{deviceType}/{deviceId}/{netType}/{osVersion}/{appVersion}/{appMode}
     private fun createBkashPayment() {
         val callBackUrl =
             "${mPref.bkashCallbackUrl}${viewModel.selectedPack.value?.id}/${viewModel.selectedPaymentMethod.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
         val amount = viewModel.selectedPaymentMethod.value?.packPrice.toString()
-
+        
         observe(viewModel.bKashCreatePaymentState) { response ->
             when (response) {
                 is Success -> {
                     requireContext().showToast(response.data.message)
-                    bkashPaymentID = response.data.paymentID
-                    val args = Bundle().apply {
-                        putString("myTitle", "Pack Details")
-                        putString("Token", sessionIdToken)
-                        putString("PaymentID", bkashPaymentID)
-                        putString("url", response.data.bkashURL)
-                    }
-                    findNavController().navigate(R.id.premiumPageViewDialog, args)
+                    bKashPaymentId = response.data.paymentId
+                    val args = bundleOf(
+                        "myTitle" to "Pack Details",
+                        "token" to sessionIdToken,
+                        "paymentId" to bKashPaymentId,
+                        "url" to response.data.bKashUrl,
+                        "isHideBackIcon" to false,
+                        "isHideCloseIcon" to true
+                    )
+                    findNavController().navigate(R.id.premiumWebViewDialog, args)
                     progressDialog.hide()
                 }
                 is Failure -> {
@@ -182,15 +178,15 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
         viewModel.selectedPaymentMethod.value = item
     }
     
-    fun showPaymentOption() {
-        binding.recyclerView.setPadding(0,0,0,8)
+    private fun showPaymentOption() {
+        binding.recyclerView.setPadding(0, 0, 0, 8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
         binding.buyNow.show()
-
     }
-    fun hidePaymentOption(){
-        binding.recyclerView.setPadding(0,0,0,24)
+    
+    private fun hidePaymentOption() {
+        binding.recyclerView.setPadding(0, 0, 0, 24)
         binding.termsAndConditionsOne.hide()
         binding.termsAndConditionsTwo.hide()
         binding.buyNow.hide()
@@ -199,12 +195,11 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     private fun showTermsAndConditionDialog() {
         findNavController().navigate(
             R.id.htmlPageViewDialog, bundleOf(
-                "myTitle" to getString(R.string.terms_and_conditions),
-                "url" to mPref.termsAndConditionUrl
+                "myTitle" to getString(R.string.terms_and_conditions), "url" to mPref.termsAndConditionUrl
             )
         )
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -368,7 +368,7 @@
 
     <dialog
         android:id="@+id/dataPackPurchaseDialog"
-        android:name="com.banglalink.toffee.ui.common.DataPackPurchaseDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="isHideBackIcon"
@@ -595,11 +595,11 @@
 
     <dialog
         android:id="@+id/bottomSheetPaymentMethods"
-        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodBottomSheetFragment"
         android:label="Add To Playlist" />
     <dialog
         android:id="@+id/startWatchingDialog"
-        android:name="com.banglalink.toffee.ui.premium.StartWatchingDialog"
+        android:name="com.banglalink.toffee.ui.premium.SuccessfulPurchaseTopBarDialog"
         android:label="DeleteAccountFragment"
-        tools:layout="@layout/start_watching_msg" />
+        tools:layout="@layout/dialog_successful_purchase_top_bar" />
 </navigation>

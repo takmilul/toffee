@@ -1,51 +1,50 @@
-package com.banglalink.toffee.ui.common
+package com.banglalink.toffee.ui.premium.payment
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.os.Build
+import android.net.http.SslError
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import coil.load
-import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.enums.WebActionType.*
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.premium.PremiumViewModel
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 @AndroidEntryPoint
-class PremiumPageViewDialog : DialogFragment() {
+class PremiumWebViewDialog : DialogFragment() {
+    
+    val TAG = "premium_log"
     
     private var title: String? = null
     private var header: String? = ""
     private var htmlUrl: String? = null
-    private var bkashPaymentID: String? = ""
+    private var bKashPaymentID: String? = ""
     private var sessionIdToken: String? = ""
     private var shareableUrl: String? = null
     private var isHideBackIcon: Boolean = true
@@ -69,11 +68,12 @@ class PremiumPageViewDialog : DialogFragment() {
         return binding.root
     }
     
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
-        bkashPaymentID = arguments?.getString("PaymentID")!!
-        sessionIdToken = arguments?.getString("Token")!!
+        bKashPaymentID = arguments?.getString("paymentId")!!
+        sessionIdToken = arguments?.getString("token")!!
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
         title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
@@ -87,7 +87,44 @@ class PremiumPageViewDialog : DialogFragment() {
         observeTopBarBackground()
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
+                Log.i(TAG, "onPageStarted: $url")
+            }
+    
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                Log.i(TAG, "onPageFinished: $url")
+            }
+    
+            override fun onReceivedHttpError(view: WebView?, request: WebResourceRequest?, errorResponse: WebResourceResponse?) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                Log.i(
+                    TAG,
+                    "onReceivedHttpError: url: ${request?.url.toString()} \nstatusCode: ${errorResponse?.statusCode} \nerrorMessage: ${errorResponse?.reasonPhrase} \nheader: ${errorResponse?.responseHeaders}"
+                )
+            }
+    
+            override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+                super.onReceivedSslError(view, handler, error)
+                Log.i(TAG, "onReceivedSslError: errorCode: ${error?.primaryError}")
+            }
+    
+            @RequiresApi(VERSION_CODES.O)
+            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+                Log.i(TAG, "onRenderProcessGone: didCrash: ${detail?.didCrash()}")
+                return super.onRenderProcessGone(view, detail)
+            }
+    
+            @Deprecated("Deprecated in Java")
+            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
+                super.onReceivedError(view, errorCode, description, failingUrl)
+                Log.i(TAG, "onReceivedError: failingUrl: $failingUrl errorCode: $errorCode, errorMsg: $description")
+            }
+    
+            @RequiresApi(VERSION_CODES.M)
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                Log.i(TAG, "onReceivedError: errorCode: ${error?.errorCode}, errorMsg: ${error?.description}")
             }
         }
         
@@ -174,7 +211,7 @@ class PremiumPageViewDialog : DialogFragment() {
         }
         viewModel.bkashExecutePayment(
             sessionIdToken!!, ExecutePaymentRequest(
-                paymentID = bkashPaymentID
+                paymentID = bKashPaymentID
             )
         )
     }
@@ -198,7 +235,7 @@ class PremiumPageViewDialog : DialogFragment() {
         }
         viewModel.bkashStatusPayment(
             sessionIdToken!!, QueryPaymentRequest(
-                paymentID = bkashPaymentID
+                paymentID = bKashPaymentID
             )
         )
     }

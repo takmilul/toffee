@@ -1,133 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/progressBar"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="65dp"
-            android:elevation="8dp"
-            android:layout_marginTop="8dp"
-            app:srcCompat="@drawable/content_loader"
-            app:layout_constraintEnd_toEndOf="@id/trailValidity"
-            app:layout_constraintStart_toStartOf="@id/trailValidity"
-            app:layout_constraintTop_toBottomOf="@+id/trailValidity"/>
-
+        
         <ImageView
             android:id="@+id/backImg"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            app:srcCompat="@drawable/ic_arrow_back"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/videoImg"
+        
+        <TextView
+            android:id="@+id/pack_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            app:srcCompat="@drawable/videos"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Choose a Plan"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:adjustViewBounds="true"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/backImg" />
-
-        <TextView
-            android:id="@+id/trailHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@null"
-            android:gravity="center_vertical"
-            android:text="You are about to access the trial pack."
-            android:textColor="@color/main_text_color"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/videoImg"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@+id/videoImg"
-            app:layout_constraintTop_toBottomOf="@+id/videoImg" />
-
-        <TextView
-            android:id="@+id/trailValidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@null"
-            android:gravity="center_vertical"
-            android:text="30 days validity . "
-            android:textColor="@color/main_text_color"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@+id/videoImg"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@+id/videoImg"
-            app:layout_constraintTop_toBottomOf="@+id/trailHeading" />
-
+        
         <TextView
             android:id="@+id/terms_and_conditions_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
-            android:layout_marginTop="48dp"
             android:background="@null"
             android:checked="true"
             android:gravity="center_vertical"
             android:text="By clicking next you are agreeing the "
             android:textColor="@color/main_text_color"
             android:textSize="12sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toBottomOf="@+id/trailValidity" />
-
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+            tools:visibility="visible" />
+        
         <TextView
             android:id="@+id/terms_and_conditions_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="36dp"
+            android:background="?selectableItemBackground"
             android:text="@string/terms_and_conditions"
             android:textColor="@color/colorAccent"
             android:textColorLink="@drawable/text_selector2"
             android:textSize="12sp"
-            android:background="?selectableItemBackground"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_one"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@id/terms_and_conditions_one"
             app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_one"
-            />
+            tools:visibility="visible" />
+        
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/enableNow"
+            android:id="@+id/buyNow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="87dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="87dp"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="20dp"
             android:backgroundTint="#FF3988"
             android:fontFamily="@font/roboto_bold"
-            android:text="ENABLE NOW"
+            android:text="BUY NOW"
             android:textAllCaps="true"
             android:textColor="@color/fw_gnt_white"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
-
-            />
-
+            tools:visibility="visible" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

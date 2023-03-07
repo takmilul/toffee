@@ -39,9 +39,9 @@
 <!--    </fragment>-->
     <fragment
         android:id="@+id/paymentPackages"
-        android:name="com.banglalink.toffee.ui.premium.payment.PackPaymentOptionFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodOptionFragment"
         android:label="PartnershipBottomSheetFragment"
-        tools:layout="@layout/buttom_sheet_pack_payment_option"
+        tools:layout="@layout/fragment_payment_method_option"
         >
         <action
             android:id="@+id/action_payment_to_pack"
@@ -54,18 +54,18 @@
     </fragment>
     <fragment
         android:id="@+id/choosePackages"
-        android:name="com.banglalink.toffee.ui.premium.payment.ChooseDataPackFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentDataPackOptionFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/buttom_sheet_choose_data_pack"
+        tools:layout="@layout/fragment_payment_data_pack_option"
         >
 
     </fragment>
 
     <fragment
         android:id="@+id/trailPack"
-        android:name="com.banglalink.toffee.ui.premium.payment.TrialFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.ActivateTrialPackFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/buttom_sheet_enable_trial"
+        tools:layout="@layout/fragment_activate_trial_pack"
         >
         <argument
             android:name="paymentName"
@@ -73,9 +73,9 @@
             />
     </fragment>
     <dialog
-        android:id="@+id/premiumPageViewDialog"
+        android:id="@+id/premiumWebViewDialog"
         tools:layout="@layout/dialog_html_page_view"
-        android:name="com.banglalink.toffee.ui.common.PremiumPageViewDialog">
+        android:name="com.banglalink.toffee.ui.premium.payment.PremiumWebViewDialog">
         <argument
             android:name="myTitle"
             app:argType="string"
@@ -87,7 +87,7 @@
 
     <dialog
         android:id="@+id/dataPackPurchaseDialog"
-        android:name="com.banglalink.toffee.ui.common.DataPackPurchaseDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="isHideBackIcon"

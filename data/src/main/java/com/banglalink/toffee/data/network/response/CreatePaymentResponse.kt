@@ -8,9 +8,9 @@ data class CreatePaymentResponse (
 	@SerializedName("statusMessage")
 	var statusMessage : String? = null,
 	@SerializedName("paymentID")
-	var paymentID : String? = null,
+	var paymentId : String? = null,
 	@SerializedName("bkashURL")
-	var bkashURL : String? = null,
+	var bKashUrl : String? = null,
 	@SerializedName("callbackURL")
 	var callbackURL : String? = null,
 	@SerializedName("successCallbackURL")

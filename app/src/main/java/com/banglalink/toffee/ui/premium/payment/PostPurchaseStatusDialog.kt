@@ -1,41 +1,39 @@
-package com.banglalink.toffee.ui.common
+package com.banglalink.toffee.ui.premium.payment
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.databinding.DialogPurchaseDataPackBinding
+import com.banglalink.toffee.databinding.DialogPostPurchaseStatusBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DataPackPurchaseDialog : DialogFragment() {
+class PostPurchaseStatusDialog : DialogFragment() {
     private var title: String? = null
     private var errorLogicCode: Int? = null
     
-    private var _binding: DialogPurchaseDataPackBinding? = null
+    private var _binding: DialogPostPurchaseStatusBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var mPref: SessionPreference
-    @Inject
-    lateinit var cPref: CommonPreference
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cPref: CommonPreference
     private var isHideBackIcon: Boolean = true
     
     companion object {
@@ -60,7 +58,7 @@ class DataPackPurchaseDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogPurchaseDataPackBinding.inflate(layoutInflater)
+        _binding = DialogPostPurchaseStatusBinding.inflate(layoutInflater)
         
         title = "Payment Confirmation"
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", false) ?: false
@@ -80,7 +78,7 @@ class DataPackPurchaseDialog : DialogFragment() {
         }
         
         binding.goToHomePageBtn.setOnClickListener {
-        
+            requireActivity().launchActivity<HomeActivity>()
         }
         binding.tryAgainBtn.setOnClickListener {
             dialog?.dismiss()
