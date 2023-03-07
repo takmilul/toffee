@@ -59,14 +59,14 @@ class PremiumViewModel @Inject constructor(
     var selectedPack = savedState.getLiveData<PremiumPack>("selectedPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
+//    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
+
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
-    
-    var selectedPaymentMethod2 = MutableLiveData<PackPaymentMethod>()
     var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
     
     private var _bKashGrandTokenState = MutableSharedFlow<Resource<GrantTokenResponse>>()
     val bKashGrandTokenState = _bKashGrandTokenState.asSharedFlow()
-    
+
     private var _bKashCreatePaymentState = MutableSharedFlow<Resource<CreatePaymentResponse>>()
     val bKashCreatePaymentState = _bKashCreatePaymentState.asSharedFlow()
 
@@ -75,7 +75,7 @@ class PremiumViewModel @Inject constructor(
 
     private var _bKashStatusPaymentState = MutableSharedFlow<Resource<QueryPaymentResponse>>()
     val bKashStatusPaymentState = _bKashStatusPaymentState.asSharedFlow()
-    
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -123,29 +123,21 @@ class PremiumViewModel @Inject constructor(
                     packId = selectedPack.value?.id,
                     packTitle = selectedPack.value?.packTitle,
                     contentList = selectedPack.value?.contentId,
-                    paymentMethodId = selectedPaymentMethod2.value?.paymentMethodId,
-                    packCode = selectedPaymentMethod2.value?.packCode,
-                    packDetails = selectedPaymentMethod2.value?.packDetails,
-                    packPrice = selectedPaymentMethod2.value?.packPrice,
-                    packDuration = selectedPaymentMethod2.value?.packDuration
+                    paymentMethodId = this@PremiumViewModel.selectedPaymentMethod.value?.paymentMethodId,
+                    packCode = this@PremiumViewModel.selectedPaymentMethod.value?.packCode,
+                    packDetails = this@PremiumViewModel.selectedPaymentMethod.value?.packDetails,
+                    packPrice = this@PremiumViewModel.selectedPaymentMethod.value?.packPrice,
+                    packDuration = this@PremiumViewModel.selectedPaymentMethod.value?.packDuration
                 )
             }
             packPurchaseResponseCode.value=response
         }
     }
-    
+
     fun bkashGrandToken() {
         viewModelScope.launch {
             val response = resultFromResponse { bKashGrandTokenService.execute() }
             _bKashGrandTokenState.emit(response)
-            when(response) {
-                is Success -> {
-                
-                }
-                is Failure -> {
-                
-                }
-            }
         }
     }
     
@@ -153,14 +145,6 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { bKashCreatePaymentService.execute(token, requestBody) }
             _bKashCreatePaymentState.emit(response)
-            when(response) {
-                is Success -> {
-                
-                }
-                is Failure -> {
-                
-                }
-            }
         }
     }
 
@@ -168,14 +152,6 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { bKashExecutePaymentService.execute(token, requestBody) }
             _bKashExecutePaymentState.emit(response)
-            when(response) {
-                is Success -> {
-
-                }
-                is Failure -> {
-
-                }
-            }
         }
     }
 
@@ -183,14 +159,6 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { bKashStatusPaymentService.execute(token, requestBody) }
             _bKashStatusPaymentState.emit(response)
-            when(response) {
-                is Success -> {
-
-                }
-                is Failure -> {
-
-                }
-            }
         }
     }
 }

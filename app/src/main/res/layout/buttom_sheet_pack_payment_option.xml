@@ -11,6 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="32dp"
         >
 
         <TextView
@@ -35,8 +36,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/blPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pack_title">
@@ -61,8 +64,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-             />
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <TextView
                     android:id="@+id/trailPrice"
@@ -111,13 +113,16 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/bkashPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trailCard">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/blPackLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -137,8 +142,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/blImg"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    />
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <TextView
                     android:id="@+id/blPackPrice"
@@ -192,7 +196,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="48dp"
+
+            android:layout_marginBottom="8dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -214,14 +219,13 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
+                    android:text="Pay by Bkash"
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintBottom_toTopOf="@id/bkashPackPrice"
                     app:layout_constraintEnd_toStartOf="@+id/bkashImg"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    android:text="Pay by Bkash"
-                    />
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <TextView
                     android:id="@+id/bkashPackPrice"
@@ -267,84 +271,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="16dp"-->
 
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:layout_marginBottom="48dp"-->
-<!--            android:backgroundTint="@color/payment_option_card_bg"-->
-<!--            app:cardCornerRadius="12dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/cardView5">-->
-
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/passNameTextView"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="16dp"-->
-<!--                    android:layout_marginTop="16dp"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:ellipsize="end"-->
-<!--                    android:fontFamily="@font/roboto_regular"-->
-<!--                    android:maxLines="2"-->
-<!--                    android:textColor="@color/cardTitleColor"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/passPriceTextView"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintVertical_chainStyle="packed"-->
-<!--                    tools:text="Premium Pass" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/passPriceTextView"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="8dp"-->
-<!--                    android:fontFamily="@font/roboto_regular"-->
-<!--                    android:textColor="@color/cardTitleColor"-->
-<!--                    android:textSize="12sp"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/passEligibleUserTextView"-->
-<!--                    app:layout_constraintEnd_toEndOf="@+id/passNameTextView"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/passNameTextView"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/passNameTextView"-->
-<!--                    tools:text="Starting from BDT 20" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/passEligibleUserTextView"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="4dp"-->
-<!--                    android:layout_marginBottom="16dp"-->
-<!--                    android:fontFamily="@font/roboto_regular"-->
-<!--                    android:textColor="@color/cardTitleColor"-->
-<!--                    android:textSize="12sp"-->
-<!--                    android:textStyle="italic"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="@+id/passNameTextView"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/passNameTextView"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/passPriceTextView"-->
-<!--                    tools:text="For all users" />-->
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/passBrandImageView"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginEnd="16dp"-->
-<!--                    android:contentDescription="pass brand image view"-->
-<!--                    android:src="@drawable/bkash"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/passNameTextView" />-->
-
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--        </androidx.cardview.widget.CardView>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

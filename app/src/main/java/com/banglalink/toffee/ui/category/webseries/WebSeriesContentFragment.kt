@@ -20,12 +20,18 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentWebSeriesContentBinding
-import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.FilterContentType.FEED
+import com.banglalink.toffee.enums.FilterContentType.LATEST_VIDEOS
+import com.banglalink.toffee.enums.FilterContentType.TRENDING_VIDEOS
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showLoadingAnimation
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.SeriesPlaybackInfo
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -152,7 +158,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             item.seriesName ?: "",
             item.seasonNo,
             item.totalSeason,
-            item.activeSeasonList,
+            listOf(1),
             item.video_share_url,
             item.id.toInt(),
             item

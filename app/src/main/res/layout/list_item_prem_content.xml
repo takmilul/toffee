@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        <import type="android.view.View" />
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -37,6 +38,42 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            
+            <View
+                android:id="@+id/overlayView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/overlay_dark_color"
+                android:alpha="0.75"
+                android:layout_marginStart="-16dp"
+                app:layout_constraintStart_toStartOf="@id/videoCountTextView"
+                app:layout_constraintTop_toTopOf="@id/icon"
+                app:layout_constraintEnd_toEndOf="@id/icon"
+                app:layout_constraintBottom_toBottomOf="@id/icon"/>
+            
+            <TextView
+                android:id="@+id/videoCountTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{data.totalEpisode + ` Episodes`}"
+                tools:text="15 Episodes"
+                android:textColor="@android:color/white"
+                android:gravity="center_horizontal"
+                android:drawablePadding="6dp"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="@dimen/default_text_size"
+                android:layout_marginEnd="16dp"
+                app:drawableTopCompat="@drawable/ic_playlist"
+                app:layout_constraintTop_toTopOf="@id/icon"
+                app:layout_constraintEnd_toEndOf="@id/icon"
+                app:layout_constraintBottom_toBottomOf="@id/icon"/>
+            
+            <androidx.constraintlayout.widget.Group
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{data.seriesSummaryId != 0 ? View.VISIBLE : View.GONE}"
+                tools:visibility="visible"
+                app:constraint_referenced_ids="overlayView,videoCountTextView" />
             
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
