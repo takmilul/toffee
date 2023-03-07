@@ -1,9 +1,16 @@
 package com.banglalink.toffee.ui.home
 
+import android.R.layout
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -26,10 +33,10 @@ class ChannelHeaderAdapter(
     private val mPref: SessionPreference,
     private val viewModel: EpisodeListViewModel? = null,
 ) : RecyclerView.Adapter<ChannelHeaderAdapter.HeaderViewHolder>() {
-
+    
     private var channelInfo: ChannelInfo? = null
     private var viewHolder: HeaderViewHolder? = null
-
+    
     init {
         when (headerData) {
             is ChannelInfo -> channelInfo = headerData
@@ -39,7 +46,7 @@ class ChannelHeaderAdapter(
             }
         }
     }
-
+    
     fun toggleShowMore(showMore: Boolean?) {
         viewHolder?.let {
             if (showMore == true) {
@@ -55,21 +62,22 @@ class ChannelHeaderAdapter(
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
             layoutInflater, viewType, parent, false
         )
-        return HeaderViewHolder(binding)
+        viewHolder = HeaderViewHolder(binding)
+        viewHolder!!.seasonSpinner.isEnabled = false
+        return viewHolder!!
     }
-
+    
     override fun getItemViewType(position: Int): Int {
         return R.layout.catchup_details_list_header_new
     }
-
+    
     override fun onBindViewHolder(holder: HeaderViewHolder, position: Int) {
-        viewHolder = holder
         channelInfo?.let {
             holder.bind(it, cb, position, viewModel)
         }
         holder.autoplaySwitchGroup.visibility = View.VISIBLE
         holder.bottomPanelStatus.visibility = View.VISIBLE
-        
+    
         when (headerData) {
             is PlaylistPlaybackInfo -> {
                 holder.seasonInfoHeader.visibility = View.GONE
@@ -83,20 +91,12 @@ class ChannelHeaderAdapter(
                 holder.seasonSpinnerWrap.visibility = View.VISIBLE
                 holder.bottomPanelStatus.visibility = View.GONE
                 holder.seasonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long,
-                    ) {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                         if (cb is SeriesHeaderCallback) {
                             cb.onSeasonChanged(position + 1)
                         }
                     }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) { }
                 }
             }
             else -> {
@@ -105,22 +105,32 @@ class ChannelHeaderAdapter(
                 holder.playlistShareButton.visibility =View.GONE
             }
         }
-
+        
         holder.autoplaySwitch.isChecked = mPref.isAutoplayForRecommendedVideos
         holder.autoplaySwitch.setOnCheckedChangeListener { _, isChecked ->
             mPref.isAutoplayForRecommendedVideos = isChecked
         }
     }
-
+    
     override fun getItemCount(): Int {
         return if (channelInfo == null) 0 else 1
     }
-
+    
     fun setChannelInfo(info: ChannelInfo?) {
         channelInfo = info
         notifyDataSetChanged()
     }
-
+    
+    fun updateSpinner(context: Context, seasonList: List<String>, selectedSeason: Int) {
+        viewHolder?.let {
+            val spinnerArrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(context, layout.simple_spinner_item, seasonList)
+            it.seasonSpinner.adapter = spinnerArrayAdapter
+            it.seasonSpinner.setSelection(selectedSeason)
+            it.seasonSpinner.isEnabled = true
+            notifyDataSetChanged()
+        }
+    }
+    
     class HeaderViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         val autoplaySwitchGroup: Group = binding.root.findViewById(R.id.autoplay_switch_group)
         val autoplaySwitch: SwitchButton = binding.root.findViewById(R.id.autoPlaySwitch)
@@ -130,7 +140,7 @@ class ChannelHeaderAdapter(
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)
         val seasonSpinnerWrap: RelativeLayout = binding.root.findViewById(R.id.seasonSpinnerWrap)
         val playlistShareButton: ImageView = binding.root.findViewById(R.id.playlistShareButton)
-
+        
         fun bind(obj: Any, cb: Any?, pos: Int, vm: EpisodeListViewModel?) {
             binding.setVariable(BR.callback, cb)
             binding.setVariable(BR.position, pos)

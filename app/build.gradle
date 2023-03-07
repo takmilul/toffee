@@ -19,6 +19,9 @@ android {
         applicationId "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
+        ndk {
+            debugSymbolLevel 'SYMBOL_TABLE'
+        }
     }
     
     flavorDimensions "lib"
@@ -70,6 +73,7 @@ android {
         resources {
             excludes += ["META-INF/*.kotlin_module"]
             pickFirsts += [
+                "META-INF/services",
                 "META-INF/LICENSE",
                 "META-INF/INDEX.LIST",
                 "META-INF/io.netty.versions.properties",
@@ -140,7 +144,7 @@ dependencies {
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging-ktx:$firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation "com.google.firebase:firebase-inappmessaging-display-ktx:20.3.0"
+    implementation "com.google.firebase:firebase-inappmessaging-display-ktx:20.3.1"
     //Firebase core
 //    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics-ktx:$firebaseAnalyticsVersion"
@@ -237,7 +241,7 @@ dependencies {
     //implementation "org.eclipse.paho:org.eclipse.paho.android.service:$pahoAndroidServiceVersion"
     
     implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
-    implementation "com.google.android.gms:play-services-ads:21.3.0"
+    implementation "com.google.android.gms:play-services-ads:21.5.0"
     implementation "androidx.ads:ads-identifier:1.0.0-alpha04"
     implementation "com.google.guava:guava:31.0.1-android"
     

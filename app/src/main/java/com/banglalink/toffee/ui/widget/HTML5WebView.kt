@@ -87,6 +87,7 @@ class HTML5WebView @JvmOverloads constructor(
             displayZoomControls = false
             setSupportMultipleWindows(false)
             cacheMode = WebSettings.LOAD_DEFAULT
+            mediaPlaybackRequiresUserGesture = false
             javaScriptCanOpenWindowsAutomatically = true
             CookieManager.getInstance().setAcceptCookie(true)
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW

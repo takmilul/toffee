@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
-import android.os.Build
+import android.os.Build.VERSION
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +12,10 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.GrantTokenBodyRequest
+import com.banglalink.toffee.data.network.response.CreatePaymentResponse
+import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.databinding.ButtomSheetChoosePackBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.launchActivity
@@ -20,10 +24,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.bkash.api.ApiInterface
 import com.banglalink.toffee.ui.bkash.api.BkashApiClient
-import com.banglalink.toffee.ui.bkash.model.CreatePaymentBodyRequest
-import com.banglalink.toffee.ui.bkash.model.CreatePaymentResponse
-import com.banglalink.toffee.ui.bkash.model.GrantTokenBodyRequest
-import com.banglalink.toffee.ui.bkash.model.GrantTokenResponse
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -126,10 +126,10 @@ class PaymentChoosePackFragment : ChildDialogFragment(), ProviderIconCallback<Ch
             mPref.bkashCreateUrl,
             "Bearer $sessionIdToken",
             bkashSandboxAppKey,
-            CreatePaymentBodyRequest(
+            CreatePaymentRequest(
                 "0011",
                 "01770618575",
-                "${mPref.bkashCallbackUrl}1/1/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_"+ Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}",
+                "${mPref.bkashCallbackUrl}1/1/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_"+ VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}",
                 "MI05MID54RF09123456One",
                 "30",
                 "BDT",

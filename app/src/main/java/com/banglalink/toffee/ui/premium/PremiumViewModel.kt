@@ -4,25 +4,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.DataPackPurchaseService
-import com.banglalink.toffee.apiservice.PackPaymentMethodService
-import com.banglalink.toffee.apiservice.PremiumPackDetailService
-import com.banglalink.toffee.apiservice.PremiumPackListService
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.response.*
-import com.banglalink.toffee.apiservice.PremiumPackStatusService
-import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
-import com.banglalink.toffee.data.network.response.PremiumPack
-import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
@@ -31,7 +26,9 @@ class PremiumViewModel @Inject constructor(
     private val premiumPackDetailService: PremiumPackDetailService,
     private val packPaymentMethodService: PackPaymentMethodService,
     private val dataPackPurchaseService: DataPackPurchaseService,
-    private val premiumPackStatusService: PremiumPackStatusService
+    private val premiumPackStatusService: PremiumPackStatusService,
+    private val bKashGrandTokenService: BkashGrandTokenService,
+    private val bKashCreatePaymentService: BkashCreatePaymentService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -59,11 +56,16 @@ class PremiumViewModel @Inject constructor(
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
 //    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
-    
+
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
     var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
     
-    
+    private var _bKashGrandTokenState = MutableSharedFlow<Resource<GrantTokenResponse>>()
+    val bKashGrandTokenState = _bKashGrandTokenState.asSharedFlow()
+
+    private var _bKashCreatePaymentState = MutableSharedFlow<Resource<CreatePaymentResponse>>()
+    val bKashCreatePaymentState = _bKashCreatePaymentState.asSharedFlow()
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -119,6 +121,36 @@ class PremiumViewModel @Inject constructor(
                 )
             }
             packPurchaseResponseCode.value=response
+        }
+    }
+
+    fun bkashGrandToken() {
+        viewModelScope.launch {
+            val response = resultFromResponse { bKashGrandTokenService.execute() }
+            _bKashGrandTokenState.emit(response)
+            when(response) {
+                is Success -> {
+
+                }
+                is Failure -> {
+
+                }
+            }
+        }
+    }
+
+    fun bkashCreatePayment(token: String, requestBody: CreatePaymentRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse { bKashCreatePaymentService.execute(token, requestBody) }
+            _bKashCreatePaymentState.emit(response)
+            when(response) {
+                is Success -> {
+
+                }
+                is Failure -> {
+
+                }
+            }
         }
     }
 }

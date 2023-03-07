@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.common
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,25 +15,30 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
+import com.banglalink.toffee.enums.WebActionType.*
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class HtmlPageViewDialog : DialogFragment() {
+    
     private var title: String? = null
-    private var _binding: DialogHtmlPageViewBinding? = null
-    private val binding get() = _binding!!
-    @Inject lateinit var mPref: SessionPreference
-    @Inject lateinit var cPref: CommonPreference
-    private lateinit var htmlUrl: String
     private var header: String? = ""
+    private var htmlUrl: String? = null
+    private var shareableUrl: String? = null
     private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
+    @Inject lateinit var cPref: CommonPreference
+    @Inject lateinit var mPref: SessionPreference
+    private var _binding: DialogHtmlPageViewBinding? = null
+    private val binding get() = _binding!!
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +50,17 @@ class HtmlPageViewDialog : DialogFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogHtmlPageViewBinding.inflate(layoutInflater)
+        return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        MedalliaDigital.disableIntercept()
         
         htmlUrl = arguments?.getString("url")!!
         header = arguments?.getString("header")
         title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
+        shareableUrl = arguments?.getString("shareable_url")
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon",true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon",false) ?: false
         
@@ -73,8 +84,8 @@ class HtmlPageViewDialog : DialogFragment() {
             
             override fun onPermissionRequest(request: PermissionRequest) {
                 val resources = request.resources
-                for (i in resources.indices) {
-                    if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resources[i]) {
+                for (resource in resources) {
+                    if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resource) {
                         request.grant(resources)
                         return
                     }
@@ -84,29 +95,34 @@ class HtmlPageViewDialog : DialogFragment() {
         }
         
         with(binding.webview.settings) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            }
-            javaScriptEnabled = true
             setSupportZoom(true)
-            setNeedInitialFocus(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
             databaseEnabled = true
             useWideViewPort = true
+            domStorageEnabled = true
+            javaScriptEnabled = true
+            setNeedInitialFocus(false)
             builtInZoomControls = true
             displayZoomControls = false
-            setSupportMultipleWindows(true)
-            javaScriptCanOpenWindowsAutomatically = true
-            domStorageEnabled = true
+            setSupportMultipleWindows(false)
+            cacheMode = WebSettings.LOAD_DEFAULT
             mediaPlaybackRequiresUserGesture = false
+            javaScriptCanOpenWindowsAutomatically = true
+            CookieManager.getInstance().setAcceptCookie(true)
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
-        if (header.isNullOrEmpty()) {
-            binding.webview.loadUrl(htmlUrl)
-        } else {
-            val headerMap: MutableMap<String, String> = HashMap()
-            headerMap["MSISDN"] = header!!
-            binding.webview.loadUrl(htmlUrl, headerMap)
+        binding.webview.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
+        
+        htmlUrl?.let {
+            if (header.isNullOrEmpty()) {
+                binding.webview.loadUrl(it)
+            } else {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["MSISDN"] = header!!
+                binding.webview.loadUrl(it, headerMap)
+            }
         }
+        
         runCatching {
             binding.closeIv.setOnClickListener {
                 dialog?.dismiss()
@@ -120,7 +136,42 @@ class HtmlPageViewDialog : DialogFragment() {
                 }
             }
         }
-        return binding.root
+    }
+    
+    @JavascriptInterface
+    fun webCallback(type: Int, message: String? = null, url: String? = null) {
+        when (type) {
+            HOME_SCREEN.value -> {
+                dismiss()
+            }
+            LOGIN_DIALOG.value -> {
+                mPref.loginDialogLiveData.postValue(true)
+            }
+            MESSAGE_DIALOG.value -> {
+                message?.let {
+                    mPref.messageDialogLiveData.postValue(it)
+                }
+            }
+            PLAY_CONTENT.value -> {
+                mPref.isPaidUser = true
+                shareableUrl?.let {
+                    mPref.shareableUrlLiveData.postValue(it)
+                }
+            }
+            DEEP_LINK.value -> {
+                url?.let {
+                    mPref.shareableUrlLiveData.postValue(it)
+                }
+            }
+            CLOSE_APP.value -> {
+                requireActivity().finishAffinity()
+                exitProcess(0)
+            }
+            FORCE_LOGOUT.value -> {
+                mPref.forceLogoutUserLiveData.postValue(true)
+            }
+        }
+        dismiss()
     }
     
     private fun observeTopBarBackground() {
@@ -155,6 +206,7 @@ class HtmlPageViewDialog : DialogFragment() {
     }
     
     override fun onDestroyView() {
+        MedalliaDigital.enableIntercept()
         binding.webview.run {
             clearCache(false)
 // loadUrl("about:blank")

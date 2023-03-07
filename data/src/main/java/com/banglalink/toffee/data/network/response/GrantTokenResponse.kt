@@ -1,7 +1,6 @@
-package com.banglalink.toffee.ui.bkash.model
+package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
-
 
 data class GrantTokenResponse (
 	@SerializedName("statusCode")
@@ -16,4 +15,4 @@ data class GrantTokenResponse (
 	var expiresIn : Int? = null,
 	@SerializedName("refresh_token")
 	var refreshToken : String? = null
-)
+): BaseResponse()

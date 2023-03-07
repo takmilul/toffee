@@ -1,7 +1,6 @@
-package com.banglalink.toffee.ui.bkash.model
+package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
-
 
 data class CreatePaymentResponse (
 	@SerializedName("statusCode")
@@ -34,4 +33,4 @@ data class CreatePaymentResponse (
 	var merchantInvoiceNumber : String? = null,
 	@SerializedName("message")
 	var message : String? = null
-)
+): BaseResponse()

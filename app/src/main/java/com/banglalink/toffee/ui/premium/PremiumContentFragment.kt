@@ -9,8 +9,10 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPremContentBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 
 class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -48,7 +50,27 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         super.onItemClicked(item)
         viewModel.selectedPack.value?.let {
             if (it.isPackPurchased) {
-                homeViewModel.playContentLiveData.value = item
+                if (item.seriesSummaryId > 0) {
+                    val seriesData = SeriesPlaybackInfo(
+                        item.seriesSummaryId,
+                        item.seriesName ?: "",
+                        item.seasonNo,
+                        item.totalSeason,
+                        listOf(1),
+                        item.video_share_url,
+                        item.id.toInt(),
+                        item
+                    )
+                    homeViewModel.addToPlayListMutableLiveData.postValue(
+                        AddToPlaylistData(
+                            seriesData.playlistId(),
+                            listOf(item)
+                        )
+                    )
+                    homeViewModel.playContentLiveData.postValue(seriesData)
+                } else {
+                    homeViewModel.playContentLiveData.postValue(item)
+                }
             }
         }
     }

@@ -246,7 +246,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun initializePlayer() {
+    fun initializePlayer() {
         retryCounter = 0
         reloadCounter = 0
         fallbackCounter = 0
@@ -491,7 +491,7 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun releasePlayer() {
+    fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
@@ -827,25 +827,21 @@ abstract class PlayerPageActivity :
         
         if (mPref.isVastActive && channelInfo.isAdActive) {
             val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
-            val shouldPlayAd = tag != null && playCounter == 0 && !(isReload && channelInfo.isLinear)
+            val shouldPlayAd = tag != null && playCounter == 0 //&& !(isReload && channelInfo.isLinear)
             if (shouldPlayAd) {
                 val vastTag = if (isReload && currentlyPlayingVastUrl.isNotBlank()) currentlyPlayingVastUrl else tag
                 ConvivaHelper.setVastTagUrl(vastTag)
-                mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
+//                Log.i("ADs_", "vast tag: $vastTag")
+                mediaItem = mediaItem.buildUpon()
+                    .setAdsConfiguration(
+                        MediaItem.AdsConfiguration
+                            .Builder(Uri.parse(vastTag))
+                            .setAdsId(Random.nextInt())
+                            .build()
+                    ).build()
                 currentlyPlayingVastUrl = vastTag!!
             }
         }
-//        getVastTagList(channelInfo)
-//            ?.randomOrNull()
-//            ?.let { tag ->
-//                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && channelInfo.isAdActive && !(isReload && channelInfo.isLinear)
-//                val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
-//                if (shouldPlayAd && vastTag.isNotBlank()) {
-//                    ConvivaHelper.setVastTagUrl(vastTag)
-//                    mediaItem = mediaItem.buildUpon().setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build()).build()
-//                    currentlyPlayingVastUrl = vastTag
-//                }
-//            }
         
         maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
         if (maxBitRate > 0) {

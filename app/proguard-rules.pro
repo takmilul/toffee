@@ -98,5 +98,16 @@
 -dontwarn io.invertase.firebase.**
 -keep class io.invertase.firebase.messaging.** { *; }
 
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+-keep class com.google.obf.** { *; }
+-keep interface com.google.obf.** { *; }
+
+-dontwarn com.beloo.widget.chipslayoutmanager.Orientation
+-dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { <fields>; }

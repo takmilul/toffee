@@ -1869,11 +1869,11 @@ class HomeActivity : PlayerPageActivity(),
         )
     }
 
-//    private fun resetPlayer() {
-//        releasePlayer()
-//        initializePlayer()
-//        setPlayerInPlayerView()
-//    }
+    private fun resetPlayer() {
+        releasePlayer()
+        initializePlayer()
+        setPlayerInPlayerView()
+    }
     
     override fun playIndex(index: Int) {
         super.playIndex(index)

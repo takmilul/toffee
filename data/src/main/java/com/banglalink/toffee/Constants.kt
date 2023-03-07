@@ -105,4 +105,9 @@ object Constants {
             return String(buf)
         }
     }.toString()
+    
+    val BKASH_USER_NAME = "sandboxTokenizedUser01"
+    val BKASH_PASSWORD = "sandboxTokenizedUser12345"
+    val BKASH_APP_KEY = "7epj60ddf7id0chhcm3vkejtab"
+    val BKASH_APP_SECRET = "18mvi27h9l38dtdv110rq5g603blk0fhh5hg46gfb27cp2rbs66f"
 }
