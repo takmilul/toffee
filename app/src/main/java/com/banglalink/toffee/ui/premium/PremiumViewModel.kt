@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
+import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.response.*
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
@@ -30,6 +32,8 @@ class PremiumViewModel @Inject constructor(
     private val premiumPackStatusService: PremiumPackStatusService,
     private val bKashGrandTokenService: BkashGrandTokenService,
     private val bKashCreatePaymentService: BkashCreatePaymentService,
+    private val bKashExecutePaymentService: BkashExecutePaymentService,
+    private val bKashStatusPaymentService: BkashStatusPaymentService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -66,6 +70,12 @@ class PremiumViewModel @Inject constructor(
 
     private var _bKashCreatePaymentState = MutableSharedFlow<Resource<CreatePaymentResponse>>()
     val bKashCreatePaymentState = _bKashCreatePaymentState.asSharedFlow()
+
+    private var _bKashExecutePaymentState = MutableSharedFlow<Resource<ExecutePaymentResponse>>()
+    val bKashExecutePaymentState = _bKashExecutePaymentState.asSharedFlow()
+
+    private var _bKashStatusPaymentState = MutableSharedFlow<Resource<QueryPaymentResponse>>()
+    val bKashStatusPaymentState = _bKashStatusPaymentState.asSharedFlow()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -129,29 +139,27 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { bKashGrandTokenService.execute() }
             _bKashGrandTokenState.emit(response)
-            when(response) {
-                is Success -> {
-
-                }
-                is Failure -> {
-
-                }
-            }
         }
     }
-
+    
     fun bkashCreatePayment(token: String, requestBody: CreatePaymentRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { bKashCreatePaymentService.execute(token, requestBody) }
             _bKashCreatePaymentState.emit(response)
-            when(response) {
-                is Success -> {
+        }
+    }
 
-                }
-                is Failure -> {
+    fun bkashExecutePayment(token: String, requestBody: ExecutePaymentRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse { bKashExecutePaymentService.execute(token, requestBody) }
+            _bKashExecutePaymentState.emit(response)
+        }
+    }
 
-                }
-            }
+    fun bkashStatusPayment(token: String, requestBody: QueryPaymentRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse { bKashStatusPaymentService.execute(token, requestBody) }
+            _bKashStatusPaymentState.emit(response)
         }
     }
 }

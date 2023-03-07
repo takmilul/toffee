@@ -1,9 +1,13 @@
 package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.GrantTokenBodyRequest
+import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
+import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
+import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -25,4 +29,20 @@ interface ExternalApi {
         @Header("x-app-key") xAppKey: String?,
         @Body createPaymentBody: CreatePaymentRequest
     ): CreatePaymentResponse
+
+    @POST
+    suspend fun executePayment(
+        @Url url: String?,
+        @Header("authorization") authorization: String?,
+        @Header("x-app-key") xAppKey: String?,
+        @Body createPaymentBody: ExecutePaymentRequest
+    ): ExecutePaymentResponse
+
+    @POST
+    suspend fun statusPayment(
+        @Url url: String?,
+        @Header("authorization") authorization: String?,
+        @Header("x-app-key") xAppKey: String?,
+        @Body createPaymentBody: QueryPaymentRequest
+    ): QueryPaymentResponse
 }
