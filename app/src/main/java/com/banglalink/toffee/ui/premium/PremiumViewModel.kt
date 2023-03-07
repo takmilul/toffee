@@ -13,6 +13,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -58,7 +59,7 @@ class PremiumViewModel @Inject constructor(
 //    var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
 
     var selectedPaymentMethod = MutableLiveData<PackPaymentMethod>()
-    var packPurchaseResponseCode = MutableLiveData< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
+    var packPurchaseResponseCode = SingleLiveEvent< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
     
     private var _bKashGrandTokenState = MutableSharedFlow<Resource<GrantTokenResponse>>()
     val bKashGrandTokenState = _bKashGrandTokenState.asSharedFlow()

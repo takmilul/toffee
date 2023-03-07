@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.common.DataPackPurchaseDialog
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.premium.DataPackAdapter
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -83,9 +85,12 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             }
         }
         observe(viewModel.packPurchaseResponseCode) {
+            progressDialog.hide()
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.toString())
+                    if(it.data.status==DataPackPurchaseDialog.SUCCESS){
+                        mPref.activePremiumPackList.value=it.data.loginRelatedSubsHistory
+                    }
                     val args = Bundle().apply {
                         putInt("errorLogicCode", it.data.status ?: 0)
                     }
@@ -102,8 +107,8 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
         binding.buyNow.setOnClickListener {
+            progressDialog.show()
             if (paymentName == "bKash") {
-                progressDialog.show()
                 grantBkashToken()
             } else if (paymentName == "blPack") {
                 viewModel.purchaseDataPack()
@@ -134,7 +139,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     //    URL/bkash/callback/{packageId}/{dataPackId}/{subscriberId}/{password}/{msisdn}/{isBlNumber}/{deviceType}/{deviceId}/{netType}/{osVersion}/{appVersion}/{appMode}
     private fun createBkashPayment() {
         val callBackUrl =
-            "${mPref.bkashCallbackUrl}${viewModel.selectedPack.value?.id}/${viewModel.selectedPaymentMethod2.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
+            "${mPref.bkashCallbackUrl}${viewModel.selectedPack.value?.id}/${viewModel.selectedPaymentMethod.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
         val amount = viewModel.selectedPaymentMethod.value?.packPrice.toString()
 
         observe(viewModel.bKashCreatePaymentState) { response ->
@@ -197,6 +202,5 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
             )
         )
     }
-
 
 }

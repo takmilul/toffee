@@ -61,7 +61,14 @@ class PackDetailsFragment : BaseFragment() {
             requireContext().showToast(getString(R.string.try_again_message))
         }
         
-//        findNavController()?.navigate(R.id.startWatchingDialog)
+        observe(mPref.packDetailsPageRefreshRequired){
+            if(it == true){
+                findNavController().popBackStack().let {
+                    findNavController().navigate(R.id.packDetailsFragment)
+                    findNavController().navigate(R.id.startWatchingDialog)
+                }
+            }
+        }
     }
     
     private fun observePackStatus() {

@@ -103,6 +103,7 @@ class DataPackPurchaseDialog : DialogFragment() {
                 binding.subTitleMsg.text = getText(R.string.please_wait_you_will_be_redirected)
                 binding.tryAgainBtn.hide()
                 binding.goToHomePageBtn.hide()
+                binding.backIcon.hide()
                 dismissDialog()
             }
             DataPackPurchase_FAILED -> {
@@ -111,6 +112,7 @@ class DataPackPurchaseDialog : DialogFragment() {
                 binding.subTitleMsg.text = getString(R.string.this_might_be_insufficient)
                 binding.tryAgainBtn.show()
                 binding.goToHomePageBtn.hide()
+             //   dismissDialog()
             }
             GetRequestStatus_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
@@ -140,6 +142,7 @@ class DataPackPurchaseDialog : DialogFragment() {
     private suspend fun dismissDialog() {
         coroutineScope {
             delay(3000)
+            mPref.packDetailsPageRefreshRequired.value=true
             dialog?.dismiss()
         }
     }

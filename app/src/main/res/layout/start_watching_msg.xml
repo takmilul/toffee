@@ -22,7 +22,7 @@
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginVertical="16dp"
                 android:maxLines="2"
-                tools:text="Tap any of the content to start watching"
+                android:text="Tap any of the content to start watching"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:fontFamily="@font/roboto_regular"

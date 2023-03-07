@@ -19,6 +19,8 @@ class DataPackPurchaseService @Inject constructor(
        
         val isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0
         val request = DataPackPurchaseRequest(
+            customerId=preference.customerId,
+            password=preference.password,
             isBanglalinkNumber = isBlNumber,
             packId = packId,
             packTitle = packTitle,

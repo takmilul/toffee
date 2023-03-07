@@ -4,6 +4,10 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class DataPackPurchaseRequest(
+    @SerializedName("customerId")
+    val customerId:Int?,
+    @SerializedName("password")
+    val password:String?,
     @SerializedName("isBanglalinkNumber")
     val isBanglalinkNumber:Int?,
     @SerializedName("pack_id")
