@@ -12,6 +12,7 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.ButtomSheetChooseDataPackBinding
 import com.banglalink.toffee.extension.*
@@ -31,6 +32,7 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private var paymentName: String? = null
+    private var bkashPaymentID: String? = null
     private val progressDialog by unsafeLazy {
         ToffeeProgressDialog(requireContext())
     }
@@ -131,18 +133,22 @@ class ChooseDataPackFragment : ChildDialogFragment(), BaseListItemCallback<PackP
     
     //    URL/bkash/callback/{packageId}/{dataPackId}/{subscriberId}/{password}/{msisdn}/{isBlNumber}/{deviceType}/{deviceId}/{netType}/{osVersion}/{appVersion}/{appMode}
     private fun createBkashPayment() {
-        val callBackUrl =
-            "${mPref.bkashCallbackUrl}${viewModel.selectedPack.value?.id}/${viewModel.selectedPaymentMethod2.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
+        val callBackUrl = "${mPref.bkashCallbackUrl}${viewModel.selectedPack.value?.id}/${viewModel.selectedPaymentMethod2.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
         val amount = viewModel.selectedPaymentMethod2.value?.packPrice.toString()
         
         observe(viewModel.bKashCreatePaymentState) { response ->
             when (response) {
                 is Success -> {
                     requireContext().showToast(response.data.message)
-                    requireActivity().launchActivity<Html5PlayerViewActivity> {
-                        putExtra(Html5PlayerViewActivity.CONTENT_URL, response.data.bkashURL.toString())
-                        putExtra(Html5PlayerViewActivity.TITLE, "Pack Details")
+                    bkashPaymentID = response.data.paymentID
+                    val args = Bundle().apply {
+                        putString("myTitle", "Pack Details")
+                        putString("Token", sessionIdToken)
+                        putString("PaymentID", bkashPaymentID)
+                        putString("url", response.data.bkashURL)
                     }
+                    findNavController().navigate(R.id.premiumPageViewDialog, args)
+                    progressDialog.hide()
                 }
                 is Failure -> {
                     requireContext().showToast("Something went to wrong")

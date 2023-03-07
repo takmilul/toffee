@@ -73,9 +73,9 @@
             />
     </fragment>
     <dialog
-        android:id="@+id/htmlPageViewDialog"
+        android:id="@+id/premiumPageViewDialog"
         tools:layout="@layout/dialog_html_page_view"
-        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        android:name="com.banglalink.toffee.ui.common.PremiumPageViewDialog">
         <argument
             android:name="myTitle"
             app:argType="string"
