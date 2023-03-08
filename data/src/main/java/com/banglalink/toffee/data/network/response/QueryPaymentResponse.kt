@@ -2,22 +2,37 @@ package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
 
-
-data class QueryPaymentResponse (
-	@SerializedName("paymentID"            ) var paymentID            : String? = null,
-	@SerializedName("mode"                 ) var mode                 : String? = null,
-	@SerializedName("paymentCreateTime"    ) var paymentCreateTime    : String? = null,
-	@SerializedName("amount"               ) var amount               : String? = null,
-	@SerializedName("currency"             ) var currency             : String? = null,
-	@SerializedName("intent"               ) var intent               : String? = null,
-	@SerializedName("merchantInvoice"      ) var merchantInvoice      : String? = null,
-	@SerializedName("transactionStatus"    ) var transactionStatus    : String? = null,
-	@SerializedName("verificationStatus"   ) var verificationStatus   : String? = null,
-	@SerializedName("statusCode"           ) var statusCode           : String? = null,
-	@SerializedName("statusMessage"        ) var statusMessage        : String? = null,
-	@SerializedName("payerReference"       ) var payerReference       : String? = null,
-	@SerializedName("agreementID"          ) var agreementID          : String? = null,
-	@SerializedName("agreementStatus"      ) var agreementStatus      : String? = null,
-	@SerializedName("agreementCreateTime"  ) var agreementCreateTime  : String? = null,
-	@SerializedName("agreementExecuteTime" ) var agreementExecuteTime : String? = null
-): BaseResponse()
+data class QueryPaymentResponse(
+	@SerializedName("paymentID")
+	val paymentID: String? = null,
+	@SerializedName("mode")
+	val mode: String? = null,
+	@SerializedName("paymentCreateTime")
+	val paymentCreateTime: String? = null,
+	@SerializedName("amount")
+	val amount: String? = null,
+	@SerializedName("currency")
+	val currency: String? = null,
+	@SerializedName("intent")
+	val intent: String? = null,
+	@SerializedName("merchantInvoice")
+	val merchantInvoice: String? = null,
+	@SerializedName("transactionStatus")
+	val transactionStatus: String? = null,
+	@SerializedName("verificationStatus")
+	val verificationStatus: String? = null,
+	@SerializedName("statusCode")
+	val statusCode: String? = null,
+	@SerializedName("statusMessage")
+	val statusMessage: String? = null,
+	@SerializedName("payerReference")
+	val payerReference: String? = null,
+	@SerializedName("agreementID")
+	val agreementID: String? = null,
+	@SerializedName("agreementStatus")
+	val agreementStatus: String? = null,
+	@SerializedName("agreementCreateTime")
+	val agreementCreateTime: String? = null,
+	@SerializedName("agreementExecuteTime")
+	val agreementExecuteTime: String? = null,
+) : BaseResponse()

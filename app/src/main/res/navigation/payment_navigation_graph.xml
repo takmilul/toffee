@@ -1,100 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/payment_navigation_graph"
     app:startDestination="@id/paymentPackages">
-<!--    <fragment-->
-<!--        android:id="@+id/paymentPackages"-->
-<!--        android:name="com.banglalink.toffee.ui.premium.payment.PaymentOptionFragment"-->
-<!--        android:label="PartnershipBottomSheetFragment"-->
-<!--        tools:layout="@layout/buttom_sheet_payment_option"-->
-<!--        >-->
-<!--        <action-->
-<!--            android:id="@+id/action_payment_to_pack"-->
-<!--            app:destination="@id/choosePackages"-->
-<!--          />-->
-<!--        <action-->
-<!--            android:id="@+id/action_payment_to_trail"-->
-<!--            app:destination="@id/trailPack"-->
-<!--            />-->
-<!--    </fragment>-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/choosePackages"-->
-<!--        android:name="com.banglalink.toffee.ui.premium.payment.PaymentChoosePackFragment"-->
-<!--        android:label="PartnershipBottomSheetFragmentPack"-->
-<!--        tools:layout="@layout/buttom_sheet_choose_pack"-->
-<!--        >-->
-
-<!--    </fragment>-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/trailPack"-->
-<!--        android:name="com.banglalink.toffee.ui.premium.payment.TrialFragment"-->
-<!--        android:label="PartnershipBottomSheetFragmentPack"-->
-<!--        tools:layout="@layout/buttom_sheet_enable_trial"-->
-<!--        >-->
-
-<!--    </fragment>-->
+    
     <fragment
         android:id="@+id/paymentPackages"
         android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodOptionFragment"
         android:label="PartnershipBottomSheetFragment"
-        tools:layout="@layout/fragment_payment_method_option"
-        >
-        <action
-            android:id="@+id/action_payment_to_pack"
-            app:destination="@id/choosePackages"
-            />
-        <action
-            android:id="@+id/action_payment_to_trail"
-            app:destination="@id/trailPack"
-            />
-    </fragment>
+        tools:layout="@layout/fragment_payment_method_option" />
+    
     <fragment
-        android:id="@+id/choosePackages"
+        android:id="@+id/paymentDataPackOptionFragment"
         android:name="com.banglalink.toffee.ui.premium.payment.PaymentDataPackOptionFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/fragment_payment_data_pack_option"
-        >
-
-    </fragment>
-
+        tools:layout="@layout/fragment_payment_data_pack_option" />
+    
     <fragment
-        android:id="@+id/trailPack"
+        android:id="@+id/activateTrialPackFragment"
         android:name="com.banglalink.toffee.ui.premium.payment.ActivateTrialPackFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/fragment_activate_trial_pack"
-        >
+        tools:layout="@layout/fragment_activate_trial_pack">
+        
         <argument
             android:name="paymentName"
-            app:argType="string"
-            />
+            app:argType="string" />
+    
     </fragment>
+    
     <dialog
         android:id="@+id/premiumWebViewDialog"
-        tools:layout="@layout/dialog_html_page_view"
-        android:name="com.banglalink.toffee.ui.premium.payment.PremiumWebViewDialog">
+        android:name="com.banglalink.toffee.ui.premium.payment.PremiumWebViewDialog"
+        tools:layout="@layout/dialog_html_page_view">
+        
         <argument
             android:name="myTitle"
-            app:argType="string"
-            />
+            app:argType="string" />
+        
         <argument
             android:name="url"
-            app:argType="string"/>
+            app:argType="string" />
+        
     </dialog>
-
+    
     <dialog
         android:id="@+id/dataPackPurchaseDialog"
         android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
+        
         <argument
             android:name="isHideBackIcon"
             android:defaultValue="false"
             app:argType="boolean" />
+        
         <argument
             android:name="errorLogicCode"
-            app:argType="integer"/>
+            app:argType="integer" />
+        
     </dialog>
+
 </navigation>

@@ -50,7 +50,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         }
         
         observeList()
-        viewModel.selectedPack.value = null
+        viewModel.selectedPremiumPack.value = null
         viewModel.getPremiumPackList(contentId ?: "0")
     }
     
@@ -84,7 +84,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     override fun onItemClicked(item: PremiumPack) {
-        viewModel.selectedPack.value = item
+        viewModel.selectedPremiumPack.value = item
         findNavController().navigate(R.id.packDetailsFragment)
     }
     

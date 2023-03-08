@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionBinding
-import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 
@@ -31,55 +32,34 @@ class PaymentMethodOptionFragment : ChildDialogFragment() {
         
         viewModel.paymentMethod.value?.let { paymentTypes ->
             with(binding) {
-                if (paymentTypes.free != null) {
-                    val isBlNumber = if (mPref.isBanglalinkNumber == "true") {
-                        trailTitle.text = paymentTypes.free?.get(1)?.packDetails.toString()
-                        trailDetails.text = "Includes 15 days extra for Banglalink subscribers"
-                    } else {
-                        trailTitle.text = paymentTypes.free?.get(0)?.packDetails.toString()
-                        trailDetails.text = "Extra 15 days for Banglalink users"
-                    }
+                if (mPref.isBanglalinkNumber == "true") {
+                    trialTitle.text = paymentTypes.free?.getOrNull(1)?.packDetails.toString()
+                    trialDetails.text = getString(string.extra_for_bl_users_text)
                 } else {
-                    trailCard.hide()
+                    trialTitle.text = paymentTypes.free?.getOrNull(0)?.packDetails.toString()
+                    trialDetails.text = getString(string.extra_for_non_bl_users_text)
                 }
+                blPackPrice.text = String.format(getString(R.string.sign_in_countdown_text), paymentTypes.bl?.minimumPrice?.toString())
+                bkashPackPrice.text = String.format(getString(R.string.sign_in_countdown_text), paymentTypes.bkash?.minimumPrice.toString())
                 
-                if (paymentTypes.bl != null) {
-                    blPackPrice.text = "Starting from BDT " + paymentTypes.bl?.minimumPrice?.toString()
-                } else {
-                    blPackCard.hide()
-                }
-                if (paymentTypes.bkash != null) {
-                    bkashPackPrice.text = "Starting from BDT " + paymentTypes.bkash?.minimumPrice?.toString()
-                } else {
-                    bkashPackCard.hide()
-                }
+                trialCard.isVisible = !paymentTypes.free.isNullOrEmpty()
+                blPackCard.isVisible = paymentTypes.bl != null && (!paymentTypes.bl?.prepaid.isNullOrEmpty() || !paymentTypes.bl?.postpaid.isNullOrEmpty())
+                bKashPackCard.isVisible = paymentTypes.bkash != null && (!paymentTypes.bkash?.blPacks.isNullOrEmpty() || !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 
                 //Disable Banglalink DataPack Option
                 if (mPref.isBanglalinkNumber == "false") {
-                    blPackLayout.isEnabled = false
-                    blPackCard.isClickable = false
                     blPackCard.isEnabled = false
-                    blPackLayout.setAlpha(.3f)
+                    blPackLayout.alpha = 0.3f
                 }
                 
-                trailCard.setOnClickListener {
-                    if (mPref.isBanglalinkNumber == "true") viewModel.selectedPaymentMethod.postValue(paymentTypes.free?.get(1))
-                    else viewModel.selectedPaymentMethod.postValue(paymentTypes.free?.get(0))
-                    mPref.paymentName.value = "trail"
-                    findNavController().navigate(R.id.action_payment_to_trail)
+                trialCard.setOnClickListener {
+                    findNavController().navigate(R.id.activateTrialPackFragment)
                 }
                 blPackCard.setOnClickListener {
-//                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bl?.pREPAID)
-//                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bl?.pOSTPAID)
-                    // mPref.paymentName.value="blPack"
-                    viewModel.selectedPaymentMethod.postValue(paymentTypes.bl?.pREPAID?.get(0))
-                    findNavController().navigate(R.id.action_payment_to_pack, bundleOf("paymentName" to "blPack"))
+                    findNavController().navigate(R.id.paymentDataPackOptionFragment, bundleOf("paymentName" to "blPack"))
                 }
-                bkashPackCard.setOnClickListener {
-                    viewModel.selectedPaymentMethod.postValue(paymentTypes.bkash?.dataPacks?.get(0))
-//                    viewModel.selectedPaymentMethodList.postValue(paymentTypes.bkash?.dataPacks)
-                    //mPref.paymentName.value="bKash"
-                    findNavController().navigate(R.id.action_payment_to_pack, bundleOf("paymentName" to "bKash"))
+                bKashPackCard.setOnClickListener {
+                    findNavController().navigate(R.id.paymentDataPackOptionFragment, bundleOf("paymentName" to "bKash"))
                 }
             }
         }

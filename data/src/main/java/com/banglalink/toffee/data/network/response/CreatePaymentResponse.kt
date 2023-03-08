@@ -4,33 +4,33 @@ import com.google.gson.annotations.SerializedName
 
 data class CreatePaymentResponse (
 	@SerializedName("statusCode")
-	var statusCode : String? = null,
+	val statusCode : String? = null,
 	@SerializedName("statusMessage")
-	var statusMessage : String? = null,
+	val statusMessage : String? = null,
 	@SerializedName("paymentID")
-	var paymentId : String? = null,
+	val paymentId : String? = null,
 	@SerializedName("bkashURL")
-	var bKashUrl : String? = null,
+	val bKashUrl : String? = null,
 	@SerializedName("callbackURL")
-	var callbackURL : String? = null,
+	val callbackURL : String? = null,
 	@SerializedName("successCallbackURL")
-	var successCallbackURL : String? = null,
+	val successCallbackURL : String? = null,
 	@SerializedName("failureCallbackURL")
-	var failureCallbackURL : String? = null,
+	val failureCallbackURL : String? = null,
 	@SerializedName("cancelledCallbackURL")
-	var cancelledCallbackURL : String? = null,
+	val cancelledCallbackURL : String? = null,
 	@SerializedName("amount")
-	var amount : String? = null,
+	val amount : String? = null,
 	@SerializedName("intent")
-	var intent : String? = null,
+	val intent : String? = null,
 	@SerializedName("currency")
-	var currency : String? = null,
+	val currency : String? = null,
 	@SerializedName("paymentCreateTime")
-	var paymentCreateTime : String? = null,
+	val paymentCreateTime : String? = null,
 	@SerializedName("transactionStatus")
-	var transactionStatus : String? = null,
+	val transactionStatus : String? = null,
 	@SerializedName("merchantInvoiceNumber")
-	var merchantInvoiceNumber : String? = null,
+	val merchantInvoiceNumber : String? = null,
 	@SerializedName("message")
-	var message : String? = null
+	val message : String? = null
 ): BaseResponse()

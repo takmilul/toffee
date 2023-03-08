@@ -48,7 +48,7 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        viewModel.selectedPack.value?.let {
+        viewModel.selectedPremiumPack.value?.let {
             if (it.isPackPurchased) {
                 if (item.seriesSummaryId > 0) {
                     val seriesData = SeriesPlaybackInfo(

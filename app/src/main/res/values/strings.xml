@@ -518,4 +518,7 @@
     <string name="pass_brand_image_view">pass brand image view</string>
     <string name="pack_banner">pack banner</string>
     <string name="app_slogan">Watch FREE\non Any Network!</string>
+    <string name="extra_for_bl_users_text">Includes 15 days extra for Banglalink subscribers</string>
+    <string name="extra_for_non_bl_users_text">Extra 15 days for Banglalink users</string>
+    <string name="starting_price">Starting from BDT %s</string>
 </resources>

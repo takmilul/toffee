@@ -2,30 +2,29 @@ package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
 
-
 data class ExecutePaymentResponse (
 	@SerializedName("statusCode")
-	var statusCode : String? = null,
+	val statusCode : String? = null,
 	@SerializedName("statusMessage")
-	var statusMessage : String? = null,
+	val statusMessage : String? = null,
 	@SerializedName("paymentID")
-	var paymentID : String? = null,
+	val paymentID : String? = null,
 	@SerializedName("payerReference")
-	var payerReference : String? = null,
+	val payerReference : String? = null,
 	@SerializedName("customerMsisdn")
-	var customerMsisdn : String? = null,
+	val customerMsisdn : String? = null,
 	@SerializedName("trxID")
-	var trxID : String? = null,
+	val trxID : String? = null,
 	@SerializedName("amount")
-	var amount : String? = null,
+	val amount : String? = null,
 	@SerializedName("transactionStatus")
-	var transactionStatus : String? = null,
+	val transactionStatus : String? = null,
 	@SerializedName("paymentExecuteTime")
-	var paymentExecuteTime : String? = null,
+	val paymentExecuteTime : String? = null,
 	@SerializedName("currency")
-	var currency : String? = null,
+	val currency : String? = null,
 	@SerializedName("intent")
-	var intent : String? = null,
+	val intent : String? = null,
 	@SerializedName("merchantInvoiceNumber")
-	var merchantInvoiceNumber : String? = null
+	val merchantInvoiceNumber : String? = null
 ) : BaseResponse()

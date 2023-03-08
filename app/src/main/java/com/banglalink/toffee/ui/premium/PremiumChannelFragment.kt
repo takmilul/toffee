@@ -46,7 +46,7 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        viewModel.selectedPack.value?.let {
+        viewModel.selectedPremiumPack.value?.let {
             if (it.isPackPurchased) {
                 homeViewModel.playContentLiveData.value = item
             }

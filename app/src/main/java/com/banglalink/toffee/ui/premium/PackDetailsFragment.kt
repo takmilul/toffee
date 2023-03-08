@@ -12,7 +12,13 @@ import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -33,16 +39,16 @@ class PackDetailsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
         changeToolbarIcon()
-        if (viewModel.selectedPack.value?.isPackPurchased == false) {
+        if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
             checkPackPurchased()
         }
-        binding.data = viewModel.selectedPack.value
+        binding.data = viewModel.selectedPremiumPack.value
     
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
     
-        viewModel.selectedPack.value?.let {
+        viewModel.selectedPremiumPack.value?.let {
             viewModel.getPremiumPackDetail(it.id)
             with(binding) {
                 payNowButton.safeClick({
@@ -73,7 +79,7 @@ class PackDetailsFragment : BaseFragment() {
                     mPref.activePremiumPackList.value = it.data
                     val isPurchased = checkPackPurchased()
                     if (!isPurchased) {
-                        viewModel.selectedPack.value?.id?.let {
+                        viewModel.selectedPremiumPack.value?.id?.let {
                             viewModel.getPackPaymentMethodList(it)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
@@ -87,7 +93,7 @@ class PackDetailsFragment : BaseFragment() {
     
     private fun checkPackPurchased(): Boolean {
         return if (mPref.isVerifiedUser) {
-            viewModel.selectedPack.value?.let { pack ->
+            viewModel.selectedPremiumPack.value?.let { pack ->
                 mPref.activePremiumPackList.value?.find {
                     try {
                         it.packId == pack.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
@@ -95,12 +101,12 @@ class PackDetailsFragment : BaseFragment() {
                         false
                     }
                 }?.let {
-                    viewModel.selectedPack.value = pack.copy(
+                    viewModel.selectedPremiumPack.value = pack.copy(
                         isPackPurchased = it.isActive,
                         expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
                         packDetail = if (pack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${it.packDetail} pack"
                     )
-                    binding.data = viewModel.selectedPack.value
+                    binding.data = viewModel.selectedPremiumPack.value
                     true
                 } ?: false
             } ?: false

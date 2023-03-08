@@ -1,22 +1,26 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.RadioButton
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
 
 class PaymentDataPackOptionAdapter(
     val context: Context,
-    cb: BaseListItemCallback<PackPaymentMethod>,
+    val mPref: SessionPreference,
+    cb: DataPackOptionCallback<PackPaymentMethod>,
 ) : MyBaseAdapter<PackPaymentMethod>(cb) {
     
-    private var selectedItem: PackPaymentMethod? = null
     var selectedPosition = -1
+    private var selectedItem: PackPaymentMethod? = null
     
     override fun getLayoutIdForPosition(position: Int): Int {
         return if (values[position].listTitle != null) {
@@ -30,27 +34,30 @@ class PaymentDataPackOptionAdapter(
         super.onBindViewHolder(holder, position)
         val obj = getItem(position)
         if (obj.listTitle != null) {
+            if (obj.isDisabled == true) {
+                val titleContainer = holder.itemView.findViewById<ConstraintLayout>(R.id.dataPackOptionsTitleContainer)
+                titleContainer.alpha = 0.3f
+            }
             return
         } else {
             obj.let {
-                val radioButton = holder.itemView.findViewById<RadioButton>(R.id.prepaidRadioButtonOne)
+                val radioButton = holder.itemView.findViewById<RadioButton>(R.id.dataPackOptionRadioButton)
+                val amountTextView = holder.itemView.findViewById<TextView>(R.id.dataPackOptionAmountTextView)
                 val packOptionContainer = holder.itemView.findViewById<ConstraintLayout>(R.id.packOptionContainerOne)
-//                radioButton.isChecked = obj.dataPackId==selectedItem?.dataPackId
-                radioButton.setOnCheckedChangeListener(null)
                 
-                radioButton.isChecked = position === selectedPosition
-                packOptionContainer.background = if (radioButton.isChecked) ContextCompat.getDrawable(
-                    context, R.drawable.subscribe_bg_round_pass
-                ) else null
-                
-                radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
-                    selectedPosition = position
-                    notifyDataSetChanged()
+                if (it.isDisabled == true) {
+                    radioButton.alpha = 0.3f
+                    amountTextView.alpha = 0.3f
+                    radioButton.isEnabled = false
+                } else {
+                    radioButton.isChecked = position == selectedPosition
+                    packOptionContainer.background = if (radioButton.isChecked) ContextCompat.getDrawable(context, R.drawable.subscribe_bg_round_pass) else null
                 }
             }
         }
     }
     
+    @SuppressLint("NotifyDataSetChanged")
     fun setSelectedItem(item: PackPaymentMethod?) {
         selectedItem = item
         notifyDataSetChanged()

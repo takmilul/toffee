@@ -4,15 +4,15 @@ import com.google.gson.annotations.SerializedName
 
 data class GrantTokenResponse (
 	@SerializedName("statusCode")
-	var statusCode : String? = null,
+	val statusCode : String? = null,
 	@SerializedName("statusMessage")
-	var statusMessage : String? = null,
+	val statusMessage : String? = null,
 	@SerializedName("id_token")
-	var idToken : String? = null,
+	val idToken : String? = null,
 	@SerializedName("token_type")
-	var tokenType : String? = null,
+	val tokenType : String? = null,
 	@SerializedName("expires_in")
-	var expiresIn : Int? = null,
+	val expiresIn : Int? = null,
 	@SerializedName("refresh_token")
-	var refreshToken : String? = null
+	val refreshToken : String? = null
 ): BaseResponse()

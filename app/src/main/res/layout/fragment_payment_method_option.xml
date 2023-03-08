@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent" />
         
         <androidx.cardview.widget.CardView
-            android:id="@+id/trailCard"
+            android:id="@+id/trialCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content">
                 
                 <TextView
-                    android:id="@+id/trailTitle"
+                    android:id="@+id/trialTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -61,15 +61,14 @@
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
                     android:textColor="@color/cardTitleColor"
-                    
-                    app:layout_constraintBottom_toTopOf="@id/trailPrice"
+                    app:layout_constraintBottom_toTopOf="@id/trialPrice"
                     app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed" />
                 
                 <TextView
-                    android:id="@+id/trailPrice"
+                    android:id="@+id/trialPrice"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -77,12 +76,12 @@
                     android:text="Starting from BDT 0"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/trailTitle"
-                    app:layout_constraintStart_toStartOf="@id/trailTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/trailTitle" />
+                    app:layout_constraintEnd_toEndOf="@+id/trialTitle"
+                    app:layout_constraintStart_toStartOf="@id/trialTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/trialTitle" />
                 
                 <TextView
-                    android:id="@+id/trailDetails"
+                    android:id="@+id/trialDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -92,9 +91,9 @@
                     android:textSize="12sp"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/trailPrice"
-                    app:layout_constraintStart_toStartOf="@+id/trailPrice"
-                    app:layout_constraintTop_toBottomOf="@+id/trailPrice" />
+                    app:layout_constraintEnd_toEndOf="@+id/trialPrice"
+                    app:layout_constraintStart_toStartOf="@+id/trialPrice"
+                    app:layout_constraintTop_toBottomOf="@+id/trialPrice" />
                 
                 <ImageView
                     android:id="@+id/passBrandImageView"
@@ -103,7 +102,7 @@
                     android:layout_marginEnd="16dp"
                     android:contentDescription="pass brand image view"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/trailTitle" />
+                    app:layout_constraintTop_toTopOf="@id/trialTitle" />
             
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -118,10 +117,10 @@
             android:layout_marginBottom="8dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/bkashPackCard"
+            app:layout_constraintBottom_toTopOf="@+id/bKashPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trailCard">
+            app:layout_constraintTop_toBottomOf="@+id/trialCard">
             
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/blPackLayout"
@@ -156,7 +155,6 @@
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
                     app:layout_constraintStart_toStartOf="@id/blPackTitle"
-                    
                     app:layout_constraintTop_toBottomOf="@+id/blPackTitle" />
                 
                 <TextView
@@ -183,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="pass brand image view"
-                    android:src="@drawable/bl_icon"
+                    android:src="@drawable/banglalink_logo"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/blPackTitle" />
             
@@ -191,13 +189,12 @@
         </androidx.cardview.widget.CardView>
         
         <androidx.cardview.widget.CardView
-            android:id="@+id/bkashPackCard"
+            android:id="@+id/bKashPackCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            
             android:layout_marginBottom="8dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
@@ -233,13 +230,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
                     app:layout_constraintHorizontal_bias="0.0"
-                    
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
                     app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle" />
                 

@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PackPaymentMethod" />
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="12dp"
-    >
-
-    <TextView
-        android:id="@+id/prepaid_title"
-        android:layout_width="wrap_content"
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dataPackOptionsTitleContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@{data.listTitle}"
-        android:textAllCaps="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:textColor="@color/cardTitleColor"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginStart="12dp">
+        
+        <TextView
+            android:id="@+id/prepaid_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@{data.listTitle}"
+            android:textAllCaps="true"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

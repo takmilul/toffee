@@ -1,77 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PackPaymentMethod" />
         <variable
+            name="position"
+            type="Integer" />
+        <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.listeners.DataPackOptionCallback" />
     </data>
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/prePaidOne"
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="5dp"
-        android:backgroundTint="@color/payment_option_card_bg"
-        app:cardCornerRadius="12dp"
-        android:layout_marginBottom="3dp"
-        app:layout_constraintBaseline_toBottomOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/packOptionContainerOne"
+        android:layout_height="wrap_content">
+        
+        <androidx.cardview.widget.CardView
+            android:id="@+id/prePaidOne"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RadioButton
-                android:id="@+id/prepaidRadioButtonOne"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="4dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:fontFamily="@font/roboto_regular"
-                android:maxLength="50"
-                android:maxLines="2"
-                app:onSafeClick="@{()-> callback.onItemClicked(data)}"
-                android:text="@{data.packDetails}"
-                android:textColor="@color/cardTitleColor"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/prePaidPackOneAmount"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/prePaidPackOneAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/roboto_regular"
-                android:maxLines="2"
-                android:text="@{`BDT ` + String.valueOf(data.packPrice)}"
-                android:textColor="@color/cardTitleColor"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prepaidRadioButtonOne"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="3dp"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintBaseline_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/packOptionContainerOne"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                
+                <RadioButton
+                    android:id="@+id/dataPackOptionRadioButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="4dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLength="50"
+                    android:maxLines="2"
+                    android:text="@{data.packDetails}"
+                    android:textColor="@color/cardTitleColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/dataPackOptionAmountTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:onSafeClick="@{(view)-> callback.onItemClicked(view, data, position)}" />
+                
+                <TextView
+                    android:id="@+id/dataPackOptionAmountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:text="@{`BDT ` + String.valueOf(data.packPrice)}"
+                    android:textColor="@color/cardTitleColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dataPackOptionRadioButton"
+                    app:layout_constraintTop_toTopOf="parent" />
+            
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
