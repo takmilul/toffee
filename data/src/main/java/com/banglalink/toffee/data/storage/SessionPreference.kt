@@ -724,6 +724,41 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_BKASH_CALL_BACK_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_BKASH_CALL_BACK_URL, value) }
 
+    var bkashAppKey: String
+        get() = pref.getString(PREF_BKASH_APP_KEY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_APP_KEY, value) }
+
+    var bkashAppSecret: String
+        get() = pref.getString(PREF_BKASH_APP_SECRET, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_APP_SECRET, value) }
+
+    var bkashPassword: String
+        get() = pref.getString(PREF_BKASH_PASSWORD, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_PASSWORD, value) }
+
+    var bkashUsername: String
+        get() = pref.getString(PREF_BKASH_USERNAME, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_USERNAME, value) }
+
+    var merchantInvoiceNumber: String
+        get() = pref.getString(PREF_BKASH_MERCHANT_INVOICE_NUMBER, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_MERCHANT_INVOICE_NUMBER, value) }
+
+    var bkashApiRetryingCount: Int
+        get() = pref.getInt(PREF_BKASH_API_RETRYING_COUNT, 60)
+        set(value) = pref.edit { putInt(PREF_BKASH_API_RETRYING_COUNT, value) }
+
+    var bkashApiRetryingDuration: Int
+        get() = pref.getInt(PREF_BKASH_API_RETRYING_DURATION, 60)
+        set(value) = pref.edit { putInt(PREF_BKASH_API_RETRYING_DURATION, value) }
+
+    var bkashExecuteUrl: String
+        get() = pref.getString(PREF_BKASH_EXECUTE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_EXECUTE_URL, value) }
+
+    var bkashQueryPaymentUrl: String
+        get() = pref.getString(PREF_BKASH_QUERY_PAYMENT_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BKASH_QUERY_PAYMENT_URL, value) }
 
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -827,6 +862,16 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashRefreshTokenUrl = it.bkashRefreshTokenUrl.toString()
             bkashCreateUrl = it.bkashCreateUrl.toString()
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
+            bkashAppKey = it.bkashAppKey.toString()
+            bkashAppSecret = it.bkashAppSecret.toString()
+            bkashPassword = it.bkashPassword.toString()
+            bkashUsername = it.bkashUsername.toString()
+            bkashUsername = it.bkashUsername.toString()
+            merchantInvoiceNumber = it.merchantInvoiceNumber.toString()
+            bkashApiRetryingCount = it.bkashApiRetryingCount!!
+            bkashApiRetryingDuration = it.bkashApiRetryingDuration!!
+            bkashExecuteUrl = it.bkashExecuteUrl.toString()
+            bkashQueryPaymentUrl = it.bkashQueryPaymentUrl.toString()
 
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -971,6 +1016,16 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BKASH_REFRESH_TOKEN_URL= "pref_bkash_refresh_token_url"
         private const val PREF_BKASH_CREATE_URL= "pref_bkash_create_url"
         private const val PREF_BKASH_CALL_BACK_URL= "pref_bkash_call_back_url"
+        private const val PREF_BKASH_APP_KEY = "pref_bkash_app_key"
+        private const val PREF_BKASH_APP_SECRET = "pref_bkash_app_secret"
+        private const val PREF_BKASH_PASSWORD = "pref_bkash_password"
+        private const val PREF_BKASH_USERNAME = "pref_bkash_username"
+        private const val PREF_BKASH_MERCHANT_INVOICE_NUMBER = "pref_bkash_merchant_invoice_number"
+        private const val PREF_BKASH_API_RETRYING_COUNT = "pref_bkash_api_retrying_count"
+        private const val PREF_BKASH_API_RETRYING_DURATION = "pref_bkash_api_retrying_duration"
+        private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
+        private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
+
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
