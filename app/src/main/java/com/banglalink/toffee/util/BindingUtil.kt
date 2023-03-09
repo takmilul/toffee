@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -443,25 +444,48 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     @BindingAdapter("setPremiumPackSubtitle")
     fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack) {
+        mPref.activePremiumPackList.value?.find {
 
-        if (pack.isAvailableFreePeriod==0)  view.text = pack.packSubtitle
-        else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==0) view.text=pack.freePackDetailsText
-        else if (pack.isPackPurchased==true && mPref.getSystemTime().before(Utils.getDate(pack.expiryDate))) view.text=pack.expiryDate
-        else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==1){
-            mPref.activePremiumPackList.value?.find {
+            //condition for showing pack expire date( if pack is brought)
+            it.packId == pack.id && it.isActive==true
 
-                it.packId == pack.id && it.isActive==false && it.isTrialPackUsed==true
+        }?.let {
+            view.text=pack.expiryDate
+        }?:run {
 
-            }?.let {
-                view.text=pack.freePackDetailsText
-            }?:run {
+            if (pack.isAvailableFreePeriod==0)  view.text = pack.packSubtitle
+            else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==0) view.text=pack.freePackDetailsText
+            else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==1){
+                mPref.activePremiumPackList.value?.find {
 
+                     it.packId.equals(pack.id)
+
+
+                }?.let {
+
+                    if (it.isActive==false && it.isTrialPackUsed==true){
+
+                        //when trail has expired
+                        view.text= pack.packSubtitle
+                    }else{
+
+                        //when trail is available
+                        view.text= pack.freePackDetailsText
+                    }
+
+                }?:run {
+
+                    view.text=pack.freePackDetailsText
+
+                }
             }
+
+            else view.text=pack.freePackDetailsText
+
         }
-
-        else view.text=pack.freePackDetailsText
-
 
 
     }
 }
+
+
