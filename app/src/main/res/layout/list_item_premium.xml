@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:maxLines="1"
-                android:text="@{data.isPackPurchased ? data.expiryDate : data.packSubtitle}"
+                setPremiumPackSubtitle="@{data}"
                 tools:text="Starting from 20 BDT"
                 android:textColor="@color/TextClrInImg"
                 android:textSize="16sp"

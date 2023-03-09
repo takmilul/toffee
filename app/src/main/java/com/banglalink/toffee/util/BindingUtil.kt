@@ -22,6 +22,7 @@ import coil.transform.RoundedCornersTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
@@ -439,5 +440,28 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             view.setImageResource(R.drawable.ic_premium)
         }
+    }
+    @BindingAdapter("setPremiumPackSubtitle")
+    fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack) {
+
+        if (pack.isAvailableFreePeriod==0)  view.text = pack.packSubtitle
+        else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==0) view.text=pack.freePackDetailsText
+        else if (pack.isPackPurchased==true && mPref.getSystemTime().before(Utils.getDate(pack.expiryDate))) view.text=pack.expiryDate
+        else if (pack.isAvailableFreePeriod==1 && pack.isPurchaseAvailable==1){
+            mPref.activePremiumPackList.value?.find {
+
+                it.packId == pack.id && it.isActive==false && it.isTrialPackUsed==true
+
+            }?.let {
+                view.text=pack.freePackDetailsText
+            }?:run {
+
+            }
+        }
+
+        else view.text=pack.freePackDetailsText
+
+
+
     }
 }
