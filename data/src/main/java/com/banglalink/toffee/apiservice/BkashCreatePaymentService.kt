@@ -1,6 +1,5 @@
 package com.banglalink.toffee.apiservice
 
-import com.banglalink.toffee.Constants.BKASH_APP_KEY
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
 import com.banglalink.toffee.data.network.retrofit.ExternalApi
@@ -15,7 +14,7 @@ class BkashCreatePaymentService @Inject constructor(private val mPref: SessionPr
             api.createPayment(
                 mPref.bkashCreateUrl,
                 "Bearer $token",
-                BKASH_APP_KEY,
+                mPref.bkashAppKey,
                 requestBody
             )
         }

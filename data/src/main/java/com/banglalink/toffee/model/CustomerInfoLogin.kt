@@ -187,6 +187,24 @@ class CustomerInfoLogin(
     var bkashCreateUrl : String? = null,
     @SerializedName("bkashCallbackUrl")
     var bkashCallbackUrl : String? = null,
+    @SerializedName("bkashAppKey")
+    var bkashAppKey : String? = null,
+    @SerializedName("bkashAppSecret")
+    var bkashAppSecret : String? = null,
+    @SerializedName("bkashPassword")
+    var bkashPassword : String? = null,
+    @SerializedName("bkashUsername")
+    var bkashUsername : String? = null,
+    @SerializedName("merchantInvoiceNumber")
+    var merchantInvoiceNumber : String? = null,
+    @SerializedName("bkashApiRetryingCount")
+    var bkashApiRetryingCount : Int?    = null,
+    @SerializedName("bkashApiRetryingDuration")
+    var bkashApiRetryingDuration : Int? = null,
+    @SerializedName("bkashExecuteUrl")
+    var bkashExecuteUrl : String? = null,
+    @SerializedName("bkashQueryPaymentUrl")
+    var bkashQueryPaymentUrl : String? = null,
 
 ) : BodyResponse(), Parcelable
 
