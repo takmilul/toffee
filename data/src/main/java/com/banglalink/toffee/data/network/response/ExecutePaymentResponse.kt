@@ -27,4 +27,4 @@ data class ExecutePaymentResponse (
 	val intent : String? = null,
 	@SerializedName("merchantInvoiceNumber")
 	val merchantInvoiceNumber : String? = null
-) : BaseResponse()
+) : ExternalBaseResponse()

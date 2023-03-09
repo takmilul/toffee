@@ -6,7 +6,7 @@ import android.net.Uri
 import android.util.Base64
 import com.banglalink.toffee.data.network.request.UploadProfileImageRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.SubscriberPhotoBean
 import com.banglalink.toffee.util.decodeSampledBitmap
@@ -28,7 +28,7 @@ class UploadProfileImage @Inject constructor(
             val imageData = bao.toByteArray()
             val imageString = Base64.encodeToString(imageData, Base64.DEFAULT)
 
-            val response = tryIO2 {
+            val response = tryIO {
                 toffeeApi.uploadPhoto(
                     UploadProfileImageRequest(
                         imageString,

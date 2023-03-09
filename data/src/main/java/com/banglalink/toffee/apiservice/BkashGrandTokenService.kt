@@ -6,14 +6,14 @@ import com.banglalink.toffee.Constants.BKASH_APP_SECRET
 import com.banglalink.toffee.data.network.request.GrantTokenBodyRequest
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.data.network.retrofit.ExternalApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIOExternal
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
 class BkashGrandTokenService @Inject constructor(private val mPref: SessionPreference, private val api: ExternalApi) {
     
     suspend fun execute(): GrantTokenResponse {
-        return tryIO2 {
+        return tryIOExternal {
             api.grantToken(
                 mPref.bkashGrantTokenUrl,
                 Constants.BKASH_USER_NAME,

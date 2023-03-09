@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import android.util.Log
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
@@ -17,7 +17,7 @@ class VerifyCodeService @Inject constructor(
 ) {
     
     suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoLogin {
-        val response = tryIO2 { toffeeApi.verifyCode(getRequest(code, regSessionToken, referralCode)) }
+        val response = tryIO { toffeeApi.verifyCode(getRequest(code, regSessionToken, referralCode)) }
         
         response.customerInfoLogin.also {
             preference.saveCustomerInfo(it)

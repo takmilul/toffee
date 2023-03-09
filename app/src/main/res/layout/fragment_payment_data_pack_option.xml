@@ -10,24 +10,26 @@
         
         <ImageView
             android:id="@+id/backImg"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
             app:layout_constraintBottom_toTopOf="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/back" />
         
         <TextView
             android:id="@+id/pack_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:fontFamily="@font/roboto_regular"
-            android:text="Choose a Plan"
+            android:text="@string/choose_a_plan"
             android:textColor="@color/cardTitleColor"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -37,33 +39,37 @@
         
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="24dp"
             android:adjustViewBounds="true"
             android:clipToPadding="false"
             android:orientation="vertical"
+            app:layout_constraintHeight_default="wrap"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backImg" />
+            app:layout_constraintTop_toBottomOf="@+id/backImg"
+            app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
+            tools:listitem="@layout/item_data_pack_option"/>
         
         <TextView
             android:id="@+id/terms_and_conditions_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
+            android:layout_marginBottom="12dp"
             android:background="@null"
             android:checked="true"
             android:gravity="center_vertical"
-            android:text="By clicking next you are agreeing the "
+            android:text="@string/payment_consent_text"
             android:textColor="@color/main_text_color"
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@id/buyNow"
             tools:visibility="visible" />
         
         <TextView
@@ -88,23 +94,22 @@
             android:id="@+id/buyNow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="87dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="87dp"
             android:layout_marginBottom="20dp"
             android:backgroundTint="#FF3988"
             android:fontFamily="@font/roboto_bold"
-            android:text="BUY NOW"
+            android:text="@string/buy_now"
             android:textAllCaps="true"
             android:textColor="@color/fw_gnt_white"
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:cornerRadius="20dp"
+            app:cornerRadius="100dp"
+            android:stateListAnimator="@null"
+            app:layout_constraintWidth_percent="0.6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
             tools:visibility="visible" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>

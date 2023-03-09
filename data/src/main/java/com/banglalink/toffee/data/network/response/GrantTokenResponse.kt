@@ -15,4 +15,4 @@ data class GrantTokenResponse (
 	val expiresIn : Int? = null,
 	@SerializedName("refresh_token")
 	val refreshToken : String? = null
-): BaseResponse()
+): ExternalBaseResponse()

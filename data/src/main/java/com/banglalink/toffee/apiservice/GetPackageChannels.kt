@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.PackageChannelListRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
@@ -16,7 +16,7 @@ class GetPackageChannels @Inject constructor(
 ) {
 
     suspend fun execute(packageId:Int):List<ChannelInfo>{
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.getPackageChannelList(PackageChannelListRequest(packageId,preference.customerId,preference.password))
         }
         return response.response.packageDetails.programs.map {

@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.UploadSignedUrlRequest
 import com.banglalink.toffee.data.network.response.UploadSignedUrlResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class UploadSignedUrlService @Inject constructor(private val pref: SessionPrefer
 ) {
 
     suspend fun execute(url: String): UploadSignedUrlResponse {
-        return tryIO2 {
+        return tryIO {
             api.uploadSignedUrl(
                  UploadSignedUrlRequest(
                     pref.customerId,

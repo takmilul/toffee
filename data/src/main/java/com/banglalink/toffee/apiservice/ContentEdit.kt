@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.ContentEditRequest
 import com.banglalink.toffee.data.network.response.ResponseBean
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class ContentEdit @Inject constructor(
         oldContentBanner: String? = "NULL",
         base64Image: String? = "NULL"
     ): ResponseBean {
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.editContent(
                 ContentEditRequest(
                     mPref.customerId,

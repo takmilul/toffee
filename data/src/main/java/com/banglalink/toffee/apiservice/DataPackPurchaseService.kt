@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.response.PremiumPackStatusResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -37,7 +37,7 @@ class DataPackPurchaseService @Inject constructor(
             packPrice = packPrice,
             packDuration = packDuration,
         )
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.purchaseDataPack(
                 request
             )

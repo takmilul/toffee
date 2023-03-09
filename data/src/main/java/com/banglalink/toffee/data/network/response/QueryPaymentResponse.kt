@@ -35,4 +35,4 @@ data class QueryPaymentResponse(
 	val agreementCreateTime: String? = null,
 	@SerializedName("agreementExecuteTime")
 	val agreementExecuteTime: String? = null,
-) : BaseResponse()
+) : ExternalBaseResponse()

@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.PackPaymentMethodRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class PackPaymentMethodService @Inject constructor (
         )
         val isBlNumber = if ( preference.isBanglalinkNumber=="true") 1 else 0
         
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.getPackPaymentMethods(
                 isBlNumber,
                 packId,

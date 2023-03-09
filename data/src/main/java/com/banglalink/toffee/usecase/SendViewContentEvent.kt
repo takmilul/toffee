@@ -5,7 +5,7 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -65,7 +65,7 @@ class SendViewContentEvent @Inject constructor(
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
-        tryIO2 {
+        tryIO {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
                     contentType, contentId, dataSource, ownerId, preference.customerId, preference.password, preference.latitude, preference.longitude

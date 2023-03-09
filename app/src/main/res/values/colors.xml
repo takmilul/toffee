@@ -125,7 +125,7 @@
     <color name="TextInsideImgColor">#FFFFFF</color>
 
     <color name="payment_option_card_bg">#FFFFFF</color>
-    <color name="button_sheet_bg">#F2F2F2</color>
+    <color name="bottom_sheet_bg">#F2F2F2</color>
     <color name="TextClrInImg">#BED6F3</color>
     <color name="TrailBg">#FFFFFF</color>
     <color name="TrailBgTransparent">#4D000000</color>

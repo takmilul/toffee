@@ -34,13 +34,14 @@ class PaymentMethodOptionFragment : ChildDialogFragment() {
             with(binding) {
                 if (mPref.isBanglalinkNumber == "true") {
                     trialTitle.text = paymentTypes.free?.getOrNull(1)?.packDetails.toString()
-                    trialDetails.text = getString(string.extra_for_bl_users_text)
                 } else {
                     trialTitle.text = paymentTypes.free?.getOrNull(0)?.packDetails.toString()
-                    trialDetails.text = getString(string.extra_for_non_bl_users_text)
                 }
-                blPackPrice.text = String.format(getString(R.string.sign_in_countdown_text), paymentTypes.bl?.minimumPrice?.toString())
-                bkashPackPrice.text = String.format(getString(R.string.sign_in_countdown_text), paymentTypes.bkash?.minimumPrice.toString())
+                val extraValidity = paymentTypes.free?.getOrNull(1)?.packDuration?.minus(paymentTypes.free?.getOrNull(0)?.packDuration ?: 0) ?: paymentTypes.free?.getOrNull(0)?.packDuration ?: 0
+                trialDetails.isVisible = extraValidity > 0
+                trialDetails.text = String.format(getString(string.extra_for_trial_pack_text), extraValidity)
+                blPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bl?.minimumPrice?.toString())
+                bkashPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bkash?.minimumPrice.toString())
                 
                 trialCard.isVisible = !paymentTypes.free.isNullOrEmpty()
                 blPackCard.isVisible = paymentTypes.bl != null && (!paymentTypes.bl?.prepaid.isNullOrEmpty() || !paymentTypes.bl?.postpaid.isNullOrEmpty())

@@ -11,12 +11,14 @@ import com.banglalink.toffee.data.exception.CustomerNotFoundException
 import com.banglalink.toffee.data.exception.OutsideOfBDException
 import com.banglalink.toffee.data.exception.UnEthicalActivitiesException
 import com.banglalink.toffee.data.network.response.BaseResponse
+import com.banglalink.toffee.data.network.response.ExternalBaseResponse
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.EventProvider
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.getExternalError
 import kotlinx.coroutines.Dispatchers
 
-suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
+suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
     val response = block()
     return when{
         response.errorCode == UN_ETHICAL_ACTIVITIES_ERROR_CODE -> {
@@ -58,6 +60,27 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
     }
 }
 
+suspend fun <T : ExternalBaseResponse> tryIOExternal(block: suspend () -> T): T {
+    val response = block()
+    return when{
+        response.status != 200 -> {//server suffered a serious error
+            throw ApiException(
+                response.errorCode,
+                response.errorMsg ?:"Something went wrong. Please try again."
+            )
+        }
+        response.errorCode != 0 -> {//hmmm....error occurred ....throw it
+            throw ApiException(
+                response.errorCode,
+                response.errorMsg ?:"Something went wrong. Please try again."
+            )
+        }
+        else-> {
+            response//seems like all fine ...return the body
+        }
+    }
+}
+
 fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
         try {
@@ -75,4 +98,13 @@ suspend fun <T> resultFromResponse(networkCall: suspend () -> T): Resource<T> =
     } catch (e:Exception){
         ToffeeAnalytics.logBreadCrumb(e.message ?: "")
         Resource.Failure(getError(e))
+    }
+
+suspend fun <T> resultFromExternalResponse(networkCall: suspend () -> T): Resource<T> =
+    try {
+        val response = networkCall.invoke()
+        Resource.Success(response)
+    } catch (e:Exception){
+        ToffeeAnalytics.logBreadCrumb(e.message ?: "")
+        Resource.Failure(getExternalError(e))
     }

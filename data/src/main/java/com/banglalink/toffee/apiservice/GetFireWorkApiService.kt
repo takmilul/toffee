@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.FireworkRequest
 import com.banglalink.toffee.data.network.response.FireworkResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ class GetFireWorkApiService @Inject constructor(
 ) {
 
     suspend fun execute(): FireworkResponse {
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.getFireworks(preference.getDBVersionByApiName(ApiNames.GET_FIREWORK_LIST),
                 FireworkRequest(preference.customerId,preference.password)
             )

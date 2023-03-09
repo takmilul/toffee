@@ -5,7 +5,7 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.doIfNotNullOrBlank
@@ -58,7 +58,7 @@ class SendHeartBeat @Inject constructor(
         if (System.currentTimeMillis() - preference.getSessionTokenSaveTimeInMillis() > preference.getSessionTokenLifeSpanInMillis()) {
             needToRefreshSessionToken = true// we need to refresh token by setting isNetworkSwitch = true
         }
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.sendHeartBeat(
                 preference.getDBVersionByApiName(ApiNames.SEND_HEART_BEAT),
                 HeartBeatRequest(

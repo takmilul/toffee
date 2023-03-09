@@ -59,7 +59,7 @@
     <color name="TextInsideImgColor">#6781A1</color>
     <color name="payment_option_card_bg">#1A2E47</color>
 
-    <color name="button_sheet_bg">#111F31</color>
+    <color name="bottom_sheet_bg">#111F31</color>
     <color name="TextClrInImg">#BED6F3</color>
     <color name="TrailBg">#111F31</color>
     <color name="TrailBgTransparent">#B3000000</color>

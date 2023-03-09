@@ -13,11 +13,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -98,10 +94,10 @@ class PaymentDataPackOptionFragment : ChildDialogFragment(), DataPackOptionCallb
                     if (it.data.status == PostPurchaseStatusDialog.SUCCESS) {
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                     }
-                    val args = Bundle().apply {
-                        putInt("errorLogicCode", it.data.status ?: 0)
-                    }
-                    findNavController().navigate(R.id.dataPackPurchaseDialog, args)
+                    val args = bundleOf(
+                        PostPurchaseStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                    )
+                    findNavController().navigate(R.id.postPurchaseStatusDialog, args)
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -133,12 +129,14 @@ class PaymentDataPackOptionFragment : ChildDialogFragment(), DataPackOptionCallb
                 is Success -> {
                     sessionToken = response.data.idToken.toString()
                     if (response.data.statusCode != "0000") {
+                        progressDialog.hide()
                         requireContext().showToast(response.data.statusMessage)
+                        return@observe
                     }
                     createBkashPayment()
                 }
                 is Failure -> {
-                    requireContext().showToast("Something went to wrong")
+                    requireContext().showToast(response.error.msg)
                     progressDialog.hide()
                 }
             }
@@ -153,7 +151,11 @@ class PaymentDataPackOptionFragment : ChildDialogFragment(), DataPackOptionCallb
         observe(viewModel.bKashCreatePaymentState) { response ->
             when (response) {
                 is Success -> {
-                    requireContext().showToast(response.data.message)
+                    if (response.data.statusCode != "0000") {
+                        progressDialog.hide()
+                        requireContext().showToast(response.data.statusMessage)
+                        return@observe
+                    }
                     bKashPaymentId = response.data.paymentId
                     val args = bundleOf(
                         "myTitle" to "Pack Details",
@@ -163,11 +165,11 @@ class PaymentDataPackOptionFragment : ChildDialogFragment(), DataPackOptionCallb
                         "isHideBackIcon" to false,
                         "isHideCloseIcon" to true
                     )
-                    findNavController().navigate(R.id.premiumWebViewDialog, args)
                     progressDialog.hide()
+                    findNavController().navigate(R.id.premiumWebViewDialog, args)
                 }
                 is Failure -> {
-                    requireContext().showToast("Something went to wrong")
+                    requireContext().showToast(response.error.msg)
                     progressDialog.hide()
                 }
             }

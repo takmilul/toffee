@@ -3,35 +3,36 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/views"
         android:background="@drawable/bottom_round_bg_payment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        
         <ImageView
             android:id="@+id/bottom_sheet_top_image"
             android:layout_width="40dp"
             android:layout_height="8dp"
             android:layout_marginTop="8dp"
-            app:srcCompat="@drawable/ic_bottom_sheet_topicon"
+            app:srcCompat="@drawable/ic_bottom_sheet_top_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/txt_icon" />
-
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/bottomSheetFragmentPayments"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/bottom_sheet_bg"
             app:defaultNavHost="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:navGraph="@navigation/payment_navigation_graph" />
-
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

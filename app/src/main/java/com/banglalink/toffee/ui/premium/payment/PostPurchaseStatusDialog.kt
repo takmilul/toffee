@@ -27,48 +27,49 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PostPurchaseStatusDialog : DialogFragment() {
-    private var title: String? = null
-    private var errorLogicCode: Int? = null
     
-    private var _binding: DialogPostPurchaseStatusBinding? = null
-    private val binding get() = _binding!!
+    private var title: String? = null
+    private var statusCode: Int? = null
+    private var statusMessage: String? = null
+    private var isHideBackIcon: Boolean = true
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cPref: CommonPreference
-    private var isHideBackIcon: Boolean = true
+    private var _binding: DialogPostPurchaseStatusBinding? = null
+    private val binding get() = _binding!!
     
     companion object {
-        const val UNSUCCESS = 0
         const val SUCCESS = 200
+        const val UN_SUCCESS = 0
         const val DataPackPurchase_FAILED = 6070
         const val GetRequestStatus_FAILED = 6075
         const val CheckAllDataPack_Status = 6080
         const val GetRequestStatus_REQUESTED = 6085
+        const val BKASH_PAYMENT_FAILED = -1
+        
+        const val ARG_STATUS_CODE = "statusCode"
+        const val ARG_STATUS_MESSAGE = "statusMessage"
+        const val ARG_IS_HIDE_BACK_BUTTON = "isHideBackIcon"
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(
-            STYLE_NORMAL,
-            R.style.FullScreenDialogStyle
-        )
+        setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
     }
     
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogPostPurchaseStatusBinding.inflate(layoutInflater)
         
         title = "Payment Confirmation"
-        isHideBackIcon = arguments?.getBoolean("isHideBackIcon", false) ?: false
-        errorLogicCode = arguments?.getInt("errorLogicCode", 0) ?: 0
+        isHideBackIcon = arguments?.getBoolean(ARG_IS_HIDE_BACK_BUTTON, false) ?: false
+        statusCode = arguments?.getInt(ARG_STATUS_CODE, 0) ?: 0
+        statusMessage = arguments?.getString(ARG_STATUS_MESSAGE, null)
+        
         binding.titleTv.text = title
         
         observeTopBarBackground()
         
         viewLifecycleOwner.lifecycleScope.launch {
-            observeErrorLogic(errorLogicCode)
+            observeErrorLogic(statusCode)
         }
         
         runCatching {
@@ -88,7 +89,7 @@ class PostPurchaseStatusDialog : DialogFragment() {
     
     private suspend fun observeErrorLogic(errorCode: Int?) {
         when (errorCode) {
-            UNSUCCESS -> {
+            UN_SUCCESS -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_warning)
                 binding.titleMsg.text = getString(R.string.technical_issue_occured)
                 binding.subTitleMsg.text = getString(R.string.due_some_technical_issue)
@@ -119,7 +120,6 @@ class PostPurchaseStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.show()
                 binding.goToHomePageBtn.hide()
             }
-            
             CheckAllDataPack_Status -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
                 binding.titleMsg.text = getString(R.string.pack_activation_failed)
@@ -134,13 +134,20 @@ class PostPurchaseStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.hide()
                 binding.goToHomePageBtn.show()
             }
+            BKASH_PAYMENT_FAILED -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.this_might_be_insufficient)
+                binding.tryAgainBtn.show()
+                binding.goToHomePageBtn.hide()
+            }
         }
     }
     
     private suspend fun dismissDialog() {
         coroutineScope {
             delay(3000)
-            mPref.packDetailsPageRefreshRequired.value=true
+            mPref.packDetailsPageRefreshRequired.value = true
             dialog?.dismiss()
         }
     }

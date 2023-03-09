@@ -23,42 +23,38 @@
         android:name="com.banglalink.toffee.ui.premium.payment.ActivateTrialPackFragment"
         android:label="PartnershipBottomSheetFragmentPack"
         tools:layout="@layout/fragment_activate_trial_pack">
-        
         <argument
             android:name="paymentName"
             app:argType="string" />
-    
     </fragment>
     
     <dialog
         android:id="@+id/premiumWebViewDialog"
         android:name="com.banglalink.toffee.ui.premium.payment.PremiumWebViewDialog"
         tools:layout="@layout/dialog_html_page_view">
-        
         <argument
             android:name="myTitle"
             app:argType="string" />
-        
         <argument
             android:name="url"
             app:argType="string" />
-        
     </dialog>
     
     <dialog
-        android:id="@+id/dataPackPurchaseDialog"
+        android:id="@+id/postPurchaseStatusDialog"
         android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
-        
         <argument
             android:name="isHideBackIcon"
             android:defaultValue="false"
             app:argType="boolean" />
-        
         <argument
-            android:name="errorLogicCode"
+            android:name="statusCode"
             app:argType="integer" />
-        
+        <argument
+            android:name="statusMessage"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
 
 </navigation>

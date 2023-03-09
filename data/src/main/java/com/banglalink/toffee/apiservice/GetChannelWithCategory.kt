@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -22,7 +22,7 @@ class GetChannelWithCategory @Inject constructor(
     val gson = Gson()
     
     suspend fun loadData(subcategoryId: Int) {
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.getChannels(
                 preference.getDBVersionByApiName(ApiNames.GET_ALL_TV_CHANNELS),
                 AllChannelRequest(

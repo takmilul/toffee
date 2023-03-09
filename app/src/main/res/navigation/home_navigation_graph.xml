@@ -338,8 +338,7 @@
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="myTitle"
-            app:argType="string"
-            />
+            app:argType="string" />
         <argument
             android:name="url"
             app:argType="string" />
@@ -367,16 +366,22 @@
     </dialog>
 
     <dialog
-        android:id="@+id/dataPackPurchaseDialog"
+        android:id="@+id/postPurchaseStatusDialog"
         android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
+        
         <argument
             android:name="isHideBackIcon"
             android:defaultValue="false"
             app:argType="boolean" />
         <argument
-        android:name="errorLogicCode"
-        app:argType="integer"/>
+            android:name="statusCode"
+            app:argType="integer"/>
+        <argument
+            android:name="statusMessage"
+            app:argType="string"
+            app:nullable="true" />
+
     </dialog>
     
     <fragment

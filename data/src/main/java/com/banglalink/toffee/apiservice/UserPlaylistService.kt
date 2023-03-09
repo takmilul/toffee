@@ -2,7 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.network.request.MyChannelUserPlaylistRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelPlaylist
 import dagger.assisted.Assisted
@@ -17,7 +17,7 @@ class UserPlaylistService @AssistedInject constructor(
     override suspend fun loadData(offset: Int, limit: Int): List<MyChannelPlaylist> {
         
         val isOwner = if (preference.customerId == channelOwnerId) 1 else 0
-        val response = tryIO2 {
+        val response = tryIO {
 
             toffeeApi.getMyChannelUserPlaylist(
                 isOwner,

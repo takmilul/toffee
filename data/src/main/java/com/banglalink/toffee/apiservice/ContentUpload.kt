@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.ContentUploadRequest
 import com.banglalink.toffee.data.network.response.ContentUploadResponseBean
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class ContentUpload @Inject constructor(
         isHorizontal: Int,
         copyrightFileName: String? = null
     ): ContentUploadResponseBean {
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.uploadContent(
                 ContentUploadRequest(
                     mPref.customerId,

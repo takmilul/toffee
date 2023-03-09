@@ -33,4 +33,4 @@ data class CreatePaymentResponse (
 	val merchantInvoiceNumber : String? = null,
 	@SerializedName("message")
 	val message : String? = null
-): BaseResponse()
+): ExternalBaseResponse()

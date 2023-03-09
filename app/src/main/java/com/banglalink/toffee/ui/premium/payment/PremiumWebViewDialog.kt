@@ -12,9 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.annotation.RequiresApi
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -26,18 +29,19 @@ import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.premium.PremiumViewModel
+import com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog.Companion.ARG_STATUS_CODE
+import com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog.Companion.ARG_STATUS_MESSAGE
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PremiumWebViewDialog : DialogFragment() {
@@ -52,6 +56,8 @@ class PremiumWebViewDialog : DialogFragment() {
     private var shareableUrl: String? = null
     private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
+    private var statusCode: String? = null
+    private var statusMessage: String? = null
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
     private var _binding: DialogHtmlPageViewBinding? = null
@@ -64,13 +70,13 @@ class PremiumWebViewDialog : DialogFragment() {
         setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogHtmlPageViewBinding.inflate(layoutInflater)
         return binding.root
     }
     
     @SuppressLint("SetJavaScriptEnabled")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?, ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
         
@@ -90,22 +96,28 @@ class PremiumWebViewDialog : DialogFragment() {
         
         binding.webview.webViewClient = object : WebViewClient() {
             
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?, ) {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
                 Log.i(TAG, "onPageStarted: $url")
             }
             
-            override fun onPageFinished(view: WebView?, url: String?, ) {
+            override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 Log.i(TAG, "onPageFinished: $url")
                 url?.let {
                     runCatching {
                         val uri = Uri.parse(it)
-                        val status = uri.getQueryParameter("status")
-                        if (status == "success" && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()) {
+                        uri.getQueryParameter("paymentID")?.let {
+                            paymentId = it
+                        }
+                        uri.getQueryParameter("status")?.let {
                             progressDialog.show()
-                            executeBkashPayment()
+                            if (it == "success" && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()) {
+                                executeBkashPayment()
+                            } else {
+                                queryBkashPayment()
+                            }
                         }
                     }
                 }
@@ -116,31 +128,31 @@ class PremiumWebViewDialog : DialogFragment() {
                 Log.i(TAG, "onReceivedHttpError: url: ${request?.url.toString()} \nstatusCode: ${errorResponse?.statusCode} \nerrorMessage: ${errorResponse?.reasonPhrase} \nheader: ${errorResponse?.responseHeaders}")
             }
             
-            override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?, ) {
+            override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
                 super.onReceivedSslError(view, handler, error)
                 Log.i(TAG, "onReceivedSslError: errorCode: ${error?.primaryError}")
             }
             
             @RequiresApi(VERSION_CODES.O)
-            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?, ): Boolean {
+            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
                 Log.i(TAG, "onRenderProcessGone: didCrash: ${detail?.didCrash()}")
                 return super.onRenderProcessGone(view, detail)
             }
             
             @Deprecated("Deprecated in Java")
-            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?, ) {
+            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
                 Log.i(TAG, "onReceivedError: failingUrl: $failingUrl errorCode: $errorCode, errorMsg: $description")
             }
             
             @RequiresApi(VERSION_CODES.M)
-            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?, ) {
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 Log.i(TAG, "onReceivedError: errorCode: ${error?.errorCode}, errorMsg: ${error?.description}")
             }
         }
         
         binding.webview.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int, ) {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 binding.progressBar.progress = newProgress
                 if (newProgress == 100) {
                     binding.progressBar.visibility = View.GONE
@@ -208,16 +220,22 @@ class PremiumWebViewDialog : DialogFragment() {
             when (response) {
                 is Resource.Success -> {
                     if (response.data.transactionStatus != "Completed") {
+                        statusCode = response.data.statusCode
+                        statusMessage = response.data.statusMessage
                         queryBkashPayment()
                     } else {
                         progressDialog.hide()
-                        requireContext().showToast(response.data.statusMessage)
-                        dialog?.dismiss()
+                        findNavController().navigate(
+                            R.id.postPurchaseStatusDialog,
+                            bundleOf(ARG_STATUS_CODE to 200),
+                            navOptions {
+                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
+                            }
+                        )
                     }
                 }
                 is Resource.Failure -> {
                     queryBkashPayment()
-                    requireContext().showToast("Something went to wrong")
                 }
             }
         }
@@ -228,14 +246,42 @@ class PremiumWebViewDialog : DialogFragment() {
         observe(viewModel.bKashQueryPaymentState) { response ->
             when (response) {
                 is Resource.Success -> {
+                    progressDialog.hide()
                     if (response.data.transactionStatus != "Completed") {
-                        dialog?.dismiss()
-                        requireContext().showToast(response.data.statusMessage)
+                        val args = bundleOf(
+                            ARG_STATUS_CODE to -1,
+                            ARG_STATUS_MESSAGE to statusMessage
+                        )
+                        findNavController().navigate(
+                            R.id.postPurchaseStatusDialog,
+                            args,
+                            navOptions {
+                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
+                            }
+                        )
+                    } else {
+                        findNavController().navigate(
+                            R.id.postPurchaseStatusDialog,
+                            bundleOf(ARG_STATUS_CODE to 200),
+                            navOptions {
+                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
+                            }
+                        )
                     }
                 }
                 is Resource.Failure -> {
                     progressDialog.hide()
-                    requireContext().showToast("Something went to wrong")
+                    val args = bundleOf(
+                        ARG_STATUS_CODE to -1,
+                        ARG_STATUS_MESSAGE to response.error.msg
+                    )
+                    findNavController().navigate(
+                        R.id.postPurchaseStatusDialog,
+                        args,
+                        navOptions {
+                            popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
+                        }
+                    )
                 }
             }
         }

@@ -518,7 +518,20 @@
     <string name="pass_brand_image_view">pass brand image view</string>
     <string name="pack_banner">pack banner</string>
     <string name="app_slogan">Watch FREE\non Any Network!</string>
-    <string name="extra_for_bl_users_text">Includes 15 days extra for Banglalink subscribers</string>
+    <string name="extra_for_trial_pack_text">Includes %s days extra for Banglalink subscribers</string>
     <string name="extra_for_non_bl_users_text">Extra 15 days for Banglalink users</string>
     <string name="starting_price">Starting from BDT %s</string>
+    <string name="buy_now">BUY NOW</string>
+    <string name="payment_consent_text">By clicking next you are agreeing the </string>
+    <string name="choose_a_plan">Choose a Plan</string>
+    <string name="pay_by_bkash">Pay by bKash</string>
+    <string name="only_for_bl_text">Only for Banglalink Subscribers</string>
+    <string name="pay_by_banglalink">Pay by Banglalink</string>
+    <string name="choose_payment_method">Choose Payment Method</string>
+    <string name="starting_from_bdt_0">Starting from BDT 0</string>
+    <string name="for_all_users_text">For all users</string>
+    <string name="enable_now">ENABLE NOW</string>
+    <string name="trial_pack_page_msg">You are about to access the trial pack.</string>
+    <string name="trial_icon">trial icon</string>
+    <string name="trial_validity_text">%s days validity</string>
 </resources>

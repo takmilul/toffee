@@ -2,7 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.network.request.MovieCategoryDetailRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MovieCategoryDetailBean
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class MovieCategoryDetailService @Inject constructor(
             preference.password
         )
 
-        val response = tryIO2 {
+        val response = tryIO {
             toffeeApi.getMovieCategoryDetail(
                 type,
                 categoryId,

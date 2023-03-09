@@ -3,7 +3,7 @@ package com.banglalink.toffee.apiservice
 import android.util.Log
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
-import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
@@ -17,7 +17,7 @@ class ApiLoginService @Inject constructor(
 ) {
     
     suspend fun execute(): CustomerInfoLogin {
-        val response = tryIO2 { authApi.apiLogin(getApiLoginRequest()) }
+        val response = tryIO { authApi.apiLogin(getApiLoginRequest()) }
         response.customerInfoLogin?.let {
             pref.saveCustomerInfo(it)
             try {
