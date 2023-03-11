@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.databinding.FragmentPremContentBinding
+import com.banglalink.toffee.databinding.FragmentPremiumContentsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -17,13 +17,13 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
     private lateinit var mAdapter: PremiumContentAdapter
-    private var _binding: FragmentPremContentBinding? = null
+    private var _binding: FragmentPremiumContentsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPremContentBinding.inflate(layoutInflater)
+        _binding = FragmentPremiumContentsBinding.inflate(layoutInflater)
         return binding.root
     }
     

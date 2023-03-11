@@ -12,21 +12,21 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.DialogPostPurchaseStatusBinding
+import com.banglalink.toffee.databinding.DialogPaymentStatusBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class PostPurchaseStatusDialog : DialogFragment() {
+class PaymentStatusDialog : DialogFragment() {
     
     private var title: String? = null
     private var statusCode: Int? = null
@@ -34,7 +34,7 @@ class PostPurchaseStatusDialog : DialogFragment() {
     private var isHideBackIcon: Boolean = true
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cPref: CommonPreference
-    private var _binding: DialogPostPurchaseStatusBinding? = null
+    private var _binding: DialogPaymentStatusBinding? = null
     private val binding get() = _binding!!
     
     companion object {
@@ -57,7 +57,7 @@ class PostPurchaseStatusDialog : DialogFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DialogPostPurchaseStatusBinding.inflate(layoutInflater)
+        _binding = DialogPaymentStatusBinding.inflate(layoutInflater)
         
         title = "Payment Confirmation"
         isHideBackIcon = arguments?.getBoolean(ARG_IS_HIDE_BACK_BUTTON, false) ?: false

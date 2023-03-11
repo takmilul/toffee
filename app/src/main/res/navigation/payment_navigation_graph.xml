@@ -4,19 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/payment_navigation_graph"
-    app:startDestination="@id/paymentPackages">
+    app:startDestination="@id/paymentMethodOptions">
     
     <fragment
-        android:id="@+id/paymentPackages"
-        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodOptionFragment"
+        android:id="@+id/paymentMethodOptions"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodOptionsFragment"
         android:label="PartnershipBottomSheetFragment"
-        tools:layout="@layout/fragment_payment_method_option" />
+        tools:layout="@layout/fragment_payment_method_options" />
     
     <fragment
-        android:id="@+id/paymentDataPackOptionFragment"
-        android:name="com.banglalink.toffee.ui.premium.payment.PaymentDataPackOptionFragment"
+        android:id="@+id/paymentDataPackOptionsFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentDataPackOptionsFragment"
         android:label="PartnershipBottomSheetFragmentPack"
-        tools:layout="@layout/fragment_payment_data_pack_option" />
+        tools:layout="@layout/fragment_payment_data_pack_options" />
     
     <fragment
         android:id="@+id/activateTrialPackFragment"
@@ -29,8 +29,8 @@
     </fragment>
     
     <dialog
-        android:id="@+id/premiumWebViewDialog"
-        android:name="com.banglalink.toffee.ui.premium.payment.PremiumWebViewDialog"
+        android:id="@+id/paymentWebViewDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentWebViewDialog"
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="myTitle"
@@ -41,8 +41,8 @@
     </dialog>
     
     <dialog
-        android:id="@+id/postPurchaseStatusDialog"
-        android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
+        android:id="@+id/paymentStatusDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="isHideBackIcon"
@@ -56,5 +56,5 @@
             app:argType="string"
             app:nullable="true" />
     </dialog>
-
+    
 </navigation>

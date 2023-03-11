@@ -17,51 +17,61 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.request.BkashDataPackRequest
+import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
+import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.premium.PremiumViewModel
-import com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog.Companion.ARG_STATUS_CODE
-import com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog.Companion.ARG_STATUS_MESSAGE
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_CODE
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_MESSAGE
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PremiumWebViewDialog : DialogFragment() {
+class PaymentWebViewDialog : DialogFragment() {
     
     val TAG = "premium_log"
     
-    private var title: String? = null
+    private var retryCount = 0
     private var header: String? = ""
+    private var title: String? = null
     private var htmlUrl: String? = null
     private var paymentId: String? = null
+    private var statusCode: String? = null
     private var sessionToken: String? = null
     private var shareableUrl: String? = null
+    private var statusMessage: String? = null
+    private var transactionId: String? = null
+    private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
-    private var statusCode: String? = null
-    private var statusMessage: String? = null
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
     private var _binding: DialogHtmlPageViewBinding? = null
     private val binding get() = _binding!!
+    private var queryPaymentResponse: QueryPaymentResponse? = null
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
@@ -216,25 +226,18 @@ class PremiumWebViewDialog : DialogFragment() {
     }
     
     private fun executeBkashPayment() {
-        observe(viewModel.bKashExecutePaymentState) { response ->
+        observe(viewModel.bKashExecutePaymentLiveData) { response ->
             when (response) {
-                is Resource.Success -> {
+                is Success -> {
                     if (response.data.transactionStatus != "Completed") {
+                        transactionId = response.data.transactionId
                         statusCode = response.data.statusCode
                         statusMessage = response.data.statusMessage
-                        queryBkashPayment()
-                    } else {
-                        progressDialog.hide()
-                        findNavController().navigate(
-                            R.id.postPurchaseStatusDialog,
-                            bundleOf(ARG_STATUS_CODE to 200),
-                            navOptions {
-                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
-                            }
-                        )
+                        customerMsisdn = response.data.customerMsisdn
                     }
+                    queryBkashPayment()
                 }
-                is Resource.Failure -> {
+                is Failure -> {
                     queryBkashPayment()
                 }
             }
@@ -243,49 +246,99 @@ class PremiumWebViewDialog : DialogFragment() {
     }
     
     private fun queryBkashPayment() {
-        observe(viewModel.bKashQueryPaymentState) { response ->
+        observe(viewModel.bKashQueryPaymentLiveData) { response ->
             when (response) {
-                is Resource.Success -> {
-                    progressDialog.hide()
+                is Success -> {
+                    queryPaymentResponse = response.data
                     if (response.data.transactionStatus != "Completed") {
+                        progressDialog.hide()
                         val args = bundleOf(
                             ARG_STATUS_CODE to -1,
                             ARG_STATUS_MESSAGE to statusMessage
                         )
-                        findNavController().navigate(
-                            R.id.postPurchaseStatusDialog,
-                            args,
-                            navOptions {
-                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
-                            }
-                        )
+                        navigateToStatusDialogPage(args)
                     } else {
-                        findNavController().navigate(
-                            R.id.postPurchaseStatusDialog,
-                            bundleOf(ARG_STATUS_CODE to 200),
-                            navOptions {
-                                popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
-                            }
-                        )
+                        callAndObserveDataPackPurchase()
                     }
                 }
-                is Resource.Failure -> {
+                is Failure -> {
                     progressDialog.hide()
                     val args = bundleOf(
                         ARG_STATUS_CODE to -1,
                         ARG_STATUS_MESSAGE to response.error.msg
                     )
-                    findNavController().navigate(
-                        R.id.postPurchaseStatusDialog,
-                        args,
-                        navOptions {
-                            popUpTo(R.id.postPurchaseStatusDialog) { inclusive = true }
-                        }
-                    )
+                    navigateToStatusDialogPage(args)
                 }
+            }
+            lifecycleScope.launch {
+                if (retryCount < mPref.bkashApiRetryingCount) {
+                    delay(mPref.bkashApiRetryingDuration)
+                    viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
+                }
+                retryCount++
             }
         }
         viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
+    }
+    
+    private fun navigateToStatusDialogPage(args: Bundle) {
+        findNavController().navigatePopUpTo(
+            resId = R.id.paymentStatusDialog,
+            args = args,
+            popUpTo = R.id.paymentWebViewDialog
+        )
+    }
+    
+    private fun callAndObserveDataPackPurchase() {
+        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
+            observe(viewModel.packPurchaseResponseCode) {
+                progressDialog.hide()
+                when (it) {
+                    is Success -> {
+                        if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                            mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                        }
+                        navigateToStatusDialogPage(bundleOf(ARG_STATUS_CODE to 200))
+                    }
+                    is Failure -> {
+                        val args = bundleOf(
+                            ARG_STATUS_CODE to 0,
+                            ARG_STATUS_MESSAGE to it.error.msg
+                        )
+                        navigateToStatusDialogPage(args)
+                    }
+                }
+            }
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
+            val selectedDataPack = viewModel.selectedDataPackOption.value!!
+            val packExpiryDate = selectedDataPack.packDuration?.let { Utils.getExpiryDate(it) }
+            val dataPackPurchaseRequest = DataPackPurchaseRequest(
+                customerId = mPref.customerId,
+                password = mPref.password,
+                isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
+                packId = selectedPremiumPack.id,
+                paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
+                bKashDataPackId = selectedDataPack.dataPackId,
+                bKashRequest = BkashDataPackRequest(
+                    amount = queryPaymentResponse?.amount,
+                    createTime = queryPaymentResponse?.agreementCreateTime,
+                    currency = queryPaymentResponse?.currency,
+                    customerMsisdn = customerMsisdn,
+                    errorCode = statusCode,
+                    errorMessage = statusMessage,
+                    intent = queryPaymentResponse?.intent,
+                    merchantInvoiceNumber = queryPaymentResponse?.merchantInvoice,
+                    paymentId = queryPaymentResponse?.paymentID,
+                    refundAmount = null,
+                    status = statusCode == "0000",
+                    subscriptionExpireDay = packExpiryDate,
+                    transactionStatus = queryPaymentResponse?.transactionStatus,
+                    trxID = transactionId,
+                    updateTime = queryPaymentResponse?.paymentCreateTime
+                )
+            )
+            viewModel.purchaseDataPack(dataPackPurchaseRequest)
+        }
     }
     
     private fun observeTopBarBackground() {
@@ -331,6 +384,7 @@ class PremiumWebViewDialog : DialogFragment() {
             destroy()
         }
         super.onDestroyView()
+        progressDialog.hide()
         _binding = null
     }
 }

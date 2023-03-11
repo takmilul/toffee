@@ -24,9 +24,9 @@ class PaymentDataPackOptionAdapter(
     
     override fun getLayoutIdForPosition(position: Int): Int {
         return if (values[position].listTitle != null) {
-            R.layout.item_data_pack_option_title
+            R.layout.list_item_data_pack_option_title
         } else {
-            R.layout.item_data_pack_option
+            R.layout.list_item_data_pack_option
         }
     }
     

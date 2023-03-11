@@ -28,9 +28,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.PackageInfoCompat
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -38,6 +35,9 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 
 object Utils {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
@@ -423,6 +423,20 @@ object Utils {
             sdf.format(dateGMT)
         } catch(e: Exception) {
             time.toString()
+        }
+    }
+    
+    fun getExpiryDate(day: Int): String {
+        return try {
+            TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+            val cal = Calendar.getInstance(TimeZone.getDefault())
+            cal.set(Calendar.DAY_OF_YEAR, day)
+            val dateGMT = cal.time
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            sdf.format(dateGMT)
+        } catch(e: Exception) {
+            val date = Calendar.getInstance().time
+            "${date.year}-${date.month}-${date.day}"
         }
     }
     

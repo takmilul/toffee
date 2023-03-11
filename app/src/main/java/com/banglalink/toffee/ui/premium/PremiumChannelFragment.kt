@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.databinding.FragmentPremChannelsBinding
+import com.banglalink.toffee.databinding.FragmentPremiumChannelsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -15,13 +15,13 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
     private lateinit var mAdapter: PremiumChannelAdapter
-    private var _binding: FragmentPremChannelsBinding? = null
+    private var _binding: FragmentPremiumChannelsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPremChannelsBinding.inflate(layoutInflater)
+        _binding = FragmentPremiumChannelsBinding.inflate(layoutInflater)
         return binding.root
     }
     

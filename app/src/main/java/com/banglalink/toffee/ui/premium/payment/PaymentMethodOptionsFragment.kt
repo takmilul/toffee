@@ -11,25 +11,27 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionBinding
+import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 
-class PaymentMethodOptionFragment : ChildDialogFragment() {
+class PaymentMethodOptionsFragment : ChildDialogFragment() {
     
-    private var _binding: FragmentPaymentMethodOptionBinding? = null
+    private var _binding: FragmentPaymentMethodOptionsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPaymentMethodOptionBinding.inflate(inflater, container, false)
+        _binding = FragmentPaymentMethodOptionsBinding.inflate(inflater, container, false)
         return binding.root
     }
     
     @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        viewModel.selectedDataPackOption.value = null
         viewModel.paymentMethod.value?.let { paymentTypes ->
             with(binding) {
                 if (mPref.isBanglalinkNumber == "true") {
@@ -37,7 +39,7 @@ class PaymentMethodOptionFragment : ChildDialogFragment() {
                 } else {
                     trialTitle.text = paymentTypes.free?.getOrNull(0)?.packDetails.toString()
                 }
-                val extraValidity = paymentTypes.free?.getOrNull(1)?.packDuration?.minus(paymentTypes.free?.getOrNull(0)?.packDuration ?: 0) ?: paymentTypes.free?.getOrNull(0)?.packDuration ?: 0
+                val extraValidity = paymentTypes.free?.getOrNull(1)?.packDuration?.minus(paymentTypes.free?.getOrNull(0)?.packDuration ?: 0) ?: 0
                 trialDetails.isVisible = extraValidity > 0
                 trialDetails.text = String.format(getString(string.extra_for_trial_pack_text), extraValidity)
                 blPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bl?.minimumPrice?.toString())
@@ -53,15 +55,15 @@ class PaymentMethodOptionFragment : ChildDialogFragment() {
                     blPackLayout.alpha = 0.3f
                 }
                 
-                trialCard.setOnClickListener {
-                    findNavController().navigate(R.id.activateTrialPackFragment)
-                }
-                blPackCard.setOnClickListener {
-                    findNavController().navigate(R.id.paymentDataPackOptionFragment, bundleOf("paymentName" to "blPack"))
-                }
-                bKashPackCard.setOnClickListener {
-                    findNavController().navigate(R.id.paymentDataPackOptionFragment, bundleOf("paymentName" to "bKash"))
-                }
+                trialCard.safeClick({
+                    findNavController().navigateTo(R.id.activateTrialPackFragment)
+                })
+                blPackCard.safeClick({
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
+                })
+                bKashPackCard.safeClick({
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
+                })
             }
         }
     }

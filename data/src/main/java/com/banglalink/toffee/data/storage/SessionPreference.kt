@@ -745,12 +745,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putString(PREF_BKASH_MERCHANT_INVOICE_NUMBER, value) }
 
     var bkashApiRetryingCount: Int
-        get() = pref.getInt(PREF_BKASH_API_RETRYING_COUNT, 60)
+        get() = pref.getInt(PREF_BKASH_API_RETRYING_COUNT, 0)
         set(value) = pref.edit { putInt(PREF_BKASH_API_RETRYING_COUNT, value) }
 
-    var bkashApiRetryingDuration: Int
-        get() = pref.getInt(PREF_BKASH_API_RETRYING_DURATION, 60)
-        set(value) = pref.edit { putInt(PREF_BKASH_API_RETRYING_DURATION, value) }
+    var bkashApiRetryingDuration: Long
+        get() = pref.getLong(PREF_BKASH_API_RETRYING_DURATION, 0)
+        set(value) = pref.edit { putLong(PREF_BKASH_API_RETRYING_DURATION, value) }
 
     var bkashExecuteUrl: String
         get() = pref.getString(PREF_BKASH_EXECUTE_URL, "") ?: ""
@@ -855,9 +855,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
             activePremiumPackList.value = it.activePackList
-            blDataPackTermsAndConditionsUrl = it.blDataPackTermsAndConditionsUrl!!
-            bkashDataPackTermsAndConditionsUrl = it.bkashDataPackTermsAndConditionsUrl!!
-            bkashApiUrl = it.bkashApiUrl!!
+            blDataPackTermsAndConditionsUrl = it.blDataPackTermsAndConditionsUrl.toString()
+            bkashDataPackTermsAndConditionsUrl = it.bkashDataPackTermsAndConditionsUrl.toString()
+            bkashApiUrl = it.bkashApiUrl.toString()
             bkashGrantTokenUrl = it.bkashGrantTokenUrl.toString()
             bkashRefreshTokenUrl = it.bkashRefreshTokenUrl.toString()
             bkashCreateUrl = it.bkashCreateUrl.toString()
@@ -868,8 +868,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashUsername = it.bkashUsername.toString()
             bkashUsername = it.bkashUsername.toString()
             merchantInvoiceNumber = it.merchantInvoiceNumber.toString()
-            bkashApiRetryingCount = it.bkashApiRetryingCount!!
-            bkashApiRetryingDuration = it.bkashApiRetryingDuration!!
+            bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
+            bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
             bkashExecuteUrl = it.bkashExecuteUrl.toString()
             bkashQueryPaymentUrl = it.bkashQueryPaymentUrl.toString()
 

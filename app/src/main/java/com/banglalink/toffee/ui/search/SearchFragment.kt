@@ -31,10 +31,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
-
+    
     private lateinit var searchKey: String
     override val itemMargin: Int = 12
-//    override val verticalPadding = Pair(16, 16)
     private var currentItem: ChannelInfo? = null
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var factory: SearchViewModel.AssistedFactory
@@ -44,7 +43,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     override val mViewModel by viewModels<SearchViewModel> {
         SearchViewModel.provideFactory(factory, searchKey)
     }
-
+    
     companion object{
         const val SEARCH_KEYWORD = "keyword"
         fun createInstance(search: String): SearchFragment {
@@ -55,7 +54,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             return searchListFragment
         }
     }
-
+    
     fun getSearchString(): String? {
         return if(::searchKey.isInitialized) searchKey else null
     }
@@ -79,19 +78,17 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             (requireActivity() as HomeActivity).clearSearViewFocus()
         }
 //        toolbar?.setNavigationOnClickListener {
-//            try {
+//            runCatching {
 //                (activity as HomeActivity).closeSearchBarIfOpen()
 //                lifecycleScope.launch {
 //                    delay(250)
 //                    findNavController().popBackStack()
 //                }
-//            } catch (e:Exception){
-//
 //            }
 //        }
         observeSubscribeChannel()
     }
-
+    
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
         if(item.isChannel){
@@ -101,18 +98,18 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             homeViewModel.playContentLiveData.postValue(item)
         }
     }
-
+    
     override fun getEmptyViewInfo(): Triple<Int, String?, String?> {
         return if (searchKey == ""){
             Triple(0, " ", " ")
         } else Triple(R.drawable.ic_search_empty, "Sorry, no relevant content\n" + "found with the keyword", "Try searching with another keyword")
     }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
         requireActivity().checkVerification {
@@ -126,7 +123,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             }
         }
     }
-
+    
     private fun observeSubscribeChannel() {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
@@ -143,11 +140,11 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             }
         }
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         openMenu(view, item)
     }
-
+    
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)

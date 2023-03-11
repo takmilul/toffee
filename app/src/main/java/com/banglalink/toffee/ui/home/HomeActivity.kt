@@ -49,10 +49,8 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -115,7 +113,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
-import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
@@ -174,7 +171,6 @@ class HomeActivity : PlayerPageActivity(),
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
-    private lateinit var navOptions: NavOptions
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
@@ -202,7 +198,6 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
-    private val premiumViewModel by viewModels<PremiumViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -355,7 +350,7 @@ class HomeActivity : PlayerPageActivity(),
         }
         observe(mPref.loginDialogLiveData) {
             if (it) {
-                navController.navigate(R.id.loginDialog, null, navOptions)
+                navController.navigateTo(R.id.loginDialog)
             }
         }
         observe(mPref.messageDialogLiveData) { message ->
@@ -414,14 +409,9 @@ class HomeActivity : PlayerPageActivity(),
         startBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
-            getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment, null, navOptions)
+            getNavController().navigateTo(R.id.completeDeleteProfileDataBottomSheetFragment)
             mPref.deleteDialogLiveData.value = false
         }
-
-//        if (mPref.isVerifiedUser && mPref.backToffeeDialogLiveData.value == true){
-//            getNavController().navigate(R.id.backToffeeBottomSheetFragment)
-//            mPref.backToffeeDialogLiveData.value = false
-//        }
         
         observeLogout()
         onLoginSuccess()
@@ -457,12 +447,12 @@ class HomeActivity : PlayerPageActivity(),
                     delay(300)
                     mPref.preLoginDestinationId.value?.let {
                         navController.popBackStack(it, true)
-                        navController.navigate(it)
+                        navController.navigateTo(it)
                     }
                 } else {
                     mPref.preLoginDestinationId.value?.let {
                         navController.popBackStack(it, true)
-                        navController.navigate(it)
+                        navController.navigateTo(it)
                     }
                     mPref.postLoginEventAction.value?.invoke()
                 }
@@ -599,10 +589,11 @@ class HomeActivity : PlayerPageActivity(),
                 landingPageViewModel.sendFeaturePartnerReportData(
                     partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                 )
-                navController.navigate(
-                    R.id.htmlPageViewDialog_Home, bundleOf(
+                navController.navigateTo(
+                    resId = R.id.htmlPageViewDialog_Home,
+                    args = bundleOf(
                         "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
-                    ), navOptions
+                    )
                 )
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }
@@ -733,7 +724,7 @@ class HomeActivity : PlayerPageActivity(),
                 if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
-                navController.navigate(R.id.uploadMethodFragment, null, navOptions)
+                navController.navigateTo(R.id.uploadMethodFragment)
             }
         } else {
             if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
@@ -747,7 +738,7 @@ class HomeActivity : PlayerPageActivity(),
                 if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
                     navController.popBackStack()
                 }
-                navController.navigate(R.id.bottomSheetUploadFragment, null, navOptions)
+                navController.navigateTo(R.id.bottomSheetUploadFragment)
             }
         }
         return false
@@ -866,7 +857,7 @@ class HomeActivity : PlayerPageActivity(),
             currentFragmentDestinationId = controller.currentDestination?.id
         }
         
-        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumFragment, id.packDetailsFragment)
+        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) drawable.ic_arrow_back else drawable.ic_toffee)
@@ -874,7 +865,6 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun setupNavController() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
-        navOptions = navOptions { launchSingleTop = true }
         navController = navHostFragment.navController
         
         appbarConfig = AppBarConfiguration(
@@ -912,14 +902,10 @@ class HomeActivity : PlayerPageActivity(),
         binding.tabNavigator.setOnItemSelectedListener {
             closeSearchBarIfOpen()
             when (it.itemId) {
-                R.id.menu_feed -> {
-                    navController.navigate(R.id.menu_feed, null, navOptions {
-                        popUpTo(R.id.menu_feed) { inclusive = true }
-                    })
-                }
-                R.id.menu_tv -> navController.navigate(R.id.menu_tv, null, navOptions)
-                R.id.menu_explore -> navController.navigate(R.id.menu_explore, null, navOptions)
-                R.id.menu_channel -> navController.navigate(R.id.menu_channel, null, navOptions)
+                R.id.menu_feed -> navController.navigatePopUpTo(R.id.menu_feed)
+                R.id.menu_tv -> navController.navigateTo(R.id.menu_tv)
+                R.id.menu_explore -> navController.navigateTo(R.id.menu_explore)
+                R.id.menu_channel -> navController.navigateTo(R.id.menu_channel)
             }
             return@setOnItemSelectedListener true
         }
@@ -1538,14 +1524,8 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun navigateToSearch(query: String?) {
-        ToffeeAnalytics.logEvent(
-            ToffeeEvents.SEARCH, bundleOf("search_query" to query)
-        )
-        navController.popBackStack(R.id.searchFragment, true)
-//        navController.navigate(Uri.parse("app.toffee://search/$query"))
-        navController.navigate(R.id.searchFragment, Bundle().apply {
-            putString(SearchFragment.SEARCH_KEYWORD, query)
-        }, navOptions)
+        ToffeeAnalytics.logEvent(ToffeeEvents.SEARCH, bundleOf("search_query" to query))
+        navController.navigatePopUpTo(R.id.searchFragment, bundleOf(SearchFragment.SEARCH_KEYWORD to query))
     }
     
     private fun handleVoiceSearchEvent(query: String) {
@@ -1674,14 +1654,9 @@ class HomeActivity : PlayerPageActivity(),
             },
             onFailure = {
                 onFailure?.invoke()
-                navController.navigate(
-                    id.premiumFragment,
-                    bundleOf("contentId" to channelInfo.getContentId()),
-                    navOptions {
-                        popUpTo(id.premiumFragment) {
-                            inclusive = true
-                        }
-                    }
+                navController.navigatePopUpTo(
+                    resId = id.premiumPackListFragment,
+                    args = bundleOf("contentId" to channelInfo.getContentId())
                 )
             }
         )
@@ -2338,9 +2313,9 @@ class HomeActivity : PlayerPageActivity(),
                 enterPictureInPictureMode()
             } else {
                 enterPictureInPictureMode(
-                    //                PictureInPictureParams.Builder()
-                    //                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
-                    //                    .build()
+//                PictureInPictureParams.Builder()
+//                    .setAspectRatio(Rational(binding.playerView.width, binding.playerView.height))
+//                    .build()
                 )
             }
         } catch (e: Exception) {
@@ -2449,11 +2424,7 @@ class HomeActivity : PlayerPageActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                navController.navigate(R.id.menu_feed, null, navOptions {
-                    popUpTo(R.id.menu_feed) {
-                        inclusive = true
-                    }
-                })
+                navController.navigatePopUpTo(resId = R.id.menu_feed)
                 return true
             }
             R.id.action_avatar -> {
@@ -2500,9 +2471,7 @@ class HomeActivity : PlayerPageActivity(),
         searchIv.setOnClickListener {
             searchView?.onActionViewExpanded()
             if (navController.currentDestination?.id != R.id.searchFragment) {
-                navController.navigate(R.id.searchFragment, Bundle().apply {
-                    putString(SearchFragment.SEARCH_KEYWORD, "")
-                }, navOptions)
+                navController.navigateTo(R.id.searchFragment, bundleOf(SearchFragment.SEARCH_KEYWORD to ""))
             }
         }
         
@@ -2567,7 +2536,7 @@ class HomeActivity : PlayerPageActivity(),
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
             if (navController.currentDestination?.id != R.id.notificationDropdownFragment) {
-                navController.navigate(R.id.notificationDropdownFragment, null, navOptions)
+                navController.navigateTo(R.id.notificationDropdownFragment)
             }
         }
         searchView?.setOnQueryTextListener(this)
@@ -2663,7 +2632,7 @@ class HomeActivity : PlayerPageActivity(),
     private fun observeMyChannelNavigation() {
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.menu_channel || channelOwnerId != it.channelOwnerId) {
-                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}/false"), navOptions)
+                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}/false"))
             } else {
                 minimizePlayer()
             }

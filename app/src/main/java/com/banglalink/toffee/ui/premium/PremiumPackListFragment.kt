@@ -12,9 +12,10 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
-import com.banglalink.toffee.databinding.FragmentPremiumBinding
+import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
 import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
@@ -23,15 +24,15 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 
-class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
+class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     
-    private lateinit var mAdapter: PremiumAdapter
-    private var _binding: FragmentPremiumBinding? = null
+    private lateinit var mAdapter: PremiumPackListAdapter
+    private var _binding: FragmentPremiumPackListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPremiumBinding.inflate(layoutInflater)
+        _binding = FragmentPremiumPackListBinding.inflate(layoutInflater)
         return binding.root
     }
     
@@ -41,7 +42,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         changeToolbarIcon()
         val contentId = arguments?.getString("contentId")
         
-        mAdapter = PremiumAdapter(this)
+        mAdapter = PremiumPackListAdapter(this)
         
         with(binding.premiumPackList) {
             adapter = mAdapter
@@ -85,7 +86,7 @@ class PremiumFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     
     override fun onItemClicked(item: PremiumPack) {
         viewModel.selectedPremiumPack.value = item
-        findNavController().navigate(R.id.packDetailsFragment)
+        findNavController().navigateTo(R.id.packDetailsFragment)
     }
     
     override fun onDestroyView() {

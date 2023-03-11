@@ -15,10 +15,14 @@ import android.widget.ImageView.ScaleType.CENTER_CROP
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.navOptions
 import coil.request.ImageRequest
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
@@ -28,7 +32,11 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.enums.InputType.ADDRESS
+import com.banglalink.toffee.enums.InputType.DESCRIPTION
+import com.banglalink.toffee.enums.InputType.EMAIL
+import com.banglalink.toffee.enums.InputType.PHONE
+import com.banglalink.toffee.enums.InputType.TITLE
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -38,9 +46,9 @@ import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
-import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.util.*
+import kotlinx.coroutines.launch
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]{1,256}+@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}+\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25}+(?:\\.[a-zA-Z]{1,4})?$"
@@ -93,6 +101,8 @@ val Int.px: Int get() {
 val Float.px: Float get() {
     return (this * Resources.getSystem().displayMetrics.density)
 }
+
+fun Boolean.toInt() = if (this) 1 else 0
 
 fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBeforeReload: Boolean = false, block: (()-> Unit)? = null) {
     if (this is HomeActivity && !mPref.isVerifiedUser) {
@@ -274,7 +284,7 @@ fun String.hexToResourceName(resources: Resources): String {
     return resourceName
 }
 
-fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
+inline fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
     if (!this.isNullOrEmpty()) {
         this.find {
             try {
@@ -288,4 +298,33 @@ fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, on
     } else {
         onFailure()
     }
+}
+
+fun NavController.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
+    this.navigate(resId, args, navOptions ?: navOptions { 
+        launchSingleTop = true
+    })
+}
+
+fun NavController.navigateTo(deepLink: Uri, navOptions: NavOptions? = null) {
+    this.navigate(deepLink, navOptions ?: navOptions { 
+        launchSingleTop = true
+    })
+}
+
+fun NavController.navigatePopUpTo(
+    @IdRes resId: Int,
+    args: Bundle? = null,
+    inclusive: Boolean? = true,
+    @IdRes popUpTo: Int? = null,
+    navOptions: NavOptions? = null
+) {
+    this.navigate(resId, args, navOptions ?: navOptions { 
+        launchSingleTop = true
+        popUpTo(popUpTo ?: resId) {
+            inclusive?.let {
+                this.inclusive = inclusive
+            }
+        }
+    })
 }

@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                app:srcCompat="@drawable/bkash"
+                app:srcCompat="@drawable/ic_bkash_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/passNameTextView"
                 android:contentDescription="@string/pass_brand_image_view" />

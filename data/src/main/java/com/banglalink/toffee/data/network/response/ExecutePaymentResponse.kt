@@ -14,7 +14,7 @@ data class ExecutePaymentResponse (
 	@SerializedName("customerMsisdn")
 	val customerMsisdn : String? = null,
 	@SerializedName("trxID")
-	val trxID : String? = null,
+	val transactionId : String? = null,
 	@SerializedName("amount")
 	val amount : String? = null,
 	@SerializedName("transactionStatus")

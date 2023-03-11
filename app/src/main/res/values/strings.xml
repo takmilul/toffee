@@ -534,4 +534,5 @@
     <string name="trial_pack_page_msg">You are about to access the trial pack.</string>
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>
+    <string name="start_watching_text">Tap any of the content to start watching</string>
 </resources>

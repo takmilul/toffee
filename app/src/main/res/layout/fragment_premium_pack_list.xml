@@ -76,7 +76,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/packListHeader"
                 app:reverseLayout="false"
                 app:layout_constraintVertical_bias="0"
-                tools:listitem="@layout/list_item_premium"
+                tools:listitem="@layout/list_item_premium_pack"
                 tools:visibility="visible"/>
             
             <ImageView

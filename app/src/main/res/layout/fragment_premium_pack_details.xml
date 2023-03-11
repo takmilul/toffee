@@ -112,7 +112,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumChannelListTitle"
-                    tools:layout="@layout/fragment_prem_channels" />
+                    tools:layout="@layout/fragment_premium_channels" />
                 
                 <TextView
                     android:id="@+id/premiumContentListTitle"
@@ -144,7 +144,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumContentListTitle"
-                    tools:layout="@layout/fragment_prem_content" />
+                    tools:layout="@layout/fragment_premium_contents" />
                 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/premiumChannelGroup"

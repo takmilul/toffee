@@ -10,6 +10,6 @@ class PremiumContentAdapter(
 ) : MyBaseAdapter<ChannelInfo>(cb) {
     
     override fun getLayoutIdForPosition(position: Int): Int {
-        return R.layout.list_item_prem_content
+        return R.layout.list_item_premium_content
     }
 }

@@ -4,11 +4,28 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.BkashCreatePaymentService
+import com.banglalink.toffee.apiservice.BkashExecutePaymentService
+import com.banglalink.toffee.apiservice.BkashGrandTokenService
+import com.banglalink.toffee.apiservice.BkashQueryPaymentService
+import com.banglalink.toffee.apiservice.DataPackPurchaseService
+import com.banglalink.toffee.apiservice.PackPaymentMethodService
+import com.banglalink.toffee.apiservice.PremiumPackDetailService
+import com.banglalink.toffee.apiservice.PremiumPackListService
+import com.banglalink.toffee.apiservice.PremiumPackStatusService
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
-import com.banglalink.toffee.data.network.response.*
+import com.banglalink.toffee.data.network.response.CreatePaymentResponse
+import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
+import com.banglalink.toffee.data.network.response.GrantTokenResponse
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
+import com.banglalink.toffee.data.network.response.PremiumPack
+import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
+import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
+import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
@@ -16,10 +33,10 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
@@ -60,19 +77,12 @@ class PremiumViewModel @Inject constructor(
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
     var selectedDataPackOption = MutableLiveData<PackPaymentMethod>()
-    var packPurchaseResponseCode = SingleLiveEvent< Resource<PremiumPackStatusResponse.PremiumPackStatusBean>>()
+    var packPurchaseResponseCode = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     
-    private var _bKashGrandTokenState = MutableSharedFlow<Resource<GrantTokenResponse>>()
-    val bKashGrandTokenState = _bKashGrandTokenState.asSharedFlow()
-    
-    private var _bKashCreatePaymentState = MutableSharedFlow<Resource<CreatePaymentResponse>>()
-    val bKashCreatePaymentState = _bKashCreatePaymentState.asSharedFlow()
-    
-    private var _bKashExecutePaymentState = MutableSharedFlow<Resource<ExecutePaymentResponse>>()
-    val bKashExecutePaymentState = _bKashExecutePaymentState.asSharedFlow()
-    
-    private var _bKashStatusPaymentState = MutableSharedFlow<Resource<QueryPaymentResponse>>()
-    val bKashQueryPaymentState = _bKashStatusPaymentState.asSharedFlow()
+    val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
+    val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
+    val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
+    val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -115,19 +125,10 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun purchaseDataPack() {
+    fun purchaseDataPack(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
-                dataPackPurchaseService.loadData(
-                    packId = selectedPremiumPack.value?.id,
-                    packTitle = selectedPremiumPack.value?.packTitle,
-                    contentList = selectedPremiumPack.value?.contentId,
-                    paymentMethodId = this@PremiumViewModel.selectedDataPackOption.value?.paymentMethodId,
-                    packCode = this@PremiumViewModel.selectedDataPackOption.value?.packCode,
-                    packDetails = this@PremiumViewModel.selectedDataPackOption.value?.packDetails,
-                    packPrice = this@PremiumViewModel.selectedDataPackOption.value?.packPrice,
-                    packDuration = this@PremiumViewModel.selectedDataPackOption.value?.packDuration
-                )
+                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
             }
             packPurchaseResponseCode.value = response
         }
@@ -136,28 +137,28 @@ class PremiumViewModel @Inject constructor(
     fun bKashGrandToken() {
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashGrandTokenService.execute() }
-            _bKashGrandTokenState.emit(response)
+            bKashGrandTokenLiveData.value = response
         }
     }
     
     fun bKashCreatePayment(token: String, requestBody: CreatePaymentRequest) {
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
-            _bKashCreatePaymentState.emit(response)
+            bKashCreatePaymentLiveData.value = response
         }
     }
     
     fun bKashExecutePayment(token: String, requestBody: ExecutePaymentRequest) {
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashExecutePaymentService.execute(token, requestBody) }
-            _bKashExecutePaymentState.emit(response)
+            bKashExecutePaymentLiveData.value = response
         }
     }
     
     fun bKashQueryPayment(token: String, requestBody: QueryPaymentRequest) {
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashQueryPaymentService.execute(token, requestBody) }
-            _bKashStatusPaymentState.emit(response)
+            bKashQueryPaymentLiveData.value = response
         }
     }
 }

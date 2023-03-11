@@ -8,8 +8,7 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:icon="@drawable/ic_menu_search"
         app:showAsAction="always" />
-
-
+    
     <item
         android:id="@+id/action_notification"
         android:title="Notification"

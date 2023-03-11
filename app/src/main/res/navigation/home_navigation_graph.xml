@@ -225,8 +225,8 @@
     </fragment>
 
     <fragment
-        android:id="@+id/premiumFragment"
-        android:name="com.banglalink.toffee.ui.premium.PremiumFragment"
+        android:id="@+id/premiumPackListFragment"
+        android:name="com.banglalink.toffee.ui.premium.PremiumPackListFragment"
         android:label="Toffee Premium">
         <argument
             android:name="contentId"
@@ -358,18 +358,16 @@
         tools:layout="@layout/dialog_html_page_view">
         <argument
             android:name="myTitle"
-            app:argType="string"
-            />
+            app:argType="string" />
         <argument
             android:name="url"
             app:argType="string" />
     </dialog>
 
     <dialog
-        android:id="@+id/postPurchaseStatusDialog"
-        android:name="com.banglalink.toffee.ui.premium.payment.PostPurchaseStatusDialog"
+        android:id="@+id/paymentStatusDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog"
         tools:layout="@layout/dialog_html_page_view">
-        
         <argument
             android:name="isHideBackIcon"
             android:defaultValue="false"
@@ -381,7 +379,6 @@
             android:name="statusMessage"
             app:argType="string"
             app:nullable="true" />
-
     </dialog>
     
     <fragment
@@ -592,19 +589,21 @@
             android:defaultValue="Category"
             app:argType="string" />
     </fragment>
-
+    
     <fragment
         android:id="@+id/packDetailsFragment"
-        android:name="com.banglalink.toffee.ui.premium.PackDetailsFragment"
+        android:name="com.banglalink.toffee.ui.premium.PremiumPackDetailsFragment"
         android:label="Pack Details" />
 
     <dialog
         android:id="@+id/bottomSheetPaymentMethods"
         android:name="com.banglalink.toffee.ui.premium.payment.PaymentMethodBottomSheetFragment"
         android:label="Add To Playlist" />
+    
     <dialog
         android:id="@+id/startWatchingDialog"
-        android:name="com.banglalink.toffee.ui.premium.SuccessfulPurchaseTopBarDialog"
+        android:name="com.banglalink.toffee.ui.premium.StartWatchingTopBarDialog"
         android:label="DeleteAccountFragment"
-        tools:layout="@layout/dialog_successful_purchase_top_bar" />
+        tools:layout="@layout/dialog_start_watching_top_bar" />
+    
 </navigation>

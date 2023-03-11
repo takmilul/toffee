@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -15,6 +14,8 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.openUrlToExternalApp
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
@@ -47,10 +48,7 @@ class DrawerHelper(
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         
         toggle.toolbarNavigationClickListener = View.OnClickListener {
-            activity.getNavController().navigate(R.id.menu_feed, null, navOptions {
-                launchSingleTop = true
-                popUpTo(R.id.menu_feed) { inclusive = true }
-            })
+            activity.getNavController().navigatePopUpTo(R.id.menu_feed)
         }
         
         setProfileInfo()
@@ -91,7 +89,7 @@ class DrawerHelper(
 //            }
             activity.getNavController().let {
                 if (it.currentDestination?.id != R.id.accountFragment) {
-                    it.navigate(R.id.accountFragment)
+                    it.navigateTo(R.id.accountFragment)
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -102,10 +100,7 @@ class DrawerHelper(
         val header = binding.sideNavigation.getHeaderView(0)
         header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-            activity.getNavController().navigate(R.id.premiumFragment, null, navOptions {
-                launchSingleTop = true
-                popUpTo(R.id.premiumFragment) { inclusive = true }
-            })
+            activity.getNavController().navigatePopUpTo(R.id.premiumPackListFragment)
             binding.drawerLayout.closeDrawers()
         }
     }
@@ -130,10 +125,11 @@ class DrawerHelper(
                     ToffeeEvents.MENU_CLICK,
                     bundleOf("selected_menu" to activity.getString(R.string.menu_creators_policy))
                 )
-                activity.getNavController().navigate(
-                    R.id.menu_creators_policy, bundleOf(
+                activity.getNavController().navigateTo(
+                    resId = R.id.menu_creators_policy,
+                    args = bundleOf(
                         "myTitle" to "Creators Policy", "url" to mPref.creatorsPolicyUrl
-                    ), navOptions { launchSingleTop = true }
+                    )
                 )
                 binding.drawerLayout.closeDrawers()
                 return true
@@ -190,7 +186,7 @@ class DrawerHelper(
             }
         }
         return run {
-            activity.getNavController().navigate(item.itemId, null, navOptions { launchSingleTop = true })
+            activity.getNavController().navigateTo(item.itemId)
             binding.drawerLayout.closeDrawers()
             return@run true
 //            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {

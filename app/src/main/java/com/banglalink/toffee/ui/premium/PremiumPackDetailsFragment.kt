@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentPackDetailsBinding
+import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
@@ -22,37 +22,41 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.unsafeLazy
 
-class PackDetailsFragment : BaseFragment() {
+class PremiumPackDetailsFragment : BaseFragment() {
     
-    private var _binding: FragmentPackDetailsBinding? = null
+    private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPackDetailsBinding.inflate(layoutInflater)
+        _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
         return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-        changeToolbarIcon()
+        
         if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
             checkPackPurchased()
         }
         binding.data = viewModel.selectedPremiumPack.value
-    
+        
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-    
+        
         viewModel.selectedPremiumPack.value?.let {
             viewModel.getPremiumPackDetail(it.id)
             with(binding) {
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
+                        progressDialog.show()
                         viewModel.getPackStatus()
                     }
                 })
@@ -64,10 +68,8 @@ class PackDetailsFragment : BaseFragment() {
         
         observe(mPref.packDetailsPageRefreshRequired){
             if(it == true){
-                findNavController().popBackStack().let {
-                    findNavController().navigate(R.id.packDetailsFragment)
-                    findNavController().navigate(R.id.startWatchingDialog)
-                }
+                findNavController().navigatePopUpTo(R.id.packDetailsFragment)
+                findNavController().navigateTo(R.id.startWatchingDialog)
             }
         }
     }
@@ -81,10 +83,17 @@ class PackDetailsFragment : BaseFragment() {
                     if (!isPurchased) {
                         viewModel.selectedPremiumPack.value?.id?.let {
                             viewModel.getPackPaymentMethodList(it)
-                        } ?: requireContext().showToast(getString(R.string.try_again_message))
+                        } ?: run {
+                            progressDialog.hide()
+                            requireContext().showToast(getString(com.banglalink.toffee.R.string.try_again_message))
+                        }
+                    } else {
+                        progressDialog.hide()
+                        findNavController().navigatePopUpTo(R.id.packDetailsFragment)
                     }
                 }
                 is Failure -> {
+                    progressDialog.hide()
                     requireContext().showToast(it.error.msg)
                 }
             }
@@ -115,12 +124,14 @@ class PackDetailsFragment : BaseFragment() {
     
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
+            progressDialog.hide()
             when(it) {
                 is Success -> {
                     viewModel.paymentMethod.value = it.data
-                    findNavController().navigate(R.id.bottomSheetPaymentMethods, bundleOf("paymentMethods" to it.data), navOptions {
-                        popUpTo(R.id.bottomSheetPaymentMethods) { inclusive = true }
-                    })
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.bottomSheetPaymentMethods,
+                        args = bundleOf("paymentMethods" to it.data)
+                    )
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -151,18 +162,9 @@ class PackDetailsFragment : BaseFragment() {
         }
     }
     
-    private fun changeToolbarIcon() {
-        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
-        toolbar?.setNavigationOnClickListener {
-            runCatching {
-                findNavController().popBackStack()
-            }
-        }
-    }
-    
     override fun onDestroyView() {
         super.onDestroyView()
+        progressDialog.hide()
         _binding = null
     }
 }

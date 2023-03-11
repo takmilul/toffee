@@ -200,7 +200,7 @@ class CustomerInfoLogin(
     @SerializedName("bkashApiRetryingCount")
     var bkashApiRetryingCount : Int?    = null,
     @SerializedName("bkashApiRetryingDuration")
-    var bkashApiRetryingDuration : Int? = null,
+    var bkashApiRetryingDuration : Long? = 0L,
     @SerializedName("bkashExecuteUrl")
     var bkashExecuteUrl : String? = null,
     @SerializedName("bkashQueryPaymentUrl")
