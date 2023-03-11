@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.login
 
 import android.app.Activity.RESULT_OK
+import android.app.PendingIntent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -11,7 +12,7 @@ import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.IntentSenderRequest.Builder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
@@ -39,6 +40,8 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.gms.auth.api.identity.GetPhoneNumberHintIntentRequest
+import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -172,21 +175,46 @@ class LoginContentFragment : ChildDialogFragment() {
     
     private fun getHintPhoneNumber() {
         try{
-            val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
-            val intent = Credentials.getClient(requireContext()).getHintPickerIntent(hintRequest)
-            resultLauncher.launch(IntentSenderRequest.Builder(intent).build())
-        }catch (e:Exception){
+            val request: GetPhoneNumberHintIntentRequest = GetPhoneNumberHintIntentRequest.builder().build()
+            Identity.getSignInClient(requireActivity())
+                .getPhoneNumberHintIntent(request)
+                .addOnSuccessListener { result: PendingIntent ->
+                    runCatching {
+                        resultLauncher.launch(
+                            Builder(result).build()
+                        )
+                    }.onFailure {
+                        useAlternateHintMechanism()
+                    }
+                }
+                .addOnFailureListener {
+                    useAlternateHintMechanism()
+                }
+        } catch (e:Exception){
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }
     }
     
+    private fun useAlternateHintMechanism() {
+        val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
+        val intent = Credentials.getClient(requireContext()).getHintPickerIntent(hintRequest)
+        resultLauncher.launch(Builder(intent).build())
+    }
+    
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
-            credential?.let {
-                binding.phoneNumberEditText.setText(it.id)
-                binding.phoneNumberEditText.setSelection(it.id.length)
+            runCatching {
+                val phoneNumber = try {
+                    Identity.getSignInClient(requireActivity()).getPhoneNumberFromIntent(result.data)
+                } catch (e: Exception) {
+                    val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
+                    credential?.id
+                }
+                phoneNumber?.let {
+                    binding.phoneNumberEditText.setText(it)
+                    binding.phoneNumberEditText.setSelection(it.length)
+                }
             }
         }
     }
