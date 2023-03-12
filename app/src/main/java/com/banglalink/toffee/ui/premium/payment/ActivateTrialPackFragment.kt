@@ -10,11 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -36,15 +32,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val selectedTrialPack = viewModel.paymentMethod.value?.let {
-            if (mPref.isBanglalinkNumber == "true") {
-                it.free?.getOrNull(1) ?: it.free?.getOrNull(0)
-            } else {
-                it.free?.getOrNull(0)
-            }
-        }
-        viewModel.selectedDataPackOption.value = selectedTrialPack
-        binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), selectedTrialPack?.packDuration ?: 0)
+        binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
         binding.enableNow.safeClick({
             progressDialog.show()
             callAndObserveDataPackPurchase()

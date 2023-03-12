@@ -26,9 +26,11 @@ class PremiumPackListService @Inject constructor(
         }
         return response.response?.premiumPacks?.map {premiumPack ->
             if (preference.isVerifiedUser) {
-                preference.activePremiumPackList.value?.firstOrNull { it.packId == premiumPack.id }?.let {
+                preference.activePremiumPackList.value?.find {
+                    it.packId == premiumPack.id && it.isActive && preference.getSystemTime().before(Utils.getDate(it.expiryDate))
+                }?.let {
                     runCatching {
-                        premiumPack.isPackPurchased = it.isActive && preference.getSystemTime().before(Utils.getDate(it.expiryDate))
+                        premiumPack.isPackPurchased = true
                         premiumPack.expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}"
                         premiumPack.packDetail = if (premiumPack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${
                             it.packDetail
