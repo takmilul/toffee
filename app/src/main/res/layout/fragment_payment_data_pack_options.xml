@@ -89,28 +89,48 @@
             app:layout_constraintStart_toEndOf="@id/terms_and_conditions_one"
             app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_one"
             tools:visibility="visible" />
-        
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buyNow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp"
             android:backgroundTint="#FF3988"
             android:fontFamily="@font/roboto_bold"
-            android:text="@string/buy_now"
+            android:stateListAnimator="@null"
+            android:text="@string/buy_with_mobile_balance"
             android:textAllCaps="true"
+            android:layout_marginBottom="5dp"
             android:textColor="@color/fw_gnt_white"
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
             app:cornerRadius="100dp"
-            android:stateListAnimator="@null"
-            app:layout_constraintWidth_percent="0.6"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/buyWithRecharge"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
-        
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buyWithRecharge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF3988"
+            android:fontFamily="@font/roboto_bold"
+            android:stateListAnimator="@null"
+            android:text="@string/buy_with_recharge"
+            android:textAllCaps="true"
+            android:layout_marginBottom="40dp"
+            android:textColor="@color/fw_gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:cornerRadius="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/buyNow"
+            app:layout_constraintStart_toStartOf="@+id/buyNow"
+            app:layout_constraintWidth_percent="0.6"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

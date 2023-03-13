@@ -522,6 +522,8 @@
     <string name="extra_for_non_bl_users_text">Extra 15 days for Banglalink users</string>
     <string name="starting_price">Starting from BDT %s</string>
     <string name="buy_now">BUY NOW</string>
+    <string name="buy_with_mobile_balance">BUY WITH MOBILE BALANCE</string>
+    <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="payment_consent_text">By clicking next you are agreeing the </string>
     <string name="choose_a_plan">Choose a Plan</string>
     <string name="pay_by_bkash">Pay by bKash</string>
