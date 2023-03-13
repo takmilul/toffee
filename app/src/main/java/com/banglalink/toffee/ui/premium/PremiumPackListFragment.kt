@@ -70,10 +70,18 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
             when(response) {
                 is Success -> {
                     binding.progressBar.hide()
+
+                    if (response.data.isNullOrEmpty()){
+                        binding.packListHeader.hide()
+                        binding.premiumPackList.hide()
+                        binding.emptyView.show()
+                    }
+
                     response.data.doIfNotNullOrEmpty {
                         binding.packListHeader.show()
                         binding.premiumPackList.show()
                         mAdapter.addAll(it.toList())
+                        binding.emptyView.hide()
                     }
                 }
                 is Failure -> {

@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -145,16 +146,29 @@ class PremiumPackDetailsFragment : BaseFragment() {
             when (response) {
                 is Success -> {
                     binding.progressBar.hide()
+
+                    if (response.data!!.totalCount==0){
+                        binding.premiumChannelGroup.hide()
+                        binding.premiumContentGroup.hide()
+                        binding.emptyView.show()
+
+                    }
+
                     response.data?.linearChannelList?.doIfNotNullOrEmpty {
+
                         binding.premiumChannelGroup.show()
+                        binding.emptyView.hide()
                         viewModel.setLinearContentState(it.toList())
                     }
                     response.data?.vodChannelList?.doIfNotNullOrEmpty {
+                        Log.d("TAG", "observePremiumPackDetail: Four")
                         binding.premiumContentGroup.show()
+                        binding.emptyView.hide()
                         viewModel.setVodContentState(it.toList())
                     }
                 }
                 is Failure -> {
+                    Log.d("TAG", "observePremiumPackDetail: Five")
                     binding.progressBar.hide()
                     requireActivity().showToast(response.error.msg)
                 }
