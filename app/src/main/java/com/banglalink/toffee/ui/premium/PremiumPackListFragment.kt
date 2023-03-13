@@ -13,12 +13,7 @@ import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -70,16 +65,17 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
             when(response) {
                 is Success -> {
                     binding.progressBar.hide()
-
-                    if (response.data.isNullOrEmpty()){
+                    
+                    if (response.data.isEmpty()) {
                         binding.packListHeader.hide()
                         binding.premiumPackList.hide()
                         binding.emptyView.show()
                     }
-
+                    
                     response.data.doIfNotNullOrEmpty {
                         binding.packListHeader.show()
                         binding.premiumPackList.show()
+                        mAdapter.removeAll()
                         mAdapter.addAll(it.toList())
                         binding.emptyView.hide()
                     }
