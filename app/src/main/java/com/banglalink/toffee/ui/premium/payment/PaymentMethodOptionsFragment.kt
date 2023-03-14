@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -49,20 +50,24 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         }
                     }
                     
+                    var extraValidity = blTrialPackMethod?.packDuration?.minus(nonBlTrialPackMethod?.packDuration ?: 0) ?: 0
+                    
+                    if (extraValidity == blTrialPackMethod?.packDuration) {
+                        extraValidity = 0
+                    }
+                    trialDetails.isVisible = extraValidity > 0
+                    
                     if (blTrialPackMethod != null && mPref.isBanglalinkNumber == "true") {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
-                    } else if (nonBlTrialPackMethod != null){
+                        trialDetails.text = String.format(getString(string.extra_for_bl_users_text), extraValidity)
+                    } else if (nonBlTrialPackMethod != null) {
                         viewModel.selectedDataPackOption.value = nonBlTrialPackMethod
                         trialTitle.text = nonBlTrialPackMethod?.packDetails.toString()
+                        trialDetails.text = String.format(getString(string.extra_for_non_bl_users_text), extraValidity)
+                        trialDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.trial_extra_text_color))
                     }
                     
-                    val extraValidity = blTrialPackMethod?.packDuration?.minus(nonBlTrialPackMethod?.packDuration ?: 0) ?: 0
-                    if (extraValidity > 0 && extraValidity != blTrialPackMethod!!.packDuration) {
-                        trialDetails.text = String.format(getString(string.extra_for_trial_pack_text), extraValidity)
-                    } else {
-                        trialDetails.hide()
-                    }
                     var isTrialPackUsed = false
                     mPref.activePremiumPackList.value?.find {
                         it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed

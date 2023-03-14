@@ -39,7 +39,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:contentDescription="@string/channel_image" />
-        
+            
         </FrameLayout>
         
         <ImageView
@@ -48,6 +48,7 @@
             android:layout_height="28dp"
             android:layout_marginTop="-6dp"
             android:adjustViewBounds="true"
+            android:visibility="gone"
             app:srcCompat="@drawable/prem_icon_three"
             app:layout_constraintEnd_toEndOf="@+id/iconHolder"
             app:layout_constraintStart_toStartOf="@+id/iconHolder"

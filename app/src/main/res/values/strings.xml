@@ -54,7 +54,7 @@
     <string name="vod">Videos</string>
     <string name="latest_video">Feed</string>
     <string name="terms_of_use">Terms of Use</string>
-    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="terms_and_conditions">Term\'s &amp; Conditions</string>
     <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="phone_number">Phone Number</string>
@@ -518,10 +518,11 @@
     <string name="pass_brand_image_view">pass brand image view</string>
     <string name="pack_banner">pack banner</string>
     <string name="app_slogan">Watch FREE\non Any Network!</string>
-    <string name="extra_for_trial_pack_text">Includes %s days extra for Banglalink subscribers</string>
-    <string name="extra_for_non_bl_users_text">Extra 15 days for Banglalink users</string>
+    <string name="extra_for_bl_users_text">Includes %s days extra for Banglalink subscribers</string>
+    <string name="extra_for_non_bl_users_text">Extra %s days for Banglalink users</string>
     <string name="starting_price">Starting from BDT %s</string>
     <string name="buy_now">BUY NOW</string>
+    <string name="payment_consent_text">By clicking next you are agreeing the</string>
     <string name="buy_with_mobile_balance">BUY WITH MOBILE BALANCE</string>
     <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="payment_consent_text">By clicking next you are agreeing the </string>

@@ -39,6 +39,7 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     private fun observeList() {
         observe(viewModel.packChannelListState) { linearChannelList ->
             linearChannelList?.let {
+                mAdapter.removeAll()
                 mAdapter.addAll(it)
             }
         }

@@ -79,7 +79,8 @@
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/trialTitle"
                     app:layout_constraintStart_toStartOf="@id/trialTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/trialTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/trialTitle"
+                    app:layout_constraintBottom_toTopOf="@id/trialDetails"/>
                 
                 <TextView
                     android:id="@+id/trialDetails"
@@ -88,7 +89,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/blClr"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="12sp"
                     android:textStyle="italic"
                     tools:text="Extra 15 days for Banglalink users"
@@ -157,7 +158,8 @@
                     tools:text="Starting from BDT 20"
                     app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
                     app:layout_constraintStart_toStartOf="@id/blPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
+                    app:layout_constraintBottom_toTopOf="@id/blPackDetails"/>
                 
                 <TextView
                     android:id="@+id/blPackDetails"
@@ -238,7 +240,8 @@
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
+                    app:layout_constraintBottom_toTopOf="@id/bkashPackDetails"/>
                 
                 <TextView
                     android:id="@+id/bkashPackDetails"

@@ -41,6 +41,7 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
     private fun observeList() {
         observe(viewModel.packContentListState) { vodContentList ->
             vodContentList?.let {
+                mAdapter.removeAll()
                 mAdapter.addAll(it)
             }
         }

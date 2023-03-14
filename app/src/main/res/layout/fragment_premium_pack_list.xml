@@ -58,8 +58,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/packBannerImageView"
                 tools:visibility="visible" />
-
-
+            
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/premiumPackList"
                 android:layout_width="0dp"
@@ -79,7 +78,7 @@
                 app:layout_constraintVertical_bias="0"
                 tools:listitem="@layout/list_item_premium_pack"
                 tools:visibility="visible"/>
-
+            
             <ImageView
                 android:id="@+id/progress_bar"
                 android:layout_width="40dp"
@@ -94,8 +93,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/packBannerImageView"
                 tools:visibility="visible" />
-
-
+            
             <LinearLayout
                 android:id="@+id/empty_view"
                 android:layout_width="0dp"
@@ -107,7 +105,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
+                
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/empty_view_icon"
                     android:layout_width="135dp"
@@ -115,10 +113,8 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/txt_empty"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/ic_videos_empty"
-
-                    />
-
+                    app:srcCompat="@drawable/ic_videos_empty" />
+                
                 <TextView
                     android:id="@+id/empty_view_label"
                     android:layout_width="wrap_content"
@@ -128,11 +124,9 @@
                     android:text="No Premium Pack Available."
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="16sp"
-                    tools:text="No Premium Pack Available."
-                   />
-
+                    tools:text="No Premium Pack Available." />
+                
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

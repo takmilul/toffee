@@ -40,7 +40,7 @@
             android:layout_height="28dp"
             android:layout_marginTop="4dp"
             android:adjustViewBounds="true"
-            android:visibility="@{(data.urlTypeExt == 1) ? View.VISIBLE : View.GONE}"
+            android:visibility="gone"
             app:srcCompat="@drawable/prem_icon_three"
             app:layout_constraintEnd_toEndOf="@+id/icon"
             app:layout_constraintStart_toStartOf="@+id/icon"
