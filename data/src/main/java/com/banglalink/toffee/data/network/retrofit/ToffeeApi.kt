@@ -500,4 +500,9 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body packPaymentMethodRequest: PackPaymentMethodRequest
     ): PackPaymentMethodResponse
+    
+    @POST("/recharge-initialized")
+    suspend fun getRechargeByBkashUrl(
+        @Body rechargeByBkashRequest: RechargeByBkashRequest
+    ): RechargeByBkashResponse
 }

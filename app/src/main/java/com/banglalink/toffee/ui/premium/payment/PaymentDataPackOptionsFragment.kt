@@ -12,15 +12,10 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
+import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -215,6 +210,36 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 merchantInvoiceNumber = "Inv0124",
             )
         )
+    }
+    
+    private fun callAndObserveRechargeByBkash() {
+        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
+            observe(viewModel.rechargeByBkashUrlLiveData) {
+                when(it) {
+                    is Success -> {
+                        it.data?.let {
+                            // load web view from response bkash web url
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }
+                    is Failure -> {
+                        requireContext().showToast(it.error.msg)
+                    }
+                }
+            }
+            
+            val request = RechargeByBkashRequest(
+                customerId = mPref.customerId,
+                password = mPref.password,
+                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                packTitle = viewModel.selectedPremiumPack.value?.packTitle,
+                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                dataPackCode = viewModel.selectedDataPackOption.value?.packCode,
+                dataPackDetail = viewModel.selectedDataPackOption.value?.packDetails,
+                dataPackPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+            )
+            viewModel.getRechargeByBkashUrl(request)
+        }
     }
     
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
