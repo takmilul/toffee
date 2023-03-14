@@ -2,7 +2,7 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
-import com.banglalink.toffee.data.network.request.GrantTokenBodyRequest
+import com.banglalink.toffee.data.network.request.GrantTokenRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
 import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
@@ -19,7 +19,7 @@ interface ExternalApi {
         @Url url: String?,
         @Header("username") bkashUsername: String?,
         @Header("password") bkashPassword: String?,
-        @Body signup: GrantTokenBodyRequest
+        @Body grantTokenRequest: GrantTokenRequest
     ): GrantTokenResponse
     
     @POST
@@ -35,7 +35,7 @@ interface ExternalApi {
         @Url url: String?,
         @Header("authorization") authorization: String?,
         @Header("x-app-key") xAppKey: String?,
-        @Body createPaymentBody: ExecutePaymentRequest
+        @Body executePaymentRequest: ExecutePaymentRequest
     ): ExecutePaymentResponse
 
     @POST
@@ -43,6 +43,6 @@ interface ExternalApi {
         @Url url: String?,
         @Header("authorization") authorization: String?,
         @Header("x-app-key") xAppKey: String?,
-        @Body createPaymentBody: QueryPaymentRequest
+        @Body queryPaymentRequest: QueryPaymentRequest
     ): QueryPaymentResponse
 }

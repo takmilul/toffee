@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
+import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,24 +16,19 @@ import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.request.BkashDataPackRequest
-import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
-import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
-import com.banglalink.toffee.data.network.request.QueryPaymentRequest
+import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigatePopUpTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -44,16 +40,15 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentWebViewDialog : DialogFragment() {
     
     val TAG = "premium_log"
-    
     private var retryCount = 0
     private var header: String? = ""
     private var title: String? = null
@@ -121,13 +116,24 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("paymentID")?.let {
                             paymentId = it
                         }
-                        uri.getQueryParameter("status")?.let {
-                            progressDialog.show()
-                            if (it == "success" && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()) {
-                                executeBkashPayment()
-                            } else {
-                                queryBkashPayment()
-                            }
+                        if(url.toString().contains("success") && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()){
+                            executeBkashPayment()
+                        }
+                        else if(url.toString().contains("failure")){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(url.toString().contains("cancel")){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to "Payment canceled by user"
+                            )
+                            navigateToStatusDialogPage(args)
                         }
                     }
                 }
@@ -199,7 +205,6 @@ class PaymentWebViewDialog : DialogFragment() {
             userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         binding.webview.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
-        
         htmlUrl?.let {
             if (header.isNullOrEmpty()) {
                 binding.webview.loadUrl(it)
@@ -224,7 +229,55 @@ class PaymentWebViewDialog : DialogFragment() {
             }
         }
     }
-    
+    private fun createBkashPayment() {
+        val callBackUrl = "${mPref.bkashCallbackUrl}${viewModel.selectedPremiumPack.value?.id}/${viewModel.selectedDataPackOption.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
+        val amount = viewModel.selectedDataPackOption.value?.packPrice.toString()
+        observe(viewModel.bKashCreatePaymentLiveDataWebView) { response ->
+            when (response) {
+                is Success -> {
+                    if (response.data.statusCode != "0000") {
+                        progressDialog.hide()
+                        val args = bundleOf(
+                            ARG_STATUS_CODE to -1,
+                            ARG_STATUS_MESSAGE to statusMessage
+                        )
+                        navigateToStatusDialogPage(args)
+                        return@observe
+                    }
+                    else{
+                        progressDialog.hide()
+                        paymentId = response.data.paymentId
+                        val args = bundleOf(
+                            "myTitle" to "Pack Details",
+                            "token" to sessionToken,
+                            "paymentId" to paymentId,
+                            "url" to response.data.bKashUrl,
+                            "isHideBackIcon" to false,
+                            "isHideCloseIcon" to true
+                        )
+                        findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
+                    }
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                    progressDialog.hide()
+                }
+            }
+        }
+        viewModel.bKashCreatePaymentWebView(
+            sessionToken!!, CreatePaymentRequest(
+                mode = "0011",
+                payerReference = "01770618575",
+                callbackURL = callBackUrl,
+                merchantAssociationInfo = "MI05MID54RF09123456One",
+                amount = amount,
+                currency = "BDT",
+                intent = "sale",
+                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+            )
+        )
+    }
+
     private fun executeBkashPayment() {
         observe(viewModel.bKashExecutePaymentLiveData) { response ->
             when (response) {
@@ -234,6 +287,30 @@ class PaymentWebViewDialog : DialogFragment() {
                         statusCode = response.data.statusCode
                         statusMessage = response.data.statusMessage
                         customerMsisdn = response.data.customerMsisdn
+
+                        if (response.data.statusCode == "2023"){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to statusMessage
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(response.data.statusCode == "2003"){
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to response.data.statusMessage
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(response.data.statusCode == "503"){
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to response.data.statusMessage
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        return@observe
                     }
                     queryBkashPayment()
                 }
@@ -250,14 +327,18 @@ class PaymentWebViewDialog : DialogFragment() {
             when (response) {
                 is Success -> {
                     queryPaymentResponse = response.data
-                    if (response.data.transactionStatus != "Completed") {
+                    if (response.data.transactionStatus == "Initiated") {
+                        createBkashPayment()
+                    }
+                    else if (response.data.transactionStatus == "Completed"){
                         progressDialog.hide()
                         val args = bundleOf(
-                            ARG_STATUS_CODE to -1,
+                            ARG_STATUS_CODE to 200,
                             ARG_STATUS_MESSAGE to statusMessage
                         )
                         navigateToStatusDialogPage(args)
-                    } else {
+                    }
+                    else {
                         callAndObserveDataPackPurchase()
                     }
                 }

@@ -12,7 +12,7 @@ class BkashQueryPaymentService @Inject constructor(private val mPref: SessionPre
     suspend fun execute(token: String, requestBody: QueryPaymentRequest): QueryPaymentResponse {
         return tryIOExternal {
             api.statusPayment(
-                mPref.bkashQueryPaymentUrl,
+                "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/payment/status",
                 "Bearer $token",
                 mPref.bkashAppKey,
                 requestBody
