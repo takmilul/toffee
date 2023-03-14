@@ -37,6 +37,8 @@ class PremiumViewModel @Inject constructor(
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
     val packListState = _packListState.asSharedFlow()
     
+    val packListScrollState = savedState.getLiveData<Int>("packListScrollState")
+    
     private var _packDetailState = MutableSharedFlow<Resource<PremiumPackDetailBean?>>()
     val packDetailState = _packDetailState.asSharedFlow()
     
