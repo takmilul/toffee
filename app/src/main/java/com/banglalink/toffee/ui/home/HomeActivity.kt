@@ -146,6 +146,10 @@ import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -153,10 +157,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
 
 @AndroidEntryPoint
 class HomeActivity : PlayerPageActivity(),
@@ -1575,6 +1575,9 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
+    var dInfo: Any? = null
+    var cInfo: ChannelInfo? = null
+    
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1595,29 +1598,35 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
         MedalliaDigital.disableIntercept()
+        
         channelInfo?.let {
             when {
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
-                        checkPurchaseBeforePlay(it, detailsInfo,null, onFailure = {
+                        checkPurchaseBeforePlay(it, detailsInfo) {
                             observe(viewModel.activePackListLiveData) { response ->
                                 when (response) {
                                     is Success -> {
                                         mPref.activePremiumPackList.value = response.data.toList()
-                                        checkPurchaseBeforePlay(it, detailsInfo)
+                                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                                            navController.navigatePopUpTo(
+                                                resId = R.id.premiumPackListFragment,
+                                                args = bundleOf("contentId" to cInfo?.getContentId())
+                                            )
+                                        }
                                     }
                                     is Failure -> {
-                                        showToast(response.error.msg)
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.premiumPackListFragment,
+                                            args = bundleOf("contentId" to cInfo?.getContentId())
+                                        )
                                     }
                                 }
                             }
-                            viewModel.getPackStatus(it.getContentId().toInt())
-                        })
-//                        when {
-//                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
-//                            it.urlType == PLAY_IN_WEB_VIEW || it.urlType == PLAY_CDN -> playInWebView(it)
-//                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
-//                        }
+                            cInfo = it
+                            dInfo = detailsInfo
+                            viewModel.getPackStatus(channelInfo.getContentId().toInt())
+                        }
                     }
                 }
                 it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PREMIUM -> {
@@ -1642,22 +1651,16 @@ class HomeActivity : PlayerPageActivity(),
     private fun checkPurchaseBeforePlay(
         channelInfo: ChannelInfo,
         detailsInfo: Any?,
-        onSuccess: (() -> Unit)? = null,
         onFailure: (() -> Unit)? = null
     ) {
         mPref.activePremiumPackList.value.checkPackPurchased(
             contentId = channelInfo.getContentId(),
             systemDate = mPref.getSystemTime(),
             onSuccess = {
-                onSuccess?.invoke()
                 playInNativePlayer(detailsInfo, channelInfo)
             },
             onFailure = {
                 onFailure?.invoke()
-                navController.navigatePopUpTo(
-                    resId = id.premiumPackListFragment,
-                    args = bundleOf("contentId" to channelInfo.getContentId())
-                )
             }
         )
     }
