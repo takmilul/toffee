@@ -26,7 +26,7 @@ import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
     
-    var sessionToken = ""
+    private var sessionToken = ""
     private var paymentName: String? = null
     private var bKashPaymentId: String? = null
     private lateinit var mAdapter: PaymentDataPackOptionAdapter
@@ -207,7 +207,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 amount = amount,
                 currency = "BDT",
                 intent = "sale",
-                merchantInvoiceNumber = "Inv0124",
+                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
             )
         )
     }
@@ -252,7 +252,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.recyclerView.setPadding(0, 0, 0, 8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
-        binding.buyNow.show()
+        if (paymentName == "bKash"){
+            binding.buyNow.text = getString(R.string.buy_now)
+            binding.buyNow.show()
+        }
+        else if(paymentName == "blPack"){
+            binding.buyNow.show()
+            binding.buyWithRecharge.show()
+        }
     }
     
     private fun hidePaymentOption() {
@@ -260,6 +267,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.termsAndConditionsOne.hide()
         binding.termsAndConditionsTwo.hide()
         binding.buyNow.hide()
+        binding.buyWithRecharge.hide()
     }
     
     private fun showTermsAndConditionDialog() {

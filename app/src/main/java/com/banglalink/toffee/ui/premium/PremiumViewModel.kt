@@ -64,6 +64,7 @@ class PremiumViewModel @Inject constructor(
     
     val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
     val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
+    val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
@@ -129,6 +130,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
             bKashCreatePaymentLiveData.value = response
+        }
+    }
+
+    fun bKashCreatePaymentWebView(token: String, requestBody: CreatePaymentRequest) {
+        viewModelScope.launch {
+            val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
+            bKashCreatePaymentLiveDataWebView.value = response
         }
     }
     
