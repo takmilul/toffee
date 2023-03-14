@@ -27,6 +27,16 @@
             android:name="paymentName"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/insufficientBalanceFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.InsufficientBalanceFragment"
+        android:label="PartnershipBottomSheetFragmentPack"
+        tools:layout="@layout/fragment_insufficient_balance">
+        <argument
+            android:name="paymentName"
+            app:argType="string" />
+    </fragment>
     
     <dialog
         android:id="@+id/paymentWebViewDialog"

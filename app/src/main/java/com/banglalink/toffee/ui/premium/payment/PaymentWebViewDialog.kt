@@ -116,10 +116,10 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("paymentID")?.let {
                             paymentId = it
                         }
-                        if(url.toString().contains("success") && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()){
+                        if(url.toString().contains("status=success") && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()){
                             executeBkashPayment()
                         }
-                        else if(url.toString().contains("failure")){
+                        else if(url.toString().contains("status=failure")){
                             progressDialog.hide()
                             val args = bundleOf(
                                 ARG_STATUS_CODE to -1,
@@ -127,7 +127,31 @@ class PaymentWebViewDialog : DialogFragment() {
                             )
                             navigateToStatusDialogPage(args)
                         }
-                        else if(url.toString().contains("cancel")){
+                        else if(url.toString().contains("status=cancel")){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to "Payment canceled by user"
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(url.toString().contains("recharge-success")){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to 200,
+                                ARG_STATUS_MESSAGE to statusMessage
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(url.toString().contains("recharge-fail")){
+                            progressDialog.hide()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1,
+                                ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else if(url.toString().contains("recharge-cancel")){
                             progressDialog.hide()
                             val args = bundleOf(
                                 ARG_STATUS_CODE to -1,

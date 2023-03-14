@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/backImg"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:contentDescription="@string/trial_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backImg"
+            app:srcCompat="@drawable/ic_purchase_failed" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:text="@string/insufficient_balance"
+            android:textColor="@color/main_text_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/img"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/img"
+            app:layout_constraintTop_toBottomOf="@+id/img" />
+
+        <TextView
+            android:id="@+id/subTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="32dp"
+            android:background="@null"
+            android:gravity="center"
+            android:text="@string/insufficient_balance_subtitle"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buyWithRecharge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:backgroundTint="#FF3988"
+            android:elevation="2dp"
+            android:fontFamily="@font/roboto_bold"
+            android:stateListAnimator="@null"
+            android:text="@string/buy_with_recharge"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="@+id/subTitle"
+            app:layout_constraintHorizontal_bias="0.491"
+            app:layout_constraintStart_toStartOf="@+id/subTitle"
+            app:layout_constraintTop_toBottomOf="@+id/subTitle"
+            app:layout_constraintWidth_percent="0.7" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/goToHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF3988"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="48dp"
+            android:elevation="2dp"
+            android:fontFamily="@font/roboto_bold"
+            android:stateListAnimator="@null"
+            android:text="Go to Home"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/buyWithRecharge"
+            app:layout_constraintStart_toStartOf="@+id/buyWithRecharge"
+            app:layout_constraintTop_toBottomOf="@+id/buyWithRecharge"
+            app:layout_constraintWidth_percent="0.7" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
