@@ -22,4 +22,6 @@ data class RechargeByBkashRequest(
     val dataPackDetail: String?,
     @SerializedName("data_pack_price")
     val dataPackPrice: Int,
+    @SerializedName("is_prepaid")
+    val isPrepaid: Int,
 ) : BaseRequest(ApiNames.RECHARGE_BY_BKASH)

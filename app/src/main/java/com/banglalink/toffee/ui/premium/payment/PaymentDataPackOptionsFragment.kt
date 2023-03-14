@@ -218,6 +218,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 when(it) {
                     is Success -> {
                         it.data?.let {
+                            if (it.statusCode != 200) {
+                                requireContext().showToast(it.message)
+                                return@observe
+                            }
                             // load web view from response bkash web url
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
@@ -226,17 +230,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     }
                 }
             }
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPackOption = viewModel.selectedDataPackOption.value
             
             val request = RechargeByBkashRequest(
                 customerId = mPref.customerId,
                 password = mPref.password,
-                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                packTitle = viewModel.selectedPremiumPack.value?.packTitle,
-                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                dataPackCode = viewModel.selectedDataPackOption.value?.packCode,
-                dataPackDetail = viewModel.selectedDataPackOption.value?.packDetails,
-                dataPackPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
+                packId = selectedPremiumPack?.id ?: 0,
+                packTitle = selectedPremiumPack?.packTitle,
+                dataPackId = selectedDataPackOption?.dataPackId ?: 0,
+                dataPackCode = selectedDataPackOption?.packCode,
+                dataPackDetail = selectedDataPackOption?.packDetails,
+                dataPackPrice = selectedDataPackOption?.packPrice ?: 0,
+                isPrepaid = selectedDataPackOption?.isPrepaid ?: 1
             )
             viewModel.getRechargeByBkashUrl(request)
         }
