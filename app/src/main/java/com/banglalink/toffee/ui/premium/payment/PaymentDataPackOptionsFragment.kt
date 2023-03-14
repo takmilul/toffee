@@ -106,6 +106,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 callAndObserveDataPackPurchase()
             }
         })
+        binding.buyWithRecharge.safeClick({
+            progressDialog.show()
+            if (paymentName == "blPack") {
+                callAndObserveRechargeByBkash()
+            }
+        })
+
     }
     
     private fun callAndObserveDataPackPurchase() {
@@ -116,11 +123,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     is Success -> {
                         if (it.data.status == PaymentStatusDialog.SUCCESS) {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                            )
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                        )
-                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        else if (it.data.status == PaymentStatusDialog.DataPackPurchase_FAILED) {
+                            findNavController().navigatePopUpTo(R.id.insufficientBalanceFragment)
+                        }
+                        else{
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                            )
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        }
                     }
                     is Failure -> {
                         requireContext().showToast(it.error.msg)
@@ -214,7 +230,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun callAndObserveRechargeByBkash() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            observe(viewModel.rechargeByBkashUrlLiveData) {
+            observe(viewModel.rechargeByBkashUrlLiveData) { it ->
                 when(it) {
                     is Success -> {
                         it.data?.let {
@@ -222,7 +238,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 requireContext().showToast(it.message)
                                 return@observe
                             }
-                            // load web view from response bkash web url
+                            val args = bundleOf(
+                                "myTitle" to "Pack Details",
+                                "url" to it.data?.bKashWebUrl.toString(),
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true
+                            )
+                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {
