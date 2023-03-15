@@ -65,4 +65,5 @@
     <color name="TrailBgTransparent">#B3000000</color>
     <color name="TrailTxt">#BED6F3</color>
     <color name="trial_extra_text_color">#FF8D23</color>
+    <color name="go_to_home_btn_color">#FBDDE8</color>
 </resources>

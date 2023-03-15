@@ -43,7 +43,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
     
     private fun callAndObserveDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            observe(viewModel.packPurchaseResponseCode) {
+            observe(viewModel.packPurchaseResponseCodeTrialPack) {
                 progressDialog.hide()
                 when (it) {
                     is Success -> {
@@ -76,7 +76,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                 packPrice = selectedDataPack.packPrice,
                 packDuration = selectedDataPack.packDuration
             )
-            viewModel.purchaseDataPack(dataPackPurchaseRequest)
+            viewModel.purchaseDataPackTrialPack(dataPackPurchaseRequest)
         }
     }
     

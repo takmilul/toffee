@@ -62,6 +62,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
+    private var isBkashBlRecharge: Boolean = false
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
     private var _binding: DialogHtmlPageViewBinding? = null
@@ -93,7 +94,8 @@ class PaymentWebViewDialog : DialogFragment() {
         shareableUrl = arguments?.getString("shareable_url")
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon", false) ?: false
-        
+        isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: true
+
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
@@ -116,8 +118,19 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("paymentID")?.let {
                             paymentId = it
                         }
-                        if(url.toString().contains("status=success") && !sessionToken.isNullOrBlank() && !paymentId.isNullOrBlank()){
-                            executeBkashPayment()
+                        if(url.toString().contains("status=success")){
+                            if (isBkashBlRecharge){
+                                progressDialog.hide()
+                                viewModel.rechargeByBkashLiveData.value = true
+                                val args = bundleOf(
+                                    "paymentName" to "blPack"
+                                )
+                                findNavController().navigatePopUpTo(R.id.paymentDataPackOptionsFragment, args)
+                                isBkashBlRecharge = false
+                            }
+                            else{
+                                executeBkashPayment()
+                            }
                         }
                         else if(url.toString().contains("status=failure")){
                             progressDialog.hide()
@@ -137,11 +150,12 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                         else if(url.toString().contains("recharge-success")){
                             progressDialog.hide()
+                            viewModel.rechargeByBkashLiveData.value = true
                             val args = bundleOf(
-                                ARG_STATUS_CODE to 200,
-                                ARG_STATUS_MESSAGE to statusMessage
+                                "paymentName" to "blPack"
                             )
-                            navigateToStatusDialogPage(args)
+                            findNavController().navigatePopUpTo(R.id.paymentDataPackOptionsFragment, args)
+                            isBkashBlRecharge = false
                         }
                         else if(url.toString().contains("recharge-fail")){
                             progressDialog.hide()
@@ -396,7 +410,7 @@ class PaymentWebViewDialog : DialogFragment() {
     
     private fun callAndObserveDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            observe(viewModel.packPurchaseResponseCode) {
+            observe(viewModel.packPurchaseResponseCodeWebView) {
                 progressDialog.hide()
                 when (it) {
                     is Success -> {
@@ -442,7 +456,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     updateTime = queryPaymentResponse?.paymentCreateTime
                 )
             )
-            viewModel.purchaseDataPack(dataPackPurchaseRequest)
+            viewModel.purchaseDataPackWebView(dataPackPurchaseRequest)
         }
     }
     
