@@ -481,6 +481,18 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             else view.text = pack.packSubtitle
         }
     }
+
+    @BindingAdapter("setPremiumPackStatusMsg")
+    fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack) {
+
+        if (pack.isPackPurchased==true && pack.isAvailableFreePeriod==1){
+            view.text="Trial Activated"
+        }else if(pack.isPackPurchased==true && pack.isAvailableFreePeriod==0){
+            view.text="Active"
+        }else{
+            view.text="See Details"
+        }
+    }
 }
 
 

@@ -132,4 +132,5 @@
     <color name="TrailTxt">#FFFFFF</color>
     <color name="pack_active_button_color">#1AAF3D</color>
     <color name="trial_extra_text_color">#FF8D23</color>
+    <color name="light_text_color">#829AB8</color>
 </resources>
