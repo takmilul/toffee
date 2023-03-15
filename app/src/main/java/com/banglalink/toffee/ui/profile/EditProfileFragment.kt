@@ -128,7 +128,7 @@ class EditProfileFragment : BaseFragment() {
         binding.profileForm?.let { form ->
     
             if (form.fullName.isBlank()) {
-                progressDialog.hide()
+                progressDialog.dismiss()
                 binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorNameTv.show()
             } else {
@@ -139,7 +139,7 @@ class EditProfileFragment : BaseFragment() {
 //            val notValidEmail = form.email.isNotBlank() and !form.email.isValid(InputType.EMAIL)
 
 //            if (notValidEmail) {
-//                progressDialog.hide()
+//                progressDialog.dismiss()
 //                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
 //                binding.errorEmailTv.show()
 //            } else {
@@ -282,7 +282,7 @@ class EditProfileFragment : BaseFragment() {
                     }
                 }
 
-                // progressDialog.hide()
+                // progressDialog.dismiss()
             }
         }
     }

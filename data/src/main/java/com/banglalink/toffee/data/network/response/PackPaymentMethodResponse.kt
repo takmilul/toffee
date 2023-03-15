@@ -68,6 +68,4 @@ data class PackPaymentMethod(
     val isPrepaid: Int? = null,
     @SerializedName("listTitle")
     val listTitle: String? = null,
-    @SerializedName("isDisabled")
-    var isDisabled: Boolean? = false
 ) : Parcelable

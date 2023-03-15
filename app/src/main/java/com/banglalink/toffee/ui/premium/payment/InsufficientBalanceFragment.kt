@@ -8,11 +8,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
-import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
 import com.banglalink.toffee.databinding.FragmentInsufficientBalanceBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -35,15 +36,16 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buyWithRecharge.safeClick({
-            progressDialog.show()
             callAndObserveRechargeByBkash()
         })
         binding.backImg.safeClick({ findNavController().popBackStack() })
     }
 
     private fun callAndObserveRechargeByBkash() {
+        progressDialog.show()
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             observe(viewModel.rechargeByBkashUrlLiveData) { it ->
+                progressDialog.dismiss()
                 when(it) {
                     is Success -> {
                         it.data?.let {
@@ -59,7 +61,6 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
                                 "isBkashBlRecharge" to true,
                             )
                             findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
-                            progressDialog.hide()
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {
@@ -83,12 +84,15 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
                 isPrepaid = selectedDataPackOption?.isPrepaid ?: 1
             )
             viewModel.getRechargeByBkashUrl(request)
+        } else {
+            progressDialog.dismiss()
+            requireContext().showToast(getString(R.string.try_again_message))
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        progressDialog.hide()
+        progressDialog.dismiss()
         _binding = null
     }
 }

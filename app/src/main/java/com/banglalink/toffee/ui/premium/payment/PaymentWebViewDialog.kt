@@ -16,7 +16,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
@@ -40,10 +39,10 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentWebViewDialog : DialogFragment() {
@@ -88,13 +87,13 @@ class PaymentWebViewDialog : DialogFragment() {
         
         paymentId = arguments?.getString("paymentId")
         sessionToken = arguments?.getString("token")
-        htmlUrl = arguments?.getString("url")!!
+        htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
         title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
         shareableUrl = arguments?.getString("shareable_url")
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon", false) ?: false
-        isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: true
+        isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: false
 
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
@@ -118,60 +117,33 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("paymentID")?.let {
                             paymentId = it
                         }
-                        if(url.toString().contains("status=success")){
-                            if (isBkashBlRecharge){
-                                progressDialog.hide()
-                                viewModel.rechargeByBkashLiveData.value = true
+                        when {
+                            it.contains("success") -> {
+                                if (isBkashBlRecharge){
+                                    progressDialog.dismiss()
+                                    callAndObserveDataPackPurchase()
+                                    isBkashBlRecharge = false
+                                }
+                                else{
+                                    executeBkashPayment()
+                                }
+                            }
+                            it.contains("failure") || it.contains("fail") -> {
+                                progressDialog.dismiss()
                                 val args = bundleOf(
-                                    "paymentName" to "blPack"
+                                    ARG_STATUS_CODE to -1,
+                                    ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
                                 )
-                                findNavController().navigatePopUpTo(R.id.paymentDataPackOptionsFragment, args)
-                                isBkashBlRecharge = false
+                                navigateToStatusDialogPage(args)
                             }
-                            else{
-                                executeBkashPayment()
+                            it.contains("cancel") -> {
+                                progressDialog.dismiss()
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to -1,
+                                    ARG_STATUS_MESSAGE to "Payment canceled by user"
+                                )
+                                navigateToStatusDialogPage(args)
                             }
-                        }
-                        else if(url.toString().contains("status=failure")){
-                            progressDialog.hide()
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        else if(url.toString().contains("status=cancel")){
-                            progressDialog.hide()
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to "Payment canceled by user"
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        else if(url.toString().contains("recharge-success")){
-                            progressDialog.hide()
-                            viewModel.rechargeByBkashLiveData.value = true
-                            val args = bundleOf(
-                                "paymentName" to "blPack"
-                            )
-                            findNavController().navigatePopUpTo(R.id.paymentDataPackOptionsFragment, args)
-                            isBkashBlRecharge = false
-                        }
-                        else if(url.toString().contains("recharge-fail")){
-                            progressDialog.hide()
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        else if(url.toString().contains("recharge-cancel")){
-                            progressDialog.hide()
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to "Payment canceled by user"
-                            )
-                            navigateToStatusDialogPage(args)
                         }
                     }
                 }
@@ -274,7 +246,7 @@ class PaymentWebViewDialog : DialogFragment() {
             when (response) {
                 is Success -> {
                     if (response.data.statusCode != "0000") {
-                        progressDialog.hide()
+                        progressDialog.dismiss()
                         val args = bundleOf(
                             ARG_STATUS_CODE to -1,
                             ARG_STATUS_MESSAGE to statusMessage
@@ -283,7 +255,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         return@observe
                     }
                     else{
-                        progressDialog.hide()
+                        progressDialog.dismiss()
                         paymentId = response.data.paymentId
                         val args = bundleOf(
                             "myTitle" to "Pack Details",
@@ -298,7 +270,7 @@ class PaymentWebViewDialog : DialogFragment() {
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)
-                    progressDialog.hide()
+                    progressDialog.dismiss()
                 }
             }
         }
@@ -325,30 +297,16 @@ class PaymentWebViewDialog : DialogFragment() {
                         statusCode = response.data.statusCode
                         statusMessage = response.data.statusMessage
                         customerMsisdn = response.data.customerMsisdn
-
-                        if (response.data.statusCode == "2023"){
-                            progressDialog.hide()
+                        
+                        if(response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503") {
+                            progressDialog.dismiss()
                             val args = bundleOf(
                                 ARG_STATUS_CODE to -1,
                                 ARG_STATUS_MESSAGE to statusMessage
                             )
                             navigateToStatusDialogPage(args)
+                            return@observe
                         }
-                        else if(response.data.statusCode == "2003"){
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to response.data.statusMessage
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        else if(response.data.statusCode == "503"){
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to response.data.statusMessage
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        return@observe
                     }
                     queryBkashPayment()
                 }
@@ -369,7 +327,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         createBkashPayment()
                     }
                     else if (response.data.transactionStatus == "Completed"){
-                        progressDialog.hide()
+                        progressDialog.dismiss()
                         val args = bundleOf(
                             ARG_STATUS_CODE to 200,
                             ARG_STATUS_MESSAGE to statusMessage
@@ -381,7 +339,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
-                    progressDialog.hide()
+                    progressDialog.dismiss()
                     val args = bundleOf(
                         ARG_STATUS_CODE to -1,
                         ARG_STATUS_MESSAGE to response.error.msg
@@ -411,7 +369,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private fun callAndObserveDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             observe(viewModel.packPurchaseResponseCodeWebView) {
-                progressDialog.hide()
+                progressDialog.dismiss()
                 when (it) {
                     is Success -> {
                         if (it.data.status == PaymentStatusDialog.SUCCESS) {
@@ -503,7 +461,7 @@ class PaymentWebViewDialog : DialogFragment() {
             destroy()
         }
         super.onDestroyView()
-        progressDialog.hide()
+        progressDialog.dismiss()
         _binding = null
     }
 }

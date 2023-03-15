@@ -469,27 +469,30 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 //            } else view.text = pack.freePackDetailsText
 //        }
         
-        
-        mPref.activePremiumPackList.value?.find {
-            it.packId == pack.id
-        }?.let {
-            if (it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))) view.text = pack.expiryDate
-            else if (pack.isAvailableFreePeriod == 1 && !it.isTrialPackUsed) view.text = pack.freePackDetailsText
-            else view.text = pack.packSubtitle
-        } ?: run {
+        if (!mPref.isVerifiedUser) {
             if (pack.isAvailableFreePeriod == 1) view.text = pack.freePackDetailsText
             else view.text = pack.packSubtitle
+        } else {
+            mPref.activePremiumPackList.value?.find {
+                it.packId == pack.id
+            }?.let {
+                if (it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))) view.text = pack.expiryDate
+                else if (pack.isAvailableFreePeriod == 1 && !it.isTrialPackUsed) view.text = pack.freePackDetailsText
+                else view.text = pack.packSubtitle
+            } ?: run {
+                if (pack.isAvailableFreePeriod == 1) view.text = pack.freePackDetailsText
+                else view.text = pack.packSubtitle
+            }
         }
     }
-
+    
     @BindingAdapter("setPremiumPackStatusMsg")
     fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack) {
-
-        if (pack.isPackPurchased==true && pack.isAvailableFreePeriod==1){
+        if (pack.isPackPurchased && pack.isAvailableFreePeriod==1) {
             view.text="Trial Activated"
-        }else if(pack.isPackPurchased==true && pack.isAvailableFreePeriod==0){
+        } else if(pack.isPackPurchased && pack.isAvailableFreePeriod==0) {
             view.text="Active"
-        }else{
+        } else {
             view.text="See Details"
         }
     }

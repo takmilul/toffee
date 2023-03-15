@@ -127,6 +127,7 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:cornerRadius="100dp"
+            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/buyNow"
             app:layout_constraintStart_toStartOf="@+id/buyNow"

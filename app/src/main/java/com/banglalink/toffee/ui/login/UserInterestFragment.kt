@@ -109,10 +109,10 @@ class UserInterestFragment : ChildDialogFragment() {
                         userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
                     }
                 }
-                progressDialog.hide()
+                progressDialog.dismiss()
             }
             else {
-                progressDialog.hide()
+                progressDialog.dismiss()
                 closeDialog()
 //                requireActivity().recreate()
                 requireContext().showToast("Oops! Something went wrong.")

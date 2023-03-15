@@ -85,16 +85,16 @@ class PremiumPackDetailsFragment : BaseFragment() {
                         viewModel.selectedPremiumPack.value?.id?.let {
                             viewModel.getPackPaymentMethodList(it)
                         } ?: run {
-                            progressDialog.hide()
+                            progressDialog.dismiss()
                             requireContext().showToast(getString(com.banglalink.toffee.R.string.try_again_message))
                         }
                     } else {
-                        progressDialog.hide()
+                        progressDialog.dismiss()
                         findNavController().navigatePopUpTo(R.id.packDetailsFragment)
                     }
                 }
                 is Failure -> {
-                    progressDialog.hide()
+                    progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
                 }
             }
@@ -125,7 +125,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
-            progressDialog.hide()
+            progressDialog.dismiss()
             when(it) {
                 is Success -> {
                     viewModel.paymentMethod.value = it.data
@@ -178,7 +178,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
-        progressDialog.hide()
+        progressDialog.dismiss()
         _binding = null
     }
 }

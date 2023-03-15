@@ -10,7 +10,11 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toInt
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -35,34 +39,19 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
         binding.enableNow.safeClick({
             progressDialog.show()
-            callAndObserveDataPackPurchase()
+            purchaseDataPack()
         })
         binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
+        
+        observeDataPackPurchase()
     }
     
-    private fun callAndObserveDataPackPurchase() {
+    private fun purchaseDataPack() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            observe(viewModel.packPurchaseResponseCodeTrialPack) {
-                progressDialog.hide()
-                when (it) {
-                    is Success -> {
-                        if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                            mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
-                        }
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                        )
-                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
-                    }
-                    is Failure -> {
-                        requireContext().showToast(it.error.msg)
-                    }
-                }
-            }
             val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
             val selectedDataPack = viewModel.selectedDataPackOption.value!!
-    
+            
             val dataPackPurchaseRequest = DataPackPurchaseRequest(
                 customerId = mPref.customerId,
                 password = mPref.password,
@@ -80,6 +69,26 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         }
     }
     
+    private fun observeDataPackPurchase() {
+        observe(viewModel.packPurchaseResponseCodeTrialPack) {
+            progressDialog.dismiss()
+            when (it) {
+                is Success -> {
+                    if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                    }
+                    val args = bundleOf(
+                        PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                    )
+                    findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                }
+                is Failure -> {
+                    requireContext().showToast(it.error.msg)
+                }
+            }
+        }
+    }
+    
     private fun showTermsAndConditionDialog() {
         findNavController().navigateTo(
             resId = R.id.htmlPageViewDialog,
@@ -92,7 +101,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
-        progressDialog.hide()
+        progressDialog.dismiss()
         _binding = null
     }
 }
