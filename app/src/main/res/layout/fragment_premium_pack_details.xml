@@ -130,7 +130,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumChannelFragment" />
-                
+
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/premiumContentFragment"
                     android:name="com.banglalink.toffee.ui.premium.PremiumContentFragment"
@@ -139,13 +139,13 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginBottom="74dp"
                     android:background="@color/screen_bg"
-                    app:layout_constraintVertical_bias="0.0"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumContentListTitle"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:layout="@layout/fragment_premium_contents" />
-                
+
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/premiumChannelGroup"
                     android:layout_width="wrap_content"

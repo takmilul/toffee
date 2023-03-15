@@ -22,6 +22,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
@@ -89,6 +90,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 showPaymentOption()
             }
         }
+
+        observe(viewModel.rechargeByBkashLiveData){
+            if (it == true && paymentName == "blPack"){
+                callAndObserveDataPackPurchase()
+            }
+        }
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
         
@@ -117,7 +124,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun callAndObserveDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            observe(viewModel.packPurchaseResponseCode) {
+            observe(viewModel.packPurchaseResponseCodeDataPackOptions) {
                 progressDialog.hide()
                 when (it) {
                     is Success -> {
@@ -126,7 +133,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             val args = bundleOf(
                                 PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
                             )
-                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                            findNavController().navigatePopUpTo(R.id.paymentStatusDialog, args)
                         }
                         else if (it.data.status == PaymentStatusDialog.DataPackPurchase_FAILED) {
                             findNavController().navigatePopUpTo(R.id.insufficientBalanceFragment)
@@ -159,7 +166,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packPrice = selectedDataPack.packPrice,
                 packDuration = selectedDataPack.packDuration
             )
-            viewModel.purchaseDataPack(dataPackPurchaseRequest)
+            viewModel.purchaseDataPackDataPackOptions(dataPackPurchaseRequest)
         }
     }
     
@@ -242,9 +249,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 "myTitle" to "Pack Details",
                                 "url" to it.data?.bKashWebUrl.toString(),
                                 "isHideBackIcon" to false,
-                                "isHideCloseIcon" to true
+                                "isHideCloseIcon" to true,
+                                "isBkashBlRecharge" to true,
                             )
-                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
+                            findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {

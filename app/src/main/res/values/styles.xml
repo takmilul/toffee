@@ -375,6 +375,13 @@
         <item name="strokeColor">@android:color/white</item>
         <item name="android:textColor">@color/colorAccent2</item>
     </style>
+
+    <style name="ButtonHomeStyleRing" parent="ToffeeButtonStyle">
+        <item name="strokeWidth">1dp</item>
+        <item name="backgroundTint">@color/go_to_home_btn_color</item>
+        <item name="strokeColor">@color/go_to_home_btn_color</item>
+        <item name="android:textColor">@color/colorAccent2</item>
+    </style>
     
     <style name="ButtonStyleRingAccent" parent="ToffeeButtonStyle">
         <item name="strokeWidth">1dp</item>

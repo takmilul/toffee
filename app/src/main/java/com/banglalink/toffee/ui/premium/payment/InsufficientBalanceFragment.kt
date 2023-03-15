@@ -55,9 +55,10 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
                                 "myTitle" to "Pack Details",
                                 "url" to it.data?.bKashWebUrl.toString(),
                                 "isHideBackIcon" to false,
-                                "isHideCloseIcon" to true
+                                "isHideCloseIcon" to true,
+                                "isBkashBlRecharge" to true,
                             )
-                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
+                            findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
                             progressDialog.hide()
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
