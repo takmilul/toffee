@@ -541,4 +541,5 @@
     <string name="start_watching_text">Tap any of the content to start watching</string>
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
     <string name="trial_already_availed_text">You have already availed the trial!</string>
+    <string name="category_channels">%s Channels</string>
 </resources>

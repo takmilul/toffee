@@ -14,11 +14,11 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import java.util.*
 
 class WebSeriesFragment: BaseFragment() {
-    private lateinit var category: Category
+    private var category: Category? = null
     private var _binding: FragmentWebSeriesBinding? = null
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-
+    
     companion object {
         @JvmStatic
         fun newInstance() = WebSeriesFragment().apply {
@@ -30,13 +30,13 @@ class WebSeriesFragment: BaseFragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
         landingViewModel.pageType.value = PageType.Category
-        landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
-        landingViewModel.featuredPageName.value = category.categoryName + " Page"
-        landingViewModel.categoryId.value = category.id.toInt()
-        mPref.categoryId.value = category.id.toInt()
-        mPref.categoryName.value = category.categoryName
+        landingViewModel.pageName.value = category?.categoryName?.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
+        landingViewModel.featuredPageName.value = category?.categoryName + " Page"
+        landingViewModel.categoryId.value = category?.id?.toInt()
+        mPref.categoryId.value = category?.id?.toInt()
+        mPref.categoryName.value = category?.categoryName
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.isDramaSeries.value = true
     }
@@ -48,7 +48,7 @@ class WebSeriesFragment: BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = category.categoryName
+        requireActivity().title = category?.categoryName
     }
     
     override fun onDestroyView() {

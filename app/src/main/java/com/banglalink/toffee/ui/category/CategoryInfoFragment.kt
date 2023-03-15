@@ -17,11 +17,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
-import com.banglalink.toffee.extension.handleUrlShare
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
@@ -30,25 +26,25 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryInfoFragment : HomeBaseFragment() {
     
-    private val binding get() = _binding!!
     @Inject lateinit var localSync: LocalSync
     private var selectedSubCategoryId: Int = 0
-    private lateinit var categoryInfo: Category
+    private var categoryInfo: Category? = null
     @Inject lateinit var bindingUtil: BindingUtil
-    private lateinit var mAdapter: CategoryWiseLinearChannelAdapter
     private var _binding: FragmentCategoryInfoBinding? = null
+    private lateinit var mAdapter: CategoryWiseLinearChannelAdapter
+    private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -59,11 +55,11 @@ class CategoryInfoFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setCategoryUiInfo()
-        requireActivity().title = categoryInfo.categoryName
+        requireActivity().title = categoryInfo?.categoryName
 //        observeHashTags()
 //        observeSubCategories()
         binding.categoryShareButton.safeClick({
-            categoryInfo.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
+            categoryInfo?.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
         
         mAdapter = CategoryWiseLinearChannelAdapter(requireContext(), bindingUtil, object : BaseListItemCallback<ChannelInfo> {
@@ -187,7 +183,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
     
     private fun setCategoryUiInfo() {
         categoryInfo.let {
-            binding.categoryName.text = it.categoryName
+            binding.categoryName.text = it?.categoryName
             bindingUtil.bindCategoryIcon(binding.categoryIcon, categoryInfo)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
@@ -195,7 +191,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
                     R.color.colorAccent2
                 )
             )
-            binding.channelTv.text=it.categoryName+" Channels"
+            binding.channelTv.text = String.format(getString(R.string.category_channels), it?.categoryName)
         }
     }
     
