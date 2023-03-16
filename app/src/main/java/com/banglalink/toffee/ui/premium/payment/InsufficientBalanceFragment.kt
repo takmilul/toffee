@@ -39,6 +39,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
             callAndObserveRechargeByBkash()
         })
         binding.backImg.safeClick({ findNavController().popBackStack() })
+        binding.goToHome.safeClick({closeDialog()})
     }
 
     private fun callAndObserveRechargeByBkash() {

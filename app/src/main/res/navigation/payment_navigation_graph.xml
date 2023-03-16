@@ -49,6 +49,19 @@
             android:name="url"
             app:argType="string" />
     </dialog>
+
+    <dialog
+        android:id="@+id/htmlPageViewDialog"
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
+    </dialog>
     
     <dialog
         android:id="@+id/paymentStatusDialog"

@@ -184,9 +184,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     }
     
     private fun createBkashPayment() {
-        val callBackUrl = "${mPref.bkashCallbackUrl}${viewModel.selectedPremiumPack.value?.id}/${viewModel.selectedDataPackOption.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
         val amount = viewModel.selectedDataPackOption.value?.packPrice.toString()
-        
         observe(viewModel.bKashCreatePaymentLiveData) { response ->
             progressDialog.dismiss()
             when (response) {
@@ -215,7 +213,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             sessionToken, CreatePaymentRequest(
                 mode = "0011",
                 payerReference = "01770618575",
-                callbackURL = callBackUrl,
+                callbackURL = mPref.bkashCallbackUrl,
                 merchantAssociationInfo = "MI05MID54RF09123456One",
                 amount = amount,
                 currency = "BDT",
