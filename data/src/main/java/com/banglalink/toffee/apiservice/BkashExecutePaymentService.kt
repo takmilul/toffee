@@ -12,7 +12,7 @@ class BkashExecutePaymentService @Inject constructor(private val mPref: SessionP
     suspend fun execute(token: String, requestBody: ExecutePaymentRequest): ExecutePaymentResponse {
         return tryIOExternal {
             api.executePayment(
-                "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/execute",
+                mPref.bkashExecuteUrl,
                 "Bearer $token",
                 mPref.bkashAppKey,
                 requestBody
