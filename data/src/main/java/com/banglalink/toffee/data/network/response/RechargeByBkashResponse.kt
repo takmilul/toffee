@@ -13,7 +13,7 @@ data class RechargeByBkashBean(
     @SerializedName("status")
     val status: String,
     @SerializedName("message")
-    val message: String? = null,
+    val message: Any? = null,
     @SerializedName("data")
     val data: RechargeByBkashData? = null
 )

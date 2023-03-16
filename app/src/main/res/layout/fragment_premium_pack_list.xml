@@ -102,6 +102,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -113,8 +114,7 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/txt_empty"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_videos_empty" />
+                    app:srcCompat="@drawable/ic_empty_pack_list" />
                 
                 <TextView
                     android:id="@+id/empty_view_label"
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="No Premium Pack Available."
+                    android:text="No premium pack available"
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="16sp"
                     tools:text="No Premium Pack Available." />

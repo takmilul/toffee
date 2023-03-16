@@ -16,20 +16,14 @@ import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigatePopUpTo
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
@@ -146,7 +140,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory?.distinctBy { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
                         )
@@ -239,7 +233,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     is Success -> {
                         it.data?.let {
                             if (it.statusCode != 200) {
-                                requireContext().showToast(it.message)
+                                requireContext().showToast(getString(R.string.try_again_message))
                                 return@observe
                             }
                             val args = bundleOf(

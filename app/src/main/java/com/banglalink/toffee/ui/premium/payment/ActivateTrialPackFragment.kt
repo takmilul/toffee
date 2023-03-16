@@ -10,16 +10,13 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class ActivateTrialPackFragment : ChildDialogFragment() {
@@ -75,7 +72,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory?.distinctBy { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }
                     }
                     val args = bundleOf(
                         PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)

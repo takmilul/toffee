@@ -50,7 +50,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
                     is Success -> {
                         it.data?.let {
                             if (it.statusCode != 200) {
-                                requireContext().showToast(it.message)
+                                requireContext().showToast(getString(R.string.try_again_message))
                                 return@observe
                             }
                             val args = bundleOf(
