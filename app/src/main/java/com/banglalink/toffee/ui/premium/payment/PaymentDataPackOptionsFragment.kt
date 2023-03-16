@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.premium.payment
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,7 +83,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
-                showPaymentOption()
+//                showPaymentOption()
             }
         }
         
@@ -271,7 +272,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     }
     
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
-        super.onItemClicked(view, item, position) 
+        super.onItemClicked(view, item, position)
+        showPaymentOption()
         mAdapter.selectedPosition = position
         viewModel.selectedDataPackOption.value = item
         val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
