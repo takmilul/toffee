@@ -23,7 +23,6 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
@@ -86,7 +85,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
         
-        observeDataPackPurchase()
+        observe(viewModel.activeDataPackAfterRecharge) {
+            if (it) {
+                progressDialog.show()
+                purchaseBlDataPack()
+            }
+        }
+        
+        observeBlDataPackPurchase()
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
         
@@ -101,7 +107,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             if (paymentName == "bKash") {
                 grantBkashToken()
             } else if (paymentName == "blPack") {
-                purchaseDataPack()
+                purchaseBlDataPack()
             }
         })
         binding.buyWithRecharge.safeClick({
@@ -109,7 +115,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
     }
     
-    private fun purchaseDataPack() {
+    private fun purchaseBlDataPack() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
             val selectedDataPack = viewModel.selectedDataPackOption.value!!
@@ -134,13 +140,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         }
     }
     
-    private fun observeDataPackPurchase() {
+    private fun observeBlDataPackPurchase() {
         observe(viewModel.packPurchaseResponseCodeDataPackOptions) {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory?.distinctBy { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
                         )

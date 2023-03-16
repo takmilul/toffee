@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
 class VerifyCodeService @Inject constructor(
@@ -21,7 +20,7 @@ class VerifyCodeService @Inject constructor(
         
         response.customerInfoLogin.also {
             try {
-                it.activePackList = it.activePackList?.distinctBy { it.isActive && preference.getSystemTime().before(Utils.getDate(it.expiryDate)) }
+                it.activePackList = it.activePackList
                 it.bubbleConfig?.let { bubbleConfigRepository.insert(it) }
             } catch (e: Exception) {
                 Log.i("bubble_", "execute: ${e.message}")

@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ActivePack
-import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
 class PremiumPackStatusService @Inject constructor(
@@ -24,6 +23,6 @@ class PremiumPackStatusService @Inject constructor(
                 isBlNumber, contentId, preference.getDBVersionByApiName(ApiNames.PREMIUM_DATA_PACK_STATUS), request
             )
         }
-        return response.response.loginRelatedSubsHistory?.distinctBy { it.isActive && preference.getSystemTime().before(Utils.getDate(it.expiryDate)) } ?: emptyList()
+        return response.response.loginRelatedSubsHistory ?: emptyList()
     }
 }

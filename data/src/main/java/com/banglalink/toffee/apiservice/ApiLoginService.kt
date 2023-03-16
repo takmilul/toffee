@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.util.Utils
 import javax.inject.Inject
 
 class ApiLoginService @Inject constructor(
@@ -20,7 +19,7 @@ class ApiLoginService @Inject constructor(
         val response = tryIO { authApi.apiLogin(getApiLoginRequest()) }
         response.customerInfoLogin?.let {
             try {
-                it.activePackList = it.activePackList?.distinctBy { it.isActive && pref.getSystemTime().before(Utils.getDate(it.expiryDate)) }
+                it.activePackList = it.activePackList
                 it.bubbleConfig?.let { bubbleConfigRepository.insert(it) }
             } catch (e: Exception) {
                 Log.i("bubble_", "execute: ${e.message}")

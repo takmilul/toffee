@@ -16,7 +16,6 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class ActivateTrialPackFragment : ChildDialogFragment() {
@@ -36,15 +35,15 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
         binding.enableNow.safeClick({
             progressDialog.show()
-            purchaseDataPack()
+            activateTrialPack()
         })
         binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
-        observeDataPackPurchase()
+        observeActivateTrialPack()
     }
     
-    private fun purchaseDataPack() {
+    private fun activateTrialPack() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
             val selectedDataPack = viewModel.selectedDataPackOption.value!!
@@ -66,13 +65,13 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         }
     }
     
-    private fun observeDataPackPurchase() {
+    private fun observeActivateTrialPack() {
         observe(viewModel.packPurchaseResponseCodeTrialPack) {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory?.distinctBy { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }
+                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                     }
                     val args = bundleOf(
                         PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)

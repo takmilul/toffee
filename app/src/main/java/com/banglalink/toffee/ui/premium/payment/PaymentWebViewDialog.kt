@@ -39,10 +39,10 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentWebViewDialog : DialogFragment() {
@@ -121,7 +121,7 @@ class PaymentWebViewDialog : DialogFragment() {
                             it.contains("success") -> {
                                 if (isBkashBlRecharge){
                                     progressDialog.dismiss()
-                                    callAndObserveDataPackPurchase()
+                                    viewModel.activeDataPackAfterRecharge.value = true
                                     isBkashBlRecharge = false
                                 }
                                 else{
@@ -335,7 +335,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         navigateToStatusDialogPage(args)
                     }
                     else {
-                        callAndObserveDataPackPurchase()
+                        callAndObserveBkashDataPackPurchase()
                     }
                 }
                 is Failure -> {
@@ -366,7 +366,7 @@ class PaymentWebViewDialog : DialogFragment() {
         )
     }
     
-    private fun callAndObserveDataPackPurchase() {
+    private fun callAndObserveBkashDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             observe(viewModel.packPurchaseResponseCodeWebView) {
                 progressDialog.dismiss()

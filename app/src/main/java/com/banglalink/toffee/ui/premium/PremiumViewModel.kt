@@ -4,31 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.BkashCreatePaymentService
-import com.banglalink.toffee.apiservice.BkashExecutePaymentService
-import com.banglalink.toffee.apiservice.BkashGrandTokenService
-import com.banglalink.toffee.apiservice.BkashQueryPaymentService
-import com.banglalink.toffee.apiservice.DataPackPurchaseService
-import com.banglalink.toffee.apiservice.PackPaymentMethodService
-import com.banglalink.toffee.apiservice.PremiumPackDetailService
-import com.banglalink.toffee.apiservice.PremiumPackListService
-import com.banglalink.toffee.apiservice.PremiumPackStatusService
-import com.banglalink.toffee.apiservice.RechargeByBkashService
-import com.banglalink.toffee.data.network.request.CreatePaymentRequest
-import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
-import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
-import com.banglalink.toffee.data.network.request.QueryPaymentRequest
-import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
-import com.banglalink.toffee.data.network.response.CreatePaymentResponse
-import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
-import com.banglalink.toffee.data.network.response.GrantTokenResponse
-import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
-import com.banglalink.toffee.data.network.response.PremiumPack
-import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
-import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
-import com.banglalink.toffee.data.network.response.QueryPaymentResponse
-import com.banglalink.toffee.data.network.response.RechargeByBkashBean
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.network.request.*
+import com.banglalink.toffee.data.network.response.*
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
@@ -36,10 +14,10 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
@@ -94,6 +72,8 @@ class PremiumViewModel @Inject constructor(
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
+    
+    val activeDataPackAfterRecharge = SingleLiveEvent<Boolean>()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
