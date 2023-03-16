@@ -409,6 +409,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("onSafeClick")
     fun onSafeClick(view: View, listener: View.OnClickListener) {
+
         view.safeClick(listener)
     }
     
@@ -488,12 +489,25 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("setPremiumPackStatusMsg")
     fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack) {
-        if (pack.isPackPurchased && pack.isAvailableFreePeriod==1) {
-            view.text="Trial Activated"
-        } else if(pack.isPackPurchased && pack.isAvailableFreePeriod==0) {
-            view.text="Active"
-        } else {
+
+        if (!mPref.isVerifiedUser) {
+
             view.text="See Details"
+
+        }else{
+
+            mPref.activePremiumPackList.value?.find {
+                it.packId == pack.id
+            }?.let {
+                if (it.isActive==true&& it.isTrialPackUsed==true) view.text = "Trial Activated"
+                else if (it.isActive==true&& it.isTrialPackUsed==false) view.text = "Active"
+                else{
+                    view.text="See Details"
+                }
+            } ?: run {
+
+                view.text="See Details"
+            }
         }
     }
 }
