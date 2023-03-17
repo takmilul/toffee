@@ -64,9 +64,11 @@ class UserActivitiesListFragment : BaseListFragment<UserActivities>(), ProviderI
     
     override fun onOpenMenu(view: View, item: UserActivities) {
         PopupMenu(requireContext(), view).apply {
-            menu.add(0, R.id.menu_delete_content, 0, "Delete")
             if (item.channelInfo?.isApproved == 1) {
                 menu.add(0, R.id.menu_share, 0, "Share")
+                menu.add(1, R.id.menu_delete_content, 1, "Delete")
+            } else {
+                menu.add(0, R.id.menu_delete_content, 0, "Delete")
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {

@@ -20,6 +20,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.response.PremiumPack
@@ -445,68 +446,38 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("setPremiumPackSubtitle")
     fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack) {
-//        mPref.activePremiumPackList.value?.find {
-//            //condition for showing pack expire date( if pack is bought)
-//            it.packId == pack.id && it.isActive
-//        }?.let {
-//            view.text = pack.expiryDate
-//        } ?: run {
-//            if (pack.isAvailableFreePeriod == 0) view.text = pack.packSubtitle
-//            else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable == 0) view.text = pack.freePackDetailsText
-//            else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable == 1) {
-//                mPref.activePremiumPackList.value?.find {
-//                    it.packId == pack.id
-//                }?.let {
-//                    if (!it.isActive && it.isTrialPackUsed) {
-//                        //when trail has expired
-//                        view.text = pack.packSubtitle
-//                    } else {
-//                        //when trail is available
-//                        view.text = pack.freePackDetailsText
-//                    }
-//                } ?: run {
-//                    view.text = pack.freePackDetailsText
-//                }
-//            } else view.text = pack.freePackDetailsText
-//        }
-        
-        if (!mPref.isVerifiedUser) {
-            if (pack.isAvailableFreePeriod == 1) view.text = pack.freePackDetailsText
-            else view.text = pack.packSubtitle
+        view.text = if (!mPref.isVerifiedUser) {
+            if (pack.isAvailableFreePeriod == 1) pack.freePackDetailsText
+            else pack.packSubtitle
         } else {
-            mPref.activePremiumPackList.value?.find {
+            mPref.activePremiumPackList.value?.filter {
                 it.packId == pack.id
             }?.let {
-                if (it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))) view.text = pack.expiryDate
-                else if (pack.isAvailableFreePeriod == 1 && !it.isTrialPackUsed) view.text = pack.freePackDetailsText
-                else view.text = pack.packSubtitle
+                if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }) pack.expiryDate
+                else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.freePackDetailsText
+                else pack.packSubtitle
             } ?: run {
-                if (pack.isAvailableFreePeriod == 1) view.text = pack.freePackDetailsText
-                else view.text = pack.packSubtitle
+                if (pack.isAvailableFreePeriod == 1) pack.freePackDetailsText
+                else pack.packSubtitle
             }
         }
     }
     
     @BindingAdapter("setPremiumPackStatusMsg")
     fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack) {
-
-        if (!mPref.isVerifiedUser) {
-
-            view.text="See Details"
-
-        }else{
-
-            mPref.activePremiumPackList.value?.find {
+        view.text = if (!mPref.isVerifiedUser) {
+            view.context.getString(string.see_details_text)
+        } else {
+            mPref.activePremiumPackList.value?.filter {
                 it.packId == pack.id
             }?.let {
-                if (it.isActive==true&& it.isTrialPackUsed==true) view.text = "Trial Activated"
-                else if (it.isActive==true&& it.isTrialPackUsed==false) view.text = "Active"
-                else{
-                    view.text="See Details"
+                if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && it.isTrialPackUsed }) view.context.getString(string.trial_activated_text)
+                else if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && !it.isTrialPackUsed }) view.context.getString(string.active_text)
+                else {
+                    view.context.getString(string.see_details_text)
                 }
             } ?: run {
-
-                view.text="See Details"
+                view.context.getString(string.see_details_text)
             }
         }
     }

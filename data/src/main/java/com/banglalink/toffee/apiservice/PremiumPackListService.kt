@@ -32,9 +32,7 @@ class PremiumPackListService @Inject constructor(
                     runCatching {
                         premiumPack.isPackPurchased = true
                         premiumPack.expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}"
-                        premiumPack.packDetail = if (premiumPack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${
-                            it.packDetail
-                        } pack"
+                        premiumPack.packDetail = if (premiumPack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${it.packDetail} pack"
                     }
                 }
             }

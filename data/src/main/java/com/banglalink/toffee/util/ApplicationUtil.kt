@@ -56,7 +56,7 @@ fun getExternalError(e: Exception): Error {
             return Error(e.code(), e.message().ifBlank { "Unknown error occurred" })
         }
         is SocketTimeoutException -> {
-            return Error(-1, "Timeout")
+            return Error(-1, "Unable to connect server.")
         }
         is IOException -> {
             return Error(-1, "Unable to connect server.")

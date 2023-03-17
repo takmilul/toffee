@@ -544,4 +544,7 @@
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
     <string name="trial_already_availed_text">You have already availed the trial!</string>
     <string name="category_channels">%s Channels</string>
+    <string name="see_details_text">See Details</string>
+    <string name="active_text">Active</string>
+    <string name="trial_activated_text">Trial Activated</string>
 </resources>

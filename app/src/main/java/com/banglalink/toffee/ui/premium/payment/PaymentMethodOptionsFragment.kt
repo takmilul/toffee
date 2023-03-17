@@ -91,7 +91,15 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 }
                 
                 blPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bl?.minimumPrice?.toString())
-                bkashPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bkash?.minimumPrice.toString())
+                
+//                bkashPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bkash?.minimumPrice.toString())
+                val startingPrice = if (mPref.isBanglalinkNumber == "true") {
+                    paymentTypes.bkash?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                } else {
+                    paymentTypes.bkash?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                }
+                bkashPackPrice.text = String.format(getString(R.string.starting_price), startingPrice)
+                bkashPackPrice.isVisible = startingPrice > 0
                 
                 blPackCard.isVisible = paymentTypes.bl != null && (!paymentTypes.bl?.prepaid.isNullOrEmpty() || !paymentTypes.bl?.postpaid.isNullOrEmpty())
                 bKashPackCard.isVisible = paymentTypes.bkash != null && (!paymentTypes.bkash?.blPacks.isNullOrEmpty() || !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())

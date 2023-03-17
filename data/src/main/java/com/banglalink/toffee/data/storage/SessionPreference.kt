@@ -857,22 +857,21 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             activePremiumPackList.value = it.activePackList
             blDataPackTermsAndConditionsUrl = it.blDataPackTermsAndConditionsUrl.toString()
             bkashDataPackTermsAndConditionsUrl = it.bkashDataPackTermsAndConditionsUrl.toString()
-            bkashApiUrl = it.bkashApiUrl.toString()
-            bkashGrantTokenUrl = it.bkashGrantTokenUrl.toString()
-            bkashRefreshTokenUrl = it.bkashRefreshTokenUrl.toString()
-            bkashCreateUrl = it.bkashCreateUrl.toString()
-            bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashAppKey = it.bkashAppKey.toString()
             bkashAppSecret = it.bkashAppSecret.toString()
             bkashPassword = it.bkashPassword.toString()
             bkashUsername = it.bkashUsername.toString()
-            bkashUsername = it.bkashUsername.toString()
             merchantInvoiceNumber = it.merchantInvoiceNumber.toString()
+            bkashApiUrl = it.bkashApiUrl.toString()
+            bkashGrantTokenUrl = it.bkashGrantTokenUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/token/grant"
+            bkashRefreshTokenUrl = it.bkashRefreshTokenUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/token/refresh"
+            bkashCreateUrl = it.bkashCreateUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/create"
+            bkashExecuteUrl = it.bkashExecuteUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/execute"
+            bkashQueryPaymentUrl = it.bkashQueryPaymentUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/payment/status"
+            bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
-            bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
-            bkashExecuteUrl = it.bkashExecuteUrl.toString()
-            bkashQueryPaymentUrl = it.bkashQueryPaymentUrl.toString()
-
+            bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 30_000L
+            
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }

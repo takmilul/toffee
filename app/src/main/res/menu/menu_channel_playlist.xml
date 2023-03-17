@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <item
+        android:id="@+id/menu_share_playlist"
+        android:title="Share" />
+    <item
         android:id="@+id/menu_edit_playlist"
         android:title="Edit Playlist" />
     <item
         android:id="@+id/menu_delete_playlist"
         android:title="Delete Playlist" />
-    <item
-        android:id="@+id/menu_share_playlist"
-        android:title="Share" />
 </menu>

@@ -1,23 +1,28 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toInt
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -82,7 +87,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
-//                showPaymentOption()
             }
         }
         
@@ -146,19 +150,23 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
-                    if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                        )
-                        findNavController().navigatePopUpTo(R.id.paymentStatusDialog, args)
-                    } else if (it.data.status == PaymentStatusDialog.DataPackPurchase_FAILED) {
-                        findNavController().navigatePopUpTo(R.id.insufficientBalanceFragment)
-                    } else {
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                        )
-                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                    when (it.data.status) {
+                        PaymentStatusDialog.SUCCESS -> {
+                            mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                            )
+                            findNavController().navigatePopUpTo(R.id.paymentStatusDialog, args)
+                        }
+                        PaymentStatusDialog.DataPackPurchase_FAILED -> {
+                            findNavController().navigatePopUpTo(R.id.insufficientBalanceFragment)
+                        }
+                        else -> {
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                            )
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        }
                     }
                 }
                 is Failure -> {
@@ -282,11 +290,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         viewModel.selectedDataPackOption.value = item
         val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
         binding.buyWithRecharge.isEnabled = isRechargeAvailable
-        if (!isRechargeAvailable) {
-            binding.buyWithRecharge.setBackgroundColor(Color.DKGRAY)
-        } else {
-            binding.buyWithRecharge.setBackgroundColor(Color.parseColor("#FF3988"))
-        }
+        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2 else R.color.disabled_color))
     }
     
     private fun showPaymentOption() {

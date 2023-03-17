@@ -89,16 +89,21 @@ class PaymentWebViewDialog : DialogFragment() {
         sessionToken = arguments?.getString("token")
         htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
-        title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
+        title = arguments?.getString("myTitle", "Pack Details") ?: "Pack Details"
         shareableUrl = arguments?.getString("shareable_url")
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon", false) ?: false
         isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: false
-
+        
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
         observeTopBarBackground()
+        
+        if (htmlUrl == null || sessionToken == null) {
+            requireContext().showToast(getString(R.string.try_again_message))
+            findNavController().popBackStack()
+        }
         
         binding.webview.webViewClient = object : WebViewClient() {
             
@@ -240,7 +245,6 @@ class PaymentWebViewDialog : DialogFragment() {
         }
     }
     private fun createBkashPayment() {
-        val callBackUrl = "${mPref.bkashCallbackUrl}${viewModel.selectedPremiumPack.value?.id}/${viewModel.selectedDataPackOption.value?.dataPackId}/${mPref.customerId}/${mPref.password}/${mPref.phoneNumber}/${mPref.isBanglalinkNumber}/${Constants.DEVICE_TYPE}/${cPref.deviceId}/${mPref.netType}/${"android_" + Build.VERSION.RELEASE}/${cPref.appVersionName}/${cPref.appTheme}"
         val amount = viewModel.selectedDataPackOption.value?.packPrice.toString()
         observe(viewModel.bKashCreatePaymentLiveDataWebView) { response ->
             when (response) {
@@ -278,7 +282,7 @@ class PaymentWebViewDialog : DialogFragment() {
             sessionToken!!, CreatePaymentRequest(
                 mode = "0011",
                 payerReference = "01770618575",
-                callbackURL = callBackUrl,
+                callbackURL = mPref.bkashCallbackUrl,
                 merchantAssociationInfo = "MI05MID54RF09123456One",
                 amount = amount,
                 currency = "BDT",
@@ -324,7 +328,15 @@ class PaymentWebViewDialog : DialogFragment() {
                 is Success -> {
                     queryPaymentResponse = response.data
                     if (response.data.transactionStatus == "Initiated") {
-                        createBkashPayment()
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            if (retryCount < mPref.bkashApiRetryingCount) {
+                                retryCount++
+                                delay(mPref.bkashApiRetryingDuration)
+                                viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
+                            } else {
+                                createBkashPayment()
+                            }
+                        }
                     }
                     else if (response.data.transactionStatus == "Completed"){
                         progressDialog.dismiss()
@@ -346,13 +358,6 @@ class PaymentWebViewDialog : DialogFragment() {
                     )
                     navigateToStatusDialogPage(args)
                 }
-            }
-            lifecycleScope.launch {
-                if (retryCount < mPref.bkashApiRetryingCount) {
-                    delay(mPref.bkashApiRetryingDuration)
-                    viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
-                }
-                retryCount++
             }
         }
         viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
@@ -426,7 +431,7 @@ class PaymentWebViewDialog : DialogFragment() {
         }
         if (isActive) {
             if (mPref.topBarType == "png") {
-                lifecycleScope.launch(Dispatchers.IO) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                     try {
                         val imagePath = if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO) mPref.topBarImagePathLight else mPref.topBarImagePathDark
                         if (!imagePath.isNullOrBlank()) {

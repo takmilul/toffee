@@ -288,9 +288,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_empty"
                 android:visibility="gone"
-                app:srcCompat="@drawable/ic_videos_empty"
-
-                />
+                app:srcCompat="@drawable/ic_videos_empty" />
 
             <TextView
                 android:id="@+id/empty_view_label"
@@ -301,8 +299,7 @@
                 android:text="No Premium Content Available."
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="16sp"
-                tools:text="No Premium Pack Available."
-                />
+                tools:text="No Premium Pack Available." />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
