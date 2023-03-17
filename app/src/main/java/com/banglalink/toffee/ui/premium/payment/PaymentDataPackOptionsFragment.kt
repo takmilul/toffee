@@ -290,7 +290,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         viewModel.selectedDataPackOption.value = item
         val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
         binding.buyWithRecharge.isEnabled = isRechargeAvailable
-        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2 else R.color.disabled_color))
+        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2 
+        else R.color.disabled_text_color))
     }
     
     private fun showPaymentOption() {

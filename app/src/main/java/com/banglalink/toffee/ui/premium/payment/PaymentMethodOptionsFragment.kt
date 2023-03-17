@@ -123,9 +123,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     }
                 })
                 bKashPackCard.safeClick({
-                    if (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) {
+                    if (mPref.isBanglalinkNumber == "true" && paymentTypes.bkash?.blPacks.isNullOrEmpty()) {
                         requireContext().showToast(getString(string.only_for_non_bl_users))
-                    } else if (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()) {
+                    } else if (mPref.isBanglalinkNumber == "false" && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()) {
                         requireContext().showToast(getString(string.only_for_bl_users))
                     } else {
                         findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))

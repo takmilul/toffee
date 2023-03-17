@@ -100,7 +100,7 @@ class PaymentWebViewDialog : DialogFragment() {
         if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
         observeTopBarBackground()
         
-        if (htmlUrl == null || sessionToken == null) {
+        if (htmlUrl == null || (!isBkashBlRecharge && sessionToken == null)) {
             requireContext().showToast(getString(R.string.try_again_message))
             findNavController().popBackStack()
         }

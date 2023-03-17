@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
@@ -39,7 +40,11 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
             callAndObserveRechargeByBkash()
         })
         binding.backImg.safeClick({ findNavController().popBackStack() })
-        binding.goToHome.safeClick({closeDialog()})
+        binding.goToHome.safeClick({
+            runCatching {
+                requireActivity().findNavController(R.id.home_nav_host).navigatePopUpTo(R.id.menu_feed)
+            }
+        })
     }
 
     private fun callAndObserveRechargeByBkash() {
