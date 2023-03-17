@@ -542,6 +542,7 @@
     <string name="insufficient_balance_subtitle">Your Banglalink account does not have sufficient balance. Please buy the pack with bKash.</string>
     <string name="start_watching_text">Tap any of the content to start watching</string>
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
+    <string name="only_for_non_bl_users">Only Non Banglalink subscribers can purchase this</string>
     <string name="trial_already_availed_text">You have already availed the trial!</string>
     <string name="category_channels">%s Channels</string>
     <string name="see_details_text">See Details</string>
