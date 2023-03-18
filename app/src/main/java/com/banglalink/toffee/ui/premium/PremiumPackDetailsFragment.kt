@@ -42,6 +42,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
+        requireActivity().title = "Pack Details"
         
         if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
             checkPackPurchased()

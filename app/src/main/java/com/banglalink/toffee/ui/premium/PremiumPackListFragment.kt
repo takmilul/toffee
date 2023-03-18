@@ -39,7 +39,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-        changeToolbarIcon()
+        requireActivity().title = "Premium Packs"
         val contentId = arguments?.getString("contentId")
         
         mAdapter = PremiumPackListAdapter(this)
@@ -62,16 +62,6 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
         observeList()
         viewModel.selectedPremiumPack.value = null
         viewModel.getPremiumPackList(contentId ?: "0")
-    }
-    
-    private fun changeToolbarIcon() {
-        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.setNavigationIcon(drawable.ic_arrow_back)
-        toolbar?.setNavigationOnClickListener {
-            runCatching {
-                findNavController().popBackStack()
-            }
-        }
     }
     
     private fun observeList() {

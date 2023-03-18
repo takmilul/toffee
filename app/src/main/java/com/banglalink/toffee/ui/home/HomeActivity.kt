@@ -1133,7 +1133,7 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    fun toggleBottomNavBar(state: Boolean) {
+    private fun toggleBottomNavBar(state: Boolean) {
         if (state) {
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
@@ -1147,10 +1147,10 @@ class HomeActivity : PlayerPageActivity(),
             binding.bottomAppBar.show()
             binding.uploadButton.show()
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
-                bottomMargin = 56.dp
+                bottomMargin = binding.bottomAppBar.height + 12.dp
             }
             binding.detailsViewer.updateLayoutParams<RelativeLayout.LayoutParams> {
-                bottomMargin = 248.dp
+                bottomMargin = binding.bottomAppBar.height + 12.dp
             }
         }
     }
