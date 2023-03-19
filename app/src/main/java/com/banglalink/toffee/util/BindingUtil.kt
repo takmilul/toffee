@@ -410,7 +410,6 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("onSafeClick")
     fun onSafeClick(view: View, listener: View.OnClickListener) {
-
         view.safeClick(listener)
     }
     
@@ -454,6 +453,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 it.packId == pack.id
             }?.let {
                 if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }) pack.expiryDate
+                else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable != 1 && it.any { it.isTrialPackUsed }) "Free Trial Over"
                 else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.freePackDetailsText
                 else pack.packSubtitle
             } ?: run {

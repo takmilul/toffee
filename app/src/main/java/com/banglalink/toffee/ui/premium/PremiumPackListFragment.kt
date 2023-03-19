@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
@@ -21,7 +20,6 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.google.ads.interactivemedia.v3.internal.it
 import kotlinx.coroutines.launch
 
 class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -39,6 +37,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
+        onBackIconClicked()
         requireActivity().title = "Premium Packs"
         val contentId = arguments?.getString("contentId")
         
@@ -95,6 +94,15 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     override fun onItemClicked(item: PremiumPack) {
         viewModel.selectedPremiumPack.value = item
         findNavController().navigateTo(R.id.packDetailsFragment)
+    }
+    
+    private fun onBackIconClicked() {
+        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.setNavigationOnClickListener {
+            runCatching {
+                findNavController().popBackStack()
+            }
+        }
     }
     
     override fun onStop() {

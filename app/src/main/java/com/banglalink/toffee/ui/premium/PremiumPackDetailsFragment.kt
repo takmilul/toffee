@@ -5,21 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigatePopUpTo
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -29,6 +23,7 @@ import com.banglalink.toffee.util.unsafeLazy
 
 class PremiumPackDetailsFragment : BaseFragment() {
     
+    private var isFreeTrialOver = false
     private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
@@ -42,6 +37,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
+        onBackIconClicked()
         requireActivity().title = "Pack Details"
         
         if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
@@ -54,8 +50,19 @@ class PremiumPackDetailsFragment : BaseFragment() {
         observePremiumPackDetail()
         
         viewModel.selectedPremiumPack.value?.let {
+            isFreeTrialOver = it.isAvailableFreePeriod == 1 && it.isPurchaseAvailable != 1 && mPref.activePremiumPackList.value?.any { activePack ->
+                it.id == activePack.packId && activePack.isTrialPackUsed
+            } ?: false
+            
             viewModel.getPremiumPackDetail(it.id)
+            
             with(binding) {
+                if (isFreeTrialOver) {
+                    payNowButton.alpha = 0.5f
+                    payNowButton.isEnabled = false
+                    payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
+                }
+                
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
                         progressDialog.show()
@@ -115,7 +122,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
                     viewModel.selectedPremiumPack.value = pack.copy(
                         isPackPurchased = it.isActive,
                         expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
-                        packDetail = if (pack.isAvailableFreePeriod == 1) it.packDetail else "You have bought ${it.packDetail} pack"
+                        packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
                     )
                     binding.data = viewModel.selectedPremiumPack.value
                     true
@@ -173,6 +180,15 @@ class PremiumPackDetailsFragment : BaseFragment() {
                     binding.progressBar.hide()
                     requireActivity().showToast(response.error.msg)
                 }
+            }
+        }
+    }
+    
+    private fun onBackIconClicked() {
+        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.setNavigationOnClickListener {
+            runCatching {
+                findNavController().popBackStack()
             }
         }
     }
