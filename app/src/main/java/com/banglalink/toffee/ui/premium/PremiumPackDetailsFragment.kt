@@ -57,7 +57,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             viewModel.getPremiumPackDetail(it.id)
             
             with(binding) {
-                if (isFreeTrialOver) {
+                if (isFreeTrialOver && mPref.isVerifiedUser) {
                     payNowButton.alpha = 0.5f
                     payNowButton.isEnabled = false
                     payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
