@@ -446,19 +446,21 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     @BindingAdapter("setPremiumPackSubtitle")
     fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack) {
         view.text = if (!mPref.isVerifiedUser) {
-            if (pack.isAvailableFreePeriod == 1) pack.freePackDetailsText
-            else pack.packSubtitle
+            if (pack.isAvailableFreePeriod == 1) pack.packDescriptionForTrial
+            else pack.packDescriptionForBl
         } else {
             mPref.activePremiumPackList.value?.filter {
                 it.packId == pack.id
             }?.let {
                 if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }) pack.expiryDate
                 else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable != 1 && it.any { it.isTrialPackUsed }) "Free Trial Over"
-                else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.freePackDetailsText
-                else pack.packSubtitle
+                else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.packDescriptionForTrial
+                else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
+                else pack.packDescriptionForNonBl
             } ?: run {
-                if (pack.isAvailableFreePeriod == 1) pack.freePackDetailsText
-                else pack.packSubtitle
+                if (pack.isAvailableFreePeriod == 1) pack.packDescriptionForTrial
+                else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
+                else pack.packDescriptionForNonBl
             }
         }
     }

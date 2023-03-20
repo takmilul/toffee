@@ -23,9 +23,11 @@ data class PremiumPack(
     @SerializedName("pack_poster_mobile")
     val packImage: String? = null,
     @SerializedName("pack_description")
-    val packSubtitle: String? = null,
+    val packDescriptionForBl: String? = null,
+    @SerializedName("non_bl_pack_description")
+    val packDescriptionForNonBl: String? = null,
     @SerializedName("free_pack_details_text")
-    val freePackDetailsText: String? = null,
+    val packDescriptionForTrial: String? = null,
     @SerializedName("content_id")
     val contentId: List<Int> = listOf(),
     @SerializedName("isPurchaseAvailable")
