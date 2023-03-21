@@ -34,6 +34,8 @@ class PremiumPackListService @Inject constructor(
                         premiumPack.expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}"
                         premiumPack.packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
                     }
+                } ?: run {
+                    premiumPack.isPackPurchased = false
                 }
             }
             premiumPack
