@@ -111,7 +111,6 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = getString(R.string.this_might_be_insufficient)
                 binding.tryAgainBtn.show()
                 binding.goToHomePageBtn.hide()
-             //   dismissDialog()
             }
             GetRequestStatus_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)

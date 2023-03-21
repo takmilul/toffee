@@ -504,7 +504,7 @@
     <string name="payment_successful">Payment Successful!</string>
     <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected.</string>
     <string name="pack_purchase_failed">Pack Purchase Failed!</string>
-    <string name="this_might_be_insufficient">This might be due to insufficient mobile balance,wrong pack selection or technical error.</string>
+    <string name="this_might_be_insufficient">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
     <string name="your_pack_purchase_failed">Your pack purchase failed due to a technical error. Please try again.</string>
     <string name="pack_activation_failed">Pack activation failed!</string>
     <string name="your_pack_expiration_date_could_not">Your pack expiration date could not be set. Please contact Banglalink Customer Care</string>

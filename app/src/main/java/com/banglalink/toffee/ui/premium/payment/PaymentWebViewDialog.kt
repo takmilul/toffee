@@ -34,6 +34,7 @@ import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.AR
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.unsafeLazy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
@@ -295,21 +296,19 @@ class PaymentWebViewDialog : DialogFragment() {
         observe(viewModel.bKashExecutePaymentLiveData) { response ->
             when (response) {
                 is Success -> {
-                    if (response.data.transactionStatus != "Completed") {
-                        transactionId = response.data.transactionId
-                        statusCode = response.data.statusCode
-                        statusMessage = response.data.statusMessage
-                        customerMsisdn = response.data.customerMsisdn
-                        
-                        if(response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503") {
-                            progressDialog.dismiss()
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to -1,
-                                ARG_STATUS_MESSAGE to statusMessage
-                            )
-                            navigateToStatusDialogPage(args)
-                            return@observe
-                        }
+                    statusCode = response.data.statusCode
+                    statusMessage = response.data.statusMessage
+                    transactionId = response.data.transactionId
+                    customerMsisdn = response.data.customerMsisdn
+                    
+                    if (response.data.transactionStatus != "Completed" && (response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503")) {
+                        progressDialog.dismiss()
+                        val args = bundleOf(
+                            ARG_STATUS_CODE to -1,
+                            ARG_STATUS_MESSAGE to statusMessage
+                        )
+                        navigateToStatusDialogPage(args)
+                        return@observe
                     }
                     queryBkashPayment()
                 }
@@ -325,36 +324,39 @@ class PaymentWebViewDialog : DialogFragment() {
         observe(viewModel.bKashQueryPaymentLiveData) { response ->
             when (response) {
                 is Success -> {
-                    queryPaymentResponse = response.data
-                    if (response.data.transactionStatus == "Initiated") {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            if (retryCount < mPref.bkashApiRetryingCount) {
-                                retryCount++
-                                delay(mPref.bkashApiRetryingDuration)
-                                viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
-                            } else {
-                                progressDialog.dismiss()
-                                val args = bundleOf(
-                                    ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to statusMessage
-                                )
-                                navigateToStatusDialogPage(args)
+                    queryPaymentResponse = response.data.copy(
+                        statusCode = statusCode,
+                        statusMessage = statusMessage,
+                        transactionId = transactionId,
+                        customerMsisdn = customerMsisdn
+                    )
+                    when (response.data.transactionStatus) {
+                        "Completed" -> {
+                            viewModel.bkashQueryPaymentData.value = queryPaymentResponse
+                            callAndObserveBkashDataPackPurchase()
+                        }
+                        "Initiated" -> {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                if (retryCount < mPref.bkashApiRetryingCount) {
+                                    retryCount++
+                                    delay(mPref.bkashApiRetryingDuration)
+                                    viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
+                                } else {
+                                    progressDialog.dismiss()
+                                    val args = bundleOf(
+                                        ARG_STATUS_CODE to -1, ARG_STATUS_MESSAGE to statusMessage
+                                    )
+                                    navigateToStatusDialogPage(args)
+                                }
                             }
                         }
-                    }
-                    else if (response.data.transactionStatus == "Completed") {
-                        viewModel.bkashQueryPaymentData.value = response.data.copy(
-                            customerMsisdn = customerMsisdn,
-                            transactionId = transactionId
-                        )
-                        callAndObserveBkashDataPackPurchase()
-                    } else {
-                        progressDialog.dismiss()
-                        val args = bundleOf(
-                            ARG_STATUS_CODE to -1,
-                            ARG_STATUS_MESSAGE to statusMessage
-                        )
-                        navigateToStatusDialogPage(args)
+                        else -> {
+                            progressDialog.dismiss()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to -1, ARG_STATUS_MESSAGE to statusMessage
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
                     }
                 }
                 is Failure -> {
@@ -400,33 +402,37 @@ class PaymentWebViewDialog : DialogFragment() {
             }
             val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
             val selectedDataPack = viewModel.selectedDataPackOption.value!!
-            val packExpiryDate = selectedDataPack.packDuration?.let { Utils.getExpiryDate(it) }
-            val dataPackPurchaseRequest = DataPackPurchaseRequest(
-                customerId = mPref.customerId,
-                password = mPref.password,
-                isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
-                packId = selectedPremiumPack.id,
-                paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
-                bKashDataPackId = selectedDataPack.dataPackId,
-                bKashRequest = BkashDataPackRequest(
-                    amount = queryPaymentResponse?.amount,
-                    createTime = queryPaymentResponse?.agreementCreateTime,
-                    currency = queryPaymentResponse?.currency,
-                    customerMsisdn = customerMsisdn,
-                    errorCode = statusCode,
-                    errorMessage = statusMessage,
-                    intent = queryPaymentResponse?.intent,
-                    merchantInvoiceNumber = queryPaymentResponse?.merchantInvoice,
-                    paymentId = queryPaymentResponse?.paymentID,
-                    refundAmount = null,
-                    status = statusCode == "0000",
-                    subscriptionExpireDay = packExpiryDate,
-                    transactionStatus = queryPaymentResponse?.transactionStatus,
-                    transactionId = transactionId,
-                    updateTime = queryPaymentResponse?.paymentCreateTime
+            
+            queryPaymentResponse?.let {
+                val dataPackPurchaseRequest = DataPackPurchaseRequest(
+                    customerId = mPref.customerId,
+                    password = mPref.password,
+                    isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
+                    packId = selectedPremiumPack.id,
+                    paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
+                    bKashDataPackId = selectedDataPack.dataPackId,
+                    bKashRequest = BkashDataPackRequest(
+                        amount = it.amount,
+                        createTime = it.paymentCreateTime,
+                        currency = it.currency,
+                        customerMsisdn = it.customerMsisdn,
+                        errorCode = null,
+                        errorMessage = null,
+                        intent = it.intent,
+                        merchantInvoiceNumber = it.merchantInvoice,
+                        paymentId = it.paymentID,
+                        refundAmount = "0",
+                        status = it.statusCode == "0000",
+                        transactionStatus = it.transactionStatus,
+                        transactionId = it.transactionId,
+                        updateTime = currentDateTime
+                    )
                 )
-            )
-            viewModel.purchaseDataPackWebView(dataPackPurchaseRequest)
+                viewModel.purchaseDataPackWebView(dataPackPurchaseRequest)
+            } ?: run {
+                progressDialog.dismiss()
+                requireContext().showToast(getString(R.string.try_again_message))
+            }
         }
     }
     

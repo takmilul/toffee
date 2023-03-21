@@ -61,8 +61,6 @@ data class BkashDataPackRequest(
     val refundAmount: String? = null,
     @SerializedName("status")
     val status: Boolean = false,
-    @SerializedName("subscriptionExpireDay")
-    val subscriptionExpireDay: String? = null,
     @SerializedName("transactionStatus")
     val transactionStatus: String? = null,
     @SerializedName("trxID")

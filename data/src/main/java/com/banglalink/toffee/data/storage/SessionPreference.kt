@@ -9,14 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.extension.isNotNullOrBlank
-import com.banglalink.toffee.model.ActivePack
-import com.banglalink.toffee.model.BubbleConfig
-import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.model.DBVersionV2
-import com.banglalink.toffee.model.DecorationData
-import com.banglalink.toffee.model.NativeAdSettings
-import com.banglalink.toffee.model.PlayerOverlayData
-import com.banglalink.toffee.model.VastTagV3
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
@@ -870,7 +863,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashQueryPaymentUrl = it.bkashQueryPaymentUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/payment/status"
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
-            bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 30_000L
+            bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
             
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
