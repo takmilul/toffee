@@ -19,11 +19,11 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentStatusDialog : DialogFragment() {
@@ -93,7 +93,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_warning)
                 binding.titleMsg.text = getString(R.string.technical_issue_occured)
                 binding.subTitleMsg.text = getString(R.string.due_some_technical_issue)
-                binding.tryAgainBtn.hide()
+                binding.tryAgainBtn.show()
                 binding.goToHomePageBtn.hide()
             }
             SUCCESS -> {

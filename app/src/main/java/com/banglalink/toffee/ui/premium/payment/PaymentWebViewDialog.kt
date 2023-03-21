@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
-import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +18,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
-import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.request.*
@@ -129,7 +127,8 @@ class PaymentWebViewDialog : DialogFragment() {
                                     viewModel.activeDataPackAfterRecharge.value = true
                                     isBkashBlRecharge = false
                                 }
-                                else{
+                                else {
+                                    progressDialog.show()
                                     executeBkashPayment()
                                 }
                             }
@@ -334,20 +333,28 @@ class PaymentWebViewDialog : DialogFragment() {
                                 delay(mPref.bkashApiRetryingDuration)
                                 viewModel.bKashQueryPayment(sessionToken!!, QueryPaymentRequest(paymentID = paymentId))
                             } else {
-                                createBkashPayment()
+                                progressDialog.dismiss()
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to -1,
+                                    ARG_STATUS_MESSAGE to statusMessage
+                                )
+                                navigateToStatusDialogPage(args)
                             }
                         }
                     }
-                    else if (response.data.transactionStatus == "Completed"){
+                    else if (response.data.transactionStatus == "Completed") {
+                        viewModel.bkashQueryPaymentData.value = response.data.copy(
+                            customerMsisdn = customerMsisdn,
+                            transactionId = transactionId
+                        )
+                        callAndObserveBkashDataPackPurchase()
+                    } else {
                         progressDialog.dismiss()
                         val args = bundleOf(
-                            ARG_STATUS_CODE to 200,
+                            ARG_STATUS_CODE to -1,
                             ARG_STATUS_MESSAGE to statusMessage
                         )
                         navigateToStatusDialogPage(args)
-                    }
-                    else {
-                        callAndObserveBkashDataPackPurchase()
                     }
                 }
                 is Failure -> {
@@ -415,7 +422,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     status = statusCode == "0000",
                     subscriptionExpireDay = packExpiryDate,
                     transactionStatus = queryPaymentResponse?.transactionStatus,
-                    trxID = transactionId,
+                    transactionId = transactionId,
                     updateTime = queryPaymentResponse?.paymentCreateTime
                 )
             )

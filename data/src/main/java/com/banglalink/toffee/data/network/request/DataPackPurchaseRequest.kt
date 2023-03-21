@@ -17,7 +17,7 @@ data class DataPackPurchaseRequest(
     @SerializedName("payment_method_id")
     val paymentMethodId: Int,
     
-    //Only for BL Data Pack
+    //Only for BL and Trial Pack
     @SerializedName("pack_title")
     val packTitle: String? = null,
     @SerializedName("contents")
@@ -66,7 +66,7 @@ data class BkashDataPackRequest(
     @SerializedName("transactionStatus")
     val transactionStatus: String? = null,
     @SerializedName("trxID")
-    val trxID: String? = null,
+    val transactionId: String? = null,
     @SerializedName("updateTime")
     val updateTime: String? = null
 )

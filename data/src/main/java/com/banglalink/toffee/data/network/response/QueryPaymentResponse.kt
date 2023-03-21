@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class QueryPaymentResponse(
 	@SerializedName("paymentID")
 	val paymentID: String? = null,
+	@SerializedName("trxID")
+	var transactionId: String? = null,
 	@SerializedName("mode")
 	val mode: String? = null,
 	@SerializedName("paymentCreateTime")
@@ -27,6 +29,8 @@ data class QueryPaymentResponse(
 	val statusMessage: String? = null,
 	@SerializedName("payerReference")
 	val payerReference: String? = null,
+	@SerializedName("customerMsisdn")
+	var customerMsisdn: String? = null,
 	@SerializedName("agreementID")
 	val agreementID: String? = null,
 	@SerializedName("agreementStatus")
