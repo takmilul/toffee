@@ -587,24 +587,18 @@ abstract class PlayerPageActivity :
     }
     
     override fun playNext() {
-        val currentChannelId = playlistManager.getCurrentChannel()?.id
-        val nextChannelId = playlistManager.getNextChannel()?.id
-        val isNextPremium = playlistManager.isNextChannelPremium()
         val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
-        Log.i(
-            "Next_",
-            "Player:--- playlistId: ${playlistManager.playlistId}, currentChannelId: $currentChannelId, nextChannelId: $nextChannelId, " +
-                "isNextPremium: $isNextPremium, isNextChannelPurchased: $isNextChannelPurchased"
-        )
-        if (playlistManager.playlistId != -1L /*&& !playlistManager.isNextChannelPremium()*/) {
+        if (!(playlistManager.isNextChannelPremium() && !isNextChannelPurchased)) {
             playlistManager.nextChannel()
-            Log.i("Next_", "Player: trying next...")
+        }
+        if (playlistManager.playlistId != -1L) {
             playChannel(false)
         }
     }
     
     override fun playPrevious() {
-        if (!playlistManager.isPreviousChannelPremium()) {
+        val isPreviousChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getPreviousChannel()?.id, mPref.getSystemTime())
+        if (!(playlistManager.isPreviousChannelPremium() && ! isPreviousChannelPurchased)) {
             playlistManager.previousChannel()
             playChannel(false)
         }

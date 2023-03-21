@@ -1809,25 +1809,25 @@ class HomeActivity : PlayerPageActivity(),
     override fun updateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
         loadMediaCdnConfig(channelInfo, onSuccess)
     }
-    
+    /**
+     * super.[playNext] method will call the [playNext] method from the [PlayerPageActivity] 
+     * there we will check if the next content is [PREMIUM] and not Paid then we will not activate the next
+     * content in the [playlistManager] instead we sill pass the next content reference to the [HomeViewModel.playContentLiveData]
+     * live data so that it can check the next content's payment and show the Premium Packs List. 
+     * Remember that [PlaylistManager.nextChannel] will activate the next
+     * content but [PlaylistManager.getNextChannel] will not activate the next content instead it will only provide the
+     * next content's reference.
+     */
     override fun playNext() {
         super.playNext()
-        val currentChannelId = playlistManager.getCurrentChannel()?.id
-        val nextChannelId = playlistManager.getNextChannel()?.id
-        val isNextPremium = playlistManager.isNextChannelPremium()
         val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
-        Log.i(
-            "Next_",
-            "Home:---playlistId: ${playlistManager.playlistId}, currentChannelId: $currentChannelId, nextChannelId: $nextChannelId, isNextPremium: $isNextPremium, isNextChannelPurchased: $isNextChannelPurchased"
-        )
-        if (playlistManager.playlistId == -1L /*|| (playlistManager.isNextChannelPremium() && !mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime()))*/) {
-            Log.i("Next_", "playNext: not purchased")
-            val nextChannel = if (playlistManager.isNextChannelPremium()) {
-                playlistManager.getNextChannel()
-            } else {
-                playlistManager.getCurrentChannel()
-            }
-            viewModel.playContentLiveData.postValue(nextChannel)
+        
+        if (playlistManager.isNextChannelPremium() && !isNextChannelPurchased) {
+            viewModel.playContentLiveData.postValue(playlistManager.getNextChannel())
+            return
+        }
+        if (playlistManager.playlistId == -1L) {
+            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return
         }
         ConvivaHelper.endPlayerSession()
@@ -1843,7 +1843,9 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playPrevious() {
         super.playPrevious()
-        if (playlistManager.isPreviousChannelPremium() && !mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())) {
+        val isPreviousChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getPreviousChannel()?.id, mPref.getSystemTime())
+        
+        if (playlistManager.isPreviousChannelPremium() && !isPreviousChannelPurchased) {
             viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
             return
         }
