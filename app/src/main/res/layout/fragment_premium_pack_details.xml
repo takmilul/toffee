@@ -198,6 +198,7 @@
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
+                android:textStyle="bold"
                 setPremiumPackSubtitle="@{data}"
                 tools:text="Starts from 10 BDT"
                 android:textColor="@android:color/white"
