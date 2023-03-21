@@ -1812,7 +1812,16 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playNext() {
         super.playNext()
-        if (playlistManager.playlistId == -1L || playlistManager.isNextChannelPremium()) {
+        val currentChannelId = playlistManager.getCurrentChannel()?.id
+        val nextChannelId = playlistManager.getNextChannel()?.id
+        val isNextPremium = playlistManager.isNextChannelPremium()
+        val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
+        Log.i(
+            "Next_",
+            "Home:---playlistId: ${playlistManager.playlistId}, currentChannelId: $currentChannelId, nextChannelId: $nextChannelId, isNextPremium: $isNextPremium, isNextChannelPurchased: $isNextChannelPurchased"
+        )
+        if (playlistManager.playlistId == -1L /*|| (playlistManager.isNextChannelPremium() && !mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime()))*/) {
+            Log.i("Next_", "playNext: not purchased")
             val nextChannel = if (playlistManager.isNextChannelPremium()) {
                 playlistManager.getNextChannel()
             } else {
@@ -1824,6 +1833,7 @@ class HomeActivity : PlayerPageActivity(),
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
         val info = playlistManager.getCurrentChannel()
+        Log.i("Next_", "playNext: ${info?.program_name}")
         playerEventHelper.startContentPlayingSession(info!!.id)
         ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
@@ -1833,7 +1843,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun playPrevious() {
         super.playPrevious()
-        if (playlistManager.isPreviousChannelPremium()) {
+        if (playlistManager.isPreviousChannelPremium() && !mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())) {
             viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
             return
         }

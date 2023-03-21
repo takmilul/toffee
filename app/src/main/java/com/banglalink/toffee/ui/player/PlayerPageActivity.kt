@@ -65,15 +65,15 @@ import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
@@ -587,8 +587,18 @@ abstract class PlayerPageActivity :
     }
     
     override fun playNext() {
-        if (playlistManager.playlistId != -1L && !playlistManager.isNextChannelPremium()) {
+        val currentChannelId = playlistManager.getCurrentChannel()?.id
+        val nextChannelId = playlistManager.getNextChannel()?.id
+        val isNextPremium = playlistManager.isNextChannelPremium()
+        val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
+        Log.i(
+            "Next_",
+            "Player:--- playlistId: ${playlistManager.playlistId}, currentChannelId: $currentChannelId, nextChannelId: $nextChannelId, " +
+                "isNextPremium: $isNextPremium, isNextChannelPurchased: $isNextChannelPurchased"
+        )
+        if (playlistManager.playlistId != -1L /*&& !playlistManager.isNextChannelPremium()*/) {
             playlistManager.nextChannel()
+            Log.i("Next_", "Player: trying next...")
             playChannel(false)
         }
     }

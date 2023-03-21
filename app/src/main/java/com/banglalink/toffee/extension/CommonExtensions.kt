@@ -296,6 +296,22 @@ inline fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: D
     }
 }
 
+fun List<ActivePack>?.isContentPurchased(contentId: String?, systemDate: Date): Boolean {
+    return if (!this.isNullOrEmpty() && contentId != null) {
+        this.find {
+            try {
+                (it.contents?.contains(contentId.toInt()) == true) && it.isActive && systemDate.before(Utils.getDate(it.expiryDate))
+            } catch (e: Exception) {
+                false
+            }
+        }?.let {
+            true
+        } ?: false
+    } else {
+        false
+    }
+}
+
 fun NavController.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
     this.navigate(resId, args, navOptions ?: navOptions { 
         launchSingleTop = true
