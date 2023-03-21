@@ -71,6 +71,7 @@ class PremiumViewModel @Inject constructor(
     val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
+    val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     
     val activeDataPackAfterRecharge = SingleLiveEvent<Boolean>()
