@@ -1,7 +1,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="343dp"
-    android:height="118dp"
+    android:height="124dp"
     android:viewportWidth="343"
     android:viewportHeight="118">
   <path
