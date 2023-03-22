@@ -11,10 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.databinding.FragmentInsufficientBalanceBinding
-import com.banglalink.toffee.extension.navigatePopUpTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -66,7 +63,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
                                 "isHideCloseIcon" to true,
                                 "isBkashBlRecharge" to true,
                             )
-                            findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
+                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {

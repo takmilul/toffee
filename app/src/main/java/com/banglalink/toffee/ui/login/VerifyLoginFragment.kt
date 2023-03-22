@@ -9,11 +9,9 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -38,7 +36,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class VerifyLoginFragment : ChildDialogFragment() {
@@ -107,7 +104,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
-                        reloadContent()
+                        closeDialog()
                     }
                     else {
                         findNavController().navigate(R.id.userInterestFragment)
@@ -128,18 +125,6 @@ class VerifyLoginFragment : ChildDialogFragment() {
                             "error_description" to it.error.msg))
                 }
             }
-        }
-    }
-    
-    private fun reloadContent() {
-        closeDialog()
-        cacheManager.clearAllCache()
-        viewLifecycleOwner.lifecycleScope.launch {
-            tVChannelRepository.deleteAllRecentItems()
-        }
-        requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
-//            requireActivity().recreate()
-            homeViewModel.postLoginEvent.value = true
         }
     }
     

@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -30,7 +28,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserInterestFragment : ChildDialogFragment() {
@@ -54,13 +51,13 @@ class UserInterestFragment : ChildDialogFragment() {
         userInterestList.clear()
         with(binding) {
             interestChipGroup.removeAllViews()
-            skipButton.safeClick({ reloadContent() })
+            skipButton.safeClick({ closeDialog() })
             doneButton.safeClick({
                 val userInterestCount = userInterestList.values.count { it == 1 }
                 if (userInterestCount >= 3) {
                     homeViewModel.sendUserInterestData(userInterestList)
                     cPref.setUserInterestSubmitted(mPref.phoneNumber)
-                    reloadContent()
+                    closeDialog()
 
                     val interestListAnalytics = userInterestList.filterValues {
                         it == 1
@@ -119,19 +116,7 @@ class UserInterestFragment : ChildDialogFragment() {
             }
         }
     }
-
-    private fun reloadContent() {
-        closeDialog()
-        cacheManager.clearAllCache()
-        viewLifecycleOwner.lifecycleScope.launch {
-            tVChannelRepository.deleteAllRecentItems()
-        }
-        requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
-//            requireActivity().recreate()
-            homeViewModel.postLoginEvent.value = true
-        }
-    }
-
+    
     private fun addOthersChip(name: String): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
