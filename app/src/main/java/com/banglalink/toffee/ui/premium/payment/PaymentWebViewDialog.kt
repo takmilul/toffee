@@ -123,10 +123,11 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                         when {
                             it.contains("success") -> {
-                                if (isBkashBlRecharge){
-                                    progressDialog.dismiss()
-                                    viewModel.activeDataPackAfterRecharge.value = true
+                                if (isBkashBlRecharge) {
+                                    progressDialog.show()
                                     isBkashBlRecharge = false
+                                    observeBlDataPackPurchase()
+                                    purchaseBlDataPack()
                                 }
                                 else {
                                     progressDialog.show()
@@ -432,6 +433,59 @@ class PaymentWebViewDialog : DialogFragment() {
             } ?: run {
                 progressDialog.dismiss()
                 requireContext().showToast(getString(R.string.try_again_message))
+            }
+        }
+    }
+    
+    private fun purchaseBlDataPack() {
+        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
+            val selectedDataPack = viewModel.selectedDataPackOption.value!!
+            
+            val dataPackPurchaseRequest = DataPackPurchaseRequest(
+                customerId = mPref.customerId,
+                password = mPref.password,
+                isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
+                packId = selectedPremiumPack.id,
+                paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
+                packTitle = selectedPremiumPack.packTitle,
+                contentList = selectedPremiumPack.contentId,
+                packCode = selectedDataPack.packCode,
+                packDetails = selectedDataPack.packDetails,
+                packPrice = selectedDataPack.packPrice,
+                packDuration = selectedDataPack.packDuration
+            )
+            viewModel.purchaseDataPackBlDataPackOptionsWeb(dataPackPurchaseRequest)
+        } else {
+            progressDialog.dismiss()
+            requireContext().showToast(getString(R.string.try_again_message))
+        }
+    }
+    
+    private fun observeBlDataPackPurchase() {
+        observe(viewModel.packPurchaseResponseCodeBlDataPackOptionsWeb) {
+            progressDialog.dismiss()
+            when (it) {
+                is Success -> {
+                    when (it.data.status) {
+                        PaymentStatusDialog.SUCCESS -> {
+                            mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to (it.data.status ?: 200)
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        else -> {
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to (it.data.status ?: 0)
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                    }
+                }
+                is Failure -> {
+                    requireContext().showToast(it.error.msg)
+                }
             }
         }
     }

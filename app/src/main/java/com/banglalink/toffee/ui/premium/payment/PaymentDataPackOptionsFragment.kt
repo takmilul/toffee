@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.premium.payment
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,14 +14,7 @@ import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.navigatePopUpTo
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.toInt
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -90,13 +82,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
         
-        observe(viewModel.activeDataPackAfterRecharge) {
-            if (it) {
-                progressDialog.show()
-                purchaseBlDataPack()
-            }
-        }
-        
         observeBlDataPackPurchase()
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
@@ -138,7 +123,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packPrice = selectedDataPack.packPrice,
                 packDuration = selectedDataPack.packDuration
             )
-            viewModel.purchaseDataPackDataPackOptions(dataPackPurchaseRequest)
+            viewModel.purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest)
         } else {
             progressDialog.dismiss()
             requireContext().showToast(getString(R.string.try_again_message))
@@ -146,7 +131,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     }
     
     private fun observeBlDataPackPurchase() {
-        observe(viewModel.packPurchaseResponseCodeDataPackOptions) {
+        observe(viewModel.packPurchaseResponseCodeBlDataPackOptions) {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
@@ -154,7 +139,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                             val args = bundleOf(
-                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 200)
                             )
                             findNavController().navigatePopUpTo(R.id.paymentStatusDialog, args)
                         }

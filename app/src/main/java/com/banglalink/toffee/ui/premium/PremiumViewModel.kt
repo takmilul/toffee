@@ -63,9 +63,10 @@ class PremiumViewModel @Inject constructor(
     var selectedDataPackOption = MutableLiveData<PackPaymentMethod>()
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseCodeDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
+    var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
+    var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeWebView = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-
+    
     val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
     val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
@@ -74,8 +75,6 @@ class PremiumViewModel @Inject constructor(
     val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     
-    val activeDataPackAfterRecharge = SingleLiveEvent<Boolean>()
-
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -126,12 +125,21 @@ class PremiumViewModel @Inject constructor(
         }
     }
 
-    fun purchaseDataPackDataPackOptions(dataPackPurchaseRequest: DataPackPurchaseRequest) {
+    fun purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
                 dataPackPurchaseService.loadData(dataPackPurchaseRequest)
             }
-            packPurchaseResponseCodeDataPackOptions.value = response
+            packPurchaseResponseCodeBlDataPackOptions.value = response
+        }
+    }
+
+    fun purchaseDataPackBlDataPackOptionsWeb(dataPackPurchaseRequest: DataPackPurchaseRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse {
+                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
+            }
+            packPurchaseResponseCodeBlDataPackOptionsWeb.value = response
         }
     }
 
