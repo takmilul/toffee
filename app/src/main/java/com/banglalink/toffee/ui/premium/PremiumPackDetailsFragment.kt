@@ -137,7 +137,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             when(it) {
                 is Success -> {
                     viewModel.paymentMethod.value = it.data
-                    findNavController().navigatePopUpTo(
+                    findNavController().navigateTo(
                         resId = R.id.bottomSheetPaymentMethods,
                         args = bundleOf("paymentMethods" to it.data)
                     )

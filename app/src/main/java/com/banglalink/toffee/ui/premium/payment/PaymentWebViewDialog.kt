@@ -41,6 +41,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import java.util.ResourceBundle.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -245,54 +247,7 @@ class PaymentWebViewDialog : DialogFragment() {
             }
         }
     }
-    private fun createBkashPayment() {
-        val amount = viewModel.selectedDataPackOption.value?.packPrice.toString()
-        observe(viewModel.bKashCreatePaymentLiveDataWebView) { response ->
-            when (response) {
-                is Success -> {
-                    if (response.data.statusCode != "0000") {
-                        progressDialog.dismiss()
-                        val args = bundleOf(
-                            ARG_STATUS_CODE to -1,
-                            ARG_STATUS_MESSAGE to statusMessage
-                        )
-                        navigateToStatusDialogPage(args)
-                        return@observe
-                    }
-                    else{
-                        progressDialog.dismiss()
-                        paymentId = response.data.paymentId
-                        val args = bundleOf(
-                            "myTitle" to "Pack Details",
-                            "token" to sessionToken,
-                            "paymentId" to paymentId,
-                            "url" to response.data.bKashUrl,
-                            "isHideBackIcon" to false,
-                            "isHideCloseIcon" to true
-                        )
-                        findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
-                    }
-                }
-                is Failure -> {
-                    requireContext().showToast(response.error.msg)
-                    progressDialog.dismiss()
-                }
-            }
-        }
-        viewModel.bKashCreatePaymentWebView(
-            sessionToken!!, CreatePaymentRequest(
-                mode = "0011",
-                payerReference = "01770618575",
-                callbackURL = mPref.bkashCallbackUrl,
-                merchantAssociationInfo = "MI05MID54RF09123456One",
-                amount = amount,
-                currency = "BDT",
-                intent = "sale",
-                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-            )
-        )
-    }
-
+    
     private fun executeBkashPayment() {
         observe(viewModel.bKashExecutePaymentLiveData) { response ->
             when (response) {
@@ -374,11 +329,12 @@ class PaymentWebViewDialog : DialogFragment() {
     }
     
     private fun navigateToStatusDialogPage(args: Bundle) {
-        findNavController().navigatePopUpTo(
-            resId = R.id.paymentStatusDialog,
-            args = args,
-            popUpTo = R.id.paymentWebViewDialog
-        )
+        findNavController().popBackStack().let {
+            findNavController().navigateTo(
+                resId = R.id.paymentStatusDialog,
+                args = args
+            )
+        }
     }
     
     private fun callAndObserveBkashDataPackPurchase() {

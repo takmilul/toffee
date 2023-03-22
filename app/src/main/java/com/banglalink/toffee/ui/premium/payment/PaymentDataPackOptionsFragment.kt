@@ -141,10 +141,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             val args = bundleOf(
                                 PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 200)
                             )
-                            findNavController().navigatePopUpTo(R.id.paymentStatusDialog, args)
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
                         PaymentStatusDialog.DataPackPurchase_FAILED -> {
-                            findNavController().navigatePopUpTo(R.id.insufficientBalanceFragment)
+                            findNavController().navigateTo(R.id.insufficientBalanceFragment)
                         }
                         else -> {
                             val args = bundleOf(
@@ -241,7 +241,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 "isHideCloseIcon" to true,
                                 "isBkashBlRecharge" to true,
                             )
-                            findNavController().navigatePopUpTo(R.id.paymentWebViewDialog, args)
+                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {
