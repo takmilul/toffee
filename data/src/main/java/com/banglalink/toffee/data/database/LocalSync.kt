@@ -109,10 +109,10 @@ class LocalSync @Inject constructor(
         }
         if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
             if (channelInfo.urlType == PLAY_CDN) {
-                cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let {
+                cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     runCatching {
                         if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate))) {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(channelInfo.id.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate, gson.toJson(channelInfo))
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate, gson.toJson(channelInfo))
                         } else {
                             if (channelInfo.cdnType == CdnType.SIGNED_URL.value) {
                                 channelInfo.signedUrlExpiryDate = it.expiryDate
@@ -125,7 +125,7 @@ class LocalSync @Inject constructor(
                         }
                     }
                 } ?: run {
-                    cdnChannelItemRepository.insert(CdnChannelItem(channelInfo.id.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
+                    cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
                         .signedCookieExpiryDate, gson.toJson(channelInfo)))
                 }
             }

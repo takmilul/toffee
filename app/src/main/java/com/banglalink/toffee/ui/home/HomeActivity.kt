@@ -1634,12 +1634,12 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
         lifecycleScope.launch {
-            cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.id.toLong())?.let { cdnChannelItem ->
+            cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.getContentId().toLong())?.let { cdnChannelItem ->
                 loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
             } ?: run {
                 cdnChannelItemRepository.insert(
                     CdnChannelItem(
-                        channelInfo.id.toLong(),
+                        channelInfo.getContentId().toLong(),
                         channelInfo.urlType,
                         channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
                         gson.toJson(channelInfo)
@@ -1650,6 +1650,8 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
+    var content: ChannelInfo? = null
+    
     private fun loadMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
         val isExpired = (channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate)?.isExpiredFrom(mPref.getSystemTime()) ?: false
         if (isExpired) {
@@ -1658,12 +1660,12 @@ class HomeActivity : PlayerPageActivity(),
                     is Success -> {
                         val mediaCdnData = mediaCdnInfo.data
                         val expiryDate = mediaCdnData?.signedUrlExpiryDate ?: mediaCdnData?.signedCookieExpiryDate
-                        val newChannelInfo = channelInfo.apply {
+                        val newChannelInfo = content?.apply {
                             signedUrlExpiryDate = mediaCdnData?.signedUrlExpiryDate?.let {
-                                if (channelInfo.urlTypeExt == PAYMENT) {
+                                if (content?.urlTypeExt == PAYMENT) {
                                     paidPlainHlsUrl = mediaCdnData.signedUrl
                                 } else {
-                                    hlsLinks = channelInfo.hlsLinks?.mapIndexed { index, hlsLinks ->
+                                    hlsLinks = content?.hlsLinks?.mapIndexed { index, hlsLinks ->
                                         if (index == 0) {
                                             hlsLinks.hls_url_mobile = mediaCdnData.signedUrl
                                         }
@@ -1678,16 +1680,20 @@ class HomeActivity : PlayerPageActivity(),
                             }
                         }
                         lifecycleScope.launch {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(
-                                channelInfo.id.toLong(), expiryDate, gson.toJson(newChannelInfo)
-                            )
+                            content?.getContentId()?.toLong()?.let {
+                                cdnChannelItemRepository.updateCdnChannelItemByChannelId(
+                                    it, expiryDate, gson.toJson(newChannelInfo)
+                                )
+                            }
                         }
-                        onSuccess(newChannelInfo)
+                        content = null
+                        newChannelInfo?.let { onSuccess(it) }
                     }
                     is Failure -> showToast(getString(string.try_again_message))
                 }
             }
-            viewModel.getMediaCdnSignUrl(channelInfo.id)
+            content = channelInfo
+            viewModel.getMediaCdnSignUrl(channelInfo.getContentId())
         } else {
             onSuccess(channelInfo)
         }
@@ -1779,11 +1785,11 @@ class HomeActivity : PlayerPageActivity(),
         )
     }
 
-//    private fun resetPlayer() {
-//        releasePlayer()
-//        initializePlayer()
-//        setPlayerInPlayerView()
-//    }
+    private fun resetPlayer() {
+        releasePlayer()
+        initializePlayer()
+        setPlayerInPlayerView()
+    }
     
     override fun playIndex(index: Int) {
         super.playIndex(index)
