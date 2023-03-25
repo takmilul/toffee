@@ -103,7 +103,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                 }
             })
             headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
-            binding.listview.addItemDecoration(MarginItemDecoration(12))
+            _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
             observe(homeViewModel.vastTagLiveData) {
                 initAdapter()
