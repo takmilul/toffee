@@ -4,7 +4,7 @@ buildscript {
         appVersionName = '4.9.0'
         
         // Gradle
-        gradlePluginVersion = '7.4.1'
+        gradlePluginVersion = '7.4.2'
         
         // Player
         exoVersion = '2.18.1'
