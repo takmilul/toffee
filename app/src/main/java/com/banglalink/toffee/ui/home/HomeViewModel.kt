@@ -84,7 +84,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -92,6 +91,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -160,7 +160,7 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     
     init {
-        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+        if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")

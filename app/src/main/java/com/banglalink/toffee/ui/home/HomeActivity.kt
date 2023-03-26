@@ -2425,10 +2425,10 @@ class HomeActivity : PlayerPageActivity(),
         return binding.draggableView.isVisible
     }
     
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
-                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
+                menu.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
                     bindingUtil.bindRoundImage(profileImageView, it)
                 }
             }

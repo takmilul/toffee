@@ -78,15 +78,12 @@ class DrawerHelper(
         val header = binding.sideNavigation.getHeaderView(0)
         val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
         if (mPref.isVerifiedUser) {
-            if (!mPref.userImageUrl.isNullOrBlank()) bindingUtil.bindRoundImage(profileImageView, mPref.userImageUrl)
             activity.observe(mPref.profileImageUrlLiveData) {
                 bindingUtil.bindRoundImage(profileImageView, it)
             }
+            if (!mPref.userImageUrl.isNullOrBlank()) mPref.profileImageUrlLiveData.postValue(mPref.userImageUrl)
         }
         header.findViewById<LinearLayout>(R.id.menu_account).setOnClickListener {
-//            activity.checkVerification {
-//
-//            }
             activity.getNavController().let {
                 if (it.currentDestination?.id != R.id.accountFragment) {
                     it.navigateTo(R.id.accountFragment)

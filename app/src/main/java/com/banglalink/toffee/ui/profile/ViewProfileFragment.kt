@@ -87,7 +87,8 @@ class ViewProfileFragment : BaseFragment() {
                             "api_name" to ApiNames.GET_USER_PROFILE,
                             FirebaseParams.BROWSER_SCREEN to "Profile Screen",
                             "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
+                            "error_description" to it.error.msg
+                        )
                     )
                 }
             }

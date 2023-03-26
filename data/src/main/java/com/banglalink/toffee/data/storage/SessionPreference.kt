@@ -9,7 +9,14 @@ import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.doIfNotNullOrEmpty
 import com.banglalink.toffee.extension.isNotNullOrBlank
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ActivePack
+import com.banglalink.toffee.model.BubbleConfig
+import com.banglalink.toffee.model.CustomerInfoLogin
+import com.banglalink.toffee.model.DBVersionV2
+import com.banglalink.toffee.model.DecorationData
+import com.banglalink.toffee.model.NativeAdSettings
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.model.VastTagV3
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
@@ -760,7 +767,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             customerId = it.customerId
             password = it.password ?: ""
             if (!it.customerName.isNullOrBlank()) {
-                customerName = it.customerName!!
+                customerName = it.customerName
             }
             sessionToken = (it.sessionToken ?: "")
             if (!it.profileImage.isNullOrBlank()) {

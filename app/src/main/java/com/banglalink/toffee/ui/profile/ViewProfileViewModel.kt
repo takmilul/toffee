@@ -12,7 +12,11 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.EditProfileForm
+import com.banglalink.toffee.model.MyChannelEditBean
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.TermsAndCondition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,33 +34,35 @@ class ViewProfileViewModel @Inject constructor(
     val editChannelResult = _data.toLiveData()
     val profileForm = MutableLiveData<EditProfileForm>()
     val categories = MutableLiveData<List<Category>>()
-
-    init {
-        viewModelScope.launch {
-            categories.value = try {
-                categoryApi.loadData(0, 0)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                emptyList()
-            }
-        }
-    }
-
+    
+//    init {
+//        viewModelScope.launch {
+//            categories.value = try {
+//                categoryApi.loadData(0, 0)
+//            } catch (ex: Exception) {
+//                ex.printStackTrace()
+//                emptyList()
+//            }
+//        }
+//    }
+    
     fun loadCustomerProfile(): LiveData<Resource<EditProfileForm>> {
         return resultLiveData {
             profileApi().profile.toProfileForm()
         }
     }
-
+    
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) })
+            val response = resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) }
+            _data.postValue(response)
         }
     }
 
     fun terms() {
         viewModelScope.launch {
-            termsAndConditionResult.postValue(resultFromResponse { termsConditionService.execute() })
+            val response = resultFromResponse { termsConditionService.execute() }
+            termsAndConditionResult.postValue(response)
         }
     }
 }
