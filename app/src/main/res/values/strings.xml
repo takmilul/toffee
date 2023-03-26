@@ -280,7 +280,14 @@
     <string name="bullet_4_text">Access to 100+ TV, live sports, international mega series</string>
     <string name="bullet_5_text">Opportunity to earn money through user generated contents</string>
     <string name="bullet_6_text">FREE access for all users from any network!</string>
-    
+    <string-array name="about_feature_text_list">
+        <item>Live Stream TV channels</item>
+        <item>Absolutely buffer-less experience</item>
+        <item>Easy content discoverability with refresh app interface</item>
+        <item>Access to 100+ TV, live sports, international mega series</item>
+        <item>Opportunity to earn money through user generated contents</item>
+        <item>FREE access for all users from any network!</item>
+    </string-array>
     <string name="tv_subscriptions_text">TV Subscriptions</string>
     <string name="are_you_sure_to_delete_text">Are You Sure to Delete?</string>
     <string name="no_text">No</string>

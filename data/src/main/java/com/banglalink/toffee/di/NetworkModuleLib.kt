@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
+import coil.disk.DiskCache
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -88,6 +89,16 @@ object NetworkModuleLib {
     @CustomCookieManager
     fun providesCookieManager(): CookieManager {
         return CookieManager()
+    }
+    
+    @Provides
+    @Singleton
+    @CoilCache
+    fun getCoilCache(@ApplicationContext ctx: Context): DiskCache {
+        return DiskCache.Builder()
+            .directory(ctx.cacheDir.resolve("image_cache"))
+            .maxSizeBytes(25 * 1024 * 1024) // 25MB
+            .build()
     }
     
     @Provides
