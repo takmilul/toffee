@@ -1,12 +1,15 @@
 package com.banglalink.toffee.data.network.retrofit
 
+import coil.annotation.ExperimentalCoilApi
+import coil.disk.DiskCache
+import com.banglalink.toffee.di.CoilCache
 import com.banglalink.toffee.di.DefaultCache
 import okhttp3.Cache
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: Cache) {
+class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: Cache, @CoilCache val coilCache: DiskCache) {
 
     fun clearCacheByUrl(apiUrl: String) {
         val urlIterator = retrofitCache.urls()
@@ -24,5 +27,15 @@ class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: 
             urlIterator.next()
             urlIterator.remove()
         }
+    }
+    
+    @OptIn(ExperimentalCoilApi::class)
+    fun clearImageCacheByUrl(url: String) {
+        coilCache.remove(url)
+    }
+    
+    @OptIn(ExperimentalCoilApi::class)
+    fun clearAllImageCache() {
+        coilCache.clear()
     }
 }
