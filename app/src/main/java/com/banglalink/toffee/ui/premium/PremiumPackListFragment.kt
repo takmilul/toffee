@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +16,12 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -37,6 +43,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
+        onBackPressed()
         onBackIconClicked()
         requireActivity().title = "Premium Packs"
         val contentId = arguments?.getString("contentId")
@@ -94,6 +101,21 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     override fun onItemClicked(item: PremiumPack) {
         viewModel.selectedPremiumPack.value = item
         findNavController().navigateTo(R.id.packDetailsFragment)
+    }
+    
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isEnabled) {
+                    viewModel.packListScrollState.value = null
+                    viewModel.selectedPremiumPack.value = null
+                    viewModel.paymentMethod.value = null
+                    viewModel.selectedDataPackOption.value = null
+                    viewModel.bkashQueryPaymentData.value = null
+                    findNavController().popBackStack()
+                }
+            }
+        })
     }
     
     private fun onBackIconClicked() {
