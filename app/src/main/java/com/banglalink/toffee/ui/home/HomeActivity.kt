@@ -121,6 +121,7 @@ import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
+import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
 import com.google.android.exoplayer2.ext.cast.CastPlayer
@@ -1083,6 +1084,8 @@ class HomeActivity : PlayerPageActivity(),
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)
         toggleNavigation(state)
+        val isInPremiumPage = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
+        toggleBottomNavBar(isInPremiumPage)
 //        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
@@ -1147,10 +1150,10 @@ class HomeActivity : PlayerPageActivity(),
             binding.bottomAppBar.show()
             binding.uploadButton.show()
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
-                bottomMargin = binding.bottomAppBar.height + 12.dp
+                bottomMargin = getActionBarSize(this@HomeActivity) + 12.dp
             }
             binding.detailsViewer.updateLayoutParams<RelativeLayout.LayoutParams> {
-                bottomMargin = binding.bottomAppBar.height + 12.dp
+                bottomMargin = getActionBarSize(this@HomeActivity) + 12.dp
             }
         }
     }

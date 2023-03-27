@@ -21,6 +21,7 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Base64
+import android.util.TypedValue
 import android.view.Display
 import android.view.View
 import android.view.WindowManager.LayoutParams
@@ -28,6 +29,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.PackageInfoCompat
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -35,9 +39,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 
 object Utils {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
@@ -281,7 +282,14 @@ object Utils {
             Point(getScreenWidth(), getScreenHeight())
         }
     }
-
+    
+    fun getActionBarSize(context: Context): Int {
+        val tv = TypedValue()
+        return if (context.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            TypedValue.complexToDimensionPixelSize(tv.data, context.resources.displayMetrics)
+        } else 0
+    }
+    
     private fun getDisplay(context: Activity): Display? {
         return if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             context.display
