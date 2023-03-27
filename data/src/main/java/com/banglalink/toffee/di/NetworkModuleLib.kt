@@ -5,6 +5,7 @@ import android.content.Context
 import coil.disk.DiskCache
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
+import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
 import com.banglalink.toffee.data.network.interceptor.IGetMethodTracker
 import com.banglalink.toffee.data.network.interceptor.ToffeeDns
@@ -80,6 +81,20 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
+    @CoilHttpClient
+    fun providesCoilHttpClient(coilInterceptor: CoilInterceptor, toffeeDns: ToffeeDns): OkHttpClient {
+        val clientBuilder = OkHttpClient.Builder().apply {
+            connectTimeout(15, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
+            retryOnConnectionFailure(true)
+            addInterceptor(coilInterceptor)
+            dns(toffeeDns)
+        }
+        return clientBuilder.build()
+    }
+    
+    @Provides
+    @Singleton
     fun providesCustomCookieJar(): CustomCookieJar {
         return CustomCookieJar()
     }
@@ -97,7 +112,7 @@ object NetworkModuleLib {
     fun getCoilCache(@ApplicationContext ctx: Context): DiskCache {
         return DiskCache.Builder()
             .directory(ctx.cacheDir.resolve("image_cache"))
-            .maxSizeBytes(25 * 1024 * 1024) // 25MB
+            .maxSizeBytes(250 * 1024 * 1024) // 250MB
             .build()
     }
     

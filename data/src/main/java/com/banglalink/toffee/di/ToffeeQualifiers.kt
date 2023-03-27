@@ -46,3 +46,6 @@ annotation class ExternalApiRetrofit
 
 @Qualifier
 annotation class PlainHttpClient
+
+@Qualifier
+annotation class CoilHttpClient
