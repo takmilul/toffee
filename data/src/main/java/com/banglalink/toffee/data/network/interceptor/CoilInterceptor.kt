@@ -45,8 +45,11 @@ class CoilInterceptor @Inject constructor(
             } else {
                 throw IOException(e.message)
             }
-        }
+        }//.newBuilder().addHeader("Cache-Control", "public, max-age=604800").removeHeader("Pragma").build()
         
+        if (response.cacheResponse != null) {
+            Log.i("IMAGE_LOG", "FROM CACHE")
+        }
         if (response.networkResponse != null) {
             Log.i("IMAGE_LOG", "FROM NETWORK: ${response.request.url}")
         }

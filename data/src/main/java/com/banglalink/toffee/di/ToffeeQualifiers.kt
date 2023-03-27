@@ -40,3 +40,12 @@ annotation class ApiHeader
 
 @Qualifier
 annotation class CustomCookieManager
+
+@Qualifier
+annotation class ExternalApiRetrofit
+
+@Qualifier
+annotation class PlainHttpClient
+
+@Qualifier
+annotation class CoilHttpClient

@@ -27,6 +27,7 @@ import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.CoilCache
+import com.banglalink.toffee.di.CoilHttpClient
 import com.banglalink.toffee.di.CustomCookieManager
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
@@ -34,7 +35,6 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
-import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.util.Log
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
@@ -67,12 +67,12 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     @Inject lateinit var cacheManager: CacheManager
     @Inject @CoilCache lateinit var coilCache: DiskCache
     @Inject lateinit var mUploadObserver: UploadObserver
-    @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var sessionPreference: SessionPreference
     private lateinit var connectivityManager: ConnectivityManager
+    @Inject @CoilHttpClient lateinit var coilHttpClient: OkHttpClient
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @CustomCookieManager @Inject lateinit var defaultCookieManager: CookieManager
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
@@ -204,7 +204,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     override fun newImageLoader(): ImageLoader {
         val imageRequest = ImageRequest.Builder(this).apply {
             dispatcher(IO)
-            crossfade(false)
+            crossfade(750)
             diskCachePolicy(ENABLED)
             networkCachePolicy(ENABLED)
             memoryCachePolicy(DISABLED)
@@ -212,6 +212,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }.build()
         
         return ImageLoader.Builder(this).apply {
+//            logger(DebugLogger())
             components {
                 if (SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
@@ -223,10 +224,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
                 coilCache
             }
             okHttpClient {
-                OkHttpClient
-                    .Builder()
-                    .addInterceptor(coilInterceptor)
-                    .build()
+                coilHttpClient
             }
         }.build().apply {
             enqueue(imageRequest)
