@@ -464,4 +464,13 @@ interface ToffeeApi {
         @Path("offset") offset: Int,
         @Body playlistRequest: PlaylistShareableRequest
     ): MyChannelPlaylistVideosResponse
+
+
+    @POST("/ramadan-scheduled/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
+    suspend fun getRamadanScheduled(
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body bubbleRequest: BubbleRequest
+    ): BubbleResponse
 }

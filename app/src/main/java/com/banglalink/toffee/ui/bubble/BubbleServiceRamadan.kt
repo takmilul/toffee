@@ -21,6 +21,7 @@ import com.banglalink.toffee.ui.bubble.listener.IBubbleInteractionListener
 import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -40,6 +41,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     private var bubbleConfig: BubbleConfig? = null
     private val coroutineScope = CoroutineScope(Default)
     private lateinit var binding: BubbleViewRamadanLayoutBinding
+
     
     override fun createBubble(): Bubble {
         return Bubble.Builder()

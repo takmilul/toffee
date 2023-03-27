@@ -215,8 +215,10 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-        
+//        FirebasviewModeleInAppMessaging.getInstance().setMessagesSuppressed(false)
+
+        viewModel.getRamadanScheduleList()
+
         val isDisableScreenshot =
             (mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
                 mPref.phoneNumber
