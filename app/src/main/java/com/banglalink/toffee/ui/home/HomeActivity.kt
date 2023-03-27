@@ -105,6 +105,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_I
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -170,6 +171,7 @@ class HomeActivity : PlayerPageActivity(),
     private var visibleDestinationId = 0
     private var bubbleIntent: Intent? = null
     private var bubbleV2Intent: Intent? = null
+    private var bubbleRamadanIntent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -364,9 +366,11 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.startBubbleService) {
             if (it) {
                 startBubbleService()
+                startRamadanBubbleService()
             } else {
 //                stopService(bubbleIntent)
                 stopService(bubbleV2Intent)
+                stopService(bubbleRamadanIntent)
             }
         }
         
@@ -409,7 +413,8 @@ class HomeActivity : PlayerPageActivity(),
             MobileAds.initialize(this)
         }
         
-        startBubbleService()
+//        startBubbleService()
+        startRamadanBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
             getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment, null, navOptions)
@@ -485,6 +490,21 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
+
+    private fun startRamadanBubbleService() {
+        runCatching {
+            bubbleRamadanIntent = Intent(this, BubbleServiceRamadan::class.java)
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+                if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                    if (mPref.bubbleDialogShowCount < 5) {
+                        displayMissingOverlayPermissionDialog()
+                    }
+                } else {
+                    startService(bubbleRamadanIntent)
+                }
+            }
+        }
+    }
     
     private fun observeCircuitBreaker() {
         if (mPref.isCircuitBreakerActive) {
@@ -527,6 +547,7 @@ class HomeActivity : PlayerPageActivity(),
         } else {
 //            startService(bubbleIntent)
             startService(bubbleV2Intent)
+            startService(bubbleRamadanIntent)
         }
     }
     
@@ -2271,6 +2292,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)) {
 //                startService(bubbleIntent)
                 startService(bubbleV2Intent)
+                startService(bubbleRamadanIntent)
             }
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)

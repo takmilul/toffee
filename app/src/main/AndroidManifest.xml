@@ -194,5 +194,10 @@
             android:enabled="true"
             android:process="com.banglalink.toffee" />
 
+        <service
+            android:name=".ui.bubble.BubbleServiceRamadan"
+            android:enabled="true"
+            android:process="com.banglalink.toffee" />
+
     </application>
 </manifest>

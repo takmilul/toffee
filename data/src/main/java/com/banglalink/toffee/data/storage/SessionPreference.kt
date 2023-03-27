@@ -248,7 +248,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
     
     var isBubbleEnabled: Boolean
-        get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
+        get() = true //pref.getBoolean(PREF_BUBBLE_ENABLED, true)
         set(value) = pref.edit().putBoolean(PREF_BUBBLE_ENABLED, value).apply()
     
     fun isNotificationEnabled(): Boolean {
@@ -636,7 +636,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putString(PREF_LAST_LOGIN_DATE_TIME, value) }
     
     var isBubbleActive: Boolean
-        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
+        get() = true //pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
     
     var bubbleDialogShowCount: Int
@@ -686,6 +686,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isCircuitBreakerActive: Boolean
         get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
+
+    var bubbleType: Boolean
+        get() = pref.getBoolean(PREF_IS_BUBBLE_TYPE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_TYPE, value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -774,14 +778,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             retryWaitDuration = it.retryWaitDuration
             videoMinDuration = it.videoMinDuration
             videoMaxDuration = it.videoMaxDuration
-            isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
+            isBubbleActive = it.bubbleConfig?.isBubbleActive ?: true
             bubbleConfigLiveData.value = it.bubbleConfig
             internalTimeOut = it.internalTimeOut?.takeIf { it >=5 } ?: 60
             externalTimeOut = it.externalTimeout?.takeIf { it >=5 } ?: 60
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
-            
+            isBubbleActive = it.isBubbleActive
+            bubbleType = it.bubbleType
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -918,6 +923,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
         private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
         private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
+        private const val PREF_IS_BUBBLE_TYPE = "pref_is_bubble_type"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
