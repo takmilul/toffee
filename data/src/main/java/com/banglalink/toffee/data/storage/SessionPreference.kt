@@ -687,9 +687,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
 
-    var bubbleType: Boolean
-        get() = pref.getBoolean(PREF_IS_BUBBLE_TYPE, false)
-        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_TYPE, value) }
+//    var bubbleType: Boolean
+//        get() = pref.getBoolean(PREF_IS_BUBBLE_TYPE, false)
+//        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_TYPE, value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -785,8 +785,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
-            isBubbleActive = it.isBubbleActive
-            bubbleType = it.bubbleType
+//            bubbleType = it.bubbleType
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
