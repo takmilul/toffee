@@ -102,7 +102,8 @@
 -keep class org.apache.http.** { *; }
 -dontwarn org.apache.http.**
 
--keepattributes SourceFile,LineNumberTable
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
 -keep public class * extends java.lang.Exception
 
 -keep class com.google.obf.** { *; }

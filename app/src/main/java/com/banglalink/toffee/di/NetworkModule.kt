@@ -1,7 +1,7 @@
 package com.banglalink.toffee.di
 
 import android.content.Context
-import coil.util.CoilUtils
+import coil.disk.DiskCache
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -31,13 +31,6 @@ object NetworkModule {
         return ToffeeConfig(
             toffeeBaseUrl = TOFFEE_BASE_URL
         )
-    }
-    
-    @Provides
-    @Singleton
-    @CoilCache
-    fun getCoilCache(@ApplicationContext ctx: Context): Cache {
-        return CoilUtils.createDefaultCache(ctx)
     }
     
     @Provides
