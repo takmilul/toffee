@@ -9,6 +9,12 @@ buildscript {
         // Player
         exoVersion = '2.18.1'
         
+        activityVersion = "1.5.1"
+        
+        // Image
+        coilVersion = "2.2.0"
+        coilTransformerVersion = "1.0.5"
+        
         // Hilt
         hiltVersion = '1.0.0'
         hiltAndroidVersion = '2.42'

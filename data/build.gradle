@@ -55,7 +55,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     //Coil image Lib
-    implementation "io.coil-kt:coil:2.2.0"
+    implementation "io.coil-kt:coil:$coilVersion"
     
     // Facebook
     implementation "com.facebook.android:facebook-android-sdk:$facebookSdkVersion"

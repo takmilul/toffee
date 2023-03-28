@@ -95,7 +95,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
-    implementation "androidx.appcompat:appcompat:1.5.1"
+    implementation "androidx.appcompat:appcompat:$activityVersion"
     implementation "androidx.core:core-ktx:$kotlinKtxVersion"
     implementation "androidx.fragment:fragment-ktx:1.5.5"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
@@ -122,8 +122,8 @@ dependencies {
 //    implementation "androidx.compose.material:material-icons-core:$composeVersion"
 //    implementation "androidx.compose.material:material-icons-extended:$composeVersion"
 
-    implementation "io.coil-kt:coil-compose:2.2.0"
-    implementation "androidx.activity:activity-compose:1.5.1"
+    implementation "io.coil-kt:coil-compose:$coilVersion"
+    implementation "androidx.activity:activity-compose:$activityVersion"
     implementation "androidx.navigation:navigation-compose:$navigationVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
 //    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
@@ -157,10 +157,10 @@ dependencies {
     implementation "com.xfinity:dahdit:0.9.3"
     
     //Coil image Lib
-    implementation "io.coil-kt:coil:2.2.0"
-    implementation "io.coil-kt:coil-gif:2.2.0"
-    implementation "jp.wasabeef.transformers:coil:1.0.5"
-    implementation "jp.wasabeef.transformers:core:1.0.5"
+    implementation "io.coil-kt:coil:$coilVersion"
+    implementation "io.coil-kt:coil-gif:$coilVersion"
+    implementation "jp.wasabeef.transformers:coil:$coilTransformerVersion"
+    implementation "jp.wasabeef.transformers:core:$coilTransformerVersion"
     
     //Firebase Push Notification
     implementation "com.google.firebase:firebase-messaging-ktx:$firebaseMessagingVersion"
