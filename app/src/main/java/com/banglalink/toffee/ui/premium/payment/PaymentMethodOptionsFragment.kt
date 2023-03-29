@@ -103,16 +103,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 
                 blPackCard.isVisible = paymentTypes.bl != null && (!paymentTypes.bl?.prepaid.isNullOrEmpty() || !paymentTypes.bl?.postpaid.isNullOrEmpty())
                 
-                bKashPackCard.isVisible = paymentTypes.bkash != null && (!paymentTypes.bkash?.blPacks.isNullOrEmpty() || !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
+                val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 
-                val isBkashAvailable = (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
+                bKashPackCard.isVisible = isBkashAvailable
                 
                 //Disable Banglalink DataPack Option
                 if (mPref.isBanglalinkNumber == "false") {
                     blPackCard.alpha = 0.3f
-                }
-                if (!isBkashAvailable) {
-                    bKashPackCard.alpha = 0.3f
                 }
                 
                 blPackCard.safeClick({
@@ -123,13 +120,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     }
                 })
                 bKashPackCard.safeClick({
-                    if (mPref.isBanglalinkNumber == "true" && paymentTypes.bkash?.blPacks.isNullOrEmpty()) {
-                        requireContext().showToast(getString(string.only_for_non_bl_users))
-                    } else if (mPref.isBanglalinkNumber == "false" && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()) {
-                        requireContext().showToast(getString(string.only_for_bl_users))
-                    } else {
-                        findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
-                    }
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
                 })
             }
         }
