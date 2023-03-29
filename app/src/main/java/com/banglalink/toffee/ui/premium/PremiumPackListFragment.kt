@@ -34,6 +34,8 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     private var _binding: FragmentPremiumPackListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
+
+    private var fromDrawer: Boolean? = false
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackListBinding.inflate(layoutInflater)
@@ -42,10 +44,24 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fromDrawer = arguments?.getBoolean("clickedFromDrawer")
+
+        if (fromDrawer==true){
+
+            binding.packListHeader.setText(R.string.premium_pack_list_title)
+            requireActivity().title = "Premium Packs"
+
+        }else{
+
+            binding.packListHeader.setText(R.string.search_premium_pack_list_title)
+            requireActivity().title = "Choose Pack"
+        }
+
         binding.progressBar.load(R.drawable.content_loader)
         onBackPressed()
         onBackIconClicked()
-        requireActivity().title = "Premium Packs"
+
         val contentId = arguments?.getString("contentId")
         
         mAdapter = PremiumPackListAdapter(this)
