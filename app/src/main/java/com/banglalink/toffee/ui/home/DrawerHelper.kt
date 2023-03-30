@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -94,10 +95,16 @@ class DrawerHelper(
     }
     
     private fun setToffeePremium() {
+
         val header = binding.sideNavigation.getHeaderView(0)
         header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
+
+            val args = Bundle().apply {
+                putBoolean("clickedFromDrawer", true)
+            }
+
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-            activity.getNavController().navigatePopUpTo(R.id.premiumPackListFragment)
+            activity.getNavController().navigatePopUpTo(R.id.premiumPackListFragment,args)
             binding.drawerLayout.closeDrawers()
         }
     }

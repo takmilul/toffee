@@ -134,4 +134,8 @@
     <color name="trial_extra_text_color">#FF8D23</color>
     <color name="light_text_color">#829AB8</color>
     <color name="go_to_home_btn_color">#FBDDE8</color>
+
+    <color name="cardTitleSecondColor">#6781A1</color>
+
+
 </resources>

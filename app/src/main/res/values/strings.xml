@@ -520,6 +520,7 @@
     <string name="please_wait_for_confirmation_message">Please wait for confirmation message and try again later.</string>
 
     <string name="premium_pack_list_title">Available Premium Packs</string>
+    <string name="search_premium_pack_list_title">Purchase any Premium Pack to watch your selected content</string>
     <string name="pack_banner_logo">pack banner logo</string>
     <string name="premium_pack_poster">premium Pack Poster</string>
     <string name="channel_image">channel image</string>
