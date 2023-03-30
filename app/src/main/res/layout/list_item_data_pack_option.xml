@@ -50,7 +50,7 @@
                     android:fontFamily="@font/roboto_regular"
                     android:maxLength="50"
                     android:maxLines="2"
-                    android:text="@{data.packDetails}"
+                    android:text="@{` `+data.packDetails}"
                     android:textColor="@color/cardTitleColor"
                     tools:text="30 days"
                     app:layout_constraintBottom_toBottomOf="parent"

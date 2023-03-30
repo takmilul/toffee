@@ -61,11 +61,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             } else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
                 if (!prePaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Packs"))
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Plans"))
                     packPaymentMethodList.addAll(prePaid)
                 }
                 if (!postPaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Packs"))
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Plans"))
                     packPaymentMethodList.addAll(postPaid)
                 }
             }
@@ -284,7 +284,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
         if (paymentName == "bKash"){
-            binding.buyNow.text = getString(R.string.buy_now)
+            binding.buyNow.text = getString(R.string.buy_bkash)
             binding.buyNow.show()
         }
         else if(paymentName == "blPack"){
