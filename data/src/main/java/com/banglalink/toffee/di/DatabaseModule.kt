@@ -249,4 +249,16 @@ object DatabaseModule {
     fun providesBubbleConfigRepository(dao: BubbleConfigDao): BubbleConfigRepository {
         return BubbleConfigRepositoryImpl(dao)
     }
+
+    @Singleton
+    @Provides
+    fun providesRamadanBubbleDao(db: ToffeeDatabase): RamadanBubbleDao {
+        return db.getRamadanBubbleDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providesRamadanBubbleRepository(dao: RamadanBubbleDao): RamadanBubbleRepository {
+        return RamadanBubbleRepositoryImpl(dao)
+    }
 }

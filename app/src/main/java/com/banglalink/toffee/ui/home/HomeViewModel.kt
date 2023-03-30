@@ -82,6 +82,7 @@ class HomeViewModel @Inject constructor(
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
     private val getBubbleService: GetBubbleService,
+    private val ramadanBubbleRepository: RamadanBubbleRepository,
 ) : ViewModel() {
     
     val postLoginEvent = SingleLiveEvent<Boolean>()
@@ -108,7 +109,7 @@ class HomeViewModel @Inject constructor(
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
-    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanScheduledResponse.RamadanScheduled>>>()
+    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanScheduled>>>()
 
     init {
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
@@ -433,12 +434,8 @@ class HomeViewModel @Inject constructor(
     fun getRamadanScheduleList() {
         viewModelScope.launch {
             val response = resultFromResponse {  getBubbleService.loadData(0,100) }
-
             ramadanScheduleLiveData.postValue(response)
-
         }
     }
-
-
 }
 

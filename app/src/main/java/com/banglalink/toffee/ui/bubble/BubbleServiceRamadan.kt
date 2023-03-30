@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.text.HtmlCompat
@@ -14,6 +16,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewRamadanLayoutBinding
 import com.banglalink.toffee.extension.doIfNotNullOrBlank
 import com.banglalink.toffee.model.BubbleConfig
+import com.banglalink.toffee.model.RamadanScheduled
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
 import com.banglalink.toffee.ui.bubble.listener.IBubbleDraggableWindowItemEventListener
@@ -34,11 +37,9 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
 
-    private var isSehriIfter: Boolean = true
-    private var isRemainging: Boolean = true
-    private var isEidMubarak: Boolean = true
     private var timeDifference: Long? = null
     private var bubbleConfig: BubbleConfig? = null
+    private var ramadanScheduled: RamadanScheduled? = null
     private val coroutineScope = CoroutineScope(Default)
     private lateinit var binding: BubbleViewRamadanLayoutBinding
 
@@ -54,31 +55,30 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     
     private fun createDraggableItem(): BubbleDraggableItem {
         binding = BubbleViewRamadanLayoutBinding.inflate(LayoutInflater.from(this))
-        
-        mPref.bubbleConfigLiveData.observeForever { bubbleConfig ->
+
+        mPref.ramadanScheduledConfigLiveData.observeForever { RamadanScheduled ->
             runCatching {
-                bubbleConfig?.let {
-                    this.bubbleConfig = it
+                RamadanScheduled?.let {
+                    this.ramadanScheduled = it
                     countDownTimer?.cancel()
-                    if (isRemainging == false) {
-                        it.adIconUrl.doIfNotNullOrBlank {
+                    if (it.isRamadanStart == 0) {
+                        it.bubbleLogoUrl.doIfNotNullOrBlank {
                             binding.ramadanLeftImage.load(it)
                         }
-                        binding.ramadanTitle.text = it.bubbleText
-                        binding.ramadanTitle.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
-                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        }
+                        binding.ramadanTitle.text = "রমজানুল মোবারক"
+//                        binding.ramadanTitle.text = it.dayName?.trim()?.replace("\n", "<br/>")?.let {
+//                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+//                        }
 
                         val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val dateTimeDifference = dateTimeFormat.parse(
-                            it.countDownEndTime ?: "2022-11-20 24:00:00"
+                            it.sehriStart ?: "2022-11-20 16:00:00"
                         )?.time?.minus(mPref.getSystemTime().time) ?: 0L
                         showCountdownStartDays(dateTimeDifference)
 
-                    } else if (isSehriIfter == true) {
-                        showCountdownSehriIfterTime()
-                        binding.ramadanTitle.text= "ইফতারের সময় বাকি"
-                    } else if (isEidMubarak == true) {
+                    } else if (it.isRamadanStart == 1) {
+                        showCountdownSehriTime()
+                    } else if (it.isEidStart == 0) {
                         setEidMubarakText()
                     }
                 }
@@ -102,6 +102,19 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 mPref.bubbleConfigLiveData.postValue(bubbleConfig)
             }
         }
+
+        val c = Calendar.getInstance().time
+        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = df.format(c)
+
+        if (mPref.ramadanScheduledConfigLiveData.value == null) {
+            coroutineScope.launch {
+                ramadanScheduled = ramadanBubbleRepository.getAllRamadanItems(formattedDate)
+                android.util.Log.i("dgfdfgfdgcgfgf", ramadanBubbleRepository.getAllRamadanItems(formattedDate).toString())
+                android.util.Log.i("yyyyyyyyyy", mPref.getSystemTime().toString())
+                mPref.ramadanScheduledConfigLiveData.postValue(ramadanScheduled)
+            }
+        }
         return BubbleDraggableItem.Builder()
             .setLayout(binding.root)
             .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
@@ -110,10 +123,10 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     }
 
 
-    private fun showCountdownSehriIfterTime() {
+    private fun showCountdownIfterTime() {
         runCatching {
-//            val countDownEndTime: String = bubbleConfig?.countDownEndTime ?: "2023-04-01 16:00:00"
-            val countDownEndTime: String = "2023-03-27 10:09:00"
+            val countDownEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
+//            val countDownEndTime: String = "2023-03-30 13:37:00"
             val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
             val endDate = dateFormat.parse(countDownEndTime)
             //milliseconds
@@ -140,15 +153,75 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 val secondsInBangla = String.format("%02d", second).enDigitToBn()
 
                 binding.ramadanLeftImage.visibility = View.GONE
+                binding.ramadanTitle.text= "ইফতারের সময় বাকি"
                 binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
             }
             
             override fun onFinish() {
                 binding.ramadanLeftImage.visibility = View.GONE
+                binding.ramadanTitle.text= "ইফতারের সময় বাকি"
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
+
+                val c = Calendar.getInstance().time
+                val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val formattedDate = df.format(c)
+
+                if(formattedDate != ramadanScheduled?.sehriStart){
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        showCountdownSehriTime()
+                    }, 600000)
+                }
+
             }
         }.start()
     }
+
+    private fun showCountdownSehriTime() {
+        runCatching {
+            val countDownEndTime: String = ramadanScheduled?.sehriStart ?: "2023-04-01 16:00:00"
+//            val countDownEndTime: String = "2023-03-30 13:40:00"
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+            val endDate = dateFormat.parse(countDownEndTime)
+            //milliseconds
+            timeDifference = endDate?.time?.minus(mPref.getSystemTime().time) ?: 0L
+            countDownTimer?.cancel()
+        }.onFailure {
+            ToffeeAnalytics.logException(it)
+        }
+
+        countDownTimer = object : CountDownTimer(timeDifference!!, 1000) {
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                var untilFinished = millisUntilFinished
+                val day = MILLISECONDS.toDays(untilFinished)
+                untilFinished -= DAYS.toMillis(day)
+                val hour = MILLISECONDS.toHours(untilFinished)
+                untilFinished -= TimeUnit.HOURS.toMillis(hour)
+                val minute = MILLISECONDS.toMinutes(untilFinished)
+                untilFinished -= TimeUnit.MINUTES.toMillis(minute)
+                val second = MILLISECONDS.toSeconds(untilFinished)
+
+                val hoursInBangla = String.format("%02d", hour).enDigitToBn()
+                val minutesInBangla = String.format("%02d", minute).enDigitToBn()
+                val secondsInBangla = String.format("%02d", second).enDigitToBn()
+
+                binding.ramadanLeftImage.visibility = View.GONE
+                binding.ramadanTitle.text= "সাহরীর সময় বাকি "
+                binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
+            }
+
+            override fun onFinish() {
+                binding.ramadanLeftImage.visibility = View.GONE
+                binding.ramadanTitle.text= "সাহরীর সময় বাকি "
+                binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    showCountdownIfterTime()
+                }, 600000)
+            }
+        }.start()
+    }
+
 
     private fun showCountdownStartDays(dateTimeDifference: Long) {
         countDownTimer = object : CountDownTimer(dateTimeDifference, 10_000) {
@@ -165,7 +238,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     private fun setCountDownTime() {
         runCatching {
 //            val countDownEndTime: String = bubbleConfig?.countDownEndTime ?: "2023-04-01 16:00:00"
-            val countDownEndTime: String = "2023-03-25 10:00:00"
+            val countDownEndTime: String = "2023-03-30 20:00:00"
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val currentDate = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
@@ -192,7 +265,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     private fun setEidMubarakText() {
         runCatching {
             binding.ramadanTitle.visibility = View.GONE
-            bubbleConfig?.adIconUrl.doIfNotNullOrBlank {
+            ramadanScheduled?.bubbleLogoUrl.doIfNotNullOrBlank {
                 binding.ramadanLeftImage.load(it)
             }
             binding.ramadanTitleBold.text = "ঈদ মোবারক"

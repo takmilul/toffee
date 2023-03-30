@@ -171,10 +171,8 @@ class CustomerInfoLogin(
     var fStoreTblContentBlacklist: String? = null,
     @SerializedName("isfireStoreTblContentBlacklist")
     var isCircuitBreakerActive: Boolean = false,
-//    @SerializedName("isBubbleActive")
-//    var isBubbleActive: Boolean = false,
-//    @SerializedName("bubbleType")
-//    var bubbleType: Boolean = false,
+    @SerializedName("bubbleType")
+    var bubbleType: Int = -1,
 ) : BodyResponse(), Parcelable
 
 @Entity

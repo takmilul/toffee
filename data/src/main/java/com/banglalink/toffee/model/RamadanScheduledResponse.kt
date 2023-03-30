@@ -1,6 +1,9 @@
 package com.banglalink.toffee.model
 
 
+import androidx.annotation.NonNull
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class RamadanScheduledResponse(
@@ -12,23 +15,4 @@ data class RamadanScheduledResponse(
     val serverDateTime: String,
     @SerializedName("totalCount")
     val totalCount: Int
-) {
-    data class RamadanScheduled(
-        @SerializedName("bubble_logo_url")
-        val bubbleLogoUrl: String,
-        @SerializedName("day_name")
-        val dayName: String,
-        @SerializedName("division")
-        val division: String,
-        @SerializedName("iftar_start")
-        val iftarStart: String,
-        @SerializedName("is_eid_start")
-        val isEidStart: Int,
-        @SerializedName("is_ramadan_start")
-        val isRamadanStart: Int,
-        @SerializedName("message")
-        val message: String,
-        @SerializedName("sehri_start")
-        val sehriStart: String
-    )
-}
+)

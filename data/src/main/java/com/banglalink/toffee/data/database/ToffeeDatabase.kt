@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.database.entities.*
 import com.banglalink.toffee.model.BubbleConfig
+import com.banglalink.toffee.model.RamadanScheduled
+import com.banglalink.toffee.model.RamadanScheduledResponse
 
 @Database(
     entities = [
@@ -27,9 +29,10 @@ import com.banglalink.toffee.model.BubbleConfig
         SessionPrefData::class,
         PlayerEventData::class,
         CdnChannelItem::class,
-        BubbleConfig::class
+        BubbleConfig::class,
+        RamadanScheduled::class
     ],
-    version = 13,
+    version = 15,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {
@@ -57,4 +60,5 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getCustomPlayerEventsDao(): PlayerEventsDao
     abstract fun getCdnChannelItemDao(): CdnChannelItemDao
     abstract fun getBubbleConfigDao(): BubbleConfigDao
+    abstract fun getRamadanBubbleDao(): RamadanBubbleDao
 }
