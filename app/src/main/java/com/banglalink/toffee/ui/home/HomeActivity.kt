@@ -415,7 +415,7 @@ class HomeActivity : PlayerPageActivity(),
             MobileAds.initialize(this)
         }
         
-//        startBubbleService()
+        startBubbleService()
         startRamadanBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
@@ -480,7 +480,7 @@ class HomeActivity : PlayerPageActivity(),
         runCatching {
 //        bubbleIntent = Intent(this, BubbleService::class.java)
             bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 1) {
                 if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                     if (mPref.bubbleDialogShowCount < 5) {
                         displayMissingOverlayPermissionDialog()
@@ -496,10 +496,10 @@ class HomeActivity : PlayerPageActivity(),
     private fun startRamadanBubbleService() {
         runCatching {
             bubbleRamadanIntent = Intent(this, BubbleServiceRamadan::class.java)
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 0) {
                 if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                     if (mPref.bubbleDialogShowCount < 5) {
-                        displayMissingOverlayPermissionDialog()
+                        displayMissingOverlayPermissionForRamadanDialog()
                     }
                 } else {
                     startService(bubbleRamadanIntent)
@@ -549,6 +549,16 @@ class HomeActivity : PlayerPageActivity(),
         } else {
 //            startService(bubbleIntent)
             startService(bubbleV2Intent)
+        }
+    }
+
+    private val startForOverlayRamadanPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionDialog()
+            }
+        } else {
+//            startService(bubbleIntent)
             startService(bubbleRamadanIntent)
         }
     }
@@ -558,6 +568,15 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
                 startForOverlayPermission.launch(intent)
+            }
+        }
+    }
+
+    private fun requestOverlayRamadanPermission() {
+        runCatching {
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                startForOverlayRamadanPermission.launch(intent)
             }
         }
     }
@@ -571,6 +590,23 @@ class HomeActivity : PlayerPageActivity(),
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
                 requestOverlayPermission()
+                it?.dismiss()
+            },
+            negativeButtonTitle = "Cancel",
+            negativeButtonListener = {
+                it?.dismiss()
+            }).create().show()
+    }
+
+    private fun displayMissingOverlayPermissionForRamadanDialog() {
+        mPref.bubbleDialogShowCount++
+        ToffeeAlertDialogBuilder(this,
+            title = getString(R.string.missing_overlay_permission_Ramadan_dialog_title),
+            text = getString(R.string.missing_overlay_permission_Ramadan_dialog_message),
+            icon = R.drawable.ic_error_ramadan,
+            positiveButtonTitle = "Allow",
+            positiveButtonListener = {
+                requestOverlayRamadanPermission()
                 it?.dismiss()
             },
             negativeButtonTitle = "Cancel",

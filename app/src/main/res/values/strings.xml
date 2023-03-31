@@ -337,6 +337,7 @@
     <string name="watch_only_when_wifi_available_text">Watch only when Wifi is available</string>
     <string name="play_on_wifi_only">Play on WIFI only</string>
     <string name="fifa_bubble_text">FIFA World Cup Bubble</string>
+    <string name="ramadan_bubble_text">Interactive Bubble</string>
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
@@ -473,7 +474,9 @@
     <string name="show_button_text">Show Button</string>
     <string name="remove_button_text">Remove Button</string>
     <string name="missing_overlay_permission_dialog_title">New Football Feature</string>
+    <string name="missing_overlay_permission_Ramadan_dialog_title">Ramadan Bubble Available</string>
     <string name="missing_overlay_permission_dialog_message"><![CDATA[To see countdown, live scores, and match schedules during FIFA World Cup Qatar 2022&trade;, please allow the<b> - Display Over Other Apps</b> permission now.]]></string>
+    <string name="missing_overlay_permission_Ramadan_dialog_message"><![CDATA[To get upcoming Sehri and Iftar timing, please allow the - Display over other apps permission now.]]></string>
     <string name="day">days</string>
     <string name="hour">hrs</string>
     <string name="minute">mins</string>

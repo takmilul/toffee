@@ -25,9 +25,8 @@ import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -35,16 +34,16 @@ import java.util.concurrent.TimeUnit.DAYS
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 
-class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
+class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEventListener,
+    IBubbleInteractionListener {
 
     private var timeDifference: Long? = null
     private var bubbleConfig: BubbleConfig? = null
     private var ramadanScheduled: RamadanScheduled? = null
-    private var ramadanScheduledNextDay: RamadanScheduled? = null
     private val coroutineScope = CoroutineScope(Default)
     private lateinit var binding: BubbleViewRamadanLayoutBinding
 
-    
+
     override fun createBubble(): Bubble {
         return Bubble.Builder()
             .with(this)
@@ -53,7 +52,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             .setListener(this)
             .build()
     }
-    
+
     private fun createDraggableItem(): BubbleDraggableItem {
         binding = BubbleViewRamadanLayoutBinding.inflate(LayoutInflater.from(this))
 
@@ -62,47 +61,22 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 RamadanScheduled?.let {
                     this.ramadanScheduled = it
                     countDownTimer?.cancel()
-                    if (it.isRamadanStart == 0) {
+                    if (it.isRamadanStart == 0 && it.isEidStart == 0) {
                         it.bubbleLogoUrl.doIfNotNullOrBlank {
                             binding.ramadanLeftImage.load(it)
                         }
                         binding.ramadanTitle.text = "রমজানুল মোবারক"
-//                        binding.ramadanTitle.text = it.dayName?.trim()?.replace("\n", "<br/>")?.let {
-//                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-//                        }
-
-                        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        val dateTimeFormat =
+                            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val dateTimeDifference = dateTimeFormat.parse(
                             it.sehriStart ?: "2022-11-20 16:00:00"
                         )?.time?.minus(mPref.getSystemTime().time) ?: 0L
                         showCountdownStartDays(dateTimeDifference)
 
-                    } else if (it.isRamadanStart == 1) {
+                    } else if (it.isRamadanStart == 1 && it.isEidStart == 0) {
+                        ramadanStatusManipulation()
 
-//                        val sehriEndTime: String = "2023-03-30 20:15:00"
-                        val sehriEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                        val endSehriDate = dateFormat.parse(sehriEndTime)
-
-//                        val ifterEndTime: String = "2023-03-30 20:20:00"
-                        val ifterEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
-                        val dateFormat2 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                        val endIfterDate = dateFormat2.parse(ifterEndTime)
-
-
-                        if (endSehriDate != null) {
-                            if (mPref.getSystemTime().time < endSehriDate.time) {
-                                showCountdownSehriTime()
-                            } else if (endIfterDate != null) {
-                                if (mPref.getSystemTime().time < endIfterDate.time) {
-                                    showCountdownIfterTime()
-                                }
-                                else{
-                                    showCountdownSehriTime()
-                                }
-                            }
-                        }
-                    } else if (it.isEidStart == 0) {
+                    } else if (it.isEidStart == 1) {
                         setEidMubarakText()
                     }
                 }
@@ -141,11 +115,62 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             .build()
     }
 
+    private fun ramadanStatusManipulation(){
+        val dateFormat =
+            SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+
+        var sehriEndTime: String =
+            ramadanScheduled?.sehriStart ?: "2023-04-01 16:00:00"
+        var endSehriDate = dateFormat.parse(sehriEndTime)
+
+        var ifterEndTime: String =
+            ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
+        var endIfterDate = dateFormat.parse(ifterEndTime)
+
+        coroutineScope.launch {
+
+            //Get Sehri and Iftar time of Next Day
+            if (endIfterDate != null && mPref.getSystemTime().time > endIfterDate.time) {
+                Log.i("__ramadan nextDayIfter", "")
+
+                val calendar = Calendar.getInstance()
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+                val tomorrow = calendar.time
+
+                ramadanScheduled = Utils.dateToStr(tomorrow, "yyyy-MM-dd")
+                    ?.let { ramadanBubbleRepository.getAllRamadanItems(it) }
+
+                sehriEndTime = ramadanScheduled?.sehriStart ?: "2023-04-01 16:00:00"
+                endSehriDate = dateFormat.parse(sehriEndTime)
+
+                ifterEndTime = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
+                endIfterDate = dateFormat.parse(ifterEndTime)
+
+                Log.i("__ramadan nextDay", ramadanScheduled.toString())
+            }
+
+            withContext(Dispatchers.Main) {
+                Log.i("__ramadan system", mPref.getSystemTime().toString())
+                Log.i("__ramadan Ifter", endIfterDate.toString())
+                Log.i("__ramadan Sehri", endSehriDate.toString())
+
+                if (endSehriDate != null && mPref.getSystemTime().time <= endSehriDate.time) {
+                    Log.i("__ramadan SehriDate", "")
+                    showCountdownSehriTime()
+                } else {
+                    if (endIfterDate != null && mPref.getSystemTime().time <= endIfterDate.time) {
+                        Log.i("__ramadan ifterDate", "")
+                        showCountdownIfterTime()
+                    }
+                }
+            }
+
+        }
+    }
 
     private fun showCountdownIfterTime() {
         runCatching {
             val countDownEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
-//            val countDownEndTime: String = "2023-03-30 20:20:00"
             val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
             val endDate = dateFormat.parse(countDownEndTime)
             //milliseconds
@@ -172,25 +197,19 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 val secondsInBangla = String.format("%02d", second).enDigitToBn()
 
                 binding.ramadanLeftImage.visibility = View.GONE
-                binding.ramadanTitle.text= "ইফতারের সময় বাকি"
-                binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
+                binding.ramadanTitle.text = "ইফতারের সময় বাকি"
+                binding.ramadanTitleBold.text =
+                    "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
             }
-            
+
             override fun onFinish() {
                 binding.ramadanLeftImage.visibility = View.GONE
-                binding.ramadanTitle.text= "ইফতারের সময় বাকি"
+                binding.ramadanTitle.text = "ইফতারের সময় বাকি"
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
 
-//                val ifterEndTime: String = "2023-04-01 20:21:00"
-                val ifterEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
-                val dateFormat2 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                val endIfterDate = dateFormat2.parse(ifterEndTime)
-
-                if (mPref.getSystemTime().time > endIfterDate.time) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        showCountdownSehriTime()
-                    }, 6000)
-                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    ramadanStatusManipulation()
+                }, 6000)
             }
         }.start()
     }
@@ -198,7 +217,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     private fun showCountdownSehriTime() {
         runCatching {
             val countDownEndTime: String = ramadanScheduled?.sehriStart ?: "2023-04-01 16:00:00"
-//            val countDownEndTime: String = "2023-03-30 20:23:00"
             val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
             val endDate = dateFormat.parse(countDownEndTime)
             //milliseconds
@@ -225,25 +243,19 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 val secondsInBangla = String.format("%02d", second).enDigitToBn()
 
                 binding.ramadanLeftImage.visibility = View.GONE
-                binding.ramadanTitle.text= "সাহরীর সময় বাকি "
-                binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
+                binding.ramadanTitle.text = "সাহরীর সময় বাকি "
+                binding.ramadanTitleBold.text =
+                    "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
             }
 
             override fun onFinish() {
                 binding.ramadanLeftImage.visibility = View.GONE
-                binding.ramadanTitle.text= "সাহরীর সময় বাকি "
+                binding.ramadanTitle.text = "সাহরীর সময় বাকি "
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
 
-//                val sehriEndTime: String = "2023-03-30 20:24:00"
-                val sehriEndTime: String = ramadanScheduled?.iftarStart ?: "2023-04-01 16:00:00"
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                val endSehriDate = dateFormat.parse(sehriEndTime)
-
-                if (mPref.getSystemTime().time > endSehriDate.time) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        showCountdownIfterTime()
-                    }, 6000)
-                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    ramadanStatusManipulation()
+                }, 6000)
             }
         }.start()
     }
@@ -253,6 +265,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             override fun onTick(millisUntilFinished: Long) {
                 setCountDownTime()
             }
+
             override fun onFinish() {
                 setCountDownTime()
             }
@@ -262,8 +275,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     @SuppressLint("SetTextI18n")
     private fun setCountDownTime() {
         runCatching {
-//            val countDownEndTime: String = bubbleConfig?.countDownEndTime ?: "2023-04-01 16:00:00"
-            val countDownEndTime: String = "2023-03-30 20:00:00"
+            val countDownEndTime: String = ramadanScheduled?.sehriStart ?: "2023-04-01 16:00:00"
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val currentDate = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
@@ -271,7 +283,8 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }.time
-            val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
+            val startDay: Date =
+                dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
             val endDay: Date = dateFormat.parse(countDownEndTime) ?: currentDate
             val remainingDays = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
             val remainingDaysText = if (remainingDays < 1L) {
@@ -299,8 +312,8 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         }
     }
 
-    fun String.enDigitToBn():String{
-        val bnDigits = listOf('০','১','২','৩','৪','৫','৬','৭','৮','৯')
+    fun String.enDigitToBn(): String {
+        val bnDigits = listOf('০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯')
         return this.map { bnDigits[it.toString().toInt()] }.joinToString("")
     }
 
@@ -311,7 +324,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             .setExpandable(true)
             .build()
     }
-    
+
     override fun onTouchEventChanged(
         view: View,
         currentViewPosition: Point,
@@ -320,13 +333,15 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         velocityY: Float,
         draggableWindowItemTouchEvent: DraggableWindowItemTouchEvent,
     ) {
-        
+
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
                 try {
-                    val isTouched = binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                    val isTouched =
+                        binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
-                        val uriUrl: Uri = Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
+                        val uriUrl: Uri =
+                            Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //                        intent.setPackage("com.android.chrome")
@@ -345,18 +360,27 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             }
         }
     }
-    
-    override fun onOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+
+    override fun onOverlappingRemoveItemOnDrag(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem,
+    ) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
-    
-    override fun onNotOverlappingRemoveItemOnDrag(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+
+    override fun onNotOverlappingRemoveItemOnDrag(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem,
+    ) {
 //        val imageView = draggableItem.view.findViewById<ImageView>(R.id.draggable_view)
 //        imageView.setImageDrawable(getDrawable(R.drawable.title))
     }
-    
-    override fun onDropInRemoveItem(removeItem: BubbleCloseItem, draggableItem: BubbleDraggableItem) {
+
+    override fun onDropInRemoveItem(
+        removeItem: BubbleCloseItem,
+        draggableItem: BubbleDraggableItem,
+    ) {
         // Nothing to do
     }
 }
