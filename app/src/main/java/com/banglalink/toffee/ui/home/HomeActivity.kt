@@ -105,6 +105,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_I
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -170,6 +171,7 @@ class HomeActivity : PlayerPageActivity(),
     private var visibleDestinationId = 0
     private var bubbleIntent: Intent? = null
     private var bubbleV2Intent: Intent? = null
+    private var bubbleRamadanIntent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -213,8 +215,12 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
-        
+//        FirebasviewModeleInAppMessaging.getInstance().setMessagesSuppressed(false)
+
+        if (mPref.isBubbleActive && mPref.bubbleType == 0){
+            viewModel.getRamadanScheduleList()
+        }
+
         val isDisableScreenshot =
             (mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
                 mPref.phoneNumber
@@ -363,10 +369,12 @@ class HomeActivity : PlayerPageActivity(),
         }
         observe(mPref.startBubbleService) {
             if (it) {
-                startBubbleService()
+                startFifaBubbleService()
+                startRamadanBubbleService()
             } else {
 //                stopService(bubbleIntent)
                 stopService(bubbleV2Intent)
+                stopService(bubbleRamadanIntent)
             }
         }
         
@@ -409,7 +417,8 @@ class HomeActivity : PlayerPageActivity(),
             MobileAds.initialize(this)
         }
         
-        startBubbleService()
+        startFifaBubbleService()
+        startRamadanBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
             getNavController().navigate(R.id.completeDeleteProfileDataBottomSheetFragment, null, navOptions)
@@ -469,11 +478,11 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    private fun startBubbleService() {
+    private fun startFifaBubbleService() {
         runCatching {
 //        bubbleIntent = Intent(this, BubbleService::class.java)
             bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+            if (!BaseBubbleService.isForceClosed && mPref.isFifaBubbleActive && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 1) {
                 if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                     if (mPref.bubbleDialogShowCount < 5) {
                         displayMissingOverlayPermissionDialog()
@@ -481,6 +490,21 @@ class HomeActivity : PlayerPageActivity(),
                 } else {
 //                startService(bubbleIntent)
                     startService(bubbleV2Intent)
+                }
+            }
+        }
+    }
+
+    private fun startRamadanBubbleService() {
+        runCatching {
+            bubbleRamadanIntent = Intent(this, BubbleServiceRamadan::class.java)
+            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 0) {
+                if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                    if (mPref.bubbleDialogShowCount < 5) {
+                        displayMissingOverlayPermissionForRamadanDialog()
+                    }
+                } else {
+                    startService(bubbleRamadanIntent)
                 }
             }
         }
@@ -529,12 +553,32 @@ class HomeActivity : PlayerPageActivity(),
             startService(bubbleV2Intent)
         }
     }
+
+    private val startForOverlayRamadanPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionDialog()
+            }
+        } else {
+//            startService(bubbleIntent)
+            startService(bubbleRamadanIntent)
+        }
+    }
     
     private fun requestOverlayPermission() {
         runCatching {
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
                 startForOverlayPermission.launch(intent)
+            }
+        }
+    }
+
+    private fun requestOverlayRamadanPermission() {
+        runCatching {
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                startForOverlayRamadanPermission.launch(intent)
             }
         }
     }
@@ -548,6 +592,23 @@ class HomeActivity : PlayerPageActivity(),
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
                 requestOverlayPermission()
+                it?.dismiss()
+            },
+            negativeButtonTitle = "Cancel",
+            negativeButtonListener = {
+                it?.dismiss()
+            }).create().show()
+    }
+
+    private fun displayMissingOverlayPermissionForRamadanDialog() {
+        mPref.bubbleDialogShowCount++
+        ToffeeAlertDialogBuilderTypeThree(this,
+            title = getString(R.string.missing_overlay_permission_Ramadan_dialog_title),
+            text = getString(R.string.missing_overlay_permission_Ramadan_dialog_message),
+            icon = R.drawable.ic_error_ramadan,
+            positiveButtonTitle = "Allow",
+            positiveButtonListener = {
+                requestOverlayRamadanPermission()
                 it?.dismiss()
             },
             negativeButtonTitle = "Cancel",
@@ -2271,6 +2332,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)) {
 //                startService(bubbleIntent)
                 startService(bubbleV2Intent)
+                startService(bubbleRamadanIntent)
             }
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)

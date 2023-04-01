@@ -4,8 +4,11 @@ import android.app.Service
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.IBinder
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.data.repository.BubbleConfigRepository
+import com.banglalink.toffee.data.repository.RamadanBubbleRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -21,7 +24,8 @@ abstract class BaseBubbleService : Service() {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var bubbleConfigRepository: BubbleConfigRepository
-    
+    @Inject lateinit var ramadanBubbleRepository: RamadanBubbleRepository
+
     companion object {
         lateinit var INSTANCE: BaseBubbleService
         var isForceClosed: Boolean = false

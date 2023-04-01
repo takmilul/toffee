@@ -32,12 +32,15 @@ class SettingsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Settings"
-        binding.bubbleSwitch.isVisible = mPref.isBubbleActive
-        binding.bubbleDivider.isVisible = mPref.isBubbleActive
+        binding.bubbleSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == 1
+        binding.bubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == 1
+        binding.bubbleRamadanSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == 0
+        binding.ramadanBubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == 0
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
         binding.bubbleToggleBtn.setOnCheckedChangeListener { _, _ -> handleBubbleToggleBtn() }
+        binding.bubbleRamadanToggleBtn.setOnCheckedChangeListener { _, _ -> handleRamadanBubbleToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
         binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
         initializeSettings()
@@ -51,6 +54,7 @@ class SettingsFragment : BaseFragment() {
     
     private fun initializeSettings() {
         binding.isBubbleEnabled = mPref.isBubbleEnabled
+        binding.isRamadanBubbleEnabled = mPref.isBubbleRamadanEnabled
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
@@ -75,6 +79,12 @@ class SettingsFragment : BaseFragment() {
         mPref.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
         binding.isBubbleEnabled = binding.bubbleToggleBtn.isChecked
         mPref.startBubbleService.value = binding.bubbleToggleBtn.isChecked
+    }
+
+    private fun handleRamadanBubbleToggleBtn() {
+        mPref.isBubbleEnabled = binding.bubbleRamadanToggleBtn.isChecked
+        binding.isBubbleEnabled = binding.bubbleRamadanToggleBtn.isChecked
+        mPref.startBubbleService.value = binding.bubbleRamadanToggleBtn.isChecked
     }
     
     private fun setPrefItemListener() {

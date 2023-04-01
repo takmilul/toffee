@@ -12,6 +12,9 @@
             name="isBubbleEnabled"
             type="Boolean" />
         <variable
+            name="isRamadanBubbleEnabled"
+            type="Boolean" />
+        <variable
             name="enableNotification"
             type="boolean" />
         <variable
@@ -149,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/fifa_bubble_text" />
-                
+
                 <com.suke.widget.SwitchButton
                     android:id="@+id/bubbleToggleBtn"
                     android:layout_width="36dp"
@@ -168,6 +171,48 @@
 
             <View
                 android:id="@+id/bubbleDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/bubbleRamadanSwitch"
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/txt_icon"
+                    app:srcCompat="@drawable/ic_ramadan_bubble" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ramadan_bubble_text" />
+
+                <com.suke.widget.SwitchButton
+                    android:id="@+id/bubbleRamadanToggleBtn"
+                    android:layout_width="36dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center_vertical"
+                    android:checked="@{isRamadanBubbleEnabled}"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    app:sb_background="@color/switchUnCheckedColor"
+                    app:sb_checked_color="@color/colorAccent"
+                    app:sb_show_indicator="false"
+                    app:sb_uncheck_color="@color/switchUnCheckedColor"
+                    app:sb_uncheckcircle_width="8dp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:id="@+id/ramadanBubbleDivider"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />

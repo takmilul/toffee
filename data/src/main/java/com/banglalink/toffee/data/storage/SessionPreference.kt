@@ -41,6 +41,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val featuredPartnerIdLiveData = MutableLiveData(0)
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
+    val ramadanScheduledConfigLiveData = MutableLiveData<RamadanScheduled?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
@@ -250,6 +251,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isBubbleEnabled: Boolean
         get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
         set(value) = pref.edit().putBoolean(PREF_BUBBLE_ENABLED, value).apply()
+
+    var isBubbleRamadanEnabled: Boolean
+        get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
+        set(value) = pref.edit().putBoolean(PREF_RAMADAN_BUBBLE_ENABLED, value).apply()
     
     fun isNotificationEnabled(): Boolean {
         return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
@@ -635,9 +640,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, "") ?: ""
         set(value) = pref.edit { putString(PREF_LAST_LOGIN_DATE_TIME, value) }
     
-    var isBubbleActive: Boolean
-        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
-        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
+    var isFifaBubbleActive: Boolean
+        get() = pref.getBoolean(PREF_IS_FIFA_BUBBLE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_FIFA_BUBBLE_ACTIVE, value) }
     
     var bubbleDialogShowCount: Int
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
@@ -686,6 +691,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isCircuitBreakerActive: Boolean
         get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
+
+    var bubbleType: Int
+        get() = pref.getInt(PREF_IS_BUBBLE_TYPE, -1)
+        set(value) = pref.edit { putInt(PREF_IS_BUBBLE_TYPE, value) }
+
+    var isBubbleActive: Boolean
+        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
     
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
@@ -774,14 +787,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             retryWaitDuration = it.retryWaitDuration
             videoMinDuration = it.videoMinDuration
             videoMaxDuration = it.videoMaxDuration
-            isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
+            isFifaBubbleActive = it.bubbleConfig?.isFifaBubbleActive ?: false
             bubbleConfigLiveData.value = it.bubbleConfig
             internalTimeOut = it.internalTimeOut?.takeIf { it >=5 } ?: 60
             externalTimeOut = it.externalTimeout?.takeIf { it >=5 } ?: 60
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
-            
+            bubbleType = it.bubbleType
+            isBubbleActive = it.isBubbleActive == 1
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -816,6 +830,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SYSTEM_TIME = "systemTime"
         private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"
         private const val PREF_BUBBLE_ENABLED = "bubbleEnabled"
+        private const val PREF_RAMADAN_BUBBLE_ENABLED = "bubbleRamadanEnabled"
         private const val PREF_KEY_NOTIFICATION = "pref_key_notification"
         private const val PREF_SESSION_TOKEN_HEADER = "sessionTokenHeader"
         private const val PREF_SHOULD_OVERRIDE_HLS_URL = "shouldOverrideHlsUrl"
@@ -905,7 +920,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_VIDEO_MIN_DURATION = "pref_video_min_duration"
         private const val PREF_VIDEO_MAX_DURATION = "pref_video_max_duration"
         private const val PREF_LAST_LOGIN_DATE_TIME = "pref_last_login_date_time"
-        private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
+        private const val PREF_IS_FIFA_BUBBLE_ACTIVE = "pref_is_fifa_bubble_active"
         private const val PREF_BUBBLE_DIALOG_SHOW_COUNT = "pref_bubble_dialog_permission_show_count"
         private const val PREF_FEATURED_PARTNER_TITLE = "pref_featured_partner_title"
         private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
@@ -918,6 +933,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
         private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
         private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
+        private const val PREF_IS_BUBBLE_TYPE = "pref_is_bubble_type"
+        private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

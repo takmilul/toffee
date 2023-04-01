@@ -170,7 +170,11 @@ class CustomerInfoLogin(
     @SerializedName("fStoreTblContentBlacklist")
     var fStoreTblContentBlacklist: String? = null,
     @SerializedName("isfireStoreTblContentBlacklist")
-    var isCircuitBreakerActive: Boolean = false
+    var isCircuitBreakerActive: Boolean = false,
+    @SerializedName("isBubbleActive")
+    var isBubbleActive: Int = -1,
+    @SerializedName("bubbleType")
+    var bubbleType: Int = -1,
 ) : BodyResponse(), Parcelable
 
 @Entity
@@ -179,7 +183,7 @@ data class BubbleConfig(
     @SerializedName("id")
     val id: Long? = null,
     @SerializedName("isBubbleActive")
-    val isBubbleActive : Boolean,
+    val isFifaBubbleActive : Boolean,
     @SerializedName("imageType")
     val imageType : String? = null,
     @SerializedName("adIconUrl")
