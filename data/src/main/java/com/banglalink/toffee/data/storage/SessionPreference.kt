@@ -38,10 +38,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
-    val featuredPartnerIdLiveData = MutableLiveData(0)
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
-    val ramadanScheduledConfigLiveData = MutableLiveData<RamadanScheduled?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
     val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
@@ -53,6 +51,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

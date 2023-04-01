@@ -1,30 +1,26 @@
 package com.banglalink.toffee.model
 
-
-import androidx.annotation.NonNull
-import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
-data class RamadanScheduled(
+data class RamadanSchedule(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     val id: Long? = null,
     @SerializedName("bubble_logo_url")
-    val bubbleLogoUrl: String,
+    val bubbleLogoUrl: String? = null,
     @SerializedName("day_name")
-    val dayName: String,
+    val dayName: String? = null,
     @SerializedName("division")
-    val division: String,
+    val division: String? = null,
     @SerializedName("iftar_start")
-    val iftarStart: String,
+    val iftarStart: String? = null,
     @SerializedName("is_eid_start")
-    val isEidStart: Int,
+    val isEidStart: Int? = null,
     @SerializedName("is_ramadan_start")
-    val isRamadanStart: Int,
+    val isRamadanStart: Int? = null,
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
     @SerializedName("sehri_start")
-    val sehriStart: String
+    val sehriStart: String? = null,
 )

@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -82,7 +81,6 @@ class HomeViewModel @Inject constructor(
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
     private val getBubbleService: GetBubbleService,
-    private val ramadanBubbleRepository: RamadanBubbleRepository,
 ) : ViewModel() {
     
     val postLoginEvent = SingleLiveEvent<Boolean>()
@@ -109,7 +107,7 @@ class HomeViewModel @Inject constructor(
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
-    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanScheduled>>>()
+    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
 
     init {
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
