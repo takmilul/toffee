@@ -12,6 +12,9 @@
             name="isBubbleEnabled"
             type="Boolean" />
         <variable
+            name="isRamadanBubbleEnabled"
+            type="Boolean" />
+        <variable
             name="enableNotification"
             type="boolean" />
         <variable
@@ -197,7 +200,7 @@
                     android:layout_width="36dp"
                     android:layout_height="22dp"
                     android:layout_gravity="center_vertical"
-                    android:checked="@{isBubbleEnabled}"
+                    android:checked="@{isRamadanBubbleEnabled}"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     app:sb_background="@color/switchUnCheckedColor"

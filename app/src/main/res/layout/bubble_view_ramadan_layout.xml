@@ -67,7 +67,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/rounded_shape"
             android:padding="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_profile"
             app:layout_constraintBottom_toBottomOf="parent"

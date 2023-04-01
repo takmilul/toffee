@@ -7,9 +7,13 @@ import com.banglalink.toffee.model.RamadanScheduledResponse
 
 class RamadanBubbleRepositoryImpl (private val dao: RamadanBubbleDao) : RamadanBubbleRepository {
     override suspend fun insertAll(vararg ramadanScheduled: RamadanScheduled): LongArray {
+        deleteAllRows()
         return dao.insertAll(*ramadanScheduled)
     }
     override suspend fun getAllRamadanItems(currentDate: String): RamadanScheduled? {
         return dao.getRamadanBubbleItem(currentDate)
+    }
+    override suspend fun deleteAllRows() {
+        return dao.deleteAllRows()
     }
 }

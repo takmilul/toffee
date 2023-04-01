@@ -32,10 +32,10 @@ class SettingsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Settings"
-        binding.bubbleSwitch.isVisible = mPref.isBubbleActive
-        binding.bubbleDivider.isVisible = mPref.isBubbleActive
-        binding.bubbleRamadanSwitch.isVisible = mPref.isBubbleActive
-        binding.ramadanBubbleDivider.isVisible = mPref.isBubbleActive
+        binding.bubbleSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == 1
+        binding.bubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == 1
+        binding.bubbleRamadanSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == 0
+        binding.ramadanBubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == 0
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
@@ -54,6 +54,7 @@ class SettingsFragment : BaseFragment() {
     
     private fun initializeSettings() {
         binding.isBubbleEnabled = mPref.isBubbleEnabled
+        binding.isRamadanBubbleEnabled = mPref.isBubbleRamadanEnabled
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow

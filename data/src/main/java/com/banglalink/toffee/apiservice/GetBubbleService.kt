@@ -34,8 +34,9 @@ class GetBubbleService @Inject constructor(
                 request
             )
         }
-
-        ramadanBubbleRepository.insertAll(*response.response.ramadanScheduled.toTypedArray())
+        if (!response.isFromCache){
+            ramadanBubbleRepository.insertAll(*response.response.ramadanScheduled.toTypedArray())
+        }
         return response.response.ramadanScheduled
     }
 }

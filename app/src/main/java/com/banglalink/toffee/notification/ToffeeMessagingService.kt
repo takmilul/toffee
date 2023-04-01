@@ -162,8 +162,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             BUBBLE_CONFIG.type -> {
                 try {
                     val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
-                    mPref.isBubbleActive = bubbleConfig.isBubbleActive
-                    mPref.startBubbleService.postValue(bubbleConfig.isBubbleActive)
+                    mPref.isBubbleActive = bubbleConfig.isFifaBubbleActive
+                    mPref.startBubbleService.postValue(bubbleConfig.isFifaBubbleActive)
                     if (mPref.isBubbleActive) {
                         mPref.bubbleConfigLiveData.postValue(bubbleConfig)
                     }

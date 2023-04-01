@@ -217,7 +217,9 @@ class HomeActivity : PlayerPageActivity(),
         super.onCreate(savedInstanceState)
 //        FirebasviewModeleInAppMessaging.getInstance().setMessagesSuppressed(false)
 
-        viewModel.getRamadanScheduleList()
+        if (mPref.isBubbleActive && mPref.bubbleType == 0){
+            viewModel.getRamadanScheduleList()
+        }
 
         val isDisableScreenshot =
             (mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
@@ -367,7 +369,7 @@ class HomeActivity : PlayerPageActivity(),
         }
         observe(mPref.startBubbleService) {
             if (it) {
-                startBubbleService()
+                startFifaBubbleService()
                 startRamadanBubbleService()
             } else {
 //                stopService(bubbleIntent)
@@ -415,7 +417,7 @@ class HomeActivity : PlayerPageActivity(),
             MobileAds.initialize(this)
         }
         
-        startBubbleService()
+        startFifaBubbleService()
         startRamadanBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
@@ -476,11 +478,11 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    private fun startBubbleService() {
+    private fun startFifaBubbleService() {
         runCatching {
 //        bubbleIntent = Intent(this, BubbleService::class.java)
             bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 1) {
+            if (!BaseBubbleService.isForceClosed && mPref.isFifaBubbleActive && mPref.isBubbleActive && mPref.isBubbleEnabled && mPref.bubbleType == 1) {
                 if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                     if (mPref.bubbleDialogShowCount < 5) {
                         displayMissingOverlayPermissionDialog()
@@ -600,7 +602,7 @@ class HomeActivity : PlayerPageActivity(),
 
     private fun displayMissingOverlayPermissionForRamadanDialog() {
         mPref.bubbleDialogShowCount++
-        ToffeeAlertDialogBuilder(this,
+        ToffeeAlertDialogBuilderTypeThree(this,
             title = getString(R.string.missing_overlay_permission_Ramadan_dialog_title),
             text = getString(R.string.missing_overlay_permission_Ramadan_dialog_message),
             icon = R.drawable.ic_error_ramadan,

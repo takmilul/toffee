@@ -10,6 +10,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.load
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewRamadanLayoutBinding
@@ -23,6 +25,7 @@ import com.banglalink.toffee.ui.bubble.listener.IBubbleInteractionListener
 import com.banglalink.toffee.ui.bubble.util.isInBounds
 import com.banglalink.toffee.ui.bubble.view.BubbleCloseItem
 import com.banglalink.toffee.ui.bubble.view.BubbleDraggableItem
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.*
@@ -62,6 +65,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                     this.ramadanScheduled = it
                     countDownTimer?.cancel()
                     if (it.isRamadanStart == 0 && it.isEidStart == 0) {
+                        binding.ramadanLeftImage.visibility = View.VISIBLE
                         it.bubbleLogoUrl.doIfNotNullOrBlank {
                             binding.ramadanLeftImage.load(it)
                         }
@@ -130,7 +134,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         coroutineScope.launch {
 
             //Get Sehri and Iftar time of Next Day
-            if (endIfterDate != null && mPref.getSystemTime().time > endIfterDate.time) {
+            if (endIfterDate != null && mPref.getSystemTime().time > endIfterDate!!.time) {
                 Log.i("__ramadan nextDayIfter", "")
 
                 val calendar = Calendar.getInstance()
@@ -151,14 +155,14 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
 
             withContext(Dispatchers.Main) {
                 Log.i("__ramadan system", mPref.getSystemTime().toString())
-                Log.i("__ramadan Ifter", endIfterDate.toString())
-                Log.i("__ramadan Sehri", endSehriDate.toString())
+                Log.i("__ramadan Ifter", endIfterDate!!.toString())
+                Log.i("__ramadan Sehri", endSehriDate!!.toString())
 
-                if (endSehriDate != null && mPref.getSystemTime().time <= endSehriDate.time) {
+                if (endSehriDate != null && mPref.getSystemTime().time <= endSehriDate!!.time) {
                     Log.i("__ramadan SehriDate", "")
                     showCountdownSehriTime()
                 } else {
-                    if (endIfterDate != null && mPref.getSystemTime().time <= endIfterDate.time) {
+                    if (endIfterDate != null && mPref.getSystemTime().time <= endIfterDate!!.time) {
                         Log.i("__ramadan ifterDate", "")
                         showCountdownIfterTime()
                     }
@@ -207,9 +211,10 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 binding.ramadanTitle.text = "ইফতারের সময় বাকি"
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
 
-                Handler(Looper.getMainLooper()).postDelayed({
+                coroutineScope.launch {
+                    delay(6000)
                     ramadanStatusManipulation()
-                }, 6000)
+                }
             }
         }.start()
     }
@@ -253,9 +258,10 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 binding.ramadanTitle.text = "সাহরীর সময় বাকি "
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
 
-                Handler(Looper.getMainLooper()).postDelayed({
+                coroutineScope.launch {
+                    delay(6000)
                     ramadanStatusManipulation()
-                }, 6000)
+                }
             }
         }.start()
     }
@@ -303,6 +309,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
     private fun setEidMubarakText() {
         runCatching {
             binding.ramadanTitle.visibility = View.GONE
+            binding.ramadanLeftImage.visibility = View.VISIBLE
             ramadanScheduled?.bubbleLogoUrl.doIfNotNullOrBlank {
                 binding.ramadanLeftImage.load(it)
             }
