@@ -15,19 +15,19 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.imageLoader
+import coil.disk.DiskCache
 import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.CoilCache
+import com.banglalink.toffee.di.CoilHttpClient
 import com.banglalink.toffee.di.CustomCookieManager
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
@@ -41,7 +41,9 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
-import com.loopnow.fireworklibrary.SdkStatus.*
+import com.loopnow.fireworklibrary.SdkStatus.InitializationFailed
+import com.loopnow.fireworklibrary.SdkStatus.Initialized
+import com.loopnow.fireworklibrary.SdkStatus.RefreshTokenFailed
 import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
@@ -51,7 +53,6 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.net.CookieHandler
 import java.net.CookieManager
@@ -64,14 +65,14 @@ import javax.net.ssl.SSLContext
 class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provider {
     
     @Inject lateinit var cacheManager: CacheManager
-    @Inject @CoilCache lateinit var coilCache: Cache
+    @Inject @CoilCache lateinit var coilCache: DiskCache
     @Inject lateinit var mUploadObserver: UploadObserver
-    @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var sessionPreference: SessionPreference
     private lateinit var connectivityManager: ConnectivityManager
+    @Inject @CoilHttpClient lateinit var coilHttpClient: OkHttpClient
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @CustomCookieManager @Inject lateinit var defaultCookieManager: CookieManager
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
@@ -203,7 +204,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     override fun newImageLoader(): ImageLoader {
         val imageRequest = ImageRequest.Builder(this).apply {
             dispatcher(IO)
-            crossfade(false)
+            crossfade(750)
             diskCachePolicy(ENABLED)
             networkCachePolicy(ENABLED)
             memoryCachePolicy(DISABLED)
@@ -211,22 +212,19 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }.build()
         
         return ImageLoader.Builder(this).apply {
-//            availableMemoryPercentage(0.2)
-//            bitmapPoolPercentage(0.4)
-            componentRegistry {
+//            logger(DebugLogger())
+            components {
                 if (SDK_INT >= 28) {
-                    add(ImageDecoderDecoder(this@ToffeeApplication))
+                    add(ImageDecoderDecoder.Factory())
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder.Factory())
                 }
             }
-            
+            diskCache {
+                coilCache
+            }
             okHttpClient {
-                OkHttpClient
-                    .Builder()
-                    .cache(coilCache)
-                    .addInterceptor(coilInterceptor)
-                    .build()
+                coilHttpClient
             }
         }.build().apply {
             enqueue(imageRequest)
@@ -235,10 +233,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        with(this.imageLoader) {
-            bitmapPool.clear()
-            memoryCache.clear()
-        }
         try {
             connectivityManager.unregisterNetworkCallback(heartBeatManager)
         } catch (e: Exception) {

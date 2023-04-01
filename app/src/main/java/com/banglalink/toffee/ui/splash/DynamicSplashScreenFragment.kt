@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.splash
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.banglalink.toffee.databinding.FragmentDynamicSplashScreenBinding
-import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
@@ -82,7 +82,10 @@ class DynamicSplashScreenFragment : BaseFragment() {
     private fun launchHomePage(waitDuration: Long) {
         lifecycleScope.launch {
             delay(waitDuration)
-            requireActivity().launchActivity<HomeActivity>()
+//                requireActivity().launchActivity<HomeActivity>()
+            val intent = Intent(requireContext(), HomeActivity::class.java)
+            intent.data = requireActivity().intent.data
+            startActivity(intent)
             requireActivity().finish()
         }
     }
