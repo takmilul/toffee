@@ -102,5 +102,10 @@ dependencies {
     
     /////// Testing
     
+    testImplementation(libs.junit.core)
+    
+    kaptAndroidTest(libs.hilt.kapt.test)
+    
     androidTestImplementation(libs.junit.ktx)
+    androidTestImplementation(libs.hilt.android.test)
 }

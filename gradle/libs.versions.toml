@@ -264,20 +264,9 @@ medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", ver
 
 ######## Testing
 
-okhttp-mock-web-server = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp-mock-web-server-version" }
-mockito-kotlin = { group = "com.nhaarman.mockitokotlin2", name = "mockito-kotlin", version.ref = "mockito-kotlin-version" }
-
-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "test-core-version" }
-test-rules = { group = "androidx.test", name = "rules", version.ref = "test-core-version" }
-test-truth = { group = "androidx.test.ext", name = "truth", version.ref = "test-core-version" }
-
-test-runner = { group = "androidx.test", name = "runner", version.ref = "test-runner-version" }
-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric-version" }
-#test-core-ktx = { group = "androidx.arch.core", name = "core-testing", version.ref = "core-testing-version" }
-
-# Assertions
+# Junit
+junit-core = { group = "junit", name = "junit", version.ref = "junit-version" }
 junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-version" }
-google-truth = { group = "com.google.truth", name = "truth", version.ref = "google-truth-version" }
 
 # Espresso
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-version" }
@@ -288,15 +277,31 @@ espresso-web = { group = "androidx.test.espresso", name = "espresso-web", versio
 espresso-idling = { group = "androidx.test.espresso.idling", name = "idling-concurrent", version.ref = "espresso-version" }
 espresso-idling-resource = { group = "androidx.test.espresso", name = "espresso-idling-resource", version.ref = "espresso-version" }
 
-# Fragment testing
+# Fragment Test
 fragment-test = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragment-test-version" }
+
+# Coroutines Test
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin-coroutine-version" }
 
+# Hilt Test
+hilt-android-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-android-version" }
+hilt-kapt-test = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-android-version" }
+
+# Mockk Test
 mockk-core = { group = "io.mockk", name = "mockk", version.ref = "mockk-version" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk-version" }
 
-#hilt-android-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-android-version" }
-hilt-kapt-test = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-android-version" }
+okhttp-mock-web-server = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp-mock-web-server-version" }
+mockito-kotlin = { group = "com.nhaarman.mockitokotlin2", name = "mockito-kotlin", version.ref = "mockito-kotlin-version" }
+
+test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "test-core-version" }
+test-rules = { group = "androidx.test", name = "rules", version.ref = "test-core-version" }
+test-runner = { group = "androidx.test", name = "runner", version.ref = "test-runner-version" }
+test-truth = { group = "androidx.test.ext", name = "truth", version.ref = "test-core-version" }
+google-truth = { group = "com.google.truth", name = "truth", version.ref = "google-truth-version" }
+#test-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "core-testing-version" }
+
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric-version" }
 
 # Leak Canary
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary-version" }
@@ -331,7 +336,6 @@ firebase = ["firebase-messaging", "firebase-in-app-message", "firebase-core", "f
 cast = ["mediarouter", "cast-framework"]
 hilt = ["hilt-android", "hilt-work"]
 #hiltkapt = ["hilt-compiler", "hilt-android-compiler", "hilt-compiler-kapt"]
-#hilt-test = ["hilt-android-test", "hilt-kapt-test"]
 room = ["room-db", "room-paging", "room-ktx"]
 navigation = ["navigation-ktx", "navigation-ui-ktx"]
 play-services = ["play-services-auth", "play-services-auth-api-phone", "play-core"]
@@ -339,4 +343,3 @@ conviva = ["conviva-core", "conviva-player"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
-mockk = ["mockk-core", "mockk-android"]

@@ -197,20 +197,25 @@ dependencies {
     
     /////// Testing
     
+    testImplementation(libs.junit.core)
     testImplementation(libs.robolectric)
-    testImplementation(libs.bundles.mockk)
+    testImplementation(libs.mockk.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.okhttp.mock.web.server)
+    
+    kaptAndroidTest(libs.hilt.kapt.test)
     
     androidTestImplementation(libs.junit.ktx)
     androidTestImplementation(libs.test.runner)
     androidTestImplementation(libs.test.rules)
     androidTestImplementation(libs.test.truth)
-    androidTestImplementation(libs.google.truth)
     androidTestImplementation(libs.test.core.ktx)
+    androidTestImplementation(libs.google.truth)
+    androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.bundles.espresso)
+    androidTestImplementation(libs.hilt.android.test)
     
-//    debugImplementation(libs.fragment.test)
+    debugImplementation(libs.fragment.test)
 //    debugImplementation (libs.leakcanary)
 }
