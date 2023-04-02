@@ -1,0 +1,221 @@
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    id(libs.plugins.com.android.application.get().pluginId)
+    id(libs.plugins.kotlin.parcelize.get().pluginId)
+    id(libs.plugins.kotlin.kapt.get().pluginId)
+    id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
+    id(libs.plugins.androidx.navigation.safeargs.get().pluginId)
+    id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
+    id(libs.plugins.com.gms.google.services.get().pluginId)
+    id(libs.plugins.com.google.firebase.crashlytics.get().pluginId)
+}
+
+android {
+    namespace = "com.banglalink.toffee"
+    compileSdk = 32
+    
+    @Suppress("UnstableApiUsage")
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 32
+        versionCode = 102
+        versionName = "4.9.0"
+        applicationId = "com.banglalink.toffee"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
+        ndk {
+            debugSymbolLevel = "FULL"
+        }
+    }
+    
+    @Suppress("UnstableApiUsage")
+    flavorDimensions += listOf("lib")
+    
+    productFlavors {
+        create("mobile") {
+            dimension = "lib"
+            buildConfigField("int", "DEVICE_TYPE", "1")
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    
+    kotlinOptions {
+//        useIR = true
+        jvmTarget = "1.8"
+    }
+    
+    @Suppress("UnstableApiUsage")
+    buildFeatures {
+        compose = true
+        dataBinding = true
+        viewBinding = true
+    }
+    
+    @Suppress("UnstableApiUsage")
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+    
+    @Suppress("UnstableApiUsage")
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+            excludes += listOf(
+                "lib/*/librsjni.so",
+                "lib/*/libRSSupport.so",
+                "lib/*/librsjni_androidx.so"
+            )
+        }
+        resources {
+            excludes += listOf("META-INF/*.kotlin_module")
+            pickFirsts += listOf(
+                "META-INF/services",
+                "META-INF/LICENSE",
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/annotation-experimental_release.kotlin_module"
+            )
+        }
+    }
+    
+    @Suppress("UnstableApiUsage")
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.3.2"
+    }
+    
+    @Suppress("UnstableApiUsage")
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
+}
+
+dependencies {
+    implementation(project(":data"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    
+    // View
+    implementation(libs.activity)
+    implementation(libs.fragment.ktx)
+    implementation(libs.splashscreen)
+    implementation(libs.material)
+    implementation(libs.cardview)
+    implementation(libs.switch.button)
+    implementation(libs.circleimageview)
+    implementation(libs.constraint.layout)
+    implementation(libs.legacy.support.v4)
+    
+    // Kotlin
+    implementation(libs.core.ktx)
+    implementation(libs.kotlin.coroutines)
+    
+    // Hilt
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.compiler.kapt)
+    
+    // Jetpack
+    implementation(libs.paging)
+    implementation(libs.bundles.room)
+    kapt(libs.room.kapt)
+    implementation(libs.bundles.compose)
+    implementation(libs.work.manager.ktx)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
+    
+    // Image
+    implementation(libs.bundles.coil)
+    implementation(libs.bundles.image.crop)
+    
+    // Player
+    implementation(libs.bundles.exoplayer)
+    implementation(libs.bundles.cast)
+    implementation(libs.bundles.ads)
+    
+    // Network
+    implementation(libs.bundles.retrofit)
+    implementation(libs.net.gotev.uploadservice)
+    implementation(libs.net.gotev.uploadservice.okhttp)
+    
+    // Google Services
+    implementation(libs.google.api.client) {
+        exclude(module = "httpclient")
+        exclude(group = "com.google.code.findbugs")
+        exclude(module = "support-annotations")
+        exclude(group = "com.google.guava")
+    }
+    implementation(libs.google.http.client) {
+        exclude(module = "httpclient")
+        exclude(group = "com.google.code.findbugs")
+        exclude(module = "support-annotations")
+        exclude(group = "com.google.guava")
+    }
+    
+    // Play Services
+    implementation(libs.bundles.play.services)
+    
+    // Firebase
+    implementation(libs.bundles.firebase)
+    
+    // Firework
+    implementation(libs.firework.ads)
+    implementation(libs.firework.sdk) {
+        exclude(module = "picasso-transformations")
+    }
+    
+    // Reporting
+    implementation(libs.bundles.conviva)
+    implementation(libs.bundles.mqtt)
+    implementation(libs.pub.sub) {
+        exclude(group = "com.google.code.findbugs")
+        exclude(group = "org.apache.httpcomponents")
+        exclude(group = "org.json")
+        exclude(module = "support-annotations")
+        exclude(group = "com.google.guava")
+    }
+    
+    // Miscellaneous
+    implementation(libs.butterknife)
+    implementation(libs.shimmer)
+    implementation(libs.guava)
+    implementation(libs.medallia)
+    
+    
+    /////// Testing
+    
+    testImplementation(libs.junit.core)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.mockk.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.okhttp.mock.web.server)
+    
+    kaptAndroidTest(libs.hilt.kapt.test)
+    
+    androidTestImplementation(libs.junit.ktx)
+    androidTestImplementation(libs.test.runner)
+    androidTestImplementation(libs.test.rules)
+    androidTestImplementation(libs.test.truth)
+    androidTestImplementation(libs.test.core.ktx)
+    androidTestImplementation(libs.google.truth)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.bundles.espresso)
+    androidTestImplementation(libs.hilt.android.test)
+    
+    debugImplementation(libs.fragment.test)
+//    debugImplementation (libs.leakcanary)
+}
