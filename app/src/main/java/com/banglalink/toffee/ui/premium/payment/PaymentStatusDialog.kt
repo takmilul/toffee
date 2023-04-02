@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.banglalink.toffee.R
@@ -16,7 +17,10 @@ import com.banglalink.toffee.databinding.DialogPaymentStatusBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +40,7 @@ class PaymentStatusDialog : DialogFragment() {
     @Inject lateinit var cPref: CommonPreference
     private var _binding: DialogPaymentStatusBinding? = null
     private val binding get() = _binding!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     
     companion object {
         const val SUCCESS = 200
@@ -146,6 +151,30 @@ class PaymentStatusDialog : DialogFragment() {
     private suspend fun dismissDialog() {
         coroutineScope {
             delay(3000)
+            mPref.prePurchaseClickedContent.value?.let { item ->
+                if (item.seriesSummaryId > 0) {
+                    val seriesData = SeriesPlaybackInfo(
+                        item.seriesSummaryId,
+                        item.seriesName ?: "",
+                        item.seasonNo,
+                        item.totalSeason,
+                        listOf(1),
+                        item.video_share_url,
+                        item.id.toInt(),
+                        item
+                    )
+                    homeViewModel.addToPlayListMutableLiveData.postValue(
+                        AddToPlaylistData(
+                            seriesData.playlistId(),
+                            listOf(item)
+                        )
+                    )
+                    homeViewModel.playContentLiveData.postValue(seriesData)
+                } else {
+                    homeViewModel.playContentLiveData.postValue(item)
+                }
+                mPref.prePurchaseClickedContent.value = null
+            }
             mPref.packDetailsPageRefreshRequired.value = true
             dialog?.dismiss()
         }

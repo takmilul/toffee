@@ -1612,6 +1612,7 @@ class HomeActivity : PlayerPageActivity(),
                                     is Success -> {
                                         mPref.activePremiumPackList.value = response.data.toList()
                                         checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                                            mPref.prePurchaseClickedContent.value = cInfo
                                             navController.navigatePopUpTo(
                                                 resId = R.id.premiumPackListFragment,
                                                 args = bundleOf("contentId" to cInfo?.getContentId())
@@ -1619,6 +1620,7 @@ class HomeActivity : PlayerPageActivity(),
                                         }
                                     }
                                     is Failure -> {
+                                        mPref.prePurchaseClickedContent.value = cInfo
                                         navController.navigatePopUpTo(
                                             resId = R.id.premiumPackListFragment,
                                             args = bundleOf("contentId" to cInfo?.getContentId())
