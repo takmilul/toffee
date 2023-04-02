@@ -143,14 +143,17 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 Log.i("__ramadan Ifter", endIfterDate.toString())
                 Log.i("__ramadan Sehri", endSehriDate.toString())
                 
-                if (mPref.getSystemTime().time <= endSehriDate.time) {
+                if (mPref.getSystemTime().time <= endSehriDate.time && ramadanSchedule?.isEidStart != 1) {
                     Log.i("__ramadan SehriDate", "")
                     showCountdownSehriTime()
                 } else {
-                    if (mPref.getSystemTime().time <= endIfterDate.time) {
+                    if (mPref.getSystemTime().time <= endIfterDate.time && ramadanSchedule?.isEidStart != 1) {
                         Log.i("__ramadan ifterDate", "")
                         showCountdownIfterTime()
                     }
+                }
+                if (ramadanSchedule?.isEidStart == 1){
+                    setEidMubarakText()
                 }
             }
         }
