@@ -63,7 +63,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                             binding.ramadanLeftImage.load(it)
                         }
                         firstRamadanStartDate = ramadanSchedules.find { it.isRamadanStart == 1 }
-                
+                        
                         binding.ramadanTitle.text = "রমজানুল মোবারক"
                         val dateTimeDifference = Utils.getDate(firstRamadanStartDate?.sehriStart).time.minus(mPref.getSystemTime().time)
                         showCountdownStartDays(dateTimeDifference)
@@ -109,12 +109,57 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             .build()
     }
     
+    private fun showCountdownStartDays(dateTimeDifference: Long) {
+        countDownTimer = object : CountDownTimer(dateTimeDifference, 10_000) {
+            override fun onTick(millisUntilFinished: Long) {
+                setCountDownTime()
+            }
+            
+            override fun onFinish() {
+                setCountDownTime()
+            }
+        }.start()
+    }
+    
+    @SuppressLint("SetTextI18n")
+    private fun setCountDownTime() {
+        runCatching {
+            val countDownEndTime: String = firstRamadanStartDate?.sehriStart ?: "2023-04-01 16:00:00"
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+            val currentDate = mPref.getSystemTime()
+            val startDay: Date = dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
+            val endDay: Date = dateFormat.parse(countDownEndTime) ?: currentDate
+            val remainingDays = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
+            if (remainingDays < 1) {
+                val calendar = Calendar.getInstance()
+                calendar.time = mPref.getSystemTime()
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+                val tomorrow = calendar.time
+                
+                ramadanSchedule = Utils.dateToStr(tomorrow, "yyyy-MM-dd")?.let { nextDay ->
+                    mPref.ramadanScheduleLiveData.value?.find { it.sehriStart?.contains(nextDay) ?: false }
+                }
+                
+                ramadanStatusManipulation()
+                return@runCatching
+            }
+            val remainingDaysText = if (remainingDays < 1L) {
+                "০ দিনে"
+            } else if (remainingDays == 1L) {
+                "১ দিনে"
+            } else {
+                "${remainingDays.toString().enDigitToBn()} দিনে"
+            }
+            binding.ramadanTitleBold.text = "শুরু হচ্ছে ${remainingDays.toString().enDigitToBn()} দিনে"
+        }.onFailure {
+            ToffeeAnalytics.logException(it)
+        }
+    }
+    
     private fun ramadanStatusManipulation() {
-        var sehriEndTime: String =
-            ramadanSchedule?.sehriStart ?: "2023-04-01 16:00:00"
+        var sehriEndTime: String = ramadanSchedule?.sehriStart ?: "2023-04-01 16:00:00"
         var endSehriDate = Utils.getDate(sehriEndTime)
-        var ifterEndTime: String =
-            ramadanSchedule?.iftarStart ?: "2023-04-01 16:00:00"
+        var ifterEndTime: String = ramadanSchedule?.iftarStart ?: "2023-04-01 16:00:00"
         var endIfterDate = Utils.getDate(ifterEndTime)
         
         coroutineScope.launch {
@@ -122,6 +167,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             if (mPref.getSystemTime().time > endIfterDate.time) {
                 Log.i("__ramadan nextDayIfter", "")
                 val calendar = Calendar.getInstance()
+                calendar.time = mPref.getSystemTime()
                 calendar.add(Calendar.DAY_OF_YEAR, 1)
                 val tomorrow = calendar.time
                 
@@ -248,45 +294,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 }
             }
         }.start()
-    }
-    
-    private fun showCountdownStartDays(dateTimeDifference: Long) {
-        countDownTimer = object : CountDownTimer(dateTimeDifference, 10_000) {
-            override fun onTick(millisUntilFinished: Long) {
-                setCountDownTime()
-            }
-            
-            override fun onFinish() {
-                setCountDownTime()
-            }
-        }.start()
-    }
-    @SuppressLint("SetTextI18n")
-    private fun setCountDownTime() {
-        runCatching {
-            val countDownEndTime: String = firstRamadanStartDate?.sehriStart ?: "2023-04-01 16:00:00"
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val currentDate = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.time
-            val startDay: Date =
-                dateFormat.parse(dateFormat.format(mPref.getSystemTime())) ?: currentDate
-            val endDay: Date = dateFormat.parse(countDownEndTime) ?: currentDate
-            val remainingDays = DAYS.convert(endDay.time - startDay.time, MILLISECONDS)
-            val remainingDaysText = if (remainingDays < 1L) {
-                "০ দিনে"
-            } else if (remainingDays == 1L) {
-                "১ দিনে"
-            } else {
-                "${remainingDays.toString().enDigitToBn()} দিনে"
-            }
-            binding.ramadanTitleBold.text = "শুরু হচ্ছে $remainingDaysText"
-        }.onFailure {
-            ToffeeAnalytics.logException(it)
-        }
     }
     
     private fun setEidMubarakText() {

@@ -14,6 +14,7 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
@@ -214,7 +215,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             ToffeeAnalytics.logException(pe)
         }
         
-        return deviceDate
+        return deviceDate //Utils.getDate("2023-03-23 04:40:00")
     }
     
     fun setDBVersion(dbVersionList: List<DBVersionV2>) {
