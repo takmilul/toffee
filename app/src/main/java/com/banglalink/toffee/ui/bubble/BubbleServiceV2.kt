@@ -14,7 +14,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
 import com.banglalink.toffee.extension.doIfNotNullOrBlank
 import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.isNotNullBlank
+import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
@@ -157,8 +157,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         bubbleConfig?.match?.awayTeam?.awayCountryFlag.doIfNotNullOrBlank {
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
-        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullBlank { it } ?: "0"
-        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullBlank { it } ?: "0"
+        val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
+        val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullOrBlank { it } ?: "0"
         binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
         binding.fifaTitleOne.text = "LIVE"
     }
