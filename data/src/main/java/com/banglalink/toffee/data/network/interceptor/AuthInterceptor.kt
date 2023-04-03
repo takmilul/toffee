@@ -8,7 +8,7 @@ import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ApiHeader
 import com.banglalink.toffee.di.ToffeeHeader
-import com.banglalink.toffee.extension.isNotNullBlank
+import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
@@ -81,7 +81,7 @@ class AuthInterceptor @Inject constructor(
         
         try {
             val isFromCacheJson = ",\"isFromCache\":${response.cacheResponse != null}"
-            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).isNotNullBlank {
+            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).isNotNullOrBlank {
                 it.replaceRange(it.lastIndex, it.lastIndex, isFromCacheJson)
             } ?: ""
             ToffeeAnalytics.logBreadCrumb("response: $responseJsonString")

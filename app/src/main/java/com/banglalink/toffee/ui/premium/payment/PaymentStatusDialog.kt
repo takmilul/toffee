@@ -173,7 +173,6 @@ class PaymentStatusDialog : DialogFragment() {
                 } else {
                     homeViewModel.playContentLiveData.postValue(item)
                 }
-                mPref.prePurchaseClickedContent.value = null
             }
             mPref.packDetailsPageRefreshRequired.value = true
             dialog?.dismiss()
