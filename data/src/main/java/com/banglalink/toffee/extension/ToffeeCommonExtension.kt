@@ -42,7 +42,7 @@ inline fun String?.doIfNotNullOrBlank(function: ((it: String) -> Unit)) {
     }
 }
 
-inline fun String?.isNotNullBlank(function: ((it: String) -> String?)): String? {
+inline fun String?.isNotNullOrBlank(function: ((it: String) -> String?)): String? {
     return if (!this.isNullOrBlank() && !this.trim().equals("null", true)) {
         function(this)
     } else null
@@ -61,7 +61,7 @@ inline fun <T> Collection<T>?.isNotNullOrEmpty(function: (Collection<T>) -> Coll
 }
 
 fun String.overrideUrl(newUrl: String?): String {
-    return newUrl?.isNotNullBlank {
+    return newUrl?.isNotNullOrBlank {
         try {
             val url = URL(this)
             var path = url.path
