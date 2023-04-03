@@ -20,7 +20,11 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrBlank
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
@@ -44,7 +48,12 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
@@ -650,7 +659,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     
     fun showCustomErrorMessage(errorMessage: String? = null) {
         errorMessageContainer.show()
-        errorMessage?.doIfNotNullOrBlank { errorMessageView.text = it }
+        errorMessage?.ifNotNullOrBlank { errorMessageView.text = it }
     }
     
     override fun onPlaybackStateChanged(playbackState: Int) {

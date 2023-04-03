@@ -496,7 +496,7 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.ramadanScheduleLiveData) {
             when(it) {
                 is Success -> {
-                    it.data.doIfNotNullOrEmpty { ramadanSchedules ->
+                    it.data.ifNotNullOrEmpty { ramadanSchedules ->
                         ramadanSchedules.find {
                             Utils.dateToStr(mPref.getSystemTime()) == Utils.dateToStr(Utils.getDate(it.sehriStart))
                         }?.let {
@@ -522,7 +522,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun observeCircuitBreaker() {
         if (mPref.isCircuitBreakerActive) {
-            mPref.circuitBreakerFirestoreCollectionName?.doIfNotNullOrBlank {
+            mPref.circuitBreakerFirestoreCollectionName?.ifNotNullOrBlank {
                 lifecycleScope.launch {
                     runCatching {
                         val db = Firebase.firestore

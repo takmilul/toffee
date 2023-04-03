@@ -1,13 +1,13 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.application.get().pluginId)
+    id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
-    id(libs.plugins.kotlin.kapt.get().pluginId)
     id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
     id(libs.plugins.androidx.navigation.safeargs.get().pluginId)
-    id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
     id(libs.plugins.com.gms.google.services.get().pluginId)
     id(libs.plugins.com.google.firebase.crashlytics.get().pluginId)
+    id(libs.plugins.kotlin.kapt.get().pluginId)
 }
 
 android {
@@ -18,7 +18,7 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 32
-        versionCode = 102
+        versionCode = 104
         versionName = "4.8.4"
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
@@ -62,7 +62,7 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        getByName("release") {
+        getByName("debug") {
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

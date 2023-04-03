@@ -7,14 +7,14 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
@@ -724,7 +724,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             if (it.isBanglalinkNumber != null) {
                 isBanglalinkNumber = it.isBanglalinkNumber
             }
-            it.dbVersionList?.doIfNotNullOrEmpty {
+            it.dbVersionList?.ifNotNullOrEmpty {
                 setDBVersion(it.toList())
             }
             latitude = it.lat ?: ""
@@ -800,7 +800,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isCircuitBreakerActive = it.isCircuitBreakerActive
             bubbleType = it.bubbleType
             isBubbleActive = it.isBubbleActive == 1
-            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink?.isNotNullOrBlank {
+            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink.ifNullOrBlank {
                 "https://toffeelive.com?routing=internal&page=featured_partner&id=10"
             }
             if (it.customerId == 0 || it.password.isNullOrBlank()) {

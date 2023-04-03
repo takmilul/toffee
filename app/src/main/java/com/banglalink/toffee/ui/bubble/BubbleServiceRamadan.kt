@@ -11,8 +11,7 @@ import androidx.core.view.isVisible
 import coil.load
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewRamadanLayoutBinding
-import com.banglalink.toffee.extension.doIfNotNullOrBlank
-import com.banglalink.toffee.model.BubbleConfig
+import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.model.RamadanSchedule
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemGravity
 import com.banglalink.toffee.ui.bubble.enums.DraggableWindowItemTouchEvent
@@ -34,7 +33,6 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
     private var timeDifference: Long? = null
-    private var bubbleConfig: BubbleConfig? = null
     private var ramadanSchedule: RamadanSchedule? = null
     private var firstRamadanStartDate: RamadanSchedule? = null
     private lateinit var binding: BubbleViewRamadanLayoutBinding
@@ -59,7 +57,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 when {
                     it.isRamadanStart == 0 && it.isEidStart == 0 -> {
                         binding.ramadanLeftImage.visibility = View.VISIBLE
-                        it.bubbleLogoUrl.doIfNotNullOrBlank {
+                        it.bubbleLogoUrl.ifNotNullOrBlank {
                             binding.ramadanLeftImage.load(it)
                         }
                         firstRamadanStartDate = ramadanSchedules.find { it.isRamadanStart == 1 }
@@ -68,9 +66,11 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                         val dateTimeDifference = Utils.getDate(firstRamadanStartDate?.sehriStart).time.minus(mPref.getSystemTime().time)
                         showCountdownStartDays(dateTimeDifference)
                     }
+                    
                     it.isRamadanStart == 1 && it.isEidStart == 0 -> {
                         ramadanStatusManipulation()
                     }
+                    
                     it.isEidStart == 1 -> {
                         setEidMubarakText()
                     }
@@ -88,20 +88,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 stopSelf()
             }
         }
-//        if (mPref.bubbleConfigLiveData.value == null) {
-//            coroutineScope.launch {
-//                bubbleConfig = bubbleConfigRepository.getLatestConfig()
-//                mPref.bubbleConfigLiveData.postValue(bubbleConfig)
-//            }
-//        }
-//
-//        if (mPref.ramadanScheduledConfigLiveData.value == null) {
-//            coroutineScope.launch {
-//                ramadanScheduled = Utils.dateToStr(mPref.getSystemTime(), "yyyy-MM-dd")
-//                    ?.let { ramadanBubbleRepository.getAllRamadanItems(it) }
-//                mPref.ramadanScheduledConfigLiveData.postValue(ramadanScheduled)
-//            }
-//        }
         return BubbleDraggableItem.Builder()
             .setLayout(binding.root)
             .setGravity(DraggableWindowItemGravity.BOTTOM_RIGHT)
@@ -120,7 +106,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
             }
         }.start()
     }
-    
     @SuppressLint("SetTextI18n")
     private fun setCountDownTime() {
         runCatching {
@@ -143,13 +128,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 ramadanStatusManipulation()
                 return@runCatching
             }
-            val remainingDaysText = if (remainingDays < 1L) {
-                "০ দিনে"
-            } else if (remainingDays == 1L) {
-                "১ দিনে"
-            } else {
-                "${remainingDays.toString().enDigitToBn()} দিনে"
-            }
             binding.ramadanTitleBold.text = "শুরু হচ্ছে ${remainingDays.toString().enDigitToBn()} দিনে"
         }.onFailure {
             ToffeeAnalytics.logException(it)
@@ -165,7 +143,6 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         coroutineScope.launch {
             //Get Sehri and Iftar time of Next Day
             if (mPref.getSystemTime().time > endIfterDate.time) {
-                Log.i("__ramadan nextDayIfter", "")
                 val calendar = Calendar.getInstance()
                 calendar.time = mPref.getSystemTime()
                 calendar.add(Calendar.DAY_OF_YEAR, 1)
@@ -180,25 +157,17 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 
                 ifterEndTime = ramadanSchedule?.iftarStart ?: "2023-04-01 16:00:00"
                 endIfterDate = Utils.getDate(ifterEndTime)
-                
-                Log.i("__ramadan nextDay", ramadanSchedule.toString())
             }
             
             withContext(Dispatchers.Main) {
-                Log.i("__ramadan system", mPref.getSystemTime().toString())
-                Log.i("__ramadan Ifter", endIfterDate.toString())
-                Log.i("__ramadan Sehri", endSehriDate.toString())
-                
                 if (mPref.getSystemTime().time <= endSehriDate.time && ramadanSchedule?.isEidStart != 1) {
-                    Log.i("__ramadan SehriDate", "")
                     showCountdownSehriTime()
                 } else {
                     if (mPref.getSystemTime().time <= endIfterDate.time && ramadanSchedule?.isEidStart != 1) {
-                        Log.i("__ramadan ifterDate", "")
                         showCountdownIfterTime()
                     }
                 }
-                if (ramadanSchedule?.isEidStart == 1){
+                if (ramadanSchedule?.isEidStart == 1) {
                     setEidMubarakText()
                 }
             }
@@ -234,8 +203,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 
                 binding.ramadanLeftImage.visibility = View.GONE
                 binding.ramadanTitle.text = "ইফতারের সময় বাকি"
-                binding.ramadanTitleBold.text =
-                    "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
+                binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
             }
             
             override fun onFinish() {
@@ -244,7 +212,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
                 
                 coroutineScope.launch {
-                    delay(6000)
+                    delay(1_000 * 60 * 10) // 10 mins
                     ramadanStatusManipulation()
                 }
             }
@@ -279,8 +247,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 
                 binding.ramadanLeftImage.visibility = View.GONE
                 binding.ramadanTitle.text = "সাহরীর সময় বাকি "
-                binding.ramadanTitleBold.text =
-                    "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
+                binding.ramadanTitleBold.text = "ঢাকা $hoursInBangla : $minutesInBangla : $secondsInBangla সে:"
             }
             
             override fun onFinish() {
@@ -289,7 +256,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 binding.ramadanTitleBold.text = "ঢাকা ০০ : ০০ : ০০ সে:"
                 
                 coroutineScope.launch {
-                    delay(6000)
+                    delay(1_000 * 60 * 10) // 10 mins
                     ramadanStatusManipulation()
                 }
             }
@@ -300,7 +267,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         runCatching {
             binding.ramadanTitle.visibility = View.GONE
             binding.ramadanLeftImage.visibility = View.VISIBLE
-            ramadanSchedule?.bubbleLogoUrl.doIfNotNullOrBlank {
+            ramadanSchedule?.bubbleLogoUrl.ifNotNullOrBlank {
                 binding.ramadanLeftImage.load(it)
             }
             binding.ramadanTitleBold.text = "ঈদ মোবারক"
@@ -333,8 +300,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
         when (draggableWindowItemTouchEvent) {
             DraggableWindowItemTouchEvent.CLICK_EVENT -> {
                 try {
-                    val isTouched =
-                        binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
+                    val isTouched = binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
                         val uriUrl: Uri = Uri.parse(mPref.ramadanBubbleDeepLink)
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
@@ -345,10 +311,12 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                     Log.i("bubble_", "onTouchEventChanged: ${e.message}")
                 }
             }
+            
             DraggableWindowItemTouchEvent.DRAG_EVENT -> {
 //                val imageView = view.findViewById<ImageView>(R.id.draggable_view)
 //                    imageView.setImageDrawable(getDrawable(R.drawable.title))
             }
+            
             DraggableWindowItemTouchEvent.DRAG_STOP_EVENT -> {
 //                view.findViewById<ImageView>(R.id.draggable_view).setImageDrawable(getDrawable(R.drawable.title))
             }

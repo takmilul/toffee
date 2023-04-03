@@ -68,15 +68,15 @@ import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
@@ -834,7 +834,7 @@ abstract class PlayerPageActivity :
                     .setAdsConfiguration(
                         MediaItem.AdsConfiguration
                             .Builder(Uri.parse(vastTag))
-                            .setAdsId(Random.nextInt())
+                            .setAdsId(System.currentTimeMillis())
                             .build()
                     ).build()
                 currentlyPlayingVastUrl = vastTag!!

@@ -12,8 +12,8 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
-import com.banglalink.toffee.extension.doIfNotNullOrBlank
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.BubbleConfig
@@ -30,8 +30,11 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit.DAYS
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
@@ -55,15 +58,15 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             runCatching {
                 bubbleConfig?.let {
                     this.bubbleConfig = it
-                    it.poweredBy?.doIfNotNullOrBlank { binding.poweredByText.text = it }
-                    it.poweredByIconUrl.doIfNotNullOrBlank {
+                    it.poweredBy?.ifNotNullOrBlank { binding.poweredByText.text = it }
+                    it.poweredByIconUrl.ifNotNullOrBlank {
                         binding.poweredByImage.load(it)
                     }
                     countDownTimer?.cancel()
                     if (it.isGlobalCountDownActive) {
                         binding.awayTeamFlag.hide()
                         binding.liveGif.hide()
-                        it.adIconUrl.doIfNotNullOrBlank {
+                        it.adIconUrl.ifNotNullOrBlank {
                             binding.homeTeamFlag.load(it)
                         }
                         binding.fifaTitleOne.text = it.bubbleText
@@ -151,10 +154,10 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         binding.awayTeamFlag.show()
         binding.liveGif.show()
         binding.liveGif.load(getDrawable(R.drawable.bubble_live_gif))
-        bubbleConfig?.match?.homeTeam?.homeCountryFlag.doIfNotNullOrBlank {
+        bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotNullOrBlank {
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }
-        bubbleConfig?.match?.awayTeam?.awayCountryFlag.doIfNotNullOrBlank {
+        bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotNullOrBlank {
             bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
         }
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
@@ -167,10 +170,10 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         runCatching {
             binding.awayTeamFlag.show()
             binding.liveGif.hide()
-            bubbleConfig?.match?.homeTeam?.homeCountryFlag.doIfNotNullOrBlank {
+            bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotNullOrBlank {
                 bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
             }
-            bubbleConfig?.match?.awayTeam?.awayCountryFlag.doIfNotNullOrBlank {
+            bubbleConfig?.match?.awayTeam?.awayCountryFlag.ifNotNullOrBlank {
                 bindingUtil.bindRoundImage(binding.awayTeamFlag, it)
             }
             val sampleFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
