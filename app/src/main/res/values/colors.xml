@@ -136,6 +136,9 @@
     <color name="go_to_home_btn_color">#FBDDE8</color>
 
     <color name="cardTitleSecondColor">#6781A1</color>
+    <color name="btnDisableClr">#4029466B</color>
+    <color name="txtDisableClr">#E1E1E1</color>
+
 
 
 </resources>

@@ -32,6 +32,7 @@
             android:text="@string/choose_a_plan"
             android:textColor="@color/cardTitleColor"
             android:textSize="16sp"
+
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +117,6 @@
             android:id="@+id/buyWithRecharge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#FF3988"
             android:fontFamily="@font/roboto_bold"
             android:stateListAnimator="@null"
             android:text="@string/buy_with_recharge"
