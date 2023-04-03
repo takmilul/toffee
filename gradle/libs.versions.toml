@@ -99,7 +99,8 @@ butterknife-version = "10.2.3"
 guava-version = "31.0.1-android"
 
 # Testing
-junit-version = "1.1.5"
+junit-version = "4.13.2"
+junit-ktx-version = "1.1.5"
 test-core-version = "1.5.0"
 espresso-version = "3.5.1"
 mockk-version = "1.12.4"
@@ -266,7 +267,7 @@ medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", ver
 
 # Junit
 junit-core = { group = "junit", name = "junit", version.ref = "junit-version" }
-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-version" }
+junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-ktx-version" }
 
 # Espresso
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-version" }
