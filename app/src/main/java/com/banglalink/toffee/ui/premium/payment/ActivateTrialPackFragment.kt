@@ -32,7 +32,10 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
+
+        if (viewModel.selectedDataPackOption.value?.packDuration==1)  binding.trialValidity.text = String.format(getString(R.string.single_day_trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
+        else binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
+
         binding.enableNow.safeClick({
             progressDialog.show()
             activateTrialPack()

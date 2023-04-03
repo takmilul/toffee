@@ -548,6 +548,7 @@
     <string name="insufficient_balance">Insufficient Balance!</string>
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>
+    <string name="single_day_trial_validity_text">%s day validity</string>
     <string name="insufficient_balance_subtitle">Your Banglalink account does not have sufficient balance. Please buy the pack with bKash.</string>
     <string name="start_watching_text">Tap any of the content to start watching</string>
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
