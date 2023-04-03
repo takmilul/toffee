@@ -336,11 +336,9 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                     val isTouched =
                         binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
-                        val uriUrl: Uri =
-                            Uri.parse("https://toffeelive.com?routing=internal&page=featured_partner&id=10")
+                        val uriUrl: Uri = Uri.parse(mPref.ramadanBubbleDeepLink)
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                        intent.setPackage("com.android.chrome")
                         startActivity(intent)
                     }
                 } catch (e: Exception) {

@@ -699,7 +699,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isBubbleActive: Boolean
         get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
-    
+
+    var ramadanBubbleDeepLink: String?
+        get() = pref.getString(PREF_RAMADAN_BUBBLE_DEEP_LINK, null)
+        set(value) = pref.edit { putString(PREF_RAMADAN_BUBBLE_DEEP_LINK, value) }
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -796,6 +800,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isCircuitBreakerActive = it.isCircuitBreakerActive
             bubbleType = it.bubbleType
             isBubbleActive = it.isBubbleActive == 1
+            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink?.isNotNullBlank {
+                "https://toffeelive.com?routing=internal&page=featured_partner&id=10"
+            }
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -935,6 +942,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
         private const val PREF_IS_BUBBLE_TYPE = "pref_is_bubble_type"
         private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
+        private const val PREF_RAMADAN_BUBBLE_DEEP_LINK = "pref_ramadan_bubble_deep_link"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

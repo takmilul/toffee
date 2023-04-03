@@ -175,6 +175,8 @@ class CustomerInfoLogin(
     var isBubbleActive: Int = -1,
     @SerializedName("bubbleType")
     var bubbleType: Int = -1,
+    @SerializedName("bubbleDeepLink")
+    val ramadanBubbleDeepLink: String? = null
 ) : BodyResponse(), Parcelable
 
 @Entity
