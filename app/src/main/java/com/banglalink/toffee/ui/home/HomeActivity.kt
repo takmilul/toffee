@@ -365,10 +365,10 @@ class HomeActivity : PlayerPageActivity(),
             if (it) {
                 startBubbleService()
             } else if(mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
-                stopService(bubbleFifaIntent)
+                bubbleFifaIntent?.let { stopService(it) }
             }
             else if(mPref.bubbleType == RAMADAN.value && mPref.isBubbleActive) {
-                stopService(bubbleRamadanIntent)
+                bubbleRamadanIntent?.let { stopService(it) }
             }
         }
         
@@ -487,7 +487,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                startService(bubbleFifaIntent)
+                bubbleFifaIntent?.let { stopService(it) }
             }
         }
     }
@@ -506,7 +506,7 @@ class HomeActivity : PlayerPageActivity(),
                                 if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
                                     displayMissingOverlayPermissionForRamadanDialog()
                                 } else {
-                                    startService(bubbleRamadanIntent)
+                                    bubbleRamadanIntent?.let { startService(it) }
                                 }
                             }
                         }
@@ -559,7 +559,7 @@ class HomeActivity : PlayerPageActivity(),
                 displayMissingOverlayPermissionDialog()
             }
         } else {
-            startService(bubbleFifaIntent)
+            bubbleFifaIntent?.let { startService(it) }
         }
     }
 
@@ -569,7 +569,7 @@ class HomeActivity : PlayerPageActivity(),
                 displayMissingOverlayPermissionDialog()
             }
         } else {
-            startService(bubbleRamadanIntent)
+            bubbleRamadanIntent?.let { startService(it) }
         }
     }
     

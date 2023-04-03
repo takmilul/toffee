@@ -800,7 +800,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             isCircuitBreakerActive = it.isCircuitBreakerActive
             bubbleType = it.bubbleType
             isBubbleActive = it.isBubbleActive == 1
-            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink?.isNotNullBlank {
+            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink?.isNotNullOrBlank {
                 "https://toffeelive.com?routing=internal&page=featured_partner&id=10"
             }
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
