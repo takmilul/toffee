@@ -364,8 +364,10 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.startBubbleService) {
             if (it) {
                 startBubbleService()
-            } else {
+            } else if(mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
                 stopService(bubbleFifaIntent)
+            }
+            else if(mPref.bubbleType == RAMADAN.value && mPref.isBubbleActive) {
                 stopService(bubbleRamadanIntent)
             }
         }

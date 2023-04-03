@@ -143,14 +143,17 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                 Log.i("__ramadan Ifter", endIfterDate.toString())
                 Log.i("__ramadan Sehri", endSehriDate.toString())
                 
-                if (mPref.getSystemTime().time <= endSehriDate.time) {
+                if (mPref.getSystemTime().time <= endSehriDate.time && ramadanSchedule?.isEidStart != 1) {
                     Log.i("__ramadan SehriDate", "")
                     showCountdownSehriTime()
                 } else {
-                    if (mPref.getSystemTime().time <= endIfterDate.time) {
+                    if (mPref.getSystemTime().time <= endIfterDate.time && ramadanSchedule?.isEidStart != 1) {
                         Log.i("__ramadan ifterDate", "")
                         showCountdownIfterTime()
                     }
+                }
+                if (ramadanSchedule?.isEidStart == 1){
+                    setEidMubarakText()
                 }
             }
         }
@@ -327,7 +330,7 @@ class BubbleServiceRamadan : BaseBubbleService(), IBubbleDraggableWindowItemEven
                         binding.bubbleIconView.isInBounds(currentTouchPoint.x, currentTouchPoint.y)
                     if (isTouched) {
                         val uriUrl: Uri =
-                            Uri.parse(bubbleConfig?.adForwardUrl?.ifBlank { "https://toffeelive.com?routing=internal&page=home" })
+                            Uri.parse("https://toffeelive.com?routing=internal&page=featured_partner&id=10")
                         val intent = Intent(Intent.ACTION_VIEW, uriUrl)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //                        intent.setPackage("com.android.chrome")
