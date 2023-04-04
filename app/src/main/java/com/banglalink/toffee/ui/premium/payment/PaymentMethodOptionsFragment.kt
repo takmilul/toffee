@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,13 +62,31 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
                         trialDetails.text = String.format(getString(string.extra_for_bl_users_text), extraValidity)
-                    } else if (nonBlTrialPackMethod != null) {
+                       
+                    } else if (nonBlTrialPackMethod != null && mPref.isBanglalinkNumber == "false") {
                         viewModel.selectedDataPackOption.value = nonBlTrialPackMethod
                         trialTitle.text = nonBlTrialPackMethod?.packDetails.toString()
                         trialDetails.text = String.format(getString(string.extra_for_non_bl_users_text), extraValidity)
                         trialDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.trial_extra_text_color))
+
+
+                    }else if (blTrialPackMethod != null){
+                        viewModel.selectedDataPackOption.value = blTrialPackMethod
+                        trialTitle.text = blTrialPackMethod!!.packDetails.toString()
+                        trialDetails.text = String.format(getString(string.extra_for_bl_users_text), extraValidity)
+                        trialCard.isEnabled=false
+                        trialCard.alpha = 0.3f
                     }
-                    
+                    else if (nonBlTrialPackMethod != null){
+                        viewModel.selectedDataPackOption.value = nonBlTrialPackMethod
+                        trialTitle.text = nonBlTrialPackMethod?.packDetails.toString()
+                        trialDetails.text = String.format(getString(string.extra_for_non_bl_users_text), extraValidity)
+                        trialDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.trial_extra_text_color))
+                        trialCard.isEnabled=false
+                        trialCard.alpha = 0.3f
+                    }
+
+
                     var isTrialPackUsed = false
                     mPref.activePremiumPackList.value?.find {
                         it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
