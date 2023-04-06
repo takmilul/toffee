@@ -28,7 +28,6 @@ import com.banglalink.toffee.model.BubbleConfig
         PlayerEventData::class,
         CdnChannelItem::class,
         BubbleConfig::class,
-        BubbleConfig::class,
 //        PremiumPackItem::class
     ],
     version = 14,

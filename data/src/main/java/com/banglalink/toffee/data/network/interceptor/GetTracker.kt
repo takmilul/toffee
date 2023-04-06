@@ -45,7 +45,7 @@ class GetTracker @Inject constructor():IGetMethodTracker {
         "/stingray-contents/${Constants.DEVICE_TYPE}",
         "/playlist-shareable/${Constants.DEVICE_TYPE}",
         "/ugc-search-content-v2/${Constants.DEVICE_TYPE}",
-        "/ramadan-scheduled/${Constants.DEVICE_TYPE}"
+        "/ramadan-scheduled/${Constants.DEVICE_TYPE}",
         "/ugc-search-content-v2/${Constants.DEVICE_TYPE}",
         "/premium-packages",
         "/package-details",
