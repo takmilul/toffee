@@ -559,7 +559,7 @@ class HomeActivity : PlayerPageActivity(),
     private val startForOverlayRamadanPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
             if (mPref.bubbleDialogShowCount < 5) {
-                displayMissingOverlayPermissionDialog()
+                displayMissingOverlayPermissionForRamadanDialog()
             }
         } else {
             bubbleRamadanIntent?.let { startService(it) }
