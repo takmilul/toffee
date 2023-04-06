@@ -62,7 +62,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
                         trialDetails.text = String.format(getString(string.extra_for_bl_users_text), extraValidity)
-                       
+
                     } else if (nonBlTrialPackMethod != null && mPref.isBanglalinkNumber == "false") {
                         viewModel.selectedDataPackOption.value = nonBlTrialPackMethod
                         trialTitle.text = nonBlTrialPackMethod?.packDetails.toString()
@@ -74,7 +74,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
                         trialDetails.text = String.format(getString(string.extra_for_bl_users_text), extraValidity)
-                        trialCard.isEnabled=false
                         trialCard.alpha = 0.3f
                     }
                     else if (nonBlTrialPackMethod != null){
@@ -82,7 +81,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         trialTitle.text = nonBlTrialPackMethod?.packDetails.toString()
                         trialDetails.text = String.format(getString(string.extra_for_non_bl_users_text), extraValidity)
                         trialDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.trial_extra_text_color))
-                        trialCard.isEnabled=false
                         trialCard.alpha = 0.3f
                     }
 
@@ -101,7 +99,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                             requireContext().showToast(getString(string.trial_already_availed_text))
                         } else if (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null) {
                             requireContext().showToast(getString(string.only_for_bl_users))
-                        } else {
+                        }
+                        else if (mPref.isBanglalinkNumber != "false" && blTrialPackMethod == null) {
+                            requireContext().showToast(getString(string.only_for_non_bl_users))
+                        }
+
+                        else {
                             findNavController().navigateTo(R.id.activateTrialPackFragment)
                         }
                     })
