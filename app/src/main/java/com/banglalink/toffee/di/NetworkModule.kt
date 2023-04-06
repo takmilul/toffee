@@ -1,7 +1,6 @@
 package com.banglalink.toffee.di
 
 import android.content.Context
-import coil.disk.DiskCache
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -11,7 +10,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)

@@ -30,7 +30,7 @@ import com.banglalink.toffee.model.BubbleConfig
         BubbleConfig::class,
 //        PremiumPackItem::class
     ],
-    version = 13,
+    version = 14,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {

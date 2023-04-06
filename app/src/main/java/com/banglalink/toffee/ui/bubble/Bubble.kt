@@ -49,14 +49,23 @@ class Bubble(builder: Builder) {
     }
     
     private fun addViewToWindow() {
-        windowManager.addView(removeItem.removeLayout, getDefaultRemoveItemWindowParams())
-        windowManager.addView(draggableItem.view, getDefaultDraggableItemWindowParams())
-        draggableItem.view.makeDraggable()
+        try {
+            windowManager.addView(removeItem.removeLayout, getDefaultRemoveItemWindowParams())
+            windowManager.addView(draggableItem.view, getDefaultDraggableItemWindowParams())
+            draggableItem.view.makeDraggable()
+        }catch (_:Exception){
+        
+        }
+
     }
     
     fun removeViewFromWindow() {
-        windowManager.removeView(draggableItem.view)
-        windowManager.removeView(removeItem.removeLayout)
+        try {
+            windowManager.removeView(draggableItem.view)
+            windowManager.removeView(removeItem.removeLayout)
+        }catch (_:Exception){
+        
+        }
     }
     
     private fun getDefaultDraggableItemWindowParams(): WindowManager.LayoutParams {

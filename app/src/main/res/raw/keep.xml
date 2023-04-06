@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources
     xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/mr_*,@drawable/exo_*,@style/Widget_MediaRouter_*,@style/ExoStyledControls_Button_*,@drawable/m3_selection_control_ripple, @drawable/m3_popupmenu_background_overlay, @drawable/exo_ic_audiotrack"
-    tools:shrinkMode="safe"
-    tools:discard=""/>
+    tools:keep="@drawable/mr_button_dark_static,@drawable/ic_mr_button_connected_30_dark,@drawable/exo_ic_audiotrack,@drawable/exo_styled_controls_speed"
+    tools:shrinkMode="safe" />

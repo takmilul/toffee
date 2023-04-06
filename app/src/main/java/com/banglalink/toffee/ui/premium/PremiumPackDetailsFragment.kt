@@ -166,13 +166,12 @@ class PremiumPackDetailsFragment : BaseFragment() {
 
                     }
 
-                    response.data?.linearChannelList?.doIfNotNullOrEmpty {
-
+                    response.data?.linearChannelList?.ifNotNullOrEmpty {
                         binding.premiumChannelGroup.show()
                         binding.emptyView.hide()
                         viewModel.setLinearContentState(it.toList())
                     }
-                    response.data?.vodChannelList?.doIfNotNullOrEmpty {
+                    response.data?.vodChannelList?.ifNotNullOrEmpty {
                         Log.d("TAG", "observePremiumPackDetail: Four")
                         binding.premiumContentGroup.show()
                         binding.emptyView.hide()

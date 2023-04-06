@@ -83,10 +83,8 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.enums.CategoryType
-import com.banglalink.toffee.enums.CdnType
-import com.banglalink.toffee.enums.SharingType
-import com.banglalink.toffee.enums.UploadStatus
+import com.banglalink.toffee.enums.*
+import com.banglalink.toffee.enums.BubbleType.*
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -102,6 +100,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_S
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
+import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
@@ -167,8 +166,8 @@ class HomeActivity : PlayerPageActivity(),
     private val gson = Gson()
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
-    private var bubbleIntent: Intent? = null
-    private var bubbleV2Intent: Intent? = null
+    private var bubbleFifaIntent: Intent? = null
+    private var bubbleRamadanIntent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
@@ -211,12 +210,13 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
+//        FirebasviewModeleInAppMessaging.getInstance().setMessagesSuppressed(false)
         
-        val isDisableScreenshot =
-            (mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(
-                mPref.phoneNumber
-            )).not()
+        val isDisableScreenshot = (
+            mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) ||
+            mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) ||
+            mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber)
+        ).not()
         
         //disable screen capture
         if (isDisableScreenshot) {
@@ -362,9 +362,11 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.startBubbleService) {
             if (it) {
                 startBubbleService()
-            } else {
-//                stopService(bubbleIntent)
-                stopService(bubbleV2Intent)
+            } else if(mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+                bubbleFifaIntent?.let { stopService(it) }
+            }
+            else if(mPref.bubbleType == RAMADAN.value && mPref.isBubbleActive) {
+                bubbleRamadanIntent?.let { stopService(it) }
             }
         }
         
@@ -406,7 +408,7 @@ class HomeActivity : PlayerPageActivity(),
 //            MobileAds.setRequestConfiguration(configuration)
             MobileAds.initialize(this)
         }
-        
+    
         startBubbleService()
         
         if (mPref.deleteDialogLiveData.value == true) {
@@ -463,25 +465,57 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun startBubbleService() {
-        runCatching {
-//        bubbleIntent = Intent(this, BubbleService::class.java)
-            bubbleV2Intent = Intent(this, BubbleServiceV2::class.java)
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-                if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
-                    if (mPref.bubbleDialogShowCount < 5) {
-                        displayMissingOverlayPermissionDialog()
-                    }
-                } else {
-//                startService(bubbleIntent)
-                    startService(bubbleV2Intent)
-                }
+        if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
+            if (mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+                startFifaBubbleService()
+            } else if (mPref.bubbleType == RAMADAN.value) {
+                startRamadanBubbleService()
             }
         }
     }
     
+    private fun startFifaBubbleService() {
+        runCatching {
+            bubbleFifaIntent = Intent(this, BubbleServiceV2::class.java)
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionDialog()
+            } else {
+                bubbleFifaIntent?.let { stopService(it) }
+            }
+        }
+    }
+    
+    private fun startRamadanBubbleService() {
+        observe(viewModel.ramadanScheduleLiveData) {
+            when(it) {
+                is Success -> {
+                    it.data.ifNotNullOrEmpty { ramadanSchedules ->
+                        ramadanSchedules.find {
+                            Utils.dateToStr(mPref.getSystemTime()) == Utils.dateToStr(Utils.getDate(it.sehriStart))
+                        }?.let {
+                            runCatching {
+                                mPref.ramadanScheduleLiveData.value = ramadanSchedules.toList()
+                                bubbleRamadanIntent = Intent(this, BubbleServiceRamadan::class.java)
+                                if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
+                                    displayMissingOverlayPermissionForRamadanDialog()
+                                } else {
+                                    bubbleRamadanIntent?.let { startService(it) }
+                                }
+                            }
+                        }
+                    }
+                }
+                is Failure -> {
+                    Log.i(TAG, "startRamadanBubbleService: ${it.error.msg}")
+                }
+            }
+        }
+        viewModel.getRamadanScheduleList()
+    }
+    
     private fun observeCircuitBreaker() {
         if (mPref.isCircuitBreakerActive) {
-            mPref.circuitBreakerFirestoreCollectionName?.doIfNotNullOrBlank {
+            mPref.circuitBreakerFirestoreCollectionName?.ifNotNullOrBlank {
                 lifecycleScope.launch {
                     runCatching {
                         val db = Firebase.firestore
@@ -518,8 +552,17 @@ class HomeActivity : PlayerPageActivity(),
                 displayMissingOverlayPermissionDialog()
             }
         } else {
-//            startService(bubbleIntent)
-            startService(bubbleV2Intent)
+            bubbleFifaIntent?.let { startService(it) }
+        }
+    }
+
+    private val startForOverlayRamadanPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (mPref.bubbleDialogShowCount < 5) {
+                displayMissingOverlayPermissionForRamadanDialog()
+            }
+        } else {
+            bubbleRamadanIntent?.let { startService(it) }
         }
     }
     
@@ -528,6 +571,15 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
                 startForOverlayPermission.launch(intent)
+            }
+        }
+    }
+
+    private fun requestOverlayRamadanPermission() {
+        runCatching {
+            if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                startForOverlayRamadanPermission.launch(intent)
             }
         }
     }
@@ -541,6 +593,23 @@ class HomeActivity : PlayerPageActivity(),
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
                 requestOverlayPermission()
+                it?.dismiss()
+            },
+            negativeButtonTitle = "Cancel",
+            negativeButtonListener = {
+                it?.dismiss()
+            }).create().show()
+    }
+    
+    private fun displayMissingOverlayPermissionForRamadanDialog() {
+        mPref.bubbleDialogShowCount++
+        ToffeeAlertDialogBuilderTypeThree(this,
+            title = getString(R.string.missing_overlay_permission_Ramadan_dialog_title),
+            text = getString(R.string.missing_overlay_permission_Ramadan_dialog_message),
+            icon = R.drawable.ic_error_ramadan,
+            positiveButtonTitle = "Allow",
+            positiveButtonListener = {
+                requestOverlayRamadanPermission()
                 it?.dismiss()
             },
             negativeButtonTitle = "Cancel",
@@ -2347,9 +2416,8 @@ class HomeActivity : PlayerPageActivity(),
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         pipChanged(isInPictureInPictureMode)
         if (lifecycle.currentState == Lifecycle.State.CREATED) {
-            if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled && Settings.canDrawOverlays(this)) {
-//                startService(bubbleIntent)
-                startService(bubbleV2Intent)
+            if (Settings.canDrawOverlays(this)) {
+                startBubbleService()
             }
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)

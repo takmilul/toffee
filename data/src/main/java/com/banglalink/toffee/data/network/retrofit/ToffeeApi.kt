@@ -465,6 +465,13 @@ interface ToffeeApi {
         @Body playlistRequest: PlaylistShareableRequest
     ): MyChannelPlaylistVideosResponse
 
+    @POST("/ramadan-scheduled/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
+    suspend fun getRamadanScheduled(
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body bubbleRequest: BubbleRequest
+    ): BubbleResponse
 
     @POST("/data-pack-status/{isBlNumber}/{contentId}/{dbVersion}")
     suspend fun getPremiumStatus(
@@ -473,19 +480,19 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body premiumPackStatusRequest: PremiumPackStatusRequest
     ): PremiumPackStatusResponse
-    
+
     @POST("/premium-packages/{contentId}/{dbVersion}")
     suspend fun getPremiumPackList(
         @Path("contentId") contentId: String,
         @Path("dbVersion") dbVersion: Int,
         @Body premiumPackListRequest: PremiumPackListRequest
     ): PremiumPackListResponse
-    
+
     @POST("/data-pack-purchase")
     suspend fun purchaseDataPack(
         @Body premiumPackListRequest: DataPackPurchaseRequest
     ): PremiumPackStatusResponse
-    
+
     @POST("/package-details/{packageId}/{dbVersion}")
     suspend fun getPremiumPackDetail(
         @Path("packageId") packId: Int,
@@ -500,7 +507,7 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body packPaymentMethodRequest: PackPaymentMethodRequest
     ): PackPaymentMethodResponse
-    
+
     @POST("/recharge-initialized")
     suspend fun getRechargeByBkashUrl(
         @Body rechargeByBkashRequest: RechargeByBkashRequest

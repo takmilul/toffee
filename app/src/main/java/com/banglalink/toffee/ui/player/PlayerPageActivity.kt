@@ -837,7 +837,7 @@ abstract class PlayerPageActivity :
                     .setAdsConfiguration(
                         MediaItem.AdsConfiguration
                             .Builder(Uri.parse(vastTag))
-                            .setAdsId(Random.nextInt())
+                            .setAdsId(System.currentTimeMillis())
                             .build()
                     ).build()
                 currentlyPlayingVastUrl = vastTag!!

@@ -10,25 +10,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.AccountDeleteService
-import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.ApiRoutes
-import com.banglalink.toffee.apiservice.BrowsingScreens
-import com.banglalink.toffee.apiservice.CheckForUpdateService
-import com.banglalink.toffee.apiservice.CredentialService
-import com.banglalink.toffee.apiservice.GetContentFromShareableUrl
-import com.banglalink.toffee.apiservice.GetProfile
-import com.banglalink.toffee.apiservice.GetShareableDramaEpisodesBySeason
-import com.banglalink.toffee.apiservice.LogoutService
-import com.banglalink.toffee.apiservice.MediaCdnSignUrlService
-import com.banglalink.toffee.apiservice.MqttCredentialService
-import com.banglalink.toffee.apiservice.MyChannelGetDetailService
-import com.banglalink.toffee.apiservice.PlaylistShareableService
-import com.banglalink.toffee.apiservice.PremiumPackStatusService
-import com.banglalink.toffee.apiservice.SetFcmToken
-import com.banglalink.toffee.apiservice.SubscribeChannelService
-import com.banglalink.toffee.apiservice.UpdateFavorite
-import com.banglalink.toffee.apiservice.VastTagServiceV3
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -49,21 +31,8 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.SimpleHttpClient
 import com.banglalink.toffee.extension.isTestEnvironment
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.AccountDeleteBean
-import com.banglalink.toffee.model.ActivePack
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.DramaSeriesContentBean
-import com.banglalink.toffee.model.FavoriteBean
-import com.banglalink.toffee.model.LogoutBean
-import com.banglalink.toffee.model.MyChannelDetail
-import com.banglalink.toffee.model.MyChannelDetailBean
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.MyChannelPlaylistVideosBean
-import com.banglalink.toffee.model.MyChannelSubscribeBean
-import com.banglalink.toffee.model.ReportInfo
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.ShareableData
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.DownloadReactionStatusDb
@@ -130,6 +99,7 @@ class HomeViewModel @Inject constructor(
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
+    private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService
 ) : ViewModel() {
 
@@ -158,6 +128,7 @@ class HomeViewModel @Inject constructor(
     val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
+    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
@@ -355,7 +326,7 @@ class HomeViewModel @Inject constructor(
             activePackListLiveData.value = response
         }
     }
-    
+
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { subscribeChannelApiService.execute(subscriptionInfo, status) }
@@ -484,6 +455,12 @@ class HomeViewModel @Inject constructor(
     fun getCredential() {
         viewModelScope.launch {
             credentialService.execute()
+        }
+    }
+    fun getRamadanScheduleList() {
+        viewModelScope.launch {
+            val response = resultFromResponse {  getBubbleService.loadData(0,100) }
+            ramadanScheduleLiveData.postValue(response)
         }
     }
 }
