@@ -169,7 +169,8 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                 val isLoading = it.source.refresh is Loading || !isInitialized
                 val isEmpty = list.size <= 0 && !it.source.refresh.endOfPaginationReached
                 binding.progressBar.isVisible = isLoading && isEmpty
-                binding.emptyView.isVisible = !isLoading && isEmpty
+                val emptyTextView = view?.findViewById<TextView>(R.id.empty_view_text_no_item_found)
+                emptyTextView?.isVisible = !isLoading && isEmpty
                 isInitialized = true
                 if(list.size > 0) {
                     homeViewModel.addToPlayListMutableLiveData.postValue(
