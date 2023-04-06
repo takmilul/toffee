@@ -5,7 +5,9 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
 
@@ -36,7 +38,13 @@ fun String.toMD5(): String {
     }
 }
 
-inline fun String?.doIfNotNullOrBlank(function: ((it: String) -> Unit)) {
+inline fun String?.ifNullOrBlank(function: (() -> String?)): String? {
+    return if (this.isNullOrBlank()) {
+        function()
+    } else this
+}
+
+inline fun String?.ifNotNullOrBlank(function: ((it: String) -> Unit)) {
     if (!this.isNullOrBlank() && !this.trim().equals("null", true)) {
         function(this)
     }
@@ -48,7 +56,7 @@ inline fun String?.isNotNullOrBlank(function: ((it: String) -> String?)): String
     } else null
 }
 
-inline fun <T: Any> Collection<T>?.doIfNotNullOrEmpty(function: (Collection<T>) -> Unit) {
+inline fun <T: Any> Collection<T>?.ifNotNullOrEmpty(function: (Collection<T>) -> Unit) {
     if (!this.isNullOrEmpty()) {
         function(this)
     }

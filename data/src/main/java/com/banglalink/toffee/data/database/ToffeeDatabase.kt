@@ -28,9 +28,10 @@ import com.banglalink.toffee.model.BubbleConfig
         PlayerEventData::class,
         CdnChannelItem::class,
         BubbleConfig::class,
+        BubbleConfig::class,
 //        PremiumPackItem::class
     ],
-    version = 13,
+    version = 14,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {

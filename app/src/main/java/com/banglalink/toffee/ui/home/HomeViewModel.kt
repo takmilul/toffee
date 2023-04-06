@@ -130,6 +130,7 @@ class HomeViewModel @Inject constructor(
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
+    private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService
 ) : ViewModel() {
 
@@ -158,7 +159,8 @@ class HomeViewModel @Inject constructor(
     val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
-    
+    val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
+
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
             getProfile()
@@ -355,7 +357,7 @@ class HomeViewModel @Inject constructor(
             activePackListLiveData.value = response
         }
     }
-    
+
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
             val response = resultFromResponse { subscribeChannelApiService.execute(subscriptionInfo, status) }
@@ -484,6 +486,12 @@ class HomeViewModel @Inject constructor(
     fun getCredential() {
         viewModelScope.launch {
             credentialService.execute()
+        }
+    }
+    fun getRamadanScheduleList() {
+        viewModelScope.launch {
+            val response = resultFromResponse {  getBubbleService.loadData(0,100) }
+            ramadanScheduleLiveData.postValue(response)
         }
     }
 }

@@ -1,10 +1,10 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.library.get().pluginId)
-    id(libs.plugins.kotlin.parcelize.get().pluginId)
-    id(libs.plugins.kotlin.kapt.get().pluginId)
-    id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
     id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
+    id(libs.plugins.kotlin.parcelize.get().pluginId)
+    id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
+    id(libs.plugins.kotlin.kapt.get().pluginId)
 }
 
 android {
