@@ -202,7 +202,7 @@ Day 21 - AUS vs IND" />
                 tools:text="21K" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+
         <View
             android:id="@+id/view"
             android:layout_width="0.1dp"
@@ -211,7 +211,7 @@ Day 21 - AUS vs IND" />
             app:layout_constraintBottom_toBottomOf="@id/viewCount"
             app:layout_constraintStart_toEndOf="@id/reactionCountLayout"
             app:layout_constraintEnd_toStartOf="@id/guideline" />
-        
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
@@ -465,7 +465,7 @@ Day 21 - AUS vs IND" />
             app:layout_constraintBottom_toBottomOf="@id/autoPlaySwitch"
             app:layout_constraintEnd_toEndOf="@id/subscribe_button"
             app:layout_constraintTop_toTopOf="@id/autoPlaySwitch" />
-        
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/autoplay_switch_group"
             android:layout_width="wrap_content"
@@ -473,6 +473,21 @@ Day 21 - AUS vs IND" />
             android:visibility="gone"
             tools:visibility="visible"
             app:constraint_referenced_ids="autoPlayText,autoPlaySwitch" />
+
+        <TextView
+            android:id="@+id/empty_view_text_no_item_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="50dp"
+            android:text="@string/no_item_found_text"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/playlistShareButton"
+            app:layout_constraintStart_toStartOf="@+id/relativeStatus"
+            app:layout_constraintTop_toBottomOf="@+id/relativeStatus"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
