@@ -41,8 +41,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.usecase.AdvertisingIdLogData
-import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.today
@@ -62,11 +61,11 @@ import javax.net.ssl.SSLContext
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : BaseFragment() {
-    
     private var isDynamicSplashActive: Boolean = false
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
+    @Inject lateinit var countDownloadService: DownloadService
     @Inject @ApplicationContext lateinit var appContext: Context
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<SplashViewModel>()
@@ -92,7 +91,26 @@ class SplashScreenFragment : BaseFragment() {
                 }
             }
         }
-        
+        observe(mPref.viewCountDbUrlLiveData) {
+            if (it.isNotEmpty()) {
+                countDownloadService.populateViewCountDb(it)
+            }
+        }
+        observe(mPref.reactionStatusDbUrlLiveData) {
+            if (it.isNotEmpty()) {
+                countDownloadService.populateReactionStatusDb(it)
+            }
+        }
+        observe(mPref.subscriberStatusDbUrlLiveData) {
+            if (it.isNotEmpty()) {
+                countDownloadService.populateSubscriptionCountDb(it)
+            }
+        }
+        observe(mPref.shareCountDbUrlLiveData) {
+            if (it.isNotEmpty()) {
+                countDownloadService.populateShareCountDb(it)
+            }
+        }
         sendAdIdLog()
         detectTlsVersion()
         observeHeaderEnrichment()

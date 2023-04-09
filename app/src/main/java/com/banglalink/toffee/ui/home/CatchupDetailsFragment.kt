@@ -50,13 +50,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     @Inject lateinit var localSync: LocalSync
-    private lateinit var mAdapter: ConcatAdapter
+    private var mAdapter: ConcatAdapter? = null
     @Inject lateinit var bindingUtil: BindingUtil
-    private lateinit var currentItem: ChannelInfo
-    private var _binding: FragmentCatchupBinding ? = null
+    private var currentItem: ChannelInfo? = null
+    private var _binding: FragmentCatchupBinding? = null
     private val binding get() = _binding!!
-    private lateinit var headerAdapter: ChannelHeaderAdapter
-    private lateinit var detailsAdapter: CatchUpDetailsAdapter
+    private var headerAdapter: ChannelHeaderAdapter? = null
+    private var detailsAdapter: CatchUpDetailsAdapter? = null
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
@@ -86,7 +86,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.progressBar.load(R.drawable.content_loader)
         lifecycleScope.launch {
-            localSync.syncData(currentItem)
+            currentItem?.let { localSync.syncData(it) }
             detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
                 override fun onItemClicked(item: ChannelInfo) {
                     homeViewModel.playContentLiveData.postValue(item)
@@ -108,7 +108,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             observe(homeViewModel.vastTagLiveData) {
                 initAdapter()
                 
-                if (currentItem.channel_owner_id == mPref.customerId) {
+                if (currentItem?.channel_owner_id == mPref.customerId) {
                     observeMyChannelVideos()
                 } else {
                     observeList()
@@ -122,7 +122,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         }
     
         observe(mPref.isShowMoreToggled) {
-            headerAdapter.toggleShowMore(it)
+            headerAdapter?.toggleShowMore(it)
         }
     }
 
@@ -152,7 +152,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
             mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
         } else {
-            mAdapter = ConcatAdapter(headerAdapter, detailsAdapter.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter.retry()}))
+            mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
         }
         with(binding.listview) {
             layoutManager = LinearLayoutManager(context)
@@ -164,17 +164,17 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         var isInitialized = false
         
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            detailsAdapter.loadStateFlow.collect {
-                val list = detailsAdapter.snapshot()
+            detailsAdapter?.loadStateFlow?.collect {
+                val list = detailsAdapter?.snapshot()
                 val isLoading = it.source.refresh is Loading || !isInitialized
-                val isEmpty = list.size <= 0 && !it.source.refresh.endOfPaginationReached
+                val isEmpty = (list?.size ?: 0) <= 0 && !it.source.refresh.endOfPaginationReached
                 binding.progressBar.isVisible = isLoading && isEmpty
                 val emptyTextView = view?.findViewById<TextView>(R.id.empty_view_text_no_item_found)
                 emptyTextView?.isVisible = !isLoading && isEmpty
                 isInitialized = true
-                if(list.size > 0) {
+                if(currentItem != null && (list?.size ?: 0) > 0) {
                     homeViewModel.addToPlayListMutableLiveData.postValue(
-                        AddToPlaylistData(-1, listOf(currentItem, list.items[0]))
+                        AddToPlaylistData(-1, listOf(currentItem!!, list!!.items[0]))
                     )
                 }
             }
@@ -183,17 +183,21 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
 
     private fun observeMyChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            myChannelVideosViewModel.getMyChannelVideos(currentItem.channel_owner_id).collectLatest {
-                detailsAdapter.submitData(it.filter { channelInfo -> channelInfo.id != currentItem.id && !channelInfo.isExpired })
+            currentItem?.channel_owner_id?.let {
+                myChannelVideosViewModel.getMyChannelVideos(it).collectLatest {
+                    detailsAdapter?.submitData(it.filter { channelInfo -> channelInfo.id != currentItem?.id && !channelInfo.isExpired })
+                }
             }
         }
     }
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, currentItem.categoryId, currentItem.subCategoryId)
-            viewModel.loadRelativeContent(catchupParams).collectLatest {
-                detailsAdapter.submitData(it.filter { !it.isExpired })
+            currentItem?.let {
+                val catchupParams = CatchupParams(it.id, it.video_tags, it.categoryId, it.subCategoryId)
+                viewModel.loadRelativeContent(catchupParams).collectLatest {
+                    detailsAdapter?.submitData(it.filter { !it.isExpired })
+                }
             }
         }
     }
@@ -202,11 +206,11 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    currentItem.apply {
+                    currentItem?.apply {
                         isSubscribed = response.data.isSubscribed
                         subscriberCount = response.data.subscriberCount
                     }
-                    headerAdapter.notifyDataSetChanged()
+                    headerAdapter?.notifyDataSetChanged()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

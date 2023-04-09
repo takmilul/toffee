@@ -11,16 +11,17 @@ import androidx.paging.LoadState
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentEditorsChoiceBinding
 import com.banglalink.toffee.enums.PageType
-import com.banglalink.toffee.extension.showLoadingAnimation
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     
+    private var listJob: Job? = null
     private lateinit var mAdapter: EditorsChoiceListAdapter
     private var _binding: FragmentEditorsChoiceBinding?=null
     private val binding get() = _binding!!
@@ -56,16 +57,18 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
             binding.placeholder.isVisible = true
             adapter = mAdapter
         }
-        
+        observe(mPref.isViewCountDbUpdatedLiveData) {
+            observeList()
+        }
         observeList()
     }
     
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        listJob?.cancel()
+        listJob = viewLifecycleOwner.lifecycleScope.launch {
             val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
                 landingPageViewModel.loadLandingEditorsChoiceContent()
-            }
-            else {
+            } else {
                 landingPageViewModel.loadEditorsChoiceContent()
             }
             content.collectLatest { 

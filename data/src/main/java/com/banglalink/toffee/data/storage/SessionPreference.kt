@@ -26,6 +26,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
     val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
     val shareCountDbUrlLiveData = SingleLiveEvent<String>()
+    val isViewCountDbUpdatedLiveData = MutableLiveData<Boolean>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val splashConfigLiveData = MutableLiveData<List<DecorationData>?>()

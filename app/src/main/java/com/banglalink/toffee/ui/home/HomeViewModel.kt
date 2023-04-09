@@ -64,11 +64,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dbApi: DbApi,
     private val profileApi: GetProfile,
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
-    private val reactionDao: ReactionDao,
     private val cacheManager: CacheManager,
     private var toffeeConfig: ToffeeConfig,
     private val logoutService: LogoutService,
@@ -78,23 +76,17 @@ class HomeViewModel @Inject constructor(
     private val sendOtpLogEvent: SendOTPLogEvent,
     private val credentialService: CredentialService,
     private val tvChannelRepo: TVChannelRepository,
-    @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
-    private val viewCountRepository: ViewCountRepository,
     private val sendShareCountEvent: SendShareCountEvent,
-    private val shareCountRepository: ShareCountRepository,
     private val sendViewContentEvent: SendViewContentEvent,
     @SimpleHttpClient private val httpClient: OkHttpClient,
-    @AppCoroutineScope private val appScope: CoroutineScope,
     private val checkForUpdateService: CheckForUpdateService,
     private val mqttCredentialService: MqttCredentialService,
     private val sendUserInterestEvent: SendUserInterestEvent,
     private val sendContentReportEvent: SendContentReportEvent,
-    private val reactionCountRepository: ReactionCountRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val subscribeChannelApiService: SubscribeChannelService,
     private val myChannelDetailApiService: MyChannelGetDetailService,
-    private val subscriptionCountRepository: SubscriptionCountRepository,
     private val episodeListApi: GetShareableDramaEpisodesBySeason.AssistedFactory,
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
@@ -181,30 +173,6 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
-        }
-    }
-    
-    fun populateViewCountDb(url: String) {
-        appScope.launch {
-            DownloadViewCountDb(dbApi, viewCountRepository).execute(mContext, url)
-        }
-    }
-    
-    fun populateReactionStatusDb(url: String) {
-        appScope.launch {
-            DownloadReactionStatusDb(dbApi, reactionCountRepository).execute(mContext, url)
-        }
-    }
-    
-    fun populateSubscriptionCountDb(url: String) {
-        appScope.launch {
-            DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository).execute(mContext, url)
-        }
-    }
-    
-    fun populateShareCountDb(url: String) {
-        appScope.launch {
-            DownloadShareCountDb(dbApi, shareCountRepository).execute(mContext, url)
         }
     }
     

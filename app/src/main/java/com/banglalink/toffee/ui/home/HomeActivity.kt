@@ -286,26 +286,6 @@ class HomeActivity : PlayerPageActivity(),
                 reloadChannel()
             }
         }
-        observe(mPref.viewCountDbUrlLiveData) {
-            if (it.isNotEmpty()) {
-                viewModel.populateViewCountDb(it)
-            }
-        }
-        observe(mPref.reactionStatusDbUrlLiveData) {
-            if (it.isNotEmpty()) {
-                viewModel.populateReactionStatusDb(it)
-            }
-        }
-        observe(mPref.subscriberStatusDbUrlLiveData) {
-            if (it.isNotEmpty()) {
-                viewModel.populateSubscriptionCountDb(it)
-            }
-        }
-        observe(mPref.shareCountDbUrlLiveData) {
-            if (it.isNotEmpty()) {
-                viewModel.populateShareCountDb(it)
-            }
-        }
         observe(mPref.forceLogoutUserLiveData) {
             if (it) {
                 mPref.clear()
@@ -679,48 +659,50 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun initMqtt() {
-        if (mPref.isVerifiedUser && mPref.mqttIsActive && mPref.isMqttRealtimeSyncActive && mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
-            observe(viewModel.mqttCredentialLiveData) {
-                when (it) {
-                    is Success -> {
-                        it.data?.let { data ->
-                            mPref.mqttIsActive = data.mqttIsActive == 1
-                            mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
-                            mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
-                            mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
-                            mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                            
-                            appScope.launch {
-                                val mqttDir = withContext(Dispatchers.IO + Job()) {
-                                    val mqttTag = "MqttConnection"
-                                    var tempDir = getExternalFilesDir(mqttTag)
-                                    if (tempDir == null) {
-                                        tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+        if (mPref.isVerifiedUser && mPref.mqttIsActive && mPref.isMqttRealtimeSyncActive) {
+            if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
+                observe(viewModel.mqttCredentialLiveData) {
+                    when (it) {
+                        is Success -> {
+                            it.data?.let { data ->
+                                mPref.mqttIsActive = data.mqttIsActive == 1
+                                mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
+                                mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
+                                mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
+                                mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
+                        
+                                appScope.launch {
+                                    val mqttDir = withContext(Dispatchers.IO + Job()) {
+                                        val mqttTag = "MqttConnection"
+                                        var tempDir = getExternalFilesDir(mqttTag)
+                                        if (tempDir == null) {
+                                            tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                        }
+                                        tempDir
                                     }
-                                    tempDir
-                                }
-                                if (mPref.mqttIsActive && mqttDir != null) {
-                                    mqttService.initialize()
+                                    if (mPref.mqttIsActive && mqttDir != null) {
+                                        mqttService.initialize()
+                                    }
                                 }
                             }
                         }
-                    }
-                    is Failure -> {
-                        Log.e("MQTT_", "onCreate: ${it.error.msg}")
-                        ToffeeAnalytics.logEvent(
-                            ToffeeEvents.EXCEPTION, bundleOf(
-                                "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
-                                FirebaseParams.BROWSER_SCREEN to "Enter OTP",
-                                "error_code" to it.error.code,
-                                "error_description" to it.error.msg
+                        is Failure -> {
+                            Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                            ToffeeAnalytics.logEvent(
+                                ToffeeEvents.EXCEPTION, bundleOf(
+                                    "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
+                                    FirebaseParams.BROWSER_SCREEN to "Enter OTP",
+                                    "error_code" to it.error.code,
+                                    "error_description" to it.error.msg
+                                )
                             )
-                        )
+                        }
                     }
                 }
+                viewModel.getMqttCredential()
+            } else {
+                mqttService.initialize()
             }
-            viewModel.getMqttCredential()
-        } else {
-            mqttService.initialize()
         }
     }
     
