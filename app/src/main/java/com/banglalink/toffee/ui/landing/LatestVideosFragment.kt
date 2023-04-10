@@ -81,13 +81,13 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         loadStateFlow()
         observe(homeViewModel.vastTagLiveData) {
             initAdapter()
-            observe(mPref.isViewCountDbUpdatedLiveData) {
-                observeLatestVideosList(category?.id?.toInt() ?: 0)
-            }
             observeLatestVideosList(category?.id?.toInt() ?: 0)
             if (mPref.nativeAdSettings.value == null) {
                 homeViewModel.getVastTagV3(false)
             }
+        }
+        observe(mPref.isViewCountDbUpdatedLiveData) {
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
         }
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()

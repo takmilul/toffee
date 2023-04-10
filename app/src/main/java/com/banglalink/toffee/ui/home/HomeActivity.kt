@@ -200,6 +200,7 @@ class HomeActivity : PlayerPageActivity(),
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
     
     companion object {
+        const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
@@ -886,7 +887,7 @@ class HomeActivity : PlayerPageActivity(),
     var bottomNavBarHideState = false
     
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
-        if (binding.draggableView.isMaximized()) {
+        if (binding.draggableView.isMaximized() || controller.currentDestination?.id == R.id.editUploadInfoFragment) {
             minimizePlayer()
         }
         if (visibleDestinationId == R.id.htmlPageViewDialogInApp && isPlayerVisible()) {

@@ -75,11 +75,6 @@ class NewUploadMethodFragment : DialogFragment() {
         return alertDialog!!
     }
     
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-    
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
@@ -213,6 +208,11 @@ class NewUploadMethodFragment : DialogFragment() {
         findNavController().popBackStack().let {
             findNavController().navigate(R.id.editUploadInfoFragment, Bundle().apply { putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri) })
         }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
     
     override fun onDestroy() {
