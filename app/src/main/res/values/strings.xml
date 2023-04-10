@@ -54,7 +54,7 @@
     <string name="vod">Videos</string>
     <string name="latest_video">Feed</string>
     <string name="terms_of_use">Terms of Use</string>
-    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="terms_and_conditions">Terms &amp; Conditions </string>
     <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="phone_number">Phone Number</string>
@@ -337,6 +337,7 @@
     <string name="watch_only_when_wifi_available_text">Watch only when Wifi is available</string>
     <string name="play_on_wifi_only">Play on WIFI only</string>
     <string name="fifa_bubble_text">FIFA World Cup Bubble</string>
+    <string name="ramadan_bubble_text">Interactive Bubble</string>
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
@@ -475,7 +476,9 @@
     <string name="show_button_text">Show Button</string>
     <string name="remove_button_text">Remove Button</string>
     <string name="missing_overlay_permission_dialog_title">New Football Feature</string>
+    <string name="missing_overlay_permission_Ramadan_dialog_title">Ramadan Bubble</string>
     <string name="missing_overlay_permission_dialog_message"><![CDATA[To see countdown, live scores, and match schedules during FIFA World Cup Qatar 2022&trade;, please allow the<b> - Display Over Other Apps</b> permission now.]]></string>
+    <string name="missing_overlay_permission_Ramadan_dialog_message"><![CDATA[To get upcoming Sehri and Iftar timings, please allow the DISPLAY OVER OTHER APPS permission now.]]></string>
     <string name="day">days</string>
     <string name="hour">hrs</string>
     <string name="minute">mins</string>
@@ -538,7 +541,7 @@
     <string name="starting_price">Starting from BDT %s</string>
     <string name="buy_now">BUY NOW</string>
     <string name="buy_bkash">BUY WITH BKASH</string>
-    <string name="payment_consent_text">By clicking next you are agreeing the</string>
+    <string name="payment_consent_text">By clicking next you are agreeing to the</string>
     <string name="buy_with_mobile_balance">BUY WITH MOBILE BALANCE</string>
     <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="choose_a_plan">Choose a Plan</string>
@@ -554,6 +557,7 @@
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>
     <string name="insufficient_balance_subtitle">Insufficient balance in your Banglalink account</string>
+    <string name="single_day_trial_validity_text">%s day validity</string>
     <string name="start_watching_text">Tap any of the content to start watching</string>
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
     <string name="only_for_non_bl_users">Only Non Banglalink subscribers can purchase this</string>

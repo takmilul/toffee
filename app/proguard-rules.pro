@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# proguardFiles setting in build.gradle.kts.
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -108,6 +108,8 @@
 
 -keep class com.google.obf.** { *; }
 -keep interface com.google.obf.** { *; }
+
+-keepattributes InnerClasses -keep class **.R -keep class **.R$* { <fields>; }
 
 -dontwarn com.beloo.widget.chipslayoutmanager.Orientation
 -dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader

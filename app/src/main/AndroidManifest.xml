@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     
     <queries>
         <intent>
@@ -191,6 +192,11 @@
 
         <service
             android:name=".ui.bubble.BubbleServiceV2"
+            android:enabled="true"
+            android:process="com.banglalink.toffee" />
+
+        <service
+            android:name=".ui.bubble.BubbleServiceRamadan"
             android:enabled="true"
             android:process="com.banglalink.toffee" />
 

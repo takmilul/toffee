@@ -1,6 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
+import android.util.*
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -17,11 +18,11 @@ class DownloadSubscriptionCountDb(
     private val subscriptionCountRepository: SubscriptionCountRepository
 ) {
     private val subscriptionCountList = mutableListOf<SubscriptionCount>()
-
+    
     companion object {
         const val TAG = "Subscription_count_db"
     }
-
+    
     suspend fun execute(context: Context, url: String) {
         withContext(Dispatchers.IO) {
             try {
@@ -31,21 +32,23 @@ class DownloadSubscriptionCountDb(
                 }
             }
             catch (e: Exception) {
+                Log.i(DownloadService.TAG, e.message.toString())
                 ToffeeAnalytics.logApiError("", e.message)
             }
         }
     }
-
+    
     private fun processFile(file: File?): Boolean {
         if (file == null || !file.exists()) {
             return false
         }
+        Log.i(DownloadService.TAG, "Processing subscription count file")
         ToffeeAnalytics.logBreadCrumb("Processing subscription count file")
         val fileBytes = Utils.readFileToBytes(file)
         val byteBuffer = ByteBuffer.wrap(fileBytes)
         val checksum = CRC32()
         checksum.update(fileBytes, 0, fileBytes.size)
-
+        
         subscriptionCountList.clear()
         while (byteBuffer.remaining() > 0) {
             val channelId = byteBuffer.int
@@ -54,10 +57,12 @@ class DownloadSubscriptionCountDb(
         }
         return true
     }
-
+    
     private suspend fun updateDb() {
-        ToffeeAnalytics.logBreadCrumb("Updating reaction status db")
+        Log.i(DownloadService.TAG, "Updating subscription count db")
+        ToffeeAnalytics.logBreadCrumb("Updating subscription status db")
         subscriptionCountRepository.insertAll(*subscriptionCountList.toTypedArray())
-        ToffeeAnalytics.logBreadCrumb("Reaction status db updated")
+        Log.i(DownloadService.TAG, "Subscription count db updated")
+        ToffeeAnalytics.logBreadCrumb("Subscription status db updated")
     }
 }

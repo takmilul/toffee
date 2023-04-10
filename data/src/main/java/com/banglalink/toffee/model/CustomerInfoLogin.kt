@@ -170,7 +170,13 @@ data class CustomerInfoLogin(
     @SerializedName("fStoreTblContentBlacklist")
     val fStoreTblContentBlacklist: String? = null,
     @SerializedName("isfireStoreTblContentBlacklist")
-    val isCircuitBreakerActive: Boolean = false,
+    var isCircuitBreakerActive: Boolean = false,
+    @SerializedName("isBubbleActive")
+    var isBubbleActive: Int = -1,
+    @SerializedName("bubbleType")
+    var bubbleType: Int = -1,
+    @SerializedName("bubbleDeepLink")
+    val ramadanBubbleDeepLink: String? = null,
     @SerializedName("premium_packages")
     var activePackList: @RawValue List<ActivePack>? = null,
     @SerializedName("blDataPackTermsAndConditionsUrl")
@@ -213,7 +219,7 @@ data class BubbleConfig(
     @SerializedName("id")
     val id: Long? = null,
     @SerializedName("isBubbleActive")
-    val isBubbleActive : Boolean,
+    val isFifaBubbleActive : Boolean,
     @SerializedName("imageType")
     val imageType : String? = null,
     @SerializedName("adIconUrl")

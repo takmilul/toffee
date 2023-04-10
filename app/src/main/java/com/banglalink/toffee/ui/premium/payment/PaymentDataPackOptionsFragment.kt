@@ -61,11 +61,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             } else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
                 if (!prePaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid Plans"))
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
                     packPaymentMethodList.addAll(prePaid)
                 }
                 if (!postPaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink PostPaid Plans"))
+                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
                     packPaymentMethodList.addAll(postPaid)
                 }
             }
@@ -283,8 +283,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         viewModel.selectedDataPackOption.value = item
         val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
         binding.buyWithRecharge.isEnabled = isRechargeAvailable
-        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2 
-        else R.color.disabled_text_color))
+
+        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2
+        else R.color.btnDisableClr))
+        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.text_color_white
+        else R.color.txtDisableClr))
     }
     
     private fun showPaymentOption() {

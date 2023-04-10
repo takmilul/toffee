@@ -25,7 +25,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.HostUrlOverrideType.*
 import com.banglalink.toffee.enums.NotificationType.*
-import com.banglalink.toffee.extension.doIfNotNullOrBlank
+import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
@@ -162,8 +162,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             BUBBLE_CONFIG.type -> {
                 try {
                     val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
-                    mPref.isBubbleActive = bubbleConfig.isBubbleActive
-                    mPref.startBubbleService.postValue(bubbleConfig.isBubbleActive)
+                    mPref.isBubbleActive = bubbleConfig.isFifaBubbleActive
+                    mPref.startBubbleService.postValue(bubbleConfig.isFifaBubbleActive)
                     if (mPref.isBubbleActive) {
                         mPref.bubbleConfigLiveData.postValue(bubbleConfig)
                     }
@@ -280,7 +280,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     NOTIFICATION_ID to notificationId,
                     ACTION_NAME to if (!hasActionButton) CONTENT_VIEW else { if (isWatchNow) WATCH_NOW else WATCH_LATER }
                 ))
-                playingUrl?.doIfNotNullOrBlank { data = Uri.parse(it) }
+                playingUrl?.ifNotNullOrBlank { data = Uri.parse(it) }
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val requestCode = if (hasActionButton) { if (isWatchNow) 1 else 2 } else 0 // watchNow = 1, watchLater = 2, else = 0

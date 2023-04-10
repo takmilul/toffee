@@ -4,22 +4,25 @@ import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
+import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ApiHeader
 import com.banglalink.toffee.di.ToffeeHeader
+import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+import com.google.gson.Gson
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
@@ -68,16 +71,6 @@ class AuthInterceptor @Inject constructor(
         } catch (ex: Exception) {
             throw AuthInterceptorException(ex.message, ex.cause)
         }
-        if (!response.isSuccessful) {
-            if (response.code == 403) {
-                val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access."
-                return response.newBuilder()
-                    .code(response.code)
-                    .message(msg)
-                    .build()
-            }
-            return response.newBuilder().removeHeader("Pragma").build()
-        }
         
         if (response.cacheResponse != null) {
             Log.i("API_LOG", "FROM CACHE  : ${response.request.url}")
@@ -88,12 +81,31 @@ class AuthInterceptor @Inject constructor(
         
         try {
             val isFromCacheJson = ",\"isFromCache\":${response.cacheResponse != null}"
-            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).let {
+            val responseJsonString = EncryptionUtil.decryptResponse(response.body!!.string()).isNotNullOrBlank {
                 it.replaceRange(it.lastIndex, it.lastIndex, isFromCacheJson)
-            }
+            } ?: ""
             ToffeeAnalytics.logBreadCrumb("response: $responseJsonString")
             val contentType = response.body!!.contentType()
             val body = responseJsonString.toResponseBody(contentType)
+            
+            if (!response.isSuccessful) {
+                return if (response.code == 403) {
+                    val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access."
+                    response.newBuilder()
+                        .code(response.code)
+                        .message(msg)
+                        .build()
+                } else {
+                    val errorBody = Gson().fromJson(responseJsonString, BaseResponse::class.java)
+                    response.newBuilder()
+                        .code(200)
+                        .body(body)
+                        .message(errorBody.errorMsg ?: "Something went wrong. Please try again.")
+                        .removeHeader("Pragma")
+                        .build()
+                }
+            }
+            
             return response.newBuilder().body(body).build()
         } catch (e: Exception) {
             throw AuthEncodeDecodeException(e.message, e.cause)

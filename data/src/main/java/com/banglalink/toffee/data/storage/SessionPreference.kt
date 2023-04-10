@@ -7,16 +7,10 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.extension.doIfNotNullOrEmpty
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
-import com.banglalink.toffee.model.ActivePack
-import com.banglalink.toffee.model.BubbleConfig
-import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.model.DBVersionV2
-import com.banglalink.toffee.model.DecorationData
-import com.banglalink.toffee.model.NativeAdSettings
-import com.banglalink.toffee.model.PlayerOverlayData
-import com.banglalink.toffee.model.VastTagV3
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
@@ -32,6 +26,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
     val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
     val shareCountDbUrlLiveData = SingleLiveEvent<String>()
+    val isViewCountDbUpdatedLiveData = MutableLiveData<Boolean>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val splashConfigLiveData = MutableLiveData<List<DecorationData>?>()
@@ -45,7 +40,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val isWebViewDialogOpened = SingleLiveEvent<Boolean>()
     val isWebViewDialogClosed = SingleLiveEvent<Boolean>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
-    val featuredPartnerIdLiveData = MutableLiveData(0)
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
@@ -59,9 +53,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
-    
+    val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
@@ -223,7 +219,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             ToffeeAnalytics.logException(pe)
         }
         
-        return deviceDate
+        return deviceDate //Utils.getDate("2023-03-23 04:40:00")
     }
     
     fun setDBVersion(dbVersionList: List<DBVersionV2>) {
@@ -259,7 +255,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isBubbleEnabled: Boolean
         get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
         set(value) = pref.edit().putBoolean(PREF_BUBBLE_ENABLED, value).apply()
-    
+
+    var isBubbleRamadanEnabled: Boolean
+        get() = pref.getBoolean(PREF_BUBBLE_ENABLED, true)
+        set(value) = pref.edit().putBoolean(PREF_RAMADAN_BUBBLE_ENABLED, value).apply()
+
     fun isNotificationEnabled(): Boolean {
         return pref.getBoolean(PREF_KEY_NOTIFICATION, true)
     }
@@ -644,9 +644,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_LAST_LOGIN_DATE_TIME, "") ?: ""
         set(value) = pref.edit { putString(PREF_LAST_LOGIN_DATE_TIME, value) }
     
-    var isBubbleActive: Boolean
-        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
-        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
+    var isFifaBubbleActive: Boolean
+        get() = pref.getBoolean(PREF_IS_FIFA_BUBBLE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_FIFA_BUBBLE_ACTIVE, value) }
     
     var bubbleDialogShowCount: Int
         get() = pref.getInt(PREF_BUBBLE_DIALOG_SHOW_COUNT, 0)
@@ -695,6 +695,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isCircuitBreakerActive: Boolean
         get() = pref.getBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_IS_CIRCUIT_BREAKER_ACTIVE, value) }
+
+    var bubbleType: Int
+        get() = pref.getInt(PREF_IS_BUBBLE_TYPE, -1)
+        set(value) = pref.edit { putInt(PREF_IS_BUBBLE_TYPE, value) }
+
+    var isBubbleActive: Boolean
+        get() = pref.getBoolean(PREF_IS_BUBBLE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_BUBBLE_ACTIVE, value) }
+
+    var ramadanBubbleDeepLink: String?
+        get() = pref.getString(PREF_RAMADAN_BUBBLE_DEEP_LINK, null)
+        set(value) = pref.edit { putString(PREF_RAMADAN_BUBBLE_DEEP_LINK, value) }
+
 
     var blDataPackTermsAndConditionsUrl: String
         get() = pref.getString(PREF_BL_DATA_PACK_TERMS_AND_CONDITIONS_URL, "") ?: ""
@@ -780,7 +793,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             if (it.isBanglalinkNumber != null) {
                 isBanglalinkNumber = it.isBanglalinkNumber
             }
-            it.dbVersionList?.doIfNotNullOrEmpty {
+            it.dbVersionList?.ifNotNullOrEmpty {
                 setDBVersion(it.toList())
             }
             latitude = it.lat ?: ""
@@ -847,13 +860,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             retryWaitDuration = it.retryWaitDuration
             videoMinDuration = it.videoMinDuration
             videoMaxDuration = it.videoMaxDuration
-            isBubbleActive = it.bubbleConfig?.isBubbleActive ?: false
+            isFifaBubbleActive = it.bubbleConfig?.isFifaBubbleActive ?: false
             bubbleConfigLiveData.value = it.bubbleConfig
             internalTimeOut = it.internalTimeOut?.takeIf { it >=5 } ?: 60
             externalTimeOut = it.externalTimeout?.takeIf { it >=5 } ?: 60
             circuitBreakerFirestoreCollectionName = it.fStoreTblContentBlacklist
             featuredPartnerTitle = it.featuredPartnerTitle ?: "Featured Partner"
             isCircuitBreakerActive = it.isCircuitBreakerActive
+            bubbleType = it.bubbleType
+            isBubbleActive = it.isBubbleActive == 1
+            ramadanBubbleDeepLink = it.ramadanBubbleDeepLink.ifNullOrBlank {
+                "https://toffeelive.com?routing=internal&page=featured_partner&id=10"
+            }
             activePremiumPackList.value = it.activePackList
             blDataPackTermsAndConditionsUrl = it.blDataPackTermsAndConditionsUrl.toString()
             bkashDataPackTermsAndConditionsUrl = it.bkashDataPackTermsAndConditionsUrl.toString()
@@ -871,7 +889,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
-            
+
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -906,6 +924,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SYSTEM_TIME = "systemTime"
         private const val PREF_WATCH_ONLY_WIFI = "WatchOnlyWifi"
         private const val PREF_BUBBLE_ENABLED = "bubbleEnabled"
+        private const val PREF_RAMADAN_BUBBLE_ENABLED = "bubbleRamadanEnabled"
         private const val PREF_KEY_NOTIFICATION = "pref_key_notification"
         private const val PREF_SESSION_TOKEN_HEADER = "sessionTokenHeader"
         private const val PREF_SHOULD_OVERRIDE_HLS_URL = "shouldOverrideHlsUrl"
@@ -995,7 +1014,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_VIDEO_MIN_DURATION = "pref_video_min_duration"
         private const val PREF_VIDEO_MAX_DURATION = "pref_video_max_duration"
         private const val PREF_LAST_LOGIN_DATE_TIME = "pref_last_login_date_time"
-        private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
+        private const val PREF_IS_FIFA_BUBBLE_ACTIVE = "pref_is_fifa_bubble_active"
         private const val PREF_BUBBLE_DIALOG_SHOW_COUNT = "pref_bubble_dialog_permission_show_count"
         private const val PREF_FEATURED_PARTNER_TITLE = "pref_featured_partner_title"
         private const val PREF_INTERNAL_TIME_OUT = "pref_internal_time_out"
@@ -1008,6 +1027,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_TOP_BAR_END_DATE = "pref_top_bar_end_date"
         private const val PREF_TOP_BAR_TYPE = "pref_top_bar_type"
         private const val PREF_IS_CIRCUIT_BREAKER_ACTIVE = "pref_is_circuit_breaker_active"
+        private const val PREF_IS_BUBBLE_TYPE = "pref_is_bubble_type"
+        private const val PREF_IS_BUBBLE_ACTIVE = "pref_is_bubble_active"
+        private const val PREF_RAMADAN_BUBBLE_DEEP_LINK = "pref_ramadan_bubble_deep_link"
         private const val PREF_BL_DATA_PACK_TERMS_AND_CONDITIONS_URL = "pref_bl_data_pack_terms_and_conditions_url"
         private const val PREF_BKASH_DATA_PACK_TERMS_AND_CONDITIONS_URL = "pref_bkash_data_pack_terms_and_conditions_url"
         private const val PREF_BKASH_API_URL= "pref_bkash_api_url"

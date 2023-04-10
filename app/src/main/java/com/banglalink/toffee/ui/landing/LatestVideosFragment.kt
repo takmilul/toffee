@@ -86,6 +86,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 homeViewModel.getVastTagV3(false)
             }
         }
+        observe(mPref.isViewCountDbUpdatedLiveData) {
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
+        }
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }

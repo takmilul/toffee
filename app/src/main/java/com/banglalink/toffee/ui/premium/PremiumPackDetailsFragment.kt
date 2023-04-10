@@ -78,7 +78,11 @@ class PremiumPackDetailsFragment : BaseFragment() {
         observe(mPref.packDetailsPageRefreshRequired){
             if(it == true){
                 findNavController().navigatePopUpTo(R.id.packDetailsFragment)
-                findNavController().navigateTo(R.id.startWatchingDialog)
+                if (mPref.prePurchaseClickedContent.value == null) {
+                    findNavController().navigateTo(R.id.startWatchingDialog)
+                } else {
+                    mPref.prePurchaseClickedContent.value = null
+                }
             }
         }
     }
@@ -162,13 +166,12 @@ class PremiumPackDetailsFragment : BaseFragment() {
 
                     }
 
-                    response.data?.linearChannelList?.doIfNotNullOrEmpty {
-
+                    response.data?.linearChannelList?.ifNotNullOrEmpty {
                         binding.premiumChannelGroup.show()
                         binding.emptyView.hide()
                         viewModel.setLinearContentState(it.toList())
                     }
-                    response.data?.vodChannelList?.doIfNotNullOrEmpty {
+                    response.data?.vodChannelList?.ifNotNullOrEmpty {
                         Log.d("TAG", "observePremiumPackDetail: Four")
                         binding.premiumContentGroup.show()
                         binding.emptyView.hide()

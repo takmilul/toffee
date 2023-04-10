@@ -21,7 +21,7 @@ abstract class BaseBubbleService : Service() {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var bubbleConfigRepository: BubbleConfigRepository
-    
+
     companion object {
         lateinit var INSTANCE: BaseBubbleService
         var isForceClosed: Boolean = false
