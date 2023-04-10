@@ -39,24 +39,21 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         fromDrawer = arguments?.getBoolean("clickedFromDrawer")
-
-        if (fromDrawer==true){
-
+        
+        if (fromDrawer == true) {
             binding.packListHeader.setText(R.string.premium_pack_list_title)
             requireActivity().title = "Premium Packs"
-
-        }else{
-
+        } else {
             binding.packListHeader.setText(R.string.search_premium_pack_list_title)
             requireActivity().title = "Choose Pack"
         }
-
+    
         binding.progressBar.load(R.drawable.content_loader)
-        onBackPressed()
-        onBackIconClicked()
-
+        handleOnBackPressed()
+        handleOnBackIconClicked()
+        
         val contentId = arguments?.getString("contentId")
         
         mAdapter = PremiumPackListAdapter(this)
@@ -114,7 +111,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
         findNavController().navigateTo(R.id.packDetailsFragment)
     }
     
-    private fun onBackPressed() {
+    private fun handleOnBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
@@ -129,7 +126,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
         })
     }
     
-    private fun onBackIconClicked() {
+    private fun handleOnBackIconClicked() {
         val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationOnClickListener {
             runCatching {
