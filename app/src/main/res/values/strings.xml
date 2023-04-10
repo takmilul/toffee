@@ -506,19 +506,24 @@
     <string name="premium_video_contents_title">Premium video contents</string>
     <string name="pack_status_icon">pack status icon</string>
     //
-    <string name="technical_issue_occured">Technical Issue Occurred!</string>
-    <string name="due_some_technical_issue">Due to some technical issue, your payment was not successful. Please retry.</string>
-    <string name="payment_successful">Payment Successful!</string>
-    <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected.</string>
-    <string name="pack_purchase_failed">Pack Purchase Failed!</string>
-    <string name="this_might_be_insufficient">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
-    <string name="your_pack_purchase_failed">Your pack purchase failed due to a technical error. Please try again.</string>
-    <string name="pack_activation_failed">Pack activation failed!</string>
+    <string name="technical_issue_occured">Plan Activation Failed!</string>
+    <string name="bkash_technical_issue_occured">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
+    <string name="due_some_technical_issue">Due to some technical issue, the plan activation failed. Please retry.</string>
+    <string name="payment_successful">Plan Activation Successful!</string>
+    <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected</string>
+    <string name="pack_purchase_failed_insufficient_balance">Pack Purchase Failed!</string>
+    <string name="pack_purchase_failed_technical_error">Data Plan Purchase Failed!</string>
+    <string name="pack_purchase_failed_wrong_data_plan">Wrong Data Plan Selected!</string>
+    <string name="pack_purchase_failed_wrong_pack">Data Plan Activation Failed!</string>
+    <string name="this_might_be_insufficient">Insufficient balance in your Banglalink account</string>
+    <string name="this_might_be_Technical">Due to some technical issue, the data plan activation failed. Please retry.</string>
+    <string name="this_might_be_wrong_pack">Please check your Banglalink prepaid/postpaid status and select a relevant data plan for you</string>
+    <string name="your_pack_purchase_failed">Data plan confirmation not found. Please contact Banglalink Customer Care</string>
+    <string name="pack_activation_failed">Data Plan Activation Failed!</string>
+    <string name="bkash_activation_failed">bKash Plan Activation Failed!</string>
     <string name="your_pack_expiration_date_could_not">Your pack expiration date could not be set. Please contact Banglalink Customer Care</string>
-
     <string name="your_request_is_under_process">Your Request is Under Process</string>
-    <string name="please_wait_for_confirmation_message">Please wait for confirmation message and try again later.</string>
-
+    <string name="please_wait_for_confirmation_message">Please wait for confirmation message and try again later</string>
     <string name="premium_pack_list_title">Available Premium Packs</string>
     <string name="search_premium_pack_list_title">Purchase any Premium Pack to watch your selected content</string>
     <string name="pack_banner_logo">pack banner logo</string>
@@ -545,10 +550,10 @@
     <string name="for_all_users_text">For all users</string>
     <string name="enable_now">ENABLE NOW</string>
     <string name="trial_pack_page_msg">You are about to active the trial pack.</string>
-    <string name="insufficient_balance">Insufficient Balance!</string>
+    <string name="insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>
-    <string name="insufficient_balance_subtitle">Your Banglalink account does not have sufficient balance. Please buy the pack with bKash.</string>
+    <string name="insufficient_balance_subtitle">Insufficient balance in your Banglalink account</string>
     <string name="start_watching_text">Tap any of the content to start watching</string>
     <string name="only_for_bl_users">Only Banglalink subscribers can purchase this</string>
     <string name="only_for_non_bl_users">Only Non Banglalink subscribers can purchase this</string>

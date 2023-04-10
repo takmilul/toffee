@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,11 +27,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class PaymentStatusDialog : DialogFragment() {
     
     private var title: String? = null
     private var statusCode: Int? = null
+    private var statusTitle: String? = null
     private var statusMessage: String? = null
     private var isHideBackIcon: Boolean = true
     @Inject lateinit var mPref: SessionPreference
@@ -40,7 +44,9 @@ class PaymentStatusDialog : DialogFragment() {
     companion object {
         const val SUCCESS = 200
         const val UN_SUCCESS = 0
-        const val DataPackPurchase_FAILED = 6070
+        const val DataPackPurchaseFailedBalanceInsufficient_ERROR = 6070
+        const val DataPackPurchaseFailedTechnical_ERROR = 6071
+        const val DataPackPurchaseWrongPackSelection_ERROR = 6072
         const val GetRequestStatus_FAILED = 6075
         const val CheckAllDataPack_Status = 6080
         const val GetRequestStatus_REQUESTED = 6085
@@ -48,6 +54,7 @@ class PaymentStatusDialog : DialogFragment() {
         
         const val ARG_STATUS_CODE = "statusCode"
         const val ARG_STATUS_MESSAGE = "statusMessage"
+        const val ARG_STATUS_TITLE = "statusTitle"
         const val ARG_IS_HIDE_BACK_BUTTON = "isHideBackIcon"
     }
     
@@ -62,8 +69,9 @@ class PaymentStatusDialog : DialogFragment() {
         title = "Payment Confirmation"
         isHideBackIcon = arguments?.getBoolean(ARG_IS_HIDE_BACK_BUTTON, false) ?: false
         statusCode = arguments?.getInt(ARG_STATUS_CODE, 0) ?: 0
+        statusTitle = arguments?.getString(ARG_STATUS_TITLE, null)
         statusMessage = arguments?.getString(ARG_STATUS_MESSAGE, null)
-        
+
         binding.titleTv.text = title
         
         observeTopBarBackground()
@@ -81,6 +89,11 @@ class PaymentStatusDialog : DialogFragment() {
         binding.goToHomePageBtn.setOnClickListener {
             requireActivity().launchActivity<HomeActivity>()
         }
+        binding.callBtn.setOnClickListener {
+            val phoneNo = "121"
+            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null))
+            startActivity(intent)
+        }
         binding.tryAgainBtn.setOnClickListener {
             dialog?.dismiss()
         }
@@ -91,9 +104,10 @@ class PaymentStatusDialog : DialogFragment() {
         when (errorCode) {
             UN_SUCCESS -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_warning)
-                binding.titleMsg.text = getString(R.string.technical_issue_occured)
-                binding.subTitleMsg.text = getString(R.string.due_some_technical_issue)
+                binding.titleMsg.text = statusTitle ?: getString(R.string.technical_issue_occured)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.due_some_technical_issue)
                 binding.tryAgainBtn.show()
+                binding.callBtn.hide()
                 binding.goToHomePageBtn.hide()
             }
             SUCCESS -> {
@@ -103,27 +117,47 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.hide()
                 binding.goToHomePageBtn.hide()
                 binding.backIcon.hide()
+                binding.callBtn.hide()
                 dismissDialog()
             }
-            DataPackPurchase_FAILED -> {
+            DataPackPurchaseFailedBalanceInsufficient_ERROR -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.pack_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed_insufficient_balance)
                 binding.subTitleMsg.text = getString(R.string.this_might_be_insufficient)
                 binding.tryAgainBtn.show()
+                binding.callBtn.hide()
+                binding.goToHomePageBtn.hide()
+            }
+            DataPackPurchaseFailedTechnical_ERROR -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed_technical_error)
+                binding.subTitleMsg.text = getString(R.string.this_might_be_Technical)
+                binding.tryAgainBtn.show()
+                binding.callBtn.hide()
+                binding.goToHomePageBtn.hide()
+            }
+            DataPackPurchaseWrongPackSelection_ERROR -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed_wrong_data_plan)
+                binding.subTitleMsg.text = getString(R.string.this_might_be_wrong_pack)
+                binding.tryAgainBtn.show()
+                binding.callBtn.hide()
                 binding.goToHomePageBtn.hide()
             }
             GetRequestStatus_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.pack_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed_wrong_pack)
                 binding.subTitleMsg.text = getString(R.string.your_pack_purchase_failed)
-                binding.tryAgainBtn.show()
-                binding.goToHomePageBtn.hide()
+                binding.tryAgainBtn.hide()
+                binding.callBtn.show()
+                binding.goToHomePageBtn.show()
             }
             CheckAllDataPack_Status -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
                 binding.titleMsg.text = getString(R.string.pack_activation_failed)
                 binding.subTitleMsg.text = getString(R.string.your_pack_expiration_date_could_not)
                 binding.tryAgainBtn.hide()
+                binding.callBtn.show()
                 binding.goToHomePageBtn.show()
             }
             GetRequestStatus_REQUESTED -> {
@@ -131,13 +165,15 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.titleMsg.text = getString(R.string.your_request_is_under_process)
                 binding.subTitleMsg.text = getString(R.string.please_wait_for_confirmation_message)
                 binding.tryAgainBtn.hide()
+                binding.callBtn.hide()
                 binding.goToHomePageBtn.show()
             }
             BKASH_PAYMENT_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.pack_purchase_failed)
-                binding.subTitleMsg.text = statusMessage ?: getString(R.string.this_might_be_insufficient)
+                binding.titleMsg.text = getString(R.string.bkash_activation_failed)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
+                binding.callBtn.hide()
                 binding.goToHomePageBtn.hide()
             }
         }

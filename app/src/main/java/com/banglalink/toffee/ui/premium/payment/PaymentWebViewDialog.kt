@@ -31,6 +31,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_CODE
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_MESSAGE
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_TITLE
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
@@ -345,12 +346,21 @@ class PaymentWebViewDialog : DialogFragment() {
                     is Success -> {
                         if (it.data.status == PaymentStatusDialog.SUCCESS) {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            navigateToStatusDialogPage(bundleOf(ARG_STATUS_CODE to 200))
                         }
-                        navigateToStatusDialogPage(bundleOf(ARG_STATUS_CODE to 200))
+                        else if(it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to 0,
+                                ARG_STATUS_TITLE to "bKash Plan Activation Failed!",
+                                ARG_STATUS_MESSAGE to "Due to some technical issue, the bKash plan activation failed. Please retry."
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
                     }
                     is Failure -> {
                         val args = bundleOf(
                             ARG_STATUS_CODE to 0,
+                            ARG_STATUS_TITLE to "bKash Plan Activation Failed!",
                             ARG_STATUS_MESSAGE to it.error.msg
                         )
                         navigateToStatusDialogPage(args)
@@ -428,6 +438,14 @@ class PaymentWebViewDialog : DialogFragment() {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 200)
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                        PaymentStatusDialog.UN_SUCCESS -> {
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to 0,
+                                ARG_STATUS_TITLE to "Data Plan Purchase Failed!",
+                                ARG_STATUS_MESSAGE to "Due to some technical issue, the data plan activation failed. Please retry."
                             )
                             navigateToStatusDialogPage(args)
                         }
