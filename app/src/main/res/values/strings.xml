@@ -517,10 +517,12 @@
     <string name="pack_purchase_failed_insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_technical_error">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_wrong_data_plan">Wrong Data Plan Selected!</string>
+    <string name="pack_purchase_failed_pack_not_exist">Wrong Data Plan Selected!</string>
     <string name="pack_purchase_failed_wrong_pack">Data Plan Activation Failed!</string>
     <string name="this_might_be_insufficient">Insufficient balance in your Banglalink account</string>
     <string name="this_might_be_Technical">Due to some technical issue, the data plan activation failed. Please retry.</string>
     <string name="this_might_be_wrong_pack">Please check your Banglalink prepaid/postpaid status and select a relevant data plan for you</string>
+    <string name="this_might_be_pack_not_exist">Oops this plan does not exist. Please purchase another plan to access the content</string>
     <string name="your_pack_purchase_failed">Data plan confirmation not found. Please contact Banglalink Customer Care</string>
     <string name="pack_activation_failed">Data Plan Activation Failed!</string>
     <string name="bkash_activation_failed">bKash Plan Activation Failed!</string>

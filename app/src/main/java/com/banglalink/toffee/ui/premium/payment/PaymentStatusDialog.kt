@@ -52,6 +52,7 @@ class PaymentStatusDialog : DialogFragment() {
         const val DataPackPurchaseFailedBalanceInsufficient_ERROR = 6070
         const val DataPackPurchaseFailedTechnical_ERROR = 6071
         const val DataPackPurchaseWrongPackSelection_ERROR = 6072
+        const val DataPackPurchaseFailedPackNotExist_ERROR = 6073
         const val GetRequestStatus_FAILED = 6075
         const val CheckAllDataPack_Status = 6080
         const val GetRequestStatus_REQUESTED = 6085
@@ -148,6 +149,14 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
                 binding.goToHomePageBtn.hide()
+            }
+            DataPackPurchaseFailedPackNotExist_ERROR -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.pack_purchase_failed_pack_not_exist)
+                binding.subTitleMsg.text = getString(R.string.this_might_be_pack_not_exist)
+                binding.tryAgainBtn.hide()
+                binding.callBtn.hide()
+                binding.goToHomePageBtn.show()
             }
             GetRequestStatus_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
