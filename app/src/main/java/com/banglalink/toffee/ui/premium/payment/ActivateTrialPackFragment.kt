@@ -75,11 +75,19 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                        val args = bundleOf(
+                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
+                        )
+                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
-                    val args = bundleOf(
-                        PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                    )
-                    findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                    else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                        val args = bundleOf(
+                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
+                            PaymentStatusDialog.ARG_STATUS_TITLE to "Trial Plan Activation Failed!",
+                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical issue, the trial plan activation failed. Please retry."
+                        )
+                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                    }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)

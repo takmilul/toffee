@@ -143,7 +143,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             )
                             findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
-                        PaymentStatusDialog.DataPackPurchase_FAILED -> {
+                        PaymentStatusDialog.UN_SUCCESS ->{
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to 0,
+                                PaymentStatusDialog.ARG_STATUS_TITLE to "Data Plan Purchase Failed!",
+                                PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical issue, the data plan activation failed. Please retry."
+                            )
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        }
+                        PaymentStatusDialog.DataPackPurchaseFailedBalanceInsufficient_ERROR -> {
                             findNavController().navigateTo(R.id.insufficientBalanceFragment)
                         }
                         else -> {

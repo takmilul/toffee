@@ -146,6 +146,18 @@
                     android:text="Try Again"
                     android:textAllCaps="true"/>
 
+                <Button
+                    android:id="@+id/callBtn"
+                    style="@style/ButtonStyleSolidPink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:paddingHorizontal="80dp"
+                    android:paddingVertical="8dp"
+                    android:text="Call 121"
+                    android:textAllCaps="true"/>
+
 
                 <Button
                     android:id="@+id/goToHomePageBtn"
