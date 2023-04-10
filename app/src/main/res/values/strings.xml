@@ -514,7 +514,7 @@
     <string name="due_some_technical_issue">Due to some technical issue, the plan activation failed. Please retry.</string>
     <string name="payment_successful">Plan Activation Successful!</string>
     <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected</string>
-    <string name="pack_purchase_failed_insufficient_balance">Pack Purchase Failed!</string>
+    <string name="pack_purchase_failed_insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_technical_error">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_wrong_data_plan">Wrong Data Plan Selected!</string>
     <string name="pack_purchase_failed_wrong_pack">Data Plan Activation Failed!</string>
