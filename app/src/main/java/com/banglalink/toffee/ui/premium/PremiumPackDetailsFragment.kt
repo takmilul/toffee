@@ -76,8 +76,12 @@ class PremiumPackDetailsFragment : BaseFragment() {
         }
         
         observe(mPref.packDetailsPageRefreshRequired){
-            if(it == true){
-                findNavController().navigatePopUpTo(R.id.packDetailsFragment)
+            if(it == true) {
+                findNavController().navigatePopUpTo(
+                    resId = R.id.packDetailsFragment,
+                    popUpTo = R.id.premiumPackListFragment,
+                    inclusive = false
+                )
                 if (mPref.prePurchaseClickedContent.value == null) {
                     findNavController().navigateTo(R.id.startWatchingDialog)
                 } else {
