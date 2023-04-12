@@ -84,7 +84,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Trial Plan Activation Failed!",
-                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical issue, the trial plan activation failed. Please retry."
+                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the trial plan activation failed. Please retry."
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
