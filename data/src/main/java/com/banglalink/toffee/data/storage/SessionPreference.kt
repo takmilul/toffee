@@ -165,10 +165,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val netType: String
         get() = Utils.checkWifiOnAndConnected(context.applicationContext)
     
-    var isSubscriptionActive: String
-        get() = "false"
-        set(phoneNumber) {
-            pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
+    var isSubscriptionActive: Boolean
+        get() = pref.getBoolean(PREF_SUBSCRIPTION_ACTIVE, false)
+        set(value) {
+            pref.edit().putBoolean(PREF_SUBSCRIPTION_ACTIVE, value).apply()
         }
     
     var isFeaturePartnerActive: Boolean
@@ -798,7 +798,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
             latitude = it.lat ?: ""
             longitude = it.lon ?: ""
-            isSubscriptionActive = it.isSubscriptionActive ?: "false"
+            isSubscriptionActive = (it.isSubscriptionActive ?: "true") == "true"
             viewCountDbUrl = it.viewCountDbUrl ?: ""
             reactionStatusDbUrl = it.reactionStatusDbUrl ?: ""
             subscriberStatusDbUrl = it.subscriberStatusDbUrl ?: ""
@@ -918,7 +918,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IMAGE_URL = "image_url"
         private const val PREF_WIFI = "WIFI"
         private const val PREF_CELLULAR = "CELLULAR"
-        private const val PREF_SUBSCRIPTION_ACTIVE = "subscription_active"
+        private const val PREF_SUBSCRIPTION_ACTIVE = "is_subscription_active"
         private const val PREF_FEATURE_PARTNER_ACTIVE = "is_feature_partner_active_new"
         private const val PREF_FIREWORK_USER_ID = "firework_user_id"
         private const val PREF_SYSTEM_TIME = "systemTime"

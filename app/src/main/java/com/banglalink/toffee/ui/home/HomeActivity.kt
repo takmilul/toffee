@@ -2022,51 +2022,53 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun initSideNav() {
-        if (mPref.isBanglalinkNumber != "true" || !mPref.showBuyInternetForAndroid) {
-            val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
-            subMenu?.isVisible = false
-        }
-        binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
-        binding.sideNavigation.menu.findItem(R.id.menu_login).isVisible = !mPref.isVerifiedUser
-        binding.sideNavigation.menu.findItem(R.id.menu_logout).isVisible = mPref.isVerifiedUser
-        
-        val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
-        sideNav?.let { themeMenu ->
-            val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            if (cPref.appThemeMode == 0) {
-                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+        with(binding.sideNavigation.menu) {
+            if (mPref.isBanglalinkNumber != "true" || !mPref.showBuyInternetForAndroid) {
+                val subMenu = findItem(R.id.ic_menu_internet_packs)
+                subMenu?.isVisible = false
             }
-            val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
-            var switch: View? = null
-            try {
-                parser.next()
-                parser.nextTag()
-                val attr: AttributeSet = Xml.asAttributeSet(parser)
-                switch = SwitchButton(this, attr)
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-                switch = SwitchMaterial(this)
-            } finally {
-                themeMenu.actionView = switch
-                when (themeMenu.actionView) {
-                    is SwitchButton -> {
-                        (themeMenu.actionView as SwitchButton).let {
-                            val param = LinearLayout.LayoutParams(36.px, 22.px)
-                            param.topMargin = 30
-                            it.layoutParams = param
-                            it.isChecked = isDarkEnabled
-                            it.setOnCheckedChangeListener { _, isChecked ->
-                                heartBeatManager.triggerEventViewingContentStop()
-                                changeAppTheme(isChecked)
+            binding.sideNavigation.getHeaderView(0).findViewById<LinearLayout>(R.id.menu_toffee_premium).isVisible = mPref.isSubscriptionActive
+            findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
+            findItem(R.id.menu_login).isVisible = !mPref.isVerifiedUser
+            findItem(R.id.menu_logout).isVisible = mPref.isVerifiedUser
+            val sideNav = findItem(R.id.menu_change_theme)
+            sideNav?.let { themeMenu ->
+                val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                if (cPref.appThemeMode == 0) {
+                    cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+                }
+                val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
+                var switch: View? = null
+                try {
+                    parser.next()
+                    parser.nextTag()
+                    val attr: AttributeSet = Xml.asAttributeSet(parser)
+                    switch = SwitchButton(this@HomeActivity, attr)
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                    switch = SwitchMaterial(this@HomeActivity)
+                } finally {
+                    themeMenu.actionView = switch
+                    when (themeMenu.actionView) {
+                        is SwitchButton -> {
+                            (themeMenu.actionView as SwitchButton).let {
+                                val param = LinearLayout.LayoutParams(36.px, 22.px)
+                                param.topMargin = 30
+                                it.layoutParams = param
+                                it.isChecked = isDarkEnabled
+                                it.setOnCheckedChangeListener { _, isChecked ->
+                                    heartBeatManager.triggerEventViewingContentStop()
+                                    changeAppTheme(isChecked)
+                                }
                             }
                         }
-                    }
-                    is SwitchMaterial -> {
-                        (themeMenu.actionView as SwitchMaterial).let {
-                            it.isChecked = isDarkEnabled
-                            it.setOnCheckedChangeListener { _, isChecked ->
-                                heartBeatManager.triggerEventViewingContentStop()
-                                changeAppTheme(isChecked)
+                        is SwitchMaterial -> {
+                            (themeMenu.actionView as SwitchMaterial).let {
+                                it.isChecked = isDarkEnabled
+                                it.setOnCheckedChangeListener { _, isChecked ->
+                                    heartBeatManager.triggerEventViewingContentStop()
+                                    changeAppTheme(isChecked)
+                                }
                             }
                         }
                     }

@@ -19,7 +19,6 @@ class ApiLoginService @Inject constructor(
         val response = tryIO { authApi.apiLogin(getApiLoginRequest()) }
         response.customerInfoLogin?.let {
             try {
-                it.activePackList = it.activePackList
                 it.bubbleConfig?.let { bubbleConfigRepository.insert(it) }
             } catch (e: Exception) {
                 Log.i("bubble_", "execute: ${e.message}")
