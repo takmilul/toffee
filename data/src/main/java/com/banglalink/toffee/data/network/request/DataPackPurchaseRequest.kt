@@ -30,6 +30,9 @@ data class DataPackPurchaseRequest(
     val packPrice: Int? = null,
     @SerializedName("pack_duration")
     val packDuration: Int? = null,
+    @SerializedName("is_purchase_call_after_recharge")
+    val purchaseCallAfterRecharge: Boolean? = false,
+
     
     //Only for bKash
     @SerializedName("data_pack_id")

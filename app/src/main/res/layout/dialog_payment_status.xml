@@ -153,9 +153,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
-                    android:paddingHorizontal="80dp"
+                    android:paddingHorizontal="70dp"
                     android:paddingVertical="8dp"
-                    android:text="Call 121"
+                    android:text="  Call 121"
+                    android:drawableLeft="@drawable/callbtn"
                     android:textAllCaps="true"/>
 
 
