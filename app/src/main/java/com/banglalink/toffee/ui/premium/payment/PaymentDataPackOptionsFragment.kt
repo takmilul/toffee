@@ -153,7 +153,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
-                    when (6080) {
+                    when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                             val args = bundleOf(
@@ -174,7 +174,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
                         else -> {
                             val args = bundleOf(
-                                PaymentStatusDialog.ARG_STATUS_CODE to (6080 ?: 0)
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status?: 0)
                             )
                             findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }

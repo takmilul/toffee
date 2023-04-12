@@ -10,15 +10,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogPaymentStatusBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -91,10 +90,11 @@ class PaymentStatusDialog : DialogFragment() {
                 dialog?.dismiss()
             }
         }
-        
-        binding.goToHomePageBtn.setOnClickListener {
-            requireActivity().launchActivity<HomeActivity>()
-        }
+        binding.goToHomePageBtn.safeClick({
+            runCatching {
+                requireActivity().findNavController(R.id.home_nav_host).navigatePopUpTo(R.id.menu_feed)
+            }
+        })
         binding.callBtn.setOnClickListener {
             val phoneNo = "121"
             val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null))
