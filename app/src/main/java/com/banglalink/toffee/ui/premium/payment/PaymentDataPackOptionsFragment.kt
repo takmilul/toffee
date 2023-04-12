@@ -21,19 +21,31 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.usecase.BkashPaymentLogData
 import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
     
     private var sessionToken = ""
     private var paymentName: String? = null
+    private var bKashNumber: String? = null
     private var bKashPaymentId: String? = null
     private lateinit var mAdapter: PaymentDataPackOptionAdapter
     private var _binding: FragmentPaymentDataPackOptionsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-    
+
+    object BKashTestNumbers {
+        const val activeCustomer = "01770618575"
+        const val activeCustomer2 = "01929918378"
+        const val activeCustomer3 = "01770618576"
+        const val activeCustomer4 = "01877722345"
+        const val activeCustomer5 = "01619777282"
+        const val activeCustomer6 = "01619777283"
+        const val insufficientBalance  = "01823074817"
+        const val debitBlock  = "01823074818"
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPaymentDataPackOptionsBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,6 +54,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hidePaymentOption()
+
+        bKashNumber = if(mPref.phoneNumber.startsWith("+")){
+            mPref.phoneNumber.substring(3)
+        } else{
+            mPref.phoneNumber
+        }
         
         paymentName = arguments?.getString("paymentName", "") ?: ""
         viewModel.paymentMethod.value?.let { paymentTypes ->
@@ -179,6 +197,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         requireContext().showToast(response.data.statusMessage)
                         return@observe
                     }
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "bkash-grant-token",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = null,
+                        paymentId = null,
+                        trxId = null,
+                        transactionStatus = null,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = response.data.toString()
+                    ))
                     createBkashPayment()
                 }
                 is Failure -> {
@@ -200,6 +236,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         requireContext().showToast(response.data.statusMessage)
                         return@observe
                     }
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "bkash-create-payment",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = null,
+                        paymentId = response.data.paymentId,
+                        trxId = null,
+                        transactionStatus = null,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = response.data.toString()
+                    ))
                     bKashPaymentId = response.data.paymentId
                     val args = bundleOf(
                         "myTitle" to "Pack Details",
@@ -219,7 +273,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         viewModel.bKashCreatePayment(
             sessionToken, CreatePaymentRequest(
                 mode = "0011",
-                payerReference = "01770618575",
+                payerReference = bKashNumber,
                 callbackURL = mPref.bkashCallbackUrl,
                 merchantAssociationInfo = "MI05MID54RF09123456One",
                 amount = amount,
@@ -242,6 +296,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 requireContext().showToast(getString(R.string.try_again_message))
                                 return@observe
                             }
+                            viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                                id = System.currentTimeMillis().toString() + mPref.customerId,
+                                callingApiName = "rechargeInitialized",
+                                userId = mPref.customerId,
+                                packId = viewModel.selectedPremiumPack.value?.id,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                                loginMsisdn = mPref.phoneNumber,
+                                paymentMsisdn = null,
+                                paymentId = null,
+                                trxId = null,
+                                transactionStatus = null,
+                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                rawResponse = it.data.toString()
+                            ))
                             val args = bundleOf(
                                 "myTitle" to "Pack Details",
                                 "url" to it.data?.bKashWebUrl.toString(),

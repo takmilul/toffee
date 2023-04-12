@@ -33,6 +33,7 @@ import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.AR
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_MESSAGE
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_TITLE
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.usecase.BkashPaymentLogData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.currentDateTime
@@ -258,15 +259,15 @@ class PaymentWebViewDialog : DialogFragment() {
                     transactionId = response.data.transactionId
                     customerMsisdn = response.data.customerMsisdn
                     
-                    if (response.data.transactionStatus != "Completed" && (response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503")) {
-                        progressDialog.dismiss()
-                        val args = bundleOf(
-                            ARG_STATUS_CODE to -1,
-                            ARG_STATUS_MESSAGE to statusMessage
-                        )
-                        navigateToStatusDialogPage(args)
-                        return@observe
-                    }
+//                    if (response.data.transactionStatus != "Completed" && (response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503")) {
+//                        progressDialog.dismiss()
+//                        val args = bundleOf(
+//                            ARG_STATUS_CODE to -1,
+//                            ARG_STATUS_MESSAGE to statusMessage
+//                        )
+//                        navigateToStatusDialogPage(args)
+//                        return@observe
+//                    }
                     queryBkashPayment()
                 }
                 is Failure -> {
@@ -287,6 +288,24 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionId = transactionId,
                         customerMsisdn = customerMsisdn
                     )
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "bkash-query-payment",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = response.data.customerMsisdn,
+                        paymentId = response.data.paymentID,
+                        trxId = response.data.transactionId,
+                        transactionStatus = response.data.transactionStatus,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = response.data.toString()
+                    ))
                     when (response.data.transactionStatus) {
                         "Completed" -> {
                             viewModel.bkashQueryPaymentData.value = queryPaymentResponse
@@ -436,6 +455,24 @@ class PaymentWebViewDialog : DialogFragment() {
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                                id = System.currentTimeMillis().toString() + mPref.customerId,
+                                callingApiName = "dataPackPurchase",
+                                userId = mPref.customerId,
+                                packId = viewModel.selectedPremiumPack.value?.id,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                                loginMsisdn = mPref.phoneNumber,
+                                paymentMsisdn = null,
+                                paymentId = null,
+                                trxId = null,
+                                transactionStatus = null,
+                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                rawResponse = it.data.toString()
+                            ))
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 200)
                             )
