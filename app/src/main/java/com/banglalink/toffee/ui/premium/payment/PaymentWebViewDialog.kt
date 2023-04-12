@@ -65,6 +65,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var isHideBackIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
     private var isBkashBlRecharge: Boolean = false
+    private var purchaseCallAfterRecharge: Boolean = false
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
     private var _binding: DialogHtmlPageViewBinding? = null
@@ -97,6 +98,7 @@ class PaymentWebViewDialog : DialogFragment() {
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon", false) ?: false
         isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: false
+        purchaseCallAfterRecharge = arguments?.getBoolean("isPurchaseCallAfterRecharge", false) ?: true
         
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
@@ -397,6 +399,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     packId = selectedPremiumPack.id,
                     paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
                     bKashDataPackId = selectedDataPack.dataPackId,
+
                     bKashRequest = BkashDataPackRequest(
                         amount = it.amount,
                         createTime = it.paymentCreateTime,
@@ -438,7 +441,8 @@ class PaymentWebViewDialog : DialogFragment() {
                 packCode = selectedDataPack.packCode,
                 packDetails = selectedDataPack.packDetails,
                 packPrice = selectedDataPack.packPrice,
-                packDuration = selectedDataPack.packDuration
+                packDuration = selectedDataPack.packDuration,
+                purchaseCallAfterRecharge=true
             )
             viewModel.purchaseDataPackBlDataPackOptionsWeb(dataPackPurchaseRequest)
         } else {

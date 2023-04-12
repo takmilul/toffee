@@ -39,7 +39,7 @@ data class CustomerInfoLogin(
     @SerializedName("tokenLifeSpan")
     val tokenLifeSpan: Int = 0,
     @SerializedName("isSubscriptionActive")
-    val isSubscriptionActive: String? = "false",
+    val isSubscriptionActive: String? = "true",
     
     @SerializedName("real_db_01_url")
     val viewCountDbUrl: String? = null,
