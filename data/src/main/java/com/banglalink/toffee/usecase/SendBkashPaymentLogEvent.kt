@@ -17,23 +17,19 @@ class SendBkashPaymentLogEvent @Inject constructor() {
 
 data class BkashPaymentLogData(
     @SerializedName("id")
-    val id : String? = null,
+    val id : Long = 0,
     @SerializedName("calling_api_name")
     val callingApiName : String? = null,
-    @SerializedName("user_id")
-    val userId : Int? = null,
     @SerializedName("pack_id")
-    val packId : Int? = null,
+    val packId : Int = 0,
     @SerializedName("pack_title")
     val packTitle : String? = null,
     @SerializedName("data_pack_id")
-    val dataPackId : Int? = null,
+    val dataPackId : Int = 0,
     @SerializedName("data_pack_details")
     val dataPackDetails : String? = null,
     @SerializedName("payment_method_id")
-    val paymentMethodId : String? = null,
-    @SerializedName("login_msisdn")
-    val loginMsisdn : String? = null,
+    val paymentMethodId : Int = 0,
     @SerializedName("payment_msisdn")
     val paymentMsisdn : String? = null,
     @SerializedName("payment_id")
@@ -47,5 +43,9 @@ data class BkashPaymentLogData(
     @SerializedName("merchant_invoice_number")
     val merchantInvoiceNumber : String? = null,
     @SerializedName("raw_response")
-    val rawResponse : String? = null
-    ) : PubSubBaseRequest()
+    val rawResponse : String? = null,
+    @SerializedName("status_code")
+    val statusCode : String? = null,
+    @SerializedName("status_message")
+    val statusMessage : String? = null,
+) : PubSubBaseRequest()
