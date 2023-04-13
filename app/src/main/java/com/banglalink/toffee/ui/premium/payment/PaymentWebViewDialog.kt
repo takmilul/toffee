@@ -338,6 +338,24 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "bkash-query-payment",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = null,
+                        paymentId = null,
+                        trxId = null,
+                        transactionStatus = null,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = response.error.toString()
+                    ))
                     progressDialog.dismiss()
                     val args = bundleOf(
                         ARG_STATUS_CODE to -1,
@@ -456,37 +474,29 @@ class PaymentWebViewDialog : DialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "dataPackPurchase",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = null,
+                        paymentId = null,
+                        trxId = null,
+                        transactionStatus = null,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = it.data.toString()
+                    ))
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
-                            viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
-                                id = System.currentTimeMillis().toString() + mPref.customerId,
-                                callingApiName = "dataPackPurchase",
-                                userId = mPref.customerId,
-                                packId = viewModel.selectedPremiumPack.value?.id,
-                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
-                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
-                                loginMsisdn = mPref.phoneNumber,
-                                paymentMsisdn = null,
-                                paymentId = null,
-                                trxId = null,
-                                transactionStatus = null,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                rawResponse = it.data.toString()
-                            ))
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 200)
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        PaymentStatusDialog.UN_SUCCESS -> {
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to 0,
-                                ARG_STATUS_TITLE to "Data Plan Purchase Failed!",
-                                ARG_STATUS_MESSAGE to "Due to some technical issue, the data plan activation failed. Please retry."
                             )
                             navigateToStatusDialogPage(args)
                         }
@@ -499,6 +509,24 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
+                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        id = System.currentTimeMillis().toString() + mPref.customerId,
+                        callingApiName = "dataPackPurchase",
+                        userId = mPref.customerId,
+                        packId = viewModel.selectedPremiumPack.value?.id,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId.toString(),
+                        loginMsisdn = mPref.phoneNumber,
+                        paymentMsisdn = null,
+                        paymentId = null,
+                        trxId = null,
+                        transactionStatus = null,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = it.error.toString()
+                    ))
                     requireContext().showToast(it.error.msg)
                 }
             }
