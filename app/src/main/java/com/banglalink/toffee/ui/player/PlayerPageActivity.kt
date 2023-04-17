@@ -824,7 +824,7 @@ abstract class PlayerPageActivity :
         }
         
         isAdRunning = false
-        if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
+        if (!isReload && player is ExoPlayer && mPref.vastFrequency > 0) playCounter = ++playCounter % mPref.vastFrequency
         
         if (mPref.isVastActive && channelInfo.isAdActive) {
             val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
