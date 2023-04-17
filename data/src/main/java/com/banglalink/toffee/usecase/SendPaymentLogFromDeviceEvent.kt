@@ -1,51 +1,51 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
-import com.banglalink.toffee.notification.BKASH_PAYMENT_LOG
+import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
-class SendBkashPaymentLogEvent @Inject constructor() {
+class SendPaymentLogFromDeviceEvent @Inject constructor() {
     private val gson = Gson()
 
-    fun execute(bkashPaymentLogData: BkashPaymentLogData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(bkashPaymentLogData), BKASH_PAYMENT_LOG)
+    fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
+        PubSubMessageUtil.sendMessage(gson.toJson(paymentLogFromDeviceData), PAYMENT_LOG_FROM_DEVICE)
     }
 }
 
-data class BkashPaymentLogData(
+data class PaymentLogFromDeviceData(
     @SerializedName("id")
     val id : Long = 0,
-    @SerializedName("calling_api_name")
+    @SerializedName("callingApiName")
     val callingApiName : String? = null,
-    @SerializedName("pack_id")
+    @SerializedName("packId")
     val packId : Int = 0,
-    @SerializedName("pack_title")
+    @SerializedName("packTitle")
     val packTitle : String? = null,
-    @SerializedName("data_pack_id")
+    @SerializedName("dataPackId")
     val dataPackId : Int = 0,
-    @SerializedName("data_pack_details")
+    @SerializedName("dataPackDetails")
     val dataPackDetails : String? = null,
-    @SerializedName("payment_method_id")
+    @SerializedName("paymentMethodId")
     val paymentMethodId : Int = 0,
-    @SerializedName("payment_msisdn")
+    @SerializedName("paymentMsisdn")
     val paymentMsisdn : String? = null,
-    @SerializedName("payment_id")
+    @SerializedName("paymentId")
     val paymentId : String? = null,
-    @SerializedName("trx_id")
+    @SerializedName("trxId")
     val trxId : String? = null,
-    @SerializedName("transaction_status")
+    @SerializedName("transactionStatus")
     val transactionStatus : String? = null,
     @SerializedName("amount")
     val amount : String? = null,
-    @SerializedName("merchant_invoice_number")
+    @SerializedName("merchantInvoiceNumber")
     val merchantInvoiceNumber : String? = null,
-    @SerializedName("raw_response")
+    @SerializedName("rawResponse")
     val rawResponse : String? = null,
-    @SerializedName("status_code")
+    @SerializedName("statusCode")
     val statusCode : String? = null,
-    @SerializedName("status_message")
+    @SerializedName("statusMessage")
     val statusMessage : String? = null,
 ) : PubSubBaseRequest()

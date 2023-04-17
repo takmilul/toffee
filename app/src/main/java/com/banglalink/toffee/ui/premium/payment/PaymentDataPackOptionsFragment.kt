@@ -21,7 +21,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.usecase.BkashPaymentLogData
+import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
@@ -192,7 +192,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             when (response) {
                 is Success -> {
                     sessionToken = response.data.idToken.toString()
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "bkash-grant-token",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -216,7 +216,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     createBkashPayment()
                 }
                 is Failure -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "bkash-grant-token",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -246,7 +246,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             progressDialog.dismiss()
             when (response) {
                 is Success -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "bkash-create-payment",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -278,7 +278,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                 }
                 is Failure -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "bkash-create-payment",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -319,7 +319,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 progressDialog.dismiss()
                 when(it) {
                     is Success -> {
-                        viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "rechargeInitialized",
                             packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -351,7 +351,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {
-                        viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "rechargeInitialized",
                             packId = viewModel.selectedPremiumPack.value?.id ?: 0,

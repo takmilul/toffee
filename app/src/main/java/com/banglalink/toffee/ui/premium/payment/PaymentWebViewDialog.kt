@@ -33,7 +33,7 @@ import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.AR
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_MESSAGE
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.ARG_STATUS_TITLE
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.usecase.BkashPaymentLogData
+import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.currentDateTime
@@ -291,7 +291,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         customerMsisdn = customerMsisdn
                     )
                    if (retryCount >= mPref.bkashApiRetryingCount) {
-                       viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                       viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                            id = System.currentTimeMillis() + mPref.customerId,
                            callingApiName = "bkash-query-payment",
                            packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -340,7 +340,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "bkash-query-payment",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -385,7 +385,7 @@ class PaymentWebViewDialog : DialogFragment() {
                 progressDialog.dismiss()
                 when (it) {
                     is Success -> {
-                        viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "dataPackPurchase",
                             packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -415,7 +415,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                     }
                     is Failure -> {
-                        viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "dataPackPurchase",
                             packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -508,7 +508,7 @@ class PaymentWebViewDialog : DialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "dataPackPurchase",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -541,7 +541,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
-                    viewModel.sendBkashPaymentLogData(BkashPaymentLogData(
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "dataPackPurchase",
                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,

@@ -12,10 +12,8 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.usecase.AdvertisingIdLogData
-import com.banglalink.toffee.usecase.BkashPaymentLogData
-import com.banglalink.toffee.usecase.SendBkashPaymentLogEvent
-import com.banglalink.toffee.usecase.SendFeaturePartnerEvent
+import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
+import com.banglalink.toffee.usecase.SendPaymentLogFromDeviceEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,7 +34,7 @@ class PremiumViewModel @Inject constructor(
     private val bKashExecutePaymentService: BkashExecutePaymentService,
     private val bKashQueryPaymentService: BkashQueryPaymentService,
     private val rechargeByBkashService: RechargeByBkashService,
-    private val sendBkashPaymentLogEvent: SendBkashPaymentLogEvent,
+    private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -199,10 +197,10 @@ class PremiumViewModel @Inject constructor(
         }
     }
 
-    fun sendBkashPaymentLogData(bkashPaymentLogData: BkashPaymentLogData) {
+    fun sendPaymentLogFromDeviceData(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
         viewModelScope.launch {
             try {
-                sendBkashPaymentLogEvent.execute(bkashPaymentLogData)
+                sendPaymentLogFromDeviceEvent.execute(paymentLogFromDeviceData)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
