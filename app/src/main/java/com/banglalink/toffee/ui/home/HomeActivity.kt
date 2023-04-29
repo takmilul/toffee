@@ -83,6 +83,7 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.banglalink.toffee.enums.*
 import com.banglalink.toffee.enums.BubbleType.*
 import com.banglalink.toffee.extension.*
@@ -190,6 +191,7 @@ class HomeActivity : PlayerPageActivity(),
     @Inject lateinit var inAppMessageParser: InAppMessageParser
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
+    @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
@@ -211,7 +213,7 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        FirebasviewModeleInAppMessaging.getInstance().setMessagesSuppressed(false)
+//        inAppMessaging.setMessagesSuppressed(false)
         
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) ||

@@ -49,3 +49,6 @@ annotation class PlainHttpClient
 
 @Qualifier
 annotation class CoilHttpClient
+
+@Qualifier
+annotation class FirebaseInAppMessage

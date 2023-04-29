@@ -9,7 +9,9 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
+import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -22,11 +24,12 @@ class SplashScreenActivity : BaseAppCompatActivity() {
     private var _binding: ActivitySplashScreenBinding? = null
     private val binding get() = _binding!!
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
+    @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-//        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(true)
+//        inAppMessaging.setMessagesSuppressed(true)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         MedalliaDigital.disableIntercept()
