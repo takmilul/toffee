@@ -219,7 +219,7 @@ class PaymentWebViewDialog : DialogFragment() {
             builtInZoomControls = true
             displayZoomControls = false
             setSupportMultipleWindows(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
+            cacheMode = WebSettings.LOAD_NO_CACHE
             mediaPlaybackRequiresUserGesture = false
             javaScriptCanOpenWindowsAutomatically = true
             CookieManager.getInstance().setAcceptCookie(true)
