@@ -32,7 +32,6 @@
             android:text="@string/choose_a_plan"
             android:textColor="@color/cardTitleColor"
             android:textSize="16sp"
-
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

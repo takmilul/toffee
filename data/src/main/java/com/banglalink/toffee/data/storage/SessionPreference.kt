@@ -10,12 +10,22 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ActivePack
+import com.banglalink.toffee.model.BubbleConfig
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.CustomerInfoLogin
+import com.banglalink.toffee.model.DBVersionV2
+import com.banglalink.toffee.model.DecorationData
+import com.banglalink.toffee.model.NativeAdSettings
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.model.RamadanSchedule
+import com.banglalink.toffee.model.VastTagV3
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -760,11 +770,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var bkashApiRetryingCount: Int
         get() = pref.getInt(PREF_BKASH_API_RETRYING_COUNT, 0)
         set(value) = pref.edit { putInt(PREF_BKASH_API_RETRYING_COUNT, value) }
-
+    
     var bkashApiRetryingDuration: Long
         get() = pref.getLong(PREF_BKASH_API_RETRYING_DURATION, 0)
         set(value) = pref.edit { putLong(PREF_BKASH_API_RETRYING_DURATION, value) }
-
+    
+    var isPrepaid: Boolean
+        get() = pref.getBoolean(PREF_IS_PREPAID, true)
+        set(value) = pref.edit { putBoolean(PREF_IS_PREPAID, value) }
+    
     var bkashExecuteUrl: String
         get() = pref.getString(PREF_BKASH_EXECUTE_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_BKASH_EXECUTE_URL, value) }
@@ -889,6 +903,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
+            isPrepaid = it.isPrepaid ?: true
 
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -1044,6 +1059,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BKASH_MERCHANT_INVOICE_NUMBER = "pref_bkash_merchant_invoice_number"
         private const val PREF_BKASH_API_RETRYING_COUNT = "pref_bkash_api_retrying_count"
         private const val PREF_BKASH_API_RETRYING_DURATION = "pref_bkash_api_retrying_duration"
+        private const val PREF_IS_PREPAID = "pref_is_prepaid"
         private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
         private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
 

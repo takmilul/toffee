@@ -14,7 +14,13 @@ import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toInt
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -78,12 +84,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 }
             } else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
-                if (!prePaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+//                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
                     packPaymentMethodList.addAll(prePaid)
                 }
-                if (!postPaid.isNullOrEmpty()) {
-                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+//                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
                     packPaymentMethodList.addAll(postPaid)
                 }
             }

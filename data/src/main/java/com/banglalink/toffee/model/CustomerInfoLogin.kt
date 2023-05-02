@@ -211,6 +211,8 @@ data class CustomerInfoLogin(
     val bkashApiRetryingCount : Int? = 0,
     @SerializedName("bkashApiRetryingDuration")
     val bkashApiRetryingDuration : Long? = 0L,
+    @SerializedName("is_prepaid")
+    val isPrepaid : Boolean?,
 ) : BodyResponse(), Parcelable
 
 @Entity
