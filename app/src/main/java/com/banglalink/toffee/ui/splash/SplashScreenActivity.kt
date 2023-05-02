@@ -29,7 +29,7 @@ class SplashScreenActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-//        inAppMessaging.setMessagesSuppressed(true)
+        inAppMessaging.setMessagesSuppressed(true)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         MedalliaDigital.disableIntercept()

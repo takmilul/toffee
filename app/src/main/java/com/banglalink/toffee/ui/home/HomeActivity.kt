@@ -213,7 +213,6 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        inAppMessaging.setMessagesSuppressed(false)
         
         val isDisableScreenshot = (
             mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) ||
@@ -1015,6 +1014,8 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onResume() {
         super.onResume()
+        inAppMessaging.setMessagesSuppressed(false)
+        
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
             finish()
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
