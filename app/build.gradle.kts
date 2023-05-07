@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.application.get().pluginId)
@@ -14,7 +16,6 @@ android {
     namespace = "com.banglalink.toffee"
     compileSdk = 32
     
-    @Suppress("UnstableApiUsage")
     defaultConfig {
         minSdk = 21
         targetSdk = 32
@@ -28,7 +29,6 @@ android {
         }
     }
     
-    @Suppress("UnstableApiUsage")
     flavorDimensions += listOf("lib")
     
     productFlavors {
@@ -48,14 +48,12 @@ android {
         jvmTarget = "1.8"
     }
     
-    @Suppress("UnstableApiUsage")
     buildFeatures {
         compose = true
         dataBinding = true
         viewBinding = true
     }
     
-    @Suppress("UnstableApiUsage")
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -69,7 +67,6 @@ android {
         }
     }
     
-    @Suppress("UnstableApiUsage")
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
@@ -91,12 +88,10 @@ android {
         }
     }
     
-    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
     }
     
-    @Suppress("UnstableApiUsage")
     lint {
         abortOnError = false
         checkReleaseBuilds = false

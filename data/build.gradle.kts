@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.library.get().pluginId)
@@ -17,7 +19,6 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
     
-    @Suppress("UnstableApiUsage")
     flavorDimensions += listOf("lib")
     productFlavors {
         create("mobile") {
@@ -31,7 +32,6 @@ android {
     }
     
     buildTypes {
-        @Suppress("UnstableApiUsage")
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
