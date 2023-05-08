@@ -401,12 +401,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         showPaymentOption()
         mAdapter.selectedPosition = position
         viewModel.selectedDataPackOption.value = item
-        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
-        binding.buyWithRecharge.isEnabled = isRechargeAvailable
-
-        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.colorAccent2
+//        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
+        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
+        
+        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
         else R.color.btnDisableClr))
-        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (isRechargeAvailable) R.color.text_color_white
+        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
         else R.color.txtDisableClr))
     }
     

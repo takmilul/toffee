@@ -120,7 +120,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
                 bkashPackPrice.isVisible = bKashStartingPrice > 0
                 
-                blPackCard.isVisible = paymentTypes.bl != null && (!paymentTypes.bl?.prepaid.isNullOrEmpty() || !paymentTypes.bl?.postpaid.isNullOrEmpty())
+                blPackCard.isVisible = paymentTypes.bl != null && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) ||      (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 

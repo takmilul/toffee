@@ -109,8 +109,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         viewLifecycleOwner.lifecycleScope.launch {
             with(channelViewModel.getChannels(0, isStingray)){
                 collectLatest { tvList ->
-                    val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName }?.map {
-                        val categoryName = it.key
+                    val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName.trimIndent() }?.map {
+                        val categoryName = it.key.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }
@@ -128,7 +128,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                 }
             }
         }
-
+        
         if(arguments?.getBoolean("show_selected") == true) {
             observe(channelViewModel.selectedChannel) {
                 channelAdapter.setSelected(it)

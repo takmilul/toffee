@@ -315,8 +315,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     }
     
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
-        listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
