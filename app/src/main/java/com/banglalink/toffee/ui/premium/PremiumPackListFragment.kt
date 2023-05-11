@@ -46,7 +46,7 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
             binding.packListHeader.setText(R.string.premium_pack_list_title)
             requireActivity().title = "Premium Packs"
         } else {
-            binding.packListHeader.setText(R.string.search_premium_pack_list_title)
+            binding.packListHeader.setText(R.string.prem_content_bundle_title)
             requireActivity().title = "Choose Pack"
         }
     

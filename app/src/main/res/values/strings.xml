@@ -513,7 +513,7 @@
     <string name="bkash_technical_issue_occured">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
     <string name="due_some_technical_issue">Due to some technical issue, the plan activation failed. Please retry.</string>
     <string name="payment_successful">Plan Activation Successful!</string>
-    <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected</string>
+    <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected soon.</string>
     <string name="pack_purchase_failed_insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_technical_error">Data Plan Purchase Failed!</string>
     <string name="pack_purchase_failed_wrong_data_plan">Wrong Data Plan Selected!</string>
@@ -568,4 +568,5 @@
     <string name="see_details_text">See Details</string>
     <string name="active_text">Active</string>
     <string name="trial_activated_text">Trial Activated</string>
+    <string name="prem_content_bundle_title">Choose any of the following premium packs to avail the content</string>
 </resources>
