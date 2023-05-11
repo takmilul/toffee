@@ -1,5 +1,6 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.com.gms.google.services) apply false
     alias(libs.plugins.com.google.firebase.crashlytics) apply false
     alias(libs.plugins.com.android.library) apply false

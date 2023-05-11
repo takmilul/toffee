@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
+<manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.banglalink.toffee">
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
     
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,12 +14,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     
     <queries>
         <intent>
@@ -34,6 +39,7 @@
         android:name=".ToffeeApplication"
         android:allowAudioPlaybackCapture="false"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:fullBackupOnly="false"
         android:hardwareAccelerated="true"
@@ -41,22 +47,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:extractNativeLibs="false"
         android:usesCleartextTraffic="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
         tools:replace="android:allowBackup"
         tools:targetApi="s">
         
         <activity
             android:name=".ui.home.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
             android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible|adjustPan"
-            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -68,13 +72,14 @@
         
         <activity
             android:name=".ui.splash.SplashScreenActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.App.Starting"
-            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name=".ui.splash.SplashScreenActivity"/>
+                <action android:name=".ui.splash.SplashScreenActivity" />
+                
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -83,8 +88,10 @@
                 android:label="@string/app_name"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
+                
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="toffeelive.com" />
@@ -94,16 +101,16 @@
         <activity
             android:name=".ui.common.Html5PlayerViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:exported="false"
             tools:ignore="LockedOrientationActivity" />
         
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:exported="false"
             tools:ignore="LockedOrientationActivity" />
         
         <provider
@@ -115,7 +122,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    
+        
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -154,14 +161,16 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
         
-        <service android:name=".notification.ToffeeMessagingService"
+        <service
+            android:name=".notification.ToffeeMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         
-        <receiver android:name=".receiver.NotificationActionReceiver"
+        <receiver
+            android:name=".receiver.NotificationActionReceiver"
             android:exported="false">
             <intent-filter android:priority="999">
                 <action android:name="com.toffee.notification_receiver" />
@@ -180,25 +189,25 @@
         <meta-data
             android:name="Firework:AppID"
             android:value="@string/firework_oauth_id" />
-    
+        
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ads_app_id"/>
+            android:value="@string/ads_app_id" />
         
 <!--        <service-->
 <!--            android:name=".ui.bubble.BubbleService"-->
 <!--            android:enabled="true"-->
 <!--            android:process="com.banglalink.toffee" />-->
-
+        
         <service
             android:name=".ui.bubble.BubbleServiceV2"
             android:enabled="true"
             android:process="com.banglalink.toffee" />
-
+        
         <service
             android:name=".ui.bubble.BubbleServiceRamadan"
             android:enabled="true"
             android:process="com.banglalink.toffee" />
-
+        
     </application>
 </manifest>

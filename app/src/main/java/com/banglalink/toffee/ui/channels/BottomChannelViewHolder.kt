@@ -7,5 +7,4 @@ import com.banglalink.toffee.R
 
 class BottomChannelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val imageView: ImageView = itemView.findViewById(R.id.icon)
-    val premiumIcon: ImageView = itemView.findViewById(R.id.premiumStatusIcon)
 }

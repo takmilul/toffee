@@ -5,11 +5,12 @@ plugins {
     id(libs.plugins.com.android.application.get().pluginId)
     id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
+    id(libs.plugins.ksp.get().pluginId)
+    id(libs.plugins.kotlin.kapt.get().pluginId)
     id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
     id(libs.plugins.androidx.navigation.safeargs.get().pluginId)
     id(libs.plugins.com.gms.google.services.get().pluginId)
     id(libs.plugins.com.google.firebase.crashlytics.get().pluginId)
-    id(libs.plugins.kotlin.kapt.get().pluginId)
 }
 
 android {
@@ -39,17 +40,18 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     
     kotlinOptions {
 //        useIR = true
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     
     buildFeatures {
         compose = true
+        buildConfig = true
         dataBinding = true
         viewBinding = true
     }
@@ -67,9 +69,9 @@ android {
         }
     }
     
-    packagingOptions {
+    packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
             excludes += listOf(
                 "lib/*/librsjni.so",
                 "lib/*/libRSSupport.so",
@@ -99,8 +101,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation(project(":data"))
     
     // View
     implementation(libs.activity)
@@ -126,7 +128,7 @@ dependencies {
     // Jetpack
     implementation(libs.paging)
     implementation(libs.bundles.room)
-    kapt(libs.room.kapt)
+    ksp(libs.room.kapt)
     implementation(libs.bundles.compose)
     implementation(libs.work.manager.ktx)
     implementation(libs.bundles.lifecycle)
@@ -148,13 +150,13 @@ dependencies {
     
     // Google Services
     implementation(libs.google.api.client) {
-        exclude(module = "httpclient")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
         exclude(group = "com.google.code.findbugs")
         exclude(module = "support-annotations")
         exclude(group = "com.google.guava")
     }
     implementation(libs.google.http.client) {
-        exclude(module = "httpclient")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
         exclude(group = "com.google.code.findbugs")
         exclude(module = "support-annotations")
         exclude(group = "com.google.guava")

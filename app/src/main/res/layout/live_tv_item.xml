@@ -53,19 +53,6 @@
             app:layout_constraintStart_toStartOf="@+id/icon"
             app:layout_constraintTop_toBottomOf="@+id/icon"
             tools:text="@{data.program_name}" />
-    
-        <ImageView
-            android:id="@+id/premiumStatusIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginTop="4dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            app:srcCompat="@drawable/prem_icon_three"
-            app:layout_constraintEnd_toEndOf="@+id/icon"
-            app:layout_constraintStart_toStartOf="@+id/icon"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="premium status icon" />
-
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

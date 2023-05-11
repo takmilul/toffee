@@ -101,7 +101,6 @@ class ChannelStickyListAdapter(
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
         
         bindingUtil.bindChannel(liveTvViewHolder.icon, item)
-//        liveTvViewHolder.premiumIcon.isVisible = item.urlTypeExt == 1
         
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
@@ -125,7 +124,6 @@ class ChannelStickyListAdapter(
     internal class LiveTvViewHolder(itemView: View) :
         ItemViewHolder(itemView) {
         var icon: ImageView = itemView.findViewById(R.id.icon)
-        var premiumIcon: ImageView = itemView.findViewById(R.id.premiumStatusIcon)
     }
 
     interface OnItemClickListener {

@@ -5,8 +5,8 @@ plugins {
     id(libs.plugins.com.android.library.get().pluginId)
     id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
-    id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
     id(libs.plugins.kotlin.kapt.get().pluginId)
+    id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
 }
 
 android {
@@ -15,6 +15,7 @@ android {
     
     defaultConfig {
         minSdk = 21
+        
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -31,6 +32,10 @@ android {
         }
     }
     
+    buildFeatures {
+        buildConfig = true
+    }
+    
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -39,12 +44,12 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -73,13 +78,13 @@ dependencies {
     
     // Google Services
     implementation(libs.google.api.client) {
-        exclude(module = "httpclient")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
         exclude(group = "com.google.code.findbugs")
         exclude(module = "support-annotations")
         exclude(group = "com.google.guava")
     }
     implementation(libs.google.http.client) {
-        exclude(module = "httpclient")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
         exclude(group = "com.google.code.findbugs")
         exclude(module = "support-annotations")
         exclude(group = "com.google.guava")
@@ -93,7 +98,7 @@ dependencies {
     implementation(libs.bundles.mqtt)
     implementation(libs.pub.sub) {
         exclude(group = "com.google.code.findbugs")
-        exclude(group = "org.apache.httpcomponents")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
         exclude(group = "org.json")
         exclude(module = "support-annotations")
         exclude(group = "com.google.guava")

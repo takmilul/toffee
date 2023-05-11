@@ -23,7 +23,7 @@ class BottomChannelAdapter(
         val obj = getItem(position)
         obj?.let {
             bindingUtil.bindChannel(holder.imageView, it)
-//            holder.premiumIcon.isVisible = it.urlTypeExt == 1
+            
             if (it.id == selectedItem?.id.toString()) {
                 holder.imageView.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
             } else {

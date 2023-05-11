@@ -832,7 +832,7 @@ class HomeActivity : PlayerPageActivity(),
                 binding.playerView.moveController(slideOffset)
             }
         })
-
+        
 //        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 //            if(insets.hasInsets()) {
 //                Log.e("INSET_T", "Has inset")
@@ -1139,8 +1139,8 @@ class HomeActivity : PlayerPageActivity(),
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)
         toggleNavigation(state)
-        val isInPremiumPage = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
-        toggleBottomNavBar(isInPremiumPage)
+//        val isInPremiumPage = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
+//        toggleBottomNavBar(isInPremiumPage)
 //        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
