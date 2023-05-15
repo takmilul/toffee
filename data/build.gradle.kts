@@ -5,6 +5,7 @@ plugins {
     id(libs.plugins.com.android.library.get().pluginId)
     id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
+    id(libs.plugins.ksp.get().pluginId)
     id(libs.plugins.kotlin.kapt.get().pluginId)
     id(libs.plugins.com.google.dagger.hilt.android.get().pluginId)
 }
@@ -64,9 +65,9 @@ dependencies {
     kapt(libs.hilt.compiler.kapt)
     
     // Jetpack
+    ksp(libs.room.kapt)
     implementation(libs.paging)
     implementation(libs.bundles.room)
-    kapt(libs.room.kapt)
     
     // Image
     implementation(libs.coil.core)

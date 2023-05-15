@@ -126,9 +126,9 @@ dependencies {
     kapt(libs.hilt.compiler.kapt)
     
     // Jetpack
+    ksp(libs.room.kapt)
     implementation(libs.paging)
     implementation(libs.bundles.room)
-    ksp(libs.room.kapt)
     implementation(libs.bundles.compose)
     implementation(libs.work.manager.ktx)
     implementation(libs.bundles.lifecycle)
