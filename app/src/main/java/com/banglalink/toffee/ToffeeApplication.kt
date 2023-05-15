@@ -80,10 +80,64 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     
     override fun onCreate() {
         super.onCreate()
+        
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
         if (CookieHandler.getDefault() !== defaultCookieManager) {
             CookieHandler.setDefault(defaultCookieManager)
         }
+        
+        FirebaseApp.initializeApp(this).apply {
+            if (BuildConfig.DEBUG) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+            }
+        }
+        
+        try {
+            ToffeeAnalytics.initFireBaseAnalytics(this)
+        } catch (e: Exception) {
+            coroutineScope.launch {
+                sendFirebaseConnectionErrorEvent.execute()
+            }
+        }
+        
+        try {
+            ToffeeAnalytics.initFacebookAnalytics(this)
+        } catch (_: Exception) { }
+        
+        try {
+            // Google Play will install latest OpenSSL 
+            ProviderInstaller.installIfNeeded(applicationContext)
+            val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
+            sslContext.init(null, null, null)
+            sslContext.createSSLEngine()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        
+        // (Binding adapter with hilt) https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d
+        val dataBindingComponent = bindingComponentProvider.get().build()
+        val dataBindingEntryPoint = EntryPoints.get(
+            dataBindingComponent, CustomBindingEntryPoint::class.java
+        )
+        DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
+        
+        if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
+            try {
+                sessionPreference.bubbleDialogShowCount = 0
+                coroutineScope.launch(IO) {
+                    cacheManager.clearAllCache()
+                    commonPreference.versionCode = BuildConfig.VERSION_CODE
+                }
+            } catch (e: Exception) {
+                ToffeeAnalytics.logException(e)
+            }
+        }
+        
+        SessionPreference.init(this)
+        CommonPreference.init(this)
+        PlayerPreference.init(this)
+        PubSubMessageUtil.init(this)
+        
         try {
             connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -97,52 +151,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
             }
         } catch (e: Exception) {
             Log.e("CONN_", "Connectivity registration failed: ${e.message}")
-        }
-        FirebaseApp.initializeApp(this).apply {
-            if (BuildConfig.DEBUG) {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
-            }
-        }
-        // (Binding adapter with hilt) https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d
-        val dataBindingComponent = bindingComponentProvider.get().build()
-        val dataBindingEntryPoint = EntryPoints.get(
-            dataBindingComponent, CustomBindingEntryPoint::class.java
-        )
-        DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
-        
-        SessionPreference.init(this)
-        CommonPreference.init(this)
-        PlayerPreference.init(this)
-        PubSubMessageUtil.init(this)
-        try {
-            ToffeeAnalytics.initFireBaseAnalytics(this)
-        } catch (e: Exception) {
-            coroutineScope.launch {
-                sendFirebaseConnectionErrorEvent.execute()
-            }
-        }
-        try {
-            ToffeeAnalytics.initFacebookAnalytics(this)
-        } catch (_: Exception) { }
-        try {
-            // Google Play will install latest OpenSSL 
-            ProviderInstaller.installIfNeeded(applicationContext)
-            val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
-            sslContext.init(null, null, null)
-            sslContext.createSSLEngine()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
-            try {
-                sessionPreference.bubbleDialogShowCount = 0
-                coroutineScope.launch(IO) {
-                    cacheManager.clearAllCache()
-                    commonPreference.versionCode = BuildConfig.VERSION_CODE
-                }
-            } catch (e: Exception) {
-                ToffeeAnalytics.logException(e)
-            }
         }
         
 //        FacebookSdk.setIsDebugEnabled(true);

@@ -130,6 +130,7 @@
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
     <string name="facebook_app_id">1116781388516653</string>
+    <string name="facebook_client_token">6436957524f4e33b7cf789031120c524</string>
     <!--    <string name="fb_login_protocol_scheme">1116781388516653</string>-->
     <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>

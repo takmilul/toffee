@@ -98,10 +98,6 @@
 -dontwarn io.invertase.firebase.**
 -keep class io.invertase.firebase.messaging.** { *; }
 
--dontwarn org.apache.commons.**
--keep class org.apache.http.** { *; }
--dontwarn org.apache.http.**
-
 -keepattributes LineNumberTable,SourceFile
 -renamesourcefileattribute SourceFile
 -keep public class * extends java.lang.Exception

@@ -7,8 +7,8 @@ gradle-plugin-version = "8.0.1"
 # View
 activity-version = "1.5.1"
 fragment-ktx-version = "1.5.5"
-splashscreen-version = "1.0.0"
-material-version = "1.8.0"
+splashscreen-version = "1.0.1"
+material-version = "1.9.0"
 cardview-version = "1.0.0"
 switch-button-version = "0.0.3"
 legacy-support-version = "1.0.0"
@@ -19,11 +19,11 @@ circular-progressbar-version = "3.1.0"
 # Kotlin
 kotlin-version = "1.7.20"
 kotlin-ktx-version = "1.8.0"
-kotlin-coroutine-version = "1.6.3"
+kotlin-coroutine-version = "1.6.4"
 
 # Hilt
 hilt-version = "1.0.0"
-hilt-android-version = "2.42"
+hilt-android-version = "2.44"
 
 # Jetpack
 room-db-version = "2.4.3"
@@ -39,23 +39,23 @@ work-manager-version = "2.7.1"
 coil-version = "2.2.0"
 ucrop-version = "2.2.8"
 coil-transformer-version = "1.0.5"
-exifinterface-version = "1.3.5"
+exifinterface-version = "1.3.6"
 
 # Player
 media3-version = "1.0.0"
 exo-player-version = "2.18.1"
 
 # Cast
-mediarouter-version = "1.3.0"
-cast-version = "21.0.1"
+mediarouter-version = "1.3.1"
+cast-version = "21.3.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
-play-services-ads-version = "21.5.0"
+play-services-ads-version = "22.0.0"
 ads-identifier-version = "1.0.0-alpha04"
 
 # Network
-gson-version = "2.9.0"
+gson-version = "2.10.1"
 okhttp-version = "4.10.0"
 retrofit-version = "2.9.0"
 upload-library-version = "4.7.0"
@@ -67,21 +67,21 @@ google-api-client-version = "2.2.0"
 google-http-client-gson-version = "1.43.1"
 
 # Play Services
-play-services-auth-version = "20.4.1"
+play-services-auth-version = "20.5.0"
 play-services-auth-api-phone-version = "18.0.1"
 play-core-version = "1.10.3"
 
 # Firebase
-firebase-core-version = "19.0.2"
+firebase-core-version = "21.1.1"
 firebase-messaging-version = "23.1.2"
 firebase-analytics-version = "21.2.2"
 firebase-firestore-version = "24.6.0"
 firebase-in-app-message-version = "20.3.2"
-firebase-crashlytics-version = "18.3.6"
+firebase-crashlytics-version = "18.3.7"
 firebase-crashlytics-plugin-version = "2.9.4"
 
 # Reporting
-facebook-sdk-version = "13.1.0"
+facebook-sdk-version = "16.0.1"
 conviva-sdk-version = "4.0.20"
 conviva-exo-player-version = "4.0.12"
 pub-sub-version = "v1-rev452-1.25.0"
