@@ -78,6 +78,38 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
     
+    /**
+     * [<b>On Application launch, doing the following actions:</b>]
+     * 
+     * &bull; [FirebaseApp] Initialized.
+     * 
+     * &bull;  Disabled [FirebaseCrashlytics] when run the app in debug mode.
+     * 
+     * &bull; Firebase Analytics Initialized. [ToffeeAnalytics.initFireBaseAnalytics]
+     * 
+     * &bull; Facebook Analytics Initialized. [ToffeeAnalytics.initFacebookAnalytics]
+     * 
+     * &bull; Install latest OpenSSL using Google Play.
+     * 
+     * &bull; DataBinding adapter injection using Hilt.
+     * [<a href="https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d">Reference</a>]
+     * 
+     * &bull; Clear all API Cache when the app updated from Play Store to avoid any caching issue in the new implementation.
+     * 
+     * &bull; All Custom [android.content.SharedPreferences] Initialization. [SessionPreference], [CommonPreference], [PlayerPreference]
+     * 
+     * &bull; [PubSubMessageUtil] Initialized for sending app logs using Google's
+     * [<a href="https://cloud.google.com/pubsub/docs/publish-receive-messages-client-library">Pub/Sub</a>]
+     * 
+     * &bull; Registers [ConnectivityManager] and implemented [ConnectivityManager.NetworkCallback] in [HeartBeatManager] to call Heartbeat API
+      on Network change
+     * 
+     * &bull; Firework SDK Initialized. [FwSDK]
+     * 
+     * &bull; [MedalliaDigital] SDK Initialized.
+     * 
+     * &bull; [UploadObserver.start] called
+     */
     override fun onCreate() {
         super.onCreate()
         
@@ -162,10 +194,23 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         BaseBubbleService.isForceClosed = false
     }
     
+    /**
+     * [androidx.work.WorkManager] configured in the application level to use in the full application.
+     */
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
     }
     
+    /**
+     * [<b>This SDK shows Shorts Video Reels</b>]
+     * 
+     * To initialize [FwSDK], we need to pass applicationContext, oAuthId provided by Firework, an unique ID as UserId and [com.loopnow.fireworklibrary.FwSDK.SdkStatusListener] to determine the initialization success or failure state.
+     * 
+     * if the SDK initializes successfully, we added some basic configuration with the SDK with a live data flag to show the Firework Reel in 
+      the home page
+     * 
+     * if the SDK failed to initialize, we logged the exception and set a flag with a live data not to show the Firework Reel in the home page
+     */
     private fun initFireworkSdk() {
         try {
             FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
@@ -181,7 +226,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
                         }
                         InitializationFailed -> {
                             Log.e("FwSDK", "InitializationFailed: $extra")
-                            ToffeeAnalytics.logException(java.lang.Exception("FwSDK InitializationFailed: $extra"))
+                            ToffeeAnalytics.logException(Exception("FwSDK InitializationFailed: $extra"))
                             sessionPreference.isFireworkInitialized.postValue(false)
                         }
                         RefreshTokenFailed -> Log.e("FwSDK", "RefreshTokenFailed: $extra")
@@ -193,6 +238,12 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
     }
     
+    /**
+     * [<b>This SDK shows a popup form to take users feedback</b>]
+     * 
+     * To initialize [MedalliaDigital] SDK, we need to pass applicationContext, ApiKey provided by Medallia and [MDResultCallback] to detect 
+      the success and error state
+     */
     private fun initMedalliaSdk() {
         try {
             MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
@@ -209,6 +260,11 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
     }
     
+    /**
+     * [<b>This code configures settings for kotlin's `coil` image loader library</b>]
+     * 
+     * Create image loader instance for [coil] library. here we configured the image loader for the whole app. 
+     */
     override fun newImageLoader(): ImageLoader {
         val imageRequest = ImageRequest.Builder(this).apply {
             dispatcher(IO)
@@ -239,6 +295,11 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
     }
     
+    /**
+     * [<b>Calls when app is terminated</b>]
+     * 
+     * Unregister [ConnectivityManager]
+     */
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         try {
