@@ -6,7 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.ApiCategoryRequestParams
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.apiservice.CatchupParams
+import com.banglalink.toffee.apiservice.FeatureContentService
+import com.banglalink.toffee.apiservice.FeaturedPartnerService
+import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetEditorsChoiceContents
+import com.banglalink.toffee.apiservice.GetMostPopularContents
+import com.banglalink.toffee.apiservice.GetPopularUserChannels
+import com.banglalink.toffee.apiservice.GetRelativeContents
+import com.banglalink.toffee.apiservice.LandingUserChannelsRequestParam
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.exception.JobCanceledError
@@ -15,9 +27,14 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
+import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.SubCategory
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.usecase.SendFeaturePartnerEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,6 +69,7 @@ class LandingPageViewModel @Inject constructor(
     val hashtagList = SingleLiveEvent<List<String>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val subCategories = SingleLiveEvent<List<SubCategory>>()
+    val selectedCategory = MutableLiveData<Category>()
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
     val featuredPartnerDeeplinkLiveData = SingleLiveEvent<FeaturedPartner>()
     

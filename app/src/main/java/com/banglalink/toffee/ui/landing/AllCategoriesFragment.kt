@@ -18,7 +18,6 @@ import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,19 +27,14 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
     
+    private val binding get() = _binding!!
     private lateinit var mAdapter: CategoriesListAdapter
     private var _binding: FragmentLandingCategoriesBinding ? =null
-    private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
         return binding.root
-    }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,24 +63,26 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
     }
     
     override fun onItemClicked(item: Category) {
-        val args = Bundle().apply {
-            putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
-            putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
-        }
+        viewModel.selectedCategory.value = item
         ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
             CategoryType.MOVIE.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.movieFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.movieFragment)
             }
             CategoryType.MUSIC.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant, args)
+                parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant)
             }
             CategoryType.DRAMA_SERIES.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment)
             }
             else -> {
-                parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment)
             }
         }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

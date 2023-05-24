@@ -29,25 +29,25 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MovieFragment : BaseFragment() {
-    @Inject lateinit var bindingUtil: BindingUtil
-    private lateinit var category: Category
-    private var _binding: FragmentMovieBinding ? = null
     private val binding get() = _binding!!
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    private lateinit var category: Category
+    @Inject lateinit var bindingUtil: BindingUtil
+    private var _binding: FragmentMovieBinding ? = null
     private val viewModel by activityViewModels<MovieViewModel>()
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         @JvmStatic
         fun newInstance() = MovieFragment().apply {
-            arguments = Bundle().also {
-                it.putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, category)
-            }
+            arguments = bundleOf(
+                CategoryDetailsFragment.ARG_CATEGORY_ITEM to category
+            )
         }
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        category = landingViewModel.selectedCategory.value!!
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.featuredPageName.value = category.categoryName + " Page"
@@ -109,5 +109,6 @@ class MovieFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        landingViewModel.selectedCategory.value = null
     }
 }

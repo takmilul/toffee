@@ -113,6 +113,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
     }
     
     override fun onItemClicked(item: Category) {
+        viewModel.selectedCategory.value = item
         val args = Bundle().apply {
             putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
             putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)

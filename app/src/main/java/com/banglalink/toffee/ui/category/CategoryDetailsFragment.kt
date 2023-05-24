@@ -34,14 +34,10 @@ class CategoryDetailsFragment : BaseFragment() {
             }
         }
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_category_details, container, false)
-    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
+        category = landingViewModel.selectedCategory.value!!
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.featuredPageName.value = category.categoryName + " Page"
@@ -55,5 +51,14 @@ class CategoryDetailsFragment : BaseFragment() {
             FirebaseParams.BROWSER_SCREEN to "category",
             "category_type" to category.categoryName
         ))
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_category_details, container, false)
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        landingViewModel.selectedCategory.value = null
     }
 }

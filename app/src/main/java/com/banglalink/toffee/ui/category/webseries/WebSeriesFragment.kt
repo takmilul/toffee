@@ -15,8 +15,8 @@ import java.util.*
 
 class WebSeriesFragment: BaseFragment() {
     private var category: Category? = null
-    private var _binding: FragmentWebSeriesBinding? = null
     private val binding get() = _binding!!
+    private var _binding: FragmentWebSeriesBinding? = null
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     
     companion object {
@@ -30,7 +30,7 @@ class WebSeriesFragment: BaseFragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
+        category = landingViewModel.selectedCategory.value
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.pageName.value = category?.categoryName?.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.featuredPageName.value = category?.categoryName + " Page"
@@ -54,5 +54,6 @@ class WebSeriesFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        landingViewModel.selectedCategory.value = null
     }
 }
