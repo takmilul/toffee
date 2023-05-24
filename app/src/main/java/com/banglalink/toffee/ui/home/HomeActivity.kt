@@ -120,6 +120,8 @@ import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.*
+import com.banglalink.toffee.usecase.Response
+import com.banglalink.toffee.usecase.MnpStatusData
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
@@ -1602,7 +1604,38 @@ class HomeActivity : PlayerPageActivity(),
             LandingPageFragment::class.java.name, POP_BACK_STACK_INCLUSIVE
         )
     }
-    
+
+    private fun observeMnpStatus() {
+        observe(viewModel.mnpStatusBeanLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    if (response.data?.mnpStatus == 200){
+                        mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
+                        mPref.isPrepaid = response.data!!.isPrepaid == true
+                        mPref.isMnpStatusChecked.postValue(true)
+                        cInfo?.let { callAndObserveGetPackStatus(it) }
+                    }
+                    viewModel.sendMnpStatusData(MnpStatusData(Response(
+                        mnpStatus = response.data?.mnpStatus,
+                        apiName = "mnpStatus",
+                        isBlNumber = response.data?.isBlNumber,
+                        isPrepaid = response.data?.isPrepaid
+                    )))
+                }
+                is Failure -> {
+                    viewModel.sendMnpStatusData(MnpStatusData(Response(
+                        mnpStatus = null,
+                        apiName = "mnpStatus",
+                        isBlNumber = null,
+                        isPrepaid = null
+                    )))
+                    baseContext.showToast(response.error.msg)
+                }
+            }
+        }
+        viewModel.getMnpStatus()
+    }
+
     private fun loadChannel(channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
         if (channelInfo.isLinear) {
@@ -1662,30 +1695,13 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     checkVerification {
                         checkPurchaseBeforePlay(it, detailsInfo) {
-                            observe(viewModel.activePackListLiveData) { response ->
-                                when (response) {
-                                    is Success -> {
-                                        mPref.activePremiumPackList.value = response.data.toList()
-                                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
-                                            mPref.prePurchaseClickedContent.value = cInfo
-                                            navController.navigatePopUpTo(
-                                                resId = R.id.premiumPackListFragment,
-                                                args = bundleOf("contentId" to cInfo?.getContentId())
-                                            )
-                                        }
-                                    }
-                                    is Failure -> {
-                                        mPref.prePurchaseClickedContent.value = cInfo
-                                        navController.navigatePopUpTo(
-                                            resId = R.id.premiumPackListFragment,
-                                            args = bundleOf("contentId" to cInfo?.getContentId())
-                                        )
-                                    }
-                                }
-                            }
                             cInfo = it
                             dInfo = detailsInfo
-                            viewModel.getPackStatus(channelInfo.getContentId().toInt())
+                            if (mPref.isMnpStatusChecked.value == false){
+                                observeMnpStatus()
+                            } else {
+                                callAndObserveGetPackStatus(channelInfo)
+                            }
                         }
                     }
                 }
@@ -1707,7 +1723,33 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
+    private fun callAndObserveGetPackStatus(channelInfo: ChannelInfo) {
+        observe(viewModel.activePackListLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    mPref.activePremiumPackList.value = response.data.toList()
+                    checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                        mPref.prePurchaseClickedContent.value = cInfo
+                        navController.navigatePopUpTo(
+                            resId = id.premiumPackListFragment,
+                            args = bundleOf("contentId" to cInfo?.getContentId())
+                        )
+                    }
+                }
+
+                is Failure -> {
+                    mPref.prePurchaseClickedContent.value = cInfo
+                    navController.navigatePopUpTo(
+                        resId = id.premiumPackListFragment,
+                        args = bundleOf("contentId" to cInfo?.getContentId())
+                    )
+                }
+            }
+        }
+        viewModel.getPackStatus(channelInfo.getContentId().toInt())
+    }
+
     private fun checkPurchaseBeforePlay(
         channelInfo: ChannelInfo,
         detailsInfo: Any?,
@@ -2296,6 +2338,7 @@ class HomeActivity : PlayerPageActivity(),
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
+                        mPref.isMnpStatusChecked.postValue(false)
                         lifecycleScope.launch {
                             tvChannelsRepo.deleteAllRecentItems()
                         }
