@@ -15,8 +15,12 @@ import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.data.network.request.MnpStatusRequest
+import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
+import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.MqttBean
+import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -39,6 +43,8 @@ import com.banglalink.toffee.usecase.DownloadReactionStatusDb
 import com.banglalink.toffee.usecase.DownloadShareCountDb
 import com.banglalink.toffee.usecase.DownloadSubscriptionCountDb
 import com.banglalink.toffee.usecase.DownloadViewCountDb
+import com.banglalink.toffee.usecase.MnpStatusData
+import com.banglalink.toffee.usecase.MnpStatusLogEvent
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.usecase.SendCategoryChannelShareCountEvent
 import com.banglalink.toffee.usecase.SendContentReportEvent
@@ -92,8 +98,11 @@ class HomeViewModel @Inject constructor(
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
     private val getBubbleService: GetBubbleService,
-    private val premiumPackStatusService: PremiumPackStatusService
-) : ViewModel() {
+    private val premiumPackStatusService: PremiumPackStatusService,
+    private val mnpStatusService: MnpStatusService,
+    private val mnpStatusLogEvent: MnpStatusLogEvent,
+
+    ) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
@@ -121,7 +130,7 @@ class HomeViewModel @Inject constructor(
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
-    
+    val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
             getProfile()
@@ -287,7 +296,23 @@ class HomeViewModel @Inject constructor(
             sendCategoryChannelShareCountEvent.execute(contentType, contentId, sharedUrl)
         }
     }
-    
+
+    fun getMnpStatus() {
+        viewModelScope.launch {
+            val response = resultFromResponse { mnpStatusService.execute() }
+            mnpStatusBeanLiveData.value = response
+        }
+    }
+    fun sendMnpStatusData(mnpStatusData: MnpStatusData) {
+        viewModelScope.launch {
+            try {
+                mnpStatusLogEvent.execute(mnpStatusData)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun getPackStatus(contentId: Int = 0) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }

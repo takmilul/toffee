@@ -17,7 +17,10 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.usecase.Response
+import com.banglalink.toffee.usecase.MnpStatusData
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
@@ -27,6 +30,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -66,6 +70,9 @@ class PremiumPackDetailsFragment : BaseFragment() {
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
                         progressDialog.show()
+                        if (mPref.isMnpStatusChecked.value == false){
+                            observeMnpStatus()
+                        }
                         viewModel.getPackStatus()
                     }
                 })
@@ -189,6 +196,35 @@ class PremiumPackDetailsFragment : BaseFragment() {
                 }
             }
         }
+    }
+    private fun observeMnpStatus() {
+        observe(homeViewModel.mnpStatusBeanLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    if (response.data?.mnpStatus == 200){
+                        mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
+                        mPref.isPrepaid = response.data!!.isPrepaid == true
+                        mPref.isMnpStatusChecked.postValue(true)
+                    }
+                    homeViewModel.sendMnpStatusData(MnpStatusData(Response(
+                        mnpStatus = response.data?.mnpStatus,
+                        apiName = "mnpStatus",
+                        isBlNumber = response.data?.isBlNumber,
+                        isPrepaid = response.data?.isPrepaid
+                    )))
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                    homeViewModel.sendMnpStatusData(MnpStatusData(Response(
+                        mnpStatus = null,
+                        apiName = "mnpStatus",
+                        isBlNumber = null,
+                        isPrepaid = null
+                    )))
+                }
+            }
+        }
+        homeViewModel.getMnpStatus()
     }
     
     private fun onBackIconClicked() {

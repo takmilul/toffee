@@ -512,4 +512,9 @@ interface ToffeeApi {
     suspend fun getRechargeByBkashUrl(
         @Body rechargeByBkashRequest: RechargeByBkashRequest
     ): RechargeByBkashResponse
+
+    @POST("/mnp-status")
+    suspend fun getMnpStatus(
+        @Body mnpStatusRequest: MnpStatusRequest
+    ): MnpStatusResponse
 }
