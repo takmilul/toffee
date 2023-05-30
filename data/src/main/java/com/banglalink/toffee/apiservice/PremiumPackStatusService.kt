@@ -12,9 +12,9 @@ class PremiumPackStatusService @Inject constructor(
     private val preference: SessionPreference
 ) {
     
-    suspend fun loadData(contentId: Int): List<ActivePack> {
+    suspend fun loadData(contentId: Int, packId: Int): List<ActivePack> {
         val request = PremiumPackStatusRequest(
-            preference.customerId, preference.password
+            preference.customerId, preference.password, packId
         )
         val isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0
         

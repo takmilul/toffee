@@ -120,7 +120,6 @@ import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.*
-import com.banglalink.toffee.usecase.Response
 import com.banglalink.toffee.usecase.MnpStatusData
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
@@ -368,6 +367,7 @@ class HomeActivity : PlayerPageActivity(),
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
+        Log.i("isMnpStatusChecked", "App Opening, isMnpStatusChecked:${mPref.isMnpStatusChecked}")
         observe(mPref.shareableHashLiveData) { pair ->
             pair.first?.let { observeShareableContent(it, pair.second) }
         }
@@ -1612,23 +1612,21 @@ class HomeActivity : PlayerPageActivity(),
                     if (response.data?.mnpStatus == 200){
                         mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
                         mPref.isPrepaid = response.data!!.isPrepaid == true
-                        mPref.isMnpStatusChecked.postValue(true)
+                        mPref.isMnpStatusChecked = true
                         cInfo?.let { callAndObserveGetPackStatus(it) }
                     }
-                    viewModel.sendMnpStatusData(MnpStatusData(Response(
+                    viewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = response.data?.mnpStatus,
                         apiName = "mnpStatus",
-                        isBlNumber = response.data?.isBlNumber,
-                        isPrepaid = response.data?.isPrepaid
-                    )))
+                        rawResponse = response.data.toString()
+                    ))
                 }
                 is Failure -> {
-                    viewModel.sendMnpStatusData(MnpStatusData(Response(
+                    viewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = null,
                         apiName = "mnpStatus",
-                        isBlNumber = null,
-                        isPrepaid = null
-                    )))
+                        rawResponse = response.error.msg
+                    ))
                     baseContext.showToast(response.error.msg)
                 }
             }
@@ -1697,7 +1695,7 @@ class HomeActivity : PlayerPageActivity(),
                         checkPurchaseBeforePlay(it, detailsInfo) {
                             cInfo = it
                             dInfo = detailsInfo
-                            if (mPref.isMnpStatusChecked.value == false){
+                            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
                                 observeMnpStatus()
                             } else {
                                 callAndObserveGetPackStatus(channelInfo)
@@ -2338,7 +2336,7 @@ class HomeActivity : PlayerPageActivity(),
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
-                        mPref.isMnpStatusChecked.postValue(false)
+                        mPref.isMnpStatusChecked = false
                         lifecycleScope.launch {
                             tvChannelsRepo.deleteAllRecentItems()
                         }

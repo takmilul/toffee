@@ -112,9 +112,9 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun getPackStatus(contentId: Int = 0) {
+    fun getPackStatus(contentId: Int = 0, packId: Int) {
         viewModelScope.launch {
-            val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
             _activePackListLiveData.emit(response)
         }
     }
