@@ -16,14 +16,19 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.usecase.MnpStatusData
-import com.banglalink.toffee.util.Log
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -104,14 +109,14 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
                     homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = response.data?.mnpStatus,
                         apiName = "mnpStatus",
-                        rawResponse = response.data.toString()
+                        rawResponse = Gson().toJson(response.data)
                     ))
                 }
                 is Failure -> {
                     homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = null,
                         apiName = "mnpStatus",
-                        rawResponse = response.error.msg
+                        rawResponse = Gson().toJson(response.error)
                     ))
                     requireContext().showToast(response.error.msg)
                 }

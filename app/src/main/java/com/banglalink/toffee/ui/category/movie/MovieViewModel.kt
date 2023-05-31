@@ -3,7 +3,12 @@ package com.banglalink.toffee.ui.category.movie
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.GetContentService
+import com.banglalink.toffee.apiservice.GetMostPopularContents
+import com.banglalink.toffee.apiservice.LandingUserChannelsRequestParam
+import com.banglalink.toffee.apiservice.MovieCategoryDetailService
+import com.banglalink.toffee.apiservice.MoviesComingSoonService
+import com.banglalink.toffee.apiservice.MoviesPreviewService
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
@@ -24,7 +29,7 @@ class MovieViewModel @Inject constructor(
     private val trendingNowService: GetMostPopularContents.AssistedFactory,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val continueWatchingRepo: ContinueWatchingRepository,
-    private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val getContentAssistedFactory: GetContentService.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
 ): ViewModel() {
     

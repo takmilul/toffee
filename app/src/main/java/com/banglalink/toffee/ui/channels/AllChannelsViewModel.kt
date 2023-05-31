@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.GetChannelWithCategory
-import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetContentService
 import com.banglalink.toffee.apiservice.GetStingrayContentService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -16,16 +16,16 @@ import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.model.ChannelInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AllChannelsViewModel @Inject constructor(
     private val tvChannelsRepo: TVChannelRepository,
     private val allChannelService: GetChannelWithCategory,
     private val getStingrayContentService: GetStingrayContentService,
-    private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val getContentAssistedFactory: GetContentService.AssistedFactory,
 ) : ViewModel() {
     
     val selectedChannel = MutableLiveData<ChannelInfo?>()
@@ -57,7 +57,7 @@ class AllChannelsViewModel @Inject constructor(
             } else {
                 tvChannelsRepo.getAllChannels(isStingray)
             }
-        }).getList()
+        }).getList(10)
     }
     
     fun loadRecentTvChannels(isStingray: Boolean = false): Flow<List<TVChannelItem>?> {

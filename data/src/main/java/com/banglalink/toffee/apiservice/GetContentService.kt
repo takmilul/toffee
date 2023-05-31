@@ -12,7 +12,7 @@ import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-class GetContents @AssistedInject constructor(
+class GetContentService @AssistedInject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
@@ -59,6 +59,6 @@ class GetContents @AssistedInject constructor(
     
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(requestParams: ChannelRequestParams): GetContents
+        fun create(requestParams: ChannelRequestParams): GetContentService
     }
 }

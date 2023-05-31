@@ -13,7 +13,15 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -22,6 +30,7 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.MnpStatusData
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.gson.Gson
 
 class PremiumPackDetailsFragment : BaseFragment() {
     
@@ -211,7 +220,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
                     homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = response.data?.mnpStatus,
                         apiName = "mnpStatus",
-                        rawResponse = response.data.toString()
+                        rawResponse = Gson().toJson(response.data)
                     ))
                 }
                 is Failure -> {
@@ -219,7 +228,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
                     homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = null,
                         apiName = "mnpStatus",
-                        rawResponse = response.error.msg
+                        rawResponse = Gson().toJson(response.error)
                     ))
                 }
             }

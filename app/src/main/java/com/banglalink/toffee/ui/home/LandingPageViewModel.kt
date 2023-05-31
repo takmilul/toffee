@@ -13,7 +13,7 @@ import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.apiservice.FeatureContentService
 import com.banglalink.toffee.apiservice.FeaturedPartnerService
 import com.banglalink.toffee.apiservice.GetCategories
-import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetContentService
 import com.banglalink.toffee.apiservice.GetEditorsChoiceContents
 import com.banglalink.toffee.apiservice.GetMostPopularContents
 import com.banglalink.toffee.apiservice.GetPopularUserChannels
@@ -49,7 +49,7 @@ class LandingPageViewModel @Inject constructor(
     private val categoryListApi: GetCategories,
     @ApplicationContext private val context: Context,
     private val featuredAssistedFactory: FeatureContentService,
-    private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val getContentAssistedFactory: GetContentService.AssistedFactory,
     private val mostPopularApi: GetMostPopularContents.AssistedFactory,
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
     private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
@@ -80,7 +80,7 @@ class LandingPageViewModel @Inject constructor(
                     ChannelRequestParams("", 0, "", 0, "LIVE")
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList(10).cachedIn(viewModelScope)
     }
     
     fun loadFeaturedContentList() {
@@ -155,7 +155,7 @@ class LandingPageViewModel @Inject constructor(
                     ChannelRequestParams("", 0, "", 0, "VOD")
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList(10).cachedIn(viewModelScope)
     }
     
     fun loadCategoryWiseContent(categoryId: Int): Flow<PagingData<ChannelInfo>> {
@@ -165,7 +165,7 @@ class LandingPageViewModel @Inject constructor(
                     ChannelRequestParams("", categoryId, "", 0, "LIVE")
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList(10).cachedIn(viewModelScope)
     }
     
     fun loadMostPopularVideos(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
@@ -195,7 +195,7 @@ class LandingPageViewModel @Inject constructor(
                     ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
                 ), ApiNames.GET_CONTENTS_V5, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
-        }).getList()
+        }).getList(10)
     }
     
     fun loadHashTagContents(hashTag: String, categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {

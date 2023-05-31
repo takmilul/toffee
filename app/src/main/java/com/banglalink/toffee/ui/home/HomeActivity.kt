@@ -1618,14 +1618,14 @@ class HomeActivity : PlayerPageActivity(),
                     viewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = response.data?.mnpStatus,
                         apiName = "mnpStatus",
-                        rawResponse = response.data.toString()
+                        rawResponse = Gson().toJson(response.data)
                     ))
                 }
                 is Failure -> {
                     viewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = null,
                         apiName = "mnpStatus",
-                        rawResponse = response.error.msg
+                        rawResponse = Gson().toJson(response.error)
                     ))
                     baseContext.showToast(response.error.msg)
                 }

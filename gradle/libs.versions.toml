@@ -2,7 +2,7 @@
 
 [versions]
 
-gradle-plugin-version = "8.0.1"
+gradle-plugin-version = "8.0.2"
 
 # View
 activity-version = "1.5.1"
@@ -74,8 +74,8 @@ play-core-version = "1.10.3"
 # Firebase
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "23.1.2"
-firebase-analytics-version = "21.2.2"
-firebase-firestore-version = "24.6.0"
+firebase-analytics-version = "21.3.0"
+firebase-firestore-version = "24.6.1"
 firebase-in-app-message-version = "20.3.2"
 firebase-crashlytics-version = "18.3.7"
 firebase-crashlytics-plugin-version = "2.9.4"

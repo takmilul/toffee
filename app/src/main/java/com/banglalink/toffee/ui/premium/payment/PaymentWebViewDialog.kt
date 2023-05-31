@@ -38,6 +38,7 @@ import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -305,7 +306,7 @@ class PaymentWebViewDialog : DialogFragment() {
                            transactionStatus = response.data.transactionStatus,
                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                           rawResponse = response.data.toString(),
+                           rawResponse = Gson().toJson(response.data),
                            statusCode = statusCode,
                            statusMessage = statusMessage,
                        ))
@@ -354,7 +355,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = response.error.msg,
+                        rawResponse = Gson().toJson(response.error),
                         statusCode = statusCode,
                         statusMessage = statusMessage,
                     ))

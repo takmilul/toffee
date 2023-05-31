@@ -10,20 +10,21 @@ class BaseListRepositoryImpl<T: Any> constructor(
     private val pagingFactory: ()-> PagingSource<Int, T>,
     private val remoteMediator: BaseRemoteMediator<T>? = null
 ): BaseListRepository<T> {
-    override fun getList(): Flow<PagingData<T>> {
+    override fun getList(pageSize: Int): Flow<PagingData<T>> {
+        val finalPageSize = if (pageSize <= 0) 30 else pageSize
         return Pager(
             config = PagingConfig(
-                PAGE_SIZE,
+                finalPageSize,
                 enablePlaceholders = true,
-                initialLoadSize = PAGE_SIZE,
-                prefetchDistance = if(PAGE_SIZE > 30) PAGE_SIZE / 2 else 10,
+                initialLoadSize = finalPageSize,
+                prefetchDistance = if(finalPageSize > 30) finalPageSize / 2 else 10,
 //                maxSize = 2 * PAGE_SIZE
             ),
 //            remoteMediator = remoteMediator,
             pagingSourceFactory = pagingFactory
         ).flow
     }
-
+    
     companion object {
         const val PAGE_SIZE = 30
     }
