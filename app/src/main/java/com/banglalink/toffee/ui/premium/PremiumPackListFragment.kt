@@ -22,8 +22,8 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.usecase.Response
 import com.banglalink.toffee.usecase.MnpStatusData
+import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.launch
 
 class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -77,16 +77,16 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
             layoutManager = linearLayoutManager
             addItemDecoration(MarginItemDecoration(12))
         }
+        observeList()
         init()
         viewModel.selectedPremiumPack.value = null
     }
 
     private fun init(){
-        if (mPref.isMnpStatusChecked.value != true && mPref.isVerifiedUser){
+        if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
             observeMnpStatus()
         }
         else{
-            observeList()
             viewModel.getPremiumPackList(contentId ?: "0")
         }
     }
@@ -98,24 +98,21 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
                     if (response.data?.mnpStatus == 200){
                         mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
                         mPref.isPrepaid = response.data!!.isPrepaid == true
-                        mPref.isMnpStatusChecked.postValue(true)
+                        mPref.isMnpStatusChecked = true
                     }
-                    observeList()
                     viewModel.getPremiumPackList(contentId ?: "0")
-                    homeViewModel.sendMnpStatusData(MnpStatusData(Response(
+                    homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = response.data?.mnpStatus,
                         apiName = "mnpStatus",
-                        isBlNumber = response.data?.isBlNumber,
-                        isPrepaid = response.data?.isPrepaid
-                    )))
+                        rawResponse = response.data.toString()
+                    ))
                 }
                 is Failure -> {
-                    homeViewModel.sendMnpStatusData(MnpStatusData(Response(
+                    homeViewModel.sendMnpStatusData(MnpStatusData(
                         mnpStatus = null,
                         apiName = "mnpStatus",
-                        isBlNumber = null,
-                        isPrepaid = null
-                    )))
+                        rawResponse = response.error.msg
+                    ))
                     requireContext().showToast(response.error.msg)
                 }
             }

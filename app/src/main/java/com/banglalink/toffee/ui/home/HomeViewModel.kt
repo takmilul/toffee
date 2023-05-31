@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.home
 
-import android.content.Context
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,20 +11,14 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.ToffeeConfig
-import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
-import com.banglalink.toffee.data.network.request.MnpStatusRequest
-import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.MqttBean
-import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.repository.ReactionCountRepository
 import com.banglalink.toffee.data.repository.ShareCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -313,9 +306,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getPackStatus(contentId: Int = 0) {
+    fun getPackStatus(contentId: Int = 0, packId: Int = 0) {
         viewModelScope.launch {
-            val response = resultFromResponse { premiumPackStatusService.loadData(contentId) }
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
             activePackListLiveData.value = response
         }
     }
