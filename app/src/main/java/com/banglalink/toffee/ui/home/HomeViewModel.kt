@@ -37,7 +37,6 @@ import com.banglalink.toffee.usecase.DownloadShareCountDb
 import com.banglalink.toffee.usecase.DownloadSubscriptionCountDb
 import com.banglalink.toffee.usecase.DownloadViewCountDb
 import com.banglalink.toffee.usecase.MnpStatusData
-import com.banglalink.toffee.usecase.MnpStatusLogEvent
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.usecase.SendCategoryChannelShareCountEvent
 import com.banglalink.toffee.usecase.SendContentReportEvent
@@ -93,7 +92,6 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-    private val mnpStatusLogEvent: MnpStatusLogEvent,
 
     ) : ViewModel() {
 
@@ -294,15 +292,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { mnpStatusService.execute() }
             mnpStatusBeanLiveData.value = response
-        }
-    }
-    fun sendMnpStatusData(mnpStatusData: MnpStatusData) {
-        viewModelScope.launch {
-            try {
-                mnpStatusLogEvent.execute(mnpStatusData)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 

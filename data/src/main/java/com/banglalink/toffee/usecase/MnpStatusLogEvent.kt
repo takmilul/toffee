@@ -16,10 +16,8 @@ class MnpStatusLogEvent @Inject constructor() {
 }
 
 data class MnpStatusData(
-    @SerializedName("mnp_status")
-    val mnpStatus  : Int? = null,
-    @SerializedName("api_name")
-    val apiName  : String? = null,
+    @SerializedName("callingApiName")
+    val callingApiName  : String? = null,
     @SerializedName("rawResponse")
     val rawResponse : String? = null,
 ) : PubSubBaseRequest()

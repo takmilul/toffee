@@ -101,23 +101,11 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
             when (response) {
                 is Success -> {
                     if (response.data?.mnpStatus == 200){
-                        mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
-                        mPref.isPrepaid = response.data!!.isPrepaid == true
                         mPref.isMnpStatusChecked = true
                     }
                     viewModel.getPremiumPackList(contentId ?: "0")
-                    homeViewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = response.data?.mnpStatus,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.data)
-                    ))
                 }
                 is Failure -> {
-                    homeViewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = null,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.error)
-                    ))
                     requireContext().showToast(response.error.msg)
                 }
             }
