@@ -21,19 +21,25 @@ import androidx.paging.LoadState.Loading
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
-import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.FilterContentType.FEED
+import com.banglalink.toffee.enums.FilterContentType.LATEST_VIDEOS
+import com.banglalink.toffee.enums.FilterContentType.TRENDING_VIDEOS
 import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.LARGE
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.handleShare
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.SubCategory
-import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionIconCallback
@@ -42,11 +48,13 @@ import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.util.*
+import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.Log
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,7 +79,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
+        category = if (viewModel.pageName.value != BrowsingScreens.HOME_PAGE) viewModel.selectedCategory.value else null
         
         setupEmptyView()
         selectedFilter = FEED.value

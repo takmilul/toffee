@@ -31,12 +31,15 @@ class WebSeriesFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = landingViewModel.selectedCategory.value
+        val categoryId = category?.id?.toInt() ?: 0
+        val categoryName = category?.categoryName ?: ""
+        
         landingViewModel.pageType.value = PageType.Category
-        landingViewModel.pageName.value = category?.categoryName?.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
-        landingViewModel.featuredPageName.value = category?.categoryName + " Page"
-        landingViewModel.categoryId.value = category?.id?.toInt()
-        mPref.categoryId.value = category?.id?.toInt()
-        mPref.categoryName.value = category?.categoryName
+        landingViewModel.pageName.value = categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
+        landingViewModel.featuredPageName.value = "$categoryName Page"
+        landingViewModel.categoryId.value = categoryId
+        mPref.categoryId.value = categoryId
+        mPref.categoryName.value = categoryName
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.isDramaSeries.value = true
     }
@@ -48,7 +51,7 @@ class WebSeriesFragment: BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = category?.categoryName
+        requireActivity().title = category?.categoryName ?: ""
     }
     
     override fun onDestroyView() {

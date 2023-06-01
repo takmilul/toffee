@@ -1937,7 +1937,7 @@ class HomeActivity : PlayerPageActivity(),
         playerEventHelper.startContentPlayingSession(info!!.id)
         ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
-            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
     }
     
@@ -1955,10 +1955,10 @@ class HomeActivity : PlayerPageActivity(),
         playerEventHelper.startContentPlayingSession(info!!.id)
         ConvivaHelper.setConvivaVideoMetadata(info, mPref.customerId)
         loadDetailFragment(
-            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
     }
-
+    
     private fun resetPlayer() {
         releasePlayer()
         initializePlayer()
@@ -1968,14 +1968,14 @@ class HomeActivity : PlayerPageActivity(),
     override fun playIndex(index: Int) {
         super.playIndex(index)
         loadDetailFragment(
-            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
     }
     
     override fun playChannelId(channelId: Int) {
         super.playChannelId(channelId)
         loadDetailFragment(
-            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
     }
     

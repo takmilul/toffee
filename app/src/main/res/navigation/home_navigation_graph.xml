@@ -584,7 +584,7 @@
     
     <fragment
         android:id="@+id/musicDetailsFragmant"
-        android:name="com.banglalink.toffee.ui.category.music.MusicDetailsFragmant"
+        android:name="com.banglalink.toffee.ui.category.music.MusicDetailsFragment"
         android:label="{title}">
         <argument
             android:name="title"

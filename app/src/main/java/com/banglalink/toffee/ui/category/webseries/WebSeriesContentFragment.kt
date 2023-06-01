@@ -32,7 +32,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.model.SubCategory
-import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -55,16 +54,11 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
         _binding = FragmentWebSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
-        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
+        category = landingPageViewModel.selectedCategory.value
         setupEmptyView()
         mAdapter = WebSeriesListAdapter(this)
         binding.latestVideosList.adapter = mAdapter
@@ -79,7 +73,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 9, it)
             }
-            else{
+            else {
                 observeTrendingVideosList(category?.id?.toInt() ?: 9, it)
             }
         }
@@ -93,7 +87,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
             popupMenu.menu.add(Menu.NONE, TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
             popupMenu.show()
-
+            
             popupMenu.setOnMenuItemClickListener { item ->
                 selectedFilter = item.itemId
                 binding.latestVideosHeader.text = item.title
@@ -104,7 +98,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
                 true
             }
         }
-
+        
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mAdapter.loadStateFlow.collectLatest {
                 val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
@@ -117,11 +111,11 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             }
         }
     }
-
+    
     private fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(0, "No item found")
     }
-
+    
     private fun setupEmptyView() {
         val info = getEmptyViewInfo()
         if(info.first > 0) {
@@ -130,12 +124,12 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
         else {
             binding.emptyViewIcon.visibility = View.GONE
         }
-
+        
         info.second?.let {
             binding.emptyViewLabel.text = it
         }
     }
-
+    
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         viewLifecycleOwner.lifecycleScope.launch {
             landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
@@ -143,7 +137,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             }
         }
     }
-
+    
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
@@ -151,7 +145,7 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
             }
         }
     }
-
+    
     override fun onItemClicked(item: ChannelInfo) {
         val seriesData = SeriesPlaybackInfo(
             item.seriesSummaryId,
@@ -288,13 +282,18 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOptionClicked(view, item)
     }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     override fun showShareMenuItem(hide: Boolean): Boolean {
         return true
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

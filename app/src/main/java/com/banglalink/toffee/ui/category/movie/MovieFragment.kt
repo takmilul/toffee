@@ -30,12 +30,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MovieFragment : BaseFragment() {
     private val binding get() = _binding!!
-    private lateinit var category: Category
+    private var category: Category? = null
     @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentMovieBinding ? = null
     private val viewModel by activityViewModels<MovieViewModel>()
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-
+    
     companion object {
         @JvmStatic
         fun newInstance() = MovieFragment().apply {
@@ -47,15 +47,18 @@ class MovieFragment : BaseFragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = landingViewModel.selectedCategory.value!!
+        category = landingViewModel.selectedCategory.value
+        val categoryId = category?.id?.toInt() ?: 0
+        val categoryName = category?.categoryName ?: ""
+        
         landingViewModel.pageType.value = PageType.Category
-        landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
-        landingViewModel.featuredPageName.value = category.categoryName + " Page"
-        landingViewModel.categoryId.value = category.id.toInt()
-        mPref.categoryId.value = category.id.toInt()
-        mPref.categoryName.value = category.categoryName
+        landingViewModel.pageName.value = categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
+        landingViewModel.featuredPageName.value = "$categoryName Page"
+        landingViewModel.categoryId.value = categoryId
+        mPref.categoryId.value = categoryId
+        mPref.categoryName.value = categoryName
         landingViewModel.isDramaSeries.value = false
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to category.categoryName))
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf(FirebaseParams.BROWSER_SCREEN to categoryName))
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -65,23 +68,23 @@ class MovieFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = category.categoryName
+        requireActivity().title = category?.categoryName ?: ""
         setCategoryIcon()
         observeCardsVisibility()
-        viewModel.loadMovieCategoryDetail(category.id.toInt())
+        viewModel.loadMovieCategoryDetail(category?.id?.toInt() ?: 0)
         binding.categoryMovieShare.safeClick({
-            category.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
+            category?.categoryShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
     }
-
+    
     private fun setCategoryIcon() {
-        category.let {
+        category?.let {
             binding.categoryName.text = it.categoryName
             bindingUtil.bindCategoryIcon(binding.categoryIcon, it)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }
-
+    
     private fun observeCardsVisibility() {
         observe(viewModel.moviesContentCards){
             binding.featuredFragment.isVisible = it.featuredContent == 1
@@ -100,7 +103,7 @@ class MovieFragment : BaseFragment() {
             binding.latestVideosFragment.isVisible = it.feed == 1
         }
     }
-
+    
     override fun onStop() {
         viewModel.moviesContentCards.removeObservers(viewLifecycleOwner)
         super.onStop()

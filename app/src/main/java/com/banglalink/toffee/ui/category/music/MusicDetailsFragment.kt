@@ -16,9 +16,9 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import java.util.*
 
-class MusicDetailsFragmant : BaseFragment() {
+class MusicDetailsFragment : BaseFragment() {
 
-    lateinit var category: Category
+    private var category: Category? = null
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
@@ -26,8 +26,8 @@ class MusicDetailsFragmant : BaseFragment() {
         const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
         const val ARG_TITLE = "title"
 
-        fun newInstance(category: Category): MusicDetailsFragmant {
-            return MusicDetailsFragmant().apply {
+        fun newInstance(category: Category): MusicDetailsFragment {
+            return MusicDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)
                     it.putString(ARG_TITLE, category.categoryName)
@@ -42,20 +42,23 @@ class MusicDetailsFragmant : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        category = landingViewModel.selectedCategory.value!!
+        category = landingViewModel.selectedCategory.value
+        val categoryId = category?.id?.toInt() ?: 0
+        val categoryName = category?.categoryName ?: ""
+        
         landingViewModel.pageType.value = PageType.Category
-        landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
-        landingViewModel.featuredPageName.value = category.categoryName + " Page"
+        landingViewModel.pageName.value = categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
+        landingViewModel.featuredPageName.value = "$categoryName Page"
         landingViewModel.checkedSubCategoryChipId.value = 0
-        landingViewModel.categoryId.value = category.id.toInt()
-        mPref.categoryId.value = category.id.toInt()
-        mPref.categoryName.value = category.categoryName
+        landingViewModel.categoryId.value = categoryId
+        mPref.categoryId.value = categoryId
+        mPref.categoryName.value = categoryName
         landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
         ToffeeAnalytics.logEvent(
             ToffeeEvents.SCREEN_VIEW,  bundleOf(
                 FirebaseParams.BROWSER_SCREEN to "category",
-            "category_type" to category.categoryName)
+            "category_type" to categoryName)
         )
     }
     

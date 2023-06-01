@@ -18,6 +18,7 @@ import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,19 +65,23 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
     
     override fun onItemClicked(item: Category) {
         viewModel.selectedCategory.value = item
+        val args = Bundle().apply {
+            putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+            putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
+        }
         ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
             CategoryType.MOVIE.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.movieFragment)
+                parentFragment?.findNavController()?.navigate(R.id.movieFragment, args)
             }
             CategoryType.MUSIC.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant)
+                parentFragment?.findNavController()?.navigate(R.id.musicDetailsFragmant, args)
             }
             CategoryType.DRAMA_SERIES.value -> {
-                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment)
+                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
             }
             else -> {
-                parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment)
+                parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment, args)
             }
         }
     }
