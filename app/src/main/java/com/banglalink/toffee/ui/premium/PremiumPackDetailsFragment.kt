@@ -212,24 +212,12 @@ class PremiumPackDetailsFragment : BaseFragment() {
             when (response) {
                 is Success -> {
                     if (response.data?.mnpStatus == 200){
-                        mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
-                        mPref.isPrepaid = response.data!!.isPrepaid == true
                         mPref.isMnpStatusChecked = true
                         viewModel.getPackStatus(0, viewModel.selectedPremiumPack.value!!.id)
                     }
-                    homeViewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = response.data?.mnpStatus,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.data)
-                    ))
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)
-                    homeViewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = null,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.error)
-                    ))
                 }
             }
         }

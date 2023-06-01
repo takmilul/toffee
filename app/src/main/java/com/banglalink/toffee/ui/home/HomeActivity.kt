@@ -367,7 +367,7 @@ class HomeActivity : PlayerPageActivity(),
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
-        Log.i("isMnpStatusChecked", "App Opening, isMnpStatusChecked:${mPref.isMnpStatusChecked}")
+
         observe(mPref.shareableHashLiveData) { pair ->
             pair.first?.let { observeShareableContent(it, pair.second) }
         }
@@ -1610,23 +1610,11 @@ class HomeActivity : PlayerPageActivity(),
             when (response) {
                 is Success -> {
                     if (response.data?.mnpStatus == 200){
-                        mPref.isBanglalinkNumber = response.data!!.isBlNumber.toString()
-                        mPref.isPrepaid = response.data!!.isPrepaid == true
                         mPref.isMnpStatusChecked = true
                         cInfo?.let { callAndObserveGetPackStatus(it) }
                     }
-                    viewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = response.data?.mnpStatus,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.data)
-                    ))
                 }
                 is Failure -> {
-                    viewModel.sendMnpStatusData(MnpStatusData(
-                        mnpStatus = null,
-                        apiName = "mnpStatus",
-                        rawResponse = Gson().toJson(response.error)
-                    ))
                     baseContext.showToast(response.error.msg)
                 }
             }
