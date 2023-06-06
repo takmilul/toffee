@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -218,7 +219,22 @@ class UploadMethodFragment : DialogFragment() {
         lifecycleScope.launch {
             val contentType = Utils.contentTypeFromContentUri(requireContext(), videoUri)
             val fileName = Utils.fileNameFromContentUri(requireContext(), videoUri)
-
+            
+            runCatching {
+                val filePath = videoUri.toString()
+                val mmr = MediaMetadataRetriever()
+                if (filePath.startsWith("content://")) {
+                    mmr.setDataSource(context, Uri.parse(filePath))
+                } else {
+                    mmr.setDataSource(filePath)
+                }
+                val height = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                val width = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                val codec = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
+                val extension = fileName.substringAfterLast(".")
+                Log.i("Meta_", "width: $width, height: $height, file-extension: .$extension, Mime-Type: $codec")
+            }
+            
             Log.i("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
 
             if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {

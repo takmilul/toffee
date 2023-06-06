@@ -15,6 +15,7 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.mediarouter.app.MediaRouteButton
 import coil.load
 import com.banglalink.toffee.R
@@ -95,6 +96,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var playerBottomSpace: Space
     private lateinit var minimizeButton: ImageView
+    private lateinit var thumbnailView: ImageView
     private lateinit var exoTimeSeparator: TextView
     private lateinit var exoProgress: DefaultTimeBar
     private lateinit var fullscreenButton: ImageView
@@ -142,7 +144,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setShowPreviousButton(false)
         setShowFastForwardButton(false)
         setShowRewindButton(false)
+        defaultArtwork = ContextCompat.getDrawable(context, R.drawable.ic_toffee)
+        useArtwork = true
         
+        thumbnailView = findViewById(R.id.thumbnail)
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerOverlay = findViewById(R.id.playerOverlay)

@@ -25,6 +25,19 @@
     
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
     
+    <ImageView
+        android:id="@+id/exo_artwork"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="Artwork" />
+    
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:contentDescription="Thumbnail" />
+    
     <FrameLayout
         android:id="@id/exo_ad_overlay"
         android:layout_width="match_parent"
