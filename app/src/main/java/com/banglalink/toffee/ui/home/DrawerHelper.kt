@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import com.banglalink.toffee.R
@@ -21,6 +22,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.openUrlToExternalApp
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.bytesEqualTo
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
@@ -41,15 +43,20 @@ class DrawerHelper(
         toggle.isDrawerIndicatorEnabled = false
 
 //        activity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
-//        val parentAdapter =
-//            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
+//        val parentAdapter = ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
 //        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         
         toggle.toolbarNavigationClickListener = View.OnClickListener {
-            activity.getNavController().navigatePopUpTo(R.id.menu_feed)
+            val icon = binding.tbar.toolbar.navigationIcon
+            val isBackIconVisible = ContextCompat.getDrawable(activity, R.drawable.ic_arrow_back)?.bytesEqualTo(icon)
+            if (isBackIconVisible == true) {
+                activity.getNavController().popBackStack()
+            } else {
+                activity.getNavController().navigatePopUpTo(R.id.menu_feed)
+            }
         }
         
         setProfileInfo()
@@ -104,7 +111,7 @@ class DrawerHelper(
             }
 
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-            activity.getNavController().navigatePopUpTo(R.id.premiumPackListFragment,args)
+            activity.getNavController().navigateTo(R.id.premiumPackListFragment,args)
             binding.drawerLayout.closeDrawers()
         }
     }

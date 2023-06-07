@@ -5,8 +5,6 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -29,27 +27,26 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
+class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
     
-    private lateinit var searchKey: String
     override val itemMargin: Int = 12
+    private lateinit var searchKey: String
     private var currentItem: ChannelInfo? = null
     @Inject lateinit var cacheManager: CacheManager
-    @Inject lateinit var factory: SearchViewModel.AssistedFactory
     @Inject lateinit var favoriteDao: FavoriteItemDao
-    private val homeViewModel by activityViewModels<HomeViewModel> ()
+    @Inject lateinit var factory: SearchViewModel.AssistedFactory
     override val mAdapter by lazy { SearchAdapter(this) }
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     override val mViewModel by viewModels<SearchViewModel> {
         SearchViewModel.provideFactory(factory, searchKey)
     }
     
-    companion object{
+    companion object {
         const val SEARCH_KEYWORD = "keyword"
+        
         fun createInstance(search: String): SearchFragment {
             val searchListFragment = SearchFragment()
             val bundle = Bundle()
@@ -60,7 +57,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     }
     
     fun getSearchString(): String? {
-        return if(::searchKey.isInitialized) searchKey else null
+        return if (::searchKey.isInitialized) searchKey else null
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,42 +68,40 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         requireActivity().title = "Search"
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
-        if(requireActivity() is HomeActivity) {
+        
+        if (requireActivity() is HomeActivity) {
             (requireActivity() as HomeActivity).openSearchBarIfClose()
         }
-        if(searchKey.isNotEmpty()){
+        
+        if (searchKey.isNotEmpty()) {
             Utils.hideSoftKeyboard(requireActivity())
             (requireActivity() as HomeActivity).clearSearViewFocus()
         }
-        toolbar?.setNavigationOnClickListener {
-            runCatching {
-                (activity as HomeActivity).closeSearchBarIfOpen()
-                lifecycleScope.launch {
-                    delay(250)
-                    findNavController().popBackStack()
-                }
-            }
-        }
+        
         observeSubscribeChannel()
     }
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        if(item.isChannel){
+        if (item.isChannel) {
             homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-        }
-        else{
+        } else {
             homeViewModel.playContentLiveData.postValue(item)
         }
     }
     
     override fun getEmptyViewInfo(): Triple<Int, String?, String?> {
-        return if (searchKey == ""){
+        return if (searchKey == "") {
             Triple(0, " ", " ")
-        } else Triple(R.drawable.ic_search_empty, "Sorry, no relevant content\n" + "found with the keyword", "Try searching with another keyword")
+        } else Triple(
+            R.drawable.ic_search_empty,
+            "Sorry, no relevant content\n" + "found with the keyword",
+            "Try searching with another keyword"
+        )
     }
     
     override fun onProviderIconClicked(item: ChannelInfo) {
@@ -130,7 +125,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     
     private fun observeSubscribeChannel() {
         observe(homeViewModel.subscriptionLiveData) { response ->
-            when(response) {
+            when (response) {
                 is Resource.Success -> {
                     currentItem?.apply {
                         isSubscribed = response.data.isSubscribed
@@ -154,8 +149,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         popupMenu.inflate(R.menu.menu_catchup_item)
         if (channelInfo.favorite == null || channelInfo.favorite == "0") {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
-        }
-        else {
+        } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
         
@@ -163,17 +157,17 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         popupMenu.menu.findItem(R.id.menu_report).isVisible = !channelInfo.isChannel
         
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
+        popupMenu.setOnMenuItemClickListener {
+            when (it?.itemId) {
+                R.id.menu_share -> {
                     requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_add_to_playlist->{
+                R.id.menu_add_to_playlist -> {
                     requireActivity().handleAddToPlaylist(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_fav->{
+                R.id.menu_fav -> {
                     requireActivity().handleFavorite(channelInfo, favoriteDao)
                     return@setOnMenuItemClickListener true
                 }
@@ -181,7 +175,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
                     requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                else->{
+                else -> {
                     return@setOnMenuItemClickListener false
                 }
             }

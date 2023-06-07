@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -27,10 +26,8 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.usecase.MnpStatusData
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
 
 class PremiumPackDetailsFragment : BaseFragment() {
     
@@ -49,7 +46,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-        onBackIconClicked()
+        
         requireActivity().title = "Pack Details"
         
         if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
@@ -222,15 +219,6 @@ class PremiumPackDetailsFragment : BaseFragment() {
             }
         }
         homeViewModel.getMnpStatus()
-    }
-    
-    private fun onBackIconClicked() {
-        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.setNavigationOnClickListener {
-            runCatching {
-                findNavController().popBackStack()
-            }
-        }
     }
     
     override fun onDestroyView() {

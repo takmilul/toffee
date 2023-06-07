@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -27,8 +26,6 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.usecase.MnpStatusData
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -62,7 +59,6 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
     
         binding.progressBar.load(R.drawable.content_loader)
         handleOnBackPressed()
-        handleOnBackIconClicked()
         
         contentId = arguments?.getString("contentId")
         
@@ -159,15 +155,6 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
                 }
             }
         })
-    }
-    
-    private fun handleOnBackIconClicked() {
-        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.setNavigationOnClickListener {
-            runCatching {
-                findNavController().popBackStack()
-            }
-        }
     }
     
     override fun onStop() {

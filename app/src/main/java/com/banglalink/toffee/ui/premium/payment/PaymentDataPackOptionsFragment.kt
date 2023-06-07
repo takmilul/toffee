@@ -29,6 +29,7 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.gson.Gson
 
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
     
@@ -212,7 +213,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = response.data.toString()
+                        rawResponse = Gson().toJson(response.data)
                     ))
                     if (response.data.statusCode != "0000") {
                         progressDialog.dismiss()
@@ -236,7 +237,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = response.error.msg
+                        rawResponse = Gson().toJson(response.error)
                     ))
                     requireContext().showToast(response.error.msg)
                     progressDialog.dismiss()
@@ -266,7 +267,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = response.data.toString()
+                        rawResponse = Gson().toJson(response.data)
                     ))
                     if (response.data.statusCode != "0000") {
                         requireContext().showToast(response.data.statusMessage)
@@ -298,7 +299,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = response.error.msg
+                        rawResponse = Gson().toJson(response.error)
                     ))
                     requireContext().showToast(response.error.msg)
                 }
@@ -339,7 +340,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = null,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = it.data.toString()
+                            rawResponse = Gson().toJson(it.data)
                         ))
                         it.data?.let {
                             if (it.statusCode != 200) {
@@ -371,7 +372,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = null,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = it.error.msg
+                            rawResponse = Gson().toJson(it.error)
                         ))
                         requireContext().showToast(it.error.msg)
                     }

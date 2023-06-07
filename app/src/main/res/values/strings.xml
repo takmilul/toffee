@@ -555,7 +555,7 @@
     <string name="starting_from_bdt_0">Starting from BDT 0</string>
     <string name="for_all_users_text">For all users</string>
     <string name="enable_now">ENABLE NOW</string>
-    <string name="trial_pack_page_msg">You are about to active the trial pack.</string>
+    <string name="trial_pack_page_msg">You are about to activate the trial plan.</string>
     <string name="insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>

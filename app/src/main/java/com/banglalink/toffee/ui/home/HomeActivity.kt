@@ -758,7 +758,7 @@ class HomeActivity : PlayerPageActivity(),
         bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
-        binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) drawable.ic_arrow_back else drawable.ic_toffee)
+        binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
     }
     
     private fun initializeDraggableView() {
@@ -841,13 +841,14 @@ class HomeActivity : PlayerPageActivity(),
                 R.id.menu_tv,
                 R.id.menu_activities,
                 R.id.menu_channel,
-//                R.id.menu_all_tv_channel,
+                R.id.menu_explore,
                 R.id.menu_favorites,
                 R.id.menu_settings,
                 R.id.menu_subscriptions,
                 R.id.menu_invite,
                 R.id.menu_redeem,
                 R.id.menu_creators_policy,
+                R.id.premiumPackListFragment
             ), binding.drawerLayout
         )
 //        setupActionBarWithNavController(navController, appbarConfig)
