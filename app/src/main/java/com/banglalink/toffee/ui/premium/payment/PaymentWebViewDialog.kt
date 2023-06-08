@@ -143,11 +143,6 @@ class PaymentWebViewDialog : DialogFragment() {
                             }
                             it.contains("failure") || it.contains("fail") -> {
                                 progressDialog.dismiss()
-                                val args = bundleOf(
-                                    ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
-                                )
-                                navigateToStatusDialogPage(args)
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "bkash-failure-callback",
@@ -164,14 +159,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                                     rawResponse = "Your payment failed due to a technical error. Please try again."
                                 ))
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to -1,
+                                    ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
+                                )
+                                navigateToStatusDialogPage(args)
                             }
                             it.contains("cancel") -> {
                                 progressDialog.dismiss()
-                                val args = bundleOf(
-                                    ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to "Payment canceled by user"
-                                )
-                                navigateToStatusDialogPage(args)
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "bkash-cancel-callback",
@@ -188,6 +183,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                                     rawResponse = "Payment canceled by user"
                                 ))
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to -1,
+                                    ARG_STATUS_MESSAGE to "Payment canceled by user"
+                                )
+                                navigateToStatusDialogPage(args)
                             }
                         }
                     }
