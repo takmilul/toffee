@@ -114,7 +114,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.due_some_technical_issue)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
-                binding.goToHomePageBtn.hide()
+                binding.goToHomePageBtn.show()
             }
             SUCCESS -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_success)
@@ -132,7 +132,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = getString(R.string.this_might_be_insufficient)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
-                binding.goToHomePageBtn.hide()
+                binding.goToHomePageBtn.show()
             }
             DataPackPurchaseFailedTechnical_ERROR -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
@@ -140,7 +140,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = getString(R.string.this_might_be_Technical)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
-                binding.goToHomePageBtn.hide()
+                binding.goToHomePageBtn.show()
             }
             DataPackPurchaseWrongPackSelection_ERROR -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
@@ -148,7 +148,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = getString(R.string.this_might_be_wrong_pack)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
-                binding.goToHomePageBtn.hide()
+                binding.goToHomePageBtn.show()
             }
             DataPackPurchaseFailedPackNotExist_ERROR -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
@@ -188,7 +188,7 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
-                binding.goToHomePageBtn.hide()
+                binding.goToHomePageBtn.show()
             }
         }
     }

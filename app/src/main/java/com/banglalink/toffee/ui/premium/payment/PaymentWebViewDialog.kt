@@ -148,6 +148,22 @@ class PaymentWebViewDialog : DialogFragment() {
                                     ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
                                 )
                                 navigateToStatusDialogPage(args)
+                                viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                                    id = System.currentTimeMillis() + mPref.customerId,
+                                    callingApiName = "bkash-failure-callback",
+                                    packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                    packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                    dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                    dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                    paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                    paymentMsisdn = null,
+                                    paymentId = paymentId,
+                                    trxId = null,
+                                    transactionStatus = null,
+                                    amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                    rawResponse = "Your payment failed due to a technical error. Please try again."
+                                ))
                             }
                             it.contains("cancel") -> {
                                 progressDialog.dismiss()
@@ -156,6 +172,22 @@ class PaymentWebViewDialog : DialogFragment() {
                                     ARG_STATUS_MESSAGE to "Payment canceled by user"
                                 )
                                 navigateToStatusDialogPage(args)
+                                viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                                    id = System.currentTimeMillis() + mPref.customerId,
+                                    callingApiName = "bkash-cancel-callback",
+                                    packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                    packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                    dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                    dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                    paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                    paymentMsisdn = null,
+                                    paymentId = paymentId,
+                                    trxId = null,
+                                    transactionStatus = null,
+                                    amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                    rawResponse = "Payment canceled by user"
+                                ))
                             }
                         }
                     }
