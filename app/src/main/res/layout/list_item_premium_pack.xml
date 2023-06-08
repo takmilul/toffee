@@ -91,12 +91,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/packNameTextView"
                 app:layout_constraintStart_toStartOf="@id/packNameTextView" />
-            
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/packageDetails"
                 setPremiumPackStatusMsg="@{data}"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
+                android:layout_height="28dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@{data.isPackPurchased ? @color/pack_active_button_color : @color/colorAccent2}"
                 android:fontFamily="@font/roboto_bold"
@@ -112,7 +112,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:backgroundTint="@color/colorAccent2"
                 tools:text="@string/pack_details_btn" />
-            
+
             <ImageView
                 android:id="@+id/packStatusIcon"
                 android:layout_width="0dp"

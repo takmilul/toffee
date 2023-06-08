@@ -815,6 +815,7 @@ abstract class PlayerPageActivity :
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
         val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+        Log.i("CONTENT_URL", "playingUrl: $contentUrl")
         showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {

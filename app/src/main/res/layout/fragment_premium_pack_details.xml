@@ -246,7 +246,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="@{data.packDetail}"
+                android:text="@string/pack_activation"
                 tools:text="You have bought 1 GB for 3 days pack"
                 android:textColor="@color/TrailTxt"
                 android:textSize="16sp"
