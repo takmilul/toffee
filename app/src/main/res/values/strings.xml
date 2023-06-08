@@ -570,4 +570,5 @@
     <string name="active_text">Active</string>
     <string name="trial_activated_text">Trial Activated</string>
     <string name="prem_content_bundle_title">Choose any of the following premium packs to avail the content</string>
+    <string name="pack_activation">Your pack is activated</string>
 </resources>
