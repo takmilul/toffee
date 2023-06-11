@@ -61,6 +61,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var sessionToken: String? = null
     private var shareableUrl: String? = null
     private var statusMessage: String? = null
+    private var transactionStatus: String? = null
     private var transactionId: String? = null
     private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
@@ -320,6 +321,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     queryPaymentResponse = response.data.copy(
                         statusCode = statusCode,
                         statusMessage = statusMessage,
+                        transactionStatus = transactionStatus,
                         transactionId = transactionId,
                         customerMsisdn = customerMsisdn
                     )
@@ -332,7 +334,7 @@ class PaymentWebViewDialog : DialogFragment() {
                            dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                            dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                            paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                           paymentMsisdn = response.data.customerMsisdn,
+                           paymentMsisdn = customerMsisdn,
                            paymentId = response.data.paymentID,
                            trxId = response.data.transactionId,
                            transactionStatus = response.data.transactionStatus,
@@ -426,13 +428,13 @@ class PaymentWebViewDialog : DialogFragment() {
                             dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                             dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                            paymentMsisdn = null,
+                            paymentMsisdn = customerMsisdn,
                             paymentId = paymentId,
-                            trxId = null,
-                            transactionStatus = null,
+                            trxId = transactionId,
+                            transactionStatus = transactionStatus,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = it.data.toString()
+                            rawResponse = Gson().toJson(it.data)
                         ))
                         if (it.data.status == PaymentStatusDialog.SUCCESS) {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
@@ -456,10 +458,10 @@ class PaymentWebViewDialog : DialogFragment() {
                             dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                             dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                            paymentMsisdn = null,
+                            paymentMsisdn = customerMsisdn,
                             paymentId = paymentId,
-                            trxId = null,
-                            transactionStatus = null,
+                            trxId = transactionId,
+                            transactionStatus = transactionStatus,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                             rawResponse = it.error.msg
