@@ -4,14 +4,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
-import android.net.http.SslError
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
@@ -52,6 +50,7 @@ import javax.inject.Inject
 class PaymentWebViewDialog : DialogFragment() {
     
     val TAG = "premium_log"
+    private val gson = Gson()
     private var retryCount = 0
     private var header: String? = ""
     private var title: String? = null
@@ -154,15 +153,15 @@ class PaymentWebViewDialog : DialogFragment() {
                                     paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                     paymentMsisdn = null,
                                     paymentId = paymentId,
-                                    trxId = null,
+                                    transactionId = null,
                                     transactionStatus = null,
                                     amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                    rawResponse = "Your payment failed due to a technical error. Please try again."
+                                    rawResponse = getString(string.payment_failed_message)
                                 ))
                                 val args = bundleOf(
                                     ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to "Your payment failed due to a technical error. Please try again."
+                                    ARG_STATUS_MESSAGE to getString(string.payment_failed_message)
                                 )
                                 navigateToStatusDialogPage(args)
                             }
@@ -178,48 +177,21 @@ class PaymentWebViewDialog : DialogFragment() {
                                     paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                     paymentMsisdn = null,
                                     paymentId = paymentId,
-                                    trxId = null,
+                                    transactionId = null,
                                     transactionStatus = null,
                                     amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                    rawResponse = "Payment canceled by user"
+                                    rawResponse = getString(string.payment_canceled_message)
                                 ))
                                 val args = bundleOf(
                                     ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to "Payment canceled by user"
+                                    ARG_STATUS_MESSAGE to getString(string.payment_canceled_message)
                                 )
                                 navigateToStatusDialogPage(args)
                             }
                         }
                     }
                 }
-            }
-            
-            override fun onReceivedHttpError(view: WebView?, request: WebResourceRequest?, errorResponse: WebResourceResponse?, ) {
-                super.onReceivedHttpError(view, request, errorResponse)
-                Log.i(TAG, "onReceivedHttpError: url: ${request?.url.toString()} \nstatusCode: ${errorResponse?.statusCode} \nerrorMessage: ${errorResponse?.reasonPhrase} \nheader: ${errorResponse?.responseHeaders}")
-            }
-            
-            override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
-                super.onReceivedSslError(view, handler, error)
-                Log.i(TAG, "onReceivedSslError: errorCode: ${error?.primaryError}")
-            }
-            
-            @RequiresApi(VERSION_CODES.O)
-            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
-                Log.i(TAG, "onRenderProcessGone: didCrash: ${detail?.didCrash()}")
-                return super.onRenderProcessGone(view, detail)
-            }
-            
-            @Deprecated("Deprecated in Java")
-            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-                super.onReceivedError(view, errorCode, description, failingUrl)
-                Log.i(TAG, "onReceivedError: failingUrl: $failingUrl errorCode: $errorCode, errorMsg: $description")
-            }
-            
-            @RequiresApi(VERSION_CODES.M)
-            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-                Log.i(TAG, "onReceivedError: errorCode: ${error?.errorCode}, errorMsg: ${error?.description}")
             }
         }
         
@@ -295,15 +267,6 @@ class PaymentWebViewDialog : DialogFragment() {
                     transactionId = response.data.transactionId
                     customerMsisdn = response.data.customerMsisdn
                     
-//                    if (response.data.transactionStatus != "Completed" && (response.data.statusCode == "2023" || response.data.statusCode == "2003" || response.data.statusCode == "503")) {
-//                        progressDialog.dismiss()
-//                        val args = bundleOf(
-//                            ARG_STATUS_CODE to -1,
-//                            ARG_STATUS_MESSAGE to statusMessage
-//                        )
-//                        navigateToStatusDialogPage(args)
-//                        return@observe
-//                    }
                     queryBkashPayment()
                 }
                 is Failure -> {
@@ -321,12 +284,14 @@ class PaymentWebViewDialog : DialogFragment() {
                     queryPaymentResponse = response.data.copy(
                         statusCode = statusCode,
                         statusMessage = statusMessage,
-                        transactionStatus = transactionStatus,
                         transactionId = transactionId,
                         customerMsisdn = customerMsisdn
                     )
-                   if (retryCount >= mPref.bkashApiRetryingCount) {
-                       viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                    
+                    transactionStatus = queryPaymentResponse?.transactionStatus
+                    
+                    if (retryCount >= mPref.bkashApiRetryingCount) {
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                            id = System.currentTimeMillis() + mPref.customerId,
                            callingApiName = "bkash-query-payment",
                            packId = viewModel.selectedPremiumPack.value?.id ?: 0,
@@ -334,18 +299,18 @@ class PaymentWebViewDialog : DialogFragment() {
                            dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                            dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                            paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                           paymentMsisdn = customerMsisdn,
-                           paymentId = response.data.paymentID,
-                           trxId = response.data.transactionId,
-                           transactionStatus = response.data.transactionStatus,
+                           paymentMsisdn = queryPaymentResponse?.customerMsisdn,
+                           paymentId = queryPaymentResponse?.paymentID,
+                           transactionId = queryPaymentResponse?.transactionId,
+                           transactionStatus = transactionStatus,
                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                           rawResponse = Gson().toJson(response.data),
+                           rawResponse = gson.toJson(queryPaymentResponse),
                            statusCode = statusCode,
                            statusMessage = statusMessage,
-                       ))
-                   }
-                    when (response.data.transactionStatus) {
+                        ))
+                    }
+                    when (queryPaymentResponse?.transactionStatus) {
                         "Completed" -> {
                             viewModel.bkashQueryPaymentData.value = queryPaymentResponse
                             callAndObserveBkashDataPackPurchase()
@@ -385,11 +350,11 @@ class PaymentWebViewDialog : DialogFragment() {
                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                         paymentMsisdn = null,
                         paymentId = paymentId,
-                        trxId = null,
+                        transactionId = null,
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = Gson().toJson(response.error),
+                        rawResponse = gson.toJson(response.error),
                         statusCode = statusCode,
                         statusMessage = statusMessage,
                     ))
@@ -430,11 +395,11 @@ class PaymentWebViewDialog : DialogFragment() {
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                             paymentMsisdn = customerMsisdn,
                             paymentId = paymentId,
-                            trxId = transactionId,
+                            transactionId = transactionId,
                             transactionStatus = transactionStatus,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = Gson().toJson(it.data)
+                            rawResponse = gson.toJson(it.data)
                         ))
                         if (it.data.status == PaymentStatusDialog.SUCCESS) {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
@@ -460,11 +425,11 @@ class PaymentWebViewDialog : DialogFragment() {
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                             paymentMsisdn = customerMsisdn,
                             paymentId = paymentId,
-                            trxId = transactionId,
+                            transactionId = transactionId,
                             transactionStatus = transactionStatus,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = it.error.msg
+                            rawResponse = gson.toJson(it.error)
                         ))
                         val args = bundleOf(
                             ARG_STATUS_CODE to 0,
@@ -553,11 +518,11 @@ class PaymentWebViewDialog : DialogFragment() {
                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                         paymentMsisdn = null,
                         paymentId = paymentId,
-                        trxId = null,
+                        transactionId = null,
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = it.data.toString()
+                        rawResponse = gson.toJson(it.data)
                     ))
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
@@ -586,11 +551,11 @@ class PaymentWebViewDialog : DialogFragment() {
                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                         paymentMsisdn = null,
                         paymentId = paymentId,
-                        trxId = null,
+                        transactionId = null,
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = it.error.msg
+                        rawResponse = gson.toJson(it.error)
                     ))
                     requireContext().showToast(it.error.msg)
                 }

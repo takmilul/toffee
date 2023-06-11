@@ -35,7 +35,7 @@ data class PaymentLogFromDeviceData(
     @SerializedName("paymentId")
     val paymentId : String? = null,
     @SerializedName("trxId")
-    val trxId : String? = null,
+    val transactionId : String? = null,
     @SerializedName("transactionStatus")
     val transactionStatus : String? = null,
     @SerializedName("amount")
