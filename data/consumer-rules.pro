@@ -9,9 +9,9 @@
 -dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
-#-dontwarn org.apache.commons.**
-#-keep class org.apache.http.** { *; }
-#-dontwarn org.apache.http.**
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
 
 # Pubsub & Google apis
 -keep class com.google.api.services.pubsub.** { <fields>; }

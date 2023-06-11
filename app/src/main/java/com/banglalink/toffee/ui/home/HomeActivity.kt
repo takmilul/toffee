@@ -914,7 +914,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun loadDefaultTopBarColor() {
-        binding.tbar.toolbar.background = getDrawable(color.tool_bar_color)
+        binding.tbar.toolbar.background = ContextCompat.getDrawable(this, R.color.tool_bar_color)
         binding.tbar.toolbar.popupTheme = style.ThemeOverlay_AppCompat_Dark_ActionBar
     }
     

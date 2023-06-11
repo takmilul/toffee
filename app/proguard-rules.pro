@@ -40,10 +40,10 @@
 #-keep class com.banglalink.toffee.ui.common** { *; }
 
 #-keepnames public class * extends androidx.fragment.app.Fragment
-#-keepnames public class * extends com.google.android.material.appbar.AppBarLayout.*
-#-keep class com.banglalink.toffee.ui.widget.AppBarLayoutBehavior {
-#    public <methods>;
-#}
+-keepnames public class * extends com.google.android.material.appbar.AppBarLayout.*
+-keep class com.banglalink.toffee.ui.widget.AppBarLayoutBehavior {
+    public <methods>;
+}
 -keepnames abstract class com.google.android.material.appbar.HeaderBehavior
 -keepclassmembers class com.google.android.material.appbar.HeaderBehavior {
     private java.lang.Runnable flingRunnable;
@@ -62,6 +62,9 @@
 #-keep class com.loopnow.fireworkplayer** { *; }
 #-keep class com.banglalink.toffee.ui.firework.FireworkFragment
 
+-dontwarn com.google.ads.**
+-keep class com.google.** { *; }
+-keep interface com.google.** { *; }
 -keep class com.google.ads.interactivemedia.** { *; }
 -keep interface com.google.ads.interactivemedia.** { *; }
 
@@ -106,7 +109,14 @@
 -keep interface com.google.obf.** { *; }
 
 -keepattributes InnerClasses -keep class **.R -keep class **.R$* { <fields>; }
+-keepnames @dagger.hilt.android.lifecycle.HiltViewModel class * extends androidx.lifecycle.ViewModel
 
 -dontwarn com.beloo.widget.chipslayoutmanager.Orientation
 -dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
--keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { <fields>; }
+
+-keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keep class * extends com.google.protobuf.GeneratedMessageInfoFactory { *; }
+-keep,allowobfuscation class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
+-dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite**
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation

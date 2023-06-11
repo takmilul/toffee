@@ -32,7 +32,11 @@ import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.enums.InputType.ADDRESS
+import com.banglalink.toffee.enums.InputType.DESCRIPTION
+import com.banglalink.toffee.enums.InputType.EMAIL
+import com.banglalink.toffee.enums.InputType.PHONE
+import com.banglalink.toffee.enums.InputType.TITLE
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -101,7 +105,7 @@ val Float.px: Float get() {
 fun Boolean.toInt() = if (this) 1 else 0
 
 fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBeforeReload: Boolean = false, block: (()-> Unit)? = null) {
-    if (this is HomeActivity && !mPref.isVerifiedUser) {
+    if (this is HomeActivity && !mPref.isVerifiedUser && this.getNavController().currentDestination?.id != R.id.loginDialog) {
         mPref.doActionBeforeReload.value = doActionBeforeReload
         mPref.preLoginDestinationId.value = currentDestinationId ?: this.getNavController().currentDestination?.id
         this.getNavController().navigate(R.id.loginDialog)
