@@ -3,7 +3,6 @@ package com.banglalink.toffee.model
 import android.net.Uri
 import android.os.Bundle
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.overrideUrl
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -20,8 +19,7 @@ class Channel(
     private val type: Int = Samples.TYPE_HLS,
     @SerializedName("imageUrl")
     private var imageUrl: String? = null
-) : Serializable//, Samples.Sample(name, contentId, provider, uri, type)
-{
+) : Serializable {
     
     @SerializedName("bundle") 
     val bundle: Bundle = Bundle().apply {
@@ -52,9 +50,6 @@ class Channel(
     }
     
     fun getContentUri(pref: SessionPreference): String? {
-        if (pref.shouldOverrideHlsHostUrl) {
-            uri = uri?.overrideUrl(pref.overrideHlsHostUrl)
-        }
         return uri?.let {
             if (it.endsWith("/")) {
                 Uri.parse(it + pref.sessionToken + "/auto").toString()

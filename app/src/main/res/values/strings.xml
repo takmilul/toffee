@@ -573,4 +573,6 @@
     <string name="pack_activation">Your pack is activated</string>
     <string name="payment_failed_message">Your payment failed due to a technical error. Please try again.</string>
     <string name="payment_canceled_message">Payment canceled by user</string>
+    <string name="go_to_home">GO TO HOME</string>
+    <string name="call_121">  Call 121</string>
 </resources>

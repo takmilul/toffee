@@ -758,7 +758,9 @@ abstract class PlayerPageActivity :
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)
         }
-        val playingUrl = getGeneratedUrl(uri, channelInfo.signedCookie)
+        val playingUrl = getGeneratedUrl(uri, channelInfo.signedCookie)?.let {
+            if (mPref.shouldOverrideHlsHostUrl) it.overrideUrl(mPref.overrideHlsHostUrl) else it
+        } ?: return null
         return MediaItem.Builder().apply {
             if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
             setUri(playingUrl)
@@ -815,7 +817,7 @@ abstract class PlayerPageActivity :
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
         val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
-        Log.i("CONTENT_URL", "playingUrl: $contentUrl")
+        Log.i("PLAYING_URL", "playingUrl: $contentUrl")
         showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
         runCatching {

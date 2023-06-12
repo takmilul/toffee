@@ -4,34 +4,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.common.HtmlPageViewFragment">
-
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/screen_bg_white"
         android:orientation="vertical">
-
+        
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
+            
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/tool_bar_color">
-
+                
                 <ImageView
                     android:id="@+id/toolbarImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/topbar_background"
                     android:scaleType="centerCrop"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
                 <ImageView
                     android:id="@+id/close_iv"
                     android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_toffee" />
-
+                
                 <ImageView
                     android:id="@+id/back_icon"
                     android:layout_width="36dp"
@@ -61,12 +61,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_back" />
-
+                
                 <TextView
                     android:id="@+id/title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_goneMarginStart="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:fontFamily="@font/roboto_medium"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -74,26 +73,28 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/back_icon"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="16dp"
                     tools:ignore="RelativeOverlap"
                     tools:text="Title" />
-
+            
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
                 android:orientation="vertical"
                 android:padding="10dp"
-                android:layout_marginHorizontal="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
+                
                 <ImageView
                     android:id="@+id/statusImageView"
                     android:layout_width="86dp"
@@ -103,7 +104,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_purchase_failed" />
-
+                
                 <TextView
                     android:id="@+id/title_msg"
                     android:layout_width="wrap_content"
@@ -117,7 +118,7 @@
                     android:textSize="20sp"
                     tools:ignore="RelativeOverlap"
                     tools:text="Pass purchase Failed!" />
-
+                
                 <TextView
                     android:id="@+id/subTitle_msg"
                     android:layout_width="wrap_content"
@@ -126,14 +127,13 @@
                     android:layout_marginTop="5dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="16sp"
-                    android:gravity="center"
                     tools:ignore="RelativeOverlap"
                     tools:text="Your payment failed due to a technical error. Please try again." />
-
-
+                
                 <Button
                     android:id="@+id/tryAgainBtn"
                     style="@style/ButtonStyleSolidPink"
@@ -143,9 +143,9 @@
                     android:layout_marginTop="18dp"
                     android:paddingHorizontal="80dp"
                     android:paddingVertical="8dp"
-                    android:text="Try Again"
-                    android:textAllCaps="true"/>
-
+                    android:text="@string/try_again_txt"
+                    android:textAllCaps="true" />
+                
                 <Button
                     android:id="@+id/callBtn"
                     style="@style/ButtonStyleSolidPink"
@@ -153,25 +153,23 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
+                    android:drawableStart="@drawable/callbtn"
                     android:paddingHorizontal="70dp"
                     android:paddingVertical="8dp"
-                    android:text="  Call 121"
-                    android:drawableLeft="@drawable/callbtn"
-                    android:textAllCaps="true"/>
-
-
+                    android:text="@string/call_121"
+                    android:textAllCaps="true" />
+                
                 <Button
                     android:id="@+id/goToHomePageBtn"
                     style="@style/ButtonStyleRingPink"
                     android:layout_width="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:paddingHorizontal="50dp"
-                    android:text="GO TO HOMEPAGE"
-                    android:layout_gravity="center"
+                    android:text="@string/go_to_home"
                     android:textAllCaps="false"
-                    android:textSize="15sp"
-                   />
-
+                    android:textSize="15sp" />
+            
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
