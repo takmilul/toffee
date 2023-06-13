@@ -505,7 +505,7 @@
     <string name="pack_price">Starting from 20 BDT</string>
     <string name="pack_details_btn">SEE DETAILS</string>
     <string name="pack_active_btn">ACTIVE</string>
-    <string name="pay_now_button_text">Buy Now</string>
+    <string name="pay_now_button_text">Activate</string>
     <string name="premium_tv_channels_title">Premium TV channels</string>
     <string name="premium_video_contents_title">Premium video contents</string>
     <string name="pack_status_icon">pack status icon</string>
@@ -555,7 +555,7 @@
     <string name="starting_from_bdt_0">Starting from BDT 0</string>
     <string name="for_all_users_text">For all users</string>
     <string name="enable_now">ENABLE NOW</string>
-    <string name="trial_pack_page_msg">You are about to activate the trial plan.</string>
+    <string name="trial_pack_page_msg">You are about to activate the trial plan</string>
     <string name="insufficient_balance">Data Plan Purchase Failed!</string>
     <string name="trial_icon">trial icon</string>
     <string name="trial_validity_text">%s days validity</string>
