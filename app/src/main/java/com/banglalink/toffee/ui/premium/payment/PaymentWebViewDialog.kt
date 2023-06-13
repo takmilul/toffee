@@ -42,7 +42,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.*
 import java.util.ResourceBundle.*
 import javax.inject.Inject
@@ -449,7 +448,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                     }
                     is Failure -> {
-                        if (retryCountDataPackPurchase < 3) {
+                        if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
                             viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                 id = System.currentTimeMillis() + mPref.customerId,
                                 callingApiName = "dataPackPurchase",
