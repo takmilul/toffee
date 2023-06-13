@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -415,9 +416,9 @@ class PaymentWebViewDialog : DialogFragment() {
     private fun callAndObserveBkashDataPackPurchase() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             observe(viewModel.packPurchaseResponseCodeWebView) {
-                progressDialog.dismiss()
                 when (it) {
                     is Success -> {
+                        progressDialog.dismiss()
                         viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "dataPackPurchase",
@@ -448,25 +449,22 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                     }
                     is Failure -> {
-                        if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
-                            viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                                id = System.currentTimeMillis() + mPref.customerId,
-                                callingApiName = "dataPackPurchase",
-                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                                paymentMsisdn = customerMsisdn,
-                                paymentId = paymentId,
-                                transactionId = transactionId,
-                                transactionStatus = transactionStatus,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                rawResponse = gson.toJson(it.error)
-                            ))
-                        }
-
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                            id = System.currentTimeMillis() + mPref.customerId,
+                            callingApiName = "dataPackPurchase",
+                            packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                            packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                            dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                            paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                            paymentMsisdn = customerMsisdn,
+                            paymentId = paymentId,
+                            transactionId = transactionId,
+                            transactionStatus = transactionStatus,
+                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                            rawResponse = gson.toJson(it.error)
+                        ))
                         viewLifecycleOwner.lifecycleScope.launch {
                             if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
                                 retryCountDataPackPurchase++
@@ -474,6 +472,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                 callAndObserveBkashDataPackPurchase()
                             }
                             else {
+                                progressDialog.dismiss()
                                 val args = bundleOf(
                                     ARG_STATUS_CODE to 0,
                                     ARG_STATUS_TITLE to "bKash Plan Activation Failed!",
