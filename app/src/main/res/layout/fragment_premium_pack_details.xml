@@ -47,11 +47,12 @@
                     app:layout_constraintVertical_chainStyle="packed"
                     tools:srcCompat="@drawable/placeholder" />
                 
-                <View
+                <ImageView
                     android:id="@+id/bgView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:background="@drawable/premium_card_bg_three"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/premium_card_bg_three"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

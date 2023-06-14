@@ -46,17 +46,16 @@
                 app:layout_constraintVertical_chainStyle="packed"
                 tools:srcCompat="@drawable/placeholder" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <ImageView
                 android:id="@+id/linearLayoutCompat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/premium_card_bg_five"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/premium_card_bg_five"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent">
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
                 android:id="@+id/packNameTextView"
@@ -69,12 +68,12 @@
                 android:textColor="@color/TextClrInImg"
                 android:textSize="14sp"
                 android:fontFamily="@font/roboto_regular"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/packPriceTextView"
                 app:layout_constraintEnd_toStartOf="@id/packageDetails"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="program name"
-                android:textFontWeight="700" />
+                tools:text="program name" />
             
             <TextView
                 android:id="@+id/packPriceTextView"
