@@ -1,14 +1,13 @@
 package com.banglalink.toffee.ui.common
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.text.ClipboardManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +40,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
         )
     }
     
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = HtmlPageViewDialogInAppBinding.inflate(layoutInflater)
         
@@ -76,9 +76,7 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
         }
         
         with(binding.webview.settings) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            }
+            mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             javaScriptEnabled = true
             setSupportZoom(true)
             setNeedInitialFocus(false)
@@ -118,16 +116,10 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
             popupMenu.setOnMenuItemClickListener{
                 when(it?.itemId){
                     R.id.menu_link ->{
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                            val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.text = htmlUrl
-                            Toast.makeText(context, "Link: $htmlUrl is copied", Toast.LENGTH_LONG).show()
-                        } else {
-                            val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            val clip = ClipData.newPlainText("Copied Text", htmlUrl)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "Link: $htmlUrl is copied", Toast.LENGTH_LONG).show()
-                        }
+                        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        val clip = ClipData.newPlainText("Copied Text", htmlUrl)
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(requireContext(), "Link: $htmlUrl is copied", Toast.LENGTH_LONG).show()
                         true
                     }
                     R.id.chrome_open ->{
@@ -135,11 +127,11 @@ class HtmlPageViewDialogInApp : DialogFragment(), ProviderIconCallback<ChannelIn
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.setPackage("com.android.chrome")
                         try {
-                            context!!.startActivity(intent)
+                            requireContext().startActivity(intent)
                         } catch (ex: ActivityNotFoundException) {
                             // Chrome browser presumably not installed so allow user to choose instead
                             intent.setPackage(null)
-                            context!!.startActivity(intent)
+                            requireContext().startActivity(intent)
                         }
                         true
                     }
