@@ -171,7 +171,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("loadSmallImageFromUrlRoundedFromDrawable")
     fun bindSmallRoundImageFromDrawable(view: ImageView, imageUrl:  Drawable?) {
-        if (imageUrl==null) {
+        if (imageUrl == null) {
             view.loadPlaceholder(isCircular = true)
         } else {
             // view.scaleType = ImageView.ScaleType.CENTER_INSIDE
@@ -435,8 +435,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     
     @BindingAdapter("setPremiumStatusIcon")
-    fun setPremiumStatusIcon(view: ImageView, isPurchased: Boolean) {
-        if (isPurchased) {
+    fun setPremiumStatusIcon(view: ImageView, isPurchased: Boolean?) {
+        if (isPurchased == true) {
             view.setImageResource(R.drawable.ic_premium_activated)
         } else {
             view.setImageResource(R.drawable.ic_premium)
@@ -444,45 +444,51 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
     
     @BindingAdapter("setPremiumPackSubtitle")
-    fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack) {
-        view.text = if (!mPref.isVerifiedUser) {
-            if (pack.isAvailableFreePeriod == 1) pack.packDescriptionForTrial
-            else pack.packDescriptionForBl
-        } else {
-            mPref.activePremiumPackList.value?.filter {
-                it.packId == pack.id
-            }?.let {
-                if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }) pack.expiryDate
-                else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable != 1 && it.any { it.isTrialPackUsed }) "Free Trial Over"
-                else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.packDescriptionForTrial
-                else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
-                else pack.packDescriptionForNonBl
-            } ?: run {
+    fun setPremiumPackSubtitle(view: TextView, pack: PremiumPack?) {
+        pack?.let {
+            view.text = if (!mPref.isVerifiedUser) {
                 if (pack.isAvailableFreePeriod == 1) pack.packDescriptionForTrial
-                else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
-                else pack.packDescriptionForNonBl
+                else pack.packDescriptionForBl
+            } else {
+                mPref.activePremiumPackList.value?.filter {
+                    it.packId == pack.id
+                }?.let {
+                    if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) }) pack.expiryDate
+                    else if (pack.isAvailableFreePeriod == 1 && pack.isPurchaseAvailable != 1 && it.any { it.isTrialPackUsed }) "Free Trial Over"
+                    else if (pack.isAvailableFreePeriod == 1 && !it.any { it.isTrialPackUsed }) pack.packDescriptionForTrial
+                    else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
+                    else pack.packDescriptionForNonBl
+                } ?: run {
+                    if (pack.isAvailableFreePeriod == 1) pack.packDescriptionForTrial
+                    else if (mPref.isBanglalinkNumber == "true") pack.packDescriptionForBl
+                    else pack.packDescriptionForNonBl
+                }
             }
         }
     }
     
     @BindingAdapter("setPremiumPackStatusMsg")
-    fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack) {
-        view.text = if (!mPref.isVerifiedUser) {
-            view.context.getString(string.see_details_text)
-        } else {
-            mPref.activePremiumPackList.value?.filter {
-                it.packId == pack.id
-            }?.let {
-                if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && it.isTrialPackUsed }) view.context.getString(string.trial_activated_text)
-                else if (it.any { it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && !it.isTrialPackUsed }) view.context.getString(string.active_text)
-                else {
+    fun setPremiumPackStatusMsg(view: TextView, pack: PremiumPack?) {
+        pack?.let {
+            view.text = if (!mPref.isVerifiedUser) {
+                view.context.getString(string.see_details_text)
+            } else {
+                mPref.activePremiumPackList.value?.filter {
+                    it.packId == pack.id
+                }?.let {
+                    if (it.any {
+                            it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && it.isTrialPackUsed
+                        }) view.context.getString(string.trial_activated_text)
+                    else if (it.any {
+                            it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && !it.isTrialPackUsed
+                        }) view.context.getString(string.active_text)
+                    else {
+                        view.context.getString(string.see_details_text)
+                    }
+                } ?: run {
                     view.context.getString(string.see_details_text)
                 }
-            } ?: run {
-                view.context.getString(string.see_details_text)
             }
         }
     }
 }
-
-

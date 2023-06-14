@@ -78,26 +78,44 @@ fun View.invisible(){
     this.visibility = View.INVISIBLE
 }
 
+/**
+ * Converts left hand side [Int] type value from [px] to [dp]
+ */
 val Int.dp: Int get() {
     return (this/Resources.getSystem().displayMetrics.density).toInt()
 }
 
+/**
+ * Converts left hand side [Float] type value from [px] to [dp]
+ */
 val Float.dp: Float get() {
     return (this/Resources.getSystem().displayMetrics.density)
 }
 
+/**
+ * Converts left hand side [Int] type value from [px] to [sp]
+ */
 val Int.sp: Int get() {
     return (this/Resources.getSystem().displayMetrics.scaledDensity).toInt()
 }
 
+/**
+ * Converts left hand side [Float] type value from [px] to [sp]
+ */
 val Float.sp: Float get() {
     return (this/Resources.getSystem().displayMetrics.scaledDensity)
 }
 
+/**
+ * Converts left hand side [Int] type value from [dp] to [px]
+ */
 val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
 }
 
+/**
+ * Converts left hand side [Float] type value from [dp] to [px]
+ */
 val Float.px: Float get() {
     return (this * Resources.getSystem().displayMetrics.density)
 }

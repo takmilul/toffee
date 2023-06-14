@@ -5,14 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPremiumContentsBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
 
 class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -34,6 +38,8 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         
         with(binding.premiumContentListview) {
             adapter = mAdapter
+            addItemDecoration(GridSpacingItemDecoration(2, 12.px, false))
+            layoutManager = GridLayoutManager(requireContext(), 2, RecyclerView.VERTICAL, false)
         }
         observeList()
     }

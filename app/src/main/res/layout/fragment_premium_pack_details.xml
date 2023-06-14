@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
         <import type="android.view.View" />
+        
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PremiumPack" />
@@ -33,16 +33,19 @@
                 
                 <ImageView
                     android:id="@+id/packBannerImageView"
+                    loadImageFromUrl="@{data.packImage}"
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/pack_banner"
                     android:scaleType="centerCrop"
-                    loadImageFromUrl="@{data.packImage}"
-                    tools:srcCompat="@drawable/placeholder"
+                    app:layout_constraintBottom_toTopOf="@id/premiumChannelListTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:srcCompat="@drawable/placeholder" />
                 
                 <View
                     android:id="@+id/bgView"
@@ -65,9 +68,9 @@
                     android:fontFamily="@font/roboto_bold"
                     android:maxLength="46"
                     android:maxLines="2"
+                    android:text="@{data.packTitle}"
                     android:textColor="@color/TextClrInImg"
                     android:textSize="24sp"
-                    android:text="@{data.packTitle}"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
                     app:layout_constraintEnd_toStartOf="@+id/packStatusIcon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -75,16 +78,16 @@
                 
                 <ImageView
                     android:id="@+id/packStatusIcon"
+                    setPremiumStatusIcon="@{data.isPackPurchased}"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/pack_status_icon"
-                    setPremiumStatusIcon="@{data.isPackPurchased}"
-                    tools:srcCompat="@drawable/ic_premium"
                     app:layout_constraintBottom_toBottomOf="@+id/packBannerImageView"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:srcCompat="@drawable/ic_premium" />
                 
                 <TextView
                     android:id="@+id/premiumChannelListTitle"
@@ -96,8 +99,9 @@
                     android:maxLines="2"
                     android:text="@string/premium_tv_channels_title"
                     android:textColor="@color/categoryNameColor"
-                    android:textStyle="bold"
                     android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/premiumChannelFragment"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/packBannerImageView" />
@@ -107,13 +111,13 @@
                     android:name="com.banglalink.toffee.ui.premium.PremiumChannelFragment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    app:layout_goneMarginBottom="74dp"
+                    android:layout_marginHorizontal="16dp"
                     android:background="@color/screen_bg"
+                    app:layout_constraintBottom_toTopOf="@id/premiumContentListTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/premiumChannelListTitle"
-                    app:layout_constraintBottom_toTopOf="@id/premiumContentListTitle"
+                    app:layout_goneMarginBottom="74dp"
                     tools:layout="@layout/fragment_premium_channels" />
                 
                 <TextView
@@ -122,26 +126,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="20dp"
+                    android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
                     android:text="@string/premium_video_contents_title"
                     android:textColor="@color/categoryNameColor"
-                    android:textStyle="bold"
                     android:textSize="12sp"
-                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/premiumChannelFragment"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/premiumChannelFragment"
-                    app:layout_constraintBottom_toTopOf="@id/premiumChannelFragment"/>
-
+                    app:layout_constraintTop_toBottomOf="@+id/premiumChannelFragment" />
+                
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/premiumContentFragment"
                     android:name="com.banglalink.toffee.ui.premium.PremiumContentFragment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_marginBottom="74dp"
                     android:background="@color/screen_bg"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -150,37 +153,37 @@
                     app:layout_constraintTop_toBottomOf="@+id/premiumContentListTitle"
                     app:layout_constraintVertical_bias="0.0"
                     tools:layout="@layout/fragment_premium_contents" />
-
+                
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/premiumChannelGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:constraint_referenced_ids="premiumChannelListTitle,premiumChannelFragment" />
+                    app:constraint_referenced_ids="premiumChannelListTitle,premiumChannelFragment"
+                    tools:visibility="visible" />
                 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/premiumContentGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:constraint_referenced_ids="premiumContentListTitle,premiumContentFragment" />
+                    app:constraint_referenced_ids="premiumContentListTitle,premiumContentFragment"
+                    tools:visibility="visible" />
                 
                 <ImageView
                     android:id="@+id/progress_bar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/gif_round_border"
-                    android:elevation="2dp"
-                    tools:srcCompat="@drawable/content_loader"
-                    android:visibility="visible"
-                    tools:visibility="gone"
                     android:contentDescription="@string/txt_content_loader"
+                    android:elevation="2dp"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/packBannerImageView" />
+                    app:layout_constraintTop_toBottomOf="@id/packBannerImageView"
+                    tools:srcCompat="@drawable/content_loader"
+                    tools:visibility="gone" />
                 
             </androidx.constraintlayout.widget.ConstraintLayout>
             
@@ -198,21 +201,21 @@
             
             <TextView
                 android:id="@+id/packPriceTextView"
+                setPremiumPackSubtitle="@{data}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
-                android:textStyle="bold"
-                setPremiumPackSubtitle="@{data}"
-                tools:text="Starts from 10 BDT"
                 android:textColor="@android:color/white"
-                android:ellipsize="end"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/payNowButton"
                 app:layout_constraintEnd_toStartOf="@+id/payNowButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/payNowButton" />
+                app:layout_constraintTop_toTopOf="@+id/payNowButton"
+                tools:text="Starts from 10 BDT" />
             
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/payNowButton"
@@ -246,17 +249,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/pack_activation"
-                tools:text="You have bought 1 GB for 3 days pack"
                 android:textColor="@color/TrailTxt"
                 android:textSize="16sp"
-                android:ellipsize="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="You have bought 1 GB for 3 days pack" />
             
             <TextView
                 android:id="@+id/packExpiryDateTextView"
@@ -265,19 +268,19 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="8dp"
-                android:textAllCaps="true"
+                android:ellipsize="end"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
                 android:maxLines="1"
-                tools:text="Expires on 24 Feb, 2023"
+                android:text="@{data.expiryDate}"
+                android:textAllCaps="true"
                 android:textColor="@color/TrailTxt"
                 android:textSize="12sp"
-                android:text="@{data.expiryDate}"
-                android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/packPurchaseMsgTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/packPurchaseMsgTextView"
+                tools:text="Expires on 24 Feb, 2023" />
             
         </androidx.constraintlayout.widget.ConstraintLayout>
         
@@ -292,7 +295,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+            
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/empty_view_icon"
                 android:layout_width="135dp"
@@ -301,18 +304,18 @@
                 android:contentDescription="@string/txt_empty"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_videos_empty" />
-
+            
             <TextView
                 android:id="@+id/empty_view_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="No Premium Content Available."
+                android:text="@string/no_premium_content"
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="16sp"
                 tools:text="No Premium Pack Available." />
-
+            
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

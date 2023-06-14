@@ -15,7 +15,6 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.mediarouter.app.MediaRouteButton
 import coil.load
 import com.banglalink.toffee.R
@@ -144,8 +143,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setShowPreviousButton(false)
         setShowFastForwardButton(false)
         setShowRewindButton(false)
-        defaultArtwork = ContextCompat.getDrawable(context, R.drawable.ic_toffee)
-        useArtwork = true
+//        defaultArtwork = ContextCompat.getDrawable(context, R.drawable.ic_toffee)
+//        useArtwork = true
         
         thumbnailView = findViewById(R.id.thumbnail)
         minimizeButton = findViewById(R.id.minimize)

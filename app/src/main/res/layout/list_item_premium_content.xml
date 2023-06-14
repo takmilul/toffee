@@ -17,8 +17,6 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:layout_marginTop="8dp"
         app:cardCornerRadius="6dp"
         app:onSafeClick="@{()-> callback.onItemClicked(data)}">
         

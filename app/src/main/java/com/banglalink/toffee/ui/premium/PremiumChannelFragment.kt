@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPremiumChannelsBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
 
 class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
@@ -32,6 +36,8 @@ class PremiumChannelFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
         
         with(binding.premiumChannelListview) {
             adapter = mAdapter
+            addItemDecoration(GridSpacingItemDecoration(5, 8.px, false))
+            layoutManager = GridLayoutManager(requireContext(), 5, RecyclerView.VERTICAL, false)
         }
         observeList()
     }
