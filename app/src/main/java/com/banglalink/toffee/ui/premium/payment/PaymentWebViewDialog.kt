@@ -419,6 +419,7 @@ class PaymentWebViewDialog : DialogFragment() {
                 when (it) {
                     is Success -> {
                         progressDialog.dismiss()
+                        Log.i("Retry_BkashDataPackPurchase", "Success BkashDataPackPurchase")
                         viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "dataPackPurchase",
@@ -449,6 +450,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                     }
                     is Failure -> {
+                        Log.i("Retry_BkashDataPackPurchase", "Failure BkashDataPackPurchase")
                         viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "dataPackPurchase",
@@ -468,6 +470,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         viewLifecycleOwner.lifecycleScope.launch {
                             if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
                                 retryCountDataPackPurchase++
+                                Log.i("Retry_BkashDataPackPurchase", retryCountDataPackPurchase.toString())
                                 delay(mPref.bkashApiRetryingDuration)
                                 callAndObserveBkashDataPackPurchase()
                             }
@@ -549,9 +552,10 @@ class PaymentWebViewDialog : DialogFragment() {
     
     private fun observeBlDataPackPurchase() {
         observe(viewModel.packPurchaseResponseCodeBlDataPackOptionsWeb) {
-            progressDialog.dismiss()
             when (it) {
                 is Success -> {
+                    Log.i("Retry_BlDataPackPurchase", "Success BlDataPackPurchase")
+                    progressDialog.dismiss()
                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "dataPackPurchase",
@@ -585,6 +589,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                 }
                 is Failure -> {
+                    Log.i("Retry_BlDataPackPurchase", "Failure BlDataPackPurchase")
                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                         id = System.currentTimeMillis() + mPref.customerId,
                         callingApiName = "dataPackPurchase",
@@ -593,15 +598,31 @@ class PaymentWebViewDialog : DialogFragment() {
                         dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                         dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
+                        paymentMsisdn = customerMsisdn,
                         paymentId = paymentId,
-                        transactionId = null,
-                        transactionStatus = null,
+                        transactionId = transactionId,
+                        transactionStatus = transactionStatus,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                         rawResponse = gson.toJson(it.error)
                     ))
-                    requireContext().showToast(it.error.msg)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
+                            retryCountDataPackPurchase++
+                            Log.i("Retry_BlDataPackPurchase", retryCountDataPackPurchase.toString())
+                            delay(mPref.bkashApiRetryingDuration)
+                            observeBlDataPackPurchase()
+                        }
+                        else {
+                            progressDialog.dismiss()
+                            val args = bundleOf(
+                                ARG_STATUS_CODE to 0,
+                                ARG_STATUS_TITLE to "Data Plan Activation Failed!",
+                                ARG_STATUS_MESSAGE to it.error.msg
+                            )
+                            navigateToStatusDialogPage(args)
+                        }
+                    }
                 }
             }
         }
