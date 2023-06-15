@@ -6,7 +6,15 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.CdnChannelItem
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
-import com.banglalink.toffee.data.repository.*
+import com.banglalink.toffee.data.repository.CdnChannelItemRepository
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
+import com.banglalink.toffee.data.repository.ReactionCountRepository
+import com.banglalink.toffee.data.repository.ShareCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.data.repository.TVChannelRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.Reaction
@@ -81,7 +89,7 @@ class LocalSync @Inject constructor(
                 channelInfo.favorite = fav.toString()
             }
         }
-        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT && !isFromCache) {
+        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
             tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
                 val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbRecentPayload.equals(channelInfo)) {
@@ -95,7 +103,7 @@ class LocalSync @Inject constructor(
                 }
             }
         }
-        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY && !isFromCache) {
+        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
             userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
                 val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbUserActivityPayload.equals(channelInfo)) {

@@ -305,9 +305,9 @@ abstract class PlayerPageActivity :
                     addAnalyticsListener(playerAnalyticsListener!!)
                     addListener(playerEventListener)
                     playWhenReady = false
-                    if (BuildConfig.DEBUG) {
-                        addAnalyticsListener(EventLogger())
-                    }
+//                    if (BuildConfig.DEBUG) {
+//                        addAnalyticsListener(EventLogger())
+//                    }
                 }
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
@@ -827,11 +827,11 @@ abstract class PlayerPageActivity :
         }
         
         isAdRunning = false
-        if (!isReload && player is ExoPlayer && mPref.vastFrequency > 0) playCounter = ++playCounter % mPref.vastFrequency
+        if (player is ExoPlayer && mPref.vastFrequency > 0) playCounter = ++playCounter % mPref.vastFrequency
         
         if (mPref.isVastActive && channelInfo.isAdActive) {
             val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
-            val shouldPlayAd = tag != null && playCounter == 0 && !isReload
+            val shouldPlayAd = tag != null && playCounter == 0
             if (shouldPlayAd) {
                 val vastTag = if (currentlyPlayingVastUrl.isNotBlank()) currentlyPlayingVastUrl else tag
                 ConvivaHelper.setVastTagUrl(vastTag)
