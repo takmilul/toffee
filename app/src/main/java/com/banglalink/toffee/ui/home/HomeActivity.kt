@@ -1037,14 +1037,16 @@ class HomeActivity : PlayerPageActivity(),
         channelInfo?.let {
             when {
                 it.urlTypeExt == PREMIUM -> {
+                    observeGetPackStatus()
+                    observeMnpStatus()
                     checkVerification {
                         checkPurchaseBeforePlay(it, detailsInfo) {
                             cInfo = it
                             dInfo = detailsInfo
-                            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
-                                observeMnpStatus()
+                            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                                viewModel.getMnpStatus()
                             } else {
-                                callAndObserveGetPackStatus(channelInfo)
+                                viewModel.getPackStatus(channelInfo.getContentId().toInt())
                             }
                         }
                     }
@@ -1068,7 +1070,7 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    private fun callAndObserveGetPackStatus(channelInfo: ChannelInfo) {
+    private fun observeGetPackStatus() {
         observe(viewModel.activePackListLiveData) { response ->
             when (response) {
                 is Success -> {
@@ -1081,7 +1083,6 @@ class HomeActivity : PlayerPageActivity(),
                         )
                     }
                 }
-                
                 is Failure -> {
                     mPref.prePurchaseClickedContent.value = cInfo
                     navController.navigatePopUpTo(
@@ -1091,7 +1092,6 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
         }
-        viewModel.getPackStatus(channelInfo.getContentId().toInt())
     }
     
     private fun checkPurchaseBeforePlay(
@@ -1336,17 +1336,16 @@ class HomeActivity : PlayerPageActivity(),
      * content but [PlaylistManager.getNextChannel] will not activate the next content instead it will only provide the
      * next content's reference.
      */
-    override fun playNext() {
-        super.playNext()
-        val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
+    override fun playNext(): Boolean {
+        val isNextChannelPremium = super.playNext()
         
-        if (playlistManager.isNextChannelPremium() && !isNextChannelPurchased) {
+        if (isNextChannelPremium) {
             viewModel.playContentLiveData.postValue(playlistManager.getNextChannel())
-            return
+            return true
         }
         if (playlistManager.playlistId == -1L) {
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
-            return
+            return false
         }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
@@ -1357,15 +1356,15 @@ class HomeActivity : PlayerPageActivity(),
         loadDetailFragment(
             playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
+        return false
     }
     
-    override fun playPrevious() {
-        super.playPrevious()
-        val isPreviousChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getPreviousChannel()?.id, mPref.getSystemTime())
+    override fun playPrevious(): Boolean {
+        val isPreviousChannelPremium = super.playPrevious()
         
-        if (playlistManager.isPreviousChannelPremium() && !isPreviousChannelPurchased) {
+        if (isPreviousChannelPremium) {
             viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
-            return
+            return true
         }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
@@ -1375,6 +1374,7 @@ class HomeActivity : PlayerPageActivity(),
         loadDetailFragment(
             playlistManager.getCurrentChannel()?.let { PlaylistItem(playlistManager.playlistId, it) }
         )
+        return false
     }
     
     private fun resetPlayer() {
@@ -2132,7 +2132,9 @@ class HomeActivity : PlayerPageActivity(),
                 is Success -> {
                     if (response.data?.mnpStatus == 200){
                         mPref.isMnpStatusChecked = true
-                        cInfo?.let { callAndObserveGetPackStatus(it) }
+                        cInfo?.let {
+                            viewModel.getPackStatus(it.getContentId().toInt())
+                        }
                     }
                 }
                 is Failure -> {
@@ -2140,7 +2142,6 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
         }
-        viewModel.getMnpStatus()
     }
 
     fun hideSearchOverlay() {

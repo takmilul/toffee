@@ -54,6 +54,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
         }
         binding.data = viewModel.selectedPremiumPack.value
         
+        observeMnpStatus()
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
@@ -75,10 +76,10 @@ class PremiumPackDetailsFragment : BaseFragment() {
                 payNowButton.safeClick({
                     requireActivity().checkVerification {
                         progressDialog.show()
-                        if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
-                            observeMnpStatus()
+                        if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                            homeViewModel.getMnpStatus()
                         }
-                        else{
+                        else {
                             viewModel.getPackStatus(0, viewModel.selectedPremiumPack.value!!.id)
                         }
                     }
@@ -204,6 +205,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             }
         }
     }
+    
     private fun observeMnpStatus() {
         observe(homeViewModel.mnpStatusBeanLiveData) { response ->
             when (response) {
@@ -218,7 +220,6 @@ class PremiumPackDetailsFragment : BaseFragment() {
                 }
             }
         }
-        homeViewModel.getMnpStatus()
     }
     
     override fun onDestroyView() {

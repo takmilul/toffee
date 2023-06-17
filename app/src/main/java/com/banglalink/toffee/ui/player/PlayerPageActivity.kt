@@ -586,22 +586,26 @@ abstract class PlayerPageActivity :
         return mPref.isAutoplayForRecommendedVideos
     }
     
-    override fun playNext() {
+    override fun playNext(): Boolean {
         val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getNextChannel()?.id, mPref.getSystemTime())
-        if (!(playlistManager.isNextChannelPremium() && !isNextChannelPurchased)) {
+        val isNextChannelPremium = playlistManager.isNextChannelPremium() && !isNextChannelPurchased
+        if (!isNextChannelPremium) {
             playlistManager.nextChannel()
         }
         if (playlistManager.playlistId != -1L) {
             playChannel(false)
         }
+        return isNextChannelPremium
     }
     
-    override fun playPrevious() {
+    override fun playPrevious(): Boolean {
         val isPreviousChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(playlistManager.getPreviousChannel()?.id, mPref.getSystemTime())
-        if (!(playlistManager.isPreviousChannelPremium() && ! isPreviousChannelPurchased)) {
+        val isPreviousChannelPremium = playlistManager.isPreviousChannelPremium() && ! isPreviousChannelPurchased
+        if (!isPreviousChannelPremium) {
             playlistManager.previousChannel()
             playChannel(false)
         }
+        return isPreviousChannelPremium
     }
     
     protected fun addChannelToPlayList(info: ChannelInfo) {
