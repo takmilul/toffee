@@ -53,7 +53,8 @@ class PaymentWebViewDialog : DialogFragment() {
     val TAG = "premium_log"
     private val gson = Gson()
     private var retryCount = 0
-    private var retryCountDataPackPurchase = 0
+    private var retryCountBkashDataPackPurchase = 0
+    private var retryCountBLDataPackPurchase = 0
     private var header: String? = ""
     private var title: String? = null
     private var htmlUrl: String? = null
@@ -465,12 +466,12 @@ class PaymentWebViewDialog : DialogFragment() {
                             transactionStatus = transactionStatus,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = gson.toJson(it.error)
+                            rawResponse = "${gson.toJson(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBkashDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
                         ))
                         viewLifecycleOwner.lifecycleScope.launch {
-                            if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
-                                retryCountDataPackPurchase++
-                                Log.i("Retry_BkashDataPackPurchase", retryCountDataPackPurchase.toString())
+                            if (retryCountBkashDataPackPurchase < mPref.bkashApiRetryingCount) {
+                                retryCountBkashDataPackPurchase++
+                                Log.i("Retry_BkashDataPackPurchase", retryCountBkashDataPackPurchase.toString())
                                 delay(mPref.bkashApiRetryingDuration)
                                 callAndObserveBkashDataPackPurchase()
                             }
@@ -604,14 +605,15 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = transactionStatus,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(it.error)
+                        rawResponse = "${gson.toJson(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBkashDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
                     ))
                     viewLifecycleOwner.lifecycleScope.launch {
-                        if (retryCountDataPackPurchase < mPref.bkashApiRetryingCount) {
-                            retryCountDataPackPurchase++
-                            Log.i("Retry_BlDataPackPurchase", retryCountDataPackPurchase.toString())
+                        if (retryCountBLDataPackPurchase < mPref.bkashApiRetryingCount) {
+                            retryCountBLDataPackPurchase++
+                            Log.i("Retry_BlDataPackPurchase", retryCountBLDataPackPurchase.toString())
                             delay(mPref.bkashApiRetryingDuration)
                             observeBlDataPackPurchase()
+                            purchaseBlDataPack()
                         }
                         else {
                             progressDialog.dismiss()
