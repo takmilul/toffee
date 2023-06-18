@@ -13,7 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest.Builder
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
@@ -174,7 +174,7 @@ class LoginContentFragment : ChildDialogFragment() {
     }
     
     private fun getHintPhoneNumber() {
-        try{
+        try {
             val request: GetPhoneNumberHintIntentRequest = GetPhoneNumberHintIntentRequest.builder().build()
             Identity.getSignInClient(requireActivity())
                 .getPhoneNumberHintIntent(request)
@@ -197,24 +197,24 @@ class LoginContentFragment : ChildDialogFragment() {
     }
     
     private fun useAlternateHintMechanism() {
-        val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
-        val intent = Credentials.getClient(requireContext()).getHintPickerIntent(hintRequest)
-        resultLauncher.launch(Builder(intent).build())
+        runCatching {
+            val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
+            val intent = Credentials.getClient(requireContext()).getHintPickerIntent(hintRequest)
+            resultLauncher.launch(Builder(intent).build())
+        }
     }
     
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+    private val resultLauncher = registerForActivityResult(StartIntentSenderForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            runCatching {
-                val phoneNumber = try {
-                    Identity.getSignInClient(requireActivity()).getPhoneNumberFromIntent(result.data)
-                } catch (e: Exception) {
-                    val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
-                    credential?.id
-                }
-                phoneNumber?.let {
-                    binding.phoneNumberEditText.setText(it)
-                    binding.phoneNumberEditText.setSelection(it.length)
-                }
+            val phoneNumber = try {
+                Identity.getSignInClient(requireActivity()).getPhoneNumberFromIntent(result.data)
+            } catch (e: Exception) {
+                val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
+                credential?.id
+            }
+            phoneNumber?.let {
+                binding.phoneNumberEditText.setText(it)
+                binding.phoneNumberEditText.setSelection(it.length)
             }
         }
     }

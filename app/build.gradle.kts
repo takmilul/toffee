@@ -20,7 +20,7 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 32
-        versionCode = 106
+        versionCode = 107
         versionName = "4.9.0"
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
