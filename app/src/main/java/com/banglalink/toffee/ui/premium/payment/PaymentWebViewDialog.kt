@@ -605,7 +605,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = transactionStatus,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = "${gson.toJson(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBkashDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
+                        rawResponse = "${gson.toJson(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBLDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
                     ))
                     viewLifecycleOwner.lifecycleScope.launch {
                         if (retryCountBLDataPackPurchase < mPref.bkashApiRetryingCount) {
