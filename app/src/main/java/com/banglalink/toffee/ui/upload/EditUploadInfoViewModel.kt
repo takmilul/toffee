@@ -151,7 +151,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 it.first?.let { thumb ->
                     thumbnailData.value = thumb
                 }
-                orientationData.value = it.second
+                orientationData.value = it.second ?: 0
             }
         }
     }
@@ -165,23 +165,55 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private suspend fun initUpload() {
         actualFileName = Utils.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
         val fileSize = Utils.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
-
+        
         uploadStatusText.value = "$actualFileName \u2022 ${Utils.readableFileSize(fileSize)}"
-
+        
         val idx = actualFileName?.lastIndexOf(".") ?: -1
         val ext = if (idx >= 0) {
             actualFileName?.substring(idx) ?: ".mp4"
         } else ".mp4"
-//
+        
         fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext.ifBlank { ".mp4" }
-
-//        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
-//
-//        val contentType = withContext(Dispatchers.IO + Job()) {
-//            UtilsKt.contentTypeFromContentUri(appContext, Uri.parse(uploadFileUri))
+        
+//        try {
+//            val mmr = MediaMetadataRetriever()
+//            if (uploadFileUri.startsWith("content://")) {
+//                mmr.setDataSource(appContext, Uri.parse(uploadFileUri))
+//            } else {
+//                mmr.setDataSource(uploadFileUri)
+//            }
+//            val height = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+//            val width = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+//            val codec = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
+//            val bitRate = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
+//            val date = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+//            val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+//            val rotation = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+//            val frameRate = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE)
+//            val frameCount = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT)
+//            val sampleRate = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_SAMPLERATE)
+//            
+//            Log.i(
+//                "Meta_",
+//                "fileName: $actualFileName" +
+//                    "\nfileSize: $fileSize" +
+//                    "\nwidth: $width" +
+//                    "\nheight: $height" +
+//                    "\nfile-extension: .$ext" +
+//                    "\nMime-Type: $codec" +
+//                    "\nbitRate: $bitRate" +
+//                    "\ndate: $date" +
+//                    "\nduration: $duration" +
+//                    "\nrotation: $rotation" +
+//                    "\nframeRate: $frameRate" +
+//                    "\nframeCount: $frameCount" +
+//                    "\nsampleRate: $sampleRate"
+//            )
+//        } catch (e: Exception) {
+//            e.printStackTrace()
 //        }
     }
-
+    
     fun categoryIndexChanged(idx: Int) {
         categories.value?.getOrNull(idx)?.let {
             subCategories.value = it.subcategories ?: emptyList()
