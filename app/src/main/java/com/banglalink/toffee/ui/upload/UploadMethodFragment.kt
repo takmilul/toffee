@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -56,23 +55,23 @@ class UploadMethodFragment : DialogFragment() {
         )
         activity?.title = "Upload"
     }
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = UploadMethodFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         if (activity is HomeActivity) {
             (activity as HomeActivity).rotateFab(true)
         }
-
+        
         view.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -85,7 +84,7 @@ class UploadMethodFragment : DialogFragment() {
         binding.uploadMethodCard.setOnClickListener { }
         binding.learnMoreButton.setOnClickListener { }
     }
-
+    
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
@@ -97,52 +96,44 @@ class UploadMethodFragment : DialogFragment() {
                         ).setType("video/mp4"),
                     )
                 }
-            }
-            catch (e: PermissionException) {
+            } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 requireContext().showToast(getString(R.string.grant_storage_permission))
-            }
-            catch (e: NoActivityException){
+            } catch (e: NoActivityException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
-            }
-            catch (e: ActivityNotFoundException){
+            } catch (e: ActivityNotFoundException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
     }
-
+    
     private fun checkCameraPermissions() {
         lifecycleScope.launch {
             try {
                 if (askPermission(Manifest.permission.CAMERA).isAccepted) {
                     openCameraIntent()
                 }
-            }
-            catch (e: PermissionException) {
+            } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 requireContext().showToast(getString(R.string.grant_camera_permission))
-            }
-            catch (e: NoActivityException){
+            } catch (e: NoActivityException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
-            }
-            catch (e: ActivityNotFoundException){
+            } catch (e: ActivityNotFoundException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
     }
-
+    
     private var videoFile: File? = null
     
     private fun openCameraIntent() {
@@ -151,17 +142,15 @@ class UploadMethodFragment : DialogFragment() {
             try {
                 videoFile = createVideoFile()
                 ToffeeAnalytics.logBreadCrumb("Video file created")
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 e.printStackTrace()
                 return
             }
-
+            
             videoUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.provider",
                 videoFile!!
-
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
@@ -169,27 +158,25 @@ class UploadMethodFragment : DialogFragment() {
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
         }
     }
-
     @Throws(IOException::class)
     fun createVideoFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val videoFileName = "VIDEO_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        if (storageDir?.exists() == false){
+        if (storageDir?.exists() == false) {
             storageDir.mkdirs()
         }
         return File.createTempFile(videoFileName, ".mp4", storageDir)
     }
-
-    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    
+    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
             checkAndOpenUpload(it.data!!.data!!)
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
         }
     }
-    
-    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK && videoFile != null) {
             lifecycleScope.launch {
                 println("CaptureAbsolutePath${videoFile!!.absolutePath}")
@@ -204,12 +191,10 @@ class UploadMethodFragment : DialogFragment() {
                             it?.dismiss()
                         }
                     }.create().show()
-                }
-                else{
+                } else {
                     openEditUpload(videoFile!!.absolutePath)
                 }
             }
-
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
         }
@@ -220,40 +205,20 @@ class UploadMethodFragment : DialogFragment() {
             val contentType = Utils.contentTypeFromContentUri(requireContext(), videoUri)
             val fileName = Utils.fileNameFromContentUri(requireContext(), videoUri)
             
-            runCatching {
-                val filePath = videoUri.toString()
-                val mmr = MediaMetadataRetriever()
-                if (filePath.startsWith("content://")) {
-                    mmr.setDataSource(context, Uri.parse(filePath))
-                } else {
-                    mmr.setDataSource(filePath)
-                }
-                val height = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-                val width = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-                val codec = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
-                val extension = fileName.substringAfterLast(".")
-                Log.i("Meta_", "width: $width, height: $height, file-extension: .$extension, Mime-Type: $codec")
-            }
-            
             Log.i("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
-
-            if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
-
-                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()),mPref.videoMinDuration,mPref.videoMaxDuration)){
-    
+            
+            if (contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
+                if (Utils.getVideoUploadLimit(Utils.getVideoDuration(requireContext(), videoUri.toString()), mPref.videoMinDuration, mPref.videoMaxDuration)) {
                     ToffeeAlertDialogBuilder(requireContext()).apply {
                         setTitle(R.string.issue_with_video_length)
-                        setText("Accepted video length is between ${Utils.getUploadDuration(mPref.videoMinDuration.toLong())} " +
-                            "to ${Utils.getUploadDuration(mPref.videoMaxDuration.toLong())}")
+                        setText("Accepted video length is between ${Utils.getUploadDuration(mPref.videoMinDuration.toLong())} to ${Utils.getUploadDuration(mPref.videoMaxDuration.toLong())}")
                         setPositiveButtonListener(getString(R.string.try_again_txt)) {
                             it?.dismiss()
                         }
                     }.create().show()
-                }
-                else{
+                } else {
                     openEditUpload(videoUri.toString())
                 }
-
             } else {
                 ToffeeAlertDialogBuilder(requireContext()).apply {
                     setTitle(R.string.txt_video_format)
@@ -265,13 +230,16 @@ class UploadMethodFragment : DialogFragment() {
             }
         }
     }
-
+    
     private fun openEditUpload(uri: String) {
-        activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment, Bundle().apply {
-            putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
-        })
+        activity?.findNavController(R.id.home_nav_host)?.navigate(
+            R.id.action_uploadMethodFragment_to_editUploadInfoFragment,
+            Bundle().apply {
+                putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+            }
+        )
     }
-
+    
     override fun onDestroyView() {
         requireActivity().let {
             if (it is HomeActivity) it.rotateFab(false)
