@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Toffee</string>
     <string name="app_name_short">Toffee</string>
-    
+
     <string name="retry">Retry</string>
     <string name="exit_from_app_msg">Are you sure to Sign out from the %s app?</string>
     <!-- Strings related to login -->
@@ -10,10 +10,10 @@
     <string name="sign_in_text">Sign In</string>
     <string name="without_sign_in_text">Continue without Sign in</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
-    <string name="sign_in_countdown_text">Resend OTP in %ss</string>   
+    <string name="sign_in_countdown_text">Resend OTP in %ss</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    
+
     <string name="resend_code_text">Resend Code </string>
     <string name="default_settings">Default Data and Video Quality</string>
     <string name="data_usage_message">Higher quality video uses more data. Data usage may vary based on network conditions.</string>
@@ -24,24 +24,24 @@
     <string name="profile_480x320">Need 384kbps+ bandwidth</string>
     <string name="profile_320x240">Need 256kbps+ bandwidth</string>
     <string name="profile_240x160">Need 128kbps+ bandwidth</string>
-    
+
     <string name="menu_add_to_fav">Add to Favorites</string>
     <string name="menu_share">Share</string>
     <string name="menu_not_interested">Not Interested</string>
-    
+
     <string name="app_id">F78B8DE7</string>
     <!--<string name="app_id">08D0944E</string>-->
-    
+
     <!--validation message-->
     <string name="phone_no_required_title">Phone Number Required!</string>
-    
+
     <string name="signin_using_password_text">Sign in using Password</string>
-    
+
     <!--success messages-->
-    
+
     <string name="view_all">View All</string>
     <string name="edit_profile_button">EDIT</string>
-    
+
     //Landing Screen Category Titles
     <string name="channel">Popular TV Channels</string>
     <string name="recent_channels">Recently Viewed</string>
@@ -109,10 +109,10 @@
     <string name="share_button">Share</string>
     <string name="copy_button">Copy</string>
     <string name="copy_to_clipboard">Copy to clipboard successfully</string>
-    
+
     <string name="invalid_referral_code_txt">Your referral code is invalid</string>
     <string name="do_you_continue_txt">Continue without code</string>
-    
+
     <string name="referral_code">Referral Code</string>
     <string name="have_referral_code">Have Referral Code?</string>
     <string name="tab_feed_label">Home</string>
@@ -122,9 +122,9 @@
     <string name="tab_mychannel_label">My Channel</string>
     <string name="try_again_txt">Try again</string>
     <string name="continue_sign_in_txt">Continue signing in</string>
-    
+
     <string name="selection_disabled">Disabled</string>
-    
+
     <string name="selection_default">Default</string>
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="track_selection_title">Track Title</string>
@@ -145,7 +145,7 @@
     <string name="menu_internet_pack">Buy Internet Packs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    
+
     <string name="grant_storage_permission">This feature needs Storage permission</string>
     <string name="text_unsubscribe_title">Are You Sure to Unfollow?</string>
     <string name="upload_selection_heading">Upload FREE from\nBanglalink Internet!</string>
@@ -158,7 +158,7 @@
     <string name="minimize_panel_description">Your video will be submitted for review. Once approved, it will be published in your channel soon.</string>
     <string name="latestVideos">Latest Videos</string>
     <string name="trendingVideos">Trending Videos</string>
-    
+
     <string name="read_more">Show More</string>
     <string name="read_less">Show Less</string>
     <string name="terms">Terms &amp; Conditions</string>
@@ -351,7 +351,7 @@
     <string name="save_text">Save</string>
     <string name="please_fill_up_all_fields_text">*Please fill up all fields to continue</string>
     <string name="you_still_have_25_days_to_subscription_left_text">You still have 25 days of subscription left. Unsubscribe anyway?</string>
-    
+
     <string name="partnership_text">By uploading video,\nyou are about to apply for the \n<b>Toffee Partnership Program</b></string>
     <string name="learn_more">LEARN MORE</string>
     <string name="okay_text">OKAY</string>
@@ -468,7 +468,7 @@
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
     <string name="try_again_message">Something went wrong. Please try again later.</string>
-<!--    <string name="player_custom_error_msg_vod">We apologize for the technical error. Please try again after some time.</string>-->
+    <!--    <string name="player_custom_error_msg_vod">We apologize for the technical error. Please try again after some time.</string>-->
     <string name="player_custom_error_msg">Your internet connection is not stable. Please change your network and try again.</string>
     <string name="add_bio">Add Bio</string>
     <string name="dynamic_splash_image_desc">dynamic splash image</string>
@@ -576,4 +576,15 @@
     <string name="go_to_home">GO TO HOME</string>
     <string name="call_121">  Call 121</string>
     <string name="no_premium_content">No Premium Content Available</string>
+    <string name="premium_packs_title">Premium Packs</string>
+    <string name="my_subscriptions_title">My Subscriptions</string>
+    <string name="payment_method_label">Payment Method</string>
+    <string name="price_label">Price</string>
+    <string name="plan_label">Plan</string>
+    <string name="auto_renewal_label">Auto Renewal</string>
+    <string name="expiry_time_label">Expiry time</string>
+    <string name="signin_text_subscription">Please sign in to view subscription</string>
+    <string name="no_premium_pack_available">No premium pack available</string>
+    <string name="subscription_history_showing_text">Showing up to 2 years of payment history</string>
+    <string name="packs_tab_layout">Premium Packs Tab Layout</string>
 </resources>

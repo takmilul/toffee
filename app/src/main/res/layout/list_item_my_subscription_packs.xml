@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.data.network.response.SubsHistoryDetail" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardBgColor"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/tvPacksName"
+            style="@style/packsNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{data.packName}"
+            tools:text="Hoichoi and TOFFEE mixed bundle subscription"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/packStatus"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="12dp"/>
+
+        <TextView
+            android:id="@+id/packStatus"
+            style="@style/stylePackStatus"
+            android:background="@{data.subscriptionStatus.equalsIgnoreCase(`active`) ? @drawable/pack_status_active_bg : @drawable/pack_status_expire_bg}"
+            android:text="@{data.subscriptionStatus}"
+            android:textColor="@{data.subscriptionStatus.equalsIgnoreCase(`active`) ? @color/pack_status_active_text : @color/pack_status_expire_text}"
+            tools:background="@drawable/pack_status_active_bg"
+            tools:textColor="@color/pack_status_active_text"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tvPacksName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvPacksName"
+            app:layout_constraintTop_toTopOf="@id/tvPacksName"
+            tools:text="Active"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45"/>
+
+        <ImageView
+            android:id="@+id/paymentMethodIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_clock"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPacksName"
+            />
+
+        <TextView
+            android:id="@+id/paymentMethodLabel"
+            style="@style/packsInfoLabel"
+            android:text="@string/payment_method_label"
+            app:layout_constraintBottom_toBottomOf="@+id/paymentMethodIcon"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            app:layout_constraintStart_toEndOf="@id/paymentMethodIcon"
+            app:layout_constraintTop_toTopOf="@id/paymentMethodIcon" />
+
+        <TextView
+            android:id="@+id/tvPaymentMethodVal"
+            style="@style/packsInfoValue"
+            tools:text="bKash"
+            android:text="@{data.paymentMethod}"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/paymentMethodIcon"
+            app:layout_constraintBottom_toBottomOf="@id/paymentMethodIcon"
+            />
+
+        <ImageView
+            android:id="@+id/priceIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_price"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/paymentMethodIcon"
+            />
+
+        <TextView
+            android:id="@+id/priceLabel"
+            style="@style/packsInfoLabel"
+            android:text="@string/price_label"
+            app:layout_constraintStart_toEndOf="@id/priceIcon"
+            app:layout_constraintTop_toTopOf="@id/priceIcon"
+            app:layout_constraintBottom_toBottomOf="@id/priceIcon"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            />
+
+        <TextView
+            android:id="@+id/tvPriceVal"
+            style="@style/packsInfoValue"
+            tools:text="BDT 9"
+            android:text="@{data.paymentPrice}"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/priceIcon"
+            app:layout_constraintBottom_toBottomOf="@id/priceIcon"
+            />
+
+        <ImageView
+            android:id="@+id/planIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_price"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceIcon"
+            />
+        <TextView
+            android:id="@+id/planLabel"
+            style="@style/packsInfoLabel"
+            android:text="@string/plan_label"
+            app:layout_constraintStart_toEndOf="@id/planIcon"
+            app:layout_constraintTop_toTopOf="@id/planIcon"
+            app:layout_constraintBottom_toBottomOf="@id/planIcon"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            />
+        <TextView
+            android:id="@+id/tvPlanVal"
+            style="@style/packsInfoValue"
+            tools:text="1 GB for 3 days"
+            android:text="@{data.plan}"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/planIcon"
+            app:layout_constraintBottom_toBottomOf="@id/planIcon"
+            />
+        <ImageView
+            android:id="@+id/autoRenewalIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_auto_renewal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/planIcon"
+            />
+        <TextView
+            android:id="@+id/autoRenewalLabel"
+            style="@style/packsInfoLabel"
+            android:text="@string/auto_renewal_label"
+            app:layout_constraintStart_toEndOf="@id/autoRenewalIcon"
+            app:layout_constraintTop_toTopOf="@id/autoRenewalIcon"
+            app:layout_constraintBottom_toBottomOf="@id/autoRenewalIcon"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            />
+        <TextView
+            android:id="@+id/tvAutoRenewalVal"
+            style="@style/packsInfoValue"
+            tools:text="OFF"
+            android:text="@{data.autoRenewal}"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/autoRenewalIcon"
+            app:layout_constraintBottom_toBottomOf="@id/autoRenewalIcon"
+            />
+
+        <ImageView
+            android:id="@+id/expiryTimeIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/autoRenewalIcon"
+            app:srcCompat="@drawable/ic_clock" />
+        <TextView
+            android:id="@+id/expiryTimeLabel"
+            style="@style/packsInfoLabel"
+            android:text="@string/expiry_time_label"
+            app:layout_constraintStart_toEndOf="@id/expiryTimeIcon"
+            app:layout_constraintTop_toTopOf="@id/expiryTimeIcon"
+            app:layout_constraintBottom_toBottomOf="@id/expiryTimeIcon"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            />
+        <TextView
+            android:id="@+id/tvExpiryTimeVal"
+            style="@style/packsInfoValue"
+            tools:text="29 Jan 2023 11:59:59 pm"
+            android:text="@{data.expiryTime}"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/expiryTimeIcon"
+            app:layout_constraintBottom_toBottomOf="@id/expiryTimeIcon"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

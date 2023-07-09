@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -13,10 +14,12 @@ import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
 import com.banglalink.toffee.apiservice.PremiumPackStatusService
+import com.banglalink.toffee.apiservice.PremiumPackSubHistoryService
 import com.banglalink.toffee.apiservice.RechargeByBkashService
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
+import com.banglalink.toffee.data.network.request.PremiumPackSubHistoryRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
@@ -29,6 +32,7 @@ import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.network.response.RechargeByBkashBean
+import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
@@ -57,6 +61,7 @@ class PremiumViewModel @Inject constructor(
     private val bKashQueryPaymentService: BkashQueryPaymentService,
     private val rechargeByBkashService: RechargeByBkashService,
     private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
+    private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -99,7 +104,16 @@ class PremiumViewModel @Inject constructor(
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
     val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
-    
+    val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
+
+
+    val clickedOnSubHistory = MutableLiveData<Boolean>()
+    fun setClickedOnSubHistoryFlag(flag: Boolean){
+        viewModelScope.launch {
+            clickedOnSubHistory.value = flag
+        }
+    }
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -226,6 +240,13 @@ class PremiumViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun getPremiumPackSubscriptionHistory(){
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackSubHistoryService.execute() }
+            premiumPackSubHistoryLiveData.value = response
         }
     }
 }
