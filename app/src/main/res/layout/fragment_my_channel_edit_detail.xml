@@ -438,7 +438,7 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:inputType="number"
-                        android:text="@{viewModel.myChannelDetail.paymentPhoneNo.length()==11 ? viewModel.myChannelDetail.paymentPhoneNo : viewModel.myChannelDetail.paymentPhoneNo.substring(3)}"
+                        android:text="@{viewModel.myChannelDetail.paymentPhoneNo.length() > 11 ? viewModel.myChannelDetail.paymentPhoneNo.substring(3) : viewModel.myChannelDetail.paymentPhoneNo}"
                         android:textColor="@color/switchUnCheckedColor"
                         android:textSize="14sp"
                         app:drawableEndCompat="@drawable/ic_verified"

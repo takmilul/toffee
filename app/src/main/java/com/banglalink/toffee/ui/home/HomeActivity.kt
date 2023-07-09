@@ -1074,8 +1074,16 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.activePackListLiveData) { response ->
             when (response) {
                 is Success -> {
-                    mPref.activePremiumPackList.value = response.data.toList()
-                    checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                    if (response.data.isNotEmpty()) {
+                        mPref.activePremiumPackList.value = response.data
+                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                            mPref.prePurchaseClickedContent.value = cInfo
+                            navController.navigatePopUpTo(
+                                resId = id.premiumPackListFragment,
+                                args = bundleOf("contentId" to cInfo?.getContentId())
+                            )
+                        }
+                    } else {
                         mPref.prePurchaseClickedContent.value = cInfo
                         navController.navigatePopUpTo(
                             resId = id.premiumPackListFragment,
