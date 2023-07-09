@@ -1295,16 +1295,18 @@ class HomeActivity : PlayerPageActivity(),
             }
         } else if (info is PlaylistPlaybackInfo) {
             when {
-                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ !info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                )
-            }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
-                )
-            }
+                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                !info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                    )
+                }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
