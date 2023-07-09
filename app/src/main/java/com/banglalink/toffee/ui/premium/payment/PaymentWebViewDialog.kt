@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -347,7 +346,6 @@ class PaymentWebViewDialog : DialogFragment() {
                     }
                     when (queryPaymentResponse?.transactionStatus) {
                         "Completed" -> {
-                            viewModel.bkashQueryPaymentData.value = queryPaymentResponse
                             callAndObserveBkashDataPackPurchase()
                         }
                         "Initiated" -> {

@@ -27,7 +27,7 @@ class FeaturedPartnerService @AssistedInject constructor(
                 )
             )
         }
-        return response.response.featuredPartners ?: emptyList()
+        return response.response?.featuredPartners ?: emptyList()
     }
     
     @dagger.assisted.AssistedFactory

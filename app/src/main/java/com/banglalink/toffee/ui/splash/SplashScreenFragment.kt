@@ -266,11 +266,16 @@ class SplashScreenFragment : BaseFragment() {
                         )
                     )
                 } catch (e: ActivityNotFoundException) {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
-                        )
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
                     )
+                    
+                    if (intent.resolveActivity(requireContext().packageManager) != null) {
+                        startActivity(intent)
+                    } else {
+                        requireContext().showToast("Please open Play Store app and update Toffee")
+                    }
                 }
                 requireActivity().finish()
             }

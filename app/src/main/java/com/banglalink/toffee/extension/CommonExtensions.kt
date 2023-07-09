@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -361,4 +362,11 @@ fun NavController.navigatePopUpTo(
             }
         }
     })
+}
+
+inline fun <T> Fragment.checkIfFragmentAttached(operation: Context.() -> T?): T? {
+    if (isAdded && context != null) {
+        return operation(requireContext())
+    }
+    return null
 }

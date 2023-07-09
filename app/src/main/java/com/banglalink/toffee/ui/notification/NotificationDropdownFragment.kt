@@ -3,15 +3,16 @@ package com.banglalink.toffee.ui.notification
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.ui.notification.NotificationDetailFragment.Companion.ARG_NOTIFICATION_INFO
 
 class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseListItemCallback<NotificationInfo> {
-
     private var enableToolbar: Boolean = false
     override val itemMargin: Int = 12
     override val verticalPadding = Pair(16, 16)
@@ -20,7 +21,6 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
     
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
-
         @JvmStatic
         fun newInstance(enableToolbar: Boolean): NotificationDropdownFragment {
             val instance = NotificationDropdownFragment()
@@ -30,7 +30,7 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
             return instance
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.title = "Notification"
@@ -38,27 +38,23 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
     
     override fun onItemClicked(item: NotificationInfo) {
         super.onItemClicked(item)
-
+        
         if (!item.isSeen) {
             mViewModel.setSeenStatus(item.id!!, true, System.currentTimeMillis())
         }
-
-        if (findNavController().currentDestination?.id != R.id.notificationDetailFragment && findNavController().currentDestination?.id ==R.id.notificationDropdownFragment) {
-            val action =
-                NotificationDropdownFragmentDirections.actionNotificationDropdownFragmentToNotificationDetailFragment(
-                    item
-                )
-            findNavController().navigate(action)
-        }
+        
+        findNavController().navigate(R.id.notificationDetailFragment, bundleOf(
+            ARG_NOTIFICATION_INFO to item
+        ))
     }
-
+    
     override fun onOpenMenu(view: View, item: NotificationInfo) {
         super.onOpenMenu(view, item)
         
         PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_notification_item)
             val menu = this.menu
-            if (item.isSeen){
+            if (item.isSeen) {
                 menu.findItem(R.id.menu_seen_notification).isVisible = false
             }
             setOnMenuItemClickListener {
@@ -67,6 +63,7 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
                         mViewModel.setSeenStatus(item.id!!, true, System.currentTimeMillis())
 //                        mAdapter.notifyDataSetChanged()
                     }
+                    
                     R.id.menu_delete_notification -> {
                         mViewModel.deleteNotification(item)
                     }

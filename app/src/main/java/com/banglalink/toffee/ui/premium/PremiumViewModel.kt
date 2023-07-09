@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.premium
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -19,7 +18,6 @@ import com.banglalink.toffee.apiservice.RechargeByBkashService
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
-import com.banglalink.toffee.data.network.request.PremiumPackSubHistoryRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
@@ -90,7 +88,7 @@ class PremiumViewModel @Inject constructor(
     var selectedPremiumPack = savedState.getLiveData<PremiumPack>("selectedPremiumPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
-    var selectedDataPackOption = MutableLiveData<PackPaymentMethod>()
+    var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
@@ -99,15 +97,12 @@ class PremiumViewModel @Inject constructor(
     
     val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
     val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
-    val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
-    val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
-
-
     val clickedOnSubHistory = MutableLiveData<Boolean>()
+
     fun setClickedOnSubHistoryFlag(flag: Boolean){
         viewModelScope.launch {
             clickedOnSubHistory.value = flag
@@ -202,13 +197,6 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
             bKashCreatePaymentLiveData.value = response
-        }
-    }
-
-    fun bKashCreatePaymentWebView(token: String, requestBody: CreatePaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
-            bKashCreatePaymentLiveDataWebView.value = response
         }
     }
     
