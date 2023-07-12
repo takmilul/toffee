@@ -1074,8 +1074,16 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.activePackListLiveData) { response ->
             when (response) {
                 is Success -> {
-                    mPref.activePremiumPackList.value = response.data.toList()
-                    checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                    if (response.data.isNotEmpty()) {
+                        mPref.activePremiumPackList.value = response.data
+                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                            mPref.prePurchaseClickedContent.value = cInfo
+                            navController.navigatePopUpTo(
+                                resId = id.premiumPackListFragment,
+                                args = bundleOf("contentId" to cInfo?.getContentId())
+                            )
+                        }
+                    } else {
                         mPref.prePurchaseClickedContent.value = cInfo
                         navController.navigatePopUpTo(
                             resId = id.premiumPackListFragment,
@@ -1287,16 +1295,18 @@ class HomeActivity : PlayerPageActivity(),
             }
         } else if (info is PlaylistPlaybackInfo) {
             when {
-                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ !info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                )
-            }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
-                )
-            }
+                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                !info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                    )
+                }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }

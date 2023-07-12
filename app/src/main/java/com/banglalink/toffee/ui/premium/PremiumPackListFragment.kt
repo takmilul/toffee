@@ -150,7 +150,6 @@ class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack
                     viewModel.selectedPremiumPack.value = null
                     viewModel.paymentMethod.value = null
                     viewModel.selectedDataPackOption.value = null
-                    viewModel.bkashQueryPaymentData.value = null
                     findNavController().popBackStack()
                 }
             }

@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.premium
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -85,7 +84,7 @@ class PremiumViewModel @Inject constructor(
     var selectedPremiumPack = savedState.getLiveData<PremiumPack>("selectedPremiumPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
-    var selectedDataPackOption = MutableLiveData<PackPaymentMethod>()
+    var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
@@ -94,10 +93,8 @@ class PremiumViewModel @Inject constructor(
     
     val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
     val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
-    val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
-    val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     
     fun getPremiumPackList(contentId: String = "0") {
@@ -188,13 +185,6 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
             bKashCreatePaymentLiveData.value = response
-        }
-    }
-
-    fun bKashCreatePaymentWebView(token: String, requestBody: CreatePaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
-            bKashCreatePaymentLiveDataWebView.value = response
         }
     }
     

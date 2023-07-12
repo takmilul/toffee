@@ -135,6 +135,7 @@ dependencies {
     implementation(libs.bundles.navigation)
     
     // Image
+    implementation(libs.lottie)
     implementation(libs.bundles.coil)
     implementation(libs.bundles.image.crop)
     

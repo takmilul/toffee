@@ -19,6 +19,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState.Loading
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.apiservice.BrowsingScreens
@@ -329,12 +330,16 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
                     mAdapter.submitData(it)
-                    mAdapter.notifyDataSetChanged()
+                    if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mAdapter.notifyDataSetChanged()
+                    }
                 }
             } else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
                     mAdapter.submitData(it)
-                    mAdapter.notifyDataSetChanged()
+                    if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

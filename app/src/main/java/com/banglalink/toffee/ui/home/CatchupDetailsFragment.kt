@@ -29,6 +29,7 @@ import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.NativeAdAreaType
 import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.checkIfFragmentAttached
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
@@ -36,7 +37,11 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosViewModel
 import com.banglalink.toffee.ui.nativead.NativeAdAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -49,6 +54,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
+    
     @Inject lateinit var localSync: LocalSync
     private var mAdapter: ConcatAdapter? = null
     @Inject lateinit var bindingUtil: BindingUtil
@@ -89,7 +95,9 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             currentItem?.let { localSync.syncData(it) }
             detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
                 override fun onItemClicked(item: ChannelInfo) {
-                    homeViewModel.playContentLiveData.postValue(item)
+                    checkIfFragmentAttached {
+                        homeViewModel.playContentLiveData.postValue(item)
+                    }
                 }
                 
                 override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -99,22 +107,26 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                 
                 override fun onProviderIconClicked(item: ChannelInfo) {
                     super.onProviderIconClicked(item)
-                    homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+                    checkIfFragmentAttached {
+                        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+                    }
                 }
             })
             headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
             _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
-            observe(homeViewModel.vastTagLiveData) {
-                initAdapter()
-                
-                if (currentItem?.channel_owner_id == mPref.customerId) {
-                    observeMyChannelVideos()
-                } else {
-                    observeList()
-                }
-                if (mPref.nativeAdSettings.value == null) {
-                    homeViewModel.getVastTagV3(false)
+            checkIfFragmentAttached {
+                observe(homeViewModel.vastTagLiveData) {
+                    initAdapter()
+                    
+                    if (currentItem?.channel_owner_id == mPref.customerId) {
+                        observeMyChannelVideos()
+                    } else {
+                        observeList()
+                    }
+                    if (mPref.nativeAdSettings.value == null) {
+                        homeViewModel.getVastTagV3(false)
+                    }
                 }
             }
             observeListState()
@@ -129,11 +141,13 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
         requireActivity().checkVerification {
-            if (item.isSubscribed == 0) {
-                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-            } else {
-                UnSubscribeDialog.show(requireContext()) {
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
+            checkIfFragmentAttached {
+                if (item.isSubscribed == 0) {
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
+                } else {
+                    UnSubscribeDialog.show(requireContext()) {
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
+                    }
                 }
             }
         }
@@ -173,9 +187,11 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                 emptyTextView?.isVisible = !isLoading && isEmpty
                 isInitialized = true
                 if(currentItem != null && (list?.size ?: 0) > 0) {
-                    homeViewModel.addToPlayListMutableLiveData.postValue(
-                        AddToPlaylistData(-1, listOf(currentItem!!, list!!.items[0]))
-                    )
+                    checkIfFragmentAttached {
+                        homeViewModel.addToPlayListMutableLiveData.postValue(
+                            AddToPlaylistData(-1, listOf(currentItem!!, list!!.items[0]))
+                        )
+                    }
                 }
             }
         }
@@ -203,17 +219,20 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     }
     
     private fun observeSubscribeChannel() {
-        observe(homeViewModel.subscriptionLiveData) { response ->
-            when(response) {
-                is Resource.Success -> {
-                    currentItem?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+        checkIfFragmentAttached {
+            observe(homeViewModel.subscriptionLiveData) { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        currentItem?.apply {
+                            isSubscribed = response.data.isSubscribed
+                            subscriberCount = response.data.subscriberCount
+                        }
+                        headerAdapter?.notifyDataSetChanged()
                     }
-                    headerAdapter?.notifyDataSetChanged()
-                }
-                is Resource.Failure -> {
-                    requireContext().showToast(response.error.msg)
+                    
+                    is Resource.Failure -> {
+                        requireContext().showToast(response.error.msg)
+                    }
                 }
             }
         }
@@ -243,7 +262,9 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+        checkIfFragmentAttached {
+            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+        }
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo, isPlaylist: Boolean) {

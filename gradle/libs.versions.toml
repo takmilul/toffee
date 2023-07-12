@@ -38,6 +38,7 @@ work-manager-version = "2.7.1"
 # Image
 coil-version = "2.2.0"
 ucrop-version = "2.2.8"
+lottie-version = "3.4.0"
 coil-transformer-version = "1.0.5"
 exifinterface-version = "1.3.6"
 
@@ -185,6 +186,7 @@ compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4
 
 # Image
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop-version" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie-version" }
 exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface-version" }
 coil-core = { group = "io.coil-kt", name = "coil", version.ref = "coil-version" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil-version" }
