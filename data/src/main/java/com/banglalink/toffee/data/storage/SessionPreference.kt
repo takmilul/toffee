@@ -791,6 +791,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(isActive) {
             pref.edit().putBoolean(PREF_MNP_STATUS, isActive).apply()
         }
+    var isLoggedInFromSubHistory: Boolean
+        get() = pref.getBoolean(PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS, false)
+        set(isActive) {
+            pref.edit().putBoolean(PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS, isActive).apply()
+        }
 
     var isMnpCallForSubscription: Boolean
         get() = pref.getBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, false)
@@ -1073,6 +1078,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
         private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
         private const val PREF_MNP_STATUS = "pref_mnp_status"
+        private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
 
         private var instance: SessionPreference? = null

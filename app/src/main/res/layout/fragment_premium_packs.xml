@@ -97,10 +97,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="No premium pack available"
+                    android:text="@string/no_premium_pack_available"
                     android:textColor="@color/fixed_second_text_color"
-                    android:textSize="16sp"
-                    tools:text="No Premium Pack Available." />
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="No Premium Pack Available" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

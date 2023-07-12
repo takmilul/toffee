@@ -38,7 +38,6 @@ class SubscriptionHistoryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = "Premium Packs"
 
         mAdapter = SubscriptionHistoryAdapter()
         mAdapterWithFooter = SubscriptionHistoryFooterAdapter(mAdapter)
@@ -69,13 +68,11 @@ class SubscriptionHistoryFragment : BaseFragment() {
     private fun observeClick() {
         observe(viewModel.clickedOnSubHistory) {
             if (it) {
-                if (mAdapter.itemCount <= 0) {
-                    binding.failureInfoLayout.hide()
-                    binding.paymentHisList.hide()
-                    binding.progressBar.load(R.drawable.content_loader)
-                    binding.progressBar.show()
-                    viewModel.getPremiumPackSubscriptionHistory()
-                }
+                binding.failureInfoLayout.hide()
+                binding.paymentHisList.hide()
+                binding.progressBar.load(R.drawable.content_loader)
+                binding.progressBar.show()
+                viewModel.getPremiumPackSubscriptionHistory()
             }
         }
     }
@@ -88,12 +85,13 @@ class SubscriptionHistoryFragment : BaseFragment() {
                     binding.failureInfoLayout.hide()
                     binding.paymentHisList.show()
 
-                    mAdapterWithFooter.setFooterText(response.data?.historyShowingText!!)
-
                     response.data.let { subHistoryResponseBean ->
                         subHistoryResponseBean?.subsHistoryDetails.ifNotNullOrEmpty {
                             mAdapter.removeAll()
-                            mAdapter.addAll(it.toList())
+                            mAdapter.addAll(response.data?.subsHistoryDetails ?: emptyList())
+                            mAdapterWithFooter.setFooterText(response.data?.historyShowingText!!)
+                            mAdapter.notifyDataSetChanged()
+                            mAdapterWithFooter.notifyDataSetChanged()
 
                         }
                         if (subHistoryResponseBean?.subsHistoryDetails.isNullOrEmpty()) {
@@ -114,7 +112,7 @@ class SubscriptionHistoryFragment : BaseFragment() {
         binding.paymentHisList.hide()
         binding.iconFailureType.setImageResource(R.drawable.ic_empty_pack_list)
         binding.textFailureMessage.text =
-            getString(R.string.no_premium_pack_available)
+            getString(R.string.no_subscription_found)
         binding.btnSingin.hide()
         binding.failureInfoLayout.show()
     }
@@ -127,7 +125,9 @@ class SubscriptionHistoryFragment : BaseFragment() {
         binding.failureInfoLayout.show()
 
         binding.btnSingin.safeClick({
-            requireActivity().checkVerification()
+            requireActivity().checkVerification{
+                mPref.isLoggedInFromSubHistory = true
+            }
         })
     }
 

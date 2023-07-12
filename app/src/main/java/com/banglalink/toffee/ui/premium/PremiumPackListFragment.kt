@@ -10,9 +10,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
-import com.banglalink.toffee.util.Log
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+
 
 class PremiumPackListFragment : BaseFragment() {
 
@@ -22,52 +22,70 @@ class PremiumPackListFragment : BaseFragment() {
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPremiumPackListBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Premium Packs"
+        activity?.title = getString(R.string.toffee_premium)
         fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
-        Log.d("PremiumPackText", fromChannelItem.toString())
         loadView()
+
     }
 
-    private fun loadView(){
+    private fun loadView() {
         viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         binding.viewPager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
         binding.viewPager.adapter = viewPagerAdapter
 
-        if (viewPagerAdapter.itemCount == 0) {
+        if(viewPagerAdapter.itemCount == 0){
             viewPagerAdapter.addFragments(listOf(
                 PremiumPacksFragment.newInstance(fromChannelItem!!),
                 SubscriptionHistoryFragment()
             ))
         }
 
-        val fragmentTitleList = listOf(resources.getString(R.string.premium_packs_title), resources.getString(R.string.my_subscriptions_title))
+        val fragmentTitleList = listOf(
+            resources.getString(R.string.premium_packs_title),
+            resources.getString(R.string.my_subscriptions_title)
+        )
+
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = fragmentTitleList[position]
         }.attach()
 
-
-        //Preventing network call automatically on viewpager load
+        // Preventing network call automatically on viewpager load
         viewModel.setClickedOnSubHistoryFlag(false)
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                val selectedPosition = tab!!.position
-                if (selectedPosition == 1){
-                    viewModel.setClickedOnSubHistoryFlag(true)
-                }else {
-                    viewModel.setClickedOnSubHistoryFlag(false)
+                when (tab!!.position) {
+                    0 -> {
+                        viewModel.setClickedOnPackListFlag(true)
+                        viewModel.setClickedOnSubHistoryFlag(false)
+                    }
+                    1 -> {
+                        viewModel.setClickedOnSubHistoryFlag(true)
+                        viewModel.setClickedOnPackListFlag(false)
+                    }
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
+        //after sign in from subscription history fragment, showing subscription history programmatically
+        if (mPref.isLoggedInFromSubHistory) {
+            binding.tabLayout.getTabAt(1)?.select()
+            binding.viewPager.setCurrentItem(1, false)
+            mPref.isLoggedInFromSubHistory = false
+        }
     }
 
     override fun onDestroy() {

@@ -26,10 +26,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelVideosFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -104,7 +101,17 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             observeMnpStatus()
         }
         else{
+            observeClick()
             viewModel.getPremiumPackList(contentId ?: "0")
+            viewModel.setClickedOnPackListFlag(false)
+        }
+    }
+
+    private fun observeClick() {
+        observe(viewModel.clickedOnPackList) {
+            if (it) {
+                viewModel.getPremiumPackList(contentId ?: "0")
+            }
         }
     }
 
@@ -166,7 +173,6 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
                     viewModel.selectedPremiumPack.value = null
                     viewModel.paymentMethod.value = null
                     viewModel.selectedDataPackOption.value = null
-                    viewModel.bkashQueryPaymentData.value = null
                     findNavController().popBackStack()
                 }
             }

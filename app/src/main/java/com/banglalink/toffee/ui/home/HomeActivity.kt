@@ -1080,7 +1080,10 @@ class HomeActivity : PlayerPageActivity(),
                             mPref.prePurchaseClickedContent.value = cInfo
                             navController.navigatePopUpTo(
                                 resId = id.premiumPackListFragment,
-                                args = bundleOf("contentId" to cInfo?.getContentId())
+                                args = bundleOf(
+                                    "contentId" to cInfo?.getContentId(),
+                                    "clickedFromChannelItem" to true
+                                )
                             )
                         }
                     } else {

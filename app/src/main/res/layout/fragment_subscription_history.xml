@@ -35,7 +35,7 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center_horizontal"
-            tools:text="Please sign in to view subscription"
+            tools:text="Please sign in to view your subscriptions"
             android:textColor="@color/subscription_history_color_secondary"
             android:textSize="20sp"
             android:textStyle="bold" />

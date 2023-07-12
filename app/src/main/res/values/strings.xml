@@ -583,8 +583,9 @@
     <string name="plan_label">Plan</string>
     <string name="auto_renewal_label">Auto Renewal</string>
     <string name="expiry_time_label">Expiry time</string>
-    <string name="signin_text_subscription">Please sign in to view subscription</string>
+    <string name="signin_text_subscription">Please sign in to view your subscriptions</string>
     <string name="no_premium_pack_available">No premium pack available</string>
+    <string name="no_subscription_found">No subscription found.</string>
     <string name="subscription_history_showing_text">Showing up to 2 years of payment history</string>
     <string name="packs_tab_layout">Premium Packs Tab Layout</string>
 </resources>
