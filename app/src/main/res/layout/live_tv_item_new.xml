@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:onSafeClick="@{()-> callback.onItemClicked(data)}"
-        android:background="?selectableItemBackgroundBorderless">
+        >
         
         <ImageView
             android:contentDescription="@string/txt_icon"
@@ -32,7 +32,8 @@
             loadChannelImage="@{data}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:foreground="@drawable/ripple_tv_channel"/>
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

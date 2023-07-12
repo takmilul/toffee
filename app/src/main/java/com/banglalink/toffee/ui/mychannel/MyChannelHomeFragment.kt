@@ -18,6 +18,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -293,6 +295,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.contentBody.visibility = View.VISIBLE
         
         observeRatingChannel()
+
         
         viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         if (viewPagerAdapter.itemCount == 0) {
@@ -301,7 +304,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 MyChannelPlaylistsHostFragment.newInstance(channelOwnerId, isMyChannel)
             ))
         }
-        binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
         binding.viewPager.adapter = viewPagerAdapter
         
         val fragmentTitleList = listOf(resources.getString(R.string.videos), resources.getString(R.string.creators_playlist))
@@ -392,4 +395,5 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         _binding = null
         _bindingRating= null
     }
+
 }

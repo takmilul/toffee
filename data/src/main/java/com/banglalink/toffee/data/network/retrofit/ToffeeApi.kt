@@ -517,4 +517,9 @@ interface ToffeeApi {
     suspend fun getMnpStatus(
         @Body mnpStatusRequest: MnpStatusRequest
     ): MnpStatusResponse
+
+    @POST("/premium-pack-subscription-history")
+    suspend fun getPremiumPackSubscriptionHistory(
+        @Body premiumPackSubHistoryRequest: PremiumPackSubHistoryRequest
+    ): PremiumPackSubHistoryResponse
 }

@@ -18,8 +18,8 @@ object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false
     
-    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"          // production server
-//    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"  // staging server
+//    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"          // production server
+    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"  // staging server
     
     @Provides
     @Singleton
