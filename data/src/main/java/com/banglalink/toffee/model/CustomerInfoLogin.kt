@@ -215,6 +215,8 @@ data class CustomerInfoLogin(
     val isPrepaid : Boolean?,
     @SerializedName("isMnpCallForSubscription")
     val isMnpCallForSubscription : Boolean?,
+    @SerializedName("faqUrl")
+    val faqUrl : String?,
 ) : BodyResponse(), Parcelable
 
 @Entity

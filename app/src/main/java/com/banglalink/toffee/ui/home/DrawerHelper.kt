@@ -145,6 +145,20 @@ class DrawerHelper(
                 binding.drawerLayout.closeDrawers()
                 return true
             }
+            R.id.menu_faq -> {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.MENU_CLICK,
+                    bundleOf("selected_menu" to activity.getString(R.string.menu_faq))
+                )
+                activity.getNavController().navigateTo(
+                    resId = R.id.menu_faq,
+                    args = bundleOf(
+                        "myTitle" to "FAQ", "url" to mPref.faqUrl
+                    )
+                )
+                binding.drawerLayout.closeDrawers()
+                return true
+            }
             R.id.menu_settings -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_settings)))
             }

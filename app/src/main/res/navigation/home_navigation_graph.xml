@@ -112,6 +112,20 @@
             android:defaultValue=""
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/menu_faq"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            android:defaultValue="FAQ"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
     
     <fragment
         android:id="@+id/menu_policies"
