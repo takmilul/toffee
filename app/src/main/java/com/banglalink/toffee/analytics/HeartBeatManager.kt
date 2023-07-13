@@ -11,9 +11,9 @@ import androidx.work.BackoffPolicy.LINEAR
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy.APPEND_OR_REPLACE
 import androidx.work.NetworkType.CONNECTED
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
@@ -23,17 +23,26 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.player.PlayerEventWorker
-import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.usecase.AdvertisingIdLogData
+import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.usecase.SendAdvertisingIdLogEvent
+import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
+import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.today
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -91,7 +100,7 @@ class HeartBeatManager @Inject constructor(
             val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
             val workerRequest = OneTimeWorkRequestBuilder<PlayerEventWorker>()
                 .setConstraints(constraints)
-                .setBackoffCriteria(LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, MILLISECONDS)
+                .setBackoffCriteria(LINEAR, MIN_BACKOFF_MILLIS, MILLISECONDS)
                 .build()
             WorkManager.getInstance(appContext).enqueueUniqueWork("sendPlayerEvent", APPEND_OR_REPLACE, workerRequest)
         } catch (e: Exception) {

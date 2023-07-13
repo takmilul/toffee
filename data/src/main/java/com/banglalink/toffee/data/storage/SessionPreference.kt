@@ -24,8 +24,7 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -813,9 +812,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             overrideHlsHostUrl = customerInfoLogin.hlsOverrideUrl ?: ""
             shouldOverrideHlsHostUrl = customerInfoLogin.hlsUrlOverride
             setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
-            if (it.isBanglalinkNumber != null) {
-                isBanglalinkNumber = it.isBanglalinkNumber
-            }
+//            if (it.isBanglalinkNumber != null) {
+//                isBanglalinkNumber = it.isBanglalinkNumber
+//            }
             it.dbVersionList?.ifNotNullOrEmpty {
                 setDBVersion(it.toList())
             }

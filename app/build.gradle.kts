@@ -15,11 +15,11 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee"
-    compileSdk = 32
+    compileSdk = 33
     
     defaultConfig {
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 107
         versionName = "4.9.0"
         applicationId = "com.banglalink.toffee"
@@ -91,7 +91,7 @@ android {
     }
     
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
     
     lint {
@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.legacy.support.v4)
     
     // Kotlin
+    implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.kotlin.coroutines)
     

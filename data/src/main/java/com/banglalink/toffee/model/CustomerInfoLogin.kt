@@ -28,8 +28,8 @@ data class CustomerInfoLogin(
     @SerializedName("customerName")
     val customerName: String? = null,
     
-    @SerializedName("isBanglalinkNumber")
-    val isBanglalinkNumber: String? = "false",
+//    @SerializedName("isBanglalinkNumber")
+//    val isBanglalinkNumber: String? = "false",
     @SerializedName("hlsUrlOverride")
     val hlsUrlOverride: Boolean = false,
     @SerializedName("hlsOverrideUrl")

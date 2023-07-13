@@ -221,6 +221,7 @@ class HomeActivity : PlayerPageActivity(),
     
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         super.onCreate(savedInstanceState)
         
         val isDisableScreenshot = (
