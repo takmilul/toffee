@@ -105,13 +105,8 @@ class DrawerHelper(
 
         val header = binding.sideNavigation.getHeaderView(0)
         header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
-
-            val args = Bundle().apply {
-                putBoolean("clickedFromDrawer", true)
-            }
-
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
-            activity.getNavController().navigateTo(R.id.premiumPackListFragment,args)
+            activity.getNavController().navigateTo(R.id.premiumPackListFragment)
             binding.drawerLayout.closeDrawers()
         }
     }
@@ -140,6 +135,20 @@ class DrawerHelper(
                     resId = R.id.menu_creators_policy,
                     args = bundleOf(
                         "myTitle" to "Creators Policy", "url" to mPref.creatorsPolicyUrl
+                    )
+                )
+                binding.drawerLayout.closeDrawers()
+                return true
+            }
+            R.id.menu_faq -> {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.MENU_CLICK,
+                    bundleOf("selected_menu" to activity.getString(R.string.menu_faq))
+                )
+                activity.getNavController().navigateTo(
+                    resId = R.id.menu_faq,
+                    args = bundleOf(
+                        "myTitle" to "FAQ", "url" to mPref.faqUrl
                     )
                 )
                 binding.drawerLayout.closeDrawers()

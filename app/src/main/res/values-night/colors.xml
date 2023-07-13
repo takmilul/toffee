@@ -15,6 +15,7 @@
     <color name="colorButtonActivated">#57112D</color>
     <color name="tool_bar_color">#111F31</color>
     <color name="tab_background_color">#111F31</color>
+    <color name="tab_premium_background_color">#000000</color>
     <color name="window_background">#000000</color>
     <color name="searchview_input_text_color">#FFFFFF</color>
     <color name="searchview_hint_text_color">#6781A1</color>
@@ -70,6 +71,18 @@
     <color name="cardTitleSecondColor">#829AB8</color>
     <color name="btnDisableClr">#4029466B</color>
     <color name="txtDisableClr">#40E1E1E1</color>
+
+    <color name="subscription_history_pack_active_bg">#1D9A3A</color>
+    <color name="subscription_history_pack_expire_bg">#43424F</color>
+    <color name="pack_status_active_text">#E6EEF9</color>
+    <color name="pack_status_expire_text">#BED6F3</color>
+
+    <color name="subscription_history_bottom_card_bg">#000000</color>
+    <color name="subscription_history_bottom_card_text">#829AB8</color>
+
+    <color name="subscription_history_color_secondary">#829AB8</color>
+    <color name="subscription_history_color_primary">#BED6F3</color>
+
 
 
 </resources>

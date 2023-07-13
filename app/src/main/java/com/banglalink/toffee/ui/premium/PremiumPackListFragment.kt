@@ -4,168 +4,93 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.ifNotNullOrEmpty
-import com.banglalink.toffee.extension.navigateTo
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.Resource.Failure
-import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import kotlinx.coroutines.launch
+import com.banglalink.toffee.ui.common.ViewPagerAdapter
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
-class PremiumPackListFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
-    
-    private lateinit var mAdapter: PremiumPackListAdapter
+
+class PremiumPackListFragment : BaseFragment() {
+
     private var _binding: FragmentPremiumPackListBinding? = null
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private var fromChannelItem: Boolean? = false
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
 
-    private var fromDrawer: Boolean? = false
-    private var contentId: String? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPremiumPackListBinding.inflate(layoutInflater)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPremiumPackListBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        fromDrawer = arguments?.getBoolean("clickedFromDrawer")
-        
-        if (fromDrawer == true) {
-            binding.packListHeader.setText(R.string.premium_pack_list_title)
-            requireActivity().title = "Premium Packs"
-        } else {
-            binding.packListHeader.setText(R.string.prem_content_bundle_title)
-            requireActivity().title = "Choose Pack"
+        activity?.title = getString(R.string.toffee_premium)
+        fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
+        loadView()
+
+    }
+
+    private fun loadView() {
+        viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        binding.viewPager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
+        binding.viewPager.adapter = viewPagerAdapter
+
+        if(viewPagerAdapter.itemCount == 0){
+            viewPagerAdapter.addFragments(listOf(
+                PremiumPacksFragment.newInstance(fromChannelItem!!),
+                SubscriptionHistoryFragment()
+            ))
         }
-    
-        binding.progressBar.load(R.drawable.content_loader)
-        handleOnBackPressed()
-        
-        contentId = arguments?.getString("contentId")
-        
-        mAdapter = PremiumPackListAdapter(this)
-        val linearLayoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
-            override fun onLayoutCompleted(state: RecyclerView.State?) {
-                super.onLayoutCompleted(state)
-                viewModel.packListScrollState.value?.let {
-                    runCatching {
-                        binding.premContentScroller.scrollY = it
+
+        val fragmentTitleList = listOf(
+            resources.getString(R.string.premium_packs_title),
+            resources.getString(R.string.my_subscriptions_title)
+        )
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = fragmentTitleList[position]
+        }.attach()
+
+        // Preventing network call automatically on viewpager load
+        viewModel.setClickedOnSubHistoryFlag(false)
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab!!.position) {
+                    0 -> {
+                        viewModel.setClickedOnPackListFlag(true)
+                        viewModel.setClickedOnSubHistoryFlag(false)
+                    }
+                    1 -> {
+                        viewModel.setClickedOnSubHistoryFlag(true)
+                        viewModel.setClickedOnPackListFlag(false)
                     }
                 }
             }
-        }
-        with(binding.premiumPackList) {
-            adapter = mAdapter
-            layoutManager = linearLayoutManager
-            addItemDecoration(MarginItemDecoration(12))
-        }
-        observeList()
-        init()
-        viewModel.selectedPremiumPack.value = null
-    }
-
-    private fun init(){
-        if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
-            observeMnpStatus()
-        }
-        else{
-            viewModel.getPremiumPackList(contentId ?: "0")
-        }
-    }
-
-    private fun observeMnpStatus() {
-        observe(homeViewModel.mnpStatusBeanLiveData) { response ->
-            when (response) {
-                is Success -> {
-                    if (response.data?.mnpStatus == 200){
-                        mPref.isMnpStatusChecked = true
-                    }
-                    viewModel.getPremiumPackList(contentId ?: "0")
-                }
-                is Failure -> {
-                    requireContext().showToast(response.error.msg)
-                }
-            }
-        }
-        homeViewModel.getMnpStatus()
-    }
-
-    private fun observeList() {
-        observe(viewModel.packListState) { response ->
-            when(response) {
-                is Success -> {
-                    binding.progressBar.hide()
-
-                    if (response.data.isEmpty()) {
-                        binding.packListHeader.hide()
-                        binding.premiumPackList.hide()
-                        binding.emptyView.show()
-                    }
-
-                    response.data.ifNotNullOrEmpty {
-                        binding.packListHeader.show()
-                        binding.premiumPackList.show()
-                        mAdapter.removeAll()
-                        mAdapter.addAll(it.toList())
-                        binding.emptyView.hide()
-                    }
-                }
-                is Failure -> {
-                    binding.progressBar.hide()
-                    requireContext().showToast(response.error.msg)
-                }
-            }
-        }
-    }
-    
-    override fun onItemClicked(item: PremiumPack) {
-        viewModel.selectedPremiumPack.value = item
-        findNavController().navigateTo(R.id.packDetailsFragment)
-    }
-    
-    private fun handleOnBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isEnabled) {
-                    viewModel.packListScrollState.value = null
-                    viewModel.selectedPremiumPack.value = null
-                    viewModel.paymentMethod.value = null
-                    viewModel.selectedDataPackOption.value = null
-                    findNavController().popBackStack()
-                }
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-    }
-    
-    override fun onStop() {
-        super.onStop()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.packListScrollState.value = binding.premContentScroller.scrollY
+
+        //after sign in from subscription history fragment, showing subscription history programmatically
+        if (mPref.isLoggedInFromSubHistory) {
+            binding.tabLayout.getTabAt(1)?.select()
+            binding.viewPager.setCurrentItem(1, false)
+            mPref.isLoggedInFromSubHistory = false
         }
     }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.premiumPackList.adapter = null
+
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
     }
+
 }

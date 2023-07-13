@@ -785,10 +785,20 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var bkashQueryPaymentUrl: String
         get() = pref.getString(PREF_BKASH_QUERY_PAYMENT_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_BKASH_QUERY_PAYMENT_URL, value) }
+
+    var faqUrl: String
+        get() = pref.getString(PREF_FAQ_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_FAQ_URL, value) }
+
     var isMnpStatusChecked: Boolean
         get() = pref.getBoolean(PREF_MNP_STATUS, false)
         set(isActive) {
             pref.edit().putBoolean(PREF_MNP_STATUS, isActive).apply()
+        }
+    var isLoggedInFromSubHistory: Boolean
+        get() = pref.getBoolean(PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS, false)
+        set(isActive) {
+            pref.edit().putBoolean(PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS, isActive).apply()
         }
 
     var isMnpCallForSubscription: Boolean
@@ -903,16 +913,17 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashUsername = it.bkashUsername.toString()
             merchantInvoiceNumber = it.merchantInvoiceNumber.toString()
             bkashApiUrl = it.bkashApiUrl.toString()
-            bkashGrantTokenUrl = it.bkashGrantTokenUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/token/grant"
-            bkashRefreshTokenUrl = it.bkashRefreshTokenUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/token/refresh"
-            bkashCreateUrl = it.bkashCreateUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/create"
-            bkashExecuteUrl = it.bkashExecuteUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/execute"
-            bkashQueryPaymentUrl = it.bkashQueryPaymentUrl ?: "https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/payment/status"
+            bkashGrantTokenUrl = it.bkashGrantTokenUrl ?: "https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout/token/grant"
+            bkashRefreshTokenUrl = it.bkashRefreshTokenUrl ?: "https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout/token/refresh"
+            bkashCreateUrl = it.bkashCreateUrl ?: "https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout/create"
+            bkashExecuteUrl = it.bkashExecuteUrl ?: "https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout/execute"
+            bkashQueryPaymentUrl = it.bkashQueryPaymentUrl ?: "https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout/payment/status"
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
             isPrepaid = it.isPrepaid ?: true
             isMnpCallForSubscription = it.isMnpCallForSubscription ?: false
+            faqUrl = it.faqUrl ?: ""
 
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
@@ -1071,7 +1082,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_PREPAID = "pref_is_prepaid"
         private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
         private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
+        private const val PREF_FAQ_URL = "pref_faq_url"
         private const val PREF_MNP_STATUS = "pref_mnp_status"
+        private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
 
         private var instance: SessionPreference? = null
