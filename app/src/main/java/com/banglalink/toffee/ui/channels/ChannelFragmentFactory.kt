@@ -16,12 +16,17 @@ class ChannelFragmentFactory(private val args: Bundle?): FragmentFactory() {
                         args.getString("sub_category", ""),
                         args.getString("category", ""),
                         args.getBoolean("show_selected", false),
-                        args.getBoolean("is_stingray", false)
+                        args.getBoolean("is_stingray", false),
+                        args.getBoolean("is_fmRadio", false)
                     )
                 }
             }
             RecentChannelsFragment::class.java.name -> {
-                RecentChannelsFragment.newInstance(args?.getBoolean("show_selected", false) ?: true, args?.getBoolean("is_stingray", false) ?: false)
+                RecentChannelsFragment.newInstance(
+                    args?.getBoolean("show_selected", false) ?: true,
+                    args?.getBoolean("is_stingray", false) ?: false,
+                    args?.getBoolean("is_fmRadio", false) ?: false
+                )
             }
             else -> super.instantiate(classLoader, className)
         }

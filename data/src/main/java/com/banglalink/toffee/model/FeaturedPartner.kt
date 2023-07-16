@@ -23,7 +23,9 @@ data class FeaturedPartner(
     @SerializedName("banner_url")
     val bannerUrl: String? = null,
     @SerializedName("is_login_required")
-    val isLoginRequired:Boolean=false
+    val isLoginRequired:Boolean=false,
+    @SerializedName("url_type")
+    val url_type: Int = 0
 )
 
 data class FeaturedPartnerRequest(

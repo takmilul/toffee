@@ -8,6 +8,7 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.GetChannelWithCategory
 import com.banglalink.toffee.apiservice.GetContentService
+import com.banglalink.toffee.apiservice.GetFmRadioContentService
 import com.banglalink.toffee.apiservice.GetStingrayContentService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -25,25 +26,31 @@ class AllChannelsViewModel @Inject constructor(
     private val tvChannelsRepo: TVChannelRepository,
     private val allChannelService: GetChannelWithCategory,
     private val getStingrayContentService: GetStingrayContentService,
+    private val getFmRadioContentService: GetFmRadioContentService,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,
 ) : ViewModel() {
     
     val selectedChannel = MutableLiveData<ChannelInfo?>()
     val isFromSportsCategory = MutableLiveData<Boolean>()
     
-    fun getChannels(subcategoryId: Int, isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
+    fun getChannels(subcategoryId: Int, isStingray: Boolean = false, isFmRadio: Boolean): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
-                if (!isStingray) {
+                if (!isStingray && !isFmRadio) {
                     allChannelService.loadData(subcategoryId)
-                } else {
+                }
+                else if(!isStingray && isFmRadio){
+
+                    getFmRadioContentService.loadData(0,100)
+                }
+                else {
                     getStingrayContentService.loadData(0, 100)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
-        return if (isStingray) tvChannelsRepo.getStingrayItems() else tvChannelsRepo.getAllItems()
+        return if (isStingray) tvChannelsRepo.getStingrayItems() else if(isFmRadio) tvChannelsRepo.getFmItems() else tvChannelsRepo.getAllItems()
     }
     
     fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<out Any>> {

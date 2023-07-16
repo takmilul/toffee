@@ -517,4 +517,13 @@ interface ToffeeApi {
     suspend fun getMnpStatus(
         @Body mnpStatusRequest: MnpStatusRequest
     ): MnpStatusResponse
+
+    @POST("fm-radio-contents/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
+    suspend fun getFmRadioContents(
+        @Path("offset") offset: Int,
+        @Path("limit") limit: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body fmRadioContentRequest: FmRadioContentRequest
+    ): FmRadioContentResponse
+
 }

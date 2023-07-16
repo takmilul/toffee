@@ -51,6 +51,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -60,6 +61,7 @@ import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
 import com.banglalink.toffee.Constants.PLAY_CDN
+import com.banglalink.toffee.Constants.PLAY_FM
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
 import com.banglalink.toffee.Constants.PREMIUM
@@ -108,6 +110,7 @@ import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.ui.fmradio.FmChannelFragmentNew
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
@@ -499,8 +502,10 @@ class HomeActivity : PlayerPageActivity(),
         }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
-                binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
-                if (binding.playerView.isControllerVisible()) {
+                if (getHomeViewModel().isFmRadio.value != true) {
+                    binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
+                }
+                if (binding.playerView.isControllerVisible() && getHomeViewModel().isFmRadio.value != true) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             } else {
@@ -1063,6 +1068,9 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlType == PLAY_CDN && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
+                it.urlType == PLAY_FM && it.urlTypeExt == NON_PREMIUM -> {
+                    playInNativePlayer(detailsInfo, it)
+                }
                 it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
@@ -1124,7 +1132,7 @@ class HomeActivity : PlayerPageActivity(),
             checkAndUpdateMediaCdnConfig(channelInfo) {
                 playContent(detailsInfo, it)
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT||channelInfo.urlType == PLAY_FM) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -1268,7 +1276,13 @@ class HomeActivity : PlayerPageActivity(),
     private fun loadDetailFragment(info: Any?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
         if (info is ChannelInfo) {
-            if (info.isStingray) {
+            if (info.isFmRadio){
+                if (fragment !is FmChannelFragmentNew) {
+                    loadFragmentById(
+                        R.id.details_viewer, FmChannelFragmentNew()
+                    )
+                }
+            } else if (info.isStingray) {
                 if (fragment !is StingrayChannelFragmentNew) {
                     loadFragmentById(
                         R.id.details_viewer, StingrayChannelFragmentNew()
@@ -1582,7 +1596,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || getHomeViewModel().isFmRadio.value == true) {
             binding.homeBottomSheet.bottomSheet.hide()
         } else {
             binding.homeBottomSheet.bottomSheet.show()
@@ -2227,19 +2241,27 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
-        if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
-            featuredPartner.webViewUrl?.let { url ->
-                landingPageViewModel.sendFeaturePartnerReportData(
-                    partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
-                )
-                navController.navigateTo(
-                    resId = R.id.htmlPageViewDialog_Home,
-                    args = bundleOf(
-                        "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+
+        if (featuredPartner.url_type==1){
+
+            navController.navigateTo(R.id.FmRadioFrag)
+        }else{
+
+            if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
+                featuredPartner.webViewUrl?.let { url ->
+                    landingPageViewModel.sendFeaturePartnerReportData(
+                        partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                )
-            } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+                    navController.navigateTo(
+                        resId = R.id.htmlPageViewDialog_Home,
+                        args = bundleOf(
+                            "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+                        )
+                    )
+                } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+            }
         }
+
     }
     
     private fun isChannelComplete() =
