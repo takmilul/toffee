@@ -141,7 +141,8 @@ dependencies {
     implementation(libs.bundles.image.crop)
     
     // Player
-    implementation(libs.bundles.exoplayer)
+//    implementation(libs.bundles.exoplayer)
+    implementation(libs.bundles.media3.player)
     implementation(libs.bundles.cast)
     implementation(libs.bundles.ads)
     

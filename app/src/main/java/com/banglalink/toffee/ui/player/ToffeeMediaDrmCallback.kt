@@ -1,21 +1,23 @@
 package com.banglalink.toffee.ui.player
 
 import android.net.Uri
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.drm.ExoMediaDrm
+import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
+import androidx.media3.exoplayer.drm.MediaDrmCallback
+import androidx.media3.exoplayer.drm.MediaDrmCallbackException
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.util.Log
-import com.google.android.exoplayer2.drm.ExoMediaDrm
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
-import com.google.android.exoplayer2.drm.MediaDrmCallback
-import com.google.android.exoplayer2.drm.MediaDrmCallbackException
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
-import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.common.collect.ImmutableMap
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class ToffeeMediaDrmException(msg: String) : Exception(msg)
 
+@UnstableApi
 class ToffeeMediaDrmCallback(
     licenseUri: String,
     dataSourceFactory: OkHttpDataSource.Factory,

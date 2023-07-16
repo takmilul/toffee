@@ -45,7 +45,7 @@ coil-transformer-version = "1.0.5"
 exifinterface-version = "1.3.6"
 
 # Player
-media3-version = "1.0.0"
+media3-version = "1.1.0"
 exo-player-version = "2.19.0"
 
 # Cast
@@ -205,14 +205,14 @@ exoplayer-cast = { group = "com.google.android.exoplayer", name = "extension-cas
 exoplayer-okhttp = { group = "com.google.android.exoplayer", name = "extension-okhttp", version.ref = "exo-player-version" }
 exoplayer-session = { group = "com.google.android.exoplayer", name = "extension-mediasession", version.ref = "exo-player-version" }
 
-#exoplayer-core = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-version" }
-#exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-version" }
-#exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-version" }
-#exoplayer-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-version" }
-#exoplayer-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3-version" }
-#exoplayer-ima = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-version" }
-#exoplayer-cast = { group = "androidx.media3", name = "media3-cast", version.ref = "media3-version" }
-#exoplayer-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "media3-version" }
+media3-core = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-version" }
+media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-version" }
+media3-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-version" }
+media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-version" }
+media3-ima = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-version" }
+media3-cast = { group = "androidx.media3", name = "media3-cast", version.ref = "media3-version" }
+media3-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "media3-version" }
+media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3-version" }
 
 # Cast
 mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter-version" }
@@ -339,6 +339,7 @@ com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", vers
 
 compose = ["compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-material", "compose-activity", "compose-runtime", "compose-coil", "compose-navigation", "compose-viewmodel"]
 exoplayer = ["exoplayer-core", "exoplayer-hls", "exoplayer-dash", "exoplayer-ui", "exoplayer-ima", "exoplayer-cast", "exoplayer-okhttp", "exoplayer-session"]
+media3-player = ["media3-core", "media3-hls", "media3-dash", "media3-ui", "media3-ima", "media3-cast", "media3-okhttp", "media3-session"]
 retrofit = ["retrofit-core", "retrofit-gson", "okhttp-logger", "okhttp-dnshttp"]
 lifecycle = ["lifecycle-viewmodel-ktx", "lifecycle-runtime-ktx", "lifecycle-livedata-ktx"]
 image-crop = ["ucrop", "circular-progressbar", "dahdit"]

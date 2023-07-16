@@ -15,6 +15,15 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.media3.cast.CastPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
+import androidx.media3.ui.PlayerControlView
+import androidx.media3.ui.PlayerView
+import androidx.media3.ui.PlayerView.ControllerVisibilityListener
 import androidx.mediarouter.app.MediaRouteButton
 import coil.load
 import com.banglalink.toffee.R
@@ -35,15 +44,6 @@ import com.banglalink.toffee.ui.player.ToffeePlayerEventHelper
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.Utils
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.DefaultTimeBar
-import com.google.android.exoplayer2.ui.StyledPlayerControlView
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.ui.StyledPlayerView.ControllerVisibilityListener
-import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
@@ -59,11 +59,12 @@ import kotlin.math.max
 import kotlin.math.min
 
 @AndroidEntryPoint
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : 
     View.OnClickListener,
     Player.Listener,
     DraggerLayout.OnPositionChangedListener,
-    StyledPlayerView(context, attrs, defStyleAttr) 
+    PlayerView(context, attrs, defStyleAttr) 
 {
     
     var isVideoScalable = false
@@ -111,7 +112,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     protected lateinit var doubleTapInterceptor: PlayerPreview
     private lateinit var errorMessageContainer: ConstraintLayout
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
-    private lateinit var playerControlView: StyledPlayerControlView
+    private lateinit var playerControlView: PlayerControlView
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     
@@ -127,7 +128,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     private fun initView() {
-        playerControlView = findViewById(com.google.android.exoplayer2.ui.R.id.exo_controller)
+        playerControlView = findViewById(androidx.media3.ui.R.id.exo_controller)
         drawerButton = findViewById(R.id.drawer)
         videoOption = findViewById(R.id.video_option)
         shareButton = findViewById(R.id.share)
@@ -158,17 +159,17 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         fullscreenButton = findViewById(R.id.fullscreen)
         controllerBg = findViewById(R.id.controller_bg)
-        playPause = findViewById(com.google.android.exoplayer2.ui.R.id.exo_play_pause)
+        playPause = findViewById(androidx.media3.ui.R.id.exo_play_pause)
         previewImage = findViewById(R.id.exo_shutter)
         
         playNext = findViewById(R.id.play_next)
         playPrev = findViewById(R.id.play_prev)
         buffering = findViewById(R.id.exo_buffering)
         
-        exoDuration = findViewById(com.google.android.exoplayer2.ui.R.id.exo_duration)
+        exoDuration = findViewById(androidx.media3.ui.R.id.exo_duration)
         exoTimeSeparator = findViewById(R.id.time_seperator)
-        exoPosition = findViewById(com.google.android.exoplayer2.ui.R.id.exo_position)
-        exoProgress = findViewById(com.google.android.exoplayer2.ui.R.id.exo_progress)
+        exoPosition = findViewById(androidx.media3.ui.R.id.exo_position)
+        exoProgress = findViewById(androidx.media3.ui.R.id.exo_progress)
         
         drawerButton.setOnClickListener(this)
         videoOption.setOnClickListener(this)

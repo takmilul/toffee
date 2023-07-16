@@ -13,6 +13,33 @@ import android.support.v4.media.session.PlaybackStateCompat.State
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.cast.CastPlayer
+import androidx.media3.cast.SessionAvailabilityListener
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Player.PositionInfo
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.*
+import androidx.media3.exoplayer.ExoPlayer.Builder
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
+import androidx.media3.exoplayer.dash.DashUtil
+import androidx.media3.exoplayer.drm.*
+import androidx.media3.exoplayer.drm.DrmSession.DrmSessionException
+import androidx.media3.exoplayer.ima.ImaAdsLoader
+import androidx.media3.exoplayer.source.*
+import androidx.media3.exoplayer.source.ads.AdsLoader
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.Parameters
+import androidx.media3.exoplayer.util.*
+import androidx.media3.ui.PlayerView
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
@@ -38,29 +65,9 @@ import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.util.*
-import com.banglalink.toffee.util.Log
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.*
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.ExoPlayer.Builder
-import com.google.android.exoplayer2.Player.PositionInfo
-import com.google.android.exoplayer2.analytics.AnalyticsListener
-import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
-import com.google.android.exoplayer2.drm.*
-import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
-import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
-import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.source.ads.AdsLoader
-import com.google.android.exoplayer2.source.dash.DashUtil
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.*
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -75,7 +82,7 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
 
-@AndroidEntryPoint
+@UnstableApi @AndroidEntryPoint
 abstract class PlayerPageActivity :
     PlaylistListener,
     AnalyticsListener,
@@ -179,7 +186,7 @@ abstract class PlayerPageActivity :
     }
     
     abstract val playlistManager: PlaylistManager
-    abstract fun getPlayerView(): StyledPlayerView
+    abstract fun getPlayerView(): PlayerView
     
     protected open fun onContentExpired() {
         //hook for subclass
