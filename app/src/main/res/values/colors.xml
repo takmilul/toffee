@@ -141,17 +141,14 @@
     <color name="txtDisableClr">#E1E1E1</color>
 
     <color name="subscription_history_pack_active_bg">#1D9A3A</color>
-    <color name="subscription_history_pack_expire_bg">#B5B5B5</color>
+    <color name="subscription_history_pack_expire_bg">#BFBFBF</color>
     <color name="pack_status_active_text">#E6EEF9</color>
-    <color name="pack_status_expire_text">#29466B</color>
+    <color name="pack_status_expire_text">#76757D</color>
     
     <color name="subscription_history_bottom_card_bg">#ECECEC</color>
     <color name="subscription_history_bottom_card_text">#829AB8</color>
 
     <color name="subscription_history_color_secondary">#6781A1</color>
     <color name="subscription_history_color_primary">#29466B</color>
-
-
-
 
 </resources>

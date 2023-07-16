@@ -7,27 +7,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentPremiumPackListBinding
+import com.banglalink.toffee.databinding.FragmentPremiumBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 
-class PremiumPackListFragment : BaseFragment() {
+class PremiumFragment : BaseFragment() {
 
-    private var _binding: FragmentPremiumPackListBinding? = null
+    private var _binding: FragmentPremiumBinding? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fromChannelItem: Boolean? = false
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentPremiumPackListBinding.inflate(layoutInflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentPremiumBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -36,7 +32,6 @@ class PremiumPackListFragment : BaseFragment() {
         activity?.title = getString(R.string.toffee_premium)
         fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
         loadView()
-
     }
 
     private fun loadView() {
@@ -46,7 +41,7 @@ class PremiumPackListFragment : BaseFragment() {
 
         if(viewPagerAdapter.itemCount == 0){
             viewPagerAdapter.addFragments(listOf(
-                PremiumPacksFragment.newInstance(fromChannelItem!!),
+                PremiumPacksFragment.newInstance(fromChannelItem ?: false),
                 SubscriptionHistoryFragment()
             ))
         }
@@ -61,18 +56,20 @@ class PremiumPackListFragment : BaseFragment() {
         }.attach()
 
         // Preventing network call automatically on viewpager load
-        viewModel.setClickedOnSubHistoryFlag(false)
+        viewModel.clickedOnSubHistory.value = false
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab!!.position) {
-                    0 -> {
-                        viewModel.setClickedOnPackListFlag(true)
-                        viewModel.setClickedOnSubHistoryFlag(false)
-                    }
-                    1 -> {
-                        viewModel.setClickedOnSubHistoryFlag(true)
-                        viewModel.setClickedOnPackListFlag(false)
+                tab?.position.let {
+                    when (it) {
+                        0 -> {
+                            viewModel.clickedOnPackList.value = true
+                            viewModel.clickedOnSubHistory.value = false
+                        }
+                        1 -> {
+                            viewModel.clickedOnSubHistory.value = true
+                            viewModel.clickedOnPackList.value = false
+                        }
                     }
                 }
             }
@@ -82,8 +79,10 @@ class PremiumPackListFragment : BaseFragment() {
 
         //after sign in from subscription history fragment, showing subscription history programmatically
         if (mPref.isLoggedInFromSubHistory) {
-            binding.tabLayout.getTabAt(1)?.select()
-            binding.viewPager.setCurrentItem(1, false)
+            binding.tabLayout.getTabAt(1)?.apply {
+                select()
+                binding.viewPager.setCurrentItem(1, false)
+            }
             mPref.isLoggedInFromSubHistory = false
         }
     }
