@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -43,6 +44,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter(value = ["loadImageFromUrl", "maintainRatio"], requireAll = false)
     fun bindImageFromUrl(view: ImageView, imageUrl: String?, maintainRatio: Boolean = true) {
+        Log.d(TAG, "bindImageFromUrl: "+imageUrl.toString())
+
         if (imageUrl.isNullOrEmpty()) {
             view.loadPlaceholder()
         } else {
@@ -138,16 +141,6 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                     setImageRequestParams(true)
                     transformations(CircleCropTransformation())
                     size(min(80.px, 150), min(80.px, 150))
-                }
-            }
-        } else {
-            if (channelInfo?.landscape_ratio_1280_720.isNullOrBlank()) {
-                view.loadPlaceholder()
-            } else {
-                view.load(channelInfo?.landscape_ratio_1280_720) {
-                    initListener(view)
-                    setImageRequestParams()
-                    size(min(360.px, 720), min(202.px, 405))
                 }
             }
         }

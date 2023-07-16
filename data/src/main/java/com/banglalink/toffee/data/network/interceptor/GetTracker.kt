@@ -49,7 +49,8 @@ class GetTracker @Inject constructor():IGetMethodTracker {
         "/ugc-search-content-v2/${Constants.DEVICE_TYPE}",
         "/premium-packages",
         "/package-details",
-        "/package-wise-data-pack"
+        "/package-wise-data-pack",
+        "/fm-radio-contents"
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

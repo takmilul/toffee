@@ -194,7 +194,7 @@ data class ChannelInfo(
     
     @get:SerializedName("isLinear")
     val isLinear: Boolean
-        get() = "LIVE".equals(type, ignoreCase = true) || "Stingray".equals(type, ignoreCase = true)
+        get() = "LIVE".equals(type, ignoreCase = true) || "Stingray".equals(type, ignoreCase = true) || "RADIO".equals(type, ignoreCase = true)
     
     @get:SerializedName("isVOD")
     val isVOD: Boolean
@@ -207,6 +207,10 @@ data class ChannelInfo(
     @get:SerializedName("isStingray")
     val isStingray: Boolean
         get() = "stingray".equals(type, ignoreCase = true)
+
+    @get:SerializedName("isFmRadio")
+    val isFmRadio: Boolean
+        get() = "RADIO".equals(type, ignoreCase = true)
     
     @get:SerializedName("isCatchup")
     val isCatchup: Boolean
