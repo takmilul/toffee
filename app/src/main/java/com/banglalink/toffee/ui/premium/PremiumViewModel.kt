@@ -104,18 +104,6 @@ class PremiumViewModel @Inject constructor(
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
 
-    fun setClickedOnSubHistoryFlag(flag: Boolean){
-        viewModelScope.launch {
-            clickedOnSubHistory.value = flag
-        }
-    }
-
-    fun setClickedOnPackListFlag(flag: Boolean){
-        viewModelScope.launch {
-            clickedOnPackList.value = flag
-        }
-    }
-
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }

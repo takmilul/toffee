@@ -1,12 +1,10 @@
 package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -27,6 +25,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.launch
 
 class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
@@ -39,7 +38,6 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     private var contentId: String? = null
     private var fromChannelItem: Boolean? = false
 
-
     companion object {
         @JvmStatic
         fun newInstance(clickedFromDrawer: Boolean) = PremiumPacksFragment().apply {
@@ -49,15 +47,10 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         }
     }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentPremiumPacksBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -92,6 +85,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             addItemDecoration(MarginItemDecoration(12))
         }
         observeList()
+        observeClick()
         init()
         viewModel.selectedPremiumPack.value = null
     }
@@ -101,9 +95,8 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             observeMnpStatus()
         }
         else{
-            observeClick()
             viewModel.getPremiumPackList(contentId ?: "0")
-            viewModel.setClickedOnPackListFlag(false)
+            viewModel.clickedOnPackList.value = false
         }
     }
 
