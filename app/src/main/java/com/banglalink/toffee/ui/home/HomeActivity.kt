@@ -2683,6 +2683,11 @@ class HomeActivity : PlayerPageActivity(),
             initDrawer()
             initSideNav()
             loadUserInfo()
+            observe(mPref.profileImageUrlLiveData) {
+                binding.root.findViewById<View>(R.id.action_avatar)?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
+                    bindingUtil.bindRoundImage(profileImageView, it)
+                }
+            }
             lifecycleScope.launch {
                 if (mPref.doActionBeforeReload.value == true) {
                     mPref.postLoginEventAction.value?.invoke()
