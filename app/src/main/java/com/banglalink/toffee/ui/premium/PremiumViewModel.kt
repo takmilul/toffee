@@ -13,6 +13,7 @@ import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
 import com.banglalink.toffee.apiservice.PremiumPackStatusService
+import com.banglalink.toffee.apiservice.PremiumPackSubHistoryService
 import com.banglalink.toffee.apiservice.RechargeByBkashService
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
@@ -29,6 +30,7 @@ import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.network.response.RechargeByBkashBean
+import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
@@ -57,6 +59,7 @@ class PremiumViewModel @Inject constructor(
     private val bKashQueryPaymentService: BkashQueryPaymentService,
     private val rechargeByBkashService: RechargeByBkashService,
     private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
+    private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -85,7 +88,7 @@ class PremiumViewModel @Inject constructor(
     var selectedPremiumPack = savedState.getLiveData<PremiumPack>("selectedPremiumPack")
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
-    var selectedDataPackOption = MutableLiveData<PackPaymentMethod>()
+    var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
@@ -94,12 +97,25 @@ class PremiumViewModel @Inject constructor(
     
     val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
     val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
-    val bKashCreatePaymentLiveDataWebView = SingleLiveEvent<Resource<CreatePaymentResponse>>()
     val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
     val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
-    val bkashQueryPaymentData = MutableLiveData<QueryPaymentResponse>()
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
-    
+    val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
+    val clickedOnSubHistory = MutableLiveData<Boolean>()
+    val clickedOnPackList = MutableLiveData<Boolean>()
+
+    fun setClickedOnSubHistoryFlag(flag: Boolean){
+        viewModelScope.launch {
+            clickedOnSubHistory.value = flag
+        }
+    }
+
+    fun setClickedOnPackListFlag(flag: Boolean){
+        viewModelScope.launch {
+            clickedOnPackList.value = flag
+        }
+    }
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -190,13 +206,6 @@ class PremiumViewModel @Inject constructor(
             bKashCreatePaymentLiveData.value = response
         }
     }
-
-    fun bKashCreatePaymentWebView(token: String, requestBody: CreatePaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
-            bKashCreatePaymentLiveDataWebView.value = response
-        }
-    }
     
     fun bKashExecutePayment(token: String, requestBody: ExecutePaymentRequest) {
         viewModelScope.launch {
@@ -226,6 +235,13 @@ class PremiumViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun getPremiumPackSubscriptionHistory(){
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackSubHistoryService.execute() }
+            premiumPackSubHistoryLiveData.value = response
         }
     }
 }

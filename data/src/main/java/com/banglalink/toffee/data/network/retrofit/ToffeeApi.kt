@@ -518,6 +518,11 @@ interface ToffeeApi {
         @Body mnpStatusRequest: MnpStatusRequest
     ): MnpStatusResponse
 
+    @POST("/premium-pack-subscription-history")
+    suspend fun getPremiumPackSubscriptionHistory(
+        @Body premiumPackSubHistoryRequest: PremiumPackSubHistoryRequest
+    ): PremiumPackSubHistoryResponse
+
     @POST("fm-radio-contents/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getFmRadioContents(
         @Path("offset") offset: Int,

@@ -312,7 +312,7 @@ abstract class PlayerPageActivity :
             adsLoader?.setPlayer(exoPlayer)
             ConvivaHelper.setPlayer(exoPlayer)
             mediaSession = MediaSessionCompat(this, packageName)
-            mediaSession!!.setCallback(MediaSessionCallback())
+            mediaSession?.setCallback(MediaSessionCallback())
             observeNetworkChange()
         }
     }

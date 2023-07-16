@@ -75,6 +75,11 @@
     <group
         android:id="@+id/group4"
         android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/menu_faq"
+            android:icon="@drawable/ic_faq"
+            android:title="@string/menu_faq" />
         
         <item
             android:id="@+id/menu_policies"

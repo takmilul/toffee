@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -45,7 +46,8 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.placeholder.isVisible = isEmpty
+                    binding.placeholder.isVisible = isEmpty && isLoading
+                    binding.featuredPartnerHeader.isVisible = !isEmpty
                     binding.featuredPartnerList.isVisible = !isEmpty
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true

@@ -3,7 +3,9 @@ package com.banglalink.toffee.ui.splash
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.data.database.entities.NotificationInfo
@@ -25,6 +27,7 @@ class SplashScreenActivity : BaseAppCompatActivity() {
     private val binding get() = _binding!!
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
+    private val pushNotificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,11 @@ class SplashScreenActivity : BaseAppCompatActivity() {
         inAppMessaging.setMessagesSuppressed(true)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+        
         MedalliaDigital.disableIntercept()
         intent.getStringExtra("resourceUrl")?.let {
             saveNotification(intent)

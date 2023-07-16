@@ -224,6 +224,7 @@ class HomeActivity : PlayerPageActivity(),
     
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         super.onCreate(savedInstanceState)
         
         val isDisableScreenshot = (
@@ -1082,12 +1083,26 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.activePackListLiveData) { response ->
             when (response) {
                 is Success -> {
-                    mPref.activePremiumPackList.value = response.data.toList()
-                    checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                    if (response.data.isNotEmpty()) {
+                        mPref.activePremiumPackList.value = response.data
+                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
+                            mPref.prePurchaseClickedContent.value = cInfo
+                            navController.navigatePopUpTo(
+                                resId = id.premiumPackListFragment,
+                                args = bundleOf(
+                                    "contentId" to cInfo?.getContentId(),
+                                    "clickedFromChannelItem" to true
+                                )
+                            )
+                        }
+                    } else {
                         mPref.prePurchaseClickedContent.value = cInfo
                         navController.navigatePopUpTo(
                             resId = id.premiumPackListFragment,
-                            args = bundleOf("contentId" to cInfo?.getContentId())
+                            args = bundleOf(
+                                "contentId" to cInfo?.getContentId(),
+                                "clickedFromChannelItem" to true
+                            )
                         )
                     }
                 }
@@ -1095,7 +1110,10 @@ class HomeActivity : PlayerPageActivity(),
                     mPref.prePurchaseClickedContent.value = cInfo
                     navController.navigatePopUpTo(
                         resId = id.premiumPackListFragment,
-                        args = bundleOf("contentId" to cInfo?.getContentId())
+                        args = bundleOf(
+                            "contentId" to cInfo?.getContentId(),
+                            "clickedFromChannelItem" to true
+                        )
                     )
                 }
             }
@@ -1301,16 +1319,18 @@ class HomeActivity : PlayerPageActivity(),
             }
         } else if (info is PlaylistPlaybackInfo) {
             when {
-                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ !info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                )
-            }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ info.isUserPlaylist -> {
-                loadFragmentById(
-                    R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
-                )
-            }
+                /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                !info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
+                info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                    )
+                }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
@@ -2685,6 +2705,11 @@ class HomeActivity : PlayerPageActivity(),
             initDrawer()
             initSideNav()
             loadUserInfo()
+            observe(mPref.profileImageUrlLiveData) {
+                binding.root.findViewById<View>(R.id.action_avatar)?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
+                    bindingUtil.bindRoundImage(profileImageView, it)
+                }
+            }
             lifecycleScope.launch {
                 if (mPref.doActionBeforeReload.value == true) {
                     mPref.postLoginEventAction.value?.invoke()

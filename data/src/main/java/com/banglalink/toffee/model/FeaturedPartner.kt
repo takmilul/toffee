@@ -37,7 +37,7 @@ data class FeaturedPartnerRequest(
 
 data class FeaturedPartnerResponse(
     @SerializedName("response")
-    val response: FeaturedPartnerBean
+    val response: FeaturedPartnerBean?
 ): BaseResponse()
 
 data class FeaturedPartnerBean(

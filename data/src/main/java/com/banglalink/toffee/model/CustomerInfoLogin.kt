@@ -28,8 +28,8 @@ data class CustomerInfoLogin(
     @SerializedName("customerName")
     val customerName: String? = null,
     
-    @SerializedName("isBanglalinkNumber")
-    val isBanglalinkNumber: String? = "false",
+//    @SerializedName("isBanglalinkNumber")
+//    val isBanglalinkNumber: String? = "false",
     @SerializedName("hlsUrlOverride")
     val hlsUrlOverride: Boolean = false,
     @SerializedName("hlsOverrideUrl")
@@ -215,6 +215,8 @@ data class CustomerInfoLogin(
     val isPrepaid : Boolean?,
     @SerializedName("isMnpCallForSubscription")
     val isMnpCallForSubscription : Boolean?,
+    @SerializedName("faqUrl")
+    val faqUrl : String?,
 ) : BodyResponse(), Parcelable
 
 @Entity

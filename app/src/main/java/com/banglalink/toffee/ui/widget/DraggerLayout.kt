@@ -22,7 +22,7 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class DraggerLayout @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ):RelativeLayout(context, attrs, defStyle) {
