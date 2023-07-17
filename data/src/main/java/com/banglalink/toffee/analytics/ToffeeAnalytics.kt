@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.core.os.bundleOf
+import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -15,6 +16,11 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Posts some events in [FirebaseAnalytics] and [facebookAnalytics]
+ * Posts error logs in [FirebaseAnalytics]
+ * Tracks custom logs in [FirebaseCrashlytics] log section.
+ */
 object ToffeeAnalytics {
     
     private val gson = Gson()
@@ -22,19 +28,31 @@ object ToffeeAnalytics {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private var firebaseCrashlytics = FirebaseCrashlytics.getInstance()
     
-    fun initFireBaseAnalytics(context: Context) {
+    /**
+     * Initialize [FirebaseAnalytics]
+     */
+    fun initFirebaseAnalytics(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
     }
     
+    /**
+     * Initialize [facebookAnalytics]
+     */
     fun initFacebookAnalytics(context: Context) {
         facebookAnalytics = AppEventsLogger.newLogger(context)
     }
     
+    /**
+     * Set UserId in [FirebaseAnalytics] and [FirebaseCrashlytics]
+     */
     fun updateCustomerId(customerId: Int) {
         firebaseAnalytics.setUserId(customerId.toString())
         firebaseCrashlytics.setUserId(customerId.toString())
     }
     
+    /**
+     * Log API error in PubSub
+     */
     fun logApiError(apiName: String?, errorMsg: String?, phoneNumber: String = SessionPreference.getInstance().phoneNumber) {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
@@ -43,6 +61,9 @@ object ToffeeAnalytics {
         PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
     }
     
+    /**
+     * Log player error event in [FirebaseAnalytics]
+     */
     fun playerError(programName: String, msg: String, isFallbackSucceeded: Boolean = false) {
         val mPref = SessionPreference.getInstance()
         val deviceId = CommonPreference.getInstance().deviceId
@@ -68,20 +89,32 @@ object ToffeeAnalytics {
         firebaseAnalytics.logEvent("player_error", bundle)
     }
     
+    /**
+     * Log Force Play event in [FirebaseAnalytics]
+     */
     fun logForcePlay() {
         val params = Bundle()
         params.putString("msg", "force play occurred")
         firebaseAnalytics.logEvent("player_event", params)
     }
     
+    /**
+     * Log Exception in [FirebaseCrashlytics] as Non-Fatal issue
+     */
     fun logException(e: Throwable) {
         firebaseCrashlytics.recordException(e)
     }
     
+    /**
+     * Log BreadCrumb message in [FirebaseCrashlytics]
+     */
     fun logBreadCrumb(msg: String) {
         firebaseCrashlytics.log(msg)
     }
     
+    /**
+     * Log Events in [FirebaseAnalytics] and [facebookAnalytics]
+     */
     fun logEvent(event: String, params: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
         if (SessionPreference.getInstance().isFcmEventActive) {
             firebaseAnalytics.logEvent(event, params)
@@ -91,12 +124,18 @@ object ToffeeAnalytics {
         }
     }
     
+    /**
+     * Log some User Information in [FirebaseAnalytics]
+     */
     fun logUserProperty(propertyMap: Map<String, String>) {
         propertyMap.forEach {
             firebaseAnalytics.setUserProperty(it.key, it.value)
         }
     }
     
+    /**
+     * API fail log in PUB/SUB
+     */
     class ApiFailData(
         @SerializedName("apiName")
         val apiName: String,

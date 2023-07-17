@@ -247,10 +247,10 @@ class HomeActivity : PlayerPageActivity(),
         initializeDraggableView()
         initDrawer()
         initSideNav()
-        observeTopBarBackground()
+        observeTopBarBackground() // get the custom toolbar background image from splash screen and set in the home activity
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-        observeCircuitBreaker()
+        observeCircuitBreaker() // restrict users from watching a specific content
         
         ToffeeAnalytics.logUserProperty(
             mapOf(
@@ -2443,18 +2443,25 @@ class HomeActivity : PlayerPageActivity(),
         FirebaseInAppMessaging.getInstance().triggerEvent(ToffeeEvents.TRIGGER_INAPP_MESSAGING)
     }
     
+    var newIntent: Intent? = null
+    
     private fun observeAppVersionUpdate(intent: Intent) {
+        newIntent = intent
         observe(viewModel.updateStatusLiveData) {
             when (it) {
                 is Success -> {
-                    handleIntent(intent)
+                    newIntent?.let {
+                        handleIntent(it)
+                    }
                 }
                 is Failure -> {
                     if (it.error is AppDeprecatedError) {
                         finish()
                         launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                     } else {
-                        handleIntent(intent)
+                        newIntent?.let {
+                            handleIntent(it)
+                        }
                     }
                 }
             }
@@ -2645,6 +2652,10 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
+    /**
+     * restrict users from watching specific channel/video if the server threshold exceeds.
+     * this is configured from firebase firestore to restrict users for specific content and time.
+     */
     private fun observeCircuitBreaker() {
         if (mPref.isCircuitBreakerActive) {
             mPref.circuitBreakerFirestoreCollectionName?.ifNotNullOrBlank {
