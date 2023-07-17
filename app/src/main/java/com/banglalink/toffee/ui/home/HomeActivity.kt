@@ -51,7 +51,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -61,7 +60,6 @@ import com.banglalink.toffee.Constants.IN_APP_UPDATE_REQUEST_CODE
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.OPEN_IN_EXTERNAL_BROWSER
 import com.banglalink.toffee.Constants.PLAY_CDN
-import com.banglalink.toffee.Constants.PLAY_FM
 import com.banglalink.toffee.Constants.PLAY_IN_NATIVE_PLAYER
 import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
 import com.banglalink.toffee.Constants.PREMIUM
@@ -1069,9 +1067,6 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlType == PLAY_CDN && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
-                it.urlType == PLAY_FM && it.urlTypeExt == NON_PREMIUM -> {
-                    playInNativePlayer(detailsInfo, it)
-                }
                 it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
@@ -1150,7 +1145,7 @@ class HomeActivity : PlayerPageActivity(),
             checkAndUpdateMediaCdnConfig(channelInfo) {
                 playContent(detailsInfo, it)
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT||channelInfo.urlType == PLAY_FM) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -2262,11 +2257,9 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
 
-        if (featuredPartner.url_type==1){
-
+        if (featuredPartner.url_type == 1){
             navController.navigateTo(R.id.FmRadioFrag)
-        }else{
-
+        } else{
             if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
                 featuredPartner.webViewUrl?.let { url ->
                     landingPageViewModel.sendFeaturePartnerReportData(
