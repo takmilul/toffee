@@ -797,7 +797,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
             
             if (channelInfo.isFmRadio) {
-                channelInfo.landscape_ratio_1280_720?.let { 
+                channelInfo.ugcFeaturedImage?.let { 
                     thumbnailView.load(it)
                     thumbnailView.show()
                 }
