@@ -42,24 +42,17 @@ class SubscriptionHistoryFragment : BaseFragment() {
         mAdapter = SubscriptionHistoryAdapter()
         mAdapterWithFooter = SubscriptionHistoryFooterAdapter(mAdapter)
 
-        val linearLayoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
-            override fun onLayoutCompleted(state: RecyclerView.State?) {
-                super.onLayoutCompleted(state)
-            }
-        }
-
         with(binding.paymentHisList) {
             adapter = mAdapterWithFooter
-            layoutManager = linearLayoutManager
             addItemDecoration(MarginItemDecoration(8))
         }
-
+        binding.progressBar.load(R.drawable.content_loader)
         binding.paymentHisList.hide()
         binding.failureInfoLayout.hide()
 
         if (mPref.isVerifiedUser) {
-            observeClick()
             observeSubscriptionHistory()
+            observeClick()
         } else {
             showSignIn()
         }
@@ -70,7 +63,6 @@ class SubscriptionHistoryFragment : BaseFragment() {
             if (it) {
                 binding.failureInfoLayout.hide()
                 binding.paymentHisList.hide()
-                binding.progressBar.load(R.drawable.content_loader)
                 binding.progressBar.show()
                 viewModel.getPremiumPackSubscriptionHistory()
             }
@@ -88,11 +80,10 @@ class SubscriptionHistoryFragment : BaseFragment() {
                     response.data.let { subHistoryResponseBean ->
                         subHistoryResponseBean?.subsHistoryDetails.ifNotNullOrEmpty {
                             mAdapter.removeAll()
-                            mAdapter.addAll(response.data?.subsHistoryDetails ?: emptyList())
-                            mAdapterWithFooter.setFooterText(response.data?.historyShowingText!!)
+                            mAdapter.addAll(it.toList())
+                            mAdapterWithFooter.setFooterText(response.data?.historyShowingText ?: "Showing up to 2 years of payment history")
                             mAdapter.notifyDataSetChanged()
                             mAdapterWithFooter.notifyDataSetChanged()
-
                         }
                         if (subHistoryResponseBean?.subsHistoryDetails.isNullOrEmpty()) {
                             showNotFound()
@@ -101,7 +92,8 @@ class SubscriptionHistoryFragment : BaseFragment() {
                 }
 
                 is Resource.Failure -> {
-                    binding.progressBar.show()
+                    showNotFound()
+                    binding.progressBar.hide()
                     requireContext().showToast(response.error.msg)
                 }
             }
