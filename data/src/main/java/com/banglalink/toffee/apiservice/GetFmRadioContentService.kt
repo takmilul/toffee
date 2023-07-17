@@ -38,7 +38,7 @@ class GetFmRadioContentService @Inject constructor(
         }
 
         //Saving Radio Banner Img
-        preference.radioBannerImg=response.response.radio_banner.toString()
+        preference.radioBannerImgUrl.value=response.response.radio_banner.toString()
 
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
@@ -50,8 +50,8 @@ class GetFmRadioContentService @Inject constructor(
             }
             it
         }?.filter { !it.isExpired }?.forEach {
+            localSync.syncData(it, LocalSync.SYNC_FLAG_FM_RADIO_RECENT)
             localSync.syncData(it, LocalSync.SYNC_FLAG_FM_ACTIVITY)
-//            localSync.syncData(it, LocalSync.SYNC_FLAG_FM_RADIO_RECENT)
 
             dbList.add(
                 TVChannelItem(

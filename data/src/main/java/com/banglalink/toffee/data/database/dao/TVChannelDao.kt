@@ -40,11 +40,11 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE categoryName=\"Recent\"")
     abstract suspend fun getRecentItems(): List<TVChannelItem>?
     
-    @Query("SELECT * FROM TVChannelItem WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray")
-    abstract suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem?
+    @Query("SELECT * FROM TVChannelItem WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray AND isFmRadio = :isFmRadio")
+    abstract suspend fun getRecentItemById(channelId: Long, isStingray: Int , isFmRadio: Int): TVChannelItem?
     
-    @Query("UPDATE TVChannelItem SET payload = :payload, viewCount = :viewCount WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray == :isStingray")
-    abstract suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String)
+    @Query("UPDATE TVChannelItem SET payload = :payload, viewCount = :viewCount WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray AND isFmRadio = :isFmRadio")
+    abstract suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, isFmRadio: Int, viewCount: Long, payload: String)
     
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\"")
     abstract suspend fun getStingrayRecentItems(): List<TVChannelItem>?
@@ -55,8 +55,11 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
     abstract fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND isFmRadio == 0 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
     abstract fun getStingrayRecentItemsFlow(): Flow<List<TVChannelItem>?>
+
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 0 AND isFmRadio == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
+    abstract fun getFmRecentItemsFlow(): Flow<List<TVChannelItem>?>
 
     @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" AND id NOT IN " +
             "(SELECT id from TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
@@ -71,7 +74,7 @@ abstract class TVChannelDao {
     
     @Transaction
     open suspend fun insertRecentItem(item: TVChannelItem) {
-        val recItem = getRecentItems()?.find { (it.channelId == item.channelId) and (it.isStingray == item.isStingray) }
+        val recItem = getRecentItems()?.find { (it.channelId == item.channelId) and (it.isStingray == item.isStingray) and (it.isFmRadio == item.isFmRadio) }
         recItem?.let {
             recItem.updateTime = System.currentTimeMillis()
             update(recItem)

@@ -87,7 +87,8 @@ class RecentChannelsFragment : BaseFragment() {
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadRecentTvChannels(isStingray).map {
+
+            viewModel.loadRecentTvChannels(isStingray,isFmRadio).map {
                 it?.filter { it.channelInfo?.isExpired == false }
             }.collectLatest {
                 val newList = if (!it.isNullOrEmpty()) {
