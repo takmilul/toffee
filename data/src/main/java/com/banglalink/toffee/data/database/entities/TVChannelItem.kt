@@ -21,7 +21,9 @@ data class TVChannelItem(
     @SerializedName("viewCount")
     val viewCount: Long,
     @SerializedName("isStingray")
-    val isStingray: Boolean = false
+    val isStingray: Boolean = false,
+    @SerializedName("isFmRadio")
+    val isFmRadio: Boolean = false
 ) : BaseEntity() {
     @Ignore
     @SerializedName("channelInfo")

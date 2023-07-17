@@ -210,6 +210,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isChannelDetailChecked: Boolean
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
+
+    var radioBannerImg: String
+        get() = pref.getString(RADIO_BANNER, "") ?: ""
+        set(radioBanner) = pref.edit { putString(RADIO_BANNER, radioBanner) }
     
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
@@ -1086,7 +1090,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_MNP_STATUS = "pref_mnp_status"
         private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
-
+        private const val RADIO_BANNER = "radio_banner"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

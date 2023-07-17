@@ -98,6 +98,7 @@ class HomeViewModel @Inject constructor(
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
     val isStingray = MutableLiveData<Boolean>()
+    val isFmRadio = MutableLiveData<Boolean>()
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
     val shareUrlLiveData = SingleLiveEvent<String>()

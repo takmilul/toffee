@@ -11,6 +11,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.Utils
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class RecentChannelsFragment : BaseFragment() {
     private var isStingray = false
+    private var isFmRadio = false
     private var showSelected = false
     private lateinit var mAdapter: RecentChannelsAdapter
     private var _binding: FragmentRecentTvChannelsBinding? = null
@@ -30,11 +32,13 @@ class RecentChannelsFragment : BaseFragment() {
     companion object {
         const val SHOW_SELECTED = "SHOW_SELECTED"
         const val IS_STINGRAY = "is_stingray"
-        
-        fun newInstance(showSelected: Boolean, isStingray: Boolean): RecentChannelsFragment {
+        const val IS_FM_RADIO = "isFmRadio"
+
+        fun newInstance(showSelected: Boolean, isStingray: Boolean, isFmRadio: Boolean): RecentChannelsFragment {
             val args = Bundle()
             args.putBoolean(SHOW_SELECTED, showSelected)
             args.putBoolean(IS_STINGRAY, isStingray)
+            args.putBoolean(IS_FM_RADIO, isFmRadio)
             val fragment = RecentChannelsFragment()
             fragment.arguments = args
             return fragment
@@ -45,6 +49,7 @@ class RecentChannelsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         showSelected = arguments?.getBoolean(SHOW_SELECTED, false) ?: false
         isStingray = arguments?.getBoolean(IS_STINGRAY, false) ?: false
+        isFmRadio = arguments?.getBoolean(IS_FM_RADIO, false) ?: false
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,7 +59,10 @@ class RecentChannelsFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+//        if (isFmRadio) {
+//            binding.channelTv.hide()
+//            return
+//        }
         val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
         val channelItemWidth = resources.getDimension(R.dimen.channel_width)
         val horizontalGap = (Utils.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
