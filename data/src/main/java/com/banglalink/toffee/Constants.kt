@@ -9,7 +9,6 @@ object Constants {
     const val NON_PREMIUM = 0
     const val PLAY_IN_WEB_VIEW = 1
     const val PLAY_CDN = 3
-    const val PLAY_FM = 4
     const val STINGRAY_CONTENT = 10
     const val PLAY_IN_NATIVE_PLAYER = 0
     const val OPEN_IN_EXTERNAL_BROWSER = 2

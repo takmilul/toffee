@@ -766,7 +766,9 @@ abstract class PlayerPageActivity :
             if (mPref.shouldOverrideHlsHostUrl) it.overrideUrl(mPref.overrideHlsHostUrl) else it
         } ?: return null
         return MediaItem.Builder().apply {
-            if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
+            if (!channelInfo.isBucketUrl) {
+                setMimeType(if (channelInfo.isFmRadio) MimeTypes.AUDIO_MPEG else MimeTypes.APPLICATION_M3U8)
+            }
             setUri(playingUrl)
             setTag(channelInfo)
         }.build()
