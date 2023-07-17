@@ -795,6 +795,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             
             rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+            
+            if (channelInfo.isFmRadio) {
+                channelInfo.ugcFeaturedImage?.let { 
+                    thumbnailView.load(it)
+                    thumbnailView.show()
+                }
+            }
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()

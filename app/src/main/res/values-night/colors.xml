@@ -73,7 +73,7 @@
     <color name="txtDisableClr">#40E1E1E1</color>
 
     <color name="subscription_history_pack_active_bg">#1D9A3A</color>
-    <color name="subscription_history_pack_expire_bg">#43424F</color>
+    <color name="subscription_history_pack_expire_bg">#4A4A4A</color>
     <color name="pack_status_active_text">#E6EEF9</color>
     <color name="pack_status_expire_text">#BED6F3</color>
 
@@ -82,7 +82,5 @@
 
     <color name="subscription_history_color_secondary">#829AB8</color>
     <color name="subscription_history_color_primary">#BED6F3</color>
-
-
 
 </resources>
