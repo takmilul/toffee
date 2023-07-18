@@ -36,15 +36,13 @@ class AllChannelsViewModel @Inject constructor(
     fun getChannels(subcategoryId: Int, isStingray: Boolean = false, isFmRadio: Boolean): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
-                if (!isStingray && !isFmRadio) {
-                    allChannelService.loadData(subcategoryId)
-                }
-                else if(!isStingray && isFmRadio){
-
+                if (isFmRadio && !isStingray) {
                     getFmRadioContentService.loadData(0,100)
                 }
-                else {
+                else if(isStingray && !isFmRadio){
                     getStingrayContentService.loadData(0, 100)
+                } else {
+                    allChannelService.loadData(subcategoryId)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

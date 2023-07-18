@@ -1,10 +1,8 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.FmRadioContentRequest
-import com.banglalink.toffee.data.network.request.StingrayContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -42,23 +40,31 @@ class GetFmRadioContentService @Inject constructor(
 
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
-        response.response.channels?.map {
+        response.response.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
-            it
-        }?.filter { !it.isExpired }?.forEach {
             localSync.syncData(it, LocalSync.SYNC_FLAG_FM_ACTIVITY)
+            if (!it.isExpired) {
 //            localSync.syncData(it, LocalSync.SYNC_FLAG_FM_RADIO_RECENT)
-
-            dbList.add(
-                TVChannelItem(
-                    it.id.toLong(),  "RADIO", 1, "Fm Radio Playlist", gson.toJson(it), it.view_count?.toLong() ?: 0L, it.isStingray,it.isFmRadio
-                ).apply {
-                    updateTime = upTime
-                })
+                dbList.add(
+                    TVChannelItem(
+                        it.id.toLong(),
+                        "RADIO",
+                        1,
+                        "Fm Radio Playlist",
+                        gson.toJson(it),
+                        it.view_count?.toLong() ?: 0L,
+                        it.isStingray,
+                        it.isFmRadio
+                    ).apply {
+                        updateTime = upTime
+                    }
+                )
+            }
+            !it.isExpired
         }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())
         return response.response.channels ?: emptyList()

@@ -8,8 +8,9 @@ import com.banglalink.toffee.databinding.FragmentAllTvChannelsBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 
 class ChannelFragmentNew: BaseFragment() {
-    private var _binding: FragmentAllTvChannelsBinding ? = null
+    
     private val binding get() = _binding!!
+    private var _binding: FragmentAllTvChannelsBinding ? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
