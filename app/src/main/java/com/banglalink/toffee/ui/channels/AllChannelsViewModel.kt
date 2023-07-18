@@ -65,7 +65,8 @@ class AllChannelsViewModel @Inject constructor(
         }).getList(10)
     }
     
-    fun loadRecentTvChannels(isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
-        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+    fun loadRecentTvChannels(isStingray: Boolean = false,isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
+//        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+       return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else if(isFmRadio) tvChannelsRepo.getFmRecentItems() else tvChannelsRepo.getRecentItemsFlow()
     }
 }

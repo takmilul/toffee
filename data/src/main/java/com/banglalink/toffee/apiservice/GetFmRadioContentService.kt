@@ -1,8 +1,10 @@
 package com.banglalink.toffee.apiservice
 
+import android.util.Log
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.FmRadioContentRequest
+import com.banglalink.toffee.data.network.request.StingrayContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -36,7 +38,7 @@ class GetFmRadioContentService @Inject constructor(
         }
 
         //Saving Radio Banner Img
-        preference.radioBannerImg=response.response.radio_banner.toString()
+        preference.radioBannerImgUrl.value=response.response.radio_banner.toString()
 
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()

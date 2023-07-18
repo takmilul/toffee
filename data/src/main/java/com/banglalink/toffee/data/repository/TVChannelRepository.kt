@@ -17,5 +17,6 @@ interface TVChannelRepository {
     fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>
     suspend fun getNonStingrayRecentItems(): List<TVChannelItem>?
     fun getStingrayRecentItems(): Flow<List<TVChannelItem>?>
+    fun getFmRecentItems(): Flow<List<TVChannelItem>?>
     fun getAllChannels(isStingray: Boolean): PagingSource<Int, String>
 }
