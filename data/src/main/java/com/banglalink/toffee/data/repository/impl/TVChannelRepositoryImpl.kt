@@ -63,7 +63,7 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
         return dao.getFmRecentItemsFlow()
     }
 
-    override fun getAllChannels(isStingray: Boolean): PagingSource<Int, String> {
-        return if (isStingray) dao.getStingrayChannels() else dao.getAllChannels()
+    override fun getAllChannels(isStingray: Boolean,isFmRadio: Boolean): PagingSource<Int, String> {
+        return if (isStingray) dao.getStingrayChannels() else if (isFmRadio) dao.getFmChannels() else dao.getAllChannels()
     }
 }
