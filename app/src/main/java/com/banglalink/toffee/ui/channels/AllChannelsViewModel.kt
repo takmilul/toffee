@@ -51,16 +51,26 @@ class AllChannelsViewModel @Inject constructor(
         return if (isStingray) tvChannelsRepo.getStingrayItems() else if(isFmRadio) tvChannelsRepo.getFmItems() else tvChannelsRepo.getAllItems()
     }
     
-    fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<out Any>> {
+    fun loadAllChannels(
+        isStingray: Boolean,
+        isFmRadio: Boolean,
+        isFromSportsCategory: Boolean
+
+    ): Flow<PagingData<out Any>> {
         return BaseListRepositoryImpl({
-            if (isFromSportsCategory) {
+            if (isFmRadio){
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
+            }
+            else if (isFromSportsCategory) {
                 BaseNetworkPagingSource(
                     getContentAssistedFactory.create(
                         ChannelRequestParams("Sports", 16, "", 0, "LIVE")
                     ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
                 )
-            } else {
-                tvChannelsRepo.getAllChannels(isStingray)
+            }
+
+            else {
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
             }
         }).getList(10)
     }
