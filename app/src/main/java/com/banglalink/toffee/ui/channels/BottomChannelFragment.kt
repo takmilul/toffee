@@ -101,7 +101,6 @@ class BottomChannelFragment : BaseFragment() {
     }
     
     private fun loadAllTvChannels() {
-        android.util.Log.i("Category_", "Calling: allChannels")
         viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             viewModel.getAllTvChannels().collectLatest { 
@@ -111,7 +110,6 @@ class BottomChannelFragment : BaseFragment() {
     }
     
     private fun loadStingrayChannels() {
-        android.util.Log.i("Category_", "Calling: stingray")
         viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount) 
             stingrayViewModel.loadStingrayList().collectLatest { 
@@ -121,7 +119,6 @@ class BottomChannelFragment : BaseFragment() {
     }
     
     private fun loadFmRadioChannels() {
-        android.util.Log.i("Category_", "Calling: fmRadio")
         viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount) 
             fmViewModel.loadFmRadioList().collectLatest { 
@@ -131,7 +128,6 @@ class BottomChannelFragment : BaseFragment() {
     }
     
     private fun loadSportsChannels() {
-        android.util.Log.i("Category_", "Calling: sports channels")
         viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
             viewModel.getSportsChannels().collectLatest { 

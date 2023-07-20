@@ -1003,16 +1003,12 @@ class HomeActivity : PlayerPageActivity(),
         allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
         viewModel.currentlyPlayingFrom.value =
             if (channelInfo.isFromSportsCategory) {
-                android.util.Log.i("Category_", "isFromSportsCategory: ${channelInfo.isFromSportsCategory}")
                 SPORTS_CATEGORY
             } else if (channelInfo.isStingray) {
-                android.util.Log.i("Category_", "isStingray: ${channelInfo.isFromSportsCategory}")
                 STINGRAY
             } else if (channelInfo.isFmRadio) {
-                android.util.Log.i("Category_", "isFmRadio: ${channelInfo.isFromSportsCategory}")
                 FM_RADIO
             } else {
-                android.util.Log.i("Category_", "ALL_TV_CHANNEL: allChannels")
                 ALL_TV_CHANNEL
             }
         addChannelToPlayList(channelInfo)
