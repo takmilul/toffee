@@ -36,15 +36,13 @@ class AllChannelsViewModel @Inject constructor(
     fun getChannels(subcategoryId: Int, isStingray: Boolean = false, isFmRadio: Boolean): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
-                if (!isStingray && !isFmRadio) {
-                    allChannelService.loadData(subcategoryId)
-                }
-                else if(!isStingray && isFmRadio){
-
+                if (isFmRadio && !isStingray) {
                     getFmRadioContentService.loadData(0,100)
                 }
-                else {
+                else if(isStingray && !isFmRadio){
                     getStingrayContentService.loadData(0, 100)
+                } else {
+                    allChannelService.loadData(subcategoryId)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -53,21 +51,32 @@ class AllChannelsViewModel @Inject constructor(
         return if (isStingray) tvChannelsRepo.getStingrayItems() else if(isFmRadio) tvChannelsRepo.getFmItems() else tvChannelsRepo.getAllItems()
     }
     
-    fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<out Any>> {
+    fun loadAllChannels(
+        isStingray: Boolean,
+        isFmRadio: Boolean,
+        isFromSportsCategory: Boolean
+
+    ): Flow<PagingData<out Any>> {
         return BaseListRepositoryImpl({
-            if (isFromSportsCategory) {
+            if (isFmRadio){
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
+            }
+            else if (isFromSportsCategory) {
                 BaseNetworkPagingSource(
                     getContentAssistedFactory.create(
                         ChannelRequestParams("Sports", 16, "", 0, "LIVE")
                     ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
                 )
-            } else {
-                tvChannelsRepo.getAllChannels(isStingray)
+            }
+
+            else {
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
             }
         }).getList(10)
     }
     
-    fun loadRecentTvChannels(isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
-        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+    fun loadRecentTvChannels(isStingray: Boolean = false,isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
+//        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+       return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else if(isFmRadio) tvChannelsRepo.getFmRecentItems() else tvChannelsRepo.getRecentItemsFlow()
     }
 }

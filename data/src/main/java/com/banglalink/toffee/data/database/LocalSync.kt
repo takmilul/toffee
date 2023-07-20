@@ -107,11 +107,11 @@ class LocalSync @Inject constructor(
         }
 
         if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
-            tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isFmRadio) 1 else 0,if (channelInfo.isFmRadio ) 1 else 0)?.let {
+            tvChannelRepo.getRecentItemById(contentId.toLong(), 0, 1 )?.let {
                 val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
                 if (!dbRecentPayload.equals(channelInfo)) {
-                    val isStingray = if (channelInfo.isStingray) 1 else 0
-                    val isFmRadio = if (channelInfo.isFmRadio) 1 else 0
+                    val isStingray =  0
+                    val isFmRadio = 1
                     tvChannelRepo.updateRecentItemPayload(
                         contentId.toLong(),
                         isStingray,

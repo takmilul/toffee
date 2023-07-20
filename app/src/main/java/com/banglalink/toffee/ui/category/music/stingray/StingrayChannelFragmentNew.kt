@@ -21,6 +21,7 @@ class StingrayChannelFragmentNew: BaseFragment() {
             putString("title", "Karaoke - Stingray")
             putBoolean("show_selected", true)
             putBoolean("is_stingray", true)
+            putBoolean("is_fmRadio", false)
         }
         childFragmentManager.fragmentFactory = ChannelFragmentFactory(args)
     }

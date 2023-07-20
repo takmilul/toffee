@@ -16,7 +16,7 @@ abstract class TVChannelDao {
     @Delete
     abstract suspend fun delete(item: TVChannelItem)
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getAllItems(): Flow<List<TVChannelItem>?>
     
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
@@ -25,26 +25,32 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE isFmRadio == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getFmItems(): Flow<List<TVChannelItem>?>
     
-    @Query("SELECT payload FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
+    @Query("SELECT payload FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
     abstract fun getAllChannels(): PagingSource<Int, String>
     
     @Query("SELECT payload FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
     abstract fun getStingrayChannels(): PagingSource<Int, String>
+
+    @Query("SELECT payload FROM TVChannelItem WHERE isFmRadio == 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority")
+    abstract fun getFmChannels(): PagingSource<Int, String>
     
-    @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\")")
+    @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName NOT IN (\"Recent\")")
     abstract suspend fun deleteAllTvItems()
     
     @Query("DELETE FROM TVChannelItem WHERE isStingray == 1 AND categoryName NOT IN (\"Recent\")")
     abstract suspend fun deleteAllStingrayItems()
+
+    @Query("DELETE FROM TVChannelItem WHERE isFmRadio == 1 AND categoryName NOT IN (\"Recent\")")
+    abstract suspend fun deleteAllFmItems()
     
     @Query("SELECT * FROM TVChannelItem WHERE categoryName=\"Recent\"")
     abstract suspend fun getRecentItems(): List<TVChannelItem>?
     
-    @Query("SELECT * FROM TVChannelItem WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray")
-    abstract suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem?
+    @Query("SELECT * FROM TVChannelItem WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray AND isFmRadio = :isFmRadio")
+    abstract suspend fun getRecentItemById(channelId: Long, isStingray: Int , isFmRadio: Int): TVChannelItem?
     
-    @Query("UPDATE TVChannelItem SET payload = :payload, viewCount = :viewCount WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray == :isStingray")
-    abstract suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String)
+    @Query("UPDATE TVChannelItem SET payload = :payload, viewCount = :viewCount WHERE categoryName = \"Recent\" AND channelId = :channelId AND isStingray = :isStingray AND isFmRadio = :isFmRadio")
+    abstract suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, isFmRadio: Int, viewCount: Long, payload: String)
     
     @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\"")
     abstract suspend fun getStingrayRecentItems(): List<TVChannelItem>?
@@ -52,14 +58,17 @@ abstract class TVChannelDao {
     @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\"")
     abstract suspend fun getNonStingrayRecentItems(): List<TVChannelItem>?
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
     abstract fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>
     
-    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 1 AND isFmRadio == 0 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
     abstract fun getStingrayRecentItemsFlow(): Flow<List<TVChannelItem>?>
 
-    @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" AND id NOT IN " +
-            "(SELECT id from TVChannelItem WHERE isStingray != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
+    @Query("SELECT * FROM TVChannelItem WHERE isStingray == 0 AND isFmRadio == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC")
+    abstract fun getFmRecentItemsFlow(): Flow<List<TVChannelItem>?>
+
+    @Query("DELETE FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName=\"Recent\" AND id NOT IN " +
+            "(SELECT id from TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
     abstract suspend fun deleteExtraRecent()
 
     @Query("DELETE FROM TVChannelItem WHERE categoryName=\"Recent\"")
@@ -68,17 +77,26 @@ abstract class TVChannelDao {
     @Query("DELETE FROM TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" AND id NOT IN " +
             "(SELECT id from TVChannelItem WHERE isStingray == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
     abstract suspend fun deleteExtraStingrayRecent()
+
+    @Query("DELETE FROM TVChannelItem WHERE isFmRadio == 1 AND categoryName=\"Recent\" AND id NOT IN " +
+            "(SELECT id from TVChannelItem WHERE isFmRadio == 1 AND categoryName=\"Recent\" ORDER BY updateTime DESC LIMIT 11)")
+    abstract suspend fun deleteExtraFMRecent()
     
     @Transaction
     open suspend fun insertRecentItem(item: TVChannelItem) {
-        val recItem = getRecentItems()?.find { (it.channelId == item.channelId) and (it.isStingray == item.isStingray) }
+        val recItem = getRecentItems()?.find { (it.channelId == item.channelId) and (it.isStingray == item.isStingray) and (it.isFmRadio == item.isFmRadio) }
         recItem?.let {
             recItem.updateTime = System.currentTimeMillis()
             update(recItem)
         } ?: insert(item)
         if (item.isStingray) {
             deleteExtraStingrayRecent()
-        } else {
+        }
+
+        else if(item.isFmRadio){
+            deleteExtraFMRecent()
+        }
+            else {
             deleteExtraRecent()
         }
     }
@@ -88,13 +106,17 @@ abstract class TVChannelDao {
         if (items.isNotEmpty()) {
             if (items.first().isStingray) {
                 deleteAllStingrayItems()
-            } else {
+            }
+            else if(items.first().isFmRadio){
+                deleteAllFmItems()
+            }
+            else {
                 deleteAllTvItems()
             }
         }
         insert(*items)
     }
     
-    @Query("SELECT channelId FROM TVChannelItem WHERE isStingray != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
+    @Query("SELECT channelId FROM TVChannelItem WHERE isStingray != 1 AND isFmRadio != 1 AND categoryName NOT IN (\"Recent\") ORDER BY priority, updateTime DESC")
     abstract fun getAllChannelList(): List<Long>?
 }

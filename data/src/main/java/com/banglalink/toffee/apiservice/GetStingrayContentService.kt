@@ -40,22 +40,31 @@ class GetStingrayContentService @Inject constructor(
         }
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
-        response.response.channels?.map {
+        response.response.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
-            it
-        }?.filter { !it.isExpired }?.forEach {
             localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
             localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
-            dbList.add(
-                TVChannelItem(
-                    it.id.toLong(), it.type ?: "Stingray", 1, "Music Playlist", gson.toJson(it), it.view_count?.toLong() ?: 0L, it.isStingray
-                ).apply {
-                    updateTime = upTime
-                })
+            
+            if (!it.isExpired) {
+                dbList.add(
+                    TVChannelItem(
+                        it.id.toLong(),
+                        it.type ?: "Stingray",
+                        1,
+                        "Music Playlist",
+                        gson.toJson(it),
+                        it.view_count?.toLong() ?: 0L,
+                        it.isStingray
+                    ).apply {
+                        updateTime = upTime
+                    }
+                )
+            }
+            !it.isExpired
         }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())
         return response.response.channels ?: emptyList()

@@ -65,11 +65,14 @@ class BottomChannelFragment : BaseFragment() {
             mAdapter.setSelectedItem(it)
         }
         observe(homeViewModel.isStingray) {
-            observeList(it, false)
+            observeList(it, false,false)
+        }
+        observe(homeViewModel.isFmRadio) {
+            observeList(false,it, false)
         }
         observe(viewModel.isFromSportsCategory) {
             if (it) {
-                observeList(homeViewModel.isStingray.value ?: false, it)
+                observeList(homeViewModel.isStingray.value ?: false,homeViewModel.isFmRadio.value ?: false, it)
             }
         }
         
@@ -93,11 +96,11 @@ class BottomChannelFragment : BaseFragment() {
         })
     }
     
-    private fun observeList(isStingray: Boolean, isFromSportsChannel: Boolean) {
+    private fun observeList(isStingray: Boolean,isFmRadio: Boolean, isFromSportsChannel: Boolean) {
         job?.cancel()
         job = viewLifecycleOwner.lifecycleScope.launch {
             mAdapter.notifyItemRangeRemoved(0, mAdapter.itemCount)
-            viewModel.loadAllChannels(isStingray, isFromSportsChannel).collectLatest {
+            viewModel.loadAllChannels(isStingray,isFmRadio ,isFromSportsChannel).collectLatest {
                 mAdapter.submitData(it.map {
                     if (it is ChannelInfo) {
                         it

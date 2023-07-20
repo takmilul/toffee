@@ -23,23 +23,24 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
-    @Inject lateinit var bindingUtil: BindingUtil
+    
     private var title: String? = null
     private var subCategoryID: Int = 0
     private var category: String? = null
+    private val binding get() = _binding!!
+    private var isFmRadio: Boolean = false
     private var subCategory: String? = null
     private var isStingray: Boolean = false
-    private var isFmRadio: Boolean = false
+    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentChannelListBinding ? = null
-    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
@@ -107,14 +108,14 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             layoutManager = gridLayoutManager
             adapter = channelAdapter
         }
-
+        
 //        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel.getChannels(0, isStingray,isFmRadio)){
+            with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
                 collectLatest { tvList ->
-                    val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName.trimIndent() }?.map {
+                    val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
                         val categoryName = it.key.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)

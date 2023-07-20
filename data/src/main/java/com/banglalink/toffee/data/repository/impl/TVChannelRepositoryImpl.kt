@@ -27,12 +27,12 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
 
 
     override suspend fun getRecentItemById(channelId: Long, isStingray: Int, isFmRadio: Int): TVChannelItem? {
-        return dao.getRecentItemById(channelId, isStingray)
+        return dao.getRecentItemById(channelId, isStingray,isFmRadio)
     }
 
 
     override suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, isFm: Int, viewCount: Long, payload: String) {
-        dao.updateRecentItemPayload(channelId, isStingray, viewCount, payload)
+        dao.updateRecentItemPayload(channelId, isStingray,isFm, viewCount, payload)
     }
     
     override fun getAllItems(): Flow<List<TVChannelItem>?> {
@@ -58,8 +58,12 @@ class TVChannelRepositoryImpl(private val db: ToffeeDatabase, private val dao: T
     override fun getStingrayRecentItems(): Flow<List<TVChannelItem>?> {
         return dao.getStingrayRecentItemsFlow()
     }
-    
-    override fun getAllChannels(isStingray: Boolean): PagingSource<Int, String> {
-        return if (isStingray) dao.getStingrayChannels() else dao.getAllChannels()
+
+    override fun getFmRecentItems(): Flow<List<TVChannelItem>?> {
+        return dao.getFmRecentItemsFlow()
+    }
+
+    override fun getAllChannels(isStingray: Boolean,isFmRadio: Boolean): PagingSource<Int, String> {
+        return if (isStingray) dao.getStingrayChannels() else if (isFmRadio) dao.getFmChannels() else dao.getAllChannels()
     }
 }

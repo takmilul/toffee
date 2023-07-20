@@ -66,6 +66,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
     val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
+    val radioBannerImgUrl = MutableLiveData<String>()
 
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
@@ -211,10 +212,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
 
-    var radioBannerImg: String
-        get() = pref.getString(RADIO_BANNER, "") ?: ""
-        set(radioBanner) = pref.edit { putString(RADIO_BANNER, radioBanner) }
-    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }
