@@ -1,10 +1,8 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.FmRadioContentRequest
-import com.banglalink.toffee.data.network.request.StingrayContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -48,9 +46,9 @@ class GetFmRadioContentService @Inject constructor(
             } catch (e: Exception) {
                 false
             }
-            localSync.syncData(it, LocalSync.SYNC_FLAG_FM_ACTIVITY)
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            
             if (!it.isExpired) {
-//            localSync.syncData(it, LocalSync.SYNC_FLAG_FM_RADIO_RECENT)
                 dbList.add(
                     TVChannelItem(
                         it.id.toLong(),

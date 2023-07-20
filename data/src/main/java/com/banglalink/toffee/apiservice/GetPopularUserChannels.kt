@@ -15,14 +15,14 @@ class GetPopularUserChannels @AssistedInject constructor(
     private val localSync: LocalSync,
     @Assisted private val requestParams: ApiCategoryRequestParams,
 ) : BaseApiService<UserChannelInfo> {
-
+    
     override suspend fun loadData(offset: Int, limit: Int): List<UserChannelInfo> {
         
         val request = PopularChannelsRequest(
             preference.customerId,
             preference.password
         )
-
+        
         val response = tryIO {
             toffeeApi.getUgcPopularChannels(
                 requestParams.isCategory,
@@ -33,7 +33,7 @@ class GetPopularUserChannels @AssistedInject constructor(
                 request
             )
         }
-
+        
         return if (response.response.channels != null) {
             response.response.channels.map {
                 localSync.syncUserChannel(it)
@@ -41,7 +41,7 @@ class GetPopularUserChannels @AssistedInject constructor(
             }
         } else emptyList()
     }
-
+    
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(requestParams: ApiCategoryRequestParams): GetPopularUserChannels

@@ -33,14 +33,14 @@ class PlaylistShareableService @AssistedInject constructor(
         }
         
         return response.response.apply {
-            channels?.map {
+            channels?.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
-                it
-            }?.filter { !it.isExpired }
+                !it.isExpired
+            }
         }
     }
     

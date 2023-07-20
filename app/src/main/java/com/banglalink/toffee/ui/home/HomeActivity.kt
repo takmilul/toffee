@@ -86,6 +86,10 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.banglalink.toffee.enums.*
 import com.banglalink.toffee.enums.BubbleType.*
+import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
+import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
+import com.banglalink.toffee.enums.PlayingPage.STINGRAY
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -997,6 +1001,20 @@ class HomeActivity : PlayerPageActivity(),
             mPref.categoryId.value = channelInfo.categoryId
         }
         allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
+        viewModel.currentlyPlayingFrom.value =
+            if (channelInfo.isFromSportsCategory) {
+                android.util.Log.i("Category_", "isFromSportsCategory: ${channelInfo.isFromSportsCategory}")
+                SPORTS_CATEGORY
+            } else if (channelInfo.isStingray) {
+                android.util.Log.i("Category_", "isStingray: ${channelInfo.isFromSportsCategory}")
+                STINGRAY
+            } else if (channelInfo.isFmRadio) {
+                android.util.Log.i("Category_", "isFmRadio: ${channelInfo.isFromSportsCategory}")
+                FM_RADIO
+            } else {
+                android.util.Log.i("Category_", "ALL_TV_CHANNEL: allChannels")
+                ALL_TV_CHANNEL
+            }
         addChannelToPlayList(channelInfo)
     }
     
@@ -1141,11 +1159,12 @@ class HomeActivity : PlayerPageActivity(),
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if (channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
+        if (channelInfo.urlType == PLAY_CDN && (channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType
+            .SIGNED_COOKIE.value)) {
             checkAndUpdateMediaCdnConfig(channelInfo) {
                 playContent(detailsInfo, it)
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -1153,6 +1172,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        cInfo = channelInfo
         lifecycleScope.launch {
             cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.getContentId().toLong())?.let { cdnChannelItem ->
                 loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
@@ -1207,13 +1227,17 @@ class HomeActivity : PlayerPageActivity(),
                         cInfo = null
                         newChannelInfo?.let { onSuccess(it) }
                     }
-                    is Failure -> showToast(getString(string.try_again_message))
+                    is Failure -> {
+                        cInfo = null
+                        showToast(getString(string.try_again_message))
+                    }
                 }
             }
-            cInfo = channelInfo
             viewModel.getMediaCdnSignUrl(channelInfo.getContentId())
         } else {
-            onSuccess(channelInfo)
+            cInfo?.let {
+                onSuccess(it)
+            } ?: showToast(getString(string.try_again_message))
         }
     }
     
@@ -1462,7 +1486,6 @@ class HomeActivity : PlayerPageActivity(),
             else {
                 ActivityInfo.SCREEN_ORIENTATION_LOCKED
             }
-        allChannelViewModel.isFromSportsCategory.value = allChannelViewModel.isFromSportsCategory.value
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
             if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {

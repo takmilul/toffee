@@ -38,9 +38,7 @@ class FeatureContentService @Inject constructor(
                 } catch (e: Exception) {
                     false
                 }
-                if (!it.isExpired) {
-                    localSync.syncData(it, isFromCache = response.isFromCache)
-                }
+                localSync.syncData(it, isFromCache = response.isFromCache)
                 !it.isExpired
             }
         }

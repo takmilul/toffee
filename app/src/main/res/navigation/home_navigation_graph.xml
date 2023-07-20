@@ -626,9 +626,9 @@
 
     <fragment
         android:id="@+id/FmRadioFrag"
-        android:name="com.banglalink.toffee.ui.fmradio.FmChannelFragment"
+        android:name="com.banglalink.toffee.ui.fmradio.FmChannelBaseFragment"
         android:label="FM Radio"
-        tools:layout="@layout/fragment_fm_channels" />
+        tools:layout="@layout/fragment_fm_channels_base" />
 
 
 </navigation>

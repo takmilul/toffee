@@ -46,8 +46,7 @@ class GetStingrayContentService @Inject constructor(
             } catch (e: Exception) {
                 false
             }
-            localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT)
-            localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY)
+            localSync.syncData(it, isFromCache = response.isFromCache)
             
             if (!it.isExpired) {
                 dbList.add(

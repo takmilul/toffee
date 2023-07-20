@@ -41,20 +41,17 @@ class MyChannelVideosService @AssistedInject constructor(
             )
         }
 
-        if (response.response.channels != null) {
-            return response.response.channels.map {
-                it.isExpired = try {
-                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
-                } catch (e: Exception) {
-                    false
-                }
-                it.isOwner = isOwner == 1
-                it.isPublic = isOwner.xor(1) == 1
-                localSync.syncData(it)
-                it
+        return response.response.channels?.filter {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
+            } catch (e: Exception) {
+                false
             }
-        }
-        return listOf()
+            it.isOwner = isOwner == 1
+            it.isPublic = isOwner.xor(1) == 1
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
+        } ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory

@@ -31,15 +31,13 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
     private var _binding: FragmentStingrayBinding? = null
     val viewModel by activityViewModels<StingrayViewModel>()
     
+    companion object {
+        fun createInstance() = StingrayFragment()
+    }
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStingrayBinding.inflate(layoutInflater)
         return binding.root
-    }
-    
-    override fun onDestroyView() {
-        binding.channelList.adapter = null
-        super.onDestroyView()
-        _binding = null
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,5 +90,11 @@ class StingrayFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
         if (item.id.isNotBlank()) {
             homeViewModel.playContentLiveData.postValue(item)
         }
+    }
+    
+    override fun onDestroyView() {
+        binding.channelList.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

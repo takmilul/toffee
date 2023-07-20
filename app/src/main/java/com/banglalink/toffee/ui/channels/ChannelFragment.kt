@@ -19,6 +19,7 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.fmradio.FmViewModel
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
@@ -41,6 +42,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     private var isStingray: Boolean = false
     @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentChannelListBinding ? = null
+    private val fmViewModel by activityViewModels<FmViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
@@ -59,19 +61,17 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             channelListFragment.arguments = bundle
             return channelListFragment
         }
-
-        fun createInstance(category: String, showSelected: Boolean = false, isStingray: Boolean = false,isFmRadio: Boolean = false): ChannelFragment {
+        
+        fun createInstance(category: String, showSelected: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
             bundle.putBoolean("show_selected", showSelected)
-            bundle.putBoolean("is_stingray", isStingray)
-            bundle.putBoolean("is_fmRadio", isFmRadio)
             instance.arguments = bundle
             return instance
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = requireArguments().getString("title")

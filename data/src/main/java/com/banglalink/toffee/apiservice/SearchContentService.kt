@@ -34,7 +34,7 @@ class SearchContentService @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.map {
+        return response.response.channels?.filter {
             it.isExpired = try {
                 Log.i("SEAR_", "map: ${it.program_name}, isExpired: ${it.isExpired}")
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
@@ -43,8 +43,8 @@ class SearchContentService @AssistedInject constructor(
             }
             it.isFromSportsCategory = (it.isVOD && it.categoryId == 16)
             it.totalCount = response.response.totalCount
-            localSync.syncData(it)
-            it
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
         } ?: emptyList()
     }
     
