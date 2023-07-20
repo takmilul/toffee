@@ -27,8 +27,8 @@ class GetChannelWithCategoryPaging  @AssistedInject constructor(
             )
         }
         val finalList = mutableListOf<ChannelInfo>()
-        response.response.channelCategoryList.forEach{
-            it.channels?.filter {
+        response.response.channelCategoryList.forEach {
+            it.channels?.forEach {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
@@ -38,7 +38,6 @@ class GetChannelWithCategoryPaging  @AssistedInject constructor(
                 if (!it.isExpired) {
                     finalList.add(it)
                 }
-                !it.isExpired
             }
         }
         return finalList

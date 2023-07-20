@@ -5,5 +5,6 @@ enum class SharingType (val value: String) {
     PLAYLIST("playlist"),
     CATEGORY("category"),
     STINGRAY("stingray"),
-    SERIES("series")
+    SERIES("series"),
+    FM_RADIO("RADIO")
 }

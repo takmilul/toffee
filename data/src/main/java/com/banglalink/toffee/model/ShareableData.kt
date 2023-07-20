@@ -28,5 +28,7 @@ data class ShareableData(
     @SerializedName("activeSeason")
     val activeSeason: List<Int>? = null,
     @SerializedName("contentType")
-    val contentType: String = "VOD"
+    val contentType: String = "VOD",
+    @SerializedName("fmRadioShareUrl")
+    val fmRadioShareUrl: String? = null,
 )

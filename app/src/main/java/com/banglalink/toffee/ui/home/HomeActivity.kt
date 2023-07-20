@@ -266,11 +266,11 @@ class HomeActivity : PlayerPageActivity(),
         )
         
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
-            handleSharedUrl(mPref.homeIntent.value ?: intent)
-            mPref.homeIntent.value = null
             if (mPref.isVastActive || mPref.isNativeAdActive) {
                 viewModel.getVastTagV3()
             }
+            handleSharedUrl(mPref.homeIntent.value ?: intent)
+            mPref.homeIntent.value = null
         } else {
             mPref.homeIntent.value = intent
             finish()
@@ -505,10 +505,10 @@ class HomeActivity : PlayerPageActivity(),
         }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
-                if (getHomeViewModel().isFmRadio.value != true) {
+                if (viewModel.currentlyPlayingFrom.value != FM_RADIO) {
                     binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 }
-                if (binding.playerView.isControllerVisible() && getHomeViewModel().isFmRadio.value != true) {
+                if (binding.playerView.isControllerVisible() && viewModel.currentlyPlayingFrom.value != FM_RADIO) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             } else {
@@ -1630,13 +1630,13 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || getHomeViewModel().isFmRadio.value == true) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || viewModel.currentlyPlayingFrom.value == FM_RADIO) {
             binding.homeBottomSheet.bottomSheet.hide()
         } else {
             binding.homeBottomSheet.bottomSheet.show()
         }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED && !binding.playerView.isControllerFullyVisible) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -1939,6 +1939,9 @@ class HomeActivity : PlayerPageActivity(),
                             SharingType.SERIES.value -> {
                                 webSeriesShareableUrl = url
                                 playShareableWebSeries()
+                            }
+                            SharingType.FM_RADIO.value -> {
+                                pair = Pair(shareableData?.fmRadioShareUrl, SharingType.FM_RADIO.value)
                             }
                         }
                     } else {
