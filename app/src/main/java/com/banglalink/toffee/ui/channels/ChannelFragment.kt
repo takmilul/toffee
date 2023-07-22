@@ -13,8 +13,10 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentChannelListBinding
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -101,6 +103,10 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
         _binding?.listview?.apply{
+            // set top padding for fm radio because the sticky header and recently viewed items will be hidden
+            if (homeViewModel.currentlyPlayingFrom.value == FM_RADIO) {
+                setPadding(0.px, 16.px, 0.px, 0.px)
+            }
             setHasFixedSize(true)
             itemAnimator = null
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)

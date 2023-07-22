@@ -11,7 +11,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
-import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.Utils
@@ -59,10 +58,7 @@ class RecentChannelsFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        if (isFmRadio) {
-//            binding.channelTv.hide()
-//            return
-//        }
+        
         val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
         val channelItemWidth = resources.getDimension(R.dimen.channel_width)
         val horizontalGap = (Utils.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
