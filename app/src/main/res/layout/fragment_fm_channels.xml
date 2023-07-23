@@ -12,7 +12,7 @@
         android:id="@+id/fmChannelListview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="16dp"
+        android:paddingTop="20dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="vertical"
