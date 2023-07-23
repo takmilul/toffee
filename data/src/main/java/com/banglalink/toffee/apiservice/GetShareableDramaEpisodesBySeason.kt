@@ -35,16 +35,16 @@ class GetShareableDramaEpisodesBySeason @AssistedInject constructor(
         }
         
         return response.response.apply {
-            channels?.map {
+            channels?.filter {
                 it.activeSeasonList = requestParams.activeSeason
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
-                it
-            }?.filter { !it.isExpired }
+                localSync.syncData(it, isFromCache = response.isFromCache)
+                !it.isExpired
+            }
         }
     }
     

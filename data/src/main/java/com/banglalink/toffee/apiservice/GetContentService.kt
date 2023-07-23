@@ -43,16 +43,8 @@ class GetContentService @AssistedInject constructor(
             } catch (e: Exception) {
                 false
             }
-            if (!it.isExpired) {
-                it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
-                if (it.isLinear) {
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT, response.isFromCache)
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_CDN_CONTENT, response.isFromCache)
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY, response.isFromCache)
-                } else {
-                    localSync.syncData(it, isFromCache = response.isFromCache)
-                }
-            }
+            it.isFromSportsCategory = (it.isVOD && requestParams.categoryId == 0 && it.categoryId == 16) || requestParams.categoryId == 16
+            localSync.syncData(it, isFromCache = response.isFromCache)
             !it.isExpired
         } ?: emptyList()
     }

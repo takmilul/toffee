@@ -13,11 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FmViewModel @Inject constructor(
-    private val getFmRadioContentService: GetFmRadioContentService,
-
-    ): ViewModel(){
-
-
+    private val getFmRadioContentService: GetFmRadioContentService
+): ViewModel(){
+    
     fun loadFmRadioList(): Flow<PagingData<ChannelInfo>> {
         return fmRadioRepo.getList()
     }

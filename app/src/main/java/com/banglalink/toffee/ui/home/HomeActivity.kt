@@ -86,6 +86,10 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.banglalink.toffee.enums.*
 import com.banglalink.toffee.enums.BubbleType.*
+import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
+import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
+import com.banglalink.toffee.enums.PlayingPage.STINGRAY
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -262,11 +266,11 @@ class HomeActivity : PlayerPageActivity(),
         )
         
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
-            handleSharedUrl(mPref.homeIntent.value ?: intent)
-            mPref.homeIntent.value = null
             if (mPref.isVastActive || mPref.isNativeAdActive) {
                 viewModel.getVastTagV3()
             }
+            handleSharedUrl(mPref.homeIntent.value ?: intent)
+            mPref.homeIntent.value = null
         } else {
             mPref.homeIntent.value = intent
             finish()
@@ -501,10 +505,10 @@ class HomeActivity : PlayerPageActivity(),
         }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
-                if (getHomeViewModel().isFmRadio.value != true) {
+                if (viewModel.currentlyPlayingFrom.value != FM_RADIO) {
                     binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 }
-                if (binding.playerView.isControllerVisible() && getHomeViewModel().isFmRadio.value != true) {
+                if (binding.playerView.isControllerVisible() && viewModel.currentlyPlayingFrom.value != FM_RADIO) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             } else {
@@ -997,6 +1001,16 @@ class HomeActivity : PlayerPageActivity(),
             mPref.categoryId.value = channelInfo.categoryId
         }
         allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
+        viewModel.currentlyPlayingFrom.value =
+            if (channelInfo.isFromSportsCategory) {
+                SPORTS_CATEGORY
+            } else if (channelInfo.isStingray) {
+                STINGRAY
+            } else if (channelInfo.isFmRadio) {
+                FM_RADIO
+            } else {
+                ALL_TV_CHANNEL
+            }
         addChannelToPlayList(channelInfo)
     }
     
@@ -1141,11 +1155,12 @@ class HomeActivity : PlayerPageActivity(),
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if (channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
+        if (channelInfo.urlType == PLAY_CDN && (channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType
+            .SIGNED_COOKIE.value)) {
             checkAndUpdateMediaCdnConfig(channelInfo) {
                 playContent(detailsInfo, it)
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -1153,6 +1168,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        cInfo = channelInfo
         lifecycleScope.launch {
             cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.getContentId().toLong())?.let { cdnChannelItem ->
                 loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
@@ -1207,13 +1223,17 @@ class HomeActivity : PlayerPageActivity(),
                         cInfo = null
                         newChannelInfo?.let { onSuccess(it) }
                     }
-                    is Failure -> showToast(getString(string.try_again_message))
+                    is Failure -> {
+                        cInfo = null
+                        showToast(getString(string.try_again_message))
+                    }
                 }
             }
-            cInfo = channelInfo
             viewModel.getMediaCdnSignUrl(channelInfo.getContentId())
         } else {
-            onSuccess(channelInfo)
+            cInfo?.let {
+                onSuccess(it)
+            } ?: showToast(getString(string.try_again_message))
         }
     }
     
@@ -1462,7 +1482,6 @@ class HomeActivity : PlayerPageActivity(),
             else {
                 ActivityInfo.SCREEN_ORIENTATION_LOCKED
             }
-        allChannelViewModel.isFromSportsCategory.value = allChannelViewModel.isFromSportsCategory.value
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
             if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
@@ -1611,13 +1630,13 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || getHomeViewModel().isFmRadio.value == true) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || viewModel.currentlyPlayingFrom.value == FM_RADIO) {
             binding.homeBottomSheet.bottomSheet.hide()
         } else {
             binding.homeBottomSheet.bottomSheet.show()
         }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED && !binding.playerView.isControllerFullyVisible) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -1920,6 +1939,9 @@ class HomeActivity : PlayerPageActivity(),
                             SharingType.SERIES.value -> {
                                 webSeriesShareableUrl = url
                                 playShareableWebSeries()
+                            }
+                            SharingType.FM_RADIO.value -> {
+                                pair = Pair(shareableData?.fmRadioShareUrl, SharingType.FM_RADIO.value)
                             }
                         }
                     } else {

@@ -13,8 +13,10 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentChannelListBinding
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -51,7 +53,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                 putInt("sub_category_id", subCategoryID)
                 putString("sub_category", subCategory)
                 putString("category", category)
-                putString("title", "TV Channels")
+                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "TV Channels")
                 putBoolean("show_selected", showSelected)
                 putBoolean("is_stingray", isStingray)
                 putBoolean("is_fmRadio", isFmRadio)
@@ -59,19 +61,17 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             channelListFragment.arguments = bundle
             return channelListFragment
         }
-
-        fun createInstance(category: String, showSelected: Boolean = false, isStingray: Boolean = false,isFmRadio: Boolean = false): ChannelFragment {
+        
+        fun createInstance(category: String, showSelected: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
             bundle.putBoolean("show_selected", showSelected)
-            bundle.putBoolean("is_stingray", isStingray)
-            bundle.putBoolean("is_fmRadio", isFmRadio)
             instance.arguments = bundle
             return instance
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = requireArguments().getString("title")
@@ -101,6 +101,10 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
         _binding?.listview?.apply{
+            // set top padding for fm radio because the sticky header and recently viewed items will be hidden
+            if (homeViewModel.currentlyPlayingFrom.value == FM_RADIO) {
+                setPadding(0.px, 16.px, 0.px, 0.px)
+            }
             setHasFixedSize(true)
             itemAnimator = null
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)

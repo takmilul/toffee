@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -96,7 +95,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
                 binding.nonLinearGroup.show()
                 
                 mAdapter.submitData(
-                    it.filter { !it.isExpired }.map { channel ->
+                    it.map { channel ->
                         localSync.syncData(channel)
                         
                         binding.placeholder.hide()

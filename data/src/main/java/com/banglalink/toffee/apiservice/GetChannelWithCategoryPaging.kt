@@ -1,61 +1,50 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.network.request.MostPopularContentRequest
+import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-data class LandingUserChannelsRequestParam(
-    val type: String,
-    val categoryId: Int,
-    val subCategoryId: Int,
-    val isDramaSeries: Boolean = false,
-)
-
-class GetMostPopularContents @AssistedInject constructor(
+class GetChannelWithCategoryPaging  @AssistedInject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
-    @Assisted private val requestParams: LandingUserChannelsRequestParam,
-) : BaseApiService<ChannelInfo> {
-
+): BaseApiService<ChannelInfo> {
+    
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO {
-            toffeeApi.getUgcMostPopularContents(
-                requestParams.type,
-                if (requestParams.isDramaSeries) 1 else 0,
-                requestParams.categoryId,
-                requestParams.subCategoryId,
-                limit,
-                offset,
-                preference.getDBVersionByApiName(ApiNames.GET_MOST_POPULAR_CONTENTS),
-                MostPopularContentRequest(
+            toffeeApi.getChannels(
+                preference.getDBVersionByApiName(ApiNames.GET_ALL_TV_CHANNELS),
+                AllChannelRequest(
+                    0,
                     preference.customerId,
                     preference.password
                 )
             )
         }
-        
-        return if (response.response.channels != null) {
-            response.response.channels.filter {
+        val finalList = mutableListOf<ChannelInfo>()
+        response.response.channelCategoryList.forEach {
+            it.channels?.forEach {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
                 localSync.syncData(it, isFromCache = response.isFromCache)
-                !it.isExpired
+                if (!it.isExpired) {
+                    finalList.add(it)
+                }
             }
-        } else emptyList()
+        }
+        return finalList
     }
-
+    
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(requestParams: LandingUserChannelsRequestParam): GetMostPopularContents
+        fun create(): GetChannelWithCategoryPaging
     }
 }

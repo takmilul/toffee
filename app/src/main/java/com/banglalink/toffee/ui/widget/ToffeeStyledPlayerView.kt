@@ -23,6 +23,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
+import com.banglalink.toffee.extension.invisible
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -795,9 +796,15 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
             
             if (channelInfo.isFmRadio) {
+                videoOption.invisible()
+                videoOption.layoutParams.width = 1.px
                 channelInfo.ugcFeaturedImage?.let {
                     previewImage.load(it)
                 }
+            } else {
+                videoOption.show()
+                videoOption.layoutParams.width = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                previewImage.setImageResource(0)
             }
         }
         onPlayerControllerChangedListeners.forEach {

@@ -19,15 +19,14 @@ class GetPackageChannels @Inject constructor(
         val response = tryIO {
             toffeeApi.getPackageChannelList(PackageChannelListRequest(packageId,preference.customerId,preference.password))
         }
-        return response.response.packageDetails.programs.map {
+        return response.response.packageDetails.programs.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
-            localSync.syncData(it)
-            it
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
         }
-
     }
 }
