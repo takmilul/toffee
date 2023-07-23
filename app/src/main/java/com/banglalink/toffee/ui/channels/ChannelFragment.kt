@@ -21,7 +21,6 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.fmradio.FmViewModel
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
@@ -44,7 +43,6 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     private var isStingray: Boolean = false
     @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentChannelListBinding ? = null
-    private val fmViewModel by activityViewModels<FmViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
@@ -55,7 +53,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                 putInt("sub_category_id", subCategoryID)
                 putString("sub_category", subCategory)
                 putString("category", category)
-                putString("title", "TV Channels")
+                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "TV Channels")
                 putBoolean("show_selected", showSelected)
                 putBoolean("is_stingray", isStingray)
                 putBoolean("is_fmRadio", isFmRadio)
