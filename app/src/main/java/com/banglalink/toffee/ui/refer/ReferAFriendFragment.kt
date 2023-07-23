@@ -50,7 +50,7 @@ class ReferAFriendFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = "Refer A Friend"
+        requireActivity().title = getString(R.string.refer_a_friend_txt)
         getMyReferralCode()
     }
     
