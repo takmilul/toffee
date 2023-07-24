@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.Point
 import android.os.CountDownTimer
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
@@ -30,8 +29,6 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.ExoStyledPlayerControlViewBinding
-import com.banglalink.toffee.databinding.ExoStyledPlayerViewBinding
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
@@ -64,7 +61,11 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : 
+open class ToffeeStyledPlayerView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : 
     View.OnClickListener,
     Player.Listener,
     DraggerLayout.OnPositionChangedListener,
@@ -131,37 +132,34 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
     
     private fun initView() {
-        val playerViewBinding = ExoStyledPlayerViewBinding.inflate(LayoutInflater.from(context))
-        val controlViewBinding = ExoStyledPlayerControlViewBinding.inflate(LayoutInflater.from(context))
-        
         playerControlView = findViewById(androidx.media3.ui.R.id.exo_controller)
-        drawerButton = controlViewBinding.drawer //findViewById(R.id.drawer)
-        videoOption = controlViewBinding.videoOption //findViewById(R.id.video_option)
-        shareButton = controlViewBinding.share //findViewById(R.id.share)
-        autoplayProgress = controlViewBinding.autoplayProgress //findViewById(R.id.autoplayProgress)
-        rotateButton = controlViewBinding.rotation //findViewById(R.id.rotation)
+        drawerButton = findViewById(R.id.drawer)
+        videoOption = findViewById(R.id.video_option)
+        shareButton = findViewById(R.id.share)
+        autoplayProgress = findViewById(R.id.autoplayProgress)
+        rotateButton = findViewById(R.id.rotation)
         
-        minimizeButton = controlViewBinding.minimize //findViewById(R.id.minimize)
-        castButton = controlViewBinding.castButton //findViewById(R.id.cast_button)
-        playerBottomSpace = controlViewBinding.playerBottomSpace //findViewById(R.id.player_bottom_space)
-        fullscreenButton = controlViewBinding.fullscreen //findViewById(R.id.fullscreen)
-        playNext = controlViewBinding.playNext //findViewById(R.id.play_next)
-        playPrev = controlViewBinding.playPrev //findViewById(R.id.play_prev)
-        playPause = controlViewBinding.exoPlayPause //findViewById(androidx.media3.ui.R.id.exo_play_pause)
-        exoDuration = controlViewBinding.exoDuration //findViewById(androidx.media3.ui.R.id.exo_duration)
-        exoTimeSeparator = controlViewBinding.timeSeperator //findViewById(R.id.time_seperator)
-        exoPosition = controlViewBinding.exoPosition //findViewById(androidx.media3.ui.R.id.exo_position)
-        exoProgress = controlViewBinding.exoProgress //findViewById(androidx.media3.ui.R.id.exo_progress)
+        minimizeButton = findViewById(R.id.minimize)
+        castButton = findViewById(R.id.cast_button)
+        playerBottomSpace = findViewById(R.id.player_bottom_space)
+        fullscreenButton = findViewById(R.id.fullscreen)
+        playNext = findViewById(R.id.play_next)
+        playPrev = findViewById(R.id.play_prev)
+        playPause = findViewById(androidx.media3.ui.R.id.exo_play_pause)
+        exoDuration = findViewById(androidx.media3.ui.R.id.exo_duration)
+        exoTimeSeparator = findViewById(R.id.time_seperator)
+        exoPosition = findViewById(androidx.media3.ui.R.id.exo_position)
+        exoProgress = findViewById(androidx.media3.ui.R.id.exo_progress)
         
-        playerOverlay = playerViewBinding.playerOverlay //findViewById(R.id.playerOverlay)
-        textCasting = playerViewBinding.textCasting //findViewById(R.id.text_casting)
-        debugContainer = playerViewBinding.debugContainer //findViewById(R.id.debug_container)
-        errorMessageView = playerViewBinding.errorMessageView //findViewById(R.id.error_message_view)
-        errorMessageContainer = playerViewBinding.errorMessageContainer //findViewById(R.id.error_message_container)
-        doubleTapInterceptor = playerViewBinding.dtInterceptor //findViewById(R.id.dtInterceptor)
-        controllerBg = playerViewBinding.controllerBg //findViewById(R.id.controller_bg)
-        previewImage = playerViewBinding.exoShutter //findViewById(R.id.exo_shutter)
-        buffering = playerViewBinding.exoBuffering //findViewById(R.id.exo_buffering)
+        playerOverlay = findViewById(R.id.playerOverlay)
+        textCasting = findViewById(R.id.text_casting)
+        debugContainer = findViewById(R.id.debug_container)
+        errorMessageView = findViewById(R.id.error_message_view)
+        errorMessageContainer = findViewById(R.id.error_message_container)
+        doubleTapInterceptor = findViewById(R.id.dtInterceptor)
+        controllerBg = findViewById(R.id.controller_bg)
+        previewImage = findViewById(R.id.exo_shutter)
+        buffering = findViewById(R.id.exo_buffering)
         
         if (isAutoRotationEnabled) {
             rotateButton.setImageResource(R.drawable.ic_screen_rotate)
