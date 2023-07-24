@@ -42,7 +42,6 @@
             tools:background="@drawable/pack_status_active_bg"
             tools:textColor="@color/pack_status_active_text"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tvPacksName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvPacksName"
             app:layout_constraintTop_toTopOf="@id/tvPacksName"

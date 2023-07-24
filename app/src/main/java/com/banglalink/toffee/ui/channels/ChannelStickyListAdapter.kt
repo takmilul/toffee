@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 import com.banglalink.toffee.util.BindingUtil
@@ -90,6 +91,10 @@ class ChannelStickyListAdapter(
             val item = getSection(section)
             val headerViewHolder = viewHolder as HeaderViewHolder
             headerViewHolder.text.text = if(item.header == "Recent") "Recently Viewed" else item.header
+
+            //removing header from fm radio
+            if (item.header == "Fm Radio Playlist") headerViewHolder.text.hide()
+
         }
     }
 

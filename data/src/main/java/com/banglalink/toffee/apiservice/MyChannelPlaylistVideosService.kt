@@ -32,21 +32,19 @@ class MyChannelPlaylistVideosService @AssistedInject constructor(
                 MyChannelPlaylistVideosRequest(preference.customerId, preference.password)
             )
         }
-
-        return if (response.response.channels != null) {
-            response.response.channels.map {
-                it.isExpired = try {
-                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
-                } catch (e: Exception) {
-                    false
-                }
-                it.isOwner = isOwner == 1
-                it.isPublic = isOwner.xor(1) == 1
-                it.isPlaylist = true
-                localSync.syncData(it)
-                it
+        
+        return response.response.channels?.filter {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
+            } catch (e: Exception) {
+                false
             }
-        } else emptyList()
+            it.isOwner = isOwner == 1
+            it.isPublic = isOwner.xor(1) == 1
+            it.isPlaylist = true
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
+        } ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory

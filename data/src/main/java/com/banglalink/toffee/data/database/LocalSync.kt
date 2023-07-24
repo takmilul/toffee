@@ -16,7 +16,6 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
@@ -90,16 +89,39 @@ class LocalSync @Inject constructor(
             }
         }
         if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
-            tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray) 1 else 0)?.let {
-                val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
-                if (!dbRecentPayload.equals(channelInfo)) {
-                    val isStingray = if (channelInfo.isStingray) 1 else 0
-                    tvChannelRepo.updateRecentItemPayload(
-                        contentId.toLong(),
-                        isStingray,
-                        channelInfo.view_count?.toLong() ?: 0L,
-                        gson.toJson(channelInfo)
-                    )
+            if (channelInfo.isLive) {
+                tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray ) 1 else 0,if (channelInfo.isFmRadio ) 1 else 0)?.let {
+                    val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    if (!dbRecentPayload.equals(channelInfo)) {
+                        val isStingray = if (channelInfo.isStingray) 1 else 0
+                        val isFmRadio = if (channelInfo.isStingray) 1 else 0
+                        tvChannelRepo.updateRecentItemPayload(
+                            contentId.toLong(),
+                            isStingray,
+                            isFmRadio,
+                            channelInfo.view_count?.toLong() ?: 0L,
+                            gson.toJson(channelInfo)
+                        )
+                    }
+                }
+            }
+        }
+
+        if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
+            if (channelInfo.isFmRadio) {
+                tvChannelRepo.getRecentItemById(contentId.toLong(), 0, 1 )?.let {
+                    val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    if (!dbRecentPayload.equals(channelInfo)) {
+                        val isStingray =  0
+                        val isFmRadio = 1
+                        tvChannelRepo.updateRecentItemPayload(
+                            contentId.toLong(),
+                            isStingray,
+                            isFmRadio,
+                            channelInfo.view_count?.toLong() ?: 0L,
+                            gson.toJson(channelInfo)
+                        )
+                    }
                 }
             }
         }
@@ -115,21 +137,37 @@ class LocalSync @Inject constructor(
                 }
             }
         }
+        
+        if (syncFlag and SYNC_FLAG_FM_ACTIVITY == SYNC_FLAG_FM_ACTIVITY) {
+            if (channelInfo.isFmRadio) {
+                userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "RADIO")?.let {
+                    val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    if (!dbUserActivityPayload.equals(channelInfo)) {
+                        userActivityRepo.updateUserActivityPayload(
+                            contentId.toLong(),
+                            channelInfo.type ?: "RADIO",
+                            gson.toJson(channelInfo)
+                        )
+                    }
+                }
+            }
+        }
         if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
             if (channelInfo.urlType == PLAY_CDN) {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     runCatching {
-                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate))) {
-                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(contentId.toLong(), channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate, gson.toJson(channelInfo))
+                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate)) || !channelInfo.equals(it)) {
+                            cdnChannelItemRepository.updateCdnChannelItemByChannelId(
+                                contentId.toLong(), 
+                                channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
+                                gson.toJson(channelInfo)
+                            )
                         } else {
-                            if (channelInfo.cdnType == CdnType.SIGNED_URL.value) {
-                                channelInfo.signedUrlExpiryDate = it.expiryDate
-                                channelInfo.hlsLinks = it.channelInfo?.hlsLinks
-                                channelInfo.paidPlainHlsUrl = it.channelInfo?.paidPlainHlsUrl
-                            } else {
-                                channelInfo.signedCookieExpiryDate = it.expiryDate
-                                channelInfo.signedCookie = it.channelInfo?.signedCookie
-                            }
+                            channelInfo.signedUrlExpiryDate = it.expiryDate
+                            channelInfo.hlsLinks = it.channelInfo?.hlsLinks
+                            channelInfo.paidPlainHlsUrl = it.channelInfo?.paidPlainHlsUrl
+                            channelInfo.signedCookieExpiryDate = it.expiryDate
+                            channelInfo.signedCookie = it.channelInfo?.signedCookie
                         }
                     }
                 } ?: run {
@@ -139,7 +177,7 @@ class LocalSync @Inject constructor(
             }
         }
     }
-
+    
     suspend fun syncUserChannel(userChannel: UserChannelInfo){
         if (preference.isVerifiedUser) {
             userChannel.isSubscribed =
@@ -228,5 +266,7 @@ class LocalSync @Inject constructor(
         const val SYNC_FLAG_TV_RECENT = 64
         const val SYNC_FLAG_USER_ACTIVITY = 128
         const val SYNC_FLAG_CDN_CONTENT = 256
+        const val SYNC_FLAG_FM_RADIO_RECENT = 512
+        const val SYNC_FLAG_FM_ACTIVITY = 1024
     }
 }

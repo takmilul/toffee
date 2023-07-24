@@ -41,11 +41,9 @@ class GetChannelWithCategory @Inject constructor(
                 } catch (e: Exception) {
                     false
                 }
+                localSync.syncData(it, isFromCache = response.isFromCache)
+                
                 if (!it.isExpired) {
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_TV_RECENT, response.isFromCache)
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_CDN_CONTENT, response.isFromCache)
-                    localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY, response.isFromCache)
-                    
                     dbList.add(TVChannelItem(
                         it.id.toLong(),
                         it.type ?: "LIVE",

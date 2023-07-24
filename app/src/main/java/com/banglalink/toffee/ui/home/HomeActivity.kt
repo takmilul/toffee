@@ -90,6 +90,10 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.banglalink.toffee.enums.*
 import com.banglalink.toffee.enums.BubbleType.*
+import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
+import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
+import com.banglalink.toffee.enums.PlayingPage.STINGRAY
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -112,6 +116,7 @@ import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.ui.fmradio.FmChannelFragmentNew
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
@@ -250,10 +255,10 @@ class HomeActivity : PlayerPageActivity(),
         initializeDraggableView()
         initDrawer()
         initSideNav()
-        observeTopBarBackground()
+        observeTopBarBackground() // get the custom toolbar background image from splash screen and set in the home activity
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-        observeCircuitBreaker()
+        observeCircuitBreaker() // restrict users from watching a specific content
         
         ToffeeAnalytics.logUserProperty(
             mapOf(
@@ -264,11 +269,11 @@ class HomeActivity : PlayerPageActivity(),
         )
         
         if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
-            handleSharedUrl(mPref.homeIntent.value ?: intent)
-            mPref.homeIntent.value = null
             if (mPref.isVastActive || mPref.isNativeAdActive) {
                 viewModel.getVastTagV3()
             }
+            handleSharedUrl(mPref.homeIntent.value ?: intent)
+            mPref.homeIntent.value = null
         } else {
             mPref.homeIntent.value = intent
             finish()
@@ -503,8 +508,10 @@ class HomeActivity : PlayerPageActivity(),
         }
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (playlistManager.getCurrentChannel()?.isLinear == true) {
-                binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
-                if (binding.playerView.isControllerVisible()) {
+                if (viewModel.currentlyPlayingFrom.value != FM_RADIO) {
+                    binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
+                }
+                if (binding.playerView.isControllerVisible() && viewModel.currentlyPlayingFrom.value != FM_RADIO) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             } else {
@@ -997,6 +1004,16 @@ class HomeActivity : PlayerPageActivity(),
             mPref.categoryId.value = channelInfo.categoryId
         }
         allChannelViewModel.isFromSportsCategory.value = channelInfo.isFromSportsCategory
+        viewModel.currentlyPlayingFrom.value =
+            if (channelInfo.isFromSportsCategory) {
+                SPORTS_CATEGORY
+            } else if (channelInfo.isStingray) {
+                STINGRAY
+            } else if (channelInfo.isFmRadio) {
+                FM_RADIO
+            } else {
+                ALL_TV_CHANNEL
+            }
         addChannelToPlayList(channelInfo)
     }
     
@@ -1141,11 +1158,12 @@ class HomeActivity : PlayerPageActivity(),
                 "content_partner" to channelInfo.content_provider_name,
             )
         )
-        if (channelInfo.urlType == PLAY_CDN && channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType.SIGNED_COOKIE.value) {
+        if (channelInfo.urlType == PLAY_CDN && (channelInfo.cdnType == CdnType.SIGNED_URL.value || channelInfo.cdnType == CdnType
+            .SIGNED_COOKIE.value)) {
             checkAndUpdateMediaCdnConfig(channelInfo) {
                 playContent(detailsInfo, it)
             }
-        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == PLAY_IN_WEB_VIEW || channelInfo.urlType == STINGRAY_CONTENT) {
+        } else if (channelInfo.urlType == PLAY_IN_NATIVE_PLAYER || channelInfo.urlType == STINGRAY_CONTENT) {
             playContent(detailsInfo, channelInfo)
         } else {
             // do nothing
@@ -1153,6 +1171,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun checkAndUpdateMediaCdnConfig(channelInfo: ChannelInfo, onSuccess: (newItem: ChannelInfo) -> Unit) {
+        cInfo = channelInfo
         lifecycleScope.launch {
             cdnChannelItemRepository.getCdnChannelItemByChannelId(channelInfo.getContentId().toLong())?.let { cdnChannelItem ->
                 loadMediaCdnConfig(cdnChannelItem.channelInfo!!, onSuccess)
@@ -1207,13 +1226,17 @@ class HomeActivity : PlayerPageActivity(),
                         cInfo = null
                         newChannelInfo?.let { onSuccess(it) }
                     }
-                    is Failure -> showToast(getString(string.try_again_message))
+                    is Failure -> {
+                        cInfo = null
+                        showToast(getString(string.try_again_message))
+                    }
                 }
             }
-            cInfo = channelInfo
             viewModel.getMediaCdnSignUrl(channelInfo.getContentId())
         } else {
-            onSuccess(channelInfo)
+            cInfo?.let {
+                onSuccess(it)
+            } ?: showToast(getString(string.try_again_message))
         }
     }
     
@@ -1289,7 +1312,13 @@ class HomeActivity : PlayerPageActivity(),
     private fun loadDetailFragment(info: Any?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
         if (info is ChannelInfo) {
-            if (info.isStingray) {
+            if (info.isFmRadio){
+                if (fragment !is FmChannelFragmentNew) {
+                    loadFragmentById(
+                        R.id.details_viewer, FmChannelFragmentNew()
+                    )
+                }
+            } else if (info.isStingray) {
                 if (fragment !is StingrayChannelFragmentNew) {
                     loadFragmentById(
                         R.id.details_viewer, StingrayChannelFragmentNew()
@@ -1456,7 +1485,6 @@ class HomeActivity : PlayerPageActivity(),
             else {
                 ActivityInfo.SCREEN_ORIENTATION_LOCKED
             }
-        allChannelViewModel.isFromSportsCategory.value = allChannelViewModel.isFromSportsCategory.value
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
             if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
@@ -1605,13 +1633,13 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || viewModel.currentlyPlayingFrom.value == FM_RADIO) {
             binding.homeBottomSheet.bottomSheet.hide()
         } else {
             binding.homeBottomSheet.bottomSheet.show()
         }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED && !binding.playerView.isControllerFullyVisible) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -1914,6 +1942,9 @@ class HomeActivity : PlayerPageActivity(),
                             SharingType.SERIES.value -> {
                                 webSeriesShareableUrl = url
                                 playShareableWebSeries()
+                            }
+                            SharingType.FM_RADIO.value -> {
+                                pair = Pair(shareableData?.fmRadioShareUrl, SharingType.FM_RADIO.value)
                             }
                         }
                     } else {
@@ -2250,19 +2281,25 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
-        if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
-            featuredPartner.webViewUrl?.let { url ->
-                landingPageViewModel.sendFeaturePartnerReportData(
-                    partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
-                )
-                navController.navigateTo(
-                    resId = R.id.htmlPageViewDialog_Home,
-                    args = bundleOf(
-                        "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+
+        if (featuredPartner.url_type == 1){
+            navController.navigateTo(R.id.FmRadioFrag)
+        } else{
+            if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
+                featuredPartner.webViewUrl?.let { url ->
+                    landingPageViewModel.sendFeaturePartnerReportData(
+                        partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                )
-            } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+                    navController.navigateTo(
+                        resId = R.id.htmlPageViewDialog_Home,
+                        args = bundleOf(
+                            "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+                        )
+                    )
+                } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+            }
         }
+
     }
     
     private fun isChannelComplete() =
@@ -2446,18 +2483,25 @@ class HomeActivity : PlayerPageActivity(),
         FirebaseInAppMessaging.getInstance().triggerEvent(ToffeeEvents.TRIGGER_INAPP_MESSAGING)
     }
     
+    var newIntent: Intent? = null
+    
     private fun observeAppVersionUpdate(intent: Intent) {
+        newIntent = intent
         observe(viewModel.updateStatusLiveData) {
             when (it) {
                 is Success -> {
-                    handleIntent(intent)
+                    newIntent?.let {
+                        handleIntent(it)
+                    }
                 }
                 is Failure -> {
                     if (it.error is AppDeprecatedError) {
                         finish()
                         launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                     } else {
-                        handleIntent(intent)
+                        newIntent?.let {
+                            handleIntent(it)
+                        }
                     }
                 }
             }
@@ -2648,6 +2692,10 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
+    /**
+     * restrict users from watching specific channel/video if the server threshold exceeds.
+     * this is configured from firebase firestore to restrict users for specific content and time.
+     */
     private fun observeCircuitBreaker() {
         if (mPref.isCircuitBreakerActive) {
             mPref.circuitBreakerFirestoreCollectionName?.ifNotNullOrBlank {
@@ -2686,6 +2734,11 @@ class HomeActivity : PlayerPageActivity(),
             initDrawer()
             initSideNav()
             loadUserInfo()
+            observe(mPref.profileImageUrlLiveData) {
+                binding.root.findViewById<View>(R.id.action_avatar)?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
+                    bindingUtil.bindRoundImage(profileImageView, it)
+                }
+            }
             lifecycleScope.launch {
                 if (mPref.doActionBeforeReload.value == true) {
                     mPref.postLoginEventAction.value?.invoke()

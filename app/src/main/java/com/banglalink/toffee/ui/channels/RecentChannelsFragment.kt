@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class RecentChannelsFragment : BaseFragment() {
     private var isStingray = false
+    private var isFmRadio = false
     private var showSelected = false
     private lateinit var mAdapter: RecentChannelsAdapter
     private var _binding: FragmentRecentTvChannelsBinding? = null
@@ -30,11 +31,13 @@ class RecentChannelsFragment : BaseFragment() {
     companion object {
         const val SHOW_SELECTED = "SHOW_SELECTED"
         const val IS_STINGRAY = "is_stingray"
-        
-        fun newInstance(showSelected: Boolean, isStingray: Boolean): RecentChannelsFragment {
+        const val IS_FM_RADIO = "isFmRadio"
+
+        fun newInstance(showSelected: Boolean, isStingray: Boolean, isFmRadio: Boolean): RecentChannelsFragment {
             val args = Bundle()
             args.putBoolean(SHOW_SELECTED, showSelected)
             args.putBoolean(IS_STINGRAY, isStingray)
+            args.putBoolean(IS_FM_RADIO, isFmRadio)
             val fragment = RecentChannelsFragment()
             fragment.arguments = args
             return fragment
@@ -45,6 +48,7 @@ class RecentChannelsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         showSelected = arguments?.getBoolean(SHOW_SELECTED, false) ?: false
         isStingray = arguments?.getBoolean(IS_STINGRAY, false) ?: false
+        isFmRadio = arguments?.getBoolean(IS_FM_RADIO, false) ?: false
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,7 +83,8 @@ class RecentChannelsFragment : BaseFragment() {
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadRecentTvChannels(isStingray).map {
+
+            viewModel.loadRecentTvChannels(isStingray,isFmRadio).map {
                 it?.filter { it.channelInfo?.isExpired == false }
             }.collectLatest {
                 val newList = if (!it.isNullOrEmpty()) {

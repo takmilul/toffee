@@ -7,7 +7,9 @@ import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.GetChannelWithCategory
+import com.banglalink.toffee.apiservice.GetChannelWithCategoryPaging
 import com.banglalink.toffee.apiservice.GetContentService
+import com.banglalink.toffee.apiservice.GetFmRadioContentService
 import com.banglalink.toffee.apiservice.GetStingrayContentService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -24,43 +26,80 @@ import javax.inject.Inject
 class AllChannelsViewModel @Inject constructor(
     private val tvChannelsRepo: TVChannelRepository,
     private val allChannelService: GetChannelWithCategory,
+    private val allTvChannelServicePaging: GetChannelWithCategoryPaging.AssistedFactory,
     private val getStingrayContentService: GetStingrayContentService,
+    private val getFmRadioContentService: GetFmRadioContentService,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,
 ) : ViewModel() {
     
     val selectedChannel = MutableLiveData<ChannelInfo?>()
     val isFromSportsCategory = MutableLiveData<Boolean>()
     
-    fun getChannels(subcategoryId: Int, isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
+    fun getChannels(subcategoryId: Int, isStingray: Boolean = false, isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
-                if (!isStingray) {
-                    allChannelService.loadData(subcategoryId)
-                } else {
+                if (isFmRadio && !isStingray) {
+                    getFmRadioContentService.loadData(0,100)
+                }
+                else if(isStingray && !isFmRadio){
                     getStingrayContentService.loadData(0, 100)
+                } else {
+                    allChannelService.loadData(subcategoryId)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
-        return if (isStingray) tvChannelsRepo.getStingrayItems() else tvChannelsRepo.getAllItems()
+        return if (isStingray) tvChannelsRepo.getStingrayItems() else if(isFmRadio) tvChannelsRepo.getFmItems() else tvChannelsRepo.getAllItems()
     }
     
-    fun loadAllChannels(isStingray: Boolean, isFromSportsCategory: Boolean): Flow<PagingData<out Any>> {
+    fun loadAllChannels(
+        isStingray: Boolean,
+        isFmRadio: Boolean,
+        isFromSportsCategory: Boolean
+
+    ): Flow<PagingData<out Any>> {
         return BaseListRepositoryImpl({
-            if (isFromSportsCategory) {
+            if (isFmRadio){
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
+            }
+            else if (isFromSportsCategory) {
                 BaseNetworkPagingSource(
                     getContentAssistedFactory.create(
                         ChannelRequestParams("Sports", 16, "", 0, "LIVE")
                     ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
                 )
-            } else {
-                tvChannelsRepo.getAllChannels(isStingray)
+            }
+
+            else {
+                tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
             }
         }).getList(10)
     }
     
-    fun loadRecentTvChannels(isStingray: Boolean = false): Flow<List<TVChannelItem>?> {
-        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+    fun getAllTvChannels(): Flow<PagingData<ChannelInfo>> {
+        viewModelScope.launch {
+            allChannelService.loadData(0)
+        }
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                allTvChannelServicePaging.create(), ApiNames.GET_ALL_TV_CHANNELS, BrowsingScreens.HOME_PAGE
+            )
+        }).getList(200)
+    }
+    
+    fun getSportsChannels(): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("Sports", 16, "", 0, "LIVE")
+                ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
+            )
+        }).getList()
+    }
+    
+    fun loadRecentTvChannels(isStingray: Boolean = false,isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
+//        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+       return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else if(isFmRadio) tvChannelsRepo.getFmRecentItems() else tvChannelsRepo.getRecentItemsFlow()
     }
 }

@@ -85,4 +85,5 @@ object ApiNames {
     const val RECHARGE_BY_BKASH = "rechargeInitialized"
     const val MNP_STATUS = "mnpStatus"
     const val PREMIUM_PACK_SUBSCRIPTION_HISTORY = "premiumPackSubscriptionHistory"
+    const val GET_FM_RADIO_CONTENTS = "getFmRadioContents"
 }

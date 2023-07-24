@@ -9,12 +9,14 @@ interface TVChannelRepository {
     suspend fun deleteItems(item: TVChannelItem)
     suspend fun deleteAllRecentItems()
     suspend fun insertRecentItems(item: TVChannelItem)
-    suspend fun getRecentItemById(channelId: Long, isStingray: Int): TVChannelItem?
-    suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, viewCount: Long, payload: String)
+    suspend fun getRecentItemById(channelId: Long, isStingray: Int,isFmRadio:Int): TVChannelItem?
+    suspend fun updateRecentItemPayload(channelId: Long, isStingray: Int, isFm: Int, viewCount: Long, payload: String)
     fun getAllItems(): Flow<List<TVChannelItem>?>
     fun getStingrayItems(): Flow<List<TVChannelItem>?>
+    fun getFmItems(): Flow<List<TVChannelItem>?>
     fun getRecentItemsFlow(): Flow<List<TVChannelItem>?>
     suspend fun getNonStingrayRecentItems(): List<TVChannelItem>?
     fun getStingrayRecentItems(): Flow<List<TVChannelItem>?>
-    fun getAllChannels(isStingray: Boolean): PagingSource<Int, String>
+    fun getFmRecentItems(): Flow<List<TVChannelItem>?>
+    fun getAllChannels(isStingray: Boolean,isFmRadio: Boolean): PagingSource<Int, String>
 }

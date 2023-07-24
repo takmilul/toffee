@@ -32,6 +32,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
+import com.banglalink.toffee.extension.invisible
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -96,7 +97,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var playerBottomSpace: Space
     private lateinit var minimizeButton: ImageView
-    private lateinit var thumbnailView: ImageView
     private lateinit var exoTimeSeparator: TextView
     private lateinit var exoProgress: DefaultTimeBar
     private lateinit var fullscreenButton: ImageView
@@ -144,10 +144,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setShowPreviousButton(false)
         setShowFastForwardButton(false)
         setShowRewindButton(false)
-//        defaultArtwork = ContextCompat.getDrawable(context, R.drawable.ic_toffee)
-//        useArtwork = true
         
-        thumbnailView = findViewById(R.id.thumbnail)
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerOverlay = findViewById(R.id.playerOverlay)
@@ -683,7 +680,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 stopAutoplayTimer()
                 if((mPlayListListener?.isAutoplayEnabled() == false && isStateEnded) || progressTime in 1 until AUTOPLAY_INTERVAL) {
                     ConvivaHelper.endPlayerSession(true)
-                    player?.currentMediaItem?.getChannelMetadata(player)?.let {
+                    getCurrentChannelInfo()?.let {
                         playerEventHelper.startContentPlayingSession(it.id)
                         ConvivaHelper.setConvivaVideoMetadata(it, mPref.customerId)
                     }
@@ -702,7 +699,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
             Player.STATE_READY -> {
                 errorMessageContainer.hide()
-                previewImage.setImageResource(0)
+                setFmRadioPlayerImage(getCurrentChannelInfo())
                 playPause.visibility = View.VISIBLE
                 val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                 nextButtonVisibility(!isChannelLive)
@@ -783,7 +780,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         super.onMediaItemTransition(mediaItem, reason)
         videoWidth = -1
         videoHeight = -1
-        val channelInfo = mediaItem?.getChannelMetadata(player)
+        val channelInfo = getCurrentChannelInfo()
         if (channelInfo is ChannelInfo) {
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
@@ -796,9 +793,31 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             
             rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+            
+            toggleVideoProfileMenuFromPlayer(channelInfo.isFmRadio)
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()
+        }
+    }
+    
+    fun setFmRadioPlayerImage(channelInfo: ChannelInfo?) {
+        if (channelInfo != null && channelInfo.isFmRadio) {
+            channelInfo.ugcFeaturedImage?.let {
+                previewImage.load(it)
+            }
+        } else {
+            previewImage.setImageResource(0)
+        }
+    }
+    
+    private fun toggleVideoProfileMenuFromPlayer(isFmRadio: Boolean = false) {
+        if (isFmRadio) {
+            videoOption.invisible()
+            videoOption.layoutParams.width = 1.px
+        } else {
+            videoOption.show()
+            videoOption.layoutParams.width = ConstraintLayout.LayoutParams.WRAP_CONTENT
         }
     }
     
@@ -809,10 +828,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         oldPlayer?.removeListener(this)
         this.player?.addListener(this)
         
-        player?.currentMediaItem?.getChannelMetadata(player)?.let {
+        getCurrentChannelInfo()?.let {
             isVideoPortrait = it.isHorizontal != 1
             rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
+    
+    fun getCurrentChannelInfo() = player?.currentMediaItem?.getChannelMetadata(player)
 }

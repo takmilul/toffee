@@ -85,7 +85,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      * 
      * &bull;  Disabled [FirebaseCrashlytics] when run the app in debug mode.
      * 
-     * &bull; Firebase Analytics Initialized. [ToffeeAnalytics.initFireBaseAnalytics]
+     * &bull; Firebase Analytics Initialized. [ToffeeAnalytics.initFirebaseAnalytics]
      * 
      * &bull; Facebook Analytics Initialized. [ToffeeAnalytics.initFacebookAnalytics]
      * 
@@ -125,7 +125,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         }
         
         try {
-            ToffeeAnalytics.initFireBaseAnalytics(this)
+            ToffeeAnalytics.initFirebaseAnalytics(this)
         } catch (e: Exception) {
             coroutineScope.launch {
                 sendFirebaseConnectionErrorEvent.execute()

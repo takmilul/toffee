@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.splash
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,10 +40,10 @@ class SplashScreenActivity : BaseAppCompatActivity() {
         }
         
         MedalliaDigital.disableIntercept()
-        intent.getStringExtra("resourceUrl")?.let {
-            saveNotification(intent)
-            mPref.homeIntent.value = intent.setData(Uri.parse(it))
-        }
+//        intent.getStringExtra("resourceUrl")?.let {
+//            saveNotification(intent)
+//            mPref.homeIntent.value = intent.setData(Uri.parse(it))
+//        }
     }
     
     private fun saveNotification(intent: Intent?) {

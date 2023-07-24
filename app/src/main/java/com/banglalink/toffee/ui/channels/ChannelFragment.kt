@@ -13,8 +13,10 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentChannelListBinding
+import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -23,51 +25,53 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
-    @Inject lateinit var bindingUtil: BindingUtil
+    
     private var title: String? = null
     private var subCategoryID: Int = 0
     private var category: String? = null
+    private val binding get() = _binding!!
+    private var isFmRadio: Boolean = false
     private var subCategory: String? = null
     private var isStingray: Boolean = false
+    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentChannelListBinding ? = null
-    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
     companion object{
-        fun createInstance(subCategoryID: Int, subCategory: String, category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
+        fun createInstance(subCategoryID: Int, subCategory: String, category: String, showSelected: Boolean = false, isStingray: Boolean = false,isFmRadio: Boolean = false): ChannelFragment {
             val channelListFragment = ChannelFragment()
             val bundle = Bundle().apply {
                 putInt("sub_category_id", subCategoryID)
                 putString("sub_category", subCategory)
                 putString("category", category)
-                putString("title", "TV Channels")
+                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "TV Channels")
                 putBoolean("show_selected", showSelected)
                 putBoolean("is_stingray", isStingray)
+                putBoolean("is_fmRadio", isFmRadio)
             }
             channelListFragment.arguments = bundle
             return channelListFragment
         }
-
-        fun createInstance(category: String, showSelected: Boolean = false, isStingray: Boolean = false): ChannelFragment {
+        
+        fun createInstance(category: String, showSelected: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
             bundle.putBoolean("show_selected", showSelected)
-            bundle.putBoolean("is_stingray", isStingray)
             instance.arguments = bundle
             return instance
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = requireArguments().getString("title")
@@ -75,6 +79,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         this.subCategory = requireArguments().getString("sub_category")
         this.subCategoryID = requireArguments().getInt("sub_category_id")
         this.isStingray = requireArguments().getBoolean("is_stingray")
+        this.isFmRadio = requireArguments().getBoolean("is_fmRadio")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -90,11 +95,16 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         }
         _binding?.progressBar?.show()
         homeViewModel.isStingray.postValue(isStingray)
+        homeViewModel.isFmRadio.postValue(isFmRadio)
         setupEmptyView()
         
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
         _binding?.listview?.apply{
+            // set top padding for fm radio because the sticky header and recently viewed items will be hidden
+            if (homeViewModel.currentlyPlayingFrom.value == FM_RADIO) {
+                setPadding(0.px, 20.px, 0.px, 0.px)
+            }
             setHasFixedSize(true)
             itemAnimator = null
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)
@@ -102,14 +112,14 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             layoutManager = gridLayoutManager
             adapter = channelAdapter
         }
-
+        
 //        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel.getChannels(0, isStingray)){
+            with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
                 collectLatest { tvList ->
-                    val res = tvList?.filter { it.channelInfo?.isExpired == false }?.groupBy { it.categoryName.trimIndent() }?.map {
+                    val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
                         val categoryName = it.key.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
