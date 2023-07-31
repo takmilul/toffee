@@ -37,6 +37,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.*
+import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Log
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -187,37 +188,53 @@ abstract class PlayerPageActivity :
     
     public override fun onStart() {
         super.onStart()
+        val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT > 23 /*&& isAppBackgrounded*/) {
-            initializePlayer()
+            if (channelInfo == null || !channelInfo.isFmRadio) {
+                initializePlayer()
+            }
         }
         mediaSession?.isActive = true
     }
     
     public override fun onResume() {
         super.onResume()
+        val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT <= 23 || player == null /*&& isAppBackgrounded*/) {
-            initializePlayer()
+            if (channelInfo == null || !channelInfo.isFmRadio) {
+                initializePlayer()
+            }
         }
     }
     
     public override fun onPause() {
         super.onPause()
+        val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT <= 23) {
-            releasePlayer()
+            if (channelInfo == null || !channelInfo.isFmRadio) {
+                releasePlayer()
+            }
             isAppBackgrounded = true
         }
     }
     
     public override fun onStop() {
         super.onStop()
+        val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT > 23) {
-            releasePlayer()
+            if (channelInfo == null || !channelInfo.isFmRadio) {
+                releasePlayer()
+            }
             isAppBackgrounded = true
         }
     }
     
     override fun onDestroy() {
         super.onDestroy()
+        val channelInfo = getCurrentChannelInfo()
+        if (channelInfo != null && channelInfo.isFmRadio) {
+            releasePlayer()
+        }
         playChannelJob?.cancel()
         adsLoader?.release()
         adsLoader = null
@@ -1543,6 +1560,11 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAdBreakEnded()
             }
             ALL_ADS_COMPLETED -> {
+                getCurrentChannelInfo()?.let {
+                    if (isAdRunning && it.isFmRadio) {
+                        (getPlayerView() as ToffeeStyledPlayerView).setFmRadioPlayerImage(getCurrentChannelInfo())
+                    }
+                }
                 isAdRunning = false
                 playerEventHelper.setAdData(it.ad, ALL_ADS_COMPLETED.name)
                 ConvivaHelper.onAllAdEnded()

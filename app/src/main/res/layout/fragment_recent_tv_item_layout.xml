@@ -20,20 +20,20 @@
         android:layout_margin="@dimen/recent_channels_margin"
         android:background="?selectableItemBackgroundBorderless"
         android:onClick="@{(v) -> callback.onItemClicked(data)}">
-    
+        
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:contentDescription="@string/txt_channel"
-            android:layout_gravity="center"
             loadChannelImage="@{data.channelInfo}"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
             android:background="@drawable/circular_white_bg"
-            tools:src="@drawable/ic_profile"
-            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/txt_channel"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"  />
+            app:srcCompat="@drawable/ic_profile" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

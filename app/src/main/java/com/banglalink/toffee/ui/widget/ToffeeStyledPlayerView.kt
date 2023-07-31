@@ -698,9 +698,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
             Player.STATE_READY -> {
                 errorMessageContainer.hide()
-                if (getCurrentChannelInfo()?.isFmRadio != true) {
-                    previewImage.setImageResource(0)
-                }
+                setFmRadioPlayerImage(getCurrentChannelInfo())
                 playPause.visibility = View.VISIBLE
                 val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                 nextButtonVisibility(!isChannelLive)
@@ -795,20 +793,30 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
             
-            if (channelInfo.isFmRadio) {
-                videoOption.invisible()
-                videoOption.layoutParams.width = 1.px
-                channelInfo.ugcFeaturedImage?.let {
-                    previewImage.load(it)
-                }
-            } else {
-                videoOption.show()
-                videoOption.layoutParams.width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                previewImage.setImageResource(0)
-            }
+            toggleVideoProfileMenuFromPlayer(channelInfo.isFmRadio)
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()
+        }
+    }
+    
+    fun setFmRadioPlayerImage(channelInfo: ChannelInfo?) {
+        if (channelInfo != null && channelInfo.isFmRadio) {
+            channelInfo.ugcFeaturedImage?.let {
+                previewImage.load(it)
+            }
+        } else {
+            previewImage.setImageResource(0)
+        }
+    }
+    
+    private fun toggleVideoProfileMenuFromPlayer(isFmRadio: Boolean = false) {
+        if (isFmRadio) {
+            videoOption.invisible()
+            videoOption.layoutParams.width = 1.px
+        } else {
+            videoOption.show()
+            videoOption.layoutParams.width = ConstraintLayout.LayoutParams.WRAP_CONTENT
         }
     }
     

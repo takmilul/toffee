@@ -103,7 +103,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         _binding?.listview?.apply{
             // set top padding for fm radio because the sticky header and recently viewed items will be hidden
             if (homeViewModel.currentlyPlayingFrom.value == FM_RADIO) {
-                setPadding(0.px, 16.px, 0.px, 0.px)
+                setPadding(0.px, 20.px, 0.px, 0.px)
             }
             setHasFixedSize(true)
             itemAnimator = null
