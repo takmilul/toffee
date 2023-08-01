@@ -151,11 +151,11 @@
         
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:value="${facebookAppId}" />
         
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
+            android:value="${facebookClientToken}" />
         
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
@@ -207,11 +207,11 @@
         <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
         <meta-data
             android:name="Firework:AppID"
-            android:value="@string/firework_oauth_id" />
+            android:value="${fireworkOAuthId}" />
         
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ads_app_id" />
+            android:value="${adsAppId}" />
         
 <!--        <service-->
 <!--            android:name=".ui.bubble.BubbleService"-->

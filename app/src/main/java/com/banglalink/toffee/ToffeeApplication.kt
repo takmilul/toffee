@@ -213,7 +213,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      */
     private fun initFireworkSdk() {
         try {
-            FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
+            FwSDK.initialize(this, BuildConfig.FIREWORK_OAUTH_ID, sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
                 override fun currentStatus(status: SdkStatus, extra: String) {
                     when (status) {
                         Initialized -> {
@@ -246,7 +246,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      */
     private fun initMedalliaSdk() {
         try {
-            MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
+            MedalliaDigital.init(this, BuildConfig.MEDALLIA_API_KEY, object : MDResultCallback {
                 override fun onSuccess() {
                     Log.i("MED_", "onSuccess: Medallia initialized")
                 }

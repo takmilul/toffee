@@ -2557,12 +2557,12 @@ class HomeActivity : PlayerPageActivity(),
         runCatching {
             if (BuildConfig.DEBUG) {
 //                val settings: Map<String, Any> = mutableMapOf(
-//                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+//                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
 //                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
 //                )
-//                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST), settings)
             } else {
-                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
+                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
             }
             ConvivaHelper.init(applicationContext, true)
         }
