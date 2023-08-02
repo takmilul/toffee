@@ -579,4 +579,5 @@
     <string name="no_subscription_found">No subscription found.</string>
     <string name="subscription_history_showing_text">Showing up to 2 years of payment history</string>
     <string name="packs_tab_layout">Premium Packs Tab Layout</string>
+    <string name="ads_app_id">ca-app-pub-8724031649645430~8504153625</string>
 </resources>

@@ -211,7 +211,7 @@
         
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${adsAppId}" />
+            android:value="@string/ads_app_id" />
         
 <!--        <service-->
 <!--            android:name=".ui.bubble.BubbleService"-->
