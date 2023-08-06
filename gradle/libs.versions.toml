@@ -80,10 +80,10 @@ play-core-version = "1.10.3"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.2.0"
+firebase-messaging-version = "23.2.1"
 firebase-analytics-version = "21.3.0"
 firebase-firestore-version = "24.7.0"
-firebase-in-app-message-version = "20.3.2"
+firebase-in-app-message-version = "20.3.3"
 firebase-crashlytics-version = "18.4.0"
 firebase-crashlytics-plugin-version = "2.9.7"
 
