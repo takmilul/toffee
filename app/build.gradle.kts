@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+import java.io.FileInputStream
+import java.util.*
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.application.get().pluginId)
@@ -17,10 +20,23 @@ android {
     namespace = "com.banglalink.toffee"
     compileSdk = 33
     
+    val properties = Properties().apply {
+        load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
+    }
+    val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
+    val facebookAppId: String = properties.getProperty("facebookAppId")
+    val facebookClientToken: String = properties.getProperty("facebookClientToken")
+    val adsAppId: String = properties.getProperty("adsAppId")
+    val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
+    val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
+    val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
+    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
+//    val fireworkOAuthId: String = gradleLocalProperties(rootDir).getProperty("firework.oAuthId")
+    
     defaultConfig {
         minSdk = 21
         targetSdk = 33
-        versionCode = 108
+        versionCode = 111
         versionName = "5.0.0"
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
@@ -28,6 +44,14 @@ android {
         ndk {
             debugSymbolLevel = "FULL"
         }
+        manifestPlaceholders.putAll(
+            mapOf(
+                "fireworkOAuthId" to fireworkOAuthId,
+                "facebookAppId" to facebookAppId,
+                "facebookClientToken" to facebookClientToken,
+                "adsAppId" to adsAppId,
+            )
+        )
     }
     
     flavorDimensions += listOf("lib")
@@ -36,6 +60,11 @@ android {
         create("mobile") {
             dimension = "lib"
             buildConfigField("int", "DEVICE_TYPE", "1")
+            buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
+            buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
+            buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
+            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_TEST", convivaCustomerKeyTest)
+            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_PROD", convivaCustomerKeyProd)
         }
     }
     
@@ -145,6 +174,9 @@ dependencies {
     implementation(libs.bundles.media3.player)
     implementation(libs.bundles.cast)
     implementation(libs.bundles.ads)
+    
+    // Security
+//    implementation(libs.bundles.security)
     
     // Network
     implementation(libs.bundles.retrofit)

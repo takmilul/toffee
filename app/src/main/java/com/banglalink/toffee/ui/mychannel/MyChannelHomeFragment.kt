@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
@@ -33,7 +32,12 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleUrlShare
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.MyChannelDetailBean
 import com.banglalink.toffee.model.Resource.Failure
@@ -58,17 +62,17 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     private var subscriberCount: Long = 0
+    private val binding get() = _binding!!
     private var isMyChannel: Boolean = false
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var cacheManager: CacheManager
+    private val bindingRating get() = _bindingRating!!
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var progressDialog: ToffeeProgressDialog
     private var _binding: FragmentMyChannelHomeBinding ? = null
-    private val binding get() = _binding!!
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
-    val homeViewModel by activityViewModels<HomeViewModel>()
-    private val bindingRating get() = _bindingRating!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<MyChannelHomeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
@@ -98,12 +102,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
-    }
-    
-    override fun onDestroyView() {
-        binding.viewPager.adapter = null
-        super.onDestroyView()
-        _binding = null
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -139,17 +137,17 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     private fun handleClick(v: View?) {
         when (v) {
-            binding.channelDetailView.addBioButton -> { navigateToEditChannel() }
-            binding.channelDetailView.editButton -> { navigateToEditChannel() }
-            binding.channelDetailView.ratingButton -> { showRatingDialog() }
-            binding.channelDetailView.analyticsButton -> {
+            _binding?.channelDetailView?.addBioButton -> { navigateToEditChannel() }
+            _binding?.channelDetailView?.editButton -> { navigateToEditChannel() }
+            _binding?.channelDetailView?.ratingButton -> { showRatingDialog() }
+            _binding?.channelDetailView?.analyticsButton -> {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
                     requireContext().showToast(getString(R.string.create_channel_msg))
                 }
             }
-            binding.channelDetailView.subscriptionButton -> {
+            _binding?.channelDetailView?.subscriptionButton -> {
                 if (isSubscribed == 0) {
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
                 } else {
@@ -389,11 +387,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
     }
     
+    override fun onDestroyView() {
+        binding.viewPager.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
+    
     override fun onDestroy() {
         progressDialog.dismiss()
         super.onDestroy()
         _binding = null
         _bindingRating= null
     }
-
 }

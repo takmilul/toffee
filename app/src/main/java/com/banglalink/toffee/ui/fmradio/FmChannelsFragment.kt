@@ -14,11 +14,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFmChannelsBinding
-import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -62,7 +60,7 @@ class FmChannelsFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo>
             adapter = mAdapter
             itemAnimator = null
             setHasFixedSize(true)
-            addItemDecoration(GridSpacingItemDecoration(3, 8.px, false))
+//            addItemDecoration(GridSpacingItemDecoration(3, 24.px, false))
             layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
         }
         observeList()

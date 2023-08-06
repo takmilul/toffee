@@ -2,7 +2,7 @@
 
 [versions]
 
-gradle-plugin-version = "8.0.2"
+gradle-plugin-version = "8.1.0"
 
 # View
 activity-version = "1.6.1"
@@ -28,7 +28,7 @@ hilt-android-version = "2.44"
 
 # Jetpack
 room-db-version = "2.5.2"
-paging-version = "3.1.1"
+paging-version = "3.2.0"
 compose-bom = "2023.06.01"
 compose-version = "1.4.3"
 compose-material-version = "1.4.3"
@@ -57,6 +57,11 @@ play-services-ads-identifier-version = "18.0.1"
 play-services-ads-version = "22.2.0"
 ads-identifier-version = "1.0.0-alpha05"
 
+# Security
+crypto-version = "1.1.0-alpha06"
+identity-credential-version = "1.0.0-alpha03"
+app-authenticator-version = "1.0.0-alpha02"
+
 # Network
 gson-version = "2.10.1"
 okhttp-version = "4.11.0"
@@ -75,12 +80,12 @@ play-core-version = "1.10.3"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.2.0"
+firebase-messaging-version = "23.2.1"
 firebase-analytics-version = "21.3.0"
 firebase-firestore-version = "24.7.0"
-firebase-in-app-message-version = "20.3.2"
+firebase-in-app-message-version = "20.3.3"
 firebase-crashlytics-version = "18.4.0"
-firebase-crashlytics-plugin-version = "2.9.4"
+firebase-crashlytics-plugin-version = "2.9.7"
 
 # Reporting
 facebook-sdk-version = "16.0.1"
@@ -223,6 +228,11 @@ play-services-ads-identifier = { group = "com.google.android.gms", name = "play-
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "play-services-ads-version" }
 ads-identifier = { group = "androidx.ads", name = "ads-identifier", version.ref = "ads-identifier-version" }
 
+# Security
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "crypto-version" }
+security-identity-credential = { group = "androidx.security", name = "security-identity-credential", version.ref = "identity-credential-version" }
+security-app-authenticator = { group = "androidx.security", name = "security-app-authenticator", version.ref = "app-authenticator-version" }
+
 # Network
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson-version" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version" }
@@ -340,6 +350,7 @@ com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", vers
 compose = ["compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-material", "compose-activity", "compose-runtime", "compose-coil", "compose-navigation", "compose-viewmodel"]
 exoplayer = ["exoplayer-core", "exoplayer-hls", "exoplayer-dash", "exoplayer-ui", "exoplayer-ima", "exoplayer-cast", "exoplayer-okhttp", "exoplayer-session"]
 media3-player = ["media3-core", "media3-hls", "media3-dash", "media3-ui", "media3-ima", "media3-cast", "media3-okhttp", "media3-session"]
+security = ["security-crypto", "security-app-authenticator"]
 retrofit = ["retrofit-core", "retrofit-gson", "okhttp-logger", "okhttp-dnshttp"]
 lifecycle = ["lifecycle-viewmodel-ktx", "lifecycle-runtime-ktx", "lifecycle-livedata-ktx"]
 image-crop = ["ucrop", "circular-progressbar", "dahdit"]

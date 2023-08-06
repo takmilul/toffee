@@ -2,8 +2,45 @@ package com.banglalink.toffee.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.banglalink.toffee.data.database.dao.*
-import com.banglalink.toffee.data.database.entities.*
+import com.banglalink.toffee.data.database.dao.BubbleConfigDao
+import com.banglalink.toffee.data.database.dao.CdnChannelItemDao
+import com.banglalink.toffee.data.database.dao.ContentViewProgressDao
+import com.banglalink.toffee.data.database.dao.ContinueWatchingDao
+import com.banglalink.toffee.data.database.dao.DrmLicenseDao
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
+import com.banglalink.toffee.data.database.dao.HistoryItemDao
+import com.banglalink.toffee.data.database.dao.NotificationDao
+import com.banglalink.toffee.data.database.dao.PlayerEventsDao
+import com.banglalink.toffee.data.database.dao.ReactionCountDao
+import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.dao.SessionPrefDao
+import com.banglalink.toffee.data.database.dao.ShareCountDao
+import com.banglalink.toffee.data.database.dao.SubscribedItemDao
+import com.banglalink.toffee.data.database.dao.SubscriptionCountDao
+import com.banglalink.toffee.data.database.dao.SubscriptionInfoDao
+import com.banglalink.toffee.data.database.dao.TVChannelDao
+import com.banglalink.toffee.data.database.dao.UploadDao
+import com.banglalink.toffee.data.database.dao.UserActivitiesDao
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
+import com.banglalink.toffee.data.database.entities.CdnChannelItem
+import com.banglalink.toffee.data.database.entities.ContentViewProgress
+import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
+import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
+import com.banglalink.toffee.data.database.entities.FavoriteItem
+import com.banglalink.toffee.data.database.entities.HistoryItem
+import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.database.entities.PlayerEventData
+import com.banglalink.toffee.data.database.entities.ReactionInfo
+import com.banglalink.toffee.data.database.entities.ReactionStatusItem
+import com.banglalink.toffee.data.database.entities.SessionPrefData
+import com.banglalink.toffee.data.database.entities.ShareCount
+import com.banglalink.toffee.data.database.entities.SubscribedItem
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.database.entities.ViewCount
 import com.banglalink.toffee.model.BubbleConfig
 
 @Database(
@@ -30,7 +67,7 @@ import com.banglalink.toffee.model.BubbleConfig
         BubbleConfig::class,
 //        PremiumPackItem::class
     ],
-    version = 14,
+    version = 15,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {

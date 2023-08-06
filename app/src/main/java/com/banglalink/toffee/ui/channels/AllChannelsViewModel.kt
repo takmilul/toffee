@@ -57,30 +57,23 @@ class AllChannelsViewModel @Inject constructor(
         isStingray: Boolean,
         isFmRadio: Boolean,
         isFromSportsCategory: Boolean
-
     ): Flow<PagingData<out Any>> {
         return BaseListRepositoryImpl({
             if (isFmRadio){
                 tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
-            }
-            else if (isFromSportsCategory) {
+            } else if (isFromSportsCategory) {
                 BaseNetworkPagingSource(
                     getContentAssistedFactory.create(
                         ChannelRequestParams("Sports", 16, "", 0, "LIVE")
                     ), ApiNames.GET_CONTENTS_V5, BrowsingScreens.CATEGORY_SCREEN
                 )
-            }
-
-            else {
+            } else {
                 tvChannelsRepo.getAllChannels(isStingray,isFmRadio)
             }
         }).getList(10)
     }
     
     fun getAllTvChannels(): Flow<PagingData<ChannelInfo>> {
-        viewModelScope.launch {
-            allChannelService.loadData(0)
-        }
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 allTvChannelServicePaging.create(), ApiNames.GET_ALL_TV_CHANNELS, BrowsingScreens.HOME_PAGE
@@ -100,6 +93,12 @@ class AllChannelsViewModel @Inject constructor(
     
     fun loadRecentTvChannels(isStingray: Boolean = false,isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
 //        return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else tvChannelsRepo.getRecentItemsFlow()
-       return if (isStingray) tvChannelsRepo.getStingrayRecentItems() else if(isFmRadio) tvChannelsRepo.getFmRecentItems() else tvChannelsRepo.getRecentItemsFlow()
+       return if (isStingray) {
+           tvChannelsRepo.getStingrayRecentItems()
+       } else if(isFmRadio) {
+           tvChannelsRepo.getFmRecentItems()
+       } else {
+           tvChannelsRepo.getRecentItemsFlow()
+       }
     }
 }

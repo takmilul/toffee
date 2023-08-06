@@ -129,8 +129,6 @@
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
-    <string name="facebook_app_id">1116781388516653</string>
-    <string name="facebook_client_token">6436957524f4e33b7cf789031120c524</string>
     <!--    <string name="fb_login_protocol_scheme">1116781388516653</string>-->
     <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
@@ -416,18 +414,13 @@
     <string name="file_format_title">File Format</string>
     <string name="file_size_msg">File size is too big. Please select a file within 5MB</string>
     <string name="file_format_msg">Selected file format is unsupported. please select any one from txt/pdf/doc/docx/rtf/png/jpg format</string>
-    <string name="firework_channel_id">4Y9XaK0</string>
-    <string name="firework_playlist_id">5aMPy5</string>
-    <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>
-    <string name="ads_app_id">ca-app-pub-8724031649645430~8504153625</string>
-    <string name="medallia_api_key">eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhcGlUb2tlblYyIiwiYXV0aFVybCI6Imh0dHBzOi8vbW9iaWxlc2RrLWV1LmthbXB5bGUuY29tL2FwaS92MS9hY2Nlc3NUb2tlbiIsImVudmlyb25tZW50IjoicHJvZEV1SXJsYW5kIiwiY3JlYXRlVGltZSI6MTYzMjM5ODM2MDE4OSwiYXBpVG9rZW5WMlZlcnNpb24iOjIsInByb3BlcnR5SWQiOjcxNjAwNX0.Ojg-m5Q93U4Eha9cxNN88ykKpd0mw4cJF4Lc02G2TylHbZPF34clxEwETYwyZRzBjZ2LiFMJpWKHkVIzaSIUC-_XKj9fV_lSJAi1rCVUYpT4V_w52zzTNCgaagjzMEbhbVBj9dEPaKGMsNO7JTg4D8__DtIzjcBHwsBX1AH63aHShwJbbTDWbiU8YC1EBXQM_6HlZeMEMi0uw6fK_i0eLILi97jBm4_RZM1Un0TCc8g_0_ErRXjTXVdIu9vEAKTHI-7okvMQHd22sQhPj2XPueDSJufGZL8NB901xLj7UDEQLZT9MRHtvVPFML4miUdrIrPjxARZ-Fg3Af_mdP3_FA</string>
     <string name="menu_all_tv_channels">All TV Channels</string>
     <string name="menu_activities">Activities</string>
     <string name="menu_playlists">My Playlist</string>
     <string name="menu_payment_history">Payment History</string>
     <string name="menu_favorites">Favorites</string>
     <string name="menu_subscriptions">Following</string>
-    <string name="menu_creators_policy">Creators Policy</string>
+    <string name="menu_creators_policy">Creator\'s Policy</string>
     <string name="menu_my_profile">My profile</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_policies">Policies</string>
@@ -450,9 +443,6 @@
     <string name="web_error_text"><![CDATA[<p style="margin:auto; width:95%; text-align: center;"><b>Something went wrong! Please try again later.</b></p>]]></string>
     <string name="clear_search_history">Clear Search History</string>
     <string name="music_playlist">Music Playlist</string>
-    <string name="convivaCustomerKeyTest">4d18565c4eff1d51ace324803225906a124fd756</string>
-    <string name="convivaCustomerKeyProd">b5657a3f90fac1a580f7ad4920e9830923077b55</string>
-    <string name="convivaGatewayUrl">https://banglalink-test.testonly.conviva.com</string>
     <string name="live_text">LIVE</string>
     <string name="reaction_text">Reaction</string>
     <string name="recommended_text">Recommended</string>
@@ -583,10 +573,11 @@
     <string name="price_label">Price</string>
     <string name="plan_label">Plan</string>
     <string name="auto_renewal_label">Auto Renewal</string>
-    <string name="expiry_time_label">Expiry time</string>
+    <string name="expiry_time_label">Expiry Time</string>
     <string name="signin_text_subscription">Please sign in to view your subscriptions</string>
     <string name="no_premium_pack_available">No premium pack available</string>
     <string name="no_subscription_found">No subscription found.</string>
     <string name="subscription_history_showing_text">Showing up to 2 years of payment history</string>
     <string name="packs_tab_layout">Premium Packs Tab Layout</string>
+    <string name="ads_app_id">ca-app-pub-8724031649645430~8504153625</string>
 </resources>
