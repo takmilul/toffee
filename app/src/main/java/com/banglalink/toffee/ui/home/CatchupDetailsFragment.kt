@@ -128,9 +128,9 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
                         homeViewModel.getVastTagV3(false)
                     }
                 }
+                observeListState()
+                observeSubscribeChannel()
             }
-            observeListState()
-            observeSubscribeChannel()
         }
     
         observe(mPref.isShowMoreToggled) {
@@ -176,21 +176,22 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     
     private fun observeListState() {
         var isInitialized = false
-        
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            detailsAdapter?.loadStateFlow?.collect {
-                val list = detailsAdapter?.snapshot()
-                val isLoading = it.source.refresh is Loading || !isInitialized
-                val isEmpty = (list?.size ?: 0) <= 0 && !it.source.refresh.endOfPaginationReached
-                binding.progressBar.isVisible = isLoading && isEmpty
-                val emptyTextView = view?.findViewById<TextView>(R.id.empty_view_text_no_item_found)
-                emptyTextView?.isVisible = !isLoading && isEmpty
-                isInitialized = true
-                if(currentItem != null && (list?.size ?: 0) > 0) {
-                    checkIfFragmentAttached {
-                        homeViewModel.addToPlayListMutableLiveData.postValue(
-                            AddToPlaylistData(-1, listOf(currentItem!!, list!!.items[0]))
-                        )
+        runCatching {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                detailsAdapter?.loadStateFlow?.collect {
+                    val list = detailsAdapter?.snapshot()
+                    val isLoading = it.source.refresh is Loading || !isInitialized
+                    val isEmpty = (list?.size ?: 0) <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.progressBar.isVisible = isLoading && isEmpty
+                    val emptyTextView = view?.findViewById<TextView>(R.id.empty_view_text_no_item_found)
+                    emptyTextView?.isVisible = !isLoading && isEmpty
+                    isInitialized = true
+                    if (currentItem != null && (list?.size ?: 0) > 0) {
+                        checkIfFragmentAttached {
+                            homeViewModel.addToPlayListMutableLiveData.postValue(
+                                AddToPlaylistData(-1, listOf(currentItem!!, list!!.items[0]))
+                            )
+                        }
                     }
                 }
             }
