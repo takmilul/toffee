@@ -68,12 +68,27 @@ import com.banglalink.toffee.model.BubbleConfig
 //        PremiumPackItem::class
     ],
     version = 15,
-    exportSchema = false)
+    exportSchema = true,
+//    autoMigrations = [
+//        AutoMigration(
+//            from = 15,
+//            to = 16,
+//            spec = ToffeeDatabase.ToffeeMigrationSpec::class //This spec only needs in case of RenameColumn, RenameTable, DeleteColumn and DeleteTable. Otherwise room will automatically migrate database, no need to add specs here.
+//        )
+//    ]
+)
 
-abstract class ToffeeDatabase: RoomDatabase() {
+abstract class ToffeeDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "toffee-db"
     }
+    
+//    @RenameColumn.Entries(
+//        RenameColumn(tableName = "DrmLicenseEntity", fromColumnName = "channel_id", toColumnName = "channelId"),
+//        RenameColumn(tableName = "DrmLicenseEntity", fromColumnName = "channel_name", toColumnName = "channelName"),
+//    )
+//    @DeleteTable(tableName = "PremiumPackItem")
+//    class ToffeeMigrationSpec : AutoMigrationSpec
     
     abstract fun getUploadDao(): UploadDao
     abstract fun getViewCountDao(): ViewCountDAO

@@ -1,10 +1,10 @@
 package com.banglalink.toffee.di
 
 import android.content.Context
+import androidx.media3.common.util.Util
 import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.google.android.exoplayer2.util.Util
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +14,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false

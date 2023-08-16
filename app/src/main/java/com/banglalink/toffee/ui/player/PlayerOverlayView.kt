@@ -5,16 +5,20 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.*
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StyleRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
+import androidx.media3.common.Player
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.android.exoplayer2.Player
 
 
 /**
