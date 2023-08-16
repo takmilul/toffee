@@ -18,8 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvPacksName"
@@ -61,8 +60,7 @@
             app:srcCompat="@drawable/ic_payment_method"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPacksName"
-            />
+            app:layout_constraintTop_toBottomOf="@id/tvPacksName" />
 
         <TextView
             android:id="@+id/paymentMethodLabel"
@@ -81,8 +79,7 @@
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/paymentMethodIcon"
-            app:layout_constraintBottom_toBottomOf="@id/paymentMethodIcon"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/paymentMethodIcon" />
 
         <ImageView
             android:id="@+id/priceIcon"
@@ -91,8 +88,7 @@
             app:srcCompat="@drawable/ic_price"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/paymentMethodIcon"
-            />
+            app:layout_constraintTop_toBottomOf="@id/paymentMethodIcon" />
 
         <TextView
             android:id="@+id/priceLabel"
@@ -101,8 +97,7 @@
             app:layout_constraintStart_toEndOf="@id/priceIcon"
             app:layout_constraintTop_toTopOf="@id/priceIcon"
             app:layout_constraintBottom_toBottomOf="@id/priceIcon"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            />
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
 
         <TextView
             android:id="@+id/tvPriceVal"
@@ -112,8 +107,7 @@
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/priceIcon"
-            app:layout_constraintBottom_toBottomOf="@id/priceIcon"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/priceIcon" />
 
         <ImageView
             android:id="@+id/planIcon"
@@ -122,8 +116,8 @@
             app:srcCompat="@drawable/ic_plan"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/priceIcon"
-            />
+            app:layout_constraintTop_toBottomOf="@id/priceIcon" />
+        
         <TextView
             android:id="@+id/planLabel"
             style="@style/packsInfoLabel"
@@ -131,8 +125,8 @@
             app:layout_constraintStart_toEndOf="@id/planIcon"
             app:layout_constraintTop_toTopOf="@id/planIcon"
             app:layout_constraintBottom_toBottomOf="@id/planIcon"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            />
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
+        
         <TextView
             android:id="@+id/tvPlanVal"
             style="@style/packsInfoValue"
@@ -141,8 +135,8 @@
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/planIcon"
-            app:layout_constraintBottom_toBottomOf="@id/planIcon"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/planIcon" />
+        
         <ImageView
             android:id="@+id/autoRenewalIcon"
             android:layout_width="16dp"
@@ -150,8 +144,8 @@
             app:srcCompat="@drawable/ic_auto_renewal"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/planIcon"
-            />
+            app:layout_constraintTop_toBottomOf="@id/planIcon" />
+        
         <TextView
             android:id="@+id/autoRenewalLabel"
             style="@style/packsInfoLabel"
@@ -159,8 +153,8 @@
             app:layout_constraintStart_toEndOf="@id/autoRenewalIcon"
             app:layout_constraintTop_toTopOf="@id/autoRenewalIcon"
             app:layout_constraintBottom_toBottomOf="@id/autoRenewalIcon"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            />
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
+        
         <TextView
             android:id="@+id/tvAutoRenewalVal"
             style="@style/packsInfoValue"
@@ -169,8 +163,7 @@
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/autoRenewalIcon"
-            app:layout_constraintBottom_toBottomOf="@id/autoRenewalIcon"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/autoRenewalIcon" />
 
         <ImageView
             android:id="@+id/expiryTimeIcon"
@@ -181,6 +174,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/autoRenewalIcon"
             app:srcCompat="@drawable/ic_clock" />
+        
         <TextView
             android:id="@+id/expiryTimeLabel"
             style="@style/packsInfoLabel"
@@ -188,17 +182,33 @@
             app:layout_constraintStart_toEndOf="@id/expiryTimeIcon"
             app:layout_constraintTop_toTopOf="@id/expiryTimeIcon"
             app:layout_constraintBottom_toBottomOf="@id/expiryTimeIcon"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            />
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
+        
         <TextView
             android:id="@+id/tvExpiryTimeVal"
             style="@style/packsInfoValue"
+            android:layout_width="wrap_content"
+            app:layout_constrainedWidth="true"
             tools:text="29 Jan 2023 11:59:59 pm"
             android:text="@{data.expiryTime}"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/infoIcon"
             app:layout_constraintTop_toTopOf="@id/expiryTimeIcon"
-            app:layout_constraintBottom_toBottomOf="@id/expiryTimeIcon"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/expiryTimeIcon" />
+        
+        <ImageView
+            android:id="@+id/infoIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/info_icon"
+            app:srcCompat="@drawable/ic_info"
+            app:layout_constraintStart_toEndOf="@id/tvExpiryTimeVal"
+            app:layout_constraintTop_toTopOf="@id/tvExpiryTimeVal"
+            app:layout_constraintBottom_toBottomOf="@id/tvExpiryTimeVal"
+            app:layout_constraintEnd_toEndOf="parent" />
+            
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

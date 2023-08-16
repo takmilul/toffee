@@ -48,6 +48,10 @@ import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.cast.CastPlayer
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
@@ -129,9 +133,6 @@ import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
 import com.conviva.sdk.ConvivaAnalytics
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -164,7 +165,9 @@ import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
 
+@UnstableApi
 @AndroidEntryPoint
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class HomeActivity : PlayerPageActivity(),
     SearchView.OnQueryTextListener,
     DraggerLayout.OnPositionChangedListener,
@@ -976,7 +979,7 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    override fun getPlayerView(): StyledPlayerView = binding.playerView
+    override fun getPlayerView(): PlayerView = binding.playerView
     
     override fun setPlayerInPlayerView() {
         binding.playerView.player = player
@@ -2557,12 +2560,12 @@ class HomeActivity : PlayerPageActivity(),
         runCatching {
             if (BuildConfig.DEBUG) {
 //                val settings: Map<String, Any> = mutableMapOf(
-//                    ConvivaSdkConstants.GATEWAY_URL to getString(R.string.convivaGatewayUrl),
+//                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
 //                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
 //                )
-//                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyTest), settings)
+//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST), settings)
             } else {
-                ConvivaAnalytics.init(applicationContext, getString(R.string.convivaCustomerKeyProd))
+                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
             }
             ConvivaHelper.init(applicationContext, true)
         }

@@ -193,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="@string/pass_brand_image_view"
-                    android:src="@drawable/ic_banglalink_logo"
+                    app:srcCompat="@drawable/ic_banglalink_logo"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/blPackTitle" />
             
@@ -209,7 +209,7 @@
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/giftVoucherCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/blPackCard">
@@ -275,10 +275,92 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="@string/pass_brand_image_view"
-                    android:src="@drawable/ic_bkash_logo"
+                    app:srcCompat="@drawable/ic_bkash_logo"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/bkashPackTitle" />
-            
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/giftVoucherCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bKashPackCard">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/giftVoucherTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:textSize="14sp"
+                    android:textFontWeight="700"
+                    android:text="@string/use_gift_voucher"
+                    android:textColor="@color/cardTitleColor"
+                    app:layout_constraintBottom_toTopOf="@id/giftVoucherPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/giftVoucherImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/giftVoucherPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:text="Use the Gift Voucher code"
+                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherTitle"
+                    app:layout_constraintBottom_toTopOf="@id/giftVoucherDetails"/>
+
+                <TextView
+                    android:id="@+id/giftVoucherDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/for_all_users_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
+                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherPrice" />
+
+                <ImageView
+                    android:id="@+id/giftVoucherImg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:srcCompat="@drawable/ic_gift_voucher"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/giftVoucherTitle" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>

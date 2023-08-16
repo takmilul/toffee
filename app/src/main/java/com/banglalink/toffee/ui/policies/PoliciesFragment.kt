@@ -43,7 +43,7 @@ class PoliciesFragment : BaseFragment() {
 
     private fun onClickCreatorsPolicy() {
         val args = Bundle().apply {
-            putString("myTitle", "Creators Policy")
+            putString("myTitle", "Creator's Policy")
             putString("url", mPref.creatorsPolicyUrl)
         }
         findNavController().navigate(R.id.termsAndConditionFragment, args)

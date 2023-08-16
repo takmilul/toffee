@@ -79,5 +79,10 @@
             app:argType="string"
             app:nullable="true" />
     </dialog>
-    
+    <fragment
+        android:id="@+id/reedemVoucherCodeFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.ReedemVoucherCodeFragment"
+        android:label="fragment_reedem_voucher_code"
+        tools:layout="@layout/fragment_reedem_voucher_code" />
+
 </navigation>

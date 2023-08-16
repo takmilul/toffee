@@ -21,12 +21,12 @@
         tools:visibility="gone"
         >
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iconFailureType"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_subscription_login" />
+            app:srcCompat="@drawable/ic_subscription_login" />
 
         <TextView
             android:id="@+id/textFailureMessage"
