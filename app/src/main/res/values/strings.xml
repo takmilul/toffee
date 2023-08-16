@@ -580,4 +580,8 @@
     <string name="subscription_history_showing_text">Showing up to 2 years of payment history</string>
     <string name="packs_tab_layout">Premium Packs Tab Layout</string>
     <string name="ads_app_id">ca-app-pub-8724031649645430~8504153625</string>
+    <string name="use_gift_voucher">Use Gift Voucher</string>
+    <string name="enter_the_code">Enter the code</string>
+    <string name="enter_gift_voucher_code">Enter the Gift Voucher code here</string>
+    <string name="voucher_code_not_valid">Voucher code is not valid</string>
 </resources>
