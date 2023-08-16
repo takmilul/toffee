@@ -1,14 +1,15 @@
 package com.banglalink.toffee.ui.player
 
 import android.net.Uri
+import androidx.media3.cast.MediaItemConverter
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.DrmConfiguration
+import androidx.media3.common.util.Assertions
+import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Log
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaItem.DrmConfiguration
-import com.google.android.exoplayer2.ext.cast.MediaItemConverter
-import com.google.android.exoplayer2.util.Assertions
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
@@ -20,6 +21,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
+@UnstableApi
 class ToffeeMediaItemConverter(
     private val isOverWifi: Boolean,
     private val mPref: SessionPreference,
@@ -143,7 +145,7 @@ class ToffeeMediaItemConverter(
             val builder = MediaItem.Builder()
             builder.setUri(Uri.parse(mediaItemJson.getString(KEY_URI)))
             if (mediaItemJson.has(KEY_TITLE)) {
-                val mediaMetadata = com.google.android.exoplayer2.MediaMetadata.Builder()
+                val mediaMetadata = androidx.media3.common.MediaMetadata.Builder()
                     .setTitle(mediaItemJson.getString(KEY_TITLE))
                     .build()
                 builder.setMediaMetadata(mediaMetadata)
@@ -173,7 +175,8 @@ class ToffeeMediaItemConverter(
             val key = iterator.next()
             requestHeaders[key] = requestHeadersJson.getString(key)
         }
-        builder.setDrmConfiguration(DrmConfiguration
+        builder.setDrmConfiguration(
+            DrmConfiguration
             .Builder(UUID.fromString(json.getString(KEY_UUID)))
             .setLicenseUri(json.getString(KEY_LICENSE_URI))
             .setLicenseRequestHeaders(requestHeaders)

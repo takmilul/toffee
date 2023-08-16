@@ -1,15 +1,21 @@
 package com.banglalink.toffee.util
 
 import android.content.Context
+import androidx.media3.common.MediaLibraryInfo
+import androidx.media3.exoplayer.ExoPlayer
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.model.ChannelInfo
-import com.conviva.sdk.*
-import com.conviva.sdk.ConvivaSdkConstants.AdPosition.*
+import com.conviva.sdk.ConvivaAdAnalytics
+import com.conviva.sdk.ConvivaAnalytics
+import com.conviva.sdk.ConvivaSdkConstants
+import com.conviva.sdk.ConvivaSdkConstants.AdPosition.MIDROLL
+import com.conviva.sdk.ConvivaSdkConstants.AdPosition.POSTROLL
+import com.conviva.sdk.ConvivaSdkConstants.AdPosition.PREROLL
+import com.conviva.sdk.ConvivaVideoAnalytics
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class ConvivaHelper private constructor() {
     
     var vastTag: String? = null
@@ -87,7 +93,7 @@ class ConvivaHelper private constructor() {
                     ConvivaSdkConstants.DURATION to (ad?.duration?.toInt() ?: 0),
                     ConvivaSdkConstants.ENCODED_FRAMERATE to 0,
                     ConvivaSdkConstants.FRAMEWORK_NAME to "ExoPlayer IMA Extension",
-                    ConvivaSdkConstants.FRAMEWORK_VERSION to ExoPlayerLibraryInfo.VERSION,
+                    ConvivaSdkConstants.FRAMEWORK_VERSION to MediaLibraryInfo.VERSION,
                     ConvivaConstants.APP_VERSION to BuildConfig.VERSION_NAME,
                     ConvivaConstants.AD_TECHNOLOGY to "Client Side",
                     ConvivaConstants.AD_ID to (ad?.adId ?: "N/A"),

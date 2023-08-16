@@ -1,9 +1,9 @@
 package com.banglalink.toffee.extension
 
+import androidx.media3.cast.CastPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.gson.Gson
 
@@ -15,6 +15,7 @@ fun MediaQueueItem.getChannelMetadata(): ChannelInfo? {
     }
 }
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun MediaItem.getChannelMetadata(player: Player? = null): ChannelInfo? {
     localConfiguration?.tag?.let {
         if(it is ChannelInfo) return it
