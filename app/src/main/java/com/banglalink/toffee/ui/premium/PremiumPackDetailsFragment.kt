@@ -2,9 +2,11 @@ package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -28,8 +30,10 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltipUtils
 
-class PremiumPackDetailsFragment : BaseFragment() {
+class PremiumPackDetailsFragment : BaseFragment(){
     
     private var isFreeTrialOver = false
     private var _binding: FragmentPremiumPackDetailsBinding? = null
@@ -37,6 +41,8 @@ class PremiumPackDetailsFragment : BaseFragment() {
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+
+    private var tooltip: Any? = null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
@@ -104,8 +110,26 @@ class PremiumPackDetailsFragment : BaseFragment() {
                 }
             }
         }
+
+        binding.infoIcon.safeClick({
+            //https://github.com/douglasjunior/android-simple-tooltip
+            tooltip = SimpleTooltip.Builder(requireContext())
+                .anchorView(binding.infoIcon)
+                .text(R.string.subscription_history_tooltip_text)
+                .gravity(Gravity.TOP)
+                .animated(false)
+                .transparentOverlay(true)
+                .margin(0f)
+                .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
+                .arrowColor(resources.getColor(R.color.tooltip_bg_color))
+                .arrowHeight(SimpleTooltipUtils.pxFromDp(10f).toInt().toFloat())
+                .arrowWidth(SimpleTooltipUtils.pxFromDp(14f).toInt().toFloat())
+                .focusable(true)
+                .build()
+                .show()
+        })
     }
-    
+
     private fun observePackStatus() {
         observe(viewModel.activePackListLiveData) {
             when(it) {
@@ -221,7 +245,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             }
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()

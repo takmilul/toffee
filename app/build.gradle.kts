@@ -250,4 +250,7 @@ dependencies {
     
     debugImplementation(libs.fragment.test)
 //    debugImplementation (libs.leakcanary)
+
+    implementation ("com.github.douglasjunior:android-simple-tooltip:1.1.0")
+//    implementation ("com.github.skydoves:balloon:1.5.4")
 }
