@@ -199,7 +199,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-            
+
             <TextView
                 android:id="@+id/packPriceTextView"
                 setPremiumPackSubtitle="@{data}"
@@ -217,7 +217,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/payNowButton"
                 tools:text="Starts from 10 BDT" />
-            
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/payNowButton"
                 style="@style/ButtonStyleRing"
@@ -231,7 +231,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
         </androidx.constraintlayout.widget.ConstraintLayout>
         
         <androidx.constraintlayout.widget.ConstraintLayout

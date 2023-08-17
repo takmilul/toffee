@@ -118,8 +118,8 @@ class PaymentStatusDialog : DialogFragment() {
             }
             SUCCESS -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_success)
-                binding.titleMsg.text = getString(R.string.payment_successful)
-                binding.subTitleMsg.text = getText(R.string.please_wait_you_will_be_redirected)
+                binding.titleMsg.text = statusTitle ?: getString(R.string.payment_successful)
+                binding.subTitleMsg.text = statusMessage ?: getText(R.string.please_wait_you_will_be_redirected)
                 binding.tryAgainBtn.hide()
                 binding.goToHomePageBtn.hide()
                 binding.backIcon.hide()
