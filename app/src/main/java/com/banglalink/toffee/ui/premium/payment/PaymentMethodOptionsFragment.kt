@@ -17,6 +17,7 @@ import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -38,6 +39,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
         viewModel.selectedDataPackOption.value = null
         viewModel.paymentMethod.value?.let { paymentTypes ->
             with(binding) {
+
+                //Trail Section
                 if (!paymentTypes.free.isNullOrEmpty()) {
                     var blTrialPackMethod: PackPaymentMethod? = null
                     var nonBlTrialPackMethod: PackPaymentMethod? = null
@@ -102,6 +105,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 } else {
                     trialCard.hide()
                 }
+
+                //Voucher Section
+                if (paymentTypes.Voucher.isNullOrEmpty()){
+                    giftVoucherCard.hide()
+                }else {
+                    giftVoucherCard.show()
+                }
                 
                 val blStartingPrice = if (mPref.isPrepaid) {
                     paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
@@ -142,7 +152,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
                 })
                 giftVoucherCard.safeClick({
-                    findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "giftVoucher"))
+                    findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
                 })
             }
         }
