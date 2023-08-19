@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee.lib"
-    compileSdk = 32
+    compileSdk = 33
     
     defaultConfig {
         minSdk = 21

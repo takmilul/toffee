@@ -5,12 +5,16 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltipUtils
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.SubsHistoryDetail
 import com.banglalink.toffee.databinding.FragmentSubscriptionHistoryBinding
+import com.banglalink.toffee.databinding.TooltipLayoutSubscriptionBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
@@ -21,9 +25,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltipUtils
-
+import com.banglalink.toffee.util.Utils
 
 class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHistoryDetail> {
     private var _binding: FragmentSubscriptionHistoryBinding? = null
@@ -63,16 +65,29 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
 
     override fun onOpenMenu(view: View, item: SubsHistoryDetail) {
         super.onOpenMenu(view, item)
+        
+        val margin = 0
+        val anchorRect = SimpleTooltipUtils.calculateRectInWindow(view)
+        val contentView = TooltipLayoutSubscriptionBinding.inflate(layoutInflater).root
+        
+        val iconBottomLocation = anchorRect.bottom.plus(contentView.measuredHeight + margin)
+        val isSpaceAvailableAtBottom = (iconBottomLocation + contentView.measuredHeight + margin) <= Utils.getScreenHeight()
+        val gravity = if (!isSpaceAvailableAtBottom) {
+            Gravity.TOP
+        } else {
+            Gravity.BOTTOM
+        }
+        
         //https://github.com/douglasjunior/android-simple-tooltip
         SimpleTooltip.Builder(requireContext())
             .anchorView(view)
             .text(R.string.subscription_history_tooltip_text)
-            .gravity(Gravity.BOTTOM)
+            .gravity(gravity)
             .animated(false)
             .transparentOverlay(true)
-            .margin(0f)
+            .margin(margin.toFloat())
             .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-            .arrowColor(resources.getColor(R.color.tooltip_bg_color))
+            .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
             .arrowHeight(SimpleTooltipUtils.pxFromDp(10f).toInt().toFloat())
             .arrowWidth(SimpleTooltipUtils.pxFromDp(14f).toInt().toFloat())
             .focusable(true)

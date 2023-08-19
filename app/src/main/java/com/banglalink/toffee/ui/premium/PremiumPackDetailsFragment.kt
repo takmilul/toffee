@@ -6,13 +6,14 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltipUtils
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
@@ -30,8 +31,6 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltipUtils
 
 class PremiumPackDetailsFragment : BaseFragment(){
     
