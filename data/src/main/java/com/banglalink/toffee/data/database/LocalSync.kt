@@ -156,7 +156,8 @@ class LocalSync @Inject constructor(
             if (channelInfo.urlType == PLAY_CDN) {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     runCatching {
-                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate)) || !channelInfo.equals(it)) {
+                        if (Utils.getDate(it.expiryDate).before(Utils.getDate(channelInfo.signedUrlExpiryDate ?: channelInfo
+                            .signedCookieExpiryDate)) || (!channelInfo.equals(it) && !isFromCache)) {
                             cdnChannelItemRepository.updateCdnChannelItemByChannelId(
                                 contentId.toLong(), 
                                 channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,

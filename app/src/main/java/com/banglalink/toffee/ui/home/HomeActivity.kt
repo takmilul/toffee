@@ -1215,9 +1215,9 @@ class HomeActivity : PlayerPageActivity(),
                                 signedCookie = mediaCdnData.signedCookie
                                 it
                             }
-                        }
+                        }?.copy()
                         lifecycleScope.launch {
-                            cInfo?.getContentId()?.toLong()?.let {
+                            newChannelInfo?.getContentId()?.toLong()?.let {
                                 cdnChannelItemRepository.updateCdnChannelItemByChannelId(
                                     it, expiryDate, gson.toJson(newChannelInfo)
                                 )
