@@ -531,4 +531,11 @@ interface ToffeeApi {
         @Body fmRadioContentRequest: FmRadioContentRequest
     ): FmRadioContentResponse
 
+    @POST("check-voucher-status/{packId}/{dbVersion}")
+    suspend fun getVoucherPayment(
+        @Path("packId") packId:Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body packVoucherMethodRequest: PackVoucherMethodRequest
+    ): VoucherPaymentMethodResponse
+
 }

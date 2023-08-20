@@ -66,7 +66,7 @@
     <dialog
         android:id="@+id/paymentStatusDialog"
         android:name="com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog"
-        tools:layout="@layout/dialog_html_page_view">
+        tools:layout="@layout/dialog_payment_status">
         <argument
             android:name="isHideBackIcon"
             android:defaultValue="false"
@@ -81,7 +81,7 @@
     </dialog>
     <fragment
         android:id="@+id/reedemVoucherCodeFragment"
-        android:name="com.banglalink.toffee.ui.premium.payment.ReedemVoucherCodeFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.RedeemVoucherCodeFragment"
         android:label="fragment_reedem_voucher_code"
         tools:layout="@layout/fragment_reedem_voucher_code" />
 

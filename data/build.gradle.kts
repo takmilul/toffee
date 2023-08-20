@@ -12,11 +12,13 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee.lib"
-    compileSdk = 32
+    compileSdk = 33
     
     defaultConfig {
         minSdk = 21
-        
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }

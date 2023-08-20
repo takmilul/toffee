@@ -1,15 +1,20 @@
 package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
+import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltipUtils
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.response.SubsHistoryDetail
 import com.banglalink.toffee.databinding.FragmentSubscriptionHistoryBinding
+import com.banglalink.toffee.databinding.TooltipLayoutSubscriptionBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
@@ -20,9 +25,9 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.banglalink.toffee.util.Utils
 
-
-class SubscriptionHistoryFragment : BaseFragment() {
+class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHistoryDetail> {
     private var _binding: FragmentSubscriptionHistoryBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
@@ -39,7 +44,7 @@ class SubscriptionHistoryFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = SubscriptionHistoryAdapter()
+        mAdapter = SubscriptionHistoryAdapter(this)
         mAdapterWithFooter = SubscriptionHistoryFooterAdapter(mAdapter)
 
         with(binding.paymentHisList) {
@@ -57,6 +62,62 @@ class SubscriptionHistoryFragment : BaseFragment() {
             showSignIn()
         }
     }
+
+    override fun onOpenMenu(view: View, item: SubsHistoryDetail) {
+        super.onOpenMenu(view, item)
+        
+        val margin = 0
+        val anchorRect = SimpleTooltipUtils.calculateRectInWindow(view)
+        val contentView = TooltipLayoutSubscriptionBinding.inflate(layoutInflater).root
+        
+        val iconBottomLocation = anchorRect.bottom.plus(contentView.measuredHeight + margin)
+        val isSpaceAvailableAtBottom = (iconBottomLocation + contentView.measuredHeight + margin) <= Utils.getScreenHeight()
+        val gravity = if (!isSpaceAvailableAtBottom) {
+            Gravity.TOP
+        } else {
+            Gravity.BOTTOM
+        }
+        
+        //https://github.com/douglasjunior/android-simple-tooltip
+        SimpleTooltip.Builder(requireContext())
+            .anchorView(view)
+            .text(R.string.subscription_history_tooltip_text)
+            .gravity(gravity)
+            .animated(false)
+            .transparentOverlay(true)
+            .margin(margin.toFloat())
+            .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
+            .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
+            .arrowHeight(SimpleTooltipUtils.pxFromDp(10f).toInt().toFloat())
+            .arrowWidth(SimpleTooltipUtils.pxFromDp(14f).toInt().toFloat())
+            .focusable(true)
+            .build()
+            .show()
+
+//        https://github.com/skydoves/balloon#balloon-builder-methods
+//        val balloon = Balloon.Builder(requireContext())
+//            .setWidthRatio(1.0f)
+//            .setWidth(BalloonSizeSpec.WRAP)
+//            .setHeight(BalloonSizeSpec.WRAP)
+//            .setText(resources.getString(R.string.subscription_history_tooltip_text))
+//            .setTextColorResource(R.color.tooltip_txt_color)
+//            .setTextSize(12f)
+//            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+//            .setArrowSize(10)
+//            .setArrowPosition(0.5f)
+//            .setPadding(8)
+//            .setMarginHorizontal(20.dp)
+//            .setTextTypeface(Typeface.BOLD)
+//            .setCornerRadius(8f)
+//            .setBackgroundColorResource(R.color.tooltip_bg_color)
+////            .setBalloonAnimation(BalloonAnimation.FADE)
+////            .setLifecycleOwner(viewLifecycleOwner)
+//            .setTextGravity(Gravity.LEFT)
+//            .build()
+//
+//        view.showAlignBottom(balloon)
+    }
+
 
     private fun observeClick() {
         observe(viewModel.clickedOnSubHistory) {

@@ -199,7 +199,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-            
+
             <TextView
                 android:id="@+id/packPriceTextView"
                 setPremiumPackSubtitle="@{data}"
@@ -217,7 +217,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/payNowButton"
                 tools:text="Starts from 10 BDT" />
-            
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/payNowButton"
                 style="@style/ButtonStyleRing"
@@ -231,7 +231,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
         </androidx.constraintlayout.widget.ConstraintLayout>
         
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -261,12 +261,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="You have bought 1 GB for 3 days pack" />
+
+            <ImageView
+                android:id="@+id/infoIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/info_icon"
+                app:srcCompat="@drawable/ic_info"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/packExpiryDateTextView"
+                app:layout_constraintBottom_toBottomOf="@id/packExpiryDateTextView"
+                app:layout_constraintEnd_toStartOf="@id/packExpiryDateTextView"/>
             
             <TextView
                 android:id="@+id/packExpiryDateTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
+                app:layout_constrainedWidth="true"
+                android:layout_marginEnd="16dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="8dp"
                 android:ellipsize="end"
@@ -279,7 +294,7 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/infoIcon"
                 app:layout_constraintTop_toBottomOf="@+id/packPurchaseMsgTextView"
                 tools:text="Expires on 24 Feb, 2023" />
             

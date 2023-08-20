@@ -24,6 +24,8 @@ data class PackPaymentMethodBean(
     val bl: @RawValue Bl?,
     @SerializedName("FREE")
     val free: @RawValue List<PackPaymentMethod>?,
+    @SerializedName("VOUCHER")
+    val Voucher: @RawValue List<PackPaymentMethod>?,
 ) : Parcelable
 
 @Parcelize
@@ -45,6 +47,7 @@ data class Bl(
     @SerializedName("PREPAID")
     val prepaid: List<PackPaymentMethod>?,
 ) : Parcelable
+
 
 @Parcelize
 data class PackPaymentMethod(
@@ -68,4 +71,12 @@ data class PackPaymentMethod(
     val isPrepaid: Int? = null,
     @SerializedName("listTitle")
     val listTitle: String? = null,
-) : Parcelable
+
+    @SerializedName("is_auto_renew")
+    val isAutoRenew: Int? = null,
+    @SerializedName("partner_id")
+    val partnerId: Int? = null,
+    @SerializedName("campaigns_id")
+    val campaignsId: Int? = null,
+
+    ) : Parcelable
