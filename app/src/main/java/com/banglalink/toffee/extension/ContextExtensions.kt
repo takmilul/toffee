@@ -4,12 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.banglalink.toffee.ArrowPositionRules
+import com.banglalink.toffee.Balloon
+import com.banglalink.toffee.BalloonSizeSpec
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if(!message.isNullOrBlank()) {
@@ -61,3 +66,23 @@ fun View.safeClick(action: View.OnClickListener, debounceTime: Long = 1000L) {
 
 val FragmentManager.currentNavigationFragment: Fragment?
     get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+
+fun Context.getBalloon(tooltipText: String): Balloon {
+    return Balloon.Builder(this)
+        .setWidthRatio(0.95f)
+        .setWidth(BalloonSizeSpec.WRAP)
+        .setHeight(BalloonSizeSpec.WRAP)
+        .setText(tooltipText)
+        .setTextColorResource(com.banglalink.toffee.R.color.tooltip_text_color)
+        .setTextSize(12f)
+        .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+        .setArrowSize(12)
+        .setArrowPosition(0.5f)
+        .setPadding(8)
+        .setMarginHorizontal(16)
+        .setTextTypeface(ResourcesCompat.getFont(this, com.banglalink.toffee.R.font.roboto_medium)!!)
+        .setCornerRadius(8f)
+        .setBackgroundColorResource(com.banglalink.toffee.R.color.tooltip_bg_color)
+        .setTextGravity(Gravity.START)
+        .build()
+}

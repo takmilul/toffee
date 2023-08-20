@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":app", ":data", ":tooltip")
+include(":app", ":data", ":tooltip", ":balloon")
 
 rootProject.name = "ToffeeAndroidMobile"

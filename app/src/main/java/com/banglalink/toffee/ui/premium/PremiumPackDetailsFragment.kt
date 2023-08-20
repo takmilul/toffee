@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +11,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.getBalloon
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
@@ -109,27 +108,34 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 }
             }
         }
-
+        
         binding.infoIcon.safeClick({
             //https://github.com/douglasjunior/android-simple-tooltip
-            tooltip = SimpleTooltip.Builder(requireContext())
-                .anchorView(binding.infoIcon)
-                .text(R.string.subscription_history_tooltip_text)
-                .gravity(Gravity.TOP)
-                .animated(false)
-                .transparentOverlay(true)
-                .margin(0f)
-                .padding(16F.px)
-                .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-                .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
-                .arrowHeight(10F.px)
-                .arrowWidth(14F.px)
-                .focusable(true)
-                .build()
-                .show()
+//            tooltip = SimpleTooltip.Builder(requireContext())
+//                .anchorView(binding.infoIcon)
+//                .text(R.string.subscription_history_tooltip_text)
+//                .gravity(Gravity.TOP)
+//                .animated(false)
+//                .transparentOverlay(true)
+//                .margin(0f)
+//                .padding(16F.px)
+//                .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
+//                .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
+//                .arrowHeight(10F.px)
+//                .arrowWidth(14F.px)
+//                .focusable(true)
+//                .build()
+//                .show()
+            runCatching {
+                it.showAlignBottom(
+                    requireContext().getBalloon(
+                        resources.getString(R.string.subscription_history_tooltip_text)
+                    )
+                )
+            }
         })
     }
-
+    
     private fun observePackStatus() {
         observe(viewModel.activePackListLiveData) {
             when(it) {

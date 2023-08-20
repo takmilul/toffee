@@ -1,32 +1,27 @@
 package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
-import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltipUtils
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.SubsHistoryDetail
 import com.banglalink.toffee.databinding.FragmentSubscriptionHistoryBinding
-import com.banglalink.toffee.databinding.TooltipLayoutSubscriptionBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.getBalloon
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.util.Utils
 
 class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHistoryDetail> {
     private var _binding: FragmentSubscriptionHistoryBinding? = null
@@ -67,57 +62,63 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
     override fun onOpenMenu(view: View, item: SubsHistoryDetail) {
         super.onOpenMenu(view, item)
         
-        val margin = 0
-        val anchorRect = SimpleTooltipUtils.calculateRectInWindow(view)
-        val contentView = TooltipLayoutSubscriptionBinding.inflate(layoutInflater).root
-        
-        val iconBottomLocation = anchorRect.bottom.plus(contentView.measuredHeight + margin)
-        val isSpaceAvailableAtBottom = (iconBottomLocation + contentView.measuredHeight + margin) <= Utils.getScreenHeight()
-        val gravity = if (!isSpaceAvailableAtBottom) {
-            Gravity.TOP
-        } else {
-            Gravity.BOTTOM
-        }
-        
-        //https://github.com/douglasjunior/android-simple-tooltip
-        SimpleTooltip.Builder(requireContext())
-            .anchorView(view)
-            .text(item.tooltipMessage ?: getString(R.string.subscription_history_tooltip_text))
-            .gravity(gravity)
-            .animated(false)
-            .transparentOverlay(true)
-            .margin(margin.toFloat())
-            .padding(16F)
-            .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-            .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
-            .arrowHeight(10F.px)
-            .arrowWidth(12F.px)
-            .focusable(true)
-            .build()
-            .show()
-
+//        val margin = 0
+//        val anchorRect = SimpleTooltipUtils.calculateRectInWindow(view)
+//        val contentView = TooltipLayoutSubscriptionBinding.inflate(layoutInflater).root
+//
+//        val iconBottomLocation = anchorRect.bottom.plus(contentView.measuredHeight + margin)
+//        val isSpaceAvailableAtBottom = (iconBottomLocation + contentView.measuredHeight + margin) <= Utils.getScreenHeight()
+//        val gravity = if (!isSpaceAvailableAtBottom) {
+//            Gravity.TOP
+//        } else {
+//            Gravity.BOTTOM
+//        }
+//        
+////        https://github.com/douglasjunior/android-simple-tooltip
+//        SimpleTooltip.Builder(requireContext())
+//            .anchorView(view)
+//            .text(item.tooltipMessage ?: getString(R.string.subscription_history_tooltip_text))
+//            .gravity(gravity)
+//            .animated(false)
+//            .transparentOverlay(true)
+//            .margin(margin.toFloat())
+//            .padding(16F)
+//            .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
+//            .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
+//            .arrowHeight(10F.px)
+//            .arrowWidth(12F.px)
+//            .focusable(true)
+//            .build()
+//            .show()
+            
 //        https://github.com/skydoves/balloon#balloon-builder-methods
 //        val balloon = Balloon.Builder(requireContext())
-//            .setWidthRatio(1.0f)
+//            .setWidthRatio(0.8f)
 //            .setWidth(BalloonSizeSpec.WRAP)
 //            .setHeight(BalloonSizeSpec.WRAP)
 //            .setText(resources.getString(R.string.subscription_history_tooltip_text))
-//            .setTextColorResource(R.color.tooltip_txt_color)
+//            .setTextColorResource(R.color.tooltip_text_color)
 //            .setTextSize(12f)
 //            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-//            .setArrowSize(10)
+//            .setArrowSize(12)
 //            .setArrowPosition(0.5f)
 //            .setPadding(8)
-//            .setMarginHorizontal(20.dp)
-//            .setTextTypeface(Typeface.BOLD)
+//            .setMarginHorizontal(16)
+//            .setTextTypeface(ResourcesCompat.getFont(requireContext(), R.font.roboto_regular)!!)
 //            .setCornerRadius(8f)
 //            .setBackgroundColorResource(R.color.tooltip_bg_color)
 ////            .setBalloonAnimation(BalloonAnimation.FADE)
 ////            .setLifecycleOwner(viewLifecycleOwner)
-//            .setTextGravity(Gravity.LEFT)
+//            .setTextGravity(Gravity.START)
 //            .build()
-//
 //        view.showAlignBottom(balloon)
+        runCatching {
+            view.showAlignBottom(
+                requireContext().getBalloon(
+                    item.tooltipMessage ?: getString(R.string.subscription_history_tooltip_text)
+                )
+            )
+        }
     }
 
 
