@@ -42,7 +42,7 @@ class DramaSeriesContentService @AssistedInject constructor(
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it)
+                localSync.syncData(it, isFromCache = response.isFromCache)
                 it
             }
         } else emptyList()

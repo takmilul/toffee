@@ -6,6 +6,9 @@
 
     <data>
         <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+        <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.SubsHistoryDetail" />
     </data>
@@ -208,7 +211,8 @@
             app:layout_constraintStart_toEndOf="@id/tvExpiryTimeVal"
             app:layout_constraintTop_toTopOf="@id/tvExpiryTimeVal"
             app:layout_constraintBottom_toBottomOf="@id/tvExpiryTimeVal"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:onClick="@{(view)-> callback.onOpenMenu(view,data)}"/>
             
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

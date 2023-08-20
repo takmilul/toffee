@@ -86,4 +86,5 @@ object ApiNames {
     const val MNP_STATUS = "mnpStatus"
     const val PREMIUM_PACK_SUBSCRIPTION_HISTORY = "premiumPackSubscriptionHistory"
     const val GET_FM_RADIO_CONTENTS = "getFmRadioContents"
+    const val CHECK_VOUCHER_STATUS = "checkVoucherStatus"
 }

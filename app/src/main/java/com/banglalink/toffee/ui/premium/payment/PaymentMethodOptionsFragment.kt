@@ -17,6 +17,7 @@ import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -38,6 +39,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
         viewModel.selectedDataPackOption.value = null
         viewModel.paymentMethod.value?.let { paymentTypes ->
             with(binding) {
+
+                //Trail Section
                 if (!paymentTypes.free.isNullOrEmpty()) {
                     var blTrialPackMethod: PackPaymentMethod? = null
                     var nonBlTrialPackMethod: PackPaymentMethod? = null
@@ -102,6 +105,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 } else {
                     trialCard.hide()
                 }
+
+                //Voucher Section
+                if (paymentTypes.Voucher.isNullOrEmpty()){
+                    giftVoucherCard.hide()
+                }else {
+                    giftVoucherCard.show()
+                }
                 
                 val blStartingPrice = if (mPref.isPrepaid) {
                     paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
@@ -120,7 +130,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
                 bkashPackPrice.isVisible = bKashStartingPrice > 0
                 
-                blPackCard.isVisible = paymentTypes.bl != null && mPref.isBanglalinkNumber == "true" && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
+                blPackCard.isVisible = paymentTypes.bl != null && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 
@@ -142,7 +152,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
                 })
                 giftVoucherCard.safeClick({
-                    findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "giftVoucher"))
+                    findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
                 })
             }
         }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.banglalink.toffee.data.database.dao.BubbleConfigDao
@@ -67,15 +68,15 @@ import com.banglalink.toffee.model.BubbleConfig
         BubbleConfig::class,
 //        PremiumPackItem::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = true,
-//    autoMigrations = [
-//        AutoMigration(
-//            from = 15,
-//            to = 16,
+    autoMigrations = [
+        AutoMigration(
+            from = 15,
+            to = 16,
 //            spec = ToffeeDatabase.ToffeeMigrationSpec::class //This spec only needs in case of RenameColumn, RenameTable, DeleteColumn and DeleteTable. Otherwise room will automatically migrate database, no need to add specs here.
-//        )
-//    ]
+        )
+    ]
 )
 
 abstract class ToffeeDatabase : RoomDatabase() {

@@ -33,6 +33,22 @@ data class DataPackPurchaseRequest(
     @SerializedName("is_purchase_call_after_recharge")
     val purchaseCallAfterRecharge: Boolean? = false,
 
+    //Only for voucher
+    @SerializedName("voucher")
+    val voucher: String? = null,
+    @SerializedName("partner_type")
+    val partnerType: String? = null,
+    @SerializedName("partner_name")
+    val partnerName: String? = null,
+    @SerializedName("partner_id")
+    val partnerId: Int? = null,
+    @SerializedName("partner_campaigns_name")
+    val partnerCampaignsName: String? = null,
+    @SerializedName("partner_campaigns_id")
+    val partnerCampaignsId: Int? = null,
+    @SerializedName("campaigns_expire_date")
+    val campaignsExpireDate: String? = null,
+
     
     //Only for bKash
     @SerializedName("data_pack_id")

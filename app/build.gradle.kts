@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -131,7 +131,8 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-    implementation(project(":data"))
+    implementation(project(mapOf("path" to ":data")))
+    implementation(project(mapOf("path" to ":tooltip")))
     
     // View
     implementation(libs.activity)
@@ -250,4 +251,7 @@ dependencies {
     
     debugImplementation(libs.fragment.test)
 //    debugImplementation (libs.leakcanary)
+
+//    implementation ("com.github.douglasjunior:android-simple-tooltip:1.1.0")
+//    implementation ("com.github.skydoves:balloon:1.5.4")
 }

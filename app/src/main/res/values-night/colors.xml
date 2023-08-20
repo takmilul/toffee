@@ -83,4 +83,7 @@
     <color name="subscription_history_color_secondary">#829AB8</color>
     <color name="subscription_history_color_primary">#BED6F3</color>
 
+    <color name="tooltip_bg_color">#BED6F3</color>
+    <color name="tooltip_txt_color">#1A2E47</color>
+
 </resources>
