@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltip
-import com.banglalink.toffee.androidSimpleTooltip.SimpleTooltipUtils
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
@@ -21,6 +20,7 @@ import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
@@ -119,10 +119,11 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 .animated(false)
                 .transparentOverlay(true)
                 .margin(0f)
+                .padding(16F.px)
                 .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-                .arrowColor(resources.getColor(R.color.tooltip_bg_color))
-                .arrowHeight(SimpleTooltipUtils.pxFromDp(10f).toInt().toFloat())
-                .arrowWidth(SimpleTooltipUtils.pxFromDp(14f).toInt().toFloat())
+                .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
+                .arrowHeight(10F.px)
+                .arrowWidth(14F.px)
                 .focusable(true)
                 .build()
                 .show()

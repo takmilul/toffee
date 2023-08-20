@@ -30,5 +30,7 @@ data class SubsHistoryDetail(
     @SerializedName("subscription_status")
     var subscriptionStatus: String? = null,
     @SerializedName("pack_start_date_for_order")
-    var packStartDateForOrder: String? = null
+    var packStartDateForOrder: String? = null,
+    @SerializedName("tooltip_message")
+    var tooltipMessage: String? = null,
 )

@@ -45,6 +45,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
@@ -184,29 +185,34 @@ class SimpleTooltip private constructor(builder: Builder) : OnDismissListener {
     @SuppressLint("ClickableViewAccessibility")
     private fun configPopupWindow() {
         mPopupWindow = PopupWindow(mContext, null, mDefaultPopupWindowStyleRes)
-        mPopupWindow!!.setOnDismissListener(this)
-        mPopupWindow!!.width = width
-        mPopupWindow!!.height = height
-        mPopupWindow!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        mPopupWindow!!.isOutsideTouchable = true
-        mPopupWindow!!.isTouchable = true
-        mPopupWindow!!.setTouchInterceptor(View.OnTouchListener { v, event ->
-            val x = event.x.toInt()
-            val y = event.y.toInt()
-            if (!mDismissOnOutsideTouch && event.action == MotionEvent.ACTION_DOWN
-                && (x < 0 || x >= mContentLayout!!.measuredWidth || y < 0 || y >= mContentLayout!!.measuredHeight)
-            ) {
-                return@OnTouchListener true
-            } else if (!mDismissOnOutsideTouch && event.action == MotionEvent.ACTION_OUTSIDE) {
-                return@OnTouchListener true
-            } else if (event.action == MotionEvent.ACTION_DOWN && mDismissOnInsideTouch) {
-                dismiss()
-                return@OnTouchListener true
-            }
-            false
-        })
-        mPopupWindow!!.isClippingEnabled = false
-        mPopupWindow!!.isFocusable = mFocusable
+        mPopupWindow?.apply {
+            width = this@SimpleTooltip.width
+            height = this@SimpleTooltip.height
+            isTouchable = true
+            isFocusable = mFocusable
+            isOutsideTouchable = true
+            isClippingEnabled = false
+            elevation = 8F
+            
+            setOnDismissListener(this@SimpleTooltip)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setTouchInterceptor(View.OnTouchListener { v, event ->
+                val x = event.x.toInt()
+                val y = event.y.toInt()
+                if (!mDismissOnOutsideTouch && event.action == MotionEvent.ACTION_DOWN
+                    && (x < 0 || x >= mContentLayout!!.measuredWidth || y < 0 || y >= mContentLayout!!.measuredHeight)
+                ) {
+                    return@OnTouchListener true
+                } else if (!mDismissOnOutsideTouch && event.action == MotionEvent.ACTION_OUTSIDE) {
+                    return@OnTouchListener true
+                } else if (event.action == MotionEvent.ACTION_DOWN && mDismissOnInsideTouch) {
+                    dismiss()
+                    return@OnTouchListener true
+                }
+                false
+            })
+        }
+        
     }
     
     fun show() {
@@ -285,8 +291,14 @@ class SimpleTooltip private constructor(builder: Builder) : OnDismissListener {
         } else {
             val tv = mContentView!!.findViewById<View>(mTextViewId) as TextView
             tv.text = mText
+            (mContentView as ViewGroup).getChildAt(0).layoutParams =
+                ((mContentView).getChildAt(0).layoutParams as FrameLayout.LayoutParams)
+                    .apply {
+                        topMargin = if (mGravity == Gravity.BOTTOM) 0 else pxFromDp(mPadding).toInt()
+                        bottomMargin = if (mGravity == Gravity.TOP) 0 else pxFromDp(mPadding).toInt()
+                    }
         }
-        mContentView.setPadding(mPadding.toInt(), mPadding.toInt(), mPadding.toInt(), mPadding.toInt())
+//        mContentView.setPadding(pxFromDp(mPadding).toInt(), 0, pxFromDp(mPadding).toInt(), 0)
         val linearLayout = LinearLayout(mContext)
         linearLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         linearLayout.orientation =

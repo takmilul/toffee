@@ -19,6 +19,7 @@ import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
@@ -81,15 +82,16 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
         //https://github.com/douglasjunior/android-simple-tooltip
         SimpleTooltip.Builder(requireContext())
             .anchorView(view)
-            .text(R.string.subscription_history_tooltip_text)
+            .text(item.tooltipMessage ?: getString(R.string.subscription_history_tooltip_text))
             .gravity(gravity)
             .animated(false)
             .transparentOverlay(true)
             .margin(margin.toFloat())
+            .padding(16F)
             .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
             .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
-            .arrowHeight(SimpleTooltipUtils.pxFromDp(10f).toInt().toFloat())
-            .arrowWidth(SimpleTooltipUtils.pxFromDp(14f).toInt().toFloat())
+            .arrowHeight(10F.px)
+            .arrowWidth(12F.px)
             .focusable(true)
             .build()
             .show()
