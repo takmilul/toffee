@@ -9,6 +9,6 @@ class SubscriptionHistoryAdapter(
     cb: BaseListItemCallback<SubsHistoryDetail>
 ): MyBaseAdapter<SubsHistoryDetail>(cb){
     override fun getLayoutIdForPosition(position: Int): Int {
-        return R.layout.list_item_my_subscription_packs
+        return R.layout.list_item_subscription_history
     }
 }

@@ -150,8 +150,10 @@
 
     <color name="subscription_history_color_secondary">#6781A1</color>
     <color name="subscription_history_color_primary">#29466B</color>
-
-    <color name="tooltip_bg_color">#29466B</color>
-    <color name="tooltip_txt_color">#BED6F3</color>
+    
+    <color name="tooltip_icon_bg_color">#29466B</color>
+    <color name="tooltip_icon_text_color">#BED6F3</color>
+    <color name="tooltip_bg_color">#BED6F3</color>
+    <color name="tooltip_text_color">#29466B</color>
 
 </resources>
