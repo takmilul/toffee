@@ -497,6 +497,7 @@ class PaymentWebViewDialog : DialogFragment() {
                     packId = selectedPremiumPack.id,
                     paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
                     bKashDataPackId = selectedDataPack.dataPackId,
+                    isPrepaid = if (mPref.isPrepaid==true) 1 else 0,
 
                     bKashRequest = BkashDataPackRequest(
                         amount = it.amount,
@@ -513,6 +514,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = it.transactionStatus,
                         transactionId = it.transactionId,
                         updateTime = currentDateTime
+
                     )
                 )
                 viewModel.purchaseDataPackWebView(dataPackPurchaseRequest)
@@ -540,7 +542,8 @@ class PaymentWebViewDialog : DialogFragment() {
                 packDetails = selectedDataPack.packDetails,
                 packPrice = selectedDataPack.packPrice,
                 packDuration = selectedDataPack.packDuration,
-                purchaseCallAfterRecharge=true
+                purchaseCallAfterRecharge=true,
+                isPrepaid = if (mPref.isPrepaid==true) 1 else 0
             )
             viewModel.purchaseDataPackBlDataPackOptionsWeb(dataPackPurchaseRequest)
         } else {

@@ -53,13 +53,34 @@
         <TextView
             android:id="@+id/tvGiftVoucherCodeError"
             style="@style/ErrorTextStyle"
-            tools:text="Voucher code is not valid"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="@+id/giftVoucherCode"
             app:layout_constraintStart_toStartOf="@+id/giftVoucherCode"
             app:layout_constraintTop_toBottomOf="@+id/giftVoucherCode"
-            app:layout_constraintBottom_toTopOf="@id/redeemVoucherBtn"
+            tools:text="Voucher code is not valid"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/terms_and_conditions_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="4dp"
+            android:background="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="By clicking on REDEEM CODE, you agree to the Terms &amp; Conditions"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+
+            app:layout_constraintEnd_toEndOf="@+id/tvGiftVoucherCodeError"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/tvGiftVoucherCodeError"
+            app:layout_constraintTop_toBottomOf="@+id/tvGiftVoucherCodeError"
+            app:layout_goneMarginTop="24dp"
             tools:visibility="visible" />
 
 
@@ -81,7 +102,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvGiftVoucherCodeError"
+            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
             app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
 
