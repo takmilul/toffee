@@ -9,5 +9,7 @@ data class PremiumPackStatusRequest(
     @SerializedName("password")
     val password: String,
     @SerializedName("pack_id")
-    val packId: Int
+    val packId: Int,
+    @SerializedName("is_prepaid")
+    val isPrepaid: Int
 ) : BaseRequest(ApiNames.PREMIUM_DATA_PACK_STATUS)

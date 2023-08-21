@@ -16,6 +16,9 @@ data class DataPackPurchaseRequest(
     val packId: Int,
     @SerializedName("payment_method_id")
     val paymentMethodId: Int,
+    @SerializedName("is_prepaid")
+    val isPrepaid: Int,
+
     
     //Only for BL and Trial Pack
     @SerializedName("pack_title")
