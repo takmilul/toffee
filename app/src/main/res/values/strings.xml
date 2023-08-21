@@ -581,8 +581,8 @@
     <string name="packs_tab_layout">Premium Packs Tab Layout</string>
     <string name="ads_app_id">ca-app-pub-8724031649645430~8504153625</string>
     <string name="info_icon">info</string>
-    <string name="use_gift_voucher">Use Gift Voucher</string>
-    <string name="voucher_title">Enter Gift Voucher code</string>
+    <string name="use_gift_voucher">Redeem Access Coupon</string>
+    <string name="voucher_title">Enter Access Coupon</string>
     <string name="enter_gift_voucher_code">Enter the Gift Voucher code here</string>
     <string name="voucher_code_not_valid">Voucher code is not valid</string>
     <string name="subscription_history_tooltip_text">Plan validity will expire earlier if the campaign ends earlier than plan validity</string>

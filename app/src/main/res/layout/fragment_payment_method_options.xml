@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="32dp">
-        
         <TextView
             android:id="@+id/pack_title"
             android:layout_width="wrap_content"
@@ -30,26 +29,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        
+
         <androidx.cardview.widget.CardView
             android:id="@+id/trialCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="32dp"
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:layout_constraintBottom_toTopOf="@+id/blPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pack_title">
-            
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
+
                 <TextView
                     android:id="@+id/trialTitle"
                     android:layout_width="0dp"
@@ -58,36 +55,35 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
-                    android:textSize="14sp"
-                    android:textFontWeight="700"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
-
-                    tools:text="Free 15 days trial"
                     android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/trialDetails"
                     app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
-                    app:layout_goneMarginBottom="16dp"/>
-                
-<!--                <TextView-->
-<!--                    android:id="@+id/trialPrice"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="8dp"-->
-<!--                    android:fontFamily="@font/roboto_regular"-->
-<!--                    android:text="@string/starting_from_bdt_0"-->
-<!--                    android:textColor="@color/cardTitleSecondColor"-->
-<!--                    android:textSize="12sp"-->
-<!--             -->
-<!--                    app:layout_goneMarginBottom="12dp"-->
-<!--                    app:layout_constraintEnd_toEndOf="@+id/trialTitle"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/trialTitle"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/trialTitle"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/trialDetails"/>-->
-                
+                    app:layout_goneMarginBottom="16dp"
+                    tools:text="Free 15 days trial" />
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/trialPrice"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="8dp"-->
+                <!--                    android:fontFamily="@font/roboto_regular"-->
+                <!--                    android:text="@string/starting_from_bdt_0"-->
+                <!--                    android:textColor="@color/cardTitleSecondColor"-->
+                <!--                    android:textSize="12sp"-->
+                <!--             -->
+                <!--                    app:layout_goneMarginBottom="12dp"-->
+                <!--                    app:layout_constraintEnd_toEndOf="@+id/trialTitle"-->
+                <!--                    app:layout_constraintStart_toStartOf="@id/trialTitle"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/trialTitle"-->
+                <!--                    app:layout_constraintBottom_toTopOf="@id/trialDetails"/>-->
+
                 <TextView
                     android:id="@+id/trialDetails"
                     android:layout_width="0dp"
@@ -98,12 +94,12 @@
                     android:textColor="@color/light_text_color"
                     android:textSize="12sp"
                     android:textStyle="italic"
-                    tools:text="Extra 15 days for Banglalink users"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/trialTitle"
                     app:layout_constraintStart_toStartOf="@+id/trialTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/trialTitle" />
-                
+                    app:layout_constraintTop_toBottomOf="@+id/trialTitle"
+                    tools:text="Extra 15 days for Banglalink users" />
+
                 <ImageView
                     android:id="@+id/passBrandImageView"
                     android:layout_width="0dp"
@@ -112,172 +108,6 @@
                     android:contentDescription="@string/pass_brand_image_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/trialTitle" />
-            
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-        
-        <androidx.cardview.widget.CardView
-            android:id="@+id/blPackCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:backgroundTint="@color/payment_option_card_bg"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            app:layout_constraintBottom_toTopOf="@+id/bKashPackCard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trialCard">
-            
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/blPackLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                
-                <TextView
-                    android:id="@+id/blPackTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/roboto_regular"
-                    android:maxLines="2"
-                    android:textSize="14sp"
-                    android:textFontWeight="700"
-                    android:text="@string/pay_by_banglalink"
-                    android:textColor="@color/cardTitleColor"
-                    app:layout_constraintBottom_toTopOf="@id/blPackPrice"
-                    app:layout_constraintEnd_toStartOf="@+id/blImg"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-                
-                <TextView
-                    android:id="@+id/blPackPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/cardTitleSecondColor"
-                    android:textSize="12sp"
-                    tools:text="Starting from BDT 20"
-                    app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
-                    app:layout_constraintStart_toStartOf="@id/blPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
-                    app:layout_constraintBottom_toTopOf="@id/blPackDetails"/>
-                
-                <TextView
-                    android:id="@+id/blPackDetails"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/only_for_bl_text"
-                    android:textColor="@color/light_text_color"
-                    android:textSize="12sp"
-                    android:textStyle="italic"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/blPackPrice"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/blPackPrice"
-                    app:layout_constraintTop_toBottomOf="@+id/blPackPrice"
-                    app:layout_constraintVertical_bias="0.4" />
-                
-                <ImageView
-                    android:id="@+id/blImg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/pass_brand_image_view"
-                    app:srcCompat="@drawable/ic_banglalink_logo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/blPackTitle" />
-            
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-        
-        <androidx.cardview.widget.CardView
-            android:id="@+id/bKashPackCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:backgroundTint="@color/payment_option_card_bg"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            app:layout_constraintBottom_toBottomOf="@id/giftVoucherCard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/blPackCard">
-            
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                
-                <TextView
-                    android:id="@+id/bkashPackTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/roboto_regular"
-                    android:maxLines="2"
-                    android:textSize="14sp"
-                    android:textFontWeight="700"
-                    android:text="@string/pay_by_bkash"
-                    android:textColor="@color/cardTitleColor"
-                    app:layout_constraintBottom_toTopOf="@id/bkashPackPrice"
-                    app:layout_constraintEnd_toStartOf="@+id/bkashImg"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-                
-                <TextView
-                    android:id="@+id/bkashPackPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/cardTitleSecondColor"
-                    android:textSize="12sp"
-                    tools:text="Starting from BDT 30"
-                    app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
-                    app:layout_constraintBottom_toTopOf="@id/bkashPackDetails"/>
-                
-                <TextView
-                    android:id="@+id/bkashPackDetails"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/for_all_users_text"
-                    android:textColor="@color/light_text_color"
-                    android:textSize="12sp"
-                    android:textStyle="italic"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
-                    app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/bkashPackPrice" />
-                
-                <ImageView
-                    android:id="@+id/bkashImg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/pass_brand_image_view"
-                    app:srcCompat="@drawable/ic_bkash_logo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/bkashPackTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -291,13 +121,12 @@
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bKashPackCard">
+            app:layout_constraintTop_toBottomOf="@+id/trialCard">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                android:layout_width="376dp"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -310,10 +139,10 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
-                    android:textSize="14sp"
-                    android:textFontWeight="700"
                     android:text="@string/use_gift_voucher"
                     android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/giftVoucherPrice"
                     app:layout_constraintEnd_toStartOf="@+id/giftVoucherImg"
                     app:layout_constraintStart_toStartOf="parent"
@@ -326,14 +155,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/roboto_regular"
+                    android:text="Use the Gift Voucher code"
                     android:textColor="@color/cardTitleSecondColor"
                     android:textSize="12sp"
-                    android:text="Use the Gift Voucher code"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/giftVoucherDetails"
                     app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherTitle"
-                    app:layout_constraintBottom_toTopOf="@id/giftVoucherDetails"/>
+                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherTitle" />
 
                 <TextView
                     android:id="@+id/giftVoucherDetails"
@@ -357,11 +187,180 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="@string/pass_brand_image_view"
-                    app:srcCompat="@drawable/ic_gift_voucher"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/giftVoucherTitle" />
+                    app:layout_constraintTop_toTopOf="@id/giftVoucherTitle"
+                    app:srcCompat="@drawable/ic_gift_voucher" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/blPackCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:layout_constraintBottom_toTopOf="@+id/bKashPackCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/giftVoucherCard">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/blPackLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/blPackTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:textSize="14sp"
+                    android:textFontWeight="700"
+                    android:text="@string/pay_by_banglalink"
+                    android:textColor="@color/cardTitleColor"
+                    app:layout_constraintBottom_toTopOf="@id/blPackPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/blImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/blPackPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="Starting from BDT 20"
+                    app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
+                    app:layout_constraintStart_toStartOf="@id/blPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
+                    app:layout_constraintBottom_toTopOf="@id/blPackDetails"/>
+
+                <TextView
+                    android:id="@+id/blPackDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/only_for_bl_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/blImg"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/blPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/blPackPrice"
+                    app:layout_constraintVertical_bias="0.4" />
+
+                <ImageView
+                    android:id="@+id/blImg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:srcCompat="@drawable/ic_banglalink_logo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/blPackTitle" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bKashPackCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blPackCard">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/bkashPackTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:text="@string/pay_by_bkash"
+                    android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/bkashPackPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/bkashImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/bkashPackPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/bkashPackDetails"
+                    app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
+                    tools:text="Starting from BDT 30" />
+
+                <TextView
+                    android:id="@+id/bkashPackDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/for_all_users_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
+                    app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/bkashPackPrice" />
+
+                <ImageView
+                    android:id="@+id/bkashImg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/bkashPackTitle"
+                    app:srcCompat="@drawable/ic_bkash_logo" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
