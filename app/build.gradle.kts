@@ -131,8 +131,9 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-    implementation(project(mapOf("path" to ":data")))
-    implementation(project(mapOf("path" to ":tooltip")))
+    implementation(project(":data"))
+    implementation(project(":tooltip"))
+    implementation(project(":balloon"))
     
     // View
     implementation(libs.activity)
@@ -251,7 +252,4 @@ dependencies {
     
     debugImplementation(libs.fragment.test)
 //    debugImplementation (libs.leakcanary)
-
-//    implementation ("com.github.douglasjunior:android-simple-tooltip:1.1.0")
-//    implementation ("com.github.skydoves:balloon:1.5.4")
 }

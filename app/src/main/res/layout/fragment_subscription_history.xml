@@ -68,7 +68,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:reverseLayout="false"
-        tools:listitem="@layout/list_item_my_subscription_packs" />
+        tools:listitem="@layout/list_item_subscription_history" />
 
     <ImageView
         android:id="@+id/progress_bar"
