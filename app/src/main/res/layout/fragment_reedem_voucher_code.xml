@@ -12,6 +12,7 @@
             android:id="@+id/backImg"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginTop="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back"
             android:padding="8dp"
@@ -38,17 +39,17 @@
         <EditText
             android:id="@+id/giftVoucherCode"
             style="@style/LeadingIconSingleLineInputFieldStyle"
-            android:layout_marginStart="0dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="0dp"
             android:autofillHints="Enter your email"
-            android:hint="@string/enter_gift_voucher_code"
+            android:drawableEnd="@drawable/ic_not_verified"
             android:inputType="text"
+            android:background="@drawable/error_solved_single_line_input_text_bg"
             android:paddingEnd="10dp"
+            android:hint="Enter the Access Coupon code here"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pack_title"
-            android:drawableEnd="@drawable/ic_not_verified" />
+            app:layout_constraintTop_toBottomOf="@id/pack_title" />
 
         <TextView
             android:id="@+id/tvGiftVoucherCodeError"
@@ -75,7 +76,7 @@
             android:text="By clicking on REDEEM CODE, you agree to the Terms &amp; Conditions"
             android:textColor="@color/main_text_color"
             android:textSize="12sp"
-
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintEnd_toEndOf="@+id/tvGiftVoucherCodeError"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@+id/tvGiftVoucherCodeError"
@@ -88,7 +89,7 @@
             android:id="@+id/redeemVoucherBtn"
             android:layout_width="216dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="48dp"
             android:backgroundTint="#FF3988"
             android:fontFamily="@font/roboto_bold"
