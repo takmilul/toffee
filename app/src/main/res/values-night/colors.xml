@@ -64,7 +64,7 @@
     <color name="bottom_sheet_bg">#111F31</color>
     <color name="textImageColor">#BED6F3</color>
     <color name="trialBgColor">#111F31</color>
-    <color name="trialBgTransparent">#4D000000</color>
+    <color name="trialBgTransparent">#E6000000</color>
     <color name="trialTextColor">#BED6F3</color>
     <color name="trialValidityTextColor">#BED6F3</color>
     <color name="trial_extra_text_color">#FF8D23</color>

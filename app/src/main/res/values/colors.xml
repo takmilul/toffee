@@ -130,7 +130,7 @@
     <color name="bottom_sheet_bg">#F2F2F2</color>
     <color name="textImageColor">#BED6F3</color>
     <color name="trialBgColor">#FFFFFF</color>
-    <color name="trialBgTransparent">#4DFFFFFF</color>
+    <color name="trialBgTransparent">#EDFFFFFF</color>
     <color name="trialTextColor">#29466B</color>
     <color name="trialValidityTextColor">#6781A1</color>
     <color name="pack_active_button_color">#1AAF3D</color>
