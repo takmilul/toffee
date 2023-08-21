@@ -1,19 +1,24 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
-import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentReedemVoucherCodeBinding
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
@@ -26,7 +31,6 @@ import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
-import javax.inject.Inject
 
 class RedeemVoucherCodeFragment : ChildDialogFragment() {
 
@@ -50,6 +54,26 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
             findNavController().popBackStack()
         })
 
+//        val spannableString = SpannableString("Don't receive the OTP, Resend OTP")
+        val spannableString = SpannableString("By clicking on REDEEM CODE, you agree to the Terms & Conditions")
+        val resendOtp: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(textView: View) {
+                showTermsAndConditionDialog()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = false
+            }
+        }
+        // Character starting from 23 - 33 is Resend OTP.
+        spannableString.setSpan(resendOtp, 45, 63, 0)
+        spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#FF3988")), 45, 63, 0)
+        binding.termsAndConditionsOne.movementMethod = LinkMovementMethod.getInstance()
+        binding.termsAndConditionsOne.setText(spannableString, TextView.BufferType.SPANNABLE)
+        binding.termsAndConditionsOne.isSelected = true
+
+
         binding.redeemVoucherBtn.safeClick({
             voucherCode = binding.giftVoucherCode.text.toString().trim()
 
@@ -64,6 +88,10 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                 binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
             }
             else{
+                binding.giftVoucherCode.setBackgroundResource(R.drawable.error_solved_single_line_input_text_bg)
+                binding.tvGiftVoucherCodeError.visibility = View.GONE
+                binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                progressDialog.show()
                 viewModel.voucherValidate(viewModel.selectedPremiumPack.value!!.id, voucherCode, viewModel.selectedPremiumPack.value!!.packTitle.toString())
             }
         })
@@ -73,6 +101,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
     }
 
     private fun observeVoucher() {
+
         observe(viewModel.voucherPaymentState) {
             when(it) {
 
@@ -102,10 +131,11 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                             partnerId =  it.data?.partnerId,
                             partnerCampaignsName = it.data?.partnerCampaignsName,
                             partnerCampaignsId = it.data?.partnerCampaignsId,
-                            campaignsExpireDate = it.data?.campaignsExpireDate
+                            campaignsExpireDate = it.data?.campaignsExpireDate,
+                            isPrepaid = if (mPref.isPrepaid==true) 1 else 0
                         )
-                        Log.d("TAG", "purchaseWithVoucher: "+dataPackPurchaseRequest.toString())
                         viewModel.purchaseDataPackVoucher(dataPackPurchaseRequest)
+                        progressDialog.dismiss()
                     }else{
                         binding.giftVoucherCode.validateInput(
                             binding.tvGiftVoucherCodeError,
@@ -115,7 +145,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                         )
                         binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                         binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
-
+                        progressDialog.dismiss()
                     }
 
 
@@ -125,6 +155,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
 
                     progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
+                    progressDialog.dismiss()
                 }
             }
         }
@@ -160,5 +191,14 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
             }
         }
     }
-
+    private fun showTermsAndConditionDialog() {
+        val args = bundleOf(
+            "myTitle" to getString(R.string.terms_and_conditions),
+            "url" to  mPref.blDataPackTermsAndConditionsUrl
+        )
+        findNavController().navigateTo(
+            resId = R.id.htmlPageViewDialog,
+            args = args
+        )
+    }
 }

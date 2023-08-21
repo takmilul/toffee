@@ -62,7 +62,9 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                 packCode = selectedDataPack.packCode,
                 packDetails = selectedDataPack.packDetails,
                 packPrice = selectedDataPack.packPrice,
-                packDuration = selectedDataPack.packDuration
+                packDuration = selectedDataPack.packDuration,
+                isPrepaid = if (mPref.isPrepaid==true) 1 else 0
+
             )
             viewModel.purchaseDataPackTrialPack(dataPackPurchaseRequest)
         }
