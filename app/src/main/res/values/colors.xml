@@ -123,14 +123,15 @@
     <color name="bubble_icon_color">#FFFFFF</color>
     <color name="live_item_bg">#ECECEC</color>
 
-    <color name="TextInsideImgColor">#FFFFFF</color>
+    <color name="textInsideImgColor">#FFFFFF</color>
 
     <color name="payment_option_card_bg">#FFFFFF</color>
     <color name="bottom_sheet_bg">#F2F2F2</color>
-    <color name="TextClrInImg">#BED6F3</color>
-    <color name="TrailBg">#FFFFFF</color>
-    <color name="TrailBgTransparent">#4D000000</color>
-    <color name="TrailTxt">#FFFFFF</color>
+    <color name="textImageColor">#BED6F3</color>
+    <color name="trialBgColor">#FFFFFF</color>
+    <color name="trialBgTransparent">#4DFFFFFF</color>
+    <color name="trialTextColor">#29466B</color>
+    <color name="trialValidityTextColor">#6781A1</color>
     <color name="pack_active_button_color">#1AAF3D</color>
     <color name="trial_extra_text_color">#FF8D23</color>
     <color name="light_text_color">#829AB8</color>

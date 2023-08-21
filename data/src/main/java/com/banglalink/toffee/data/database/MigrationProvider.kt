@@ -107,6 +107,8 @@ object MigrationProvider {
     private val MIGRATION_15_16 = object: Migration(14,15) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("DROP TABLE IF EXISTS `CdnChannelItem`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `CdnChannelItem` (`channelId` INTEGER NOT NULL, `urlType` INTEGER NOT NULL, `expiryDate` TEXT, `payload` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)")
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_CdnChannelItem_channelId` ON `CdnChannelItem` (`channelId`)")
         }
     }
     
