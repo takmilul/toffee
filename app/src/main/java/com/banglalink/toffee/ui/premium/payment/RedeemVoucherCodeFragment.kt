@@ -85,7 +85,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     binding.tvGiftVoucherCodeError,
                     R.string.voucher_code_not_valid,
                     R.color.pink_to_accent_color,
-                    R.drawable.error_single_line_input_text_bg
+                    R.drawable.error_single_line_input_text_bg_coupon
                 )
                 binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                 binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
@@ -142,7 +142,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                             binding.tvGiftVoucherCodeError,
                             R.string.voucher_code_not_valid,
                             R.color.pink_to_accent_color,
-                            R.drawable.error_single_line_input_text_bg
+                            R.drawable.error_single_line_input_text_bg_coupon
                         )
                         binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                         binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)

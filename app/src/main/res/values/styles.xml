@@ -568,7 +568,6 @@
     </style>
     
     <style name="LeadingIconSingleLineInputFieldStyle" parent="SingleLineInputFieldStyle">
-        <item name="backgroundTint">@color/editTextBg</item>
         <item name="android:drawablePadding">12dp</item>
         <item name="android:inputType">textCapWords</item>
     </style>

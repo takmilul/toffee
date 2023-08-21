@@ -43,6 +43,7 @@
             android:autofillHints="Enter your email"
             android:drawableEnd="@drawable/ic_not_verified"
             android:inputType="text"
+            android:background="@drawable/error_solved_single_line_input_text_bg"
             android:paddingEnd="10dp"
             android:hint="Enter the Access Coupon code here"
             app:layout_constraintEnd_toEndOf="parent"
