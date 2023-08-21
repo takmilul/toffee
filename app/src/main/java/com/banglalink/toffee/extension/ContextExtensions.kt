@@ -69,7 +69,7 @@ val FragmentManager.currentNavigationFragment: Fragment?
 
 fun Context.getBalloon(tooltipText: String): Balloon {
     return Balloon.Builder(this)
-        .setWidthRatio(0.95f)
+        .setWidthRatio(0.90f)
         .setWidth(BalloonSizeSpec.WRAP)
         .setHeight(BalloonSizeSpec.WRAP)
         .setText(tooltipText)
