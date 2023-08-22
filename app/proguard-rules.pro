@@ -52,9 +52,9 @@
 #-keep class androidx.navigation** { *; }
 
 -keep class androidx.mediarouter.app.MediaRouteActionProvider {*;}
--keepnames class com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener
--keepclassmembers class com.google.android.exoplayer2.ext.cast.CastPlayer {
-    private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
+-keepnames class androidx.media3.cast.CastPlayer$StatusListener
+-keepclassmembers class androidx.media3.cast.CastPlayer {
+    private androidx.media3.cast.CastPlayer$StatusListener statusListener;
 }
 
 #-keep class com.google.android.exoplayer2** { *; }
@@ -120,3 +120,19 @@
 -assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
 -dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite**
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+-dontwarn com.google.android.exoplayer2.ExoPlayer
+-dontwarn com.google.android.exoplayer2.ExoPlayerLibraryInfo
+-dontwarn com.google.android.exoplayer2.Format
+-dontwarn com.google.android.exoplayer2.PlaybackException
+-dontwarn com.google.android.exoplayer2.Player$Listener
+-dontwarn com.google.android.exoplayer2.Timeline$Window
+-dontwarn com.google.android.exoplayer2.Timeline
+-dontwarn com.google.android.exoplayer2.Tracks$Group
+-dontwarn com.google.android.exoplayer2.Tracks
+-dontwarn com.google.android.exoplayer2.analytics.AnalyticsListener$EventTime
+-dontwarn com.google.android.exoplayer2.analytics.AnalyticsListener
+-dontwarn com.google.android.exoplayer2.mediacodec.MediaCodecRenderer$DecoderInitializationException
+-dontwarn com.google.android.exoplayer2.source.LoadEventInfo
+-dontwarn com.google.android.exoplayer2.source.MediaLoadData
+-dontwarn com.google.android.exoplayer2.video.VideoSize

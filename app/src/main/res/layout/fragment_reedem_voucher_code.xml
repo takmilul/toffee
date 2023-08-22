@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp">
-
+        
         <ImageView
             android:id="@+id/backImg"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginTop="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back"
             android:padding="8dp"
             android:src="@drawable/ic_arrow_back"
-            app:layout_constraintBottom_toTopOf="@id/giftVoucherCode"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+        
         <TextView
             android:id="@+id/pack_title"
             android:layout_width="0dp"
@@ -34,78 +35,73 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/backImg" />
-
+        
         <EditText
             android:id="@+id/giftVoucherCode"
             style="@style/LeadingIconSingleLineInputFieldStyle"
-            android:layout_marginStart="0dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="0dp"
             android:autofillHints="Enter your email"
-            android:hint="@string/enter_gift_voucher_code"
+            android:background="@drawable/error_solved_single_line_input_text_bg"
+            android:drawableEnd="@drawable/ic_not_verified"
+            android:hint="@string/gift_coupon_hint"
             android:inputType="text"
+            android:paddingStart="16dp"
             android:paddingEnd="10dp"
+            app:layout_constraintBottom_toTopOf="@id/tvGiftVoucherCodeError"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pack_title"
-            android:drawableEnd="@drawable/ic_not_verified" />
-
+            app:layout_constraintVertical_chainStyle="packed" />
+        
         <TextView
             android:id="@+id/tvGiftVoucherCodeError"
             style="@style/ErrorTextStyle"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
             app:layout_constraintEnd_toEndOf="@+id/giftVoucherCode"
             app:layout_constraintStart_toStartOf="@+id/giftVoucherCode"
             app:layout_constraintTop_toBottomOf="@+id/giftVoucherCode"
             tools:text="Voucher code is not valid"
             tools:visibility="visible" />
-
+        
         <TextView
             android:id="@+id/terms_and_conditions_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginHorizontal="4dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="4dp"
             android:background="@null"
             android:checked="true"
+            android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:maxLines="2"
-            android:text="By clicking on REDEEM CODE, you agree to the Terms &amp; Conditions"
+            android:text="@string/redeem_voucher_terms_and_conditions"
             android:textColor="@color/main_text_color"
             android:textSize="12sp"
-
+            app:layout_constraintBottom_toTopOf="@id/redeemVoucherBtn"
             app:layout_constraintEnd_toEndOf="@+id/tvGiftVoucherCodeError"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@+id/tvGiftVoucherCodeError"
             app:layout_constraintTop_toBottomOf="@+id/tvGiftVoucherCodeError"
             app:layout_goneMarginTop="24dp"
             tools:visibility="visible" />
-
-
+        
         <com.google.android.material.button.MaterialButton
             android:id="@+id/redeemVoucherBtn"
+            style="@style/ButtonStyleSolidPink"
             android:layout_width="216dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="48dp"
-            android:backgroundTint="#FF3988"
-            android:fontFamily="@font/roboto_bold"
-            android:stateListAnimator="@null"
             android:text="@string/txt_redeem_code"
             android:textAllCaps="true"
-            android:textColor="@color/fw_gnt_white"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:cornerRadius="20dp"
+            android:textColor="@color/text_color_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_one"
-            app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
-
-
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

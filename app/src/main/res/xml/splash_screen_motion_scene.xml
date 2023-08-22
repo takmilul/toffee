@@ -7,7 +7,7 @@
         motion:autoTransition="animateToEnd"
         motion:constraintSetEnd="@id/firstEnd"
         motion:constraintSetStart="@id/firstStart"
-        motion:duration="700"
+        motion:duration="550"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>

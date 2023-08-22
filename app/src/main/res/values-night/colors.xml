@@ -8,6 +8,7 @@
     <color name="input_bg_color">#29466B</color>
     <color name="dialog_input_bg_color">#29466B</color>
     <color name="fab_icon_bg">#111F31</color>
+    <color name="editTextBg">#29466B</color>
     <color name="title_color">#FFFFFF</color>
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
@@ -57,14 +58,15 @@
     <color name="native_ad_button_color">#222F46</color>
     <color name="live_item_bg">#111F31</color>
 
-    <color name="TextInsideImgColor">#6781A1</color>
+    <color name="textInsideImgColor">#6781A1</color>
     <color name="payment_option_card_bg">#1A2E47</color>
 
     <color name="bottom_sheet_bg">#111F31</color>
-    <color name="TextClrInImg">#BED6F3</color>
-    <color name="TrailBg">#111F31</color>
-    <color name="TrailBgTransparent">#B3000000</color>
-    <color name="TrailTxt">#BED6F3</color>
+    <color name="textImageColor">#BED6F3</color>
+    <color name="trialBgColor">#111F31</color>
+    <color name="trialBgTransparent">#E6000000</color>
+    <color name="trialTextColor">#BED6F3</color>
+    <color name="trialValidityTextColor">#BED6F3</color>
     <color name="trial_extra_text_color">#FF8D23</color>
     <color name="go_to_home_btn_color">#FBDDE8</color>
 

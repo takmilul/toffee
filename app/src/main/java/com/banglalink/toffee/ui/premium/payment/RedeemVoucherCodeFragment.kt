@@ -54,9 +54,12 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
             findNavController().popBackStack()
         })
 
-//        val spannableString = SpannableString("Don't receive the OTP, Resend OTP")
+        observeVoucherPurchase()
+        observeVoucher()
+
+
         val spannableString = SpannableString("By clicking on REDEEM CODE, you agree to the Terms & Conditions")
-        val resendOtp: ClickableSpan = object : ClickableSpan() {
+        val clickTerms: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 showTermsAndConditionDialog()
             }
@@ -66,8 +69,8 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                 ds.isUnderlineText = false
             }
         }
-        // Character starting from 23 - 33 is Resend OTP.
-        spannableString.setSpan(resendOtp, 45, 63, 0)
+        // Character starting from 45, - 63 is Resend OTP.
+        spannableString.setSpan(clickTerms, 45, 63, 0)
         spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#FF3988")), 45, 63, 0)
         binding.termsAndConditionsOne.movementMethod = LinkMovementMethod.getInstance()
         binding.termsAndConditionsOne.setText(spannableString, TextView.BufferType.SPANNABLE)
@@ -82,7 +85,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     binding.tvGiftVoucherCodeError,
                     R.string.voucher_code_not_valid,
                     R.color.pink_to_accent_color,
-                    R.drawable.error_single_line_input_text_bg
+                    R.drawable.error_single_line_input_text_bg_coupon
                 )
                 binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                 binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
@@ -96,8 +99,6 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
             }
         })
 
-        observeVoucher()
-        observeVoucherPurchase()
     }
 
     private fun observeVoucher() {
@@ -107,7 +108,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
 
                 is Resource.Success -> {
 
-                    if (it.data?.isValidVoucher==true){
+                    if (it.data?.isValidVoucher==true && it.data!=null){
 
                         val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
 
@@ -132,16 +133,16 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                             partnerCampaignsName = it.data?.partnerCampaignsName,
                             partnerCampaignsId = it.data?.partnerCampaignsId,
                             campaignsExpireDate = it.data?.campaignsExpireDate,
-                            isPrepaid = if (mPref.isPrepaid==true) 1 else 0
+                            isPrepaid = if (mPref.isPrepaid) 1 else 0
                         )
                         viewModel.purchaseDataPackVoucher(dataPackPurchaseRequest)
-                        progressDialog.dismiss()
+
                     }else{
                         binding.giftVoucherCode.validateInput(
                             binding.tvGiftVoucherCodeError,
                             R.string.voucher_code_not_valid,
                             R.color.pink_to_accent_color,
-                            R.drawable.error_single_line_input_text_bg
+                            R.drawable.error_single_line_input_text_bg_coupon
                         )
                         binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                         binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
@@ -155,7 +156,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
 
                     progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
-                    progressDialog.dismiss()
+
                 }
             }
         }
@@ -171,7 +172,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
-                            PaymentStatusDialog.ARG_STATUS_TITLE to "Gift Voucher Redemption is Successful",
+                            PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption is Successful",
                             PaymentStatusDialog.ARG_STATUS_MESSAGE to "Please wait while we redirect you"
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
@@ -179,7 +180,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
-                            PaymentStatusDialog.ARG_STATUS_TITLE to "Voucher Activation Failed!",
+                            PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption Failed!",
                             PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the Voucher activation failed. Please retry."
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)

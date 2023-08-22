@@ -90,8 +90,8 @@ firebase-crashlytics-plugin-version = "2.9.8"
 
 # Reporting
 facebook-sdk-version = "16.0.1"
-conviva-sdk-version = "4.0.20"
-conviva-exo-player-version = "4.0.12"
+conviva-sdk-version = "4.0.33"
+conviva-exo-player-version = "4.1.0"
 pub-sub-version = "v1-rev452-1.25.0"
 mqtt-client-version = "1.2.5"
 mqtt-android-service-version = "3.3.8"
