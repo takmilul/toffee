@@ -92,6 +92,11 @@ class MyChannelVideosEditFragment : BaseFragment() {
         descriptionDesWatcher()
         
         with(binding) {
+
+            errorTagsTv.text = getString(string.please_space_to_separate)
+            errorTagsTv.setTextColor(resources.getColor(R.color.cardTitleColor))
+            errorTagsTv.show()
+
             cancelButton.setOnClickListener {
                 Utils.hideSoftKeyboard(requireActivity())
                 findNavController().popBackStack()
@@ -285,7 +290,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private fun updateVideoInfo() {
         progressDialog.show()
         observeEditResponse()
-        
+
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
         if (title.isBlank()) {

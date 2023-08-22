@@ -127,7 +127,11 @@ class EditUploadInfoFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
+        binding.errorTagsTv.text = getString(R.string.please_space_to_separate)
+        binding.errorTagsTv.setTextColor(resources.getColor(R.color.cardTitleColor))
+        binding.errorTagsTv.show()
+
         binding.container.setOnClickListener {
             Utils.hideSoftKeyboard(requireActivity())
         }
