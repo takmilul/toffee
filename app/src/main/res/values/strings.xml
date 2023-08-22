@@ -586,6 +586,7 @@
     <string name="enter_gift_voucher_code">Enter the Gift Voucher code here</string>
     <string name="voucher_code_not_valid">Voucher code is not valid</string>
     <string name="subscription_history_tooltip_text">Plan validity will expire earlier if the campaign ends earlier than plan validity</string>
+    <string name="please_space_to_separate">*Please space to separate</string>
     <string name="redeem_voucher_terms_and_conditions"><![CDATA[By clicking on REDEEM CODE, you agree to the Terms & Conditions]]></string>
     <string name="gift_coupon_hint">Enter the Access Coupon code here</string>
     <string name="gift_voucher_code_subtitle">Use the Gift Voucher code</string>
