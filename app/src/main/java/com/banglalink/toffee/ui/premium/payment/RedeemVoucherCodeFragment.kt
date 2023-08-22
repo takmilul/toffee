@@ -87,6 +87,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     R.color.pink_to_accent_color,
                     R.drawable.error_single_line_input_text_bg_coupon
                 )
+                binding.tvGiftVoucherCodeError.text= getString(R.string.gift_voucher_enter_code)
                 binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                 binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
             }
@@ -144,6 +145,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                             R.color.pink_to_accent_color,
                             R.drawable.error_single_line_input_text_bg_coupon
                         )
+                        binding.tvGiftVoucherCodeError.text= it.data!!.message
                         binding.tvGiftVoucherCodeError.visibility = View.VISIBLE
                         binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_not_verified), null)
                         progressDialog.dismiss()
@@ -171,7 +173,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                         val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
+                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 200),
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption is Successful",
                             PaymentStatusDialog.ARG_STATUS_MESSAGE to "Please wait while we redirect you"
                         )
@@ -179,9 +181,9 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
                         val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
+                            PaymentStatusDialog.ARG_STATUS_CODE to  0,
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption Failed!",
-                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the Voucher activation failed. Please retry."
+                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the Coupon activation failed. Please retry"
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }

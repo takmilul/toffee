@@ -590,4 +590,5 @@
     <string name="redeem_voucher_terms_and_conditions"><![CDATA[By clicking on REDEEM CODE, you agree to the Terms & Conditions]]></string>
     <string name="gift_coupon_hint">Enter the Access Coupon code here</string>
     <string name="gift_voucher_code_subtitle">Use the Gift Voucher code</string>
+    <string name="gift_voucher_enter_code">Please enter the code here</string>
 </resources>
