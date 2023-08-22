@@ -60,17 +60,9 @@ class PremiumFragment : BaseFragment() {
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                tab?.position.let {
-                    when (it) {
-                        0 -> {
-                            viewModel.clickedOnPackList.value = true
-                            viewModel.clickedOnSubHistory.value = false
-                        }
-                        1 -> {
-                            viewModel.clickedOnSubHistory.value = true
-                            viewModel.clickedOnPackList.value = false
-                        }
-                    }
+                    tab?.position.let {
+                    viewModel.clickedOnPackList.value = it == 0
+                    viewModel.clickedOnSubHistory.value = it == 1
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}

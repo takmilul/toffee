@@ -84,7 +84,12 @@ class PremiumPackDetailsFragment : BaseFragment(){
                             homeViewModel.getMnpStatus()
                         }
                         else {
-                            viewModel.getPackStatus(0, viewModel.selectedPremiumPack.value!!.id)
+                            viewModel.selectedPremiumPack.value?.let {
+                                viewModel.getPackStatus(0, it.id)
+                            } ?: run {
+                                progressDialog.hide()
+                                requireContext().showToast(getString(R.string.try_again_message))
+                            }
                         }
                     }
                 })
@@ -242,7 +247,9 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 is Success -> {
                     if (response.data?.mnpStatus == 200){
                         mPref.isMnpStatusChecked = true
-                        viewModel.getPackStatus(0, viewModel.selectedPremiumPack.value!!.id)
+                        viewModel.selectedPremiumPack.value?.let {
+                            viewModel.getPackStatus(0, it.id)
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {

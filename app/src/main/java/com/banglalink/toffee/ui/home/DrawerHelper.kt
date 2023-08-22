@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.home
 
-import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -26,6 +25,7 @@ import com.banglalink.toffee.util.bytesEqualTo
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class DrawerHelper(
     private val activity: HomeActivity,
     private val mPref: SessionPreference,
@@ -52,7 +52,7 @@ class DrawerHelper(
         toggle.toolbarNavigationClickListener = View.OnClickListener {
             val icon = binding.tbar.toolbar.navigationIcon
             val isBackIconVisible = ContextCompat.getDrawable(activity, R.drawable.ic_arrow_back)?.bytesEqualTo(icon)
-            if (isBackIconVisible == true) {
+            if (isBackIconVisible == true && activity.getNavController().currentDestination?.id != R.id.premiumPackListFragment) {
                 activity.getNavController().popBackStack()
             } else {
                 activity.getNavController().navigatePopUpTo(R.id.menu_feed)

@@ -302,7 +302,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error)
+                        rawResponse = gson.toJson(response.error.msg)
                     ))
                     queryBkashPayment()
                 }
@@ -387,7 +387,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error),
+                        rawResponse = gson.toJson(response.error.msg),
                         statusCode = statusCode,
                         statusMessage = statusMessage,
                     ))

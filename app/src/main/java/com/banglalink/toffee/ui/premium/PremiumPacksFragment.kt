@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -25,11 +24,10 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.util.Log
 import kotlinx.coroutines.launch
 
 class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
-
+    
     private lateinit var mAdapter: PremiumPackListAdapter
     private var _binding: FragmentPremiumPacksBinding? = null
     private val binding get() = _binding!!
@@ -46,28 +44,27 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             }
         }
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentPremiumPacksBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
-
+        
         if (fromChannelItem == true) {
             binding.packListHeader.setText(R.string.prem_content_bundle_title)
         } else {
             binding.packListHeader.setText(R.string.premium_pack_list_title)
         }
-
+        
         binding.progressBar.load(R.drawable.content_loader)
-        handleOnBackPressed()
-
+        
         contentId = arguments?.getString("contentId")
-
+        
         mAdapter = PremiumPackListAdapter(this)
         val linearLayoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
             override fun onLayoutCompleted(state: RecyclerView.State?) {
@@ -89,7 +86,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         init()
         viewModel.selectedPremiumPack.value = null
     }
-
+    
     private fun init(){
         if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription){
             observeMnpStatus()
@@ -99,7 +96,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             viewModel.clickedOnPackList.value = false
         }
     }
-
+    
     private fun observeClick() {
         observe(viewModel.clickedOnPackList) {
             if (it) {
@@ -107,7 +104,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             }
         }
     }
-
+    
     private fun observeMnpStatus() {
         observe(homeViewModel.mnpStatusBeanLiveData) { response ->
             when (response) {
@@ -124,7 +121,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         }
         homeViewModel.getMnpStatus()
     }
-
+    
     private fun observeList() {
         observe(viewModel.packListState) { response ->
             when(response) {
@@ -152,33 +149,19 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
             }
         }
     }
-
+    
     override fun onItemClicked(item: PremiumPack) {
         viewModel.selectedPremiumPack.value = item
         findNavController().navigateTo(R.id.packDetailsFragment)
     }
-
-    private fun handleOnBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isEnabled) {
-                    viewModel.packListScrollState.value = null
-                    viewModel.selectedPremiumPack.value = null
-                    viewModel.paymentMethod.value = null
-                    viewModel.selectedDataPackOption.value = null
-                    findNavController().popBackStack()
-                }
-            }
-        })
-    }
-
-    override fun onStop() {
-        super.onStop()
+    
+    override fun onPause() {
+        super.onPause()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.packListScrollState.value = binding.premContentScroller.scrollY
         }
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         binding.premiumPackList.adapter = null

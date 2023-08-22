@@ -118,21 +118,19 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 } else {
                     paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
-//                blPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bl?.minimumPrice?.toString())
                 blPackPrice.text = String.format(getString(R.string.starting_price), blStartingPrice.toString())
-                blPackPrice.visibility=View.GONE
                 
                 val bKashStartingPrice = if (mPref.isBanglalinkNumber == "true") {
                     paymentTypes.bkash?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 } else {
                     paymentTypes.bkash?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
-//                bkashPackPrice.text = String.format(getString(R.string.starting_price), paymentTypes.bkash?.minimumPrice.toString())
                 bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
                 bkashPackPrice.isVisible = bKashStartingPrice > 0
-                bkashPackPrice.visibility=View.GONE
                 
-                blPackCard.isVisible = paymentTypes.bl != null && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
+                val isAvailableForBlUsers = mPref.isBanglalinkNumber == "true" && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
+                
+                blPackCard.isVisible = paymentTypes.bl != null && (mPref.isBanglalinkNumber != "true" || isAvailableForBlUsers)
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 

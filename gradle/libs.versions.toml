@@ -2,7 +2,7 @@
 
 [versions]
 
-gradle-plugin-version = "8.1.0"
+gradle-plugin-version = "8.1.1"
 
 # View
 activity-version = "1.6.1"

@@ -705,6 +705,8 @@ class HomeActivity : PlayerPageActivity(),
 //            }
         } else if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip() && navController.currentDestination?.id == R.id.menu_feed) {
             enterPipMode()
+        } else if (navController.currentDestination?.id == R.id.premiumPackListFragment) {
+            navController.navigatePopUpTo(R.id.menu_feed)
         } else {
             super.onBackPressed()
         }

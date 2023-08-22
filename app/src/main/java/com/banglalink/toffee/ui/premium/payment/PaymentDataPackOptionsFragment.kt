@@ -229,7 +229,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error)
+                        rawResponse = gson.toJson(response.error.msg)
                     ))
                     requireContext().showToast(response.error.msg)
                     progressDialog.dismiss()
@@ -291,7 +291,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error)
+                        rawResponse = gson.toJson(response.error.msg)
                     ))
                     requireContext().showToast(response.error.msg)
                 }
@@ -364,7 +364,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = null,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = gson.toJson(it.error)
+                            rawResponse = gson.toJson(it.error.msg)
                         ))
                         requireContext().showToast(it.error.msg)
                     }
