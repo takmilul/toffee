@@ -19,6 +19,8 @@ data class SubsHistoryDetail(
     var packName: String? = null,
     @SerializedName("payment_method")
     var paymentMethod: String? = null,
+    @SerializedName("payment_method_id")
+    var paymentMethodId: Int? = null,
     @SerializedName("payment_price")
     var paymentPrice: String? = null,
     @SerializedName("plan")

@@ -11,6 +11,8 @@
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.SubsHistoryDetail" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -90,6 +92,7 @@
             android:layout_height="16dp"
             app:srcCompat="@drawable/ic_price"
             android:layout_marginTop="8dp"
+            android:visibility="@{data.paymentMethodId==12 ? View.GONE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/paymentMethodIcon" />
 
@@ -97,6 +100,7 @@
             android:id="@+id/priceLabel"
             style="@style/packsInfoLabel"
             android:text="@string/price_label"
+            android:visibility="@{data.paymentMethodId==12 ? View.GONE : View.VISIBLE}"
             app:layout_constraintStart_toEndOf="@id/priceIcon"
             app:layout_constraintTop_toTopOf="@id/priceIcon"
             app:layout_constraintBottom_toBottomOf="@id/priceIcon"
@@ -106,6 +110,7 @@
             android:id="@+id/tvPriceVal"
             style="@style/packsInfoValue"
             tools:text="BDT 9"
+            android:visibility="@{data.paymentMethodId==12 ? View.GONE : View.VISIBLE}"
             android:text="@{data.paymentPrice}"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
