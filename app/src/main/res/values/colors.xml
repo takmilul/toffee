@@ -158,4 +158,6 @@
     <color name="tooltip_bg_color">#BED6F3</color>
     <color name="tooltip_text_color">#29466B</color>
 
+    <color name="bottom_sheet_top_icon">#29466B</color>
+
 </resources>
