@@ -8,7 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        
         <WebView
             android:id="@+id/webview"
             android:layout_width="match_parent"
@@ -20,18 +20,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <ProgressBar
+        
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:progressDrawable="@drawable/progressbar_states"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
             android:visibility="visible"
-            tools:progress="50"
+            app:indicatorColor="@color/colorAccent2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:trackColor="@android:color/transparent"
+            app:trackThickness="2dp"
+            tools:progress="50" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-

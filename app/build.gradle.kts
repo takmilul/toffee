@@ -87,13 +87,19 @@ android {
     
     buildTypes {
         getByName("release") {
+            isDebuggable = false
             isMinifyEnabled = true
+            isJniDebuggable = false
             isShrinkResources = true
+            isRenderscriptDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
+            isDebuggable = true
+            isJniDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
+            isRenderscriptDebuggable = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
