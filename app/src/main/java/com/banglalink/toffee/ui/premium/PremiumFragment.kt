@@ -15,11 +15,12 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 
 class PremiumFragment : BaseFragment() {
-
+    
+    private var contentId: String? = null
+    private val binding get() = _binding!!
     private var _binding: FragmentPremiumBinding? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fromChannelItem: Boolean? = false
-    private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -30,6 +31,7 @@ class PremiumFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = getString(R.string.toffee_premium)
+        contentId = arguments?.getString("contentId")
         fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
         loadView()
     }
@@ -41,7 +43,7 @@ class PremiumFragment : BaseFragment() {
 
         if(viewPagerAdapter.itemCount == 0){
             viewPagerAdapter.addFragments(listOf(
-                PremiumPacksFragment.newInstance(fromChannelItem ?: false),
+                PremiumPacksFragment.newInstance(contentId, fromChannelItem ?: false),
                 SubscriptionHistoryFragment()
             ))
         }

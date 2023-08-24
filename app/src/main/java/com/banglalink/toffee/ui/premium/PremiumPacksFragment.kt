@@ -38,8 +38,9 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
 
     companion object {
         @JvmStatic
-        fun newInstance(clickedFromDrawer: Boolean) = PremiumPacksFragment().apply {
+        fun newInstance(contentId: String?, clickedFromDrawer: Boolean) = PremiumPacksFragment().apply {
             arguments = Bundle().apply {
+                putString("contentId", contentId)
                 putBoolean("clickedFromChannelItem", clickedFromDrawer)
             }
         }
@@ -63,7 +64,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         
         binding.progressBar.load(R.drawable.content_loader)
         
-        contentId = arguments?.getString("contentId")
+        contentId = arguments?.getString("contentId", "0")
         
         mAdapter = PremiumPackListAdapter(this)
         val linearLayoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
