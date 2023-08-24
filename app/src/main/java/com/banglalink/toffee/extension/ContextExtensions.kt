@@ -81,7 +81,7 @@ fun Context.getBalloon(tooltipText: String): Balloon {
         .setPaddingVertical(8)
         .setPaddingHorizontal(12)
         .setMarginHorizontal(16)
-        .setTextTypeface(ResourcesCompat.getFont(this, com.banglalink.toffee.R.font.roboto_medium)!!)
+        .setTextTypeface(ResourcesCompat.getFont(this, com.banglalink.toffee.R.font.roboto_regular)!!)
         .setCornerRadius(8f)
         .setBackgroundColorResource(com.banglalink.toffee.R.color.tooltip_bg_color)
         .setTextGravity(Gravity.START)
