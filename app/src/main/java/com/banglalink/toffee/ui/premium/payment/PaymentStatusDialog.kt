@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,9 +18,12 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogPaymentStatusBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.SeriesPlaybackInfo
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.util.Utils
@@ -157,6 +161,9 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.hide()
                 binding.callBtn.hide()
                 binding.goToHomePageBtn.show()
+                binding.goToHomePageBtn.layoutParams = (binding.goToHomePageBtn.layoutParams as LayoutParams).apply {
+                    topMargin = 18.px
+                }
             }
             GetRequestStatus_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
@@ -181,6 +188,9 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.tryAgainBtn.hide()
                 binding.callBtn.hide()
                 binding.goToHomePageBtn.show()
+                binding.goToHomePageBtn.layoutParams = (binding.goToHomePageBtn.layoutParams as LayoutParams).apply {
+                    topMargin = 18.px
+                }
             }
             BKASH_PAYMENT_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
