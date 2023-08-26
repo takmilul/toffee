@@ -2,12 +2,11 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.Index
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
-@Entity(indices = [Index(value = ["channelId"], unique = true)])
+@Entity
 data class TVChannelItem(
     @SerializedName("channelId")
     val channelId: Long,
