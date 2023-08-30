@@ -237,6 +237,7 @@ class SplashScreenFragment : BaseFragment() {
         }
     }
     
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun forwardToNextScreen() {
         ToffeeAnalytics.updateCustomerId(mPref.customerId)
         lifecycleScope.launch(Main) {

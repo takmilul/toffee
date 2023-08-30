@@ -1,6 +1,8 @@
 package com.banglalink.toffee.notification
 
 import android.content.Context
+import android.util.Base64
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Log
@@ -53,13 +55,13 @@ object PubSubMessageUtil {
     private const val TAG = "PubSubMessageUtil"
     private val coroutineContext = IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
-
+    
     fun init(context: Context){
         val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
         val timeout = SessionPreference.getInstance().externalTimeOut
         val credential = GoogleCredential.fromStream(
-            context.assets.open("toffee-261507-c7793c98cdfd.json")
+            Base64.decode(Constants.GCP_CREDENTIAL, Base64.NO_WRAP).inputStream()
         ).setExpirationTimeMilliseconds(timeout * 1_000L).createScoped(PubsubScopes.all())
         val builder = Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
         client = builder.build()
