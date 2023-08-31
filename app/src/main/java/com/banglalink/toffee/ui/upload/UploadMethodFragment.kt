@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -17,6 +18,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -65,6 +67,7 @@ class UploadMethodFragment : DialogFragment() {
         return binding.root
     }
     
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -88,12 +91,12 @@ class UploadMethodFragment : DialogFragment() {
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
-                if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
+                if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_VIDEO).isAccepted) {
                     galleryResultLauncher.launch(
                         Intent(
                             Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                        ).setType("video/mp4"),
+                        ).setTypeAndNormalize("video/mp4"),
                     )
                 }
             } catch (e: PermissionException) {

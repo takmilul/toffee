@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,9 +34,9 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.util.Utils
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -217,7 +218,7 @@ class EditUploadInfoFragment : BaseFragment() {
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
-                if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
+                if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_VIDEO).isAccepted) {
                     var chooseFile = Intent(Intent.ACTION_GET_CONTENT)
                     chooseFile.type = "*/*"
                     chooseFile = Intent.createChooser(chooseFile, "Choose a file")

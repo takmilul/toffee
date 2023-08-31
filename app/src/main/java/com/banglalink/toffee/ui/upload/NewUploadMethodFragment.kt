@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -78,8 +79,13 @@ class NewUploadMethodFragment : DialogFragment() {
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
-                if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
-                    galleryResultLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI).setType("video/mp4"))
+                if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_VIDEO).isAccepted) {
+                    galleryResultLauncher.launch(
+                        Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        ).setTypeAndNormalize("video/mp4")
+                    )
                 }
             } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
