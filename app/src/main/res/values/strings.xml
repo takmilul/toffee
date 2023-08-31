@@ -512,6 +512,7 @@
     <string name="pack_purchase_failed_pack_not_exist">Wrong Data Plan Selected!</string>
     <string name="pack_purchase_failed_wrong_pack">Data Plan Activation Failed!</string>
     <string name="this_might_be_insufficient">Insufficient balance in your Banglalink account.</string>
+    <string name="this_might_be_insufficient_for_postpaid">Overdue credit limit in your Banglalink account</string>
     <string name="this_might_be_Technical">Due to some technical error, the data plan activation failed. Please retry.</string>
     <string name="this_might_be_wrong_pack">Please check your Banglalink connection type (prepaid/ postpaid) and select a relevant data plan for you.</string>
     <string name="this_might_be_pack_not_exist">Sorry, this plan does not exist. Please purchase a different plan to access the content.</string>

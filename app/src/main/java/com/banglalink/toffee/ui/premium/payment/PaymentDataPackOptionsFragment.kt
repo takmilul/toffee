@@ -169,7 +169,16 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
                         PaymentStatusDialog.DataPackPurchaseFailedBalanceInsufficient_ERROR -> {
-                            findNavController().navigateTo(R.id.insufficientBalanceFragment)
+                            if (!mPref.isPrepaid){
+                                val args = bundleOf(
+                                    "subTitle" to getString(R.string.this_might_be_insufficient_for_postpaid),
+                                    "isBuyWithRechargeHide" to true,
+                                )
+                                findNavController().navigateTo(R.id.insufficientBalanceFragment, args)
+                            }
+                            else{
+                                findNavController().navigateTo(R.id.insufficientBalanceFragment)
+                            }
                         }
                         else -> {
                             val args = bundleOf(
