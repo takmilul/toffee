@@ -1095,42 +1095,46 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun observeGetPackStatus() {
         observe(viewModel.activePackListLiveData) { response ->
-            when (response) {
-                is Success -> {
-                    if (response.data.isNotEmpty()) {
-                        mPref.activePremiumPackList.value = response.data
-                        checkPurchaseBeforePlay(cInfo!!, dInfo) {
+            runCatching {
+                when (response) {
+                    is Success -> {
+                        if (response.data.isNotEmpty()) {
+                            mPref.activePremiumPackList.value = response.data
+                            cInfo?.let {
+                                checkPurchaseBeforePlay(it, dInfo) {
+                                    mPref.prePurchaseClickedContent.value = cInfo
+                                    navController.navigatePopUpTo(
+                                        resId = id.premiumPackListFragment,
+                                        args = bundleOf(
+                                            "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
+                                            "clickedFromChannelItem" to true
+                                        )
+                                    )
+                                }
+                            } ?: showToast(getString(R.string.try_again_message))
+                        } else {
                             mPref.prePurchaseClickedContent.value = cInfo
                             navController.navigatePopUpTo(
                                 resId = id.premiumPackListFragment,
                                 args = bundleOf(
-                                    "contentId" to cInfo?.getContentId(),
+                                    "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
                                     "clickedFromChannelItem" to true
                                 )
                             )
                         }
-                    } else {
+                    }
+                    is Failure -> {
                         mPref.prePurchaseClickedContent.value = cInfo
                         navController.navigatePopUpTo(
                             resId = id.premiumPackListFragment,
                             args = bundleOf(
-                                "contentId" to cInfo?.getContentId(),
+                                "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
                                 "clickedFromChannelItem" to true
                             )
                         )
                     }
                 }
-                is Failure -> {
-                    mPref.prePurchaseClickedContent.value = cInfo
-                    navController.navigatePopUpTo(
-                        resId = id.premiumPackListFragment,
-                        args = bundleOf(
-                            "contentId" to cInfo?.getContentId(),
-                            "clickedFromChannelItem" to true
-                        )
-                    )
-                }
-            }
+            }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
     }
     

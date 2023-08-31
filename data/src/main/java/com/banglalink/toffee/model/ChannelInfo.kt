@@ -257,9 +257,9 @@ data class ChannelInfo(
     var viewProgress: Long = -1L
     
     fun getContentId(): String {
-        return if (isOwner && !isPublic && !isPlaylist && mainTableId != null && mainTableId != "0"){
+        return if (isOwner && !isPublic && !isPlaylist && mainTableId != null && mainTableId != "0" && !mainTableId.equals("null", ignoreCase = true)) {
             mainTableId ?: id
-        } else if (isOwner && !isPublic && isPlaylist && iptvProgramsId != null && iptvProgramsId != "0") {
+        } else if (isOwner && !isPublic && isPlaylist && iptvProgramsId != null && iptvProgramsId != "0" && !iptvProgramsId.equals("null", ignoreCase = true)) {
             iptvProgramsId ?: id
         } else {
             id

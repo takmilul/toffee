@@ -6,7 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import coil.load
@@ -15,7 +21,13 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.enums.WebActionType.*
+import com.banglalink.toffee.enums.WebActionType.CLOSE_APP
+import com.banglalink.toffee.enums.WebActionType.DEEP_LINK
+import com.banglalink.toffee.enums.WebActionType.FORCE_LOGOUT
+import com.banglalink.toffee.enums.WebActionType.HOME_SCREEN
+import com.banglalink.toffee.enums.WebActionType.LOGIN_DIALOG
+import com.banglalink.toffee.enums.WebActionType.MESSAGE_DIALOG
+import com.banglalink.toffee.enums.WebActionType.PLAY_CONTENT
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
@@ -57,7 +69,7 @@ class HtmlPageViewDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
         
-        htmlUrl = arguments?.getString("url")!!
+        htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
         title = arguments?.getString("myTitle", "Toffee") ?: "Toffee"
         shareableUrl = arguments?.getString("shareable_url")
