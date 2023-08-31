@@ -35,22 +35,15 @@ class AllChannelsViewModel @Inject constructor(
     val selectedChannel = MutableLiveData<ChannelInfo?>()
     val isFromSportsCategory = MutableLiveData<Boolean>()
     
-    fun getChannels(subcategoryId: Int, isStingray: Boolean = false, isFmRadio: Boolean = false): Flow<List<TVChannelItem>?> {
+    fun getChannels(subcategoryId: Int): Flow<List<TVChannelItem>?> {
         viewModelScope.launch {
             try {
-                if (isFmRadio && !isStingray) {
-                    getFmRadioContentService.loadData(0,100)
-                }
-                else if(isStingray && !isFmRadio){
-                    getStingrayContentService.loadData(0, 100)
-                } else {
-                    allChannelService.loadData(subcategoryId)
-                }
+                allChannelService.loadData(subcategoryId)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
-        return if (isStingray) tvChannelsRepo.getStingrayItems() else if(isFmRadio) tvChannelsRepo.getFmItems() else tvChannelsRepo.getAllItems()
+        return tvChannelsRepo.getAllItems()
     }
     
     fun loadAllChannels(

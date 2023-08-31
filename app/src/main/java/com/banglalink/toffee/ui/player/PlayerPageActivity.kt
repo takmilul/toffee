@@ -1313,6 +1313,12 @@ abstract class PlayerPageActivity :
             super.onIsPlayingChanged(isPlaying)
             updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
             observeNetworkChange()
+            val channelInfo = getCurrentChannelInfo()
+            if (channelInfo is ChannelInfo) {
+                if ((player?.currentPosition ?: 0) > 0L) {
+                    insertContentViewProgress(channelInfo, player?.currentPosition ?: -1)
+                }
+            }
             if (isPlaying) {
                 if (reloadCounter > 1 || retryCounter > 1 || fallbackCounter > 1) {
                     ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
@@ -1320,13 +1326,10 @@ abstract class PlayerPageActivity :
                 retryCounter = 0
                 reloadCounter = 0
                 fallbackCounter = 0
+                heartBeatManager.triggerEventViewingContentStart(channelInfo?.id?.toInt() ?: 0,channelInfo?.type ?: "VOD", channelInfo?.dataSource ?: "iptv_programs", channelInfo?.channel_owner_id ?: 0)
                 return
-            }
-            val channelInfo = getCurrentChannelInfo()
-            if (channelInfo is ChannelInfo) {
-                if ((player?.currentPosition ?: 0) > 0L) {
-                    insertContentViewProgress(channelInfo, player?.currentPosition ?: -1)
-                }
+            } else {
+                heartBeatManager.triggerEventViewingContentStop()
             }
         }
     }

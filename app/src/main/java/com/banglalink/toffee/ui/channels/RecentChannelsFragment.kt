@@ -73,7 +73,7 @@ class RecentChannelsFragment : BaseFragment() {
         })
         
         _binding?.channelList?.apply {
-            setPadding(leftPadding.toInt(), 0, leftPadding.toInt(), 0)
+//            setPadding(leftPadding.toInt(), 0, leftPadding.toInt(), 0)
             itemAnimator = null
             adapter = mAdapter
         }

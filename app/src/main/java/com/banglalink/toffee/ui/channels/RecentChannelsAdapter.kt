@@ -16,6 +16,6 @@ class RecentChannelsAdapter(private val callback: BaseListItemCallback<TVChannel
 //    }
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.fragment_recent_tv_item_layout
+        return R.layout.list_item_live_recently_viewed
     }
 }

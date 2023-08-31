@@ -15,6 +15,7 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentChannelListBinding
 import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
@@ -93,6 +94,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         title?.let {
             activity?.title = it
         }
+        _binding?.listview?.hide()
         _binding?.progressBar?.show()
         homeViewModel.isStingray.postValue(isStingray)
         homeViewModel.isFmRadio.postValue(isFmRadio)
@@ -119,15 +121,18 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
+            with(channelViewModel.getChannels(0)) {
                 collectLatest { tvList ->
                     val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
                         val categoryName = it.key.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }
-                    _binding?.progressBar?.hide()
-                    res?.let { channelAdapter.setItems(it) }
+                    res?.ifNotNullOrEmpty {
+                        _binding?.progressBar?.hide()
+                        _binding?.listview?.show()
+                        channelAdapter.setItems(it.toList())
+                    }
                 }
                 catch {
                     _binding?.progressBar?.hide()

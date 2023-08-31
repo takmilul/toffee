@@ -10,10 +10,10 @@
     
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/channel_width"
+        android:layout_height="@dimen/channel_height"
+        android:layout_marginVertical="8dp"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
         android:adjustViewBounds="true"
         android:background="@drawable/circular_white_bg"
         android:contentDescription="@string/channel_image"

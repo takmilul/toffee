@@ -67,7 +67,7 @@ import com.banglalink.toffee.model.BubbleConfig
         BubbleConfig::class,
 //        PremiumPackItem::class
     ],
-    version = 18,
+    version = 19,
     exportSchema = true,
 //    autoMigrations = [
 //        AutoMigration(
