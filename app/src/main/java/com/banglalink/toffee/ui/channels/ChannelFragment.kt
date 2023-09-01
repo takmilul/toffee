@@ -121,7 +121,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
         
         viewLifecycleOwner.lifecycleScope.launch {
-            with(channelViewModel.getChannels(0)) {
+            with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
                 collectLatest { tvList ->
                     val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
                         val categoryName = it.key.trimIndent()
