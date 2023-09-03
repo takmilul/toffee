@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -163,7 +162,7 @@ class UploadMethodFragment : DialogFragment() {
     }
     @Throws(IOException::class)
     fun createVideoFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val videoFileName = "VIDEO_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
         if (storageDir?.exists() == false) {
@@ -243,6 +242,7 @@ class UploadMethodFragment : DialogFragment() {
         )
     }
     
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     override fun onDestroyView() {
         requireActivity().let {
             if (it is HomeActivity) it.rotateFab(false)

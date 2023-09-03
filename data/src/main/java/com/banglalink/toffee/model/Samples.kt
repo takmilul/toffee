@@ -213,6 +213,6 @@ object Samples {
     ) {
         constructor(
             name: String, uri: String?, type: Int
-        ) : this(name, name.lowercase(Locale.US).replace("\\s".toRegex(), ""), "", uri, type) {}
+        ) : this(name, name.lowercase(Locale.ENGLISH).replace("\\s".toRegex(), ""), "", uri, type) {}
     }
 }

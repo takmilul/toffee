@@ -158,7 +158,7 @@ class NewUploadMethodFragment : DialogFragment() {
 
     @Throws(IOException::class)
     fun createVideoFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val videoFileName = "VIDEO_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
         if (storageDir?.exists() == false){

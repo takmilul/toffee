@@ -13,7 +13,7 @@ class PlayerPreference private constructor(val context: Context) {
         context.getSharedPreferences("PLAYER_PREF_V3", Context.MODE_PRIVATE)
 
 
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
 
     fun savePlayerSessionBandWidth(durationInMillis: Long, bandWidthInMB: Double) {
         pref.edit().putString(UUID.randomUUID().toString(), "$durationInMillis,$bandWidthInMB")

@@ -321,7 +321,7 @@ object Utils {
         Settings.System.ACCELEROMETER_ROTATION, 0) == 1
 
     fun strToDate(dateTime: String?, dateFormat: String = "yyyy-MM-d HH:mm:ss"):Date? {
-        val df: DateFormat = SimpleDateFormat(dateFormat, Locale.getDefault())
+        val df: DateFormat = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         try {
             if (dateTime != null) {
                 return df.parse(dateTime)
@@ -334,7 +334,7 @@ object Utils {
 
 
     fun dateToStr(dateTime: Date?, dateFormat: String = "dd/MM/yyyy"):String? {
-        val formatter: DateFormat = SimpleDateFormat(dateFormat, Locale.getDefault())
+        val formatter: DateFormat = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         try {
             if (dateTime != null) {
                 return formatter.format(dateTime)
@@ -377,11 +377,11 @@ object Utils {
         if (TextUtils.isEmpty(dateTime)) {
             return ""
         }
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) //2016-10-20 06:45:29
+        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH) //2016-10-20 06:45:29
         val dateObj: Date?
         return try {
             dateObj = dateTime?.let { currentFormatter.parse(it) }
-            val postFormatter = SimpleDateFormat("MMM dd, yyyy hh:mm aaa", Locale.getDefault())
+            val postFormatter = SimpleDateFormat("MMM dd, yyyy hh:mm aaa", Locale.ENGLISH)
             dateObj?.let { postFormatter.format(it) }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -390,7 +390,7 @@ object Utils {
     }
     
     fun formatValidityText(date: Date?): String? {
-        val currentFormatter = SimpleDateFormat("dd MMMM HH:mm aa", Locale.getDefault())
+        val currentFormatter = SimpleDateFormat("dd MMMM HH:mm aa", Locale.ENGLISH)
         return date?.let { currentFormatter.format(it) }
     }
     
@@ -398,11 +398,11 @@ object Utils {
         if (TextUtils.isEmpty(dateTime)) {
             return ""
         }
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) //2016-10-20 06:45:29
+        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH) //2016-10-20 06:45:29
         val dateObj: Date?
         return try {
             dateObj = dateTime?.let { currentFormatter.parse(it) }
-            val postFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+            val postFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH)
             dateObj?.let { postFormatter.format(it) }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -411,7 +411,7 @@ object Utils {
     }
     
     fun getDate(dateTime: String?): Date {
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         return try {
             dateTime?.let { currentFormatter.parse(it) } ?: Date()
         } catch (e: ParseException) {
@@ -427,7 +427,7 @@ object Utils {
             cal.set(0, 0, 0, 0, 0, 0)
             cal.set(Calendar.SECOND, time)
             val dateGMT = cal.time
-            val sdf = SimpleDateFormat("mm:ss", Locale.getDefault())
+            val sdf = SimpleDateFormat("mm:ss", Locale.ENGLISH)
             sdf.format(dateGMT)
         } catch(e: Exception) {
             time.toString()
@@ -440,7 +440,7 @@ object Utils {
             val cal = Calendar.getInstance(TimeZone.getDefault())
             cal.set(Calendar.DAY_OF_YEAR, day)
             val dateGMT = cal.time
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
             sdf.format(dateGMT)
         } catch(e: Exception) {
             val date = Calendar.getInstance().time
@@ -515,8 +515,8 @@ object Utils {
     }
     
     fun getTime(dateTime: String?): String? {
-        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.getDefault())
-        val formatter = SimpleDateFormat("hh:mm aa", Locale.getDefault())
+        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("hh:mm aa", Locale.ENGLISH)
         return try {
             val date = dateTime?.let { df.parse(it) }
             return date?.let { formatter.format(it) }
@@ -527,8 +527,8 @@ object Utils {
     }
     
     fun getDay(dateTime: String?): String? {
-        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.getDefault())
-        val formatter = SimpleDateFormat("EEEE", Locale.getDefault())
+        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("EEEE", Locale.ENGLISH)
         return try {
             val date = dateTime?.let { df.parse(it) }
             return date?.let { formatter.format(it) }
@@ -540,8 +540,8 @@ object Utils {
     
     @JvmStatic
     fun formatDate(dateTime: String?): String? {
-        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.getDefault())
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val df = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
         return try {
             val date = dateTime?.let { df.parse(it) }
             return date?.let { formatter.format(it) }
@@ -636,27 +636,30 @@ const val TAG = "SCALE_IMAGE"
 val today: String
     get() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
-        val cal = Calendar.getInstance(TimeZone.getDefault())
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Dhaka"))
         val dateGMT = cal.time
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return sdf.format(dateGMT)
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        return sdf.format(dateGMT) ?: sdf.format(Date())
     }
 
-private val bdTime: Date
-    get() {
+fun bdTime(): Date {
+    return try {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
-        val cal = Calendar.getInstance(TimeZone.getDefault())
-        return cal.time
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Dhaka"))
+        cal.time
+    } catch (e: Exception) {
+        Date()
     }
+}
 
 val currentDateTime: String
     get() {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(bdTime)
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        return sdf.format(bdTime()) ?: sdf.format(Date())
     }
 
 val currentDateTimeMillis: String
     get() {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
-        return sdf.format(bdTime)
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
+        return sdf.format(bdTime()) ?: sdf.format(Date())
     }

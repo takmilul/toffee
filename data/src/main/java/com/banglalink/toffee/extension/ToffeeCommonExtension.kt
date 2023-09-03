@@ -5,9 +5,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import java.util.TimeZone
+import java.util.*
 
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
 
@@ -16,7 +14,7 @@ fun Long.toFormattedDate(): String{
     val cal = Calendar.getInstance(TimeZone.getDefault())
     cal.timeInMillis = this
     val dateGMT = cal.time
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
     return sdf.format(dateGMT)
 }
 
@@ -25,7 +23,7 @@ fun Long.toFormattedDateMillis(): String{
     val cal = Calendar.getInstance(TimeZone.getDefault())
     cal.timeInMillis = this
     val dateGMT = cal.time
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
     return sdf.format(dateGMT)
 }
 

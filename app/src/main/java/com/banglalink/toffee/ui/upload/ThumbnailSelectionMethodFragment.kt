@@ -160,7 +160,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     
     @Throws(IOException::class)
     fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val imageFileName = "IMAGE_" + timeStamp + "_"
         val storageDir = checkIfFragmentAttached { requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES) }
         if (storageDir?.exists() == false) {

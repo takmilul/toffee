@@ -338,7 +338,7 @@ data class ChannelInfo(
     
     fun durationInSeconds(): Int {
         val time = try {
-            val format = SimpleDateFormat("HH:mm:ss", Locale.US)
+            val format = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
             format.parse(duration ?: "00:00:00")?.seconds ?: 0
         } catch (e: Exception) {
             0
