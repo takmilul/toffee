@@ -211,8 +211,8 @@ dependencies {
     implementation(libs.bundles.firebase)
     
     // Firework
-    implementation(libs.firework.ads)
-    implementation(libs.firework.sdk) {
+//    implementation(libs.firework.ads)
+    implementation(libs.bundles.firework) {
         exclude(module = "picasso-transformations")
     }
     

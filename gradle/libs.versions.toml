@@ -78,6 +78,7 @@ google-http-client-gson-version = "1.43.1"
 play-services-auth-version = "20.7.0"
 play-services-auth-api-phone-version = "18.0.1"
 play-core-version = "1.10.3"
+in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
@@ -97,7 +98,7 @@ mqtt-client-version = "1.2.5"
 mqtt-android-service-version = "3.3.8"
 
 # Firework
-firework-sdk-version = "v5.10.0"
+firework-sdk-version = "6.3.4"
 firework-ads-version = "v20.0.0"
 
 # Miscellaneous
@@ -252,6 +253,8 @@ google-http-client = { group = "com.google.http-client", name = "google-http-cli
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth-version" }
 play-services-auth-api-phone = { group = "com.google.android.gms", name = "play-services-auth-api-phone", version.ref = "play-services-auth-api-phone-version" }
 play-core = { group = "com.google.android.play", name = "core", version.ref = "play-core-version" }
+inapp-update = { group = "com.google.android.play", name = "app-update", version.ref = "in-app-update-version" }
+inapp-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "in-app-update-version" }
 
 # Firebase
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-version" }
@@ -262,8 +265,11 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebase-firestore-version" }
 
 # Firework
-firework-sdk = { group = "com.github.loopsocial", name = "firework_sdk", version.ref = "firework-sdk-version" }
-firework-ads = { group = "com.github.loopsocial", name = "AndroidAdsService", version.ref = "firework-ads-version" }
+firework-sdk = { group = "com.firework", name = "sdk", version.ref = "firework-sdk-version" }
+firework-ads = { group = "com.firework", name = "AndroidAdsService", version.ref = "firework-ads-version" }
+firework-singlehost = { group = "com.firework.external.livestream", name = "singleHostPlayer", version.ref = "firework-sdk-version" }
+firework-multihost = { group = "com.firework.external.livestream", name = "multiHostPlayer", version.ref = "firework-sdk-version" }
+firework-imageloader = { group = "com.firework.external.imageloading", name = "glide", version.ref = "firework-sdk-version" }
 
 # Reporting
 facebook-sdk = { group = "com.facebook.android", name = "facebook-android-sdk", version.ref = "facebook-sdk-version" }
@@ -363,8 +369,9 @@ hilt = ["hilt-android", "hilt-work"]
 #hiltkapt = ["hilt-compiler", "hilt-android-compiler", "hilt-compiler-kapt"]
 room = ["room-db", "room-paging", "room-ktx"]
 navigation = ["navigation-ktx", "navigation-ui-ktx"]
-play-services = ["play-services-auth", "play-services-auth-api-phone", "play-core"]
+play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-update", "inapp-update-ktx"]
 conviva = ["conviva-core", "conviva-player"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
+firework = ["firework-sdk", "firework-singlehost", "firework-multihost", "firework-imageloader"]

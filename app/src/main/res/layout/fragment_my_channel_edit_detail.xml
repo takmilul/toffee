@@ -38,7 +38,7 @@
                     loadImageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/channel_banner_height"
-                    android:background="@color/fw_gnt_black"
+                    android:background="@android:color/black"
                     android:contentDescription="@string/txt_placeholder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -19,7 +19,7 @@ class RedeemBulletCardView @JvmOverloads constructor(
     init {
         View.inflate(context, R.layout.list_item_redeemcode_bulletpoint, this)
         titleTextView = findViewById(R.id.bullet_title)
-        bulletImageView = findViewById(R.id.feedView)
+//        bulletImageView = findViewById(R.id.feedView)
     }
 
     fun setConfiguration(cardTitle: String) {

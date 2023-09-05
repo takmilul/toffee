@@ -200,14 +200,14 @@
 <!--            android:exported="false" />-->
         
         <!-- Activity needed for video playback-->
-        <activity
-            android:name="com.loopnow.fireworklibrary.PlaybackActivity"
-            android:exported="false" />
-        
+<!--        <activity-->
+<!--            android:name="com.loopnow.fireworklibrary.PlaybackActivity"-->
+<!--            android:exported="false" />-->
+<!--        <meta-data android:name="Firework:Checksum" android:value="true" />-->
         <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
-        <meta-data
-            android:name="Firework:AppID"
-            android:value="${fireworkOAuthId}" />
+<!--        <meta-data-->
+<!--            android:name="Firework:AppID"-->
+<!--            android:value="${fireworkOAuthId}" />-->
         
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

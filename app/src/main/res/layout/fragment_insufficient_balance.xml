@@ -76,7 +76,7 @@
             android:stateListAnimator="@null"
             android:text="@string/buy_with_recharge"
             android:textAllCaps="true"
-            android:textColor="@color/fw_gnt_white"
+            android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold"
             app:cornerRadius="100dp"

@@ -36,15 +36,13 @@ import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
+import com.firework.imageloading.glide.GlideImageLoaderFactory
+import com.firework.sdk.FireworkInitError
+import com.firework.sdk.FireworkSdk
+import com.firework.sdk.FireworkSdkConfig
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.loopnow.fireworklibrary.FwSDK
-import com.loopnow.fireworklibrary.SdkStatus
-import com.loopnow.fireworklibrary.SdkStatus.InitializationFailed
-import com.loopnow.fireworklibrary.SdkStatus.Initialized
-import com.loopnow.fireworklibrary.SdkStatus.RefreshTokenFailed
-import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -213,26 +211,57 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      */
     private fun initFireworkSdk() {
         try {
-            FwSDK.initialize(this, BuildConfig.FIREWORK_OAUTH_ID, sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
-                override fun currentStatus(status: SdkStatus, extra: String) {
-                    when (status) {
-                        Initialized -> {
-                            Log.e("FwSDK", "Initialized: $extra")
-                            VideoPlayerProperties.share = false
-                            VideoPlayerProperties.branding = false
-                            VideoPlayerProperties.fullScreenPlayer = true
-                            FwSDK.setBasePlayerUrl("https://toffeelive.com/")
-                            sessionPreference.isFireworkInitialized.postValue(true)
-                        }
-                        InitializationFailed -> {
-                            Log.e("FwSDK", "InitializationFailed: $extra")
-                            ToffeeAnalytics.logException(Exception("FwSDK InitializationFailed: $extra"))
+            val config = FireworkSdkConfig.Builder(this)
+                .checksumRequired(false)
+                .clientId(BuildConfig.FIREWORK_OAUTH_ID) // Client OAUTH Id
+                .userId(sessionPreference.getFireworkUserId()) // User Id in your eco-system
+                .imageLoader(GlideImageLoaderFactory.createInstance(this)) // glide, picasso, or your ImageLoader implementation
+//                .enableCache(true) // Enable or disable video players cache, enabled by default
+//                .maxCacheSizeBytes(MAX_CACHE_SIZE_BYTES) // Max cache size used by video players, 25MB by default
+//                .muteOnLaunch(true) // Mute videos on lauch
+//                .addLivestreamPlayerInitializer(SingleHostLivestreamPlayerInitializer()) // For single-host livestream use
+//                .addLivestreamPlayerInitializer(MultiHostLivestreamPlayerInitializer()) // For multi-host livestream use
+                .build()
+            FireworkSdk.init(
+                fireworkSdkConfig = config,
+                onSuccess = {
+                    Log.e("FwSDK", "Initialized")
+//                    VideoPlayerProperties.share = false
+//                    VideoPlayerProperties.branding = false
+//                    VideoPlayerProperties.fullScreenPlayer = true
+//                    FwSDK.setBasePlayerUrl("https://toffeelive.com/")
+                    sessionPreference.isFireworkInitialized.postValue(true)
+                },
+                onError = { error ->
+                    when (error) {
+                        is FireworkInitError.InitializationError -> {
+                            Log.e("FwSDK", "InitializationFailed")
+                            ToffeeAnalytics.logException(Exception("FwSDK InitializationFailed"))
                             sessionPreference.isFireworkInitialized.postValue(false)
                         }
-                        RefreshTokenFailed -> Log.e("FwSDK", "RefreshTokenFailed: $extra")
                     }
-                }
-            })
+                },
+            )
+//            FwSDK.initialize(this, BuildConfig.FIREWORK_OAUTH_ID, sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener {
+//                override fun currentStatus(status: SdkStatus, extra: String) {
+//                    when (status) {
+//                        Initialized -> {
+//                            Log.e("FwSDK", "Initialized: $extra")
+//                            VideoPlayerProperties.share = false
+//                            VideoPlayerProperties.branding = false
+//                            VideoPlayerProperties.fullScreenPlayer = true
+//                            FwSDK.setBasePlayerUrl("https://toffeelive.com/")
+//                            sessionPreference.isFireworkInitialized.postValue(true)
+//                        }
+//                        InitializationFailed -> {
+//                            Log.e("FwSDK", "InitializationFailed: $extra")
+//                            ToffeeAnalytics.logException(Exception("FwSDK InitializationFailed: $extra"))
+//                            sessionPreference.isFireworkInitialized.postValue(false)
+//                        }
+//                        RefreshTokenFailed -> Log.e("FwSDK", "RefreshTokenFailed: $extra")
+//                    }
+//                }
+//            })
         } catch (e: Exception) {
             Log.e("FwSDK", "onCreate: ${e.message}")
         }

@@ -323,27 +323,26 @@ class PaymentWebViewDialog : DialogFragment() {
                     )
                     
                     transactionStatus = queryPaymentResponse?.transactionStatus
+    
+                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                        id = System.currentTimeMillis() + mPref.customerId,
+                        callingApiName = "bkash-query-payment",
+                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                        paymentMsisdn = queryPaymentResponse?.customerMsisdn,
+                        paymentId = queryPaymentResponse?.paymentID,
+                        transactionId = queryPaymentResponse?.transactionId,
+                        transactionStatus = transactionStatus,
+                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                        rawResponse = gson.toJson(queryPaymentResponse),
+                        statusCode = statusCode,
+                        statusMessage = statusMessage,
+                    ))
                     
-                    if (retryCount >= mPref.bkashApiRetryingCount) {
-                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                           id = System.currentTimeMillis() + mPref.customerId,
-                           callingApiName = "bkash-query-payment",
-                           packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                           packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                           dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                           dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                           paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                           paymentMsisdn = queryPaymentResponse?.customerMsisdn,
-                           paymentId = queryPaymentResponse?.paymentID,
-                           transactionId = queryPaymentResponse?.transactionId,
-                           transactionStatus = transactionStatus,
-                           amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                           merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                           rawResponse = gson.toJson(queryPaymentResponse),
-                           statusCode = statusCode,
-                           statusMessage = statusMessage,
-                        ))
-                    }
                     when (queryPaymentResponse?.transactionStatus) {
                         "Completed" -> {
                             callAndObserveBkashDataPackPurchase()
