@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/channel_banner_height"
             android:adjustViewBounds="true"
-            android:background="@color/fw_gnt_black"
+            android:background="@android:color/black"
             loadImageFromUrl="@{data.myChannelDetail.bannerUrl}"
             maintainRatio="@{false}"
             app:layout_constraintEnd_toEndOf="parent"

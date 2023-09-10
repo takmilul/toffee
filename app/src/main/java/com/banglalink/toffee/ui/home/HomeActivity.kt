@@ -136,14 +136,12 @@ import com.conviva.sdk.ConvivaAnalytics
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.ktx.firestore
@@ -2460,14 +2458,21 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private val appUpdateListener = InstallStateUpdatedListener { state ->
-        if (state.installStatus() == InstallStatus.INSTALLED) {
-            showToast("Toffee updated successfully")
+        when (state.installStatus()) {
+            InstallStatus.DOWNLOADED -> {
+                popupSnackbarForCompleteUpdate()
+            }
+            InstallStatus.INSTALLED -> {
+                showToast("Toffee updated successfully")
+            }
+            else -> {}
         }
     }
     
     private fun inAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
-        val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        appUpdateManager.registerListener(appUpdateListener)
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             val updateType = if (mPref.shouldForceUpdate(BuildConfig.VERSION_CODE)) AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(updateType)) {
@@ -2481,7 +2486,14 @@ class HomeActivity : PlayerPageActivity(),
                 }
             }
         }
-        appUpdateManager.registerListener(appUpdateListener)
+    }
+    
+    private fun popupSnackbarForCompleteUpdate() {
+        binding.root.snack(getString(string.in_app_update_msg)) {
+            action("RESTART", ContextCompat.getColor(this@HomeActivity, R.color.colorAccent2)) {
+                appUpdateManager.completeUpdate()
+            }
+        }
     }
     
     private fun observeInAppMessage() {
@@ -2808,9 +2820,16 @@ class HomeActivity : PlayerPageActivity(),
                         }
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
-                        navController.popBackStack(R.id.menu_feed, false).let {
-                            recreate()
+                        when (navController.currentDestination?.id) {
+                            R.id.editUploadInfoFragment,
+                            R.id.myChannelEditDetailFragment,
+                            R.id.myChannelVideosEditFragment -> {
+                                
+                            }
                         }
+//                        navController.popBackStack(R.id.menu_feed, false).let {
+//                            recreate()
+//                        }
                     }
                 }
                 is Failure -> {

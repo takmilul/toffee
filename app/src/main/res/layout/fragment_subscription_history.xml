@@ -50,7 +50,7 @@
             android:insetBottom="0dp"
             android:text="@string/sign_in_text"
             android:textAllCaps="true"
-            android:textColor="@color/fw_gnt_white"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/default_text_size"
             app:cornerRadius="20dp" />
     </LinearLayout>
