@@ -2820,13 +2820,32 @@ class HomeActivity : PlayerPageActivity(),
                         }
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
+                        
                         when (navController.currentDestination?.id) {
+                            R.id.myChannelEditDetailFragment -> {
+                                navController.popBackStack()
+                                navController.currentDestination?.id?.let {
+                                    navController.popBackStack()
+                                    getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(0)
+                                }
+                            }
+                            R.id.editProfileFragment,
                             R.id.editUploadInfoFragment,
-                            R.id.myChannelEditDetailFragment,
                             R.id.myChannelVideosEditFragment -> {
-                                
+                                navController.popBackStack()
+                                navController.currentDestination?.id?.let {
+                                    navController.popBackStack()
+                                    navController.navigateTo(it)
+                                }
+                            }
+                            else -> {
+                                    navController.currentDestination?.id?.let {
+                                    navController.popBackStack()
+                                    navController.navigateTo(it)
+                                }
                             }
                         }
+                        
 //                        navController.popBackStack(R.id.menu_feed, false).let {
 //                            recreate()
 //                        }

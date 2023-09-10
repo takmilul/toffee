@@ -256,17 +256,18 @@
         android:label="Profile">
         <action
             android:id="@+id/action_profileFragment_to_EditProfileFragment"
-            app:destination="@id/EditProfileFragment" />
+            app:destination="@id/editProfileFragment" />
     </fragment>
     
     <fragment
-        android:id="@+id/EditProfileFragment"
+        android:id="@+id/editProfileFragment"
         android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
         android:label="Edit-Profile">
         <argument
             android:name="data"
             app:argType="com.banglalink.toffee.model.EditProfileForm"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />

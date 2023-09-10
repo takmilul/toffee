@@ -75,7 +75,7 @@ class EditProfileFragment : BaseFragment() {
 
         observeCategory()
         with(binding) {
-            profileForm = args.data
+            profileForm = arguments?.getParcelable("data")
             previousEmail = profileForm?.email ?: ""
             previousAddress = profileForm?.address ?: ""
             container.setOnClickListener {
@@ -87,7 +87,7 @@ class EditProfileFragment : BaseFragment() {
 //            emailEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.emailEt, ToffeeFieldTextWatcher.FieldType.EMAIL_FIELD)
             addressEt.onFocusChangeListener = ToffeeFieldTextWatcher(binding.addressEt, ToffeeFieldTextWatcher.FieldType.ADDRESS_FIELD)
             editIv.setOnClickListener {
-                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.EditProfileFragment) {
+                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.editProfileFragment) {
                     val action =
                         EditProfileFragmentDirections.actionEditProfileToThumbnailSelectionMethodFragment(
                             "Set Profile Photo",

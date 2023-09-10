@@ -97,9 +97,8 @@ class ViewProfileFragment : BaseFragment() {
 
     private fun onClickEditProfile() {
         if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.profileFragment) {
-            val action =
-                ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
-            findNavController().navigate(action)
+//            val action = ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
+            findNavController().navigate(R.id.editProfileFragment, bundleOf("data" to binding.data))
         }
     }
 
