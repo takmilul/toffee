@@ -459,6 +459,7 @@
     <string name="upload_vod_requirement_description">Only mp4 file uploading is supported.</string>
     <string name="non_editable_desc_error_message">*You can not change the description of the approved video</string>
     <string name="try_again_message">Something went wrong. Please try again later.</string>
+    <string name="activate_pack_toast">Please activate the pack to watch this content</string>
     <!--    <string name="player_custom_error_msg_vod">We apologize for the technical error. Please try again after some time.</string>-->
     <string name="player_custom_error_msg">Your internet connection is not stable. Please change your network and try again.</string>
     <string name="add_bio">Add Bio</string>

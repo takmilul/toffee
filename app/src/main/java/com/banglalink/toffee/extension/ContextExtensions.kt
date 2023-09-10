@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
@@ -15,6 +17,7 @@ import androidx.fragment.app.FragmentManager
 import com.banglalink.toffee.ArrowPositionRules
 import com.banglalink.toffee.Balloon
 import com.banglalink.toffee.BalloonSizeSpec
+import com.banglalink.toffee.R
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if(!message.isNullOrBlank()) {
@@ -86,4 +89,23 @@ fun Context.getBalloon(tooltipText: String): Balloon {
         .setBackgroundColorResource(com.banglalink.toffee.R.color.tooltip_bg_color)
         .setTextGravity(Gravity.START)
         .build()
+}
+fun Context.showCustomToast(message: String?) {
+    if (!message.isNullOrBlank()) {
+        val inflater = LayoutInflater.from(this)
+        val toastView = inflater.inflate(R.layout.custom_toast_layout, null)
+
+        val toast = Toast(this)
+        toast.view = toastView
+
+        val toastText = toastView.findViewById<TextView>(R.id.customToastText)
+        toastText.text = message
+
+        // Set gravity to BOTTOM
+        toast.setGravity(Gravity.BOTTOM, 0, 88)
+
+        // Set duration and show the toast
+        toast.duration = Toast.LENGTH_SHORT
+        toast.show()
+    }
 }
