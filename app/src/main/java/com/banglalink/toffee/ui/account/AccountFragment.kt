@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.FragmentAccountBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
@@ -102,7 +99,10 @@ class AccountFragment : BaseFragment() {
                 }
             }
             observe(mPref.profileImageUrlLiveData) {
-                bindingUtil.bindRoundImage(binding.profileImageView, it)
+                when (it) {
+                    is String -> bindingUtil.bindRoundImage(binding.profileImageView, it)
+                    is Int -> bindingUtil.loadImageFromResource(binding.profileImageView, it)
+                }
             }
         }
     }

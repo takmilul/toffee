@@ -87,7 +87,10 @@ class DrawerHelper(
         val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
         if (mPref.isVerifiedUser) {
             activity.observe(mPref.profileImageUrlLiveData) {
-                bindingUtil.bindRoundImage(profileImageView, it)
+                when (it) {
+                    is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                    is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                }
             }
             if (!mPref.userImageUrl.isNullOrBlank()) mPref.profileImageUrlLiveData.postValue(mPref.userImageUrl)
         }

@@ -655,7 +655,10 @@ class HomeActivity : PlayerPageActivity(),
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
                 menu.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
-                    bindingUtil.bindRoundImage(profileImageView, it)
+                    when (it) {
+                        is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                        is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                    }
                 }
             }
         }
@@ -948,10 +951,10 @@ class HomeActivity : PlayerPageActivity(),
                 binding.mainUiFrame.visibility = View.GONE
                 mPref.bubbleVisibilityLiveData.postValue(false)
             } else {
-                binding.mainUiFrame.visibility = View.VISIBLE
                 supportActionBar?.show()
                 binding.bottomAppBar.show()
                 binding.uploadButton.show()
+                binding.mainUiFrame.visibility = View.VISIBLE
                 mPref.bubbleVisibilityLiveData.postValue(true)
             }
         }
@@ -2754,7 +2757,10 @@ class HomeActivity : PlayerPageActivity(),
             loadUserInfo()
             observe(mPref.profileImageUrlLiveData) {
                 binding.root.findViewById<View>(R.id.action_avatar)?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
-                    bindingUtil.bindRoundImage(profileImageView, it)
+                    when (it) {
+                        is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                        is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                    }
                 }
             }
             lifecycleScope.launch {
@@ -2821,6 +2827,8 @@ class HomeActivity : PlayerPageActivity(),
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
                         
+                        initSideNav()
+                        mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
                         when (navController.currentDestination?.id) {
                             R.id.myChannelEditDetailFragment -> {
                                 navController.popBackStack()

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -76,13 +77,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 }
             } else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
-                if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+                if (mPref.isBanglalinkNumber == "true") {
+                    if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
 //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
-                    packPaymentMethodList.addAll(prePaid)
-                }
-                if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+                        packPaymentMethodList.addAll(prePaid)
+                    }
+                    if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
 //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                    packPaymentMethodList.addAll(postPaid)
+                        packPaymentMethodList.addAll(postPaid)
+                    }
+                } else {
+                    if (!prePaid.isNullOrEmpty()) {
+                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                        packPaymentMethodList.addAll(prePaid)
+                    }
+                    if (!postPaid.isNullOrEmpty()) {
+                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                        packPaymentMethodList.addAll(postPaid)
+                    }
                 }
             }
             
@@ -405,6 +417,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         viewModel.selectedDataPackOption.value = item
 //        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
         binding.buyWithRecharge.isEnabled = mPref.isPrepaid
+        binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
+        binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+        binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
         
         binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
         else R.color.btnDisableClr))

@@ -58,7 +58,10 @@ class ViewProfileFragment : BaseFragment() {
                 photoUrl = mPref.userImageUrl ?: ""
             }
             observe(mPref.profileImageUrlLiveData) {
-                bindingUtil.bindRoundImage(binding.profileIv, it)
+                when (it) {
+                    is String -> bindingUtil.bindRoundImage(binding.profileIv, it)
+                    is Int -> bindingUtil.loadImageFromResource(binding.profileIv, it)
+                }
             }
             loadProfile()
         }

@@ -134,19 +134,19 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 
-                bKashPackCard.isVisible = isBkashAvailable
+//                bKashPackCard.isVisible = isBkashAvailable
                 
                 //Disable Banglalink DataPack Option
-                if (mPref.isBanglalinkNumber == "false") {
-                    blPackCard.alpha = 0.3f
-                }
+//                if (mPref.isBanglalinkNumber == "false") {
+//                    blPackCard.alpha = 0.3f
+//                }
                 
                 blPackCard.safeClick({
-                    if (mPref.isBanglalinkNumber == "false") {
-                        requireContext().showToast(getString(string.only_for_bl_users))
-                    } else {
+//                    if (mPref.isBanglalinkNumber == "false") {
+//                        requireContext().showToast(getString(string.only_for_bl_users))
+//                    } else {
                         findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
-                    }
+//                    }
                 })
                 bKashPackCard.safeClick({
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))

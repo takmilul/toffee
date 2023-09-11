@@ -37,7 +37,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val shareCountDbUrlLiveData = SingleLiveEvent<String>()
     val isViewCountDbUpdatedLiveData = MutableLiveData<Boolean>()
     val sessionTokenLiveData = MutableLiveData<String>()
-    val profileImageUrlLiveData = MutableLiveData<String>()
+    val profileImageUrlLiveData = MutableLiveData<Any>()
     val splashConfigLiveData = MutableLiveData<List<DecorationData>?>()
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()

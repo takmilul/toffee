@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.isDigitsOnly
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -434,7 +435,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             )
         } else {
             val nidLength = userNID.length
-            validNID = nidLength == 10 || nidLength == 13 || nidLength == 17
+            validNID = (nidLength == 10 || nidLength == 13 || nidLength == 17) && userNID.isDigitsOnly()
             if (!validNID) {
                 binding.nidEt.validateInput(
                     binding.nidErrorTv,
