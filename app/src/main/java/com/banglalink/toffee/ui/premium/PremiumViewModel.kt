@@ -9,6 +9,7 @@ import com.banglalink.toffee.apiservice.BkashExecutePaymentService
 import com.banglalink.toffee.apiservice.BkashGrandTokenService
 import com.banglalink.toffee.apiservice.BkashQueryPaymentService
 import com.banglalink.toffee.apiservice.DataPackPurchaseService
+import com.banglalink.toffee.apiservice.MnpStatusService
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
 import com.banglalink.toffee.apiservice.PremiumPackListService
@@ -24,6 +25,7 @@ import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
 import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
+import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.response.PremiumPack
@@ -62,7 +64,8 @@ class PremiumViewModel @Inject constructor(
     private val rechargeByBkashService: RechargeByBkashService,
     private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
     private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
-    private val voucherService: VoucherService
+    private val voucherService: VoucherService,
+    private val mnpStatusService: MnpStatusService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -110,6 +113,7 @@ class PremiumViewModel @Inject constructor(
     val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
+    val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -180,7 +184,6 @@ class PremiumViewModel @Inject constructor(
     }
 
    fun purchaseDataPackVoucher(dataPackPurchaseRequest: DataPackPurchaseRequest){
-
        viewModelScope.launch {
            val response= resultFromResponse {
                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
@@ -254,6 +257,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { voucherService.loadData(packId,voucherCode,packName) }
             _voucherPayment.emit(response)
+        }
+    }
+    
+    fun getMnpStatus() {
+        viewModelScope.launch {
+            val response = resultFromResponse { mnpStatusService.execute() }
+            mnpStatusLiveData.value = response
         }
     }
 }

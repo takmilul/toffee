@@ -2290,7 +2290,7 @@ class HomeActivity : PlayerPageActivity(),
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
 
         if (featuredPartner.url_type == 1){
-            navController.navigateTo(R.id.FmRadioFrag)
+            navController.navigateTo(R.id.fmRadioFragment)
         } else{
             if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
                 featuredPartner.webViewUrl?.let { url ->
@@ -2767,17 +2767,35 @@ class HomeActivity : PlayerPageActivity(),
                 if (mPref.doActionBeforeReload.value == true) {
                     mPref.postLoginEventAction.value?.invoke()
                     delay(300)
-                    mPref.preLoginDestinationId.value?.let {
-                        navController.popBackStack(it, true)
-                        navController.navigateTo(it)
+                    if (mPref.shouldReloadAfterLogin.value == true) {
+                        mPref.preLoginDestinationId.value?.let {
+//                            TODO: check login in the User channel
+                            if (navController.currentDestination?.id == R.id.menu_channel) {
+                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
+                                navController.popBackStack(it, true)
+                                getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
+                            } else {
+                                navController.popBackStack(it, true)
+                                navController.navigateTo(it)
+                            }
+                        }
                     }
                 } else {
-                    mPref.preLoginDestinationId.value?.let {
-                        navController.popBackStack(it, true)
-                        navController.navigateTo(it)
+                    if (mPref.shouldReloadAfterLogin.value == true) {
+                        mPref.preLoginDestinationId.value?.let {
+//                            TODO: check login in the User channel
+                            if (navController.currentDestination?.id == R.id.menu_channel) {
+                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
+                                getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
+                            } else {
+                                navController.popBackStack(it, true)
+                                navController.navigateTo(it)
+                            }
+                        }
                     }
                     mPref.postLoginEventAction.value?.invoke()
                 }
+                mPref.shouldReloadAfterLogin.value = false
             }
             initMqtt()
         }
@@ -2827,31 +2845,59 @@ class HomeActivity : PlayerPageActivity(),
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
                         
+                        
+                        UploadService.stopAllUploads()
                         initSideNav()
                         mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
-                        when (navController.currentDestination?.id) {
-                            R.id.myChannelEditDetailFragment -> {
-                                navController.popBackStack()
-                                navController.currentDestination?.id?.let {
+                        if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
+                            when (navController.currentDestination?.id) {
+                                R.id.myChannelEditDetailFragment -> {
+                                    navController.popBackStack()
                                     navController.popBackStack()
                                     getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(0)
                                 }
-                            }
-                            R.id.editProfileFragment,
-                            R.id.editUploadInfoFragment,
-                            R.id.myChannelVideosEditFragment -> {
-                                navController.popBackStack()
-                                navController.currentDestination?.id?.let {
+                                R.id.menu_channel -> {
+                                    val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
                                     navController.popBackStack()
-                                    navController.navigateTo(it)
+                                    getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
                                 }
-                            }
-                            else -> {
+                                R.id.menu_activities,
+                                R.id.menu_playlist,
+                                R.id.menu_favorites,
+                                R.id.menu_subscriptions,
+                                R.id.upload_minimize,
+                                R.id.profileFragment,
+                                R.id.editUploadInfoFragment,
+                                R.id.myChannelVideosEditFragment
+                                -> {
+                                    navController.popBackStack()
                                     navController.currentDestination?.id?.let {
+                                        navController.popBackStack()
+                                        navController.navigateTo(it)
+                                    }
+                                }
+                                R.id.editProfileFragment,
+                                R.id.userPlaylistVideos
+                                -> {
                                     navController.popBackStack()
-                                    navController.navigateTo(it)
+                                    navController.popBackStack()
+                                    navController.currentDestination?.id?.let {
+                                        navController.popBackStack()
+                                        navController.navigateTo(it)
+                                    }
+                                }
+                                else -> {
+                                    navController.currentDestination?.id?.let {
+                                        navController.popBackStack()
+                                        navController.navigateTo(it)
+                                    }
                                 }
                             }
+                        }
+                        mPref.shouldIgnoreReloadAfterLogout.value = false
+                        viewModel.isLogoutCompleted.value = true
+                        if (player?.currentMediaItem?.getChannelMetadata(player)?.urlTypeExt == PREMIUM) {
+                            destroyPlayer()
                         }
                         
 //                        navController.popBackStack(R.id.menu_feed, false).let {

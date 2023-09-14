@@ -28,6 +28,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
 //    https://toffeelive.com?routing=internal&page=login
+//    https://toffeelive.com?routing=internal&page=fm-radio
 //    https://toffeelive.com?routing=internal&page=search&keyword=natok
 //    https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=6417560
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
@@ -134,6 +135,9 @@ class InAppMessageParser @Inject constructor(
                                 inclusive = true
                             }
                         })
+                    }
+                    "fm-radio" -> {
+                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
                     }
                     "featured_partner" -> {
                         val partnerId = link.getQueryParameter("id")?.toIntOrNull() ?: 0

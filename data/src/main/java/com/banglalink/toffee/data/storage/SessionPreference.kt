@@ -62,6 +62,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val shouldReloadAfterLogin = MutableLiveData<Boolean>()
+    val shouldIgnoreReloadAfterLogout = MutableLiveData<Boolean>()
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()

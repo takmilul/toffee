@@ -9,6 +9,9 @@
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PremiumPack" />
+        <variable
+            name="isVerifiedUser"
+            type="Boolean" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -195,7 +198,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FF3988"
-            android:visibility="@{data.isPackPurchased ? View.GONE : View.VISIBLE}"
+            android:visibility="@{isVerifiedUser &amp;&amp; data.isPackPurchased ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -242,7 +245,7 @@
             android:clickable="true"
             android:elevation="2dp"
             android:background="@color/trialBgTransparent"
-            android:visibility="@{data.isPackPurchased ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isVerifiedUser &amp;&amp; data.isPackPurchased ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

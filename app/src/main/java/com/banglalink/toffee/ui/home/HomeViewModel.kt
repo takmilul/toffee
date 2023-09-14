@@ -133,6 +133,7 @@ class HomeViewModel @Inject constructor(
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
     val logoutLiveData = MutableLiveData<Resource<LogoutBean>>()
+    val isLogoutCompleted = SingleLiveEvent<Boolean>()
     val accountDeleteLiveData = SingleLiveEvent<Resource<AccountDeleteBean>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
