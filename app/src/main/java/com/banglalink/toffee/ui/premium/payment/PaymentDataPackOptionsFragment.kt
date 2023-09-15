@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -106,11 +105,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     if (mAdapter.selectedPosition > -1) {
                                         binding.buyNow.show()
                                         binding.buyWithRecharge.show()
-                                        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
-                                        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
-                                        else R.color.btnDisableClr))
-                                        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
-                                        else R.color.txtDisableClr))
+//                                        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
+//                                        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2 else R.color.btnDisableClr))
+//                                        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white else R.color.txtDisableClr))
                                     }
                                 }
                                 is Failure -> {
@@ -236,8 +233,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         PaymentStatusDialog.DataPackPurchaseFailedBalanceInsufficient_ERROR -> {
                             if (!mPref.isPrepaid){
                                 val args = bundleOf(
-                                    "subTitle" to getString(R.string.this_might_be_insufficient_for_postpaid),
-                                    "isBuyWithRechargeHide" to true,
+                                    "subTitle" to getString(R.string.insufficient_balance_for_postpaid),
+                                    "isBuyWithRechargeHide" to false,
                                 )
                                 findNavController().navigateTo(R.id.insufficientBalanceFragment, args)
                             }
@@ -469,16 +466,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         mAdapter.selectedPosition = position
         viewModel.selectedDataPackOption.value = item
 //        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
-        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
-        binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
-        binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
-        binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
-        binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
+//        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
         
-        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
-        else R.color.btnDisableClr))
-        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
-        else R.color.txtDisableClr))
+//        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
+//        else R.color.btnDisableClr))
+//        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
+//        else R.color.txtDisableClr))
     }
     
     private fun showPaymentOption() {
@@ -492,6 +485,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         else if(paymentName == "blPack"){
             binding.buyNow.show()
             binding.buyWithRecharge.show()
+            binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
+            binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+            binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
+            binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
         }
     }
     

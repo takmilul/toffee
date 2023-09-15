@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
@@ -33,7 +34,10 @@ class PaymentDataPackOptionAdapter(
         super.onBindViewHolder(holder, position)
         val obj = getItem(position)
         if (obj.listTitle != null) {
-            holder.itemView.findViewById<ConstraintLayout>(R.id.dataPackOptionsTitleContainer)
+            if (position > 0) {
+                val optionTitle = holder.itemView.findViewById<ConstraintLayout>(R.id.dataPackOptionsTitleContainer)
+                optionTitle.setPadding(0, 32.px, 0, 0)
+            }
             return
         } else {
             obj.let {
