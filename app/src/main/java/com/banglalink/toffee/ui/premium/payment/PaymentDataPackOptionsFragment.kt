@@ -13,6 +13,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
+import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
 import com.banglalink.toffee.extension.hide
@@ -35,10 +36,10 @@ import com.google.gson.Gson
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
     
     private val gson = Gson()
-    private var sessionToken = ""
     private var paymentName: String? = null
-    private var bKashNumber: String? = null
-    private var bKashPaymentId: String? = null
+    private var transactionIdentifier: String? = null
+    private var statusCode: String? = null
+    private var statusMessage: String? = null
     private lateinit var mAdapter: PaymentDataPackOptionAdapter
     private var _binding: FragmentPaymentDataPackOptionsBinding? = null
     private val binding get() = _binding!!
@@ -53,12 +54,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hidePaymentOption()
-
-        bKashNumber = if(mPref.phoneNumber.startsWith("+")){
-            mPref.phoneNumber.substring(3)
-        } else{
-            mPref.phoneNumber
-        }
         
         paymentName = arguments?.getString("paymentName", "") ?: ""
         viewModel.paymentMethod.value?.let { paymentTypes ->
@@ -68,14 +63,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val bKashBlPacks = paymentTypes.bkash?.blPacks
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             
-            if (paymentName == "bKash") {
+            if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true") {
                     bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
                 } else {
                     bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
                 }
-            } else if (paymentName == "blPack") {
+            }
+            else if (paymentName == "ssl"){
+                ///// dummy////////
+                packPaymentMethodList.clear()
+                if (mPref.isBanglalinkNumber == "true") {
+                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                } else {
+                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                }
+            }
+            else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true") {
                     if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
@@ -122,10 +127,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         binding.buyNow.safeClick({
             progressDialog.show()
-            if (paymentName == "bKash") {
-                grantBkashToken()
-            } else if (paymentName == "blPack") {
-                purchaseBlDataPack()
+
+            // Determine the payment method based on the provided paymentName
+            when (paymentName) {
+                "bkash" -> {
+                    // Initiate the Subscriber Payment Initialization for bKash
+                    callAndObserveSubscriberPaymentInit(paymentType = "bkash")
+                }
+                "ssl" -> {
+                    // Initiate the Subscriber Payment Initialization for SSL
+                    callAndObserveSubscriberPaymentInit(paymentType = "ssl")
+                }
+                "blPack" -> {
+                    // Purchase a Banglalink data pack
+                    purchaseBlDataPack()
+                }
             }
         })
         binding.buyWithRecharge.safeClick({
@@ -206,132 +222,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
     }
-    
-    private fun grantBkashToken() {
-        observe(viewModel.bKashGrandTokenLiveData) { response ->
-            when (response) {
-                is Success -> {
-                    sessionToken = response.data.idToken.toString()
-                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                        id = System.currentTimeMillis() + mPref.customerId,
-                        callingApiName = "bkash-grant-token",
-                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
-                        paymentId = null,
-                        transactionId = null,
-                        transactionStatus = null,
-                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.data)
-                    ))
-                    if (response.data.statusCode != "0000") {
-                        progressDialog.dismiss()
-                        requireContext().showToast(response.data.statusMessage)
-                        return@observe
-                    }
-                    createBkashPayment()
-                }
-                is Failure -> {
-                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                        id = System.currentTimeMillis() + mPref.customerId,
-                        callingApiName = "bkash-grant-token",
-                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
-                        paymentId = null,
-                        transactionId = null,
-                        transactionStatus = null,
-                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error.msg)
-                    ))
-                    requireContext().showToast(response.error.msg)
-                    progressDialog.dismiss()
-                }
-            }
-        }
-        viewModel.bKashGrandToken()
-    }
-    
-    private fun createBkashPayment() {
-        val amount = viewModel.selectedDataPackOption.value?.packPrice.toString()
-        observe(viewModel.bKashCreatePaymentLiveData) { response ->
-            progressDialog.dismiss()
-            when (response) {
-                is Success -> {
-                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                        id = System.currentTimeMillis() + mPref.customerId,
-                        callingApiName = "bkash-create-payment",
-                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
-                        paymentId = response.data.paymentId,
-                        transactionId = null,
-                        transactionStatus = null,
-                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.data)
-                    ))
-                    if (response.data.statusCode != "0000") {
-                        requireContext().showToast(response.data.statusMessage)
-                        return@observe
-                    }
-                    bKashPaymentId = response.data.paymentId
-                    val args = bundleOf(
-                        "myTitle" to "Pack Details",
-                        "token" to sessionToken,
-                        "paymentId" to bKashPaymentId,
-                        "url" to response.data.bKashUrl,
-                        "isHideBackIcon" to false,
-                        "isHideCloseIcon" to true
-                    )
-                    findNavController().navigateTo(R.id.paymentWebViewDialog, args)
-                }
-                is Failure -> {
-                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                        id = System.currentTimeMillis() + mPref.customerId,
-                        callingApiName = "bkash-create-payment",
-                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
-                        paymentId = null,
-                        transactionId = null,
-                        transactionStatus = null,
-                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(response.error.msg)
-                    ))
-                    requireContext().showToast(response.error.msg)
-                }
-            }
-        }
-        viewModel.bKashCreatePayment(
-            sessionToken, CreatePaymentRequest(
-                mode = "0011",
-                payerReference = bKashNumber,
-                callbackURL = mPref.bkashCallbackUrl,
-                merchantAssociationInfo = "",
-                amount = amount,
-                currency = "BDT",
-                intent = "sale",
-                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-            )
-        )
-    }
-    
+
     private fun callAndObserveRechargeByBkash() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
             progressDialog.show()
@@ -409,7 +300,100 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             viewModel.getRechargeByBkashUrl(request)
         }
     }
-    
+
+    /**
+     * Initiates the payment process for bKash and SSL payment methods.
+     * This function is responsible for preparing and sending a payment initialization request.
+     *
+     * @param paymentType The type of payment method (e.g., "bkash" or "ssl").
+     */
+    private fun callAndObserveSubscriberPaymentInit(paymentType: String) {
+        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
+            progressDialog.show()
+
+            // Observe the subscriberPaymentInitLiveData for response handling
+            observe(viewModel.subscriberPaymentInitLiveData) { it ->
+                progressDialog.dismiss() // Dismiss the progress dialog
+
+                when (it) {
+                    is Success -> {
+                        it.data?.let {
+                            transactionIdentifier = it.transactionIdentifierId
+                            statusCode = it.statusCode.toString()
+                            statusMessage = it.message
+
+                            if (it.statusCode != 200) {
+                                requireContext().showToast(getString(R.string.try_again_message))
+                                return@observe
+                            }
+
+                            //Send Log to the Pub/Sub
+                            viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                                id = System.currentTimeMillis() + mPref.customerId,
+                                callingApiName = "${paymentType}SubscriberPaymentInitFromAndroid",
+                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                paymentMsisdn = null,
+                                paymentId = transactionIdentifier,
+                                transactionId = null,
+                                transactionStatus = statusCode,
+                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                rawResponse = "statusCode: $statusCode, message: $statusMessage"
+                            ))
+
+                            // Prepare navigation arguments for payment WebView
+                            val args = bundleOf(
+                                "myTitle" to "Pack Details",
+                                "url" to it.webViewUrl,
+                                "paymentType" to paymentType,
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true,
+                                "isBkashBlRecharge" to false,
+                            )
+
+                            // Navigate to the payment WebView dialog
+                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }
+                    is Failure -> {
+                        requireContext().showToast(it.error.msg)
+                    }
+                }
+            }
+
+            // Retrieve selected premium pack and data pack option
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPackOption = viewModel.selectedDataPackOption.value
+
+            // Prepare a payment initiation request
+            val request = SubscriberPaymentInitRequest(
+                customerId = mPref.customerId,
+                password = mPref.password,
+                is_Bl_Number = if (mPref.isBanglalinkNumber == "true") 1 else 0,
+                isPrepaid = if (mPref.isPrepaid) 1 else 0,
+                packId = selectedPremiumPack?.id ?: 0,
+                packTitle = selectedPremiumPack?.packTitle,
+                contents = selectedPremiumPack?.contentId,
+                paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
+                packCode = selectedDataPackOption?.packCode,
+                packDetails = selectedDataPackOption?.packDetails,
+                packPrice = selectedDataPackOption?.packPrice ?: 0,
+                packDuration = selectedDataPackOption?.packDuration ?: 0,
+                geoCity = mPref.geoCity,
+                geoLocation = mPref.geoLocation,
+                cusEmail = mPref.customerEmail
+            )
+
+            // Trigger the payment initiation request
+            viewModel.getSubscriberPaymentInit(paymentType, request)
+        }
+    }
+
+
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
         super.onItemClicked(view, item, position)
         showPaymentOption()
@@ -418,7 +402,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 //        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
         binding.buyWithRecharge.isEnabled = mPref.isPrepaid
         binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
-        binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+//        binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+        if (paymentName !in listOf("ssl", "bkash")) {
+            binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+        }
         binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
         
         binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
@@ -426,18 +413,31 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
         else R.color.txtDisableClr))
     }
-    
+
+    /**
+     * Configures UI elements and text for different payment methods (bKash, SSL, Banglalink Pack).
+     */
     private fun showPaymentOption() {
         binding.recyclerView.setPadding(0, 0, 0, 8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
-        if (paymentName == "bKash"){
-            binding.buyNow.text = getString(R.string.buy_bkash)
-            binding.buyNow.show()
-        }
-        else if(paymentName == "blPack"){
-            binding.buyNow.show()
-            binding.buyWithRecharge.show()
+
+        // Customize UI elements based on the selected payment method
+        when (paymentName) {
+            "bkash" -> {
+                binding.buyNow.text = getString(R.string.buy_bkash)
+                binding.buyNow.show()
+                binding.buyWithRecharge.hide()
+            }
+            "ssl" -> {
+                binding.buyNow.text = getString(R.string.buy_now_ssl)
+                binding.buyNow.show()
+                binding.buyWithRecharge.hide()
+            }
+            "blPack" -> {
+                binding.buyNow.show()
+                binding.buyWithRecharge.show()
+            }
         }
     }
     

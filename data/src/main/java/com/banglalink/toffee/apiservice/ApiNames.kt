@@ -83,6 +83,7 @@ object ApiNames {
     const val PACKAGE_WISE_PREMIUM_PACK = "packageWiseDataPack"
     const val DATA_PACK_PURCHASE = "dataPackPurchase"
     const val RECHARGE_BY_BKASH = "rechargeInitialized"
+    const val SUBSCRIBER_PAYMENT_INIT = "subscriberPaymentInit"
     const val MNP_STATUS = "mnpStatus"
     const val PREMIUM_PACK_SUBSCRIPTION_HISTORY = "premiumPackSubscriptionHistory"
     const val GET_FM_RADIO_CONTENTS = "getFmRadioContents"

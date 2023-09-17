@@ -542,6 +542,7 @@
     <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="choose_a_plan">Choose a Plan</string>
     <string name="pay_by_bkash">Pay by bKash</string>
+    <string name="pay_by_card">Pay by Card</string>
     <string name="only_for_bl_text">Only for Banglalink Subscribers</string>
     <string name="pay_by_banglalink">Pay by Banglalink</string>
     <string name="choose_payment_method">Choose Payment Method</string>
@@ -595,4 +596,5 @@
     <string name="gift_voucher_enter_code">Please enter the code here</string>
     <string name="in_app_update_msg">An update has just been downloaded. Press reload to install the update.</string>
     <string name="sign_in_with_banglalink">sign in with Banglalink</string>
+    <string name="buy_now_ssl">BUY NOW</string>
 </resources>

@@ -4,10 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.BkashCreatePaymentService
-import com.banglalink.toffee.apiservice.BkashExecutePaymentService
-import com.banglalink.toffee.apiservice.BkashGrandTokenService
-import com.banglalink.toffee.apiservice.BkashQueryPaymentService
 import com.banglalink.toffee.apiservice.DataPackPurchaseService
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
@@ -15,24 +11,19 @@ import com.banglalink.toffee.apiservice.PremiumPackListService
 import com.banglalink.toffee.apiservice.PremiumPackStatusService
 import com.banglalink.toffee.apiservice.PremiumPackSubHistoryService
 import com.banglalink.toffee.apiservice.RechargeByBkashService
+import com.banglalink.toffee.apiservice.SubscriberPaymentInitService
 import com.banglalink.toffee.apiservice.VoucherService
-import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
-import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
-import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
-import com.banglalink.toffee.data.network.response.CreatePaymentResponse
-import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
-import com.banglalink.toffee.data.network.response.GrantTokenResponse
+import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
-import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
-import com.banglalink.toffee.data.network.util.resultFromExternalResponse
+import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
@@ -55,11 +46,8 @@ class PremiumViewModel @Inject constructor(
     private val packPaymentMethodService: PackPaymentMethodService,
     private val dataPackPurchaseService: DataPackPurchaseService,
     private val premiumPackStatusService: PremiumPackStatusService,
-    private val bKashGrandTokenService: BkashGrandTokenService,
-    private val bKashCreatePaymentService: BkashCreatePaymentService,
-    private val bKashExecutePaymentService: BkashExecutePaymentService,
-    private val bKashQueryPaymentService: BkashQueryPaymentService,
     private val rechargeByBkashService: RechargeByBkashService,
+    private val subscriberPaymentInitService: SubscriberPaymentInitService,
     private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
     private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
     private val voucherService: VoucherService
@@ -88,6 +76,9 @@ class PremiumViewModel @Inject constructor(
     private val _activePackListLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
     val activePackListLiveData = _activePackListLiveData.asSharedFlow()
 
+    private val _activePackListAfterSubscriberPaymentLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
+    val activePackListAfterSubscriberPaymentLiveData = _activePackListAfterSubscriberPaymentLiveData.asSharedFlow()
+
     private var _voucherPayment = MutableSharedFlow<Resource<VoucherPaymentBean?>>()
     val voucherPaymentState = _voucherPayment.asSharedFlow()
     
@@ -101,12 +92,9 @@ class PremiumViewModel @Inject constructor(
     var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeWebView = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    
-    val bKashGrandTokenLiveData = SingleLiveEvent<Resource<GrantTokenResponse>>()
-    val bKashCreatePaymentLiveData = SingleLiveEvent<Resource<CreatePaymentResponse>>()
-    val bKashExecutePaymentLiveData = SingleLiveEvent<Resource<ExecutePaymentResponse>>()
-    val bKashQueryPaymentLiveData = SingleLiveEvent<Resource<QueryPaymentResponse>>()
+
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
+    val subscriberPaymentInitLiveData = SingleLiveEvent<Resource<SubscriberPaymentInitBean?>>()
     val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
@@ -151,6 +139,12 @@ class PremiumViewModel @Inject constructor(
             _activePackListLiveData.emit(response)
         }
     }
+    fun getPackStatusAfterSubscriberPayment(contentId: Int = 0, packId: Int = 0) {
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
+            _activePackListAfterSubscriberPaymentLiveData.emit(response)
+        }
+    }
     
     fun purchaseDataPackTrialPack(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
@@ -189,7 +183,6 @@ class PremiumViewModel @Inject constructor(
        }
    }
 
-
     fun purchaseDataPackWebView(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -199,38 +192,16 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun bKashGrandToken() {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashGrandTokenService.execute() }
-            bKashGrandTokenLiveData.value = response
-        }
-    }
-    
-    fun bKashCreatePayment(token: String, requestBody: CreatePaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashCreatePaymentService.execute(token, requestBody) }
-            bKashCreatePaymentLiveData.value = response
-        }
-    }
-    
-    fun bKashExecutePayment(token: String, requestBody: ExecutePaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashExecutePaymentService.execute(token, requestBody) }
-            bKashExecutePaymentLiveData.value = response
-        }
-    }
-    
-    fun bKashQueryPayment(token: String, requestBody: QueryPaymentRequest) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { bKashQueryPaymentService.execute(token, requestBody) }
-            bKashQueryPaymentLiveData.value = response
-        }
-    }
-    
     fun getRechargeByBkashUrl(rechargeByBkashRequest: RechargeByBkashRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { rechargeByBkashService.execute(rechargeByBkashRequest) }
             rechargeByBkashUrlLiveData.value = response
+        }
+    }
+    fun getSubscriberPaymentInit(paymentType: String, subscriberPaymentInitRequest: SubscriberPaymentInitRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse { subscriberPaymentInitService.execute(paymentType, subscriberPaymentInitRequest) }
+            subscriberPaymentInitLiveData.value = response
         }
     }
 

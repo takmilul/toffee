@@ -26,6 +26,7 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,7 @@ class PaymentStatusDialog : DialogFragment() {
     private var _binding: DialogPaymentStatusBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val viewModel by activityViewModels<PremiumViewModel>()
     
     companion object {
         const val SUCCESS = 200

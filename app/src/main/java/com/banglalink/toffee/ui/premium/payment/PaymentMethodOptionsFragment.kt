@@ -149,7 +149,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 //                    }
                 })
                 bKashPackCard.safeClick({
-                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bKash"))
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bkash"))
+                })
+                SslPackCard.safeClick({
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "ssl"))
                 })
                 giftVoucherCard.safeClick({
                     findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))

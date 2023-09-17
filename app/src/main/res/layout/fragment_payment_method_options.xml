@@ -45,7 +45,7 @@
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:layout_constraintBottom_toTopOf="@id/giftVoucherCard"
+            app:layout_constraintBottom_toTopOf="@id/blPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pack_title"
@@ -119,89 +119,6 @@
         </androidx.cardview.widget.CardView>
         
         <androidx.cardview.widget.CardView
-            android:id="@+id/giftVoucherCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/payment_option_card_bg"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            app:layout_constraintBottom_toTopOf="@id/blPackCard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trialCard"
-            tools:visibility="visible">
-            
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-                
-                <TextView
-                    android:id="@+id/giftVoucherTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/roboto_regular"
-                    android:maxLines="2"
-                    android:text="@string/use_gift_voucher"
-                    android:textColor="@color/cardTitleColor"
-                    android:textFontWeight="700"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/giftVoucherPrice"
-                    app:layout_constraintEnd_toStartOf="@+id/giftVoucherImg"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-                
-                <ImageView
-                    android:id="@+id/giftVoucherImg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/pass_brand_image_view"
-                    app:layout_constraintBottom_toBottomOf="@id/giftVoucherTitle"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/giftVoucherTitle"
-                    app:srcCompat="@drawable/ic_gift_voucher" />
-                
-                <TextView
-                    android:id="@+id/giftVoucherPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/gift_voucher_code_subtitle"
-                    android:textColor="@color/cardTitleSecondColor"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/giftVoucherDetails"
-                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherTitle" />
-                
-                <TextView
-                    android:id="@+id/giftVoucherDetails"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/for_all_users_text"
-                    android:textColor="@color/light_text_color"
-                    android:textSize="12sp"
-                    android:textStyle="italic"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
-                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherPrice"
-                    app:layout_goneMarginTop="8dp" />
-            
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-        
-        <androidx.cardview.widget.CardView
             android:id="@+id/blPackCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -212,7 +129,7 @@
             app:layout_constraintBottom_toTopOf="@+id/bKashPackCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/giftVoucherCard"
+            app:layout_constraintTop_toBottomOf="@+id/trialCard"
             tools:visibility="visible">
             
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -294,7 +211,6 @@
             android:backgroundTint="@color/payment_option_card_bg"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/blPackCard"
@@ -365,9 +281,173 @@
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
                     app:layout_constraintTop_toBottomOf="@+id/bkashPackPrice"
                     app:layout_goneMarginTop="8dp" />
-            
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-    
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/SslPackCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/payment_option_card_bg"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bKashPackCard"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/SslPackTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:text="@string/pay_by_card"
+                    android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/SslPackPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/SslImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <ImageView
+                    android:id="@+id/SslImg"
+                    android:layout_width="71dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:layout_constraintBottom_toBottomOf="@id/SslPackTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/SslPackTitle"
+                    app:srcCompat="@drawable/ic_ssl_icon" />
+
+                <TextView
+                    android:id="@+id/SslPackPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/SslPackDetails"
+                    app:layout_constraintEnd_toEndOf="@+id/SslPackTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/SslPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/SslPackTitle"
+                    tools:text="Starting from BDT 30" />
+
+                <TextView
+                    android:id="@+id/SslPackDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/for_all_users_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/SslPackTitle"
+                    app:layout_constraintStart_toStartOf="@id/SslPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/SslPackPrice"
+                    app:layout_goneMarginTop="8dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/giftVoucherCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            android:layout_marginTop="8dp"
+            app:cardElevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/SslPackCard"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/giftVoucherTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:text="@string/use_gift_voucher"
+                    android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/giftVoucherPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/giftVoucherImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <ImageView
+                    android:id="@+id/giftVoucherImg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:layout_constraintBottom_toBottomOf="@id/giftVoucherTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/giftVoucherTitle"
+                    app:srcCompat="@drawable/ic_gift_voucher" />
+
+                <TextView
+                    android:id="@+id/giftVoucherPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/gift_voucher_code_subtitle"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/giftVoucherDetails"
+                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherTitle" />
+
+                <TextView
+                    android:id="@+id/giftVoucherDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/for_all_users_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/giftVoucherTitle"
+                    app:layout_constraintStart_toStartOf="@id/giftVoucherTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/giftVoucherPrice"
+                    app:layout_goneMarginTop="8dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -98,21 +98,11 @@ class PremiumPackDetailsFragment : BaseFragment(){
             binding.progressBar.hide()
             requireContext().showToast(getString(R.string.try_again_message))
         }
-        
-        observe(mPref.packDetailsPageRefreshRequired){
-            if(it == true) {
-                findNavController().navigatePopUpTo(
-                    resId = R.id.packDetailsFragment,
-                    popUpTo = R.id.premiumPackListFragment,
-                    inclusive = false
-                )
-                if (mPref.prePurchaseClickedContent.value == null) {
-                    findNavController().navigateTo(R.id.startWatchingDialog)
-                } else {
-                    mPref.prePurchaseClickedContent.value = null
-                }
-            }
-        }
+
+        /**
+         * Observes `packDetailsPageRefreshRequired` LiveData and refreshes pack status if `true`.
+         */
+        observe(mPref.packDetailsPageRefreshRequired) { if (it == true) observePackStatusAfterSubscriberPayment() }
         
         binding.infoIcon.safeClick({
             //https://github.com/douglasjunior/android-simple-tooltip
@@ -152,7 +142,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                             viewModel.getPackPaymentMethodList(it)
                         } ?: run {
                             progressDialog.dismiss()
-                            requireContext().showToast(getString(com.banglalink.toffee.R.string.try_again_message))
+                            requireContext().showToast(getString(R.string.try_again_message))
                         }
                     } else {
                         progressDialog.dismiss()
@@ -166,7 +156,53 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
+    /**
+     * Observes the pack status after a subscriber's payment is successfully processed.
+     * This function updates the active premium pack list, checks for pack purchases, and navigates
+     * to appropriate destinations based on the payment flow.
+     */
+    private fun observePackStatusAfterSubscriberPayment() {
+        observe(viewModel.activePackListAfterSubscriberPaymentLiveData) { packStatusResult ->
+            when (packStatusResult) {
+                is Success -> {
+                    // Update the active premium pack list with the received data
+                    mPref.activePremiumPackList.value = packStatusResult.data
+
+                    // Check if any premium packs have been purchased
+                    checkPackPurchased()
+
+                    // Navigate back to the premium pack list while preserving the back stack
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.packDetailsFragment,
+                        popUpTo = R.id.premiumPackListFragment,
+                        inclusive = false
+                    )
+
+                    // Determine the next destination based on the payment flow
+                    if (mPref.prePurchaseClickedContent.value == null) {
+                        // If no pre-purchase content was clicked, navigate to the "Start Watching" dialog
+                        findNavController().navigateTo(R.id.startWatchingDialog)
+                    } else {
+                        // Clear the pre-purchase clicked content if available
+                        mPref.prePurchaseClickedContent.value = null
+                    }
+                }
+                is Failure -> {
+                    // Dismiss the progress dialog and display an error message in case of failure
+                    progressDialog.dismiss()
+                    requireContext().showToast(packStatusResult.error.msg)
+                }
+            }
+        }
+
+        // Trigger the retrieval of pack status for the selected premium pack
+        viewModel.selectedPremiumPack.value?.let {
+            viewModel.getPackStatusAfterSubscriberPayment(0, it.id)
+        }
+    }
+
+
     private fun checkPackPurchased(): Boolean {
         return if (mPref.isVerifiedUser) {
             viewModel.selectedPremiumPack.value?.let { pack ->

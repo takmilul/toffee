@@ -513,6 +513,12 @@ interface ToffeeApi {
         @Body rechargeByBkashRequest: RechargeByBkashRequest
     ): RechargeByBkashResponse
 
+    @POST("/subscriber/v1/payment/init/{paymentType}")
+    suspend fun getSubscriberPaymentInit(
+        @Path("paymentType") paymentType: String,
+        @Body subscriberPaymentInitRequest: SubscriberPaymentInitRequest
+    ): SubscriberPaymentInitResponse
+
     @POST("/mnp-status")
     suspend fun getMnpStatus(
         @Body mnpStatusRequest: MnpStatusRequest
