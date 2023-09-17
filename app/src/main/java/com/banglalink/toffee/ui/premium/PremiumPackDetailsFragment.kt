@@ -56,6 +56,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
         if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
             checkPackPurchased()
         }
+        binding.isVerifiedUser = mPref.isVerifiedUser
         binding.data = viewModel.selectedPremiumPack.value
         
         observeMnpStatus()
@@ -182,6 +183,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                         expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
                         packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
                     )
+                    binding.isVerifiedUser = mPref.isVerifiedUser
                     binding.data = viewModel.selectedPremiumPack.value
                     true
                 } ?: false

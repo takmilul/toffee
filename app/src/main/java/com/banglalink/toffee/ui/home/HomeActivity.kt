@@ -2772,9 +2772,8 @@ class HomeActivity : PlayerPageActivity(),
                     delay(300)
                     if (mPref.shouldReloadAfterLogin.value == true) {
                         mPref.preLoginDestinationId.value?.let {
-//                            TODO: check login in the User channel
-                            if (navController.currentDestination?.id == R.id.menu_channel) {
-                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
+                            if (it == R.id.menu_channel) {
+                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: mPref.customerId
                                 navController.popBackStack(it, true)
                                 getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
                             } else {
@@ -2786,9 +2785,9 @@ class HomeActivity : PlayerPageActivity(),
                 } else {
                     if (mPref.shouldReloadAfterLogin.value == true) {
                         mPref.preLoginDestinationId.value?.let {
-//                            TODO: check login in the User channel
-                            if (navController.currentDestination?.id == R.id.menu_channel) {
-                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
+                            if (it == R.id.menu_channel) {
+                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: mPref.customerId
+                                navController.popBackStack(it, true)
                                 getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
                             } else {
                                 navController.popBackStack(it, true)
