@@ -436,7 +436,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("setPremiumStatusIcon")
     fun setPremiumStatusIcon(view: ImageView, isPurchased: Boolean?) {
-        if (isPurchased == true) {
+        if (mPref.isVerifiedUser && isPurchased == true) {
             view.setImageResource(R.drawable.ic_premium_activated)
         } else {
             view.setImageResource(R.drawable.ic_premium)

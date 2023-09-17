@@ -24,7 +24,6 @@
             android:id="@+id/prepaid_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@{data.listTitle}"

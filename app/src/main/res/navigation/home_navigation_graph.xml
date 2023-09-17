@@ -622,11 +622,9 @@
         android:name="com.banglalink.toffee.ui.premium.StartWatchingTopBarDialog"
         android:label="DeleteAccountFragment"
         tools:layout="@layout/dialog_start_watching_top_bar" />
-
-
-
+    
     <fragment
-        android:id="@+id/FmRadioFrag"
+        android:id="@+id/fmRadioFragment"
         android:name="com.banglalink.toffee.ui.fmradio.FmChannelBaseFragment"
         android:label="FM Radio"
         tools:layout="@layout/fragment_fm_channels_base" />

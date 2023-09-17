@@ -123,9 +123,15 @@ val Float.px: Float get() {
 
 fun Boolean.toInt() = if (this) 1 else 0
 
-fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBeforeReload: Boolean = false, block: (()-> Unit)? = null) {
+fun Activity.checkVerification(
+    currentDestinationId: Int? = null,
+    doActionBeforeReload: Boolean = false,
+    shouldReloadAfterLogin: Boolean = true, 
+    block: (()-> Unit)? = null
+) {
     if (this is HomeActivity && !mPref.isVerifiedUser && this.getNavController().currentDestination?.id != R.id.loginDialog) {
         mPref.doActionBeforeReload.value = doActionBeforeReload
+        mPref.shouldReloadAfterLogin.value = shouldReloadAfterLogin
         mPref.preLoginDestinationId.value = currentDestinationId ?: this.getNavController().currentDestination?.id
         this.getNavController().navigate(R.id.loginDialog)
         mPref.postLoginEventAction.value = block
