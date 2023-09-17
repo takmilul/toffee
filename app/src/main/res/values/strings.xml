@@ -242,11 +242,11 @@
     <string name="login_with_phone_image">Phone Login</string>
     <string name="resend_text">Resend</string>
     <string name="done_text">Done</string>
-    <string name="verify_text">Verify</string>
+    <string name="verify_text">Get otp</string>
     <string name="submit_button_text">Submit</string>
     <string name="sign_in_intro_desc">For example: premium content, \nreaction, upload, referral etc.</string>
     <string name="sign_in_intro_title">Sign in to Access All Features</string>
-    <string name="login_with_phone_text">Sign in with Phone</string>
+    <string name="login_with_phone_text">Sign in with Phone Number</string>
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="i_agree_with_text">&#160;&#160;I agree to the&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>

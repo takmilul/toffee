@@ -52,7 +52,7 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="16dp"
         android:background="@null"
-        android:button="@drawable/custom_checkbox"
+        android:button="@drawable/ic_checked"
         android:checked="true"
         android:gravity="center_vertical"
         android:text="@string/i_agree_with_text"
