@@ -1293,8 +1293,9 @@ class HomeActivity : PlayerPageActivity(),
         it.getHlsLink()?.let { url ->
             viewModel.sendViewContentEvent(it.copy(id = "0"))
             val shareableUrl = it.video_share_url
+            val urlWithTheme = if (!url.contains("style=", ignoreCase = true)) url else url.plus(cPref.appTheme)
             launchActivity<Html5PlayerViewActivity> {
-                putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
+                putExtra(Html5PlayerViewActivity.CONTENT_URL, urlWithTheme)
                 putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)
                 putExtra(Html5PlayerViewActivity.TITLE, it.program_name)
             }
@@ -2288,7 +2289,6 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
-
         if (featuredPartner.url_type == 1){
             navController.navigateTo(R.id.fmRadioFragment)
         } else{
@@ -2297,16 +2297,19 @@ class HomeActivity : PlayerPageActivity(),
                     landingPageViewModel.sendFeaturePartnerReportData(
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
+                    val urlWithTheme = if (!url.contains("style=", ignoreCase = true)) url else url.plus(cPref.appTheme)
                     navController.navigateTo(
                         resId = R.id.htmlPageViewDialog_Home,
                         args = bundleOf(
-                            "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+                            "myTitle" to getString(string.back_to_toffee_text),
+                            "url" to urlWithTheme,
+                            "isHideBackIcon" to false,
+                            "isHideCloseIcon" to true
                         )
                     )
                 } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
             }
         }
-
     }
     
     private fun isChannelComplete() =
