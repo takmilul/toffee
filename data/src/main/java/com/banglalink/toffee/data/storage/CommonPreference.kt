@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.storage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -10,6 +11,7 @@ import com.banglalink.toffee.util.Utils
 
 const val COMMON_PREF_NAME = "LIFETIME_DATA"
 
+@SuppressLint("HardwareIds")
 class CommonPreference(private val pref: SharedPreferences, private val context: Context) {
     
     companion object {
