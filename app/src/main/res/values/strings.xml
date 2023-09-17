@@ -544,7 +544,7 @@
     <string name="pay_by_bkash">Pay by bKash</string>
     <string name="pay_by_card">Pay by Card</string>
     <string name="only_for_bl_text">Only for Banglalink Subscribers</string>
-    <string name="only_for_bl_text">Up to 5GB FREE, Best Experience</string>
+<!--    <string name="only_for_bl_text">Up to 5GB FREE, Best Experience</string>-->
     <string name="pay_by_banglalink">Pay by Banglalink</string>
     <string name="choose_payment_method">Choose Payment Method</string>
     <string name="starting_from_bdt_0">Starting from BDT 0</string>
