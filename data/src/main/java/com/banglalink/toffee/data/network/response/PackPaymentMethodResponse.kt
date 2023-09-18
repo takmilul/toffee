@@ -26,12 +26,22 @@ data class PackPaymentMethodBean(
     val free: @RawValue List<PackPaymentMethod>?,
     @SerializedName("VOUCHER")
     val Voucher: @RawValue List<PackPaymentMethod>?,
+    @SerializedName("SSL")
+    val ssl: SSL?,
 ) : Parcelable
 
 @Parcelize
 data class Bkash(
     @SerializedName("minimum_price")
     val minimumPrice: Int,
+    @SerializedName("BL")
+    val blPacks: List<PackPaymentMethod>?,
+    @SerializedName("NON_BL")
+    val nonBlPacks: List<PackPaymentMethod>?,
+) : Parcelable
+
+@Parcelize
+data class SSL(
     @SerializedName("BL")
     val blPacks: List<PackPaymentMethod>?,
     @SerializedName("NON_BL")
@@ -71,12 +81,10 @@ data class PackPaymentMethod(
     val isPrepaid: Int? = null,
     @SerializedName("listTitle")
     val listTitle: String? = null,
-
     @SerializedName("is_auto_renew")
     val isAutoRenew: Int? = null,
     @SerializedName("partner_id")
     val partnerId: Int? = null,
     @SerializedName("campaigns_id")
     val campaignsId: Int? = null,
-
     ) : Parcelable

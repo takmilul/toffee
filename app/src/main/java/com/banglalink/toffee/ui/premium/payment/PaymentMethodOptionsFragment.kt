@@ -125,6 +125,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 } else {
                     paymentTypes.bkash?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
+
+                val sslStartingPrice = if (mPref.isBanglalinkNumber == "true") {
+                    paymentTypes.ssl?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                } else {
+                    paymentTypes.ssl?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                }
 //                bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
 //                bkashPackPrice.isVisible = bKashStartingPrice > 0
                 
@@ -133,9 +139,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 blPackCard.isVisible = paymentTypes.bl != null && (mPref.isBanglalinkNumber != "true" || isAvailableForBlUsers)
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
-                
+                val isSslAvailable = paymentTypes.ssl != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
+
 //                bKashPackCard.isVisible = isBkashAvailable
-                
+                SslPackCard.isVisible = isSslAvailable
+
                 //Disable Banglalink DataPack Option
 //                if (mPref.isBanglalinkNumber == "false") {
 //                    blPackCard.alpha = 0.3f

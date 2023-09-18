@@ -4,18 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
@@ -27,6 +28,7 @@ import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -43,6 +45,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private lateinit var mAdapter: PaymentDataPackOptionAdapter
     private var _binding: FragmentPaymentDataPackOptionsBinding? = null
     private val binding get() = _binding!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
 
@@ -56,59 +59,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         hidePaymentOption()
 
         paymentName = arguments?.getString("paymentName", "") ?: ""
-        viewModel.paymentMethod.value?.let { paymentTypes ->
-            val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
-            val prePaid = paymentTypes.bl?.prepaid
-            val postPaid = paymentTypes.bl?.postpaid
-            val bKashBlPacks = paymentTypes.bkash?.blPacks
-            val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
-
-            if (paymentName == "bkash") {
-                packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
-                } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
-                }
-            }
-            else if (paymentName == "ssl"){
-                ///// dummy////////
-                packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
-                } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
-                }
-            }
-            else if (paymentName == "blPack") {
-                packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
-//                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
-                        packPaymentMethodList.addAll(prePaid)
-                    }
-                    if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
-//                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                        packPaymentMethodList.addAll(postPaid)
-                    }
-                } else {
-                    if (!prePaid.isNullOrEmpty()) {
-                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
-                        packPaymentMethodList.addAll(prePaid)
-                    }
-                    if (!postPaid.isNullOrEmpty()) {
-                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                        packPaymentMethodList.addAll(postPaid)
-                    }
-                }
-            }
-
-            packPaymentMethodList.let {
-                mAdapter = PaymentDataPackOptionAdapter(requireContext(), mPref, this)
-                binding.recyclerView.adapter = mAdapter
-                mAdapter.addAll(it.toList())
-            }
-        }
+        prepareDataPackOptions()
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
@@ -127,7 +78,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         binding.buyNow.safeClick({
             progressDialog.show()
-
             // Determine the payment method based on the provided paymentName
             when (paymentName) {
                 "bkash" -> {
@@ -147,6 +97,108 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyWithRecharge.safeClick({
             callAndObserveRechargeByBkash()
         })
+        binding.signInButton.safeClick({
+            observe(homeViewModel.isLogoutCompleted) {
+                if (it) {
+                    requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                        observe(viewModel.mnpStatusLiveData) { response ->
+                            when (response) {
+                                is Success -> {
+                                    prepareDataPackOptions(true)
+                                    binding.signInButton.hide()
+                                    binding.buySimButton.hide()
+                                    if (mAdapter.selectedPosition > -1) {
+                                        binding.buyNow.show()
+                                        binding.buyWithRecharge.show()
+//                                        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
+//                                        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2 else R.color.btnDisableClr))
+//                                        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white else R.color.txtDisableClr))
+                                    }
+                                }
+                                is Failure -> {
+                                    requireContext().showToast(response.error.msg)
+                                }
+                            }
+                        }
+                        viewModel.getMnpStatus()
+                    }
+                }
+            }
+            mPref.shouldIgnoreReloadAfterLogout.value = true
+            homeViewModel.logoutUser()
+        })
+        binding.buySimButton.safeClick({
+            val args = Bundle().apply {
+                putString("myTitle", "Back to TOFFEE")
+                putString("url", "https://eshop.banglalink.net/")
+                putBoolean("isHideBackIcon", false)
+                putBoolean("isHideCloseIcon", true)
+            }
+            findNavController().navigate(R.id.htmlPageViewDialog, args)
+        })
+    }
+
+    private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
+        viewModel.paymentMethod.value?.let { paymentTypes ->
+            val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
+            val prePaid = paymentTypes.bl?.prepaid
+            val postPaid = paymentTypes.bl?.postpaid
+            val bKashBlPacks = paymentTypes.bkash?.blPacks
+            val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
+            val sslBlPacks = paymentTypes.ssl?.blPacks
+            val sslNonBlPacks = paymentTypes.ssl?.nonBlPacks
+
+            if (paymentName == "bkash") {
+                packPaymentMethodList.clear()
+                if (mPref.isBanglalinkNumber == "true") {
+                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) }
+                        ?: requireContext().showToast(getString(string.try_again_message))
+                } else {
+                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) }
+                        ?: requireContext().showToast(getString(string.try_again_message))
+                }
+            }
+            else if (paymentName == "ssl"){
+                packPaymentMethodList.clear()
+                if (mPref.isBanglalinkNumber == "true") {
+                    sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                } else {
+                    sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                }
+            }
+            else if (paymentName == "blPack") {
+                packPaymentMethodList.clear()
+                if (mPref.isBanglalinkNumber == "true") {
+                    if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+                        //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                        packPaymentMethodList.addAll(prePaid)
+                    }
+                    if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+                        //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                        packPaymentMethodList.addAll(postPaid)
+                    }
+                } else {
+                    if (!prePaid.isNullOrEmpty()) {
+                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                        packPaymentMethodList.addAll(prePaid)
+                    }
+                    if (!postPaid.isNullOrEmpty()) {
+                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                        packPaymentMethodList.addAll(postPaid)
+                    }
+                }
+            }
+
+            packPaymentMethodList.let {
+                mAdapter = PaymentDataPackOptionAdapter(requireContext(), mPref, this)
+                binding.recyclerView.adapter = mAdapter
+                if (isRestoreSelection && viewModel.selectedDataPackOption.value != null) {
+                    mAdapter.selectedPosition = it.indexOf(viewModel.selectedDataPackOption.value)
+                }
+                mAdapter.addAll(it.toList())
+                mAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun purchaseBlDataPack() {
@@ -200,7 +252,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             if (!mPref.isPrepaid){
                                 val args = bundleOf(
                                     "subTitle" to getString(R.string.insufficient_balance_for_postpaid),
-                                    "isBuyWithRechargeHide" to true,
+                                    "isBuyWithRechargeHide" to false,
                                 )
                                 findNavController().navigateTo(R.id.insufficientBalanceFragment, args)
                             }
@@ -220,6 +272,89 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     requireContext().showToast(it.error.msg)
                 }
             }
+        }
+    }
+
+    /**
+     * Initiates the payment process for bKash and SSL payment methods.
+     * This function is responsible for preparing and sending a payment initialization request.
+     *
+     * @param paymentType The type of payment method (e.g., "bkash" or "ssl").
+     */
+    private fun callAndObserveSubscriberPaymentInit(paymentType: String) {
+        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
+            progressDialog.show()
+            // Observe the subscriberPaymentInitLiveData for response handling
+            observe(viewModel.subscriberPaymentInitLiveData) { it ->
+                progressDialog.dismiss() // Dismiss the progress dialog
+                when (it) {
+                    is Success -> {
+                        it.data?.let {
+                            transactionIdentifier = it.transactionIdentifierId
+                            statusCode = it.statusCode.toString()
+                            statusMessage = it.message
+                            if (it.statusCode != 200) {
+                                requireContext().showToast(getString(R.string.try_again_message))
+                                return@observe
+                            }
+                            //Send Log to the Pub/Sub
+                            viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                                id = System.currentTimeMillis() + mPref.customerId,
+                                callingApiName = "${paymentType}SubscriberPaymentInitFromAndroid",
+                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                paymentMsisdn = null,
+                                paymentId = transactionIdentifier,
+                                transactionId = null,
+                                transactionStatus = statusCode,
+                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                rawResponse = "statusCode: $statusCode, message: $statusMessage"
+                            ))
+                            // Prepare navigation arguments for payment WebView
+                            val args = bundleOf(
+                                "myTitle" to "Pack Details",
+                                "url" to it.webViewUrl,
+                                "paymentType" to paymentType,
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true,
+                                "isBkashBlRecharge" to false,
+                            )
+                            // Navigate to the payment WebView dialog
+                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }
+                    is Failure -> {
+                        requireContext().showToast(it.error.msg)
+                    }
+                }
+            }
+            // Retrieve selected premium pack and data pack option
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPackOption = viewModel.selectedDataPackOption.value
+            // Prepare a payment initiation request
+            val request = SubscriberPaymentInitRequest(
+                customerId = mPref.customerId,
+                password = mPref.password,
+                is_Bl_Number = if (mPref.isBanglalinkNumber == "true") 1 else 0,
+                isPrepaid = if (mPref.isPrepaid) 1 else 0,
+                packId = selectedPremiumPack?.id ?: 0,
+                packTitle = selectedPremiumPack?.packTitle,
+                contents = selectedPremiumPack?.contentId,
+                paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
+                packCode = selectedDataPackOption?.packCode,
+                packDetails = selectedDataPackOption?.packDetails,
+                packPrice = selectedDataPackOption?.packPrice ?: 0,
+                packDuration = selectedDataPackOption?.packDuration ?: 0,
+                geoCity = mPref.geoCity,
+                geoLocation = mPref.geoLocation,
+                cusEmail = mPref.customerEmail
+            )
+            // Trigger the payment initiation request
+            viewModel.getSubscriberPaymentInit(paymentType, request)
         }
     }
 
@@ -301,127 +436,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         }
     }
 
-    /**
-     * Initiates the payment process for bKash and SSL payment methods.
-     * This function is responsible for preparing and sending a payment initialization request.
-     *
-     * @param paymentType The type of payment method (e.g., "bkash" or "ssl").
-     */
-    private fun callAndObserveSubscriberPaymentInit(paymentType: String) {
-        if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            progressDialog.show()
-
-            // Observe the subscriberPaymentInitLiveData for response handling
-            observe(viewModel.subscriberPaymentInitLiveData) { it ->
-                progressDialog.dismiss() // Dismiss the progress dialog
-
-                when (it) {
-                    is Success -> {
-                        it.data?.let {
-                            transactionIdentifier = it.transactionIdentifierId
-                            statusCode = it.statusCode.toString()
-                            statusMessage = it.message
-
-                            if (it.statusCode != 200) {
-                                requireContext().showToast(getString(R.string.try_again_message))
-                                return@observe
-                            }
-
-                            //Send Log to the Pub/Sub
-                            viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                                id = System.currentTimeMillis() + mPref.customerId,
-                                callingApiName = "${paymentType}SubscriberPaymentInitFromAndroid",
-                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                                paymentMsisdn = null,
-                                paymentId = transactionIdentifier,
-                                transactionId = null,
-                                transactionStatus = statusCode,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                rawResponse = "statusCode: $statusCode, message: $statusMessage"
-                            ))
-
-                            // Prepare navigation arguments for payment WebView
-                            val args = bundleOf(
-                                "myTitle" to "Pack Details",
-                                "url" to it.webViewUrl,
-                                "paymentType" to paymentType,
-                                "isHideBackIcon" to false,
-                                "isHideCloseIcon" to true,
-                                "isBkashBlRecharge" to false,
-                            )
-
-                            // Navigate to the payment WebView dialog
-                            findNavController().navigateTo(R.id.paymentWebViewDialog, args)
-                        } ?: requireContext().showToast(getString(R.string.try_again_message))
-                    }
-                    is Failure -> {
-                        requireContext().showToast(it.error.msg)
-                    }
-                }
-            }
-
-            // Retrieve selected premium pack and data pack option
-            val selectedPremiumPack = viewModel.selectedPremiumPack.value
-            val selectedDataPackOption = viewModel.selectedDataPackOption.value
-
-            // Prepare a payment initiation request
-            val request = SubscriberPaymentInitRequest(
-                customerId = mPref.customerId,
-                password = mPref.password,
-                is_Bl_Number = if (mPref.isBanglalinkNumber == "true") 1 else 0,
-                isPrepaid = if (mPref.isPrepaid) 1 else 0,
-                packId = selectedPremiumPack?.id ?: 0,
-                packTitle = selectedPremiumPack?.packTitle,
-                contents = selectedPremiumPack?.contentId,
-                paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
-                packCode = selectedDataPackOption?.packCode,
-                packDetails = selectedDataPackOption?.packDetails,
-                packPrice = selectedDataPackOption?.packPrice ?: 0,
-                packDuration = selectedDataPackOption?.packDuration ?: 0,
-                geoCity = mPref.geoCity,
-                geoLocation = mPref.geoLocation,
-                cusEmail = mPref.customerEmail
-            )
-
-            // Trigger the payment initiation request
-            viewModel.getSubscriberPaymentInit(paymentType, request)
-        }
-    }
-
-
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
         super.onItemClicked(view, item, position)
         showPaymentOption()
         mAdapter.selectedPosition = position
         viewModel.selectedDataPackOption.value = item
 //        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
-        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
-        binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
-//        binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
-        if (paymentName !in listOf("ssl", "bkash")) {
-            binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
-        }
-        binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
+//        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
 
-        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
-        else R.color.btnDisableClr))
-        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
-        else R.color.txtDisableClr))
+//        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2
+//        else R.color.btnDisableClr))
+//        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white
+//        else R.color.txtDisableClr))
     }
 
-    /**
-     * Configures UI elements and text for different payment methods (bKash, SSL, Banglalink Pack).
-     */
     private fun showPaymentOption() {
         binding.recyclerView.setPadding(0, 0, 0, 8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
-
         // Customize UI elements based on the selected payment method
         when (paymentName) {
             "bkash" -> {
@@ -437,6 +469,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             "blPack" -> {
                 binding.buyNow.show()
                 binding.buyWithRecharge.show()
+                binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
+                binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+                binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
+                binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
             }
         }
     }
