@@ -178,8 +178,18 @@ class PaymentWebViewDialog : DialogFragment() {
                                             }
                                         }
                                         "bkash" -> {
-                                            val args = bundleOf(ARG_STATUS_CODE to 200)
-                                            navigateToStatusDialogPage(args)
+                                            if (statusCode != "200"){
+                                                val args = bundleOf(
+                                                    ARG_STATUS_CODE to -1,
+                                                    ARG_STATUS_TITLE to "Plan Activation Failed!",
+                                                    ARG_STATUS_MESSAGE to statusMessage
+                                                )
+                                                navigateToStatusDialogPage(args)
+                                            }
+                                            else{
+                                                val args = bundleOf(ARG_STATUS_CODE to 200)
+                                                navigateToStatusDialogPage(args)
+                                            }
                                         }
                                         else -> {}
                                     }
