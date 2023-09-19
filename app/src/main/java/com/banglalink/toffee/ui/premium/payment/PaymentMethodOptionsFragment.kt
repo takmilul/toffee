@@ -144,6 +144,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 //                bKashPackCard.isVisible = isBkashAvailable
                 SslPackCard.isVisible = isSslAvailable
 
+
+                bKashPackCard.isVisible = isBkashAvailable
+
                 //Disable Banglalink DataPack Option
 //                if (mPref.isBanglalinkNumber == "false") {
 //                    blPackCard.alpha = 0.3f

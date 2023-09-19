@@ -42,6 +42,7 @@ class InAppMessageParser @Inject constructor(
         try {
             val link = Uri.parse(url)
             val navOptions = navOptions { launchSingleTop = true }
+            val path = link.lastPathSegment
             val page = link.getQueryParameter("page")
             page?.let { name ->
                 when(name) {
@@ -136,12 +137,18 @@ class InAppMessageParser @Inject constructor(
                             }
                         })
                     }
-                    "fm-radio" -> {
-                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
-                    }
                     "featured_partner" -> {
                         val partnerId = link.getQueryParameter("id")?.toIntOrNull() ?: 0
                         return RouteV2(partnerId, "Featured Partner", null, navOptions)
+                    }
+                    else -> null
+                }
+            }
+            
+            path?.let {
+                when (it) {
+                    "fm-radio" -> {
+                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
                     }
                     else -> null
                 }
