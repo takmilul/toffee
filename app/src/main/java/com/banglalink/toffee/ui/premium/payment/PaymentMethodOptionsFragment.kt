@@ -134,7 +134,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 
                 val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
                 
-//                bKashPackCard.isVisible = isBkashAvailable
+                bKashPackCard.isVisible = isBkashAvailable
                 
                 //Disable Banglalink DataPack Option
 //                if (mPref.isBanglalinkNumber == "false") {
