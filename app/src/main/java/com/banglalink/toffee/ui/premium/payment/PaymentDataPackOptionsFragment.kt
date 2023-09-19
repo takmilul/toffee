@@ -481,21 +481,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         if (paymentName == "bKash"){
             binding.buyNow.text = getString(R.string.buy_bkash)
             binding.buyNow.show()
-        }
-        else if(paymentName == "blPack"){
+        } else if(paymentName == "blPack") {
             binding.buyNow.show()
             binding.buyWithRecharge.show()
             binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
             binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
             binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
             binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
+            binding.termsAndConditionsText.isVisible = mPref.isBanglalinkNumber == "true"
         }
     }
     
     private fun hidePaymentOption() {
         binding.recyclerView.setPadding(0, 0, 0, 24)
-        binding.termsAndConditionsOne.hide()
-        binding.termsAndConditionsTwo.hide()
+        binding.termsAndConditionsText.hide()
         binding.buyNow.hide()
         binding.buyWithRecharge.hide()
     }
