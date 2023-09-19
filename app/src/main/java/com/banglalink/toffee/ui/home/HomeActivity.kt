@@ -2853,46 +2853,28 @@ class HomeActivity : PlayerPageActivity(),
                         mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
                             when (navController.currentDestination?.id) {
-                                R.id.myChannelEditDetailFragment -> {
-                                    navController.popBackStack()
-                                    navController.popBackStack()
-                                    getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(0)
-                                }
-                                R.id.menu_channel -> {
-                                    val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: 0
-                                    navController.popBackStack()
-                                    getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
-                                }
-                                R.id.menu_activities,
                                 R.id.menu_playlist,
                                 R.id.menu_favorites,
-                                R.id.menu_subscriptions,
-                                R.id.upload_minimize,
+                                R.id.menu_activities,
                                 R.id.profileFragment,
+                                R.id.upload_minimize,
+                                R.id.menu_subscriptions,
                                 R.id.editUploadInfoFragment,
+                                R.id.myChannelEditDetailFragment,
                                 R.id.myChannelVideosEditFragment
                                 -> {
                                     navController.popBackStack()
-                                    navController.currentDestination?.id?.let {
-                                        navController.popBackStack()
-                                        navController.navigateTo(it)
-                                    }
+                                    reloadCurrentPage()
                                 }
                                 R.id.editProfileFragment,
                                 R.id.userPlaylistVideos
                                 -> {
                                     navController.popBackStack()
                                     navController.popBackStack()
-                                    navController.currentDestination?.id?.let {
-                                        navController.popBackStack()
-                                        navController.navigateTo(it)
-                                    }
+                                    reloadCurrentPage()
                                 }
                                 else -> {
-                                    navController.currentDestination?.id?.let {
-                                        navController.popBackStack()
-                                        navController.navigateTo(it)
-                                    }
+                                    reloadCurrentPage()
                                 }
                             }
                         }
@@ -2919,6 +2901,13 @@ class HomeActivity : PlayerPageActivity(),
                     showToast(it.error.msg)
                 }
             }
+        }
+    }
+    
+    private fun reloadCurrentPage() {
+        navController.currentDestination?.id?.let {
+            navController.popBackStack()
+            navController.navigateTo(it)
         }
     }
 }
