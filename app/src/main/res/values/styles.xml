@@ -712,7 +712,7 @@
 
     <style name="packsInfoLabel" parent="@android:style/Widget.TextView">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/subscription_history_color_secondary</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
