@@ -166,7 +166,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "ssl" -> {
                                             if (statusCode != "200"){
                                                 val args = bundleOf(
-                                                    ARG_STATUS_CODE to -1,
+                                                    ARG_STATUS_CODE to -2,
                                                     ARG_STATUS_TITLE to "Plan Activation Failed!",
                                                     ARG_STATUS_MESSAGE to statusMessage
                                                 )

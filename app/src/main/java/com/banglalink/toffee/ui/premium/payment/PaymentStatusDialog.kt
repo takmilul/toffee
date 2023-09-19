@@ -62,6 +62,7 @@ class PaymentStatusDialog : DialogFragment() {
         const val CheckAllDataPack_Status = 6080
         const val GetRequestStatus_REQUESTED = 6085
         const val BKASH_PAYMENT_FAILED = -1
+        const val SSL_PAYMENT_FAILED = -2
         
         const val ARG_STATUS_CODE = "statusCode"
         const val ARG_STATUS_MESSAGE = "statusMessage"
@@ -102,7 +103,7 @@ class PaymentStatusDialog : DialogFragment() {
             }
         })
         binding.callBtn.setOnClickListener {
-            val phoneNo = "121"
+            val phoneNo = "+8801911304121"
             val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null))
             startActivity(intent)
         }
@@ -200,6 +201,14 @@ class PaymentStatusDialog : DialogFragment() {
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
+                binding.goToHomePageBtn.show()
+            }
+            SSL_PAYMENT_FAILED -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.bkash_activation_failed)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
+                binding.tryAgainBtn.hide()
+                binding.callBtn.show()
                 binding.goToHomePageBtn.show()
             }
         }
