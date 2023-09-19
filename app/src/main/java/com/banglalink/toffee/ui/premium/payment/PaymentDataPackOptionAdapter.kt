@@ -43,9 +43,17 @@ class PaymentDataPackOptionAdapter(
             obj.let {
                 val radioButton = holder.itemView.findViewById<RadioButton>(R.id.dataPackOptionRadioButton)
                 val packOptionContainer = holder.itemView.findViewById<ConstraintLayout>(R.id.packOptionContainerOne)
-                
-                radioButton.isChecked = position == selectedPosition
+//                radioButton.isChecked = obj.dataPackId==selectedItem?.dataPackId
+                radioButton.setOnCheckedChangeListener(null)
+
+                radioButton.isChecked = position === selectedPosition
                 packOptionContainer.background = if (radioButton.isChecked) ContextCompat.getDrawable(context, R.drawable.subscribe_bg_round_pass) else null
+
+                radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
+                    selectedPosition = position
+
+                    notifyDataSetChanged()
+                }
             }
         }
     }
