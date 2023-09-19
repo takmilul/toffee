@@ -56,7 +56,9 @@ class PaymentWebViewDialog : DialogFragment() {
     private var title: String? = null
     private var htmlUrl: String? = null
     private var paymentId: String? = null
+    private var paymentTypeFromDataPackOptionsFragment: String? = null
     private var paymentType: String? = null
+    private var callBackStatus: String? = null
     private var statusCode: String? = null
     private var sessionToken: String? = null
     private var shareableUrl: String? = null
@@ -92,7 +94,7 @@ class PaymentWebViewDialog : DialogFragment() {
         MedalliaDigital.disableIntercept()
         
         paymentId = arguments?.getString("paymentId")
-        paymentType = arguments?.getString("paymentType")
+        paymentTypeFromDataPackOptionsFragment = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
         htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
@@ -131,8 +133,10 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("statusCode")?.let { statusCode = it }
                         uri.getQueryParameter("message")?.let { statusMessage = it }
                         uri.getQueryParameter("transactionIdentifier")?.let { transactionIdentifier = it }
+                        uri.getQueryParameter("paymentType")?.let { paymentType = it }
+                        uri.getQueryParameter("callBackStatus")?.let { callBackStatus = it }
                         when {
-                            it.contains("success") || (statusCode != null && statusCode == "200") -> {
+                            it.contains("success") || callBackStatus == "success" -> {
                                 if (isBkashBlRecharge) {
                                     progressDialog.show()
                                     isBkashBlRecharge = false
@@ -143,7 +147,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     progressDialog.show()
                                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                         id = System.currentTimeMillis() + mPref.customerId,
-                                        callingApiName = "${paymentType}SubscriberPaymentAfterSuccessfulFromAndroid",
+                                        callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
                                         packId = viewModel.selectedPremiumPack.value?.id ?: 0,
                                         packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                         dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
@@ -155,13 +159,33 @@ class PaymentWebViewDialog : DialogFragment() {
                                         transactionStatus = statusCode,
                                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                        rawResponse = "statusCode: $statusCode, message: $statusMessage"
+                                        rawResponse = url.toString()
                                     ))
-                                    val args = bundleOf(ARG_STATUS_CODE to 200)
-                                    navigateToStatusDialogPage(args)
+
+                                    when (paymentType) {
+                                        "ssl" -> {
+                                            if (statusCode != "200"){
+                                                val args = bundleOf(
+                                                    ARG_STATUS_CODE to -1,
+                                                    ARG_STATUS_TITLE to "Plan Activation Failed!",
+                                                    ARG_STATUS_MESSAGE to statusMessage
+                                                )
+                                                navigateToStatusDialogPage(args)
+                                            }
+                                            else{
+                                                val args = bundleOf(ARG_STATUS_CODE to 200)
+                                                navigateToStatusDialogPage(args)
+                                            }
+                                        }
+                                        "bkash" -> {
+                                            val args = bundleOf(ARG_STATUS_CODE to 200)
+                                            navigateToStatusDialogPage(args)
+                                        }
+                                        else -> {}
+                                    }
                                 }
                             }
-                            (it.contains("failure") || it.contains("fail")) && !it.contains("statusCode") -> {
+                            (it.contains("failure") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
@@ -185,7 +209,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                 )
                                 navigateToStatusDialogPage(args)
                             }
-                            it.contains("cancel") && !it.contains("statusCode") -> {
+                            it.contains("cancel") && !it.contains("callBackStatus") -> {
                                 progressDialog.dismiss()
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
@@ -209,11 +233,12 @@ class PaymentWebViewDialog : DialogFragment() {
                                 )
                                 navigateToStatusDialogPage(args)
                             }
-                            statusCode != null && statusCode != "200" -> {
+
+                            callBackStatus == "failure" || callBackStatus == "cancel" -> {
                                 progressDialog.dismiss()
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
-                                    callingApiName = "${paymentType}SubscriberPaymentAfterUnsuccessfulFromAndroid",
+                                    callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
                                     packId = viewModel.selectedPremiumPack.value?.id ?: 0,
                                     packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
@@ -225,14 +250,24 @@ class PaymentWebViewDialog : DialogFragment() {
                                     transactionStatus = statusCode,
                                     amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                    rawResponse = "statusCode: $statusCode, message: $statusMessage"
+                                    rawResponse = url.toString()
                                 ))
-                                val args = bundleOf(
-                                    ARG_STATUS_CODE to -1,
-                                    ARG_STATUS_MESSAGE to statusMessage
-                                )
-                                navigateToStatusDialogPage(args)
+
+                                when {
+                                    paymentType == "ssl" && statusCode != "200" -> {
+                                        dialog?.dismiss()
+                                    }
+                                    paymentType == "bkash" && statusCode != "200" -> {
+                                        val args = bundleOf(
+                                            ARG_STATUS_CODE to -1,
+                                            ARG_STATUS_MESSAGE to statusMessage
+                                        )
+                                        navigateToStatusDialogPage(args)
+                                    }
+                                    else -> {}
+                                }
                             }
+                            else -> {}
                         }
                     }
                 }
@@ -438,7 +473,7 @@ class PaymentWebViewDialog : DialogFragment() {
             }
         }
     }
-    
+
     override fun onStart() {
         super.onStart()
         dialog?.let {
