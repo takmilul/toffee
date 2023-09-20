@@ -2297,7 +2297,8 @@ class HomeActivity : PlayerPageActivity(),
                     landingPageViewModel.sendFeaturePartnerReportData(
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                    val urlWithTheme = if (!url.contains("style=", ignoreCase = true)) url else url.plus(cPref.appTheme)
+                    
+                    val urlWithTheme = url.replace("toffee_theme=", "toffee_theme=${cPref.appTheme}")
                     navController.navigateTo(
                         resId = R.id.htmlPageViewDialog_Home,
                         args = bundleOf(
@@ -2846,7 +2847,6 @@ class HomeActivity : PlayerPageActivity(),
                         }
                         appScope.launch { favoriteDao.deleteAll() }
                         mqttService.destroy()
-                        
                         
                         UploadService.stopAllUploads()
                         initSideNav()
