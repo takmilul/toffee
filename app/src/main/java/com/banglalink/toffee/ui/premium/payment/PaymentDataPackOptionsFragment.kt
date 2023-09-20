@@ -312,7 +312,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                                rawResponse = "statusCode: $statusCode, message: $statusMessage"
+                                rawResponse = gson.toJson(it)
                             ))
                             // Prepare navigation arguments for payment WebView
                             val args = bundleOf(

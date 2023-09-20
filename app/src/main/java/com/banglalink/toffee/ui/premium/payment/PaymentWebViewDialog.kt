@@ -122,10 +122,18 @@ class PaymentWebViewDialog : DialogFragment() {
                 binding.progressBar.visibility = View.VISIBLE
                 Log.i(TAG, "onPageStarted: $url")
             }
+
+            /**
+             * This function is responsible for handling the onPageFinished event in a WebView,
+             * particularly for processing payment callback data from a URL and managing various payment scenarios.
+             * It parses the URL's query parameters and takes appropriate actions based on the payment status.
+             */
             
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 Log.i(TAG, "onPageFinished: $url")
+
+                // Parse the URL and extract query parameters
                 url?.let {
                     runCatching {
                         val uri = Uri.parse(it)
@@ -135,16 +143,25 @@ class PaymentWebViewDialog : DialogFragment() {
                         uri.getQueryParameter("transactionIdentifier")?.let { transactionIdentifier = it }
                         uri.getQueryParameter("paymentType")?.let { paymentType = it }
                         uri.getQueryParameter("callBackStatus")?.let { callBackStatus = it }
+
+                        // Handle different payment scenarios based on callback data
                         when {
-                            it.contains("success") || callBackStatus == "success" -> {
+                            // Handle successful payments or success callbacks
+                            (it.contains("success") || callBackStatus == "success") -> {
                                 if (isBkashBlRecharge) {
+                                    // Handle specific actions for Banglalink recharge
+
                                     progressDialog.show()
                                     isBkashBlRecharge = false
                                     observeBlDataPackPurchase()
                                     purchaseBlDataPack()
                                 }
                                 else {
+                                    // Handle specific actions for bKask or SSL
                                     progressDialog.show()
+
+                                    //Send Log to the Pub/Sub
+
                                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                         id = System.currentTimeMillis() + mPref.customerId,
                                         callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
@@ -162,12 +179,12 @@ class PaymentWebViewDialog : DialogFragment() {
                                         rawResponse = url.toString()
                                     ))
 
+                                    // Navigate or perform actions based on payment type and status code
                                     when (paymentType) {
                                         "ssl" -> {
                                             if (statusCode != "200"){
                                                 val args = bundleOf(
                                                     ARG_STATUS_CODE to -2,
-                                                    ARG_STATUS_TITLE to "Plan Activation Failed!",
                                                     ARG_STATUS_MESSAGE to statusMessage
                                                 )
                                                 navigateToStatusDialogPage(args)
@@ -180,8 +197,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "bkash" -> {
                                             if (statusCode != "200"){
                                                 val args = bundleOf(
-                                                    ARG_STATUS_CODE to -1,
-                                                    ARG_STATUS_TITLE to "Plan Activation Failed!",
+                                                    ARG_STATUS_CODE to -2,
                                                     ARG_STATUS_MESSAGE to statusMessage
                                                 )
                                                 navigateToStatusDialogPage(args)
@@ -195,8 +211,12 @@ class PaymentWebViewDialog : DialogFragment() {
                                     }
                                 }
                             }
+
+                            // Handle payment failure scenarios for Banglalink recharge
                             (it.contains("failure") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
+
+                                //Send Log to the Pub/Sub
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "bkash-recharge-failure-callback",
@@ -219,8 +239,12 @@ class PaymentWebViewDialog : DialogFragment() {
                                 )
                                 navigateToStatusDialogPage(args)
                             }
-                            it.contains("cancel") && !it.contains("callBackStatus") -> {
+
+                            // Handle payment cancellation scenarios for Banglalink recharge
+                            (it.contains("cancel") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
+
+                                //Send Log to the Pub/Sub
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "bkash-recharge-cancel-callback",
@@ -244,8 +268,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                 navigateToStatusDialogPage(args)
                             }
 
-                            callBackStatus == "failure" || callBackStatus == "cancel" -> {
+                            // Handle failure or cancellation callbacks for bKask or SSL
+                            (callBackStatus == "failure" || callBackStatus == "cancel") -> {
                                 progressDialog.dismiss()
+
+                                //Send Log to the Pub/Sub
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",

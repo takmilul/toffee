@@ -504,6 +504,7 @@
     //
     <string name="technical_issue_occured">Plan Activation Failed!</string>
     <string name="bkash_technical_issue_occured">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
+    <string name="subscriber_payment_helpline">Please call our helpline for support.</string>
     <string name="due_some_technical_issue">Due to some technical issue, the plan activation failed. Please retry.</string>
     <string name="payment_successful">Plan Activation Successful!</string>
     <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected soon.</string>
@@ -520,6 +521,7 @@
     <string name="your_pack_purchase_failed">Data plan purchase failed. Please contact Banglalink Customer Care.</string>
     <string name="pack_activation_failed">Data Plan Activation Failed!</string>
     <string name="bkash_activation_failed">bKash Plan Activation Failed!</string>
+    <string name="subscriber_payment_activation_failed">Plan Activation Failed!</string>
     <string name="your_pack_expiration_date_could_not">Your pack validity could not be set. Please contact Banglalink Customer Care.</string>
     <string name="your_request_is_under_process">Your Request is Under Process</string>
     <string name="please_wait_for_confirmation_message">Please wait for confirmation message from Banglalink.</string>
