@@ -175,7 +175,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         transactionId = null,
                                         transactionStatus = statusCode,
                                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                        merchantInvoiceNumber = null,
                                         rawResponse = url.toString()
                                     ))
 
@@ -286,7 +286,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     transactionId = null,
                                     transactionStatus = statusCode,
                                     amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                    merchantInvoiceNumber = null,
                                     rawResponse = url.toString()
                                 ))
 

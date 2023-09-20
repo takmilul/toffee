@@ -311,7 +311,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 transactionId = null,
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                merchantInvoiceNumber = null,
                                 rawResponse = gson.toJson(it)
                             ))
                             // Prepare navigation arguments for payment WebView
