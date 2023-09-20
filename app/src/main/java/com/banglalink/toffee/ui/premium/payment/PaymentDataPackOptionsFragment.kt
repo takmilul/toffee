@@ -137,7 +137,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             findNavController().navigate(R.id.htmlPageViewDialog, args)
         })
     }
-
+    
     private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
@@ -170,7 +170,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true") {
                     if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
-                        //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+    //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
                         packPaymentMethodList.addAll(prePaid)
                     }
                     if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
@@ -459,7 +459,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             "bkash" -> {
                 binding.buyNow.text = getString(R.string.buy_bkash)
                 binding.buyNow.show()
-                binding.buyWithRecharge.hide()
             }
             "ssl" -> {
                 binding.buyNow.text = getString(R.string.buy_now_ssl)
@@ -473,14 +472,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
                 binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
+                binding.termsAndConditionsText.isVisible = mPref.isBanglalinkNumber == "true"
             }
         }
     }
 
     private fun hidePaymentOption() {
         binding.recyclerView.setPadding(0, 0, 0, 24)
-        binding.termsAndConditionsOne.hide()
-        binding.termsAndConditionsTwo.hide()
+        binding.termsAndConditionsText.hide()
         binding.buyNow.hide()
         binding.buyWithRecharge.hide()
     }

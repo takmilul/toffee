@@ -53,6 +53,12 @@
             app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
             tools:listitem="@layout/list_item_data_pack_option"/>
         
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/termsAndConditionsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="terms_and_conditions_one,terms_and_conditions_two" />
+        
         <TextView
             android:id="@+id/terms_and_conditions_one"
             android:layout_width="wrap_content"
