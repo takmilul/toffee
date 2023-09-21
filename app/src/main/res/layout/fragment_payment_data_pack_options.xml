@@ -21,7 +21,8 @@
             app:layout_constraintBottom_toTopOf="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/back" />
+            android:contentDescription="@string/back"
+            app:layout_constraintVertical_bias="0"/>
         
         <TextView
             android:id="@+id/pack_title"
@@ -51,13 +52,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/backImg"
             app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
-            tools:listitem="@layout/list_item_data_pack_option"/>
+            tools:listitem="@layout/list_item_data_pack_option"
+            tools:visibility="visible"/>
         
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/termsAndConditionsText"
+            android:id="@+id/termsAndConditionsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="terms_and_conditions_one,terms_and_conditions_two" />
+            app:constraint_referenced_ids="terms_and_conditions_one,terms_and_conditions_two"
+            tools:visibility="visible"/>
         
         <TextView
             android:id="@+id/terms_and_conditions_one"
@@ -75,7 +78,7 @@
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_two"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/buyNow"
+            app:layout_constraintBottom_toTopOf="@id/buyNowButton"
             tools:visibility="visible" />
         
         <TextView
@@ -98,7 +101,7 @@
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buyNow"
+            android:id="@+id/buyNowButton"
             style="@style/ButtonStyleSolidPink"
             android:layout_width="0dp"
             android:text="@string/buy_with_mobile_balance"
@@ -106,14 +109,14 @@
             app:layout_goneMarginBottom="40dp"
             android:textSize="12sp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/buyWithRecharge"
+            app:layout_constraintBottom_toTopOf="@+id/buyWithRechargeButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buyWithRecharge"
+            android:id="@+id/buyWithRechargeButton"
             style="@style/ButtonStyleSolidPink"
             android:layout_width="0dp"
             android:text="@string/buy_with_recharge"
@@ -123,8 +126,8 @@
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/signInButton"
-            app:layout_constraintEnd_toEndOf="@+id/buyNow"
-            app:layout_constraintStart_toStartOf="@+id/buyNow"
+            app:layout_constraintEnd_toEndOf="@+id/buyNowButton"
+            app:layout_constraintStart_toStartOf="@+id/buyNowButton"
             app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
         
@@ -138,11 +141,11 @@
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/buySimButton"
-            app:layout_constraintEnd_toEndOf="@+id/buyNow"
-            app:layout_constraintStart_toStartOf="@+id/buyNow"
+            app:layout_constraintEnd_toEndOf="@+id/buyNowButton"
+            app:layout_constraintStart_toStartOf="@+id/buyNowButton"
             app:layout_constraintWidth_percent="0.6"
             tools:visibility="visible" />
-
+        
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buySimButton"
             style="@style/ButtonStyleRingPink"
@@ -156,7 +159,62 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent="0.6"
-            tools:visibility="visible" />
-
+            tools:visibility="gone" />
+        
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/contentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="pack_title, recyclerView, termsAndConditionsGroup, buyNowButton, buyWithRechargeButton, signInButton, buySimButton"
+            tools:visibility="visible"/>
+        
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backImg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="gone">
+            
+            <ImageView
+                android:id="@+id/statusImageView"
+                android:layout_width="86dp"
+                android:layout_height="86dp"
+                android:layout_marginTop="32dp"
+                app:srcCompat="@drawable/ic_purchase_failed" />
+            
+            <TextView
+                android:id="@+id/errorMessageTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:fontFamily="@font/roboto_medium"
+                android:textAlignment="center"
+                android:textColor="@color/cardTitleColor"
+                android:textSize="22sp"
+                tools:text="No Banglalink prepaid plans \n available" />
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goBackButton"
+                style="@style/ButtonStyleSolidPink"
+                android:layout_width="match_parent"
+                android:layout_marginTop="48dp"
+                android:layout_marginHorizontal="80dp"
+                android:layout_marginBottom="48dp"
+                android:text="@string/go_back_text"
+                android:textSize="12sp"
+                android:visibility="visible"
+                tools:visibility="visible" />
+        
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

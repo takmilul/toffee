@@ -85,6 +85,9 @@ class PremiumViewModel @Inject constructor(
     private val _activePackListAfterSubscriberPaymentLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
     val activePackListAfterSubscriberPaymentLiveData = _activePackListAfterSubscriberPaymentLiveData.asSharedFlow()
 
+    private val _activePackListForDataPackOptionsLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
+    val activePackListForDataPackOptionsLiveData = _activePackListForDataPackOptionsLiveData.asSharedFlow()
+
     private var _voucherPayment = MutableSharedFlow<Resource<VoucherPaymentBean?>>()
     val voucherPaymentState = _voucherPayment.asSharedFlow()
     
@@ -98,7 +101,7 @@ class PremiumViewModel @Inject constructor(
     var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeWebView = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-
+    
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     val subscriberPaymentInitLiveData = SingleLiveEvent<Resource<SubscriberPaymentInitBean?>>()
     val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
@@ -146,6 +149,14 @@ class PremiumViewModel @Inject constructor(
             _activePackListLiveData.emit(response)
         }
     }
+    
+    fun getPackStatusForDataPackOptions(contentId: Int = 0, packId: Int = 0) {
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
+            _activePackListForDataPackOptionsLiveData.emit(response)
+        }
+    }
+    
     fun getPackStatusAfterSubscriberPayment(contentId: Int = 0, packId: Int = 0) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
@@ -198,13 +209,14 @@ class PremiumViewModel @Inject constructor(
             packPurchaseResponseCodeWebView.value = response
         }
     }
-
+    
     fun getRechargeByBkashUrl(rechargeByBkashRequest: RechargeByBkashRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { rechargeByBkashService.execute(rechargeByBkashRequest) }
             rechargeByBkashUrlLiveData.value = response
         }
     }
+    
     fun getSubscriberPaymentInit(paymentType: String, subscriberPaymentInitRequest: SubscriberPaymentInitRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { subscriberPaymentInitService.execute(paymentType, subscriberPaymentInitRequest) }
@@ -234,7 +246,7 @@ class PremiumViewModel @Inject constructor(
             _voucherPayment.emit(response)
         }
     }
-
+    
     fun getMnpStatus() {
         viewModelScope.launch {
             val response = resultFromResponse { mnpStatusService.execute() }

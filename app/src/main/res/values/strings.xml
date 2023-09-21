@@ -601,4 +601,6 @@
     <string name="sign_in_with_banglalink">sign in with Banglalink</string>
     <string name="buy_banglalink_sim">GET A BANGLALINK SIM</string>
     <string name="buy_now_ssl">BUY NOW</string>
+    <string name="go_back_text">go back</string>
+    <string name="no_pack_option_msg">No Banglalink %s plans \n available</string>
 </resources>
