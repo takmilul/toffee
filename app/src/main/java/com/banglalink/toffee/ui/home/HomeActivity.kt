@@ -888,7 +888,10 @@ class HomeActivity : PlayerPageActivity(),
                 R.id.menu_feed -> navController.navigatePopUpTo(R.id.menu_feed)
                 R.id.menu_tv -> navController.navigateTo(R.id.menu_tv)
                 R.id.menu_explore -> navController.navigateTo(R.id.menu_explore)
-                R.id.menu_channel -> navController.navigateTo(R.id.menu_channel)
+                R.id.menu_channel -> {
+                    channelOwnerId = if (mPref.isVerifiedUser) mPref.customerId else 0
+                    navController.navigateTo(R.id.menu_channel)
+                }
             }
             return@setOnItemSelectedListener true
         }
@@ -939,6 +942,7 @@ class HomeActivity : PlayerPageActivity(),
             } else {
                 minimizePlayer()
             }
+            channelOwnerId = it.channelOwnerId
         }
     }
     
@@ -2774,9 +2778,9 @@ class HomeActivity : PlayerPageActivity(),
                     if (mPref.shouldReloadAfterLogin.value == true) {
                         mPref.preLoginDestinationId.value?.let {
                             if (it == R.id.menu_channel) {
-                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: mPref.customerId
                                 navController.popBackStack(it, true)
-                                getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
+                                val isMyChannel = channelOwnerId == mPref.customerId
+                                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
                             } else {
                                 navController.popBackStack(it, true)
                                 navController.navigateTo(it)
@@ -2787,9 +2791,9 @@ class HomeActivity : PlayerPageActivity(),
                     if (mPref.shouldReloadAfterLogin.value == true) {
                         mPref.preLoginDestinationId.value?.let {
                             if (it == R.id.menu_channel) {
-                                val channelOwnerId = getHomeViewModel().myChannelNavLiveData.value?.channelOwnerId ?: mPref.customerId
                                 navController.popBackStack(it, true)
-                                getHomeViewModel().myChannelNavLiveData.value = MyChannelNavParams(channelOwnerId)
+                                val isMyChannel = channelOwnerId == mPref.customerId
+                                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
                             } else {
                                 navController.popBackStack(it, true)
                                 navController.navigateTo(it)
@@ -2853,6 +2857,15 @@ class HomeActivity : PlayerPageActivity(),
                         mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
                             when (navController.currentDestination?.id) {
+                                R.id.menu_channel -> {
+                                    if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
+                                        reloadCurrentPage()
+                                    } else {
+                                        navController.popBackStack()
+                                        val isMyChannel = channelOwnerId == mPref.customerId
+                                        navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                                    }
+                                }
                                 R.id.menu_playlist,
                                 R.id.menu_favorites,
                                 R.id.menu_activities,

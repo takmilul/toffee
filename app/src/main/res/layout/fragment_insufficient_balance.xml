@@ -66,7 +66,7 @@
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buyWithRecharge"
+            android:id="@+id/buyWithRechargeButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
@@ -98,9 +98,9 @@
             android:layout_marginBottom="48dp"
             app:layout_goneMarginTop="48dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/buyWithRecharge"
-            app:layout_constraintStart_toStartOf="@+id/buyWithRecharge"
-            app:layout_constraintTop_toBottomOf="@+id/buyWithRecharge"
+            app:layout_constraintEnd_toEndOf="@+id/buyWithRechargeButton"
+            app:layout_constraintStart_toStartOf="@+id/buyWithRechargeButton"
+            app:layout_constraintTop_toBottomOf="@+id/buyWithRechargeButton"
             app:layout_constraintWidth_percent="0.7" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

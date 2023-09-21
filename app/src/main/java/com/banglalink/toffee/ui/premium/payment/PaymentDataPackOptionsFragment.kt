@@ -31,6 +31,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.gson.Gson
 
@@ -71,6 +72,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
         
+        observePackStatus()
+        observeMnpStatus()
         observeBlDataPackPurchase()
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
@@ -81,7 +84,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.termsAndConditionsTwo.safeClick({
             showTermsAndConditionDialog()
         })
-        binding.buyNow.safeClick({
+        binding.buyNowButton.safeClick({
             progressDialog.show()
             if (paymentName == "bKash") {
                 grantBkashToken()
@@ -89,32 +92,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 purchaseBlDataPack()
             }
         })
-        binding.buyWithRecharge.safeClick({
+        binding.buyWithRechargeButton.safeClick({
             callAndObserveRechargeByBkash()
         })
         binding.signInButton.safeClick({
             observe(homeViewModel.isLogoutCompleted) {
                 if (it) {
                     requireActivity().checkVerification(shouldReloadAfterLogin = false) {
-                        observe(viewModel.mnpStatusLiveData) { response ->
-                            when (response) {
-                                is Success -> {
-                                    prepareDataPackOptions(true)
-                                    binding.signInButton.hide()
-                                    binding.buySimButton.hide()
-                                    if (mAdapter.selectedPosition > -1) {
-                                        binding.buyNow.show()
-                                        binding.buyWithRecharge.show()
-//                                        binding.buyWithRecharge.isEnabled = mPref.isPrepaid
-//                                        binding.buyWithRecharge.setBackgroundColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.colorAccent2 else R.color.btnDisableClr))
-//                                        binding.buyWithRecharge.setTextColor(ContextCompat.getColor(requireContext(), if (mPref.isPrepaid) R.color.text_color_white else R.color.txtDisableClr))
-                                    }
-                                }
-                                is Failure -> {
-                                    requireContext().showToast(response.error.msg)
-                                }
-                            }
-                        }
                         viewModel.getMnpStatus()
                     }
                 }
@@ -131,6 +115,74 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             findNavController().navigate(R.id.htmlPageViewDialog, args)
         })
+        binding.goBackButton.safeClick({
+            findNavController().popBackStack()
+        })
+    }
+    
+    private fun observeMnpStatus() {
+        observe(viewModel.mnpStatusLiveData) { response ->
+            when (response) {
+                is Success -> {
+                    viewModel.selectedPremiumPack.value?.let {
+                        viewModel.getPackStatusForDataPackOptions(packId = it.id)
+                    } ?: requireContext().showToast(getString(R.string.try_again_message))
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
+    private fun observePackStatus() {
+        observe(viewModel.activePackListForDataPackOptionsLiveData) {
+            when(it) {
+                is Success -> {
+                    mPref.activePremiumPackList.value = it.data
+                    val isPurchased = checkPackPurchased()
+                    if (!isPurchased) {
+                        prepareDataPackOptions(true)
+                        binding.signInButton.hide()
+                        binding.buySimButton.hide()
+                        if (mAdapter.selectedPosition > -1) {
+                            binding.buyNowButton.show()
+                            binding.buyWithRechargeButton.show()
+                        }
+                    } else {
+                        progressDialog.dismiss()
+                        mPref.packDetailsPageRefreshRequired.value = true
+                    }
+                }
+                is Failure -> {
+                    progressDialog.dismiss()
+                    requireContext().showToast(it.error.msg)
+                }
+            }
+        }
+    }
+    
+    private fun checkPackPurchased(): Boolean {
+        return if (mPref.isVerifiedUser) {
+            viewModel.selectedPremiumPack.value?.let { pack ->
+                mPref.activePremiumPackList.value?.find {
+                    try {
+                        it.packId == pack.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
+                    } catch (e: Exception) {
+                        false
+                    }
+                }?.let {
+                    viewModel.selectedPremiumPack.value = pack.copy(
+                        isPackPurchased = it.isActive,
+                        expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
+                        packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
+                    )
+//                    binding.isVerifiedUser = mPref.isVerifiedUser
+//                    binding.data = viewModel.selectedPremiumPack.value
+                    true
+                } ?: false
+            } ?: false
+        } else false
     }
     
     private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
@@ -152,12 +204,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             } else if (paymentName == "blPack") {
                 if (mPref.isBanglalinkNumber == "true") {
                     if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
-    //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
                         packPaymentMethodList.addAll(prePaid)
-                    }
-                    if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
-    //                    packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                    } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
                         packPaymentMethodList.addAll(postPaid)
+                    } else {
+//                        binding.errorMessageTextView.text = String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid")
+//                        binding.emptyView.show()
+//                        binding.contentView.hide()
                     }
                 } else {
                     if (!prePaid.isNullOrEmpty()) {
@@ -479,24 +532,26 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
         if (paymentName == "bKash"){
-            binding.buyNow.text = getString(R.string.buy_bkash)
-            binding.buyNow.show()
+            binding.buyNowButton.text = getString(R.string.buy_bkash)
+            binding.buyNowButton.show()
         } else if(paymentName == "blPack") {
-            binding.buyNow.show()
-            binding.buyWithRecharge.show()
-            binding.buyNow.isVisible = mPref.isBanglalinkNumber == "true"
-            binding.buyWithRecharge.isVisible = mPref.isBanglalinkNumber == "true"
+            binding.buyNowButton.show()
+            binding.buyWithRechargeButton.show()
+            binding.buyNowButton.isVisible = mPref.isBanglalinkNumber == "true"
+            binding.buyWithRechargeButton.isVisible = mPref.isBanglalinkNumber == "true"
             binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
             binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
-            binding.termsAndConditionsText.isVisible = mPref.isBanglalinkNumber == "true"
+            binding.termsAndConditionsGroup.isVisible = mPref.isBanglalinkNumber == "true"
         }
     }
     
     private fun hidePaymentOption() {
         binding.recyclerView.setPadding(0, 0, 0, 24)
-        binding.termsAndConditionsText.hide()
-        binding.buyNow.hide()
-        binding.buyWithRecharge.hide()
+        binding.termsAndConditionsGroup.hide()
+        binding.buyNowButton.hide()
+        binding.buyWithRechargeButton.hide()
+        binding.buySimButton.hide()
+        binding.signInButton.hide()
     }
     
     private fun showTermsAndConditionDialog() {

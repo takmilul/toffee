@@ -596,4 +596,6 @@
     <string name="in_app_update_msg">An update has just been downloaded. Press reload to install the update.</string>
     <string name="sign_in_with_banglalink">sign in with Banglalink</string>
     <string name="buy_banglalink_sim">GET A BANGLALINK SIM</string>
+    <string name="go_back_text">go back</string>
+    <string name="no_pack_option_msg">No Banglalink %s plans \n available</string>
 </resources>

@@ -91,6 +91,9 @@ class PremiumViewModel @Inject constructor(
     private val _activePackListLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
     val activePackListLiveData = _activePackListLiveData.asSharedFlow()
 
+    private val _activePackListForDataPackOptionsLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
+    val activePackListForDataPackOptionsLiveData = _activePackListForDataPackOptionsLiveData.asSharedFlow()
+
     private var _voucherPayment = MutableSharedFlow<Resource<VoucherPaymentBean?>>()
     val voucherPaymentState = _voucherPayment.asSharedFlow()
     
@@ -153,6 +156,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
             _activePackListLiveData.emit(response)
+        }
+    }
+    
+    fun getPackStatusForDataPackOptions(contentId: Int = 0, packId: Int = 0) {
+        viewModelScope.launch {
+            val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
+            _activePackListForDataPackOptionsLiveData.emit(response)
         }
     }
     

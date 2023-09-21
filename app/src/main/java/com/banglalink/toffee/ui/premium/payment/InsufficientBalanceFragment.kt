@@ -11,7 +11,12 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.databinding.FragmentInsufficientBalanceBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -40,12 +45,12 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
         isBuyWithRechargeHide = arguments?.getBoolean("isBuyWithRechargeHide", false) ?: false
 
         if (isBuyWithRechargeHide){
-            binding.buyWithRecharge.hide()
+            binding.buyWithRechargeButton.hide()
         }
 
         binding.subTitle.text = subTitle
 
-        binding.buyWithRecharge.safeClick({
+        binding.buyWithRechargeButton.safeClick({
             callAndObserveRechargeByBkash()
         })
         binding.backImg.safeClick({ findNavController().popBackStack() })
