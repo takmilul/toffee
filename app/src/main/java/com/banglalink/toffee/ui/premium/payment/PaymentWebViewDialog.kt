@@ -171,11 +171,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                         dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                         paymentMsisdn = null,
-                                        paymentId = transactionIdentifier,
-                                        transactionId = null,
+                                        paymentId = if (paymentType == "bkash") transactionIdentifier else null,
+                                        transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                         transactionStatus = statusCode,
                                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                        merchantInvoiceNumber = null,
                                         rawResponse = url.toString()
                                     ))
 
@@ -282,11 +282,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                     dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                     paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                     paymentMsisdn = null,
-                                    paymentId = transactionIdentifier,
-                                    transactionId = null,
+                                    paymentId = if (paymentType == "bkash") transactionIdentifier else null,
+                                    transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                     transactionStatus = statusCode,
                                     amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                    merchantInvoiceNumber = null,
                                     rawResponse = url.toString()
                                 ))
 

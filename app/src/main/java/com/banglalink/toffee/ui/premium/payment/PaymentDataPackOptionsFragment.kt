@@ -293,6 +293,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionIdentifier = it.transactionIdentifierId
                             statusCode = it.statusCode.toString()
                             statusMessage = it.message
+
                             if (it.statusCode != 200) {
                                 requireContext().showToast(getString(R.string.try_again_message))
                                 return@observe
@@ -307,11 +308,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                 paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                 paymentMsisdn = null,
-                                paymentId = transactionIdentifier,
-                                transactionId = null,
+                                paymentId = if (paymentType == "bkash") transactionIdentifier else null,
+                                transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                merchantInvoiceNumber = null,
                                 rawResponse = gson.toJson(it)
                             ))
                             // Prepare navigation arguments for payment WebView
