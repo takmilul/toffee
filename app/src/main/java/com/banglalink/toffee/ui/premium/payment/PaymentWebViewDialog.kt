@@ -190,10 +190,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                 navigateToStatusDialogPage(args)
                                             }
                                             else{
-                                                val args = bundleOf(
-                                                    ARG_STATUS_CODE to 200,
-                                                    ARG_STATUS_MESSAGE to statusMessage
-                                                )
+                                                val args = bundleOf(ARG_STATUS_CODE to 200)
                                                 navigateToStatusDialogPage(args)
                                             }
                                         }
@@ -206,10 +203,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                 navigateToStatusDialogPage(args)
                                             }
                                             else{
-                                                val args = bundleOf(
-                                                    ARG_STATUS_CODE to 200,
-                                                    ARG_STATUS_MESSAGE to statusMessage
-                                                )
+                                                val args = bundleOf(ARG_STATUS_CODE to 200)
                                                 navigateToStatusDialogPage(args)
                                             }
                                         }
