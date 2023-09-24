@@ -10,13 +10,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.data.network.request.CreatePaymentRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.getPurchasedPack
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
@@ -67,8 +67,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
         
-        observePackStatus()
+        observeLogout()
         observeMnpStatus()
+        observePackStatus()
         observeBlDataPackPurchase()
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
@@ -101,13 +102,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             callAndObserveRechargeByBkash()
         })
         binding.signInButton.safeClick({
-            observe(homeViewModel.isLogoutCompleted) {
-                if (it) {
-                    requireActivity().checkVerification(shouldReloadAfterLogin = false) {
-                        viewModel.getMnpStatus()
-                    }
-                }
-            }
+            homeViewModel.isLogoutCompleted.value = false
             mPref.shouldIgnoreReloadAfterLogout.value = true
             homeViewModel.logoutUser()
         })
@@ -125,15 +120,30 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
     }
     
+    private fun observeLogout() {
+        observe(homeViewModel.isLogoutCompleted) {
+            if (it) {
+                requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                    progressDialog.show()
+                    viewModel.getMnpStatus()
+                }
+            }
+        }
+    }
+    
     private fun observeMnpStatus() {
         observe(viewModel.mnpStatusLiveData) { response ->
             when (response) {
                 is Success -> {
                     viewModel.selectedPremiumPack.value?.let {
                         viewModel.getPackStatusForDataPackOptions(packId = it.id)
-                    } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    } ?: {
+                        progressDialog.hide()
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    }
                 }
                 is Failure -> {
+                    progressDialog.hide()
                     requireContext().showToast(response.error.msg)
                 }
             }
@@ -142,54 +152,60 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun observePackStatus() {
         observe(viewModel.activePackListForDataPackOptionsLiveData) {
+            progressDialog.dismiss()
             when(it) {
                 is Success -> {
                     mPref.activePremiumPackList.value = it.data
                     val isPurchased = checkPackPurchased()
                     if (!isPurchased) {
                         prepareDataPackOptions(true)
-                        binding.signInButton.hide()
-                        binding.buySimButton.hide()
-                        if (mAdapter.selectedPosition > -1) {
+                        if (mAdapter.selectedPosition > -1 && mPref.isVerifiedUser && mPref.isBanglalinkNumber == "true") {
+                            binding.signInButton.hide()
+                            binding.buySimButton.hide()
                             binding.buyNowButton.show()
                             binding.buyWithRechargeButton.show()
                         }
                     } else {
-                        progressDialog.dismiss()
                         mPref.packDetailsPageRefreshRequired.value = true
                     }
                 }
                 is Failure -> {
-                    progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
                 }
             }
         }
     }
     
+    /**
+     * Check if the selected premium pack is purchase or not
+     */
     private fun checkPackPurchased(): Boolean {
-        return if (mPref.isVerifiedUser) {
-            viewModel.selectedPremiumPack.value?.let { pack ->
-                mPref.activePremiumPackList.value?.find {
-                    try {
-                        it.packId == pack.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
-                    } catch (e: Exception) {
-                        false
-                    }
-                }?.let {
-                    viewModel.selectedPremiumPack.value = pack.copy(
-                        isPackPurchased = it.isActive,
-                        expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
-                        packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
-                    )
-//                    binding.isVerifiedUser = mPref.isVerifiedUser
-//                    binding.data = viewModel.selectedPremiumPack.value
-                    true
-                } ?: false
-            } ?: false
-        } else false
+        return viewModel.selectedPremiumPack.value?.let { selectedPack ->
+            mPref.activePremiumPackList.value?.getPurchasedPack(
+                viewModel.selectedPremiumPack.value?.id,
+                mPref.isVerifiedUser,
+                mPref.getSystemTime()
+            )?.let { activePack ->
+                viewModel.selectedPremiumPack.value = selectedPack.copy(
+                    isPackPurchased = activePack.isActive,
+                    expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
+                    packDetail = if (activePack.isTrialPackUsed) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
+                )
+                true
+            } ?: run {
+                viewModel.selectedPremiumPack.value = selectedPack.copy(isPackPurchased = false)
+                false
+            }
+        } ?: false
     }
     
+    /**
+     * initiate the payment data pack option in adapter. for non-bl users, bl_packs will show prepaid and postpaid both options with 
+     * the proper title. user can select an option and the related buttons will be appeared. if user selects 'sign in with banglalink'
+     * button, the user will be logged out immediately and login popup will be visible.
+     * @param isRestoreSelection After logout from non-bl operator to bl operator, the previously selected option will remain 
+     * selected if the value is true.
+     */
     private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
@@ -271,7 +287,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packDetails = selectedDataPack.packDetails,
                 packPrice = selectedDataPack.packPrice,
                 packDuration = selectedDataPack.packDuration,
-                isPrepaid = if (mPref.isPrepaid==true) 1 else 0
+                isPrepaid = if (mPref.isPrepaid) 1 else 0
             )
             viewModel.purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest)
         } else {

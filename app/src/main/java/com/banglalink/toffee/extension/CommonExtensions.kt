@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -45,6 +44,7 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
@@ -123,6 +123,7 @@ val Float.px: Float get() {
 
 fun Boolean.toInt() = if (this) 1 else 0
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun Activity.checkVerification(
     currentDestinationId: Int? = null,
     doActionBeforeReload: Boolean = false,
@@ -309,7 +310,21 @@ fun String.hexToResourceName(resources: Resources): String {
     return resourceName
 }
 
-inline fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
+fun List<ActivePack>?.getPurchasedPack(selectedPackId: Int?, isVerifiedUser: Boolean, systemDate: Date): ActivePack? {
+    return if (isVerifiedUser) {
+        selectedPackId?.let { packId ->
+            this?.find {
+                try {
+                    it.packId == packId && it.isActive && systemDate.before(Utils.getDate(it.expiryDate))
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        }
+    } else null
+}
+
+inline fun List<ActivePack>?.checkContentPurchase(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
     if (!this.isNullOrEmpty()) {
         this.find {
             try {

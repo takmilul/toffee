@@ -17,9 +17,6 @@ import com.banglalink.toffee.apiservice.VoucherService
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
-import com.banglalink.toffee.data.network.response.CreatePaymentResponse
-import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
-import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
@@ -79,15 +76,12 @@ class PremiumViewModel @Inject constructor(
     private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean>>()
     val paymentMethodState = _paymentMethodState.asSharedFlow()
     
-    private val _activePackListLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
-    val activePackListLiveData = _activePackListLiveData.asSharedFlow()
-
-    private val _activePackListAfterSubscriberPaymentLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
-    val activePackListAfterSubscriberPaymentLiveData = _activePackListAfterSubscriberPaymentLiveData.asSharedFlow()
-
+    val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
+    val activePackListAfterSubscriberPaymentLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
+    
     private val _activePackListForDataPackOptionsLiveData = MutableSharedFlow<Resource<List<ActivePack>>>()
     val activePackListForDataPackOptionsLiveData = _activePackListForDataPackOptionsLiveData.asSharedFlow()
-
+    
     private var _voucherPayment = MutableSharedFlow<Resource<VoucherPaymentBean?>>()
     val voucherPaymentState = _voucherPayment.asSharedFlow()
     
@@ -108,7 +102,7 @@ class PremiumViewModel @Inject constructor(
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
-
+    
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -146,7 +140,7 @@ class PremiumViewModel @Inject constructor(
     fun getPackStatus(contentId: Int = 0, packId: Int = 0) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
-            _activePackListLiveData.emit(response)
+            activePackListLiveData.value = response
         }
     }
     
@@ -160,10 +154,10 @@ class PremiumViewModel @Inject constructor(
     fun getPackStatusAfterSubscriberPayment(contentId: Int = 0, packId: Int = 0) {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackStatusService.loadData(contentId, packId) }
-            _activePackListAfterSubscriberPaymentLiveData.emit(response)
+            activePackListAfterSubscriberPaymentLiveData.value = response
         }
     }
-
+    
     fun purchaseDataPackTrialPack(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -172,7 +166,7 @@ class PremiumViewModel @Inject constructor(
             packPurchaseResponseCodeTrialPack.value = response
         }
     }
-
+    
     fun purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -181,7 +175,7 @@ class PremiumViewModel @Inject constructor(
             packPurchaseResponseCodeBlDataPackOptions.value = response
         }
     }
-
+    
     fun purchaseDataPackBlDataPackOptionsWeb(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -190,17 +184,16 @@ class PremiumViewModel @Inject constructor(
             packPurchaseResponseCodeBlDataPackOptionsWeb.value = response
         }
     }
-
-   fun purchaseDataPackVoucher(dataPackPurchaseRequest: DataPackPurchaseRequest){
-       viewModelScope.launch {
-           val response= resultFromResponse {
+    
+    fun purchaseDataPackVoucher(dataPackPurchaseRequest: DataPackPurchaseRequest){
+        viewModelScope.launch {
+            val response= resultFromResponse {
                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
-           }
-           packPurchaseResponseVoucher.value = response
-       }
-   }
-
-
+            }
+            packPurchaseResponseVoucher.value = response
+        }
+    }
+    
     fun purchaseDataPackWebView(dataPackPurchaseRequest: DataPackPurchaseRequest) {
         viewModelScope.launch {
             val response = resultFromResponse {
@@ -223,7 +216,7 @@ class PremiumViewModel @Inject constructor(
             subscriberPaymentInitLiveData.value = response
         }
     }
-
+    
     fun sendPaymentLogFromDeviceData(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
         viewModelScope.launch {
             try {
@@ -233,13 +226,14 @@ class PremiumViewModel @Inject constructor(
             }
         }
     }
-
+    
     fun getPremiumPackSubscriptionHistory(){
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackSubHistoryService.execute() }
             premiumPackSubHistoryLiveData.value = response
         }
     }
+    
     fun voucherValidate(packId: Int,voucherCode:String,packName:String) {
         viewModelScope.launch {
             val response = resultFromResponse { voucherService.loadData(packId,voucherCode,packName) }

@@ -1148,7 +1148,7 @@ class HomeActivity : PlayerPageActivity(),
         detailsInfo: Any?,
         onFailure: (() -> Unit)? = null
     ) {
-        mPref.activePremiumPackList.value.checkPackPurchased(
+        mPref.activePremiumPackList.value.checkContentPurchase(
             contentId = channelInfo.getContentId(),
             systemDate = mPref.getSystemTime(),
             onSuccess = {
@@ -2855,6 +2855,7 @@ class HomeActivity : PlayerPageActivity(),
                         UploadService.stopAllUploads()
                         initSideNav()
                         mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
+                        
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
                             when (navController.currentDestination?.id) {
                                 R.id.menu_channel -> {

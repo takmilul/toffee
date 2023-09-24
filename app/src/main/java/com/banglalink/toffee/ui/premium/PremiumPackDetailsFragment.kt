@@ -14,6 +14,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
+import com.banglalink.toffee.extension.getPurchasedPack
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.navigatePopUpTo
@@ -53,9 +54,9 @@ class PremiumPackDetailsFragment : BaseFragment(){
         
         requireActivity().title = "Pack Details"
         
-        if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
+//        if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
             checkPackPurchased()
-        }
+//        }
         binding.isVerifiedUser = mPref.isVerifiedUser
         binding.data = viewModel.selectedPremiumPack.value
         
@@ -99,7 +100,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             binding.progressBar.hide()
             requireContext().showToast(getString(R.string.try_again_message))
         }
-
+        
         /**
          * Observes `packDetailsPageRefreshRequired` LiveData and refreshes pack status if `true`.
          */
@@ -205,26 +206,27 @@ class PremiumPackDetailsFragment : BaseFragment(){
 
 
     private fun checkPackPurchased(): Boolean {
-        return if (mPref.isVerifiedUser) {
-            viewModel.selectedPremiumPack.value?.let { pack ->
-                mPref.activePremiumPackList.value?.find {
-                    try {
-                        it.packId == pack.id && it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate))
-                    } catch (e: Exception) {
-                        false
-                    }
-                }?.let {
-                    viewModel.selectedPremiumPack.value = pack.copy(
-                        isPackPurchased = it.isActive,
-                        expiryDate = "Expires on ${Utils.formatPackExpiryDate(it.expiryDate)}",
-                        packDetail = if (it.isTrialPackUsed) it.packDetail else "You have bought ${it.packDetail} pack"
-                    )
-                    binding.isVerifiedUser = mPref.isVerifiedUser
-                    binding.data = viewModel.selectedPremiumPack.value
-                    true
-                } ?: false
-            } ?: false
-        } else false
+        return viewModel.selectedPremiumPack.value?.let { selectedPack ->
+            mPref.activePremiumPackList.value?.getPurchasedPack(
+                viewModel.selectedPremiumPack.value?.id,
+                mPref.isVerifiedUser,
+                mPref.getSystemTime()
+            )?.let { activePack ->
+                viewModel.selectedPremiumPack.value = selectedPack.copy(
+                    isPackPurchased = activePack.isActive,
+                    expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
+                    packDetail = if (activePack.isTrialPackUsed) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
+                )
+                binding.isVerifiedUser = mPref.isVerifiedUser
+                binding.data = viewModel.selectedPremiumPack.value
+                true
+            } ?: run {
+                viewModel.selectedPremiumPack.value = selectedPack.copy(isPackPurchased = false)
+                binding.isVerifiedUser = mPref.isVerifiedUser
+                binding.data = viewModel.selectedPremiumPack.value
+                false
+            }
+        } ?: false
     }
     
     private fun observePaymentMethodList() {
