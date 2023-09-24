@@ -95,7 +95,7 @@
             app:layout_constraintVertical_bias="0.4"
             app:layout_constraintVertical_chainStyle="packed"
             app:srcCompat="@drawable/ic_purchase_failed" />
-        
+
         <TextView
             android:id="@+id/title_msg"
             android:layout_width="0dp"
@@ -134,7 +134,7 @@
             app:layout_constraintTop_toBottomOf="@id/title_msg"
             tools:ignore="RelativeOverlap"
             tools:text="Your payment failed due to a technical error. Please try again." />
-        
+
         <Button
             android:id="@+id/tryAgainBtn"
             style="@style/ButtonStyleSolidPink"
@@ -142,16 +142,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="18dp"
-            android:paddingHorizontal="80dp"
+            android:paddingHorizontal="83dp"
             android:paddingVertical="8dp"
             android:text="@string/try_again_txt"
             android:textAllCaps="true"
             app:layout_constraintBottom_toTopOf="@id/callBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/subTitle_msg"
+            app:layout_constraintStart_toStartOf="@+id/subTitle_msg"
             app:layout_constraintTop_toBottomOf="@id/subTitle_msg"
             tools:visibility="visible" />
-        
+
         <Button
             android:id="@+id/callBtn"
             style="@style/ButtonStyleSolidPink"
@@ -165,25 +165,25 @@
             android:text="@string/call_121"
             android:textAllCaps="true"
             app:layout_constraintBottom_toTopOf="@id/goToHomePageBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tryAgainBtn"
+            app:layout_constraintStart_toStartOf="@+id/tryAgainBtn"
             app:layout_constraintTop_toBottomOf="@id/tryAgainBtn"
             app:layout_goneMarginTop="18dp"
             tools:visibility="visible" />
-        
+
         <Button
             android:id="@+id/goToHomePageBtn"
             style="@style/ButtonStyleRingPink"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
-            android:paddingHorizontal="50dp"
+            android:paddingHorizontal="70dp"
             android:text="@string/go_to_home"
             android:textAllCaps="false"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/callBtn"
+            app:layout_constraintStart_toStartOf="@+id/callBtn"
             app:layout_constraintTop_toBottomOf="@id/callBtn"
             tools:visibility="visible" />
         
