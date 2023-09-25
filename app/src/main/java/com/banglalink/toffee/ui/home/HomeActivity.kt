@@ -2302,12 +2302,11 @@ class HomeActivity : PlayerPageActivity(),
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
                     
-                    val urlWithTheme = url.replace("toffee_theme=", "toffee_theme=${cPref.appTheme}")
                     navController.navigateTo(
                         resId = R.id.htmlPageViewDialog_Home,
                         args = bundleOf(
                             "myTitle" to getString(string.back_to_toffee_text),
-                            "url" to urlWithTheme,
+                            "url" to url,
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true
                         )

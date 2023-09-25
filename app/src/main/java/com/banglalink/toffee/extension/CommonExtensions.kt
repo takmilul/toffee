@@ -3,6 +3,7 @@ package com.banglalink.toffee.extension
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
@@ -30,6 +31,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.ADDRESS
@@ -66,6 +68,9 @@ fun String.isValid(type: InputType): Boolean{
         PHONE -> this.isNotBlank() and PHONE_PATTERN.toRegex().matches(this)
     }
 }
+
+val CommonPreference.appTheme: String
+    get() = if (this.appThemeMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
 
 fun View.show(){
     this.visibility = View.VISIBLE
