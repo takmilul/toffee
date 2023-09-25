@@ -205,7 +205,7 @@ class PaymentStatusDialog : DialogFragment() {
             }
             BKASH_PAYMENT_CANCEL_OR_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.subscriber_payment_activation_failed)
+                binding.titleMsg.text = getString(R.string.bkash_activation_failed)
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
