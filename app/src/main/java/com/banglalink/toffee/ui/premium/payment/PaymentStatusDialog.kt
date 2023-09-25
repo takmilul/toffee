@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -61,9 +62,10 @@ class PaymentStatusDialog : DialogFragment() {
         const val GetRequestStatus_FAILED = 6075
         const val CheckAllDataPack_Status = 6080
         const val GetRequestStatus_REQUESTED = 6085
-        const val BKASH_PAYMENT_FAILED = -1
-        const val SUBSCRIBER_PAYMENT_PAYMENT_FAILED = -2
-        
+        const val BKASH_PAYMENT_CANCEL_OR_FAILED = -1
+        const val SUBSCRIBER_PAYMENT_FAILED = -2
+        const val SUBSCRIBER_PAYMENT_RETRY  = -3
+
         const val ARG_STATUS_CODE = "statusCode"
         const val ARG_STATUS_MESSAGE = "statusMessage"
         const val ARG_STATUS_TITLE = "statusTitle"
@@ -78,7 +80,7 @@ class PaymentStatusDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogPaymentStatusBinding.inflate(layoutInflater)
         
-        title = "Payment Confirmation"
+        title = "Payment"
         isHideBackIcon = arguments?.getBoolean(ARG_IS_HIDE_BACK_BUTTON, false) ?: false
         statusCode = arguments?.getInt(ARG_STATUS_CODE, 0) ?: 0
         statusTitle = arguments?.getString(ARG_STATUS_TITLE, null)
@@ -102,6 +104,11 @@ class PaymentStatusDialog : DialogFragment() {
                 requireActivity().findNavController(R.id.home_nav_host).navigatePopUpTo(R.id.menu_feed)
             }
         })
+        binding.anotherHomePageBtn.safeClick({
+            runCatching {
+                requireActivity().findNavController(R.id.home_nav_host).navigatePopUpTo(R.id.menu_feed)
+            }
+        })
         binding.callBtn.setOnClickListener {
             val phoneNo = "+8801911304121"
             val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNo, null))
@@ -113,6 +120,7 @@ class PaymentStatusDialog : DialogFragment() {
         return binding.root
     }
     
+    @SuppressLint("ResourceType")
     private suspend fun observeErrorLogic(errorCode: Int?) {
         when (errorCode) {
             UN_SUCCESS -> {
@@ -195,21 +203,30 @@ class PaymentStatusDialog : DialogFragment() {
                     topMargin = 18.px
                 }
             }
-            BKASH_PAYMENT_FAILED -> {
+            BKASH_PAYMENT_CANCEL_OR_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.bkash_activation_failed)
+                binding.titleMsg.text = getString(R.string.subscriber_payment_activation_failed)
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()
                 binding.goToHomePageBtn.show()
             }
-            SUBSCRIBER_PAYMENT_PAYMENT_FAILED -> {
+            SUBSCRIBER_PAYMENT_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
                 binding.titleMsg.text = getString(R.string.subscriber_payment_activation_failed)
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.subscriber_payment_helpline)
                 binding.tryAgainBtn.hide()
                 binding.callBtn.show()
                 binding.goToHomePageBtn.show()
+            }
+            SUBSCRIBER_PAYMENT_RETRY -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.subscriber_payment_activation_failed)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.subscriber_payment_retry)
+                binding.tryAgainBtn.hide()
+                binding.callBtn.hide()
+                binding.goToHomePageBtn.hide()
+                binding.anotherHomePageBtn.show()
             }
         }
     }
