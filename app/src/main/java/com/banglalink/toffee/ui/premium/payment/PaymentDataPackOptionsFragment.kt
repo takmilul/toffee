@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -508,7 +510,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
         super.onItemClicked(view, item, position)
-        showPaymentOption()
+        showPaymentOption(item)
         mAdapter.selectedPosition = position
         viewModel.selectedDataPackOption.value = item
 //        val isRechargeAvailable = viewModel.paymentMethod.value?.bl?.prepaid?.any { it.dataPackId == item.dataPackId } ?: false
@@ -520,7 +522,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 //        else R.color.txtDisableClr))
     }
     
-    private fun showPaymentOption() {
+    private fun showPaymentOption(item: PackPaymentMethod) {
         binding.recyclerView.setPadding(0, 0, 0, 8)
         binding.termsAndConditionsOne.show()
         binding.termsAndConditionsTwo.show()
@@ -535,10 +537,38 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 binding.buyNowButton.show()
             }
             "blPack" -> {
-                binding.buyNowButton.show()
-                binding.buyWithRechargeButton.show()
-                binding.buyNowButton.isVisible = mPref.isBanglalinkNumber == "true"
-                binding.buyWithRechargeButton.isVisible = mPref.isBanglalinkNumber == "true"
+
+                if (mPref.isBanglalinkNumber == "true"){
+
+                    when(item.dataPackCtaButton){
+
+                        1->{
+                            binding.buyNowButton.show()
+                            binding.buyWithRechargeButton.hide()
+                        }
+                        2->{
+                            binding.buyNowButton.hide()
+                            binding.buyWithRechargeButton.show()
+                        }
+                        3->{
+                            binding.buyNowButton.show()
+                            binding.buyWithRechargeButton.show()
+                        }
+                        else->{
+                            binding.buyNowButton.hide()
+                            binding.buyWithRechargeButton.hide()
+
+                        }
+
+
+                    }
+                }else{
+
+                    binding.buyNowButton.hide()
+                    binding.buyWithRechargeButton.hide()
+                }
+
+
                 binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.termsAndConditionsGroup.isVisible = mPref.isBanglalinkNumber == "true"
