@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 @SuppressLint("Registered")
 @AndroidEntryPoint
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 open class BaseAppCompatActivity : AppCompatActivity() {
 
     @Inject lateinit var cPref: CommonPreference

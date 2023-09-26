@@ -2826,70 +2826,10 @@ class HomeActivity : PlayerPageActivity(),
             when (it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
-                        mPref.mqttHost = ""
-                        mPref.phoneNumber = ""
-                        mPref.channelName = ""
-                        mPref.channelLogo = ""
-                        mPref.customerDOB = ""
-                        mPref.customerNID = ""
-                        mPref.mqttClientId = ""
-                        mPref.mqttUserName = ""
-                        mPref.mqttPassword = ""
-                        mPref.customerName = ""
-                        mPref.customerEmail = ""
-                        mPref.isPaidUser = false
-                        mPref.userImageUrl = null
-                        mPref.customerAddress = ""
-                        mPref.lastLoginDateTime = ""
-                        cacheManager.clearAllCache()
-                        mPref.isVerifiedUser = false
-                        mPref.isChannelDetailChecked = false
-                        mPref.isMnpStatusChecked = false
-                        lifecycleScope.launch {
-                            tvChannelsRepo.deleteAllRecentItems()
-                        }
-                        appScope.launch { favoriteDao.deleteAll() }
-                        mqttService.destroy()
-                        
-                        UploadService.stopAllUploads()
-                        initSideNav()
-                        mPref.profileImageUrlLiveData.postValue(R.drawable.ic_menu_profile)
+                        clearDataOnLogOut()
                         
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
-                            when (navController.currentDestination?.id) {
-                                R.id.menu_channel -> {
-                                    if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
-                                        reloadCurrentPage()
-                                    } else {
-                                        navController.popBackStack()
-                                        val isMyChannel = channelOwnerId == mPref.customerId
-                                        navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
-                                    }
-                                }
-                                R.id.menu_playlist,
-                                R.id.menu_favorites,
-                                R.id.menu_activities,
-                                R.id.profileFragment,
-                                R.id.upload_minimize,
-                                R.id.menu_subscriptions,
-                                R.id.editUploadInfoFragment,
-                                R.id.myChannelEditDetailFragment,
-                                R.id.myChannelVideosEditFragment
-                                -> {
-                                    navController.popBackStack()
-                                    reloadCurrentPage()
-                                }
-                                R.id.editProfileFragment,
-                                R.id.userPlaylistVideos
-                                -> {
-                                    navController.popBackStack()
-                                    navController.popBackStack()
-                                    reloadCurrentPage()
-                                }
-                                else -> {
-                                    reloadCurrentPage()
-                                }
-                            }
+                            handleReloadPage()
                         }
                         mPref.shouldIgnoreReloadAfterLogout.value = false
                         viewModel.isLogoutCompleted.value = true
@@ -2913,6 +2853,77 @@ class HomeActivity : PlayerPageActivity(),
                     )
                     showToast(it.error.msg)
                 }
+            }
+        }
+    }
+    
+    private fun clearDataOnLogOut() {
+        mPref.mqttHost = ""
+        mPref.phoneNumber = ""
+        mPref.channelName = ""
+        mPref.channelLogo = ""
+        mPref.customerDOB = ""
+        mPref.customerNID = ""
+        mPref.mqttClientId = ""
+        mPref.mqttUserName = ""
+        mPref.mqttPassword = ""
+        mPref.customerName = ""
+        mPref.customerEmail = ""
+        mPref.isPaidUser = false
+        mPref.userImageUrl = null
+        mPref.customerAddress = ""
+        mPref.lastLoginDateTime = ""
+        cacheManager.clearAllCache()
+        mPref.isVerifiedUser = false
+        mPref.isChannelDetailChecked = false
+        mPref.isMnpStatusChecked = false
+        lifecycleScope.launch {
+            tvChannelsRepo.deleteAllRecentItems()
+        }
+        appScope.launch { favoriteDao.deleteAll() }
+        mqttService.destroy()
+        
+        UploadService.stopAllUploads()
+        initSideNav()
+        mPref.profileImageUrlLiveData.postValue(drawable.ic_menu_profile)
+    }
+    
+    private fun handleReloadPage() {
+        when (navController.currentDestination?.id) {
+            id.menu_channel -> {
+                if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
+                    reloadCurrentPage()
+                } else {
+                    navController.popBackStack()
+                    val isMyChannel = channelOwnerId == mPref.customerId
+                    navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                }
+            }
+            
+            id.menu_playlist,
+            id.menu_favorites,
+            id.menu_activities,
+            id.profileFragment,
+            id.upload_minimize,
+            id.menu_subscriptions,
+            id.editUploadInfoFragment,
+            id.myChannelEditDetailFragment,
+            id.myChannelVideosEditFragment,
+            -> {
+                navController.popBackStack()
+                reloadCurrentPage()
+            }
+            
+            id.editProfileFragment,
+            id.userPlaylistVideos,
+            -> {
+                navController.popBackStack()
+                navController.popBackStack()
+                reloadCurrentPage()
+            }
+            
+            else -> {
+                reloadCurrentPage()
             }
         }
     }
