@@ -61,8 +61,6 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
             pref.edit().putInt(PREF_APP_THEME, themeMode).apply()
         }
     
-    var appTheme: String = if (appThemeMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
-    
     var isAlreadyForceLoggedOut: Boolean
         get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT, false)
         set(isVerified) {

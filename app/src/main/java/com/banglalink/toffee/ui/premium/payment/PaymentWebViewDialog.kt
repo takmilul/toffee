@@ -136,13 +136,14 @@ class PaymentWebViewDialog : DialogFragment() {
                 // Parse the URL and extract query parameters
                 url?.let {
                     runCatching {
-                        val uri = Uri.parse(it)
-                        uri.getQueryParameter("paymentID")?.let { paymentId = it }
-                        uri.getQueryParameter("statusCode")?.let { statusCode = it }
-                        uri.getQueryParameter("message")?.let { statusMessage = it }
-                        uri.getQueryParameter("transactionIdentifier")?.let { transactionIdentifier = it }
-                        uri.getQueryParameter("paymentType")?.let { paymentType = it }
-                        uri.getQueryParameter("callBackStatus")?.let { callBackStatus = it }
+                        with(Uri.parse(it)) {
+                            paymentId = getQueryParameter("paymentID")
+                            statusCode = getQueryParameter("statusCode")
+                            statusMessage = getQueryParameter("message")
+                            transactionIdentifier = getQueryParameter("transactionIdentifier")
+                            paymentType = getQueryParameter("paymentType")
+                            callBackStatus = getQueryParameter("callBackStatus")
+                        }
 
                         // Handle different payment scenarios based on callback data
                         when {
@@ -182,29 +183,53 @@ class PaymentWebViewDialog : DialogFragment() {
                                     // Navigate or perform actions based on payment type and status code
                                     when (paymentType) {
                                         "ssl" -> {
-                                            if (statusCode != "200"){
-                                                val args = bundleOf(
-                                                    ARG_STATUS_CODE to -2,
-                                                    ARG_STATUS_MESSAGE to statusMessage
-                                                )
-                                                navigateToStatusDialogPage(args)
-                                            }
-                                            else{
-                                                val args = bundleOf(ARG_STATUS_CODE to 200)
-                                                navigateToStatusDialogPage(args)
+                                            when (statusCode) {
+                                                "200" -> {
+                                                    // If statusCode is 200, create args with status code 200 and navigate
+                                                    val args = bundleOf(ARG_STATUS_CODE to 200)
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                                else -> {
+                                                    // For any other statusCode, use the default args and navigate
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -2,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
                                             }
                                         }
                                         "bkash" -> {
-                                            if (statusCode != "200"){
-                                                val args = bundleOf(
-                                                    ARG_STATUS_CODE to -2,
-                                                    ARG_STATUS_MESSAGE to statusMessage
-                                                )
-                                                navigateToStatusDialogPage(args)
-                                            }
-                                            else{
-                                                val args = bundleOf(ARG_STATUS_CODE to 200)
-                                                navigateToStatusDialogPage(args)
+                                            when (statusCode) {
+                                                "200" -> {
+                                                    // If statusCode is 200, create args with status code 200 and navigate
+                                                    val args = bundleOf(ARG_STATUS_CODE to 200)
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                                "277" -> {
+                                                    // If statusCode is 277, create args with status code -2 and the status message
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -2,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                                "2029", "2062" -> {
+                                                    // If statusCode is 2029 or 2062, create args with status code -3 and the status message
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -3,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                                else -> {
+                                                    // For any other statusCode, use the default args and navigate
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -2,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
                                             }
                                         }
                                         else -> {}

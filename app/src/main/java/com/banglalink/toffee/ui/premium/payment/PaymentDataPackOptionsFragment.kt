@@ -365,10 +365,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             statusCode = it.statusCode.toString()
                             statusMessage = it.message
 
-                            if (it.statusCode != 200) {
-                                requireContext().showToast(getString(R.string.try_again_message))
-                                return@observe
-                            }
                             //Send Log to the Pub/Sub
                             viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                 id = System.currentTimeMillis() + mPref.customerId,
@@ -386,6 +382,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 merchantInvoiceNumber = null,
                                 rawResponse = gson.toJson(it)
                             ))
+
+                            if (it.statusCode != 200) {
+                                requireContext().showToast(it.message.toString())
+                                return@observe
+                            }
                             // Prepare navigation arguments for payment WebView
                             val args = bundleOf(
                                 "myTitle" to "Pack Details",
@@ -400,6 +401,23 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
                     }
                     is Failure -> {
+                        //Send Log to the Pub/Sub
+                        viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
+                            id = System.currentTimeMillis() + mPref.customerId,
+                            callingApiName = "${paymentType}SubscriberPaymentInitFromAndroid",
+                            packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                            packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                            dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                            paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                            paymentMsisdn = null,
+                            paymentId = if (paymentType == "bkash") transactionIdentifier else null,
+                            transactionId = if (paymentType == "ssl") transactionIdentifier else null,
+                            transactionStatus = statusCode,
+                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = gson.toJson(it)
+                        ))
                         requireContext().showToast(it.error.msg)
                     }
                 }
@@ -407,6 +425,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             // Retrieve selected premium pack and data pack option
             val selectedPremiumPack = viewModel.selectedPremiumPack.value
             val selectedDataPackOption = viewModel.selectedDataPackOption.value
+
             // Prepare a payment initiation request
             val request = SubscriberPaymentInitRequest(
                 customerId = mPref.customerId,
@@ -425,8 +444,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 geoLocation = mPref.geoLocation,
                 cusEmail = mPref.customerEmail
             )
-            // Trigger the payment initiation request
-            viewModel.getSubscriberPaymentInit(paymentType, request)
+            // Trigger the payment initiation request, but only if both selectedPremiumPack and selectedDataPackOption are not null
+            if (selectedPremiumPack != null && selectedDataPackOption != null) {
+                viewModel.getSubscriberPaymentInit(paymentType, request)
+            } else {
+                // Handle the case where either selectedPremiumPack or selectedDataPackOption is null
+                requireContext().showToast(getString(R.string.try_again_message))
+            }
         }
     }
     

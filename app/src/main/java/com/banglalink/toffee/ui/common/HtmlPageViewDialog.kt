@@ -28,6 +28,7 @@ import com.banglalink.toffee.enums.WebActionType.HOME_SCREEN
 import com.banglalink.toffee.enums.WebActionType.LOGIN_DIALOG
 import com.banglalink.toffee.enums.WebActionType.MESSAGE_DIALOG
 import com.banglalink.toffee.enums.WebActionType.PLAY_CONTENT
+import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
@@ -126,12 +127,13 @@ class HtmlPageViewDialog : DialogFragment() {
         binding.webview.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
         
         htmlUrl?.let {
+            val urlWithTheme = it.replace("toffee_theme=", "toffee_theme=${cPref.appTheme}")
             if (header.isNullOrEmpty()) {
-                binding.webview.loadUrl(it)
+                binding.webview.loadUrl(urlWithTheme)
             } else {
                 val headerMap: MutableMap<String, String> = HashMap()
                 headerMap["MSISDN"] = header!!
-                binding.webview.loadUrl(it, headerMap)
+                binding.webview.loadUrl(urlWithTheme, headerMap)
             }
         }
         

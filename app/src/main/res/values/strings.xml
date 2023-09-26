@@ -505,6 +505,7 @@
     <string name="technical_issue_occured">Plan Activation Failed!</string>
     <string name="bkash_technical_issue_occured">This might be due to insufficient mobile balance, wrong pack selection or technical error.</string>
     <string name="subscriber_payment_helpline">Please call our helpline for support.</string>
+    <string name="subscriber_payment_retry">Please retry after some time.</string>
     <string name="due_some_technical_issue">Due to some technical issue, the plan activation failed. Please retry.</string>
     <string name="payment_successful">Plan Activation Successful!</string>
     <string name="please_wait_you_will_be_redirected">Please wait, you will be redirected soon.</string>
