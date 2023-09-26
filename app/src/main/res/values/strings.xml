@@ -604,4 +604,5 @@
     <string name="buy_now_ssl">BUY NOW</string>
     <string name="go_back_text">go back</string>
     <string name="no_pack_option_msg">No Banglalink %s plans \n available</string>
+    <string name="get_bl_sim">Get more with Banglalink SIM</string>
 </resources>
