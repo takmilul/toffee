@@ -175,12 +175,12 @@
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleSecondColor"
                     android:textSize="12sp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@id/blPackDetails"
                     app:layout_constraintEnd_toEndOf="@+id/blPackTitle"
                     app:layout_constraintStart_toStartOf="@id/blPackTitle"
                     app:layout_constraintTop_toBottomOf="@+id/blPackTitle"
-                    tools:text="Starting from BDT 20" />
+                    tools:text="From BDT X, Access + FREE Y GB" />
                 
                 <TextView
                     android:id="@+id/blPackDetails"
@@ -192,6 +192,7 @@
                     android:textColor="@color/light_text_color"
                     android:textSize="12sp"
                     android:textStyle="italic"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/blImg"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -258,13 +259,13 @@
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleSecondColor"
                     android:textSize="12sp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@id/bkashPackDetails"
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
                     app:layout_constraintTop_toBottomOf="@+id/bkashPackTitle"
-                    tools:text="Starting from BDT 30" />
+                    tools:text="From BDT X, Access Only" />
                 
                 <TextView
                     android:id="@+id/bkashPackDetails"
@@ -276,6 +277,7 @@
                     android:textColor="@color/light_text_color"
                     android:textSize="12sp"
                     android:textStyle="italic"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/bkashPackTitle"
                     app:layout_constraintStart_toStartOf="@id/bkashPackTitle"
@@ -340,13 +342,13 @@
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/cardTitleSecondColor"
                     android:textSize="12sp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@id/SslPackDetails"
                     app:layout_constraintEnd_toEndOf="@+id/SslPackTitle"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/SslPackTitle"
                     app:layout_constraintTop_toBottomOf="@+id/SslPackTitle"
-                    tools:text="Starting from BDT 30" />
+                    tools:text="From BDT X, Access Only" />
 
                 <TextView
                     android:id="@+id/SslPackDetails"
@@ -358,6 +360,7 @@
                     android:textColor="@color/light_text_color"
                     android:textSize="12sp"
                     android:textStyle="italic"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/SslPackTitle"
                     app:layout_constraintStart_toStartOf="@id/SslPackTitle"

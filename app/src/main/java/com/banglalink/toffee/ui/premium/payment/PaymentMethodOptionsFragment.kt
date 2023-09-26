@@ -33,7 +33,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
         return binding.root
     }
     
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint("ResourceAsColor", "SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.selectedDataPackOption.value = null
@@ -113,26 +113,42 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     giftVoucherCard.show()
                 }
                 
-                val blStartingPrice = if (mPref.isPrepaid) {
+//                val blStartingPrice = if (mPref.isPrepaid) {
+//                    paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+//                } else {
+//                    paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+//                }
+
+                val blStartingPrice = if (mPref.isBanglalinkNumber == "false") {
+                    val postpaidMinPackPrice = paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                    val prepaidMinPackPrice = paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                    minOf(postpaidMinPackPrice, prepaidMinPackPrice)
+                } else if (mPref.isPrepaid) {
                     paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 } else {
                     paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
-                blPackPrice.text = String.format(getString(R.string.starting_price), blStartingPrice.toString())
-                
+//                blPackPrice.text = String.format(getString(R.string.starting_price), blStartingPrice.toString())
+                blPackPrice.text = "From BDT ${blStartingPrice}, Access + FREE 1GB"
+
                 val bKashStartingPrice = if (mPref.isBanglalinkNumber == "true") {
                     paymentTypes.bkash?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 } else {
                     paymentTypes.bkash?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
+//                bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
+                bkashPackPrice.text = "From BDT ${bKashStartingPrice}, Access Only"
+                bkashPackPrice.isVisible = bKashStartingPrice > 0
 
                 val sslStartingPrice = if (mPref.isBanglalinkNumber == "true") {
                     paymentTypes.ssl?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 } else {
                     paymentTypes.ssl?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
-//                bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
-//                bkashPackPrice.isVisible = bKashStartingPrice > 0
+
+//                SslPackPrice.text = String.format(getString(R.string.starting_price), sslStartingPrice)
+                SslPackPrice.text  = "From BDT ${sslStartingPrice}, Access Only"
+                SslPackPrice.isVisible = sslStartingPrice > 0
                 
                 val isAvailableForBlUsers = mPref.isBanglalinkNumber == "true" && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
                 
