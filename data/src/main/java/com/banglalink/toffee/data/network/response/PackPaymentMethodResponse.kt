@@ -87,4 +87,6 @@ data class PackPaymentMethod(
     val partnerId: Int? = null,
     @SerializedName("campaigns_id")
     val campaignsId: Int? = null,
+    @SerializedName("data_pack_cta_button")
+    val dataPackCtaButton: Int? = null
     ) : Parcelable
