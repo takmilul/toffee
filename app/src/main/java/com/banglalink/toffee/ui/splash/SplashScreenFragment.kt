@@ -245,11 +245,11 @@ class SplashScreenFragment : BaseFragment() {
             if (isDynamicSplashActive) {
                 findNavController().navigate(R.id.dynamicSplashScreenFragment)
             } else {
-//                requireActivity().launchActivity<HomeActivity>()
-                val intent = Intent(requireContext(), HomeActivity::class.java)
-                intent.data = requireActivity().intent.data
-                startActivity(intent)
-                requireActivity().finish()
+                requireActivity().launchActivity<HomeActivity> {
+                    data = requireActivity().intent.data
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                requireActivity().finishAffinity()
             }
         }
     }

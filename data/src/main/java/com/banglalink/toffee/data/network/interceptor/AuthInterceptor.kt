@@ -4,6 +4,7 @@ import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
+import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ApiHeader
@@ -40,6 +41,13 @@ class AuthInterceptor @Inject constructor(
         val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
         val requestJsonString = bodyToString(request.body)
+        val baseRequest = try { Gson().fromJson(requestJsonString, BaseRequest::class.java) } catch (e: Exception) { null }
+//        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != "6.0.0")) {
+//            Response.Builder().apply {
+//                body(Gson().toJson(BaseResponse().apply {  }, BaseResponse::class.java).toResponseBody())
+//            }
+//        }
+        
         ToffeeAnalytics.logBreadCrumb("request: $requestJsonString")
         val string = EncryptionUtil.encryptRequest(requestJsonString)
         if (!convertToGet) {
