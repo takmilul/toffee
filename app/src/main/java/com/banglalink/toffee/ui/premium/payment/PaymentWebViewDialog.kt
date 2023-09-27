@@ -238,7 +238,7 @@ class PaymentWebViewDialog : DialogFragment() {
                             }
 
                             // Handle payment failure scenarios for Banglalink recharge
-                            (it.contains("failure") && !it.contains("callBackStatus")) -> {
+                            (it.contains("recharge-fail") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
 
                                 //Send Log to the Pub/Sub
@@ -266,7 +266,7 @@ class PaymentWebViewDialog : DialogFragment() {
                             }
 
                             // Handle payment cancellation scenarios for Banglalink recharge
-                            (it.contains("cancel") && !it.contains("callBackStatus")) -> {
+                            (it.contains("recharge-cancel") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
 
                                 //Send Log to the Pub/Sub

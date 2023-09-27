@@ -119,14 +119,32 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 //                    paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
 //                }
 
-                val blStartingPrice = if (mPref.isBanglalinkNumber == "false") {
-                    val postpaidMinPackPrice = paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
-                    val prepaidMinPackPrice = paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
-                    minOf(postpaidMinPackPrice, prepaidMinPackPrice)
-                } else if (mPref.isPrepaid) {
-                    paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
-                } else {
-                    paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                // Determine the starting price for Banglalink based on user preferences and available data
+                val blStartingPrice = when {
+                    // If it's not a Banglalink number, check both postpaid and prepaid options
+                    mPref.isBanglalinkNumber == "false" -> {
+                        val postpaidMinPackPrice = paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                        val prepaidMinPackPrice = paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+
+                        if (postpaidMinPackPrice == 0) {
+                            // If postpaidMinPackPrice is zero, consider prepaidMinPackPrice
+                            paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                        } else if (prepaidMinPackPrice == 0) {
+                            // If prepaidMinPackPrice is zero, consider postpaidMinPackPrice
+                            paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                        } else {
+                            // Choose the minimum between postpaidMinPackPrice and prepaidMinPackPrice
+                            minOf(postpaidMinPackPrice, prepaidMinPackPrice)
+                        }
+                    }
+                    // If it's a prepaid Banglalink number, consider only prepaid options
+                    mPref.isPrepaid -> {
+                        paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                    }
+                    // If it's a postpaid Banglalink number, consider only postpaid options
+                    else -> {
+                        paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                    }
                 }
 //                blPackPrice.text = String.format(getString(R.string.starting_price), blStartingPrice.toString())
                 blPackPrice.text = "From BDT ${blStartingPrice}, Access + FREE 1GB"
