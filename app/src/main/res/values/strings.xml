@@ -540,7 +540,7 @@
     <string name="starting_price">Starting from BDT %s</string>
     <string name="buy_now">BUY NOW</string>
     <string name="buy_bkash">BUY WITH BKASH</string>
-    <string name="payment_consent_text">By clicking on the button below you agree to the</string>
+    <string name="payment_consent_text">By clicking below button you are agreeing to</string>
     <string name="buy_with_mobile_balance">BUY WITH MOBILE BALANCE</string>
     <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="choose_a_plan">Choose a Plan</string>
