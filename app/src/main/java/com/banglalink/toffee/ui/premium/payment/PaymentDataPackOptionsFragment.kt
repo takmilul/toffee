@@ -423,7 +423,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = gson.toJson(it)
+                            rawResponse = gson.toJson(it.error.msg)
                         ))
                         requireContext().showToast(it.error.msg)
                     }
