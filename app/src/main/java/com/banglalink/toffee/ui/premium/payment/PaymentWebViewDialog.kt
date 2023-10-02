@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
@@ -19,7 +21,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.request.*
-import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -34,7 +35,6 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import java.util.ResourceBundle.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PaymentWebViewDialog : DialogFragment() {
@@ -116,7 +117,41 @@ class PaymentWebViewDialog : DialogFragment() {
         }
         
         binding.webview.webViewClient = object : WebViewClient() {
-            
+            @Deprecated("Deprecated in Java")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String): Boolean {
+                Log.i(TAG, "shouldOverrideUrlLoading: $url")
+
+                return when {
+                    url.startsWith("http:") || url.startsWith("https:") -> {
+                        // If the URL starts with "http:" or "https:", allow the WebView to handle it.
+                        false
+                    }
+                    url.startsWith("tel:") -> {
+                        // If the URL starts with "tel:", create an intent to dial the phone number.
+                        val tel = Intent(Intent.ACTION_DIAL, Uri.parse(url))
+                        startActivity(tel) // Start the dialer activity.
+                        true // Indicate that the URL has been handled.
+                    }
+                    url.startsWith("mailto:") -> {
+                        // If the URL starts with "mailto:", extract the email address.
+                        val email = url.substringAfter("mailto:")
+                        val mail = Intent(Intent.ACTION_SEND)
+                        mail.type = "message/rfc822" // Set the MIME type for email.
+                        mail.putExtra(Intent.EXTRA_EMAIL, arrayOf(email)) // Set the recipient email address.
+                        try {
+                            startActivity(mail) // Start the mail app.
+                        } catch (e: ActivityNotFoundException) {
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        }
+                        true // Indicate that the URL has been handled.
+                    }
+                    else -> {
+                        // If none of the above conditions are met, allow the WebView to handle the URL.
+                        true
+                    }
+                }
+            }
+
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
