@@ -60,7 +60,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
         binding.backImg.safeClick({ findNavController().popBackStack() })
         binding.goToHome.safeClick({
             runCatching {
-                requireActivity().findNavController(R.id.home_nav_host).navigatePopUpTo(R.id.menu_feed)
+                closeDialog()
             }
         })
     }
