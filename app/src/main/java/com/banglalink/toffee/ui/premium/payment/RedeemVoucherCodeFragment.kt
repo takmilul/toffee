@@ -58,7 +58,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
         observeVoucher()
 
 
-        val spannableString = SpannableString("By clicking on the button below you agree to the Terms & Conditions")
+        val spannableString = SpannableString("By clicking below button you are agreeing to Terms & Conditions")
         val clickTerms: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 showTermsAndConditionDialog()
@@ -69,9 +69,9 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                 ds.isUnderlineText = false
             }
         }
-        // Character starting from 45, - 63 is Resend OTP.
-        spannableString.setSpan(clickTerms, 48, 67, 0)
-        spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#FF3988")), 48, 67, 0)
+        // Character starting from 45, - 63 is Terms & Conditions.
+        spannableString.setSpan(clickTerms, 45, 63, 0)
+        spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#FF3988")), 45, 63, 0)
         binding.termsAndConditionsOne.movementMethod = LinkMovementMethod.getInstance()
         binding.termsAndConditionsOne.setText(spannableString, TextView.BufferType.SPANNABLE)
         binding.termsAndConditionsOne.isSelected = true
