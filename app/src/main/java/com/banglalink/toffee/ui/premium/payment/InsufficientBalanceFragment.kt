@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,13 +49,8 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
         ctaButtonValue = arguments?.getInt("ctaValue",0)!!
 
 
-        if (isBuyWithRechargeHide){
-
-            binding.buyWithRechargeButton.hide()
-        }else{
-            if (ctaButtonValue==2|| ctaButtonValue==3) binding.buyWithRechargeButton.show()
-            else binding.buyWithRechargeButton.hide()
-        }
+        if (ctaButtonValue==2|| ctaButtonValue==3) binding.buyWithRechargeButton.show()
+        else binding.buyWithRechargeButton.hide()
 
         binding.subTitle.text = subTitle
 

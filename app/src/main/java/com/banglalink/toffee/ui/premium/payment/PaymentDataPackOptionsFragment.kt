@@ -338,7 +338,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 findNavController().navigateTo(R.id.insufficientBalanceFragment, args)
                             }
                             else{
-                                findNavController().navigateTo(R.id.insufficientBalanceFragment)
+                                val argsTwo = bundleOf(
+                                    "ctaValue" to ctaButtonValue
+                                )
+                                findNavController().navigateTo(R.id.insufficientBalanceFragment,argsTwo)
                             }
                         }
                         else -> {
