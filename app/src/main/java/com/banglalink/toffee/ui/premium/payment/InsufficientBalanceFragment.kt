@@ -43,7 +43,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        subTitle = arguments?.getString("subTitle", "Insufficient balance in your Banglalink account") ?: "Insufficient balance in your Banglalink account"
+        subTitle = arguments?.getString("subTitle", "You do not have sufficient balance in your Banglalink account") ?: "You do not have sufficient balance in your Banglalink account"
         isBuyWithRechargeHide = arguments?.getBoolean("isBuyWithRechargeHide", false) ?: false
         ctaButtonValue = arguments?.getInt("ctaValue",0)!!
 
