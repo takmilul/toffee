@@ -243,13 +243,13 @@
                 
                 <ImageView
                     android:id="@+id/bkashImg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="71dp"
+                    android:layout_height="30dp"
                     android:contentDescription="@string/pass_brand_image_view"
                     app:layout_constraintBottom_toBottomOf="@id/bkashPackTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/bkashPackTitle"
-                    app:srcCompat="@drawable/ic_bkash_logo" />
+                    app:srcCompat="@drawable/bkash_logo_new" />
                 
                 <TextView
                     android:id="@+id/bkashPackPrice"
