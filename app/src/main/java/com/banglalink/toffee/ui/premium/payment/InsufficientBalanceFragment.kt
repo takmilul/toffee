@@ -16,6 +16,7 @@ import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -29,6 +30,7 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
     private var _binding: FragmentInsufficientBalanceBinding? = null
     private var subTitle: String? = null
     private var isBuyWithRechargeHide: Boolean = false
+    private var ctaButtonValue=0
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
@@ -43,9 +45,15 @@ class InsufficientBalanceFragment : ChildDialogFragment() {
 
         subTitle = arguments?.getString("subTitle", "Insufficient balance in your Banglalink account") ?: "Insufficient balance in your Banglalink account"
         isBuyWithRechargeHide = arguments?.getBoolean("isBuyWithRechargeHide", false) ?: false
+        ctaButtonValue = arguments?.getInt("ctaValue",0)!!
+
 
         if (isBuyWithRechargeHide){
+
             binding.buyWithRechargeButton.hide()
+        }else{
+            if (ctaButtonValue==2|| ctaButtonValue==3) binding.buyWithRechargeButton.show()
+            else binding.buyWithRechargeButton.hide()
         }
 
         binding.subTitle.text = subTitle

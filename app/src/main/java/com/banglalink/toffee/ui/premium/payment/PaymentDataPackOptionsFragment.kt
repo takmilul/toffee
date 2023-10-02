@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private var transactionIdentifier: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
+    private var ctaButtonValue=0
     private lateinit var mAdapter: PaymentDataPackOptionAdapter
     private var _binding: FragmentPaymentDataPackOptionsBinding? = null
     private val binding get() = _binding!!
@@ -331,6 +333,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 val args = bundleOf(
                                     "subTitle" to getString(R.string.insufficient_balance_for_postpaid),
                                     "isBuyWithRechargeHide" to false,
+                                    "ctaValue" to ctaButtonValue
                                 )
                                 findNavController().navigateTo(R.id.insufficientBalanceFragment, args)
                             }
@@ -568,6 +571,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             "blPack" -> {
                 if (mPref.isBanglalinkNumber == "true") {
+                    ctaButtonValue= item.dataPackCtaButton!!
                     binding.buyNowButton.isVisible = item.dataPackCtaButton == 1 || item.dataPackCtaButton == 3
                     binding.buyWithRechargeButton.isVisible = item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3
                 } else {
