@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,7 +68,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
         
-        observeLogout()
         observeMnpStatus()
         observePackStatus()
         observeBlDataPackPurchase()
@@ -106,6 +104,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.signInButton.safeClick({
             homeViewModel.isLogoutCompleted.value = false
             mPref.shouldIgnoreReloadAfterLogout.value = true
+            observeLogout()
             homeViewModel.logoutUser()
         })
         binding.buySimButton.safeClick({
@@ -140,12 +139,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     viewModel.selectedPremiumPack.value?.let {
                         viewModel.getPackStatusForDataPackOptions(packId = it.id)
                     } ?: {
-                        progressDialog.hide()
+                        progressDialog.dismiss()
                         requireContext().showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {
-                    progressDialog.hide()
+                    progressDialog.dismiss()
                     requireContext().showToast(response.error.msg)
                 }
             }
@@ -367,7 +366,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
      */
     private fun callAndObserveSubscriberPaymentInit(paymentType: String) {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            progressDialog.show()
             // Observe the subscriberPaymentInitLiveData for response handling
             observe(viewModel.subscriberPaymentInitLiveData) { it ->
                 progressDialog.dismiss() // Dismiss the progress dialog
@@ -459,6 +457,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             )
             // Trigger the payment initiation request, but only if both selectedPremiumPack and selectedDataPackOption are not null
             if (selectedPremiumPack != null && selectedDataPackOption != null) {
+                progressDialog.show()
                 viewModel.getSubscriberPaymentInit(paymentType, request)
             } else {
                 // Handle the case where either selectedPremiumPack or selectedDataPackOption is null
@@ -469,7 +468,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun callAndObserveRechargeByBkash() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            progressDialog.show()
             observe(viewModel.rechargeByBkashUrlLiveData) { it ->
                 progressDialog.dismiss()
                 when(it) {
@@ -541,6 +539,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 dataPackPrice = selectedDataPackOption?.packPrice ?: 0,
                 isPrepaid = selectedDataPackOption?.isPrepaid ?: 1
             )
+            progressDialog.show()
             viewModel.getRechargeByBkashUrl(request)
         }
     }

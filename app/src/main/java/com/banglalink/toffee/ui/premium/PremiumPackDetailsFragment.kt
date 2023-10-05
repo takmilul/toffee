@@ -27,7 +27,6 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
@@ -38,10 +37,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
     private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-
-    private var tooltip: Any? = null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
@@ -83,9 +79,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     requireActivity().checkVerification {
                         progressDialog.show()
                         if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
-                            homeViewModel.getMnpStatus()
-                        }
-                        else {
+                            viewModel.getMnpStatusForPaymentDetail()
+                        } else {
                             viewModel.selectedPremiumPack.value?.let {
                                 viewModel.getPackStatus(0, it.id)
                             } ?: run {
@@ -117,6 +112,24 @@ class PremiumPackDetailsFragment : BaseFragment(){
         })
     }
     
+    private fun observeMnpStatus() {
+        observe(viewModel.mnpStatusLiveDataForPaymentDetail) { response ->
+            when (response) {
+                is Success -> {
+                    if (response.data?.mnpStatus == 200){
+                        mPref.isMnpStatusChecked = true
+                        viewModel.selectedPremiumPack.value?.let {
+                            viewModel.getPackStatus(0, it.id)
+                        } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
     private fun observePackStatus() {
         observe(viewModel.activePackListLiveData) {
             when(it) {
@@ -142,7 +155,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-
+    
     /**
      * Observes the pack status after a subscriber's payment is successfully processed.
      * This function updates the active premium pack list, checks for pack purchases, and navigates
@@ -187,8 +200,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             viewModel.getPackStatusAfterSubscriberPayment(0, it.id)
         }
     }
-
-
+    
     private fun checkPackPurchased(): Boolean {
         return viewModel.selectedPremiumPack.value?.let { selectedPack ->
             mPref.activePremiumPackList.value?.getPurchasedPack(
@@ -265,24 +277,6 @@ class PremiumPackDetailsFragment : BaseFragment(){
         }
     }
     
-    private fun observeMnpStatus() {
-        observe(homeViewModel.mnpStatusBeanLiveData) { response ->
-            when (response) {
-                is Success -> {
-                    if (response.data?.mnpStatus == 200){
-                        mPref.isMnpStatusChecked = true
-                        viewModel.selectedPremiumPack.value?.let {
-                            viewModel.getPackStatus(0, it.id)
-                        } ?: requireContext().showToast(getString(R.string.try_again_message))
-                    }
-                }
-                is Failure -> {
-                    requireContext().showToast(response.error.msg)
-                }
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()

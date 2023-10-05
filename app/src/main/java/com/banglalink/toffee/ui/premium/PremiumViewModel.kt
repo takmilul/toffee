@@ -93,7 +93,6 @@ class PremiumViewModel @Inject constructor(
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseCodeWebView = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
@@ -102,6 +101,7 @@ class PremiumViewModel @Inject constructor(
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+    val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -194,15 +194,6 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun purchaseDataPackWebView(dataPackPurchaseRequest: DataPackPurchaseRequest) {
-        viewModelScope.launch {
-            val response = resultFromResponse {
-                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
-            }
-            packPurchaseResponseCodeWebView.value = response
-        }
-    }
-    
     fun getRechargeByBkashUrl(rechargeByBkashRequest: RechargeByBkashRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { rechargeByBkashService.execute(rechargeByBkashRequest) }
@@ -245,6 +236,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { mnpStatusService.execute() }
             mnpStatusLiveData.value = response
+        }
+    }
+    
+    fun getMnpStatusForPaymentDetail() {
+        viewModelScope.launch {
+            val response = resultFromResponse { mnpStatusService.execute() }
+            mnpStatusLiveDataForPaymentDetail.value = response
         }
     }
 }
