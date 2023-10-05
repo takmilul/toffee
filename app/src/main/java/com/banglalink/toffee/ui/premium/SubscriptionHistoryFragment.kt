@@ -61,57 +61,6 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
 
     override fun onOpenMenu(view: View, item: SubsHistoryDetail) {
         super.onOpenMenu(view, item)
-        
-//        val margin = 0
-//        val anchorRect = SimpleTooltipUtils.calculateRectInWindow(view)
-//        val contentView = TooltipLayoutSubscriptionBinding.inflate(layoutInflater).root
-//
-//        val iconBottomLocation = anchorRect.bottom.plus(contentView.measuredHeight + margin)
-//        val isSpaceAvailableAtBottom = (iconBottomLocation + contentView.measuredHeight + margin) <= Utils.getScreenHeight()
-//        val gravity = if (!isSpaceAvailableAtBottom) {
-//            Gravity.TOP
-//        } else {
-//            Gravity.BOTTOM
-//        }
-//        
-////        https://github.com/douglasjunior/android-simple-tooltip
-//        SimpleTooltip.Builder(requireContext())
-//            .anchorView(view)
-//            .text(item.tooltipMessage ?: getString(R.string.subscription_history_tooltip_text))
-//            .gravity(gravity)
-//            .animated(false)
-//            .transparentOverlay(true)
-//            .margin(margin.toFloat())
-//            .padding(16F)
-//            .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-//            .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
-//            .arrowHeight(10F.px)
-//            .arrowWidth(12F.px)
-//            .focusable(true)
-//            .build()
-//            .show()
-            
-//        https://github.com/skydoves/balloon#balloon-builder-methods
-//        val balloon = Balloon.Builder(requireContext())
-//            .setWidthRatio(0.8f)
-//            .setWidth(BalloonSizeSpec.WRAP)
-//            .setHeight(BalloonSizeSpec.WRAP)
-//            .setText(resources.getString(R.string.subscription_history_tooltip_text))
-//            .setTextColorResource(R.color.tooltip_text_color)
-//            .setTextSize(12f)
-//            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-//            .setArrowSize(12)
-//            .setArrowPosition(0.5f)
-//            .setPadding(8)
-//            .setMarginHorizontal(16)
-//            .setTextTypeface(ResourcesCompat.getFont(requireContext(), R.font.roboto_regular)!!)
-//            .setCornerRadius(8f)
-//            .setBackgroundColorResource(R.color.tooltip_bg_color)
-////            .setBalloonAnimation(BalloonAnimation.FADE)
-////            .setLifecycleOwner(viewLifecycleOwner)
-//            .setTextGravity(Gravity.START)
-//            .build()
-//        view.showAlignBottom(balloon)
         runCatching {
             view.showAlignBottom(
                 requireContext().getBalloon(
