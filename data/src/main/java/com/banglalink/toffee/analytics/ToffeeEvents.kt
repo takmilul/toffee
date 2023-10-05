@@ -44,9 +44,6 @@ object ToffeeEvents {
     const val UGC_UPLOAD ="ugc_upload"
     const val SUPPORTED_TLS = "supported_TLS"
     const val PROMOTION = "in_app_promos"
-    const val PAYMENT_SELECTED = "payment_selected"
-    const val PLAN_SELECTED = "plan_selected"
-    const val PACK_SUCCESS = "pack_success"
-    const val PACK_ERROR = "pack_error"
-    const val BEGIN_PURCHASE = "begin_purchase"
+    const val TRAIL_ACTIVATE = "trial_activate"
+    const val COUPON_REDEMPTION = "coupon_redemption"
 }
