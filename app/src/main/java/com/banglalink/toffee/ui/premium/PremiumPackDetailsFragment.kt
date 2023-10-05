@@ -107,22 +107,6 @@ class PremiumPackDetailsFragment : BaseFragment(){
         observe(mPref.packDetailsPageRefreshRequired) { if (it == true) observePackStatusAfterSubscriberPayment() }
         
         binding.infoIcon.safeClick({
-            //https://github.com/douglasjunior/android-simple-tooltip
-//            tooltip = SimpleTooltip.Builder(requireContext())
-//                .anchorView(binding.infoIcon)
-//                .text(R.string.subscription_history_tooltip_text)
-//                .gravity(Gravity.TOP)
-//                .animated(false)
-//                .transparentOverlay(true)
-//                .margin(0f)
-//                .padding(16F.px)
-//                .contentView(R.layout.tooltip_layout_subscription, R.id.tooltipText)
-//                .arrowColor(ContextCompat.getColor(requireContext(), R.color.tooltip_bg_color))
-//                .arrowHeight(10F.px)
-//                .arrowWidth(14F.px)
-//                .focusable(true)
-//                .build()
-//                .show()
             runCatching {
                 it.showAlignBottom(
                     requireContext().getBalloon(
