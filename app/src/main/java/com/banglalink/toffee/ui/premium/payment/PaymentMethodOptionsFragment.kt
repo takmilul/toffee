@@ -40,7 +40,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
         viewModel.paymentMethod.value?.let { paymentTypes ->
             with(binding) {
 
-                //Trail Section
+                /**
+                 * This code manages the display and selection of trial pack options based on user preferences and availability.
+                 * It calculates extra validity, determines which trial pack to display, checks if the trial pack is used,
+                 * and handles user interactions with the trial pack card.
+                 */
+
                 if (!paymentTypes.free.isNullOrEmpty()) {
                     var blTrialPackMethod: PackPaymentMethod? = null
                     var nonBlTrialPackMethod: PackPaymentMethod? = null
@@ -106,20 +111,23 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     trialCard.hide()
                 }
 
-                //Voucher Section
+                /**
+                 * This code controls the visibility of the gift voucher card based on the availability of voucher options.
+                 * If there are no vouchers available, the card is hidden; otherwise, it is shown to the user.
+                 */
+
                 if (paymentTypes.Voucher.isNullOrEmpty()){
                     giftVoucherCard.hide()
                 }else {
                     giftVoucherCard.show()
                 }
-                
-//                val blStartingPrice = if (mPref.isPrepaid) {
-//                    paymentTypes.bl?.prepaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
-//                } else {
-//                    paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
-//                }
 
-                // Determine the starting price for Banglalink based on user preferences and available data
+                /**
+                 * This code determines the starting price for Banglalink packages based on user preferences and available data.
+                 * It considers whether the user has a Banglalink number, whether it's prepaid or postpaid, and fetches the
+                 * minimum pack price accordingly to display to the user.
+                 */
+
                 val blStartingPrice = when {
                     // If it's not a Banglalink number, check both postpaid and prepaid options
                     mPref.isBanglalinkNumber == "false" -> {
@@ -146,17 +154,35 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         paymentTypes.bl?.postpaid?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                     }
                 }
-//                blPackPrice.text = String.format(getString(R.string.starting_price), blStartingPrice.toString())
-                blPackPrice.text = "From BDT ${blStartingPrice}, Access + FREE 1GB"
+
+                blPackPrice.text = String.format(getString(R.string.starting_price_bl), blStartingPrice.toString())
+
+                val isAvailableForBlUsers = mPref.isBanglalinkNumber == "true" && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
+                blPackCard.isVisible = paymentTypes.bl != null && (mPref.isBanglalinkNumber != "true" || isAvailableForBlUsers)
+
+                /**
+                 * This code determines the starting price for bKash packages based on user preferences and available data.
+                 * It calculates the starting price differently for Banglalink and non-Banglalink users,
+                 * sets the corresponding text view, and controls the visibility of the bKash package card based on availability.
+                 */
 
                 val bKashStartingPrice = if (mPref.isBanglalinkNumber == "true") {
                     paymentTypes.bkash?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 } else {
                     paymentTypes.bkash?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
-//                bkashPackPrice.text = String.format(getString(R.string.starting_price), bKashStartingPrice)
-                bkashPackPrice.text = "From BDT ${bKashStartingPrice}, Access Only"
+
+                bkashPackPrice.text = String.format(getString(R.string.starting_price_bkash), bKashStartingPrice)
                 bkashPackPrice.isVisible = bKashStartingPrice > 0
+
+                val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
+                bKashPackCard.isVisible = isBkashAvailable
+
+                /**
+                 * This code determines the starting price for SSL payment packages based on user preferences and available data.
+                 * It calculates the starting price differently for Banglalink and non-Banglalink users,
+                 * sets the corresponding text view, and controls the visibility of the SSL payment package card based on availability.
+                 */
 
                 val sslStartingPrice = if (mPref.isBanglalinkNumber == "true") {
                     paymentTypes.ssl?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
@@ -164,34 +190,19 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     paymentTypes.ssl?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
                 }
 
-//                SslPackPrice.text = String.format(getString(R.string.starting_price), sslStartingPrice)
-                SslPackPrice.text  = "From BDT ${sslStartingPrice}, Access Only"
+                SslPackPrice.text = String.format(getString(R.string.starting_price_ssl), sslStartingPrice)
                 SslPackPrice.isVisible = sslStartingPrice > 0
-                
-                val isAvailableForBlUsers = mPref.isBanglalinkNumber == "true" && ((mPref.isPrepaid && !paymentTypes.bl?.prepaid.isNullOrEmpty()) || (!mPref.isPrepaid && !paymentTypes.bl?.postpaid.isNullOrEmpty()))
-                
-                blPackCard.isVisible = paymentTypes.bl != null && (mPref.isBanglalinkNumber != "true" || isAvailableForBlUsers)
-                
-                val isBkashAvailable = paymentTypes.bkash != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
-                val isSslAvailable = paymentTypes.ssl != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
 
-//                bKashPackCard.isVisible = isBkashAvailable
+                val isSslAvailable = paymentTypes.ssl != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
                 SslPackCard.isVisible = isSslAvailable
 
 
-                bKashPackCard.isVisible = isBkashAvailable
+                /**
+                 * These click handlers navigate to specific fragments based on the selected payment card.
+                 */
 
-                //Disable Banglalink DataPack Option
-//                if (mPref.isBanglalinkNumber == "false") {
-//                    blPackCard.alpha = 0.3f
-//                }
-                
                 blPackCard.safeClick({
-//                    if (mPref.isBanglalinkNumber == "false") {
-//                        requireContext().showToast(getString(string.only_for_bl_users))
-//                    } else {
-                        findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
-//                    }
+                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
                 })
                 bKashPackCard.safeClick({
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bkash"))

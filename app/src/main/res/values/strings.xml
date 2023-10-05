@@ -537,7 +537,9 @@
     <string name="app_slogan">Watch FREE\non Any Network!</string>
     <string name="extra_for_bl_users_text">Includes %s Days Extra for Banglalink Subscribers</string>
     <string name="extra_for_non_bl_users_text">Extra %s Days for Banglalink Users</string>
-    <string name="starting_price">Starting from BDT %s</string>
+    <string name="starting_price_bl">From BDT %s, Access + FREE 1GB</string>
+    <string name="starting_price_bkash">From BDT %s, Access Only</string>
+    <string name="starting_price_ssl">From BDT %s, Access Only</string>
     <string name="buy_now">BUY NOW</string>
     <string name="buy_bkash">BUY WITH BKASH</string>
     <string name="payment_consent_text">By clicking below button you are agreeing to</string>
