@@ -3,6 +3,7 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
@@ -121,6 +122,35 @@ object ToffeeAnalytics {
         }
         if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
             facebookAnalytics.logEvent(event, params)
+        }
+    }
+
+    fun toffeeLogEvent(event: String, customParams: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
+        val commonParams = Bundle().apply {
+            putString("app_version", CommonPreference.getInstance().appVersionName)
+            putString("country", SessionPreference.getInstance().geoLocation)
+            putString("device_model", CommonPreference.getInstance().deviceName)
+            putString("gender", null)
+            putString("operating_system", System.getProperty("os.name"))
+            putString("os_version", Build.VERSION.RELEASE)
+            putString("platform", "android")
+            putString("region", SessionPreference.getInstance().geoRegion)
+        }
+
+        val combinedParams = customParams?.let { params ->
+            val mergedParams = Bundle(commonParams).apply {
+                putAll(params)
+            }
+            mergedParams
+        } ?: commonParams
+
+        if (SessionPreference.getInstance().isFcmEventActive) {
+            firebaseAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
+        }
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
+            facebookAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
     }
     
