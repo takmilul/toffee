@@ -18,11 +18,11 @@
 -keep class com.google.api.client.** { <fields>; }
 -keep class com.google.api.client.googleapis.** { <fields>; }
 
--keepclassmembers class * extends java.lang.Enum {
-    <fields>;
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
+#-keepclassmembers class * extends java.lang.Enum {
+#    <fields>;
+#    public static **[] values();
+#    public static ** valueOf(java.lang.String);
+#}
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
@@ -32,7 +32,7 @@
 -keep class * implements com.google.gson.JsonDeserializer
 
 # Prevent R8 from leaving Data object members always null
--keepclassmembers,allowobfuscation class * {
+-keep class * {
   @com.google.gson.annotations.SerializedName <fields>;
 }
 #********************************End rules for gson****************************************#

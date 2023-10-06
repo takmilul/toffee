@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -36,14 +36,14 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 33
-        versionCode = 120
-        versionName = "6.0.0"
+        versionCode = 121
+        versionName = "6.1.0"
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
-        ndk {
-            debugSymbolLevel = "FULL"
-        }
+//        ndk {
+//            debugSymbolLevel = "FULL"
+//        }
         manifestPlaceholders.putAll(
             mapOf(
                 "fireworkOAuthId" to fireworkOAuthId,

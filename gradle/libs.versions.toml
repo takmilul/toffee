@@ -2,7 +2,7 @@
 
 [versions]
 
-gradle-plugin-version = "8.1.1"
+gradle-plugin-version = "8.1.2"
 
 # View
 activity-version = "1.6.1"
@@ -361,7 +361,7 @@ lifecycle = ["lifecycle-viewmodel-ktx", "lifecycle-runtime-ktx", "lifecycle-live
 image-crop = ["ucrop", "circular-progressbar", "dahdit"]
 coil = ["coil-core", "coil-gif", "coil-transformer", "coil-transformer-core"]
 firebase = ["firebase-messaging", "firebase-in-app-message", "firebase-core", "firebase-analytics", "firebase-crashlytics", "firebase-firestore"]
-cast = ["mediarouter", "cast-framework"]
+cast = ["cast-framework"] # "mediarouter", 
 hilt = ["hilt-android", "hilt-work"]
 #hiltkapt = ["hilt-compiler", "hilt-android-compiler", "hilt-compiler-kapt"]
 room = ["room-db", "room-paging", "room-ktx"]

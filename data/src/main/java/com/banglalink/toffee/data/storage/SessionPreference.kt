@@ -24,7 +24,8 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -844,7 +845,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             mqttIsActive = it.mqttIsActive == 1
             isMqttRealtimeSyncActive = it.isMqttRealtimeSyncActive == 1
             
-            isCastEnabled = it.isCastEnabled == 1
+            isCastEnabled = false //it.isCastEnabled == 1
             isCastUrlOverride = it.isCastUrlOverride == 1
             castReceiverId = it.castReceiverId ?: ""
             castOverrideUrl = it.castOverrideUrl ?: ""
