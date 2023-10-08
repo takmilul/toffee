@@ -9,21 +9,6 @@
 -dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
--dontwarn org.apache.commons.**
--keep class org.apache.http.** { *; }
--dontwarn org.apache.http.**
-
-# Pubsub & Google apis
--keep class com.google.api.services.pubsub.** { <fields>; }
--keep class com.google.api.client.** { <fields>; }
--keep class com.google.api.client.googleapis.** { <fields>; }
-
-#-keepclassmembers class * extends java.lang.Enum {
-#    <fields>;
-#    public static **[] values();
-#    public static ** valueOf(java.lang.String);
-#}
-
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * implements com.google.gson.TypeAdapter
@@ -36,6 +21,21 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 #********************************End rules for gson****************************************#
+
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
+# Pubsub & Google apis
+#-keep class com.google.api.services.pubsub.** { <fields>; }
+#-keep class com.google.api.client.** { <fields>; }
+#-keep class com.google.api.client.googleapis.** { <fields>; }
+
+#-keepclassmembers class * extends java.lang.Enum {
+#    <fields>;
+#    public static **[] values();
+#    public static ** valueOf(java.lang.String);
+#}
 
 #-keep class com.google.obf.** { *; }
 #-keep interface com.google.obf.** { *; }

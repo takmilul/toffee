@@ -69,19 +69,19 @@
 -dontwarn com.google.ads.**
 #-keep class com.google.** { *; }
 #-keep interface com.google.** { *; }
--keep class com.google.ads.interactivemedia.** { *; }
--keep interface com.google.ads.interactivemedia.** { *; }
+#-keep class com.google.ads.interactivemedia.** { *; }
+#-keep interface com.google.ads.interactivemedia.** { *; }
 
 #-keep class * extends java.util.ListResourceBundle { *; }
 
--keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
-    public static final *** NULL;
-}
+#-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+#    public static final *** NULL;
+#}
 
--keepnames @com.google.android.gms.common.annotation.KeepName class *
--keepclassmembernames class * {
-    @com.google.android.gms.common.annotation.KeepName *;
-}
+#-keepnames @com.google.android.gms.common.annotation.KeepName class *
+#-keepclassmembernames class * {
+#    @com.google.android.gms.common.annotation.KeepName *;
+#}
 
 -keepnames class * implements android.os.Parcelable {
     public static final ** CREATOR;
@@ -98,12 +98,12 @@
 -keep class retrofit2.** { *; }
 -dontwarn retrofit2.**
 
--keep class com.google.protobuf.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class com.google.firebase.** { *; }
--keep class io.invertase.firebase.** { *; }
--dontwarn io.invertase.firebase.**
--keep class io.invertase.firebase.messaging.** { *; }
+#-keep class com.google.protobuf.** { *; }
+#-keep class com.google.android.gms.** { *; }
+#-keep class com.google.firebase.** { *; }
+#-keep class io.invertase.firebase.** { *; }
+#-dontwarn io.invertase.firebase.**
+#-keep class io.invertase.firebase.messaging.** { *; }
 
 #-keepattributes LineNumberTable,SourceFile
 #-renamesourcefileattribute SourceFile

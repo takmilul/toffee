@@ -9,4 +9,7 @@
 <!--    <domain-config cleartextTrafficPermitted="true">-->
 <!--        <domain includeSubdomains="true">http://bl-he.toffeelive.com/getMsisdn.php</domain>-->
 <!--    </domain-config>-->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">bl-he.toffeelive.com</domain>
+    </domain-config>
 </network-security-config>
