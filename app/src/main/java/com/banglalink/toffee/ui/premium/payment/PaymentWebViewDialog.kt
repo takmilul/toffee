@@ -20,7 +20,10 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.*
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -66,6 +69,8 @@ class PaymentWebViewDialog : DialogFragment() {
     private var statusMessage: String? = null
     private var transactionStatus: String? = null
     private var transactionIdentifier: String? = null
+    private var selectedPremiumPack: PremiumPack? = null
+    private var selectedDataPackOption: PackPaymentMethod? = null
     private var transactionId: String? = null
     private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
@@ -93,7 +98,10 @@ class PaymentWebViewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
-        
+
+        selectedPremiumPack = viewModel.selectedPremiumPack.value
+        selectedDataPackOption = viewModel.selectedDataPackOption.value
+
         paymentId = arguments?.getString("paymentId")
         paymentTypeFromDataPackOptionsFragment = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
@@ -186,8 +194,8 @@ class PaymentWebViewDialog : DialogFragment() {
                             (it.contains("success") || callBackStatus == "success") -> {
                                 if (isBkashBlRecharge) {
                                     // Handle specific actions for Banglalink recharge
-
                                     progressDialog.show()
+
                                     isBkashBlRecharge = false
                                     observeBlDataPackPurchase()
                                     purchaseBlDataPack()
@@ -197,7 +205,6 @@ class PaymentWebViewDialog : DialogFragment() {
                                     progressDialog.show()
 
                                     //Send Log to the Pub/Sub
-
                                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                         id = System.currentTimeMillis() + mPref.customerId,
                                         callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
@@ -220,11 +227,39 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "ssl" -> {
                                             when (statusCode) {
                                                 "200" -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "SSL Wireless",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // If statusCode is 200, create args with status code 200 and navigate
                                                     val args = bundleOf(ARG_STATUS_CODE to 200)
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 else -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "SSL Wireless",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // For any other statusCode, use the default args and navigate
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -237,11 +272,39 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "bkash" -> {
                                             when (statusCode) {
                                                 "200" -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // If statusCode is 200, create args with status code 200 and navigate
                                                     val args = bundleOf(ARG_STATUS_CODE to 200)
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 "277" -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // If statusCode is 277, create args with status code -2 and the status message
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -250,6 +313,20 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 "2029", "2062" -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // If statusCode is 2029 or 2062, create args with status code -3 and the status message
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -3,
@@ -258,6 +335,20 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 else -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to selectedPremiumPack?.id,
+                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "currency" to "BDT",
+                                                            "amount" to selectedDataPackOption?.packPrice,
+                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                                        )
+                                                    )
                                                     // For any other statusCode, use the default args and navigate
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -293,6 +384,20 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                                     rawResponse = getString(string.payment_failed_message)
                                 ))
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_ERROR,
+                                    bundleOf(
+                                        "pack_ID" to selectedPremiumPack?.id,
+                                        "pack_name" to selectedPremiumPack?.packTitle,
+                                        "currency" to "BDT",
+                                        "amount" to selectedDataPackOption?.packPrice,
+                                        "validity" to selectedPremiumPack?.expiryDate,
+                                        "provider" to "Banglalink",
+                                        "type" to "recharge",
+                                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    )
+                                )
                                 val args = bundleOf(
                                     ARG_STATUS_CODE to -1,
                                     ARG_STATUS_MESSAGE to getString(string.payment_failed_message)
@@ -349,6 +454,23 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = null,
                                     rawResponse = url.toString()
                                 ))
+
+                                if (callBackStatus == "failure"){
+                                    // Send Log to FirebaseAnalytics
+                                    ToffeeAnalytics.toffeeLogEvent(
+                                        ToffeeEvents.PACK_ERROR,
+                                        bundleOf(
+                                            "pack_ID" to selectedPremiumPack?.id,
+                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                            "currency" to "BDT",
+                                            "amount" to selectedDataPackOption?.packPrice,
+                                            "validity" to selectedPremiumPack?.expiryDate,
+                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "type" to "wallet",
+                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                        )
+                                    )
+                                }
 
                                 when {
                                     paymentType == "ssl" && statusCode != "200" -> {
@@ -495,12 +617,40 @@ class PaymentWebViewDialog : DialogFragment() {
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_SUCCESS,
+                                bundleOf(
+                                    "pack_ID" to selectedPremiumPack?.id,
+                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to selectedDataPackOption?.packPrice,
+                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 200)
                             )
                             navigateToStatusDialogPage(args)
                         }
                         else -> {
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_ERROR,
+                                bundleOf(
+                                    "pack_ID" to selectedPremiumPack?.id,
+                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to selectedDataPackOption?.packPrice,
+                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 0)
                             )
@@ -536,6 +686,20 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                         else {
                             progressDialog.dismiss()
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_ERROR,
+                                bundleOf(
+                                    "pack_id" to selectedPremiumPack?.id,
+                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to selectedDataPackOption?.packPrice,
+                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "nonBL" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to 0,
                                 ARG_STATUS_TITLE to "Data Plan Activation Failed!",
