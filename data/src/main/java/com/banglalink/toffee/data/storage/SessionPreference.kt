@@ -68,6 +68,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
+    val clickedFromChannelItem = SingleLiveEvent<Boolean?>()
     val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
     val radioBannerImgUrl = MutableLiveData<String>()
 

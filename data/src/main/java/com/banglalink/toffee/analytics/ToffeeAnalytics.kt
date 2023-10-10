@@ -132,7 +132,7 @@ object ToffeeAnalytics {
             putString("device_model", CommonPreference.getInstance().deviceName)
             putString("gender", null)
             putString("operating_system", System.getProperty("os.name"))
-            putString("os_version", Build.VERSION.RELEASE)
+            putString("OS_version", Build.VERSION.RELEASE)
             putString("platform", "android")
             putString("region", SessionPreference.getInstance().geoRegion)
         }
@@ -145,11 +145,11 @@ object ToffeeAnalytics {
         } ?: commonParams
 
         if (SessionPreference.getInstance().isFcmEventActive) {
-            firebaseAnalytics.logEvent(event, combinedParams)
+//            firebaseAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
         }
         if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
-            facebookAnalytics.logEvent(event, combinedParams)
+//            facebookAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
     }

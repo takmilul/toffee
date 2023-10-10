@@ -12,6 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.extension.hide
@@ -25,6 +27,8 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 class PaymentMethodOptionsFragment : ChildDialogFragment() {
     
     private var _binding: FragmentPaymentMethodOptionsBinding? = null
+    private var subType: String? = null
+
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     
@@ -201,17 +205,76 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                  * These click handlers navigate to specific fragments based on the selected payment card.
                  */
 
+                val selectedPremiumPack = viewModel.selectedPremiumPack.value
+                subType = when {
+                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "prepaid"
+                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "postpaid"
+                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "N/A"
+                    else -> null
+                }
+
                 blPackCard.safeClick({
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
+                    //Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PAYMENT_SELECTED,
+                        bundleOf(
+                            "pack_ID" to selectedPremiumPack?.id,
+                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "provider" to "Banglalink",
+                            "type" to "data pack",
+                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "subtype" to subType,
+                        )
+                    )
                 })
+
                 bKashPackCard.safeClick({
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bkash"))
+                    //Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PAYMENT_SELECTED,
+                        bundleOf(
+                            "pack_id" to selectedPremiumPack?.id,
+                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "provider" to "bKash",
+                            "type" to "wallet",
+                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "subtype" to subType,
+                        )
+                    )
                 })
+
                 SslPackCard.safeClick({
                     findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "ssl"))
+                    //Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PAYMENT_SELECTED,
+                        bundleOf(
+                            "pack_id" to selectedPremiumPack?.id,
+                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "provider" to "SSL Wireless",
+                            "type" to "aggregator",
+                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "subtype" to subType,
+                        )
+                    )
                 })
+
                 giftVoucherCard.safeClick({
                     findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
+                    //Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PAYMENT_SELECTED,
+                        bundleOf(
+                            "pack_id" to selectedPremiumPack?.id,
+                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "provider" to "Banglalink",
+                            "type" to "coupon",
+                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "subtype" to subType,
+                        )
+                    )
                 })
             }
         }
