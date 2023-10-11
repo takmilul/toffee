@@ -237,7 +237,8 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "amount" to selectedDataPackOption?.packPrice,
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "SSL Wireless",
-                                                            "type" to "wallet",
+                                                            "type" to "aggregator",
+                                                            "reason" to "N/A",
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -256,7 +257,8 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "amount" to selectedDataPackOption?.packPrice,
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "SSL Wireless",
-                                                            "type" to "wallet",
+                                                            "type" to "aggregator",
+                                                            "reason" to statusMessage,
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -283,6 +285,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
+                                                            "reason" to "N/A",
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -302,6 +305,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
+                                                            "reason" to statusMessage,
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -324,6 +328,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
+                                                            "reason" to statusMessage,
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -346,6 +351,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "validity" to selectedPremiumPack?.expiryDate,
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
+                                                            "reason" to statusMessage,
                                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                                         )
                                                     )
@@ -395,6 +401,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "validity" to selectedPremiumPack?.expiryDate,
                                         "provider" to "Banglalink",
                                         "type" to "recharge",
+                                        "reason" to string.payment_failed_message,
                                         "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                     )
                                 )
@@ -409,6 +416,21 @@ class PaymentWebViewDialog : DialogFragment() {
                             (it.contains("recharge-cancel") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
 
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_ERROR,
+                                    bundleOf(
+                                        "pack_ID" to selectedPremiumPack?.id,
+                                        "pack_name" to selectedPremiumPack?.packTitle,
+                                        "currency" to "BDT",
+                                        "amount" to selectedDataPackOption?.packPrice,
+                                        "validity" to selectedPremiumPack?.expiryDate,
+                                        "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                        "type" to "wallet",
+                                        "reason" to "Payment canceled by user",
+                                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    )
+                                )
                                 //Send Log to the Pub/Sub
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
@@ -467,6 +489,24 @@ class PaymentWebViewDialog : DialogFragment() {
                                             "validity" to selectedPremiumPack?.expiryDate,
                                             "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
                                             "type" to "wallet",
+                                            "reason" to statusMessage,
+                                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                        )
+                                    )
+                                }
+                                else{
+                                    // Send Log to FirebaseAnalytics
+                                    ToffeeAnalytics.toffeeLogEvent(
+                                        ToffeeEvents.PACK_ERROR,
+                                        bundleOf(
+                                            "pack_ID" to selectedPremiumPack?.id,
+                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                            "currency" to "BDT",
+                                            "amount" to selectedDataPackOption?.packPrice,
+                                            "validity" to selectedPremiumPack?.expiryDate,
+                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "type" to "wallet",
+                                            "reason" to "Payment canceled by user",
                                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                         )
                                     )
@@ -628,6 +668,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
+                                    "reason" to "N/A",
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -648,6 +689,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
+                                    "reason" to R.string.due_some_technical_issue,
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -697,6 +739,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
+                                    "reason" to it.error.msg,
                                     "nonBL" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )

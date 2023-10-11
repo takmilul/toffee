@@ -125,6 +125,9 @@ object ToffeeAnalytics {
         }
     }
 
+    /**
+     * toffeeLog Events in [FirebaseAnalytics] and [facebookAnalytics]
+     */
     fun toffeeLogEvent(event: String, customParams: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
         val commonParams = Bundle().apply {
             putString("app_version", CommonPreference.getInstance().appVersionName)
@@ -145,11 +148,11 @@ object ToffeeAnalytics {
         } ?: commonParams
 
         if (SessionPreference.getInstance().isFcmEventActive) {
-//            firebaseAnalytics.logEvent(event, combinedParams)
+            firebaseAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
         }
         if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
-//            facebookAnalytics.logEvent(event, combinedParams)
+            facebookAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
     }
