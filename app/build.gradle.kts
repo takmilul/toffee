@@ -232,6 +232,7 @@ dependencies {
     implementation(libs.shimmer)
     implementation(libs.guava)
     implementation(libs.medallia)
+    implementation(libs.clarity)
     
     
     /////// Testing

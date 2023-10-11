@@ -46,4 +46,9 @@ object ToffeeEvents {
     const val PROMOTION = "in_app_promos"
     const val MENU_OPEN = "menu_open"
     const val MENU_SELECTED = "menu_selected"
+    const val PAYMENT_SELECTED = "payment_selected"
+    const val PLAN_SELECTED = "plan_selected"
+    const val PACK_SUCCESS = "pack_success"
+    const val PACK_ERROR = "pack_error"
+    const val BEGIN_PURCHASE = "begin_purchase"
 }
