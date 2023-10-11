@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +10,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -18,6 +24,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 
 class ActivateTrialPackFragment : ChildDialogFragment() {
@@ -114,6 +121,9 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
                         )
+                        val selectedPremiumPac = viewModel.selectedPremiumPack.value!!
+                        val selectedDataPac = viewModel.selectedDataPackOption.value!!
+
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){

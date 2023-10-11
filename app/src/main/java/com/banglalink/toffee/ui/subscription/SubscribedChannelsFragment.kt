@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -110,6 +111,15 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             subscribedChannelInfo = info
             

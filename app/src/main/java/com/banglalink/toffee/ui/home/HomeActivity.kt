@@ -85,6 +85,7 @@ import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
@@ -171,7 +172,7 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-    
+
     private val gson = Gson()
     private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
@@ -210,8 +211,9 @@ class HomeActivity : PlayerPageActivity(),
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    var currentFragmentClassName: String ?= null
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
-    
+
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -284,6 +286,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -657,8 +668,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to currentFragmentClassName
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -771,8 +790,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -1049,7 +1068,7 @@ class HomeActivity : PlayerPageActivity(),
             viewModel.sendViewContentEvent(it)
         }
     }
-    
+
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1076,6 +1095,15 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     lifecycleScope.launch {
                         /**
                          * if the user is not logged in and video is full screen: exit full screen, update player size and minimize the player. delay some time before minimizing the player otherwise the player will not be half minimized.
@@ -1143,9 +1171,9 @@ class HomeActivity : PlayerPageActivity(),
             }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
     }
-    
+
     /**
-     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when 
+     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when
      * configuration changes navigate to the premium page or if not in fullscreen then navigate immediately.
      */
     private fun handleNavigateToPremiumPackList() {
@@ -1159,7 +1187,7 @@ class HomeActivity : PlayerPageActivity(),
             false
         }
     }
-    
+
     /**
      * keep the content in a live data. navigate to the premium page. if the user purchase the pack then play the content from the live data.
      */
@@ -2819,7 +2847,7 @@ class HomeActivity : PlayerPageActivity(),
             initMqtt()
         }
     }
-    
+
     private fun handleRefreshPageOnLogin() {
         mPref.preLoginDestinationId.value?.let {
             if (it == id.menu_channel) {
@@ -2882,7 +2910,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
     private fun clearDataOnLogOut() {
         mPref.mqttHost = ""
         mPref.phoneNumber = ""

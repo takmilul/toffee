@@ -13,6 +13,7 @@ import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -132,11 +133,11 @@ object ToffeeAnalytics {
         val commonParams = Bundle().apply {
             putString("app_version", CommonPreference.getInstance().appVersionName)
             putString("country", SessionPreference.getInstance().geoLocation)
-            putString("device_model", CommonPreference.getInstance().deviceName)
-            putString("gender", null)
-            putString("operating_system", System.getProperty("os.name"))
-            putString("OS_version", Build.VERSION.RELEASE)
-            putString("platform", "android")
+            putString("device_model", CommonPreference.getInstance().deviceName )
+//            putString("gender", null)
+            putString("operating_system", "Android")
+            putString("os_version", Build.VERSION.RELEASE)
+            putString("platform", "Android")
             putString("region", SessionPreference.getInstance().geoRegion)
         }
 
@@ -146,6 +147,13 @@ object ToffeeAnalytics {
             }
             mergedParams
         } ?: commonParams
+
+        // Replacing blank or null values with N/A
+        combinedParams.keySet().forEach {
+            if (combinedParams.getString(it).isNullOrBlank()) {
+                combinedParams.putString(it, "N/A")
+            }
+        }
 
         if (SessionPreference.getInstance().isFcmEventActive) {
             firebaseAnalytics.logEvent(event, combinedParams)

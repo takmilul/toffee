@@ -55,7 +55,8 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         super.onViewCreated(view, savedInstanceState)
         
         fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
-        
+
+        mPref.packSource.value = fromChannelItem
         if (fromChannelItem == true) {
             binding.packListHeader.setText(R.string.prem_content_bundle_title)
             mPref.clickedFromChannelItem.value = fromChannelItem
