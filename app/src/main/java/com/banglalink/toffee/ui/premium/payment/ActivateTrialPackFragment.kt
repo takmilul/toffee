@@ -110,6 +110,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                                 "validity" to selectedPremiumPack?.expiryDate,
                                 "provider" to "Trial",
                                 "type" to "trial",
+                                "reason" to "N/A",
                                 "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                             )
                         )
@@ -133,6 +134,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                                 "validity" to selectedPremiumPack?.expiryDate,
                                 "provider" to "Trial",
                                 "type" to "trial",
+                                "reason" to "Due to some technical error, the trial plan activation failed. Please retry.",
                                 "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                             )
                         )
@@ -158,6 +160,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                             "validity" to selectedPremiumPack?.expiryDate,
                             "provider" to "Trial",
                             "type" to "trial",
+                            "reason" to it.error.msg,
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                         )
                     )

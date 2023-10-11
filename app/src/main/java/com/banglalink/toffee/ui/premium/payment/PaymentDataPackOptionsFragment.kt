@@ -50,7 +50,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private var selectedPremiumPack: PremiumPack? = null
     private var selectedDataPackOption: PackPaymentMethod? = null
     private var ctaButtonValue=0
-    private var isPrepaid: String? = null
     private var subType: String? = null
     private var type: String? = null
     private var provider: String? = null
@@ -96,6 +95,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyNowButton.safeClick({
             progressDialog.show()
 
+            val subTypes = when (paymentName) {
+                "blPack" -> "balance"
+                "bkash" -> "BUY WITH BKASH"
+                "ssl" -> "BUY NOW"
+                "nagad" -> "BUY WITH NAGAD"
+                else -> null
+            }
+
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
@@ -108,7 +115,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "validity" to selectedPremiumPack?.expiryDate,
                     "provider" to provider,
                     "type" to type,
-                    "subtype" to subType,
+                    "subtype" to subTypes,
                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                     "discount" to null,
                 )
@@ -408,6 +415,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
+                                    "reason" to "N/A",
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -428,6 +436,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
+                                    "reason" to "Due to some technical issue, the data plan activation failed. Please retry.",
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -450,6 +459,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
+                                    "reason" to if (!mPref.isPrepaid) R.string.insufficient_balance_for_postpaid else R.string.insufficient_balance_subtitle,
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -480,6 +490,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "validity" to selectedPremiumPack?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
+                                    "reason" to R.string.due_some_technical_issue,
                                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
@@ -502,6 +513,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "validity" to selectedPremiumPack?.expiryDate,
                             "provider" to "Banglalink",
                             "type" to "data pack",
+                            "reason" to it.error.msg,
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                         )
                     )
