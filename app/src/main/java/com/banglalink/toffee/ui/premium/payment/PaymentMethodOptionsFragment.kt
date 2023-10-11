@@ -205,7 +205,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                  * These click handlers navigate to specific fragments based on the selected payment card.
                  */
 
-                val selectedPremiumPack = viewModel.selectedPremiumPack.value
                 subType = when {
                     (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "prepaid"
                     (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "postpaid"
@@ -219,8 +218,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PAYMENT_SELECTED,
                         bundleOf(
-                            "pack_ID" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "provider" to "Banglalink",
                             "type" to "data pack",
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
@@ -235,8 +234,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PAYMENT_SELECTED,
                         bundleOf(
-                            "pack_id" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "provider" to "bKash",
                             "type" to "wallet",
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
@@ -251,8 +250,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PAYMENT_SELECTED,
                         bundleOf(
-                            "pack_id" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "provider" to "SSL Wireless",
                             "type" to "aggregator",
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
@@ -267,8 +266,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PAYMENT_SELECTED,
                         bundleOf(
-                            "pack_id" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "provider" to "Banglalink",
                             "type" to "coupon",
                             "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",

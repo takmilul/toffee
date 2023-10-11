@@ -39,18 +39,16 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         else binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
 
         binding.enableNow.safeClick({
-            val selectedPremiumPack = viewModel.selectedPremiumPack.value
-            val selectedDataPackOption = viewModel.selectedDataPackOption.value
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
                 bundleOf(
                     "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to selectedPremiumPack?.id,
-                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
-                    "amount" to selectedDataPackOption?.packPrice,
-                    "validity" to selectedPremiumPack?.expiryDate,
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                     "provider" to "Trial",
                     "type" to "trial",
                     "subtype" to null,
@@ -97,17 +95,15 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        val selectedPremiumPack = viewModel.selectedPremiumPack.value
-                        val selectedDataPackOption = viewModel.selectedDataPackOption.value
                         // Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PACK_SUCCESS,
                             bundleOf(
-                                "pack_ID" to selectedPremiumPack?.id,
-                                "pack_name" to selectedPremiumPack?.packTitle,
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                 "currency" to "BDT",
-                                "amount" to selectedDataPackOption?.packPrice,
-                                "validity" to selectedPremiumPack?.expiryDate,
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                 "provider" to "Trial",
                                 "type" to "trial",
                                 "reason" to "N/A",
@@ -121,17 +117,15 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
-                        val selectedPremiumPack = viewModel.selectedPremiumPack.value
-                        val selectedDataPackOption = viewModel.selectedDataPackOption.value
                         // Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PACK_ERROR,
                             bundleOf(
-                                "pack_ID" to selectedPremiumPack?.id,
-                                "pack_name" to selectedPremiumPack?.packTitle,
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                 "currency" to "BDT",
-                                "amount" to selectedDataPackOption?.packPrice,
-                                "validity" to selectedPremiumPack?.expiryDate,
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                 "provider" to "Trial",
                                 "type" to "trial",
                                 "reason" to "Due to some technical error, the trial plan activation failed. Please retry.",
@@ -147,17 +141,15 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                     }
                 }
                 is Failure -> {
-                    val selectedPremiumPack = viewModel.selectedPremiumPack.value
-                    val selectedDataPackOption = viewModel.selectedDataPackOption.value
                     // Send Log to FirebaseAnalytics
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ERROR,
                         bundleOf(
-                            "pack_ID" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "currency" to "BDT",
-                            "amount" to selectedDataPackOption?.packPrice,
-                            "validity" to selectedPremiumPack?.expiryDate,
+                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                             "provider" to "Trial",
                             "type" to "trial",
                             "reason" to it.error.msg,

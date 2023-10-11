@@ -69,8 +69,6 @@ class PaymentWebViewDialog : DialogFragment() {
     private var statusMessage: String? = null
     private var transactionStatus: String? = null
     private var transactionIdentifier: String? = null
-    private var selectedPremiumPack: PremiumPack? = null
-    private var selectedDataPackOption: PackPaymentMethod? = null
     private var transactionId: String? = null
     private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
@@ -98,9 +96,6 @@ class PaymentWebViewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
-
-        selectedPremiumPack = viewModel.selectedPremiumPack.value
-        selectedDataPackOption = viewModel.selectedDataPackOption.value
 
         paymentId = arguments?.getString("paymentId")
         paymentTypeFromDataPackOptionsFragment = arguments?.getString("paymentType")
@@ -231,11 +226,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_SUCCESS,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "SSL Wireless",
                                                             "type" to "aggregator",
                                                             "reason" to "N/A",
@@ -251,11 +246,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_ERROR,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "SSL Wireless",
                                                             "type" to "aggregator",
                                                             "reason" to statusMessage,
@@ -278,11 +273,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_SUCCESS,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
                                                             "reason" to "N/A",
@@ -298,11 +293,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_ERROR,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
                                                             "reason" to statusMessage,
@@ -321,11 +316,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_ERROR,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
                                                             "reason" to statusMessage,
@@ -344,11 +339,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_ERROR,
                                                         bundleOf(
-                                                            "pack_ID" to selectedPremiumPack?.id,
-                                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                                             "currency" to "BDT",
-                                                            "amount" to selectedDataPackOption?.packPrice,
-                                                            "validity" to selectedPremiumPack?.expiryDate,
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                                             "provider" to "bKash",
                                                             "type" to "wallet",
                                                             "reason" to statusMessage,
@@ -394,11 +389,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                 ToffeeAnalytics.toffeeLogEvent(
                                     ToffeeEvents.PACK_ERROR,
                                     bundleOf(
-                                        "pack_ID" to selectedPremiumPack?.id,
-                                        "pack_name" to selectedPremiumPack?.packTitle,
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                         "currency" to "BDT",
-                                        "amount" to selectedDataPackOption?.packPrice,
-                                        "validity" to selectedPremiumPack?.expiryDate,
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                         "provider" to "Banglalink",
                                         "type" to "recharge",
                                         "reason" to string.payment_failed_message,
@@ -420,11 +415,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                 ToffeeAnalytics.toffeeLogEvent(
                                     ToffeeEvents.PACK_ERROR,
                                     bundleOf(
-                                        "pack_ID" to selectedPremiumPack?.id,
-                                        "pack_name" to selectedPremiumPack?.packTitle,
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                         "currency" to "BDT",
-                                        "amount" to selectedDataPackOption?.packPrice,
-                                        "validity" to selectedPremiumPack?.expiryDate,
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                         "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
                                         "type" to "wallet",
                                         "reason" to "Payment canceled by user",
@@ -482,11 +477,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                     ToffeeAnalytics.toffeeLogEvent(
                                         ToffeeEvents.PACK_ERROR,
                                         bundleOf(
-                                            "pack_ID" to selectedPremiumPack?.id,
-                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                             "currency" to "BDT",
-                                            "amount" to selectedDataPackOption?.packPrice,
-                                            "validity" to selectedPremiumPack?.expiryDate,
+                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                             "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
                                             "type" to "wallet",
                                             "reason" to statusMessage,
@@ -499,11 +494,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                     ToffeeAnalytics.toffeeLogEvent(
                                         ToffeeEvents.PACK_ERROR,
                                         bundleOf(
-                                            "pack_ID" to selectedPremiumPack?.id,
-                                            "pack_name" to selectedPremiumPack?.packTitle,
+                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                             "currency" to "BDT",
-                                            "amount" to selectedDataPackOption?.packPrice,
-                                            "validity" to selectedPremiumPack?.expiryDate,
+                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                             "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
                                             "type" to "wallet",
                                             "reason" to "Payment canceled by user",
@@ -661,11 +656,11 @@ class PaymentWebViewDialog : DialogFragment() {
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_SUCCESS,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
                                     "reason" to "N/A",
@@ -682,11 +677,11 @@ class PaymentWebViewDialog : DialogFragment() {
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
                                     "reason" to R.string.due_some_technical_issue,
@@ -732,15 +727,15 @@ class PaymentWebViewDialog : DialogFragment() {
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
                                 bundleOf(
-                                    "pack_id" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
                                     "provider" to "Banglalink",
                                     "type" to "recharge",
                                     "reason" to it.error.msg,
-                                    "nonBL" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 )
                             )
                             val args = bundleOf(

@@ -36,6 +36,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.gson.Gson
@@ -47,8 +48,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private var transactionIdentifier: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
-    private var selectedPremiumPack: PremiumPack? = null
-    private var selectedDataPackOption: PackPaymentMethod? = null
     private var ctaButtonValue=0
     private var subType: String? = null
     private var type: String? = null
@@ -68,9 +67,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hidePaymentOption()
-
-        selectedPremiumPack = viewModel.selectedPremiumPack.value
-        selectedDataPackOption = viewModel.selectedDataPackOption.value
 
         paymentName = arguments?.getString("paymentName", "") ?: ""
         prepareDataPackOptions()
@@ -103,16 +99,17 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 else -> null
             }
 
+            Log.i("gdrtgrtfg", viewModel.selectedPremiumPack.value.toString())
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
                 bundleOf(
                     "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to selectedPremiumPack?.id,
-                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
-                    "amount" to selectedDataPackOption?.packPrice,
-                    "validity" to selectedPremiumPack?.expiryDate,
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to subTypes,
@@ -143,11 +140,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 ToffeeEvents.BEGIN_PURCHASE,
                 bundleOf(
                     "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to selectedPremiumPack?.id,
-                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
-                    "amount" to selectedDataPackOption?.packPrice,
-                    "validity" to selectedPremiumPack?.expiryDate,
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "recharge",
@@ -163,11 +160,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 ToffeeEvents.BEGIN_PURCHASE,
                 bundleOf(
                     "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to selectedPremiumPack?.id,
-                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
-                    "amount" to selectedDataPackOption?.packPrice,
-                    "validity" to selectedPremiumPack?.expiryDate,
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "signin",
@@ -186,11 +183,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 ToffeeEvents.BEGIN_PURCHASE,
                 bundleOf(
                     "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to selectedPremiumPack?.id,
-                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
-                    "amount" to selectedDataPackOption?.packPrice,
-                    "validity" to selectedPremiumPack?.expiryDate,
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "sim",
@@ -408,11 +405,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_SUCCESS,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "N/A",
@@ -429,11 +426,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "Due to some technical issue, the data plan activation failed. Please retry.",
@@ -452,11 +449,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to if (!mPref.isPrepaid) R.string.insufficient_balance_for_postpaid else R.string.insufficient_balance_subtitle,
@@ -483,11 +480,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
                                 bundleOf(
-                                    "pack_ID" to selectedPremiumPack?.id,
-                                    "pack_name" to selectedPremiumPack?.packTitle,
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
-                                    "amount" to selectedDataPackOption?.packPrice,
-                                    "validity" to selectedPremiumPack?.expiryDate,
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to R.string.due_some_technical_issue,
@@ -506,11 +503,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ERROR,
                         bundleOf(
-                            "pack_ID" to selectedPremiumPack?.id,
-                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "currency" to "BDT",
-                            "amount" to selectedDataPackOption?.packPrice,
-                            "validity" to selectedPremiumPack?.expiryDate,
+                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
                             "provider" to "Banglalink",
                             "type" to "data pack",
                             "reason" to it.error.msg,
@@ -689,8 +686,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     }
                 }
             }
-            selectedPremiumPack = viewModel.selectedPremiumPack.value
-            selectedDataPackOption = viewModel.selectedDataPackOption.value
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPackOption = viewModel.selectedDataPackOption.value
             
             val request = RechargeByBkashRequest(
                 customerId = mPref.customerId,
@@ -785,11 +782,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         ToffeeAnalytics.toffeeLogEvent(
             ToffeeEvents.PLAN_SELECTED,
             bundleOf(
-                "pack_ID" to selectedPremiumPack?.id,
-                "pack_name" to selectedPremiumPack?.packTitle,
-                "plan_details " to selectedPremiumPack?.packDetail,
+                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                "plan_details " to viewModel.selectedDataPackOption.value?.packDetails.toString(),
                 "currency" to "BDT",
-                "amount" to selectedDataPackOption?.packPrice,
+                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
                 "provider" to provider,
                 "type" to type,
                 "subtype" to subType,
