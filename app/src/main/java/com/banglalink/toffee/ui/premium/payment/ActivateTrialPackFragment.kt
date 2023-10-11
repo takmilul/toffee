@@ -93,18 +93,6 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         val selectedPremiumPac = viewModel.selectedPremiumPack.value!!
                         val selectedDataPac = viewModel.selectedDataPackOption.value!!
 
-                        ToffeeAnalytics.toffeeLogEvent(
-                            ToffeeEvents.TRAIL_ACTIVATE, bundleOf(
-                                "pack_ID" to selectedPremiumPac.id,
-                                "pack_name" to selectedPremiumPac.packTitle,
-                                "currency" to "BDT",
-                                "amount" to selectedDataPac.packPrice,
-                                "validity" to selectedPremiumPac.expiryDate,
-                                "non-BL" to (mPref.isBanglalinkNumber == "false")
-                            )
-                        )
-
-
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
