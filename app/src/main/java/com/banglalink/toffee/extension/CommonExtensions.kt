@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -147,6 +148,18 @@ fun Activity.checkVerification(
 }
 
 fun Activity.handleReport(item: ChannelInfo) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "report_content",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         val fragment =
             item.duration?.let { durations ->
@@ -160,6 +173,18 @@ fun Activity.handleReport(item: ChannelInfo) {
 }
 
 fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "add_to_playlist",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         if (this is HomeActivity) {
             val args = Bundle().also {
@@ -186,6 +211,18 @@ fun Activity.handleUrlShare(url: String) {
 }
 
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "add_to_favorites",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {

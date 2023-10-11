@@ -59,8 +59,10 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
         mPref.packSource.value = fromChannelItem
         if (fromChannelItem == true) {
             binding.packListHeader.setText(R.string.prem_content_bundle_title)
+            mPref.clickedFromChannelItem.value = fromChannelItem
         } else {
             binding.packListHeader.setText(R.string.premium_pack_list_title)
+            mPref.clickedFromChannelItem.value = false
         }
         
         binding.progressBar.load(R.drawable.content_loader)

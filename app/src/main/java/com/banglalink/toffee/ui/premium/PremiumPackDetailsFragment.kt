@@ -43,8 +43,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-    fun shouldInterceptBackPress() = true
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
         return binding.root
@@ -53,8 +52,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-
-
+        
         requireActivity().title = "Pack Details"
         
 //        if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
@@ -84,6 +82,15 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 
                 payNowButton.safeClick({
                     mPref.signingFromPrem.value = true
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "premium_pack_menu",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     requireActivity().checkVerification {
                         progressDialog.show()
                         if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
@@ -127,7 +134,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ABORT, bundleOf(
                             "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                            "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
                             "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
                             "mno" to if (mPref.isBanglalinkNumber == "false") "Non-Bl" else "Bl",
                             "reason" to "content",
@@ -143,8 +150,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
 
 
     }
-
-
+    
     private fun observeMnpStatus() {
         observe(viewModel.mnpStatusLiveDataForPaymentDetail) { response ->
             when (response) {
@@ -268,7 +274,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ACTIVE, bundleOf(
                             "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id,
+                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
                             "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle,
                             "mno" to if (mPref.isBanglalinkNumber == "false") "Non-Bl" else "Bl",
                         )
@@ -319,7 +325,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()

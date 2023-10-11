@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
@@ -130,29 +131,82 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     override fun onClick(v: View?) {
-        requireActivity().checkVerification {
-            handleClick(v)
-        }
+        handleClick(v)
     }
     
     private fun handleClick(v: View?) {
         when (v) {
-            _binding?.channelDetailView?.addBioButton -> { navigateToEditChannel() }
-            _binding?.channelDetailView?.editButton -> { navigateToEditChannel() }
-            _binding?.channelDetailView?.ratingButton -> { showRatingDialog() }
+            _binding?.channelDetailView?.addBioButton -> {
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN,
+                        bundleOf(
+                            "source" to "add_channel_bio",
+                            "method" to "mobile"
+                        )
+                    )
+                }
+                requireActivity().checkVerification { navigateToEditChannel() }
+            }
+            _binding?.channelDetailView?.editButton -> {
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN,
+                        bundleOf(
+                            "source" to "create_channel",
+                            "method" to "mobile"
+                        )
+                    )
+                }
+                requireActivity().checkVerification { navigateToEditChannel() }
+            }
+            _binding?.channelDetailView?.ratingButton -> {
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN,
+                        bundleOf(
+                            "source" to "rate_channel",
+                            "method" to "mobile"
+                        )
+                    )
+                }
+                requireActivity().checkVerification { showRatingDialog() }
+            }
             _binding?.channelDetailView?.analyticsButton -> {
-                if (channelId > 0) {
-                    showCreatePlaylistDialog()
-                } else {
-                    requireContext().showToast(getString(R.string.create_channel_msg))
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN,
+                        bundleOf(
+                            "source" to "create_channel_playlist",
+                            "method" to "mobile"
+                        )
+                    )
+                }
+                requireActivity().checkVerification {
+                    if (channelId > 0) {
+                        showCreatePlaylistDialog()
+                    } else {
+                        requireContext().showToast(getString(R.string.create_channel_msg))
+                    }
                 }
             }
             _binding?.channelDetailView?.subscriptionButton -> {
-                if (isSubscribed == 0) {
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
-                } else {
-                    UnSubscribeDialog.show(requireContext()) {
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), -1)
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN,
+                        bundleOf(
+                            "source" to "follow_channel",
+                            "method" to "mobile"
+                        )
+                    )
+                }
+                requireActivity().checkVerification {
+                    if (isSubscribed == 0) {
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
+                    } else {
+                        UnSubscribeDialog.show(requireContext()) {
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), -1)
+                        }
                     }
                 }
             }
