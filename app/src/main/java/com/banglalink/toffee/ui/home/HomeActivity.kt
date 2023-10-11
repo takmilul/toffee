@@ -85,6 +85,7 @@ import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
@@ -171,18 +172,15 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-    
     private val gson = Gson()
-    private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
-    private var cInfo: ChannelInfo? = null
+    private var bubbleFifaIntent: Intent? = null
+    private var bubbleRamadanIntent: Intent? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
-    private var bubbleFifaIntent: Intent? = null
     @Inject lateinit var bindingUtil: BindingUtil
-    private var bubbleRamadanIntent: Intent? = null
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
     private var playlistShareableUrl: String? = null
@@ -199,19 +197,18 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var tvChannelsRepo: TVChannelRepository
     @Inject lateinit var inAppMessageParser: InAppMessageParser
-    private var shouldNavigateToPremiumPageAfterConfigChange = false
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
-    private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
-    
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    var currentFragmentClassName: String ?= null
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -284,6 +281,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -530,14 +536,6 @@ class HomeActivity : PlayerPageActivity(),
             binding.playerView.moveController(-1.0f)
         }
         updateFullScreenState()
-        if (shouldNavigateToPremiumPageAfterConfigChange) {
-            shouldNavigateToPremiumPageAfterConfigChange = false
-            lifecycleScope.launch {
-                delay(800)
-                minimizePlayer()
-                navigateToPremiumPackList()
-            }
-        }
     }
     
     @Deprecated("Deprecated in Java")
@@ -657,8 +655,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to currentFragmentClassName
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -691,7 +697,6 @@ class HomeActivity : PlayerPageActivity(),
         return super.onOptionsItemSelected(item)
     }
     
-    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -772,8 +777,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -1051,6 +1056,9 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
+    var dInfo: Any? = null
+    var cInfo: ChannelInfo? = null
+    
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1077,26 +1085,23 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
-                    lifecycleScope.launch {
-                        /**
-                         * if the user is not logged in and video is full screen: exit full screen, update player size and minimize the player. delay some time before minimizing the player otherwise the player will not be half minimized.
-                         */
-                        if (!mPref.isVerifiedUser && binding.playerView.isFullScreen) {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                            binding.playerView.toggleFullScreenStatus(false)
-                            updateFullScreenState()
-                            delay(800)
-                            minimizePlayer()
-                        }
-                        checkVerification {
-                            checkPurchaseBeforePlay(it, detailsInfo) {
-                                cInfo = it
-                                dInfo = detailsInfo
-                                if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
-                                    viewModel.getMnpStatus()
-                                } else {
-                                    viewModel.getPackStatus(channelInfo.getContentId().toInt())
-                                }
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
+                    checkVerification {
+                        checkPurchaseBeforePlay(it, detailsInfo) {
+                            cInfo = it
+                            dInfo = detailsInfo
+                            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                                viewModel.getMnpStatus()
+                            } else {
+                                viewModel.getPackStatus(channelInfo.getContentId().toInt())
                             }
                         }
                     }
@@ -1116,7 +1121,6 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
-                else -> {}
             }
         }
     }
@@ -1130,49 +1134,40 @@ class HomeActivity : PlayerPageActivity(),
                             mPref.activePremiumPackList.value = response.data
                             cInfo?.let {
                                 checkPurchaseBeforePlay(it, dInfo) {
-                                    handleNavigateToPremiumPackList()
+                                    mPref.prePurchaseClickedContent.value = cInfo
+                                    navController.navigatePopUpTo(
+                                        resId = id.premiumPackListFragment,
+                                        args = bundleOf(
+                                            "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
+                                            "clickedFromChannelItem" to true
+                                        )
+                                    )
                                 }
                             } ?: showToast(getString(R.string.try_again_message))
                         } else {
-                            handleNavigateToPremiumPackList()
+                            mPref.prePurchaseClickedContent.value = cInfo
+                            navController.navigatePopUpTo(
+                                resId = id.premiumPackListFragment,
+                                args = bundleOf(
+                                    "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
+                                    "clickedFromChannelItem" to true
+                                )
+                            )
                         }
                     }
                     is Failure -> {
-                        handleNavigateToPremiumPackList()
+                        mPref.prePurchaseClickedContent.value = cInfo
+                        navController.navigatePopUpTo(
+                            resId = id.premiumPackListFragment,
+                            args = bundleOf(
+                                "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
+                                "clickedFromChannelItem" to true
+                            )
+                        )
                     }
                 }
             }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
-    }
-    
-    /**
-     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when 
-     * configuration changes navigate to the premium page or if not in fullscreen then navigate immediately.
-     */
-    private fun handleNavigateToPremiumPackList() {
-        shouldNavigateToPremiumPageAfterConfigChange = if (binding.playerView.isFullScreen) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            binding.playerView.toggleFullScreenStatus(false)
-            updateFullScreenState()
-            true
-        } else {
-            navigateToPremiumPackList()
-            false
-        }
-    }
-    
-    /**
-     * keep the content in a live data. navigate to the premium page. if the user purchase the pack then play the content from the live data.
-     */
-    private fun navigateToPremiumPackList() {
-        mPref.prePurchaseClickedContent.value = cInfo
-        navController.navigatePopUpTo(
-            resId = id.premiumPackListFragment,
-            args = bundleOf(
-                "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
-                "clickedFromChannelItem" to true
-            )
-        )
     }
     
     private fun checkPurchaseBeforePlay(
@@ -2807,30 +2802,35 @@ class HomeActivity : PlayerPageActivity(),
                     mPref.postLoginEventAction.value?.invoke()
                     delay(300)
                     if (mPref.shouldReloadAfterLogin.value == true) {
-                        handleRefreshPageOnLogin()
+                        mPref.preLoginDestinationId.value?.let {
+                            if (it == R.id.menu_channel) {
+                                navController.popBackStack(it, true)
+                                val isMyChannel = channelOwnerId == mPref.customerId
+                                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                            } else {
+                                navController.popBackStack(it, true)
+                                navController.navigateTo(it)
+                            }
+                        }
                     }
                 } else {
                     if (mPref.shouldReloadAfterLogin.value == true) {
-                        handleRefreshPageOnLogin()
+                        mPref.preLoginDestinationId.value?.let {
+                            if (it == R.id.menu_channel) {
+                                navController.popBackStack(it, true)
+                                val isMyChannel = channelOwnerId == mPref.customerId
+                                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                            } else {
+                                navController.popBackStack(it, true)
+                                navController.navigateTo(it)
+                            }
+                        }
                     }
                     mPref.postLoginEventAction.value?.invoke()
                 }
                 mPref.shouldReloadAfterLogin.value = false
             }
             initMqtt()
-        }
-    }
-    
-    private fun handleRefreshPageOnLogin() {
-        mPref.preLoginDestinationId.value?.let {
-            if (it == id.menu_channel) {
-                navController.popBackStack(it, true)
-                val isMyChannel = channelOwnerId == mPref.customerId
-                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
-            } else {
-                navController.popBackStack(it, true)
-                navController.navigateTo(it)
-            }
         }
     }
     
@@ -2856,7 +2856,7 @@ class HomeActivity : PlayerPageActivity(),
                         clearDataOnLogOut()
                         
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
-                            handleReloadPageOnLogout()
+                            handleReloadPage()
                         }
                         mPref.shouldIgnoreReloadAfterLogout.value = false
                         viewModel.isLogoutCompleted.value = true
@@ -2883,7 +2883,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
     private fun clearDataOnLogOut() {
         mPref.mqttHost = ""
         mPref.phoneNumber = ""
@@ -2915,7 +2915,7 @@ class HomeActivity : PlayerPageActivity(),
         mPref.profileImageUrlLiveData.postValue(drawable.ic_menu_profile)
     }
     
-    private fun handleReloadPageOnLogout() {
+    private fun handleReloadPage() {
         when (navController.currentDestination?.id) {
             id.menu_channel -> {
                 if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
