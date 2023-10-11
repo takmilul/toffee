@@ -834,6 +834,9 @@ abstract class PlayerPageActivity :
             onContentExpired()
             return@launch
         }
+        if (BuildConfig.PACKAGE_NAME != BuildConfig.APPLICATION_ID) {
+            return@launch
+        }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
         var mediaItem = if (isDrmActive) {
             getDrmMediaItem(channelInfo)

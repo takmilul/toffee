@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -23,14 +23,15 @@ android {
     val properties = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
     }
-    val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
-    val facebookAppId: String = properties.getProperty("facebookAppId")
-    val facebookClientToken: String = properties.getProperty("facebookClientToken")
     val adsAppId: String = properties.getProperty("adsAppId")
+    val packageName: String = properties.getProperty("packageName")
+    val facebookAppId: String = properties.getProperty("facebookAppId")
     val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
+    val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
+    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
+    val facebookClientToken: String = properties.getProperty("facebookClientToken")
     val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
     val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
-    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
 //    val fireworkOAuthId: String = gradleLocalProperties(rootDir).getProperty("firework.oAuthId")
     
     defaultConfig {
@@ -60,6 +61,7 @@ android {
         create("mobile") {
             dimension = "lib"
             buildConfigField("int", "DEVICE_TYPE", "1")
+            buildConfigField("String", "PACKAGE_NAME", packageName)
             buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
             buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
             buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)

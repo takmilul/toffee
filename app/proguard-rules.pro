@@ -22,7 +22,7 @@
 
 #********************************Start rules for gson****************************************#
 
--repackageclasses
+#-repackageclasses
 -optimizationpasses 5
 -optimizations class/marking/final
 -optimizations field/marking/private
@@ -39,6 +39,10 @@
 -dontwarn com.yalantis.ucrop**
 -keep class com.yalantis.ucrop** { *; }
 -keep interface com.yalantis.ucrop** { *; }
+
+-keepclassmembers class * extends androidx.constraintlayout.motion.widget.Key {
+  public <init>();
+}
 
 #-keep class com.banglalink.toffee.ui.common** { *; }
 #-keep class com.banglalink.toffee.ui.player.** { <fields>; }
@@ -148,5 +152,5 @@
 -keep class net.gotev.uploadservice.schemehandlers.ContentResolverSchemeHandler { *; }
 
 -keep class com.google.api.services.pubsub.model.PublishResponse { *; }
-
 -keep class com.google.api.client.json.GenericJson { *; }
+-keep class com.google.api.client.auth.oauth2.TokenErrorResponse { *; }
