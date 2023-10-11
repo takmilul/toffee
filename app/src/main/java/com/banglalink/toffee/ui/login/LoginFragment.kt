@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -23,6 +24,7 @@ import com.banglalink.toffee.databinding.FragmentLoginDialogBinding
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.premium.PremiumViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -37,6 +39,7 @@ class LoginFragment : DialogFragment(), DefaultLifecycleObserver {
     private lateinit var navController: NavController
     @Inject lateinit var tVChannelRepository: TVChannelRepository
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModel by activityViewModels<PremiumViewModel>()
     
     companion object {
         @JvmStatic
@@ -50,6 +53,22 @@ class LoginFragment : DialogFragment(), DefaultLifecycleObserver {
         ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG)
         binding.closeIv.safeClick({
             runCatching {
+
+                //sends firebase event for users aborting premPack after signing popup.
+                if (mPref.signingFromPrem.value==true){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ABORT, bundleOf(
+                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id,
+                            "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle,
+                            "mno" to if (mPref.isBanglalinkNumber == "false") "Non-Bl" else "Bl",
+                            "reason" to "signin",
+                            "action" to "close button in sign in modal"
+                        )
+                    )
+                    mPref.signingFromPrem.value=false
+                }
+
                 dismiss()
             }
         })
