@@ -44,4 +44,6 @@ object ToffeeEvents {
     const val UGC_UPLOAD ="ugc_upload"
     const val SUPPORTED_TLS = "supported_TLS"
     const val PROMOTION = "in_app_promos"
+    const val MENU_OPEN = "menu_open"
+    const val MENU_SELECTED = "menu_selected"
 }

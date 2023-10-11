@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
@@ -76,6 +78,15 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 }
                 
                 payNowButton.safeClick({
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "premium_pack_menu",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     requireActivity().checkVerification {
                         progressDialog.show()
                         if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {

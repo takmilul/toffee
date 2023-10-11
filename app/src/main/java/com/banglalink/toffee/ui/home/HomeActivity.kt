@@ -85,6 +85,7 @@ import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
@@ -207,7 +208,7 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
-    
+    var currentFragmentClassName: String ?= null
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -280,6 +281,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -645,8 +655,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to currentFragmentClassName
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -759,8 +777,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -1067,6 +1085,15 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     checkVerification {
                         checkPurchaseBeforePlay(it, detailsInfo) {
                             cInfo = it
@@ -2856,7 +2883,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
     private fun clearDataOnLogOut() {
         mPref.mqttHost = ""
         mPref.phoneNumber = ""

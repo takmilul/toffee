@@ -120,6 +120,15 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             if (isOwner) {
                 emptyViewLabel.text = getString(string.empty_playlist_msg_owner)
                 createPlaylistButton.setOnClickListener {
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN,
+                            bundleOf(
+                                "source" to "create_new_creators_playlist",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     requireActivity().checkVerification {
                         if (mPref.channelId > 0) {
                             if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
