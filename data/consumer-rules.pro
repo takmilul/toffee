@@ -1,3 +1,6 @@
+
+#********************************Start rules for gson****************************************#
+
 # Gson uses generic type information stored in a class file when working with fields. Proguard
 # removes such information by default, so configure it to keep all of it.
 -keepattributes Signature
@@ -27,15 +30,15 @@
 -dontwarn org.apache.http.**
 
 # Pubsub & Google apis
-#-keep class com.google.api.services.pubsub.** { <fields>; }
-#-keep class com.google.api.client.** { <fields>; }
-#-keep class com.google.api.client.googleapis.** { <fields>; }
+-keep class com.google.api.services.pubsub.** { <fields>; }
+-keep class com.google.api.client.** { <fields>; }
+-keep class com.google.api.client.googleapis.** { <fields>; }
 
-#-keepclassmembers class * extends java.lang.Enum {
-#    <fields>;
-#    public static **[] values();
-#    public static ** valueOf(java.lang.String);
-#}
+-keepclassmembers class * extends java.lang.Enum {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
 #-keep class com.google.obf.** { *; }
 #-keep interface com.google.obf.** { *; }

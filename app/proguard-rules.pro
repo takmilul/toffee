@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#********************************Start rules for gson****************************************#
+#********************************Start rules****************************************#
 
 #-repackageclasses
 -optimizationpasses 5
@@ -149,6 +149,8 @@
 
 -keep class net.gotev.uploadservice.UploadService { *; }
 -keep class net.gotev.uploadservice.protocols.binary.BinaryUploadTask { *; }
+-keep class net.gotev.uploadservice.protocols.multipart.MultipartUploadTask { *; }
+-keep class net.gotev.uploadservice.schemehandlers.FileSchemeHandler { *; }
 -keep class net.gotev.uploadservice.schemehandlers.ContentResolverSchemeHandler { *; }
 
 -keep class com.google.api.services.pubsub.model.PublishResponse { *; }
