@@ -22,6 +22,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
@@ -78,7 +79,10 @@ class SplashScreenFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    
+        
+        if (BuildConfig.PACKAGE_NAME != BuildConfig.APPLICATION_ID) {
+            requireActivity().finishAffinity()
+        }
         observeLoadingProgress()
         
         binding.splashScreenMotionLayout.onTransitionCompletedListener {

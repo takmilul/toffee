@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true">
     
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -72,8 +73,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:translationZ="9dp"
-                dragger_layout:bottom_view_id="@+id/details_viewer"
-                dragger_layout:top_view_id="@+id/player_view">
+                dragger_layout:top_view_id="@+id/player_view"
+                dragger_layout:bottom_view_id="@+id/details_viewer" >
+                
+                <com.banglalink.toffee.ui.player.ExoMediaController4
+                    android:id="@+id/player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/black"
+                    app:show_buffering="always"
+                    app:shutter_background_color="#000000"
+                    app:surface_type="surface_view" />
                 
                 <FrameLayout
                     android:id="@+id/details_viewer"
@@ -84,15 +94,6 @@
                     android:clickable="true"
                     android:focusable="true" />
                 
-                <com.banglalink.toffee.ui.player.ExoMediaController4
-                    android:id="@+id/player_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/black"
-                    app:show_buffering="always"
-                    app:shutter_background_color="#000000"
-                    app:surface_type="surface_view" />
-            
             </com.banglalink.toffee.ui.widget.DraggerLayout>
         </RelativeLayout>
         

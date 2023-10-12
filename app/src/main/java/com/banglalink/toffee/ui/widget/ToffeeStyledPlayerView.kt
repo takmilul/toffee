@@ -776,13 +776,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     
     private val scaleType: Int
         get() {
-//            return if (isLinearChannel || !isUgc)
-//                AspectRatioFrameLayout.RESIZE_MODE_FILL
-//            else if (isFullScreen)
-//                AspectRatioFrameLayout.RESIZE_MODE_FIT
-//            else
-//                AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
-            return if (isFullScreen)
+            return if (isLinearChannel || !isUgc)
+                AspectRatioFrameLayout.RESIZE_MODE_FILL
+            else if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
             else
                 AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
