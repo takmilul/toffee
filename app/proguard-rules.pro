@@ -22,7 +22,7 @@
 
 #********************************Start rules****************************************#
 
-#-repackageclasses
+-repackageclasses
 -optimizationpasses 5
 -optimizations class/marking/final
 -optimizations field/marking/private
@@ -95,13 +95,6 @@
 -dontwarn com.medallia.**
 -keep class com.conviva.** { *; }
 
--keep class okhttp3.** { *; }
--dontwarn okhttp3.**
--dontwarn okio.**
-
--keep class retrofit2.** { *; }
--dontwarn retrofit2.**
-
 #-keep class com.google.protobuf.** { *; }
 #-keep class com.google.android.gms.** { *; }
 #-keep class com.google.firebase.** { *; }
@@ -153,6 +146,6 @@
 -keep class net.gotev.uploadservice.schemehandlers.FileSchemeHandler { *; }
 -keep class net.gotev.uploadservice.schemehandlers.ContentResolverSchemeHandler { *; }
 
--keep class com.google.api.services.pubsub.model.PublishResponse { *; }
 -keep class com.google.api.client.json.GenericJson { *; }
+-keep class com.google.api.services.pubsub.model.PublishResponse { *; }
 -keep class com.google.api.client.auth.oauth2.TokenErrorResponse { *; }
