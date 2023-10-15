@@ -131,9 +131,8 @@ object ToffeeAnalytics {
             putString("app_version", CommonPreference.getInstance().appVersionName)
             putString("country", SessionPreference.getInstance().geoLocation)
             putString("device_model", CommonPreference.getInstance().deviceName )
-//            putString("gender", null)
             putString("operating_system", "Android")
-            putString("os_version", Build.VERSION.RELEASE)
+            putString("OS_version", Build.VERSION.RELEASE)
             putString("platform", "Android")
             putString("region", SessionPreference.getInstance().geoRegion)
         }

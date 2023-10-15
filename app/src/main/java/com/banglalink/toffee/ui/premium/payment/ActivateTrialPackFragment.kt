@@ -45,19 +45,28 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         if (viewModel.selectedDataPackOption.value?.packDuration==1)  binding.trialValidity.text = String.format(getString(R.string.single_day_trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
         else binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
 
-
         binding.enableNow.safeClick({
+            // Send Log to FirebaseAnalytics
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.BEGIN_PURCHASE,
+                bundleOf(
+                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                    "currency" to "BDT",
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                    "provider" to "Trial",
+                    "type" to "trial",
+                    "subtype" to null,
+                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                    "discount" to null,
+                )
+            )
             progressDialog.show()
             activateTrialPack()
         })
-        binding.backImg.safeClick({
-            viewModel.clickableAdInventories.value?.let {
-                this.closeDialog()
-                viewModel.clickableAdInventories.value = null
-            } ?: run {
-                findNavController().navigateTo(R.id.paymentMethodOptions)
-            }
-        })
+        binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
         observeActivateTrialPack()
@@ -93,6 +102,21 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PACK_SUCCESS,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "currency" to "BDT",
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                "provider" to "Trial",
+                                "type" to "trial",
+                                "reason" to "N/A",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            )
+                        )
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
@@ -103,6 +127,21 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PACK_ERROR,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "currency" to "BDT",
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                "provider" to "Trial",
+                                "type" to "trial",
+                                "reason" to "Due to some technical error, the trial plan activation failed. Please retry.",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            )
+                        )
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Trial Plan Activation Failed!",
@@ -112,6 +151,21 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                     }
                 }
                 is Failure -> {
+                    // Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ERROR,
+                        bundleOf(
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            "currency" to "BDT",
+                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                            "provider" to "Trial",
+                            "type" to "trial",
+                            "reason" to it.error.msg,
+                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                        )
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }

@@ -83,85 +83,67 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.recyclerView.setPadding(0, 0, 0, 24)
         
         binding.backImg.safeClick({
-            viewModel.clickableAdInventories.value?.let {
-                this.closeDialog()
-                viewModel.clickableAdInventories.value = null
-            } ?: run {
-                findNavController().popBackStack()
-            }
+            findNavController().popBackStack()
         })
         binding.termsAndConditionsTwo.safeClick({
             showTermsAndConditionDialog()
         })
         binding.buyNowButton.safeClick({
-            requireActivity().checkVerification {
-                progressDialog.show()
+            progressDialog.show()
 
-                val subTypes = when (paymentName) {
-                    "blPack" -> "balance"
-                    "bkash" -> "BUY WITH BKASH"
-                    "ssl" -> "BUY NOW"
-                    "nagad" -> "BUY WITH NAGAD"
-                    else -> null
-                }
-
-                Log.i("gdrtgrtfg", viewModel.selectedPremiumPack.value.toString())
-                // Send Log to FirebaseAnalytics
-                ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.BEGIN_PURCHASE,
-                    bundleOf(
-                        "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        "currency" to "BDT",
-                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
-                        "provider" to provider,
-                        "type" to type,
-                        "subtype" to subTypes,
-                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
-                        "discount" to null,
-                    )
+            // Send Log to FirebaseAnalytics
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.BEGIN_PURCHASE,
+                bundleOf(
+                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                    "currency" to "BDT",
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                    "provider" to provider,
+                    "type" to type,
+                    "subtype" to if(paymentName == "blPack") "balance" else null,
+                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                    "discount" to null,
                 )
+            )
 
-                // Determine the payment method based on the provided paymentName
-                when (paymentName) {
-                    "bkash" -> {
-                        // Initiate the Subscriber Payment Initialization for bKash
-                        callAndObserveSubscriberPaymentInit(paymentType = "bkash")
-                    }
-                    "ssl" -> {
-                        // Initiate the Subscriber Payment Initialization for SSL
-                        callAndObserveSubscriberPaymentInit(paymentType = "ssl")
-                    }
-                    "blPack" -> {
-                        // Purchase a Banglalink data pack
-                        purchaseBlDataPack()
-                    }
+            // Determine the payment method based on the provided paymentName
+            when (paymentName) {
+                "bkash" -> {
+                    // Initiate the Subscriber Payment Initialization for bKash
+                    callAndObserveSubscriberPaymentInit(paymentType = "bkash")
+                }
+                "ssl" -> {
+                    // Initiate the Subscriber Payment Initialization for SSL
+                    callAndObserveSubscriberPaymentInit(paymentType = "ssl")
+                }
+                "blPack" -> {
+                    // Purchase a Banglalink data pack
+                    purchaseBlDataPack()
                 }
             }
         })
         binding.buyWithRechargeButton.safeClick({
-            requireActivity().checkVerification {
-                // Send Log to FirebaseAnalytics
-                ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.BEGIN_PURCHASE,
-                    bundleOf(
-                        "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        "currency" to "BDT",
-                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
-                        "provider" to provider,
-                        "type" to type,
-                        "subtype" to "recharge",
-                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
-                        "discount" to null,
-                    )
+            // Send Log to FirebaseAnalytics
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.BEGIN_PURCHASE,
+                bundleOf(
+                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                    "currency" to "BDT",
+                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                    "provider" to provider,
+                    "type" to type,
+                    "subtype" to "recharge",
+                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                    "discount" to null,
                 )
-                callAndObserveRechargeByBkash()
-            }
+            )
+            callAndObserveRechargeByBkash()
         })
         binding.signInButton.safeClick({
             // Send Log to FirebaseAnalytics
@@ -173,7 +155,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "signin",
@@ -196,7 +178,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "sim",
@@ -351,7 +333,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         binding.errorMessageTextView.text = String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid")
                         binding.emptyView.show()
                         binding.contentView.hide()
-                        hidePaymentOption()
                     }
                 } else {
                     if (!prePaid.isNullOrEmpty()) {
@@ -419,7 +400,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "N/A",
@@ -440,7 +421,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "Due to some technical issue, the data plan activation failed. Please retry.",
@@ -463,7 +444,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to if (!mPref.isPrepaid) R.string.insufficient_balance_for_postpaid else R.string.insufficient_balance_subtitle,
@@ -494,7 +475,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to R.string.due_some_technical_issue,
@@ -517,7 +498,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "currency" to "BDT",
                             "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                             "provider" to "Banglalink",
                             "type" to "data pack",
                             "reason" to it.error.msg,
