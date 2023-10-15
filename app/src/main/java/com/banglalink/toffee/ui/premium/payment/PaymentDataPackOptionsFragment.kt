@@ -91,15 +91,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyNowButton.safeClick({
             progressDialog.show()
 
-            val subTypes = when (paymentName) {
-                "blPack" -> "balance"
-                "bkash" -> "BUY WITH BKASH"
-                "ssl" -> "BUY NOW"
-                "nagad" -> "BUY WITH NAGAD"
-                else -> null
-            }
-
-            Log.i("gdrtgrtfg", viewModel.selectedPremiumPack.value.toString())
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
@@ -109,10 +100,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
-                    "subtype" to subTypes,
+                    "subtype" to if(paymentName == "blPack") "balance" else null,
                     "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                     "discount" to null,
                 )
@@ -144,7 +135,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "recharge",
@@ -164,7 +155,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "signin",
@@ -187,7 +178,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                     "currency" to "BDT",
                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "sim",
@@ -409,7 +400,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "N/A",
@@ -430,7 +421,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "Due to some technical issue, the data plan activation failed. Please retry.",
@@ -453,7 +444,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to if (!mPref.isPrepaid) R.string.insufficient_balance_for_postpaid else R.string.insufficient_balance_subtitle,
@@ -484,7 +475,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     "currency" to "BDT",
                                     "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to R.string.due_some_technical_issue,
@@ -507,7 +498,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                             "currency" to "BDT",
                             "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            "validity" to viewModel.selectedPremiumPack.value?.expiryDate.toString(),
+                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
                             "provider" to "Banglalink",
                             "type" to "data pack",
                             "reason" to it.error.msg,
