@@ -108,8 +108,10 @@ class ChannelStickyListAdapter(
         bindingUtil.bindChannel(liveTvViewHolder.icon, item)
         
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
+//            liveTvViewHolder.icon.borderWidth = 4.px
             liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.selected_channel_bg)
         } else {
+//            liveTvViewHolder.icon.borderWidth = 0
             liveTvViewHolder.icon.background = ContextCompat.getDrawable(context, R.drawable.circular_white_bg)
         }
     }
