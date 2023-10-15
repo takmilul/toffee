@@ -11,6 +11,12 @@ plugins {
     alias(libs.plugins.com.google.dagger.hilt.android) apply false
 }
 
+buildscript {
+    dependencies {
+        classpath(libs.conviva.tracker.plugin)
+    }
+}
+
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }

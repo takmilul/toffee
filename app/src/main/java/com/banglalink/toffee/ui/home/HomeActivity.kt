@@ -132,6 +132,8 @@ import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
+import com.conviva.apptracker.ConvivaAppAnalytics
+import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -2622,9 +2624,21 @@ class HomeActivity : PlayerPageActivity(),
 //                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
 //                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
 //                )
-//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST), settings)
+//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
+//                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+//                    applicationContext,
+//                    BuildConfig.CONVIVA_CUSTOMER_KEY_TEST,
+//                    "Toffee Android"
+//                )
+//                tracker?.subject?.userId = mPref.customerId.toString()
             } else {
                 ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
+                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+                    applicationContext,
+                    BuildConfig.CONVIVA_CUSTOMER_KEY_PROD,
+                    "Toffee Android"
+                )
+                tracker?.subject?.userId = mPref.customerId.toString()
             }
             ConvivaHelper.init(applicationContext, true)
         }

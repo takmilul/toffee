@@ -92,7 +92,9 @@ firebase-crashlytics-plugin-version = "2.9.9"
 # Reporting
 facebook-sdk-version = "16.0.1"
 conviva-sdk-version = "4.0.33"
+conviva-tracker-version = "0.7.4"
 conviva-exo-player-version = "4.1.0"
+conviva-plugin-version = "0.3.1"
 pub-sub-version = "v1-rev452-1.25.0"
 mqtt-client-version = "1.2.5"
 mqtt-android-service-version = "3.3.8"
@@ -272,6 +274,8 @@ firework-ads = { group = "com.github.loopsocial", name = "AndroidAdsService", ve
 facebook-sdk = { group = "com.facebook.android", name = "facebook-android-sdk", version.ref = "facebook-sdk-version" }
 conviva-core = { group = "com.conviva.sdk", name = "conviva-core-sdk", version.ref = "conviva-sdk-version" }
 conviva-player = { group = "com.conviva.sdk", name = "conviva-exoplayer-sdk", version.ref = "conviva-exo-player-version" }
+conviva-tracker = { group = "com.conviva.sdk", name = "conviva-android-tracker", version.ref = "conviva-tracker-version" }
+conviva-tracker-plugin = { module = "com.conviva.sdk:android-plugin", version.ref = "conviva-plugin-version" }
 pub-sub = { group = "com.google.apis", name = "google-api-services-pubsub", version.ref = "pub-sub-version" }
 mqtt-client = { group = "org.eclipse.paho", name = "org.eclipse.paho.client.mqttv3", version.ref = "mqtt-client-version" }
 mqtt-android-service = { group = "com.github.hannesa2", name = "paho.mqtt.android", version.ref = "mqtt-android-service-version" }
@@ -346,6 +350,7 @@ com-gms-google-services = { id = "com.google.gms.google-services", version.ref =
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
 com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android-version" }
 com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin-version" }
+conviva-tracker-plugin = { id = "com.conviva.sdk.android-plugin", version.ref = "conviva-plugin-version" }
 
 
 ###########################################################  BUNDLES  ##############################################################
@@ -367,7 +372,7 @@ hilt = ["hilt-android", "hilt-work"]
 room = ["room-db", "room-paging", "room-ktx"]
 navigation = ["navigation-ktx", "navigation-ui-ktx"]
 play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-update", "inapp-update-ktx"]
-conviva = ["conviva-core", "conviva-player"]
+conviva = ["conviva-core", "conviva-player", "conviva-tracker"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
