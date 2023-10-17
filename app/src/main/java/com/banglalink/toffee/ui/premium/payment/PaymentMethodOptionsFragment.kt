@@ -30,7 +30,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
     
     private var _binding: FragmentPaymentMethodOptionsBinding? = null
     private var subType: String? = null
-
+    var isTrialPackUsed = false
+    var blTrialPackMethod: PackPaymentMethod? = null
+    var nonBlTrialPackMethod: PackPaymentMethod? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     
@@ -53,8 +55,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                  */
 
                 if (!paymentTypes.free.isNullOrEmpty()) {
-                    var blTrialPackMethod: PackPaymentMethod? = null
-                    var nonBlTrialPackMethod: PackPaymentMethod? = null
                     
                     paymentTypes.free?.forEach {
                         if (it.isNonBlFree == 1) {
@@ -70,7 +70,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         extraValidity = 0
                     }
                     trialDetails.isVisible = extraValidity > 0
-                    
+
+                    /**
+                     * This section handles the logics for trail packs title and sub-title depending on user being banglalink user or non-banglalink user.
+                     */
+
                     if (blTrialPackMethod != null && mPref.isBanglalinkNumber == "true") {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
@@ -93,7 +97,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         trialCard.alpha = 0.3f
                     }
                     
-                    var isTrialPackUsed = false
+
                     mPref.activePremiumPackList.value?.find {
                         it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
                     }?.let { isTrialPackUsed = true }
@@ -218,8 +222,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     // navigating to destination by paymentMethodId from deep link
                     when(it.paymentMethodId) {
                         0 -> {
-                            // todo; validation before trial pack navigation
-                            findNavController().navigateTo(R.id.activateTrialPackFragment)
+
+                            if (paymentTypes.free.isNullOrEmpty()) requireActivity().showToast("No Trail Pack available For this pack")
+                            else if ( mPref.isVerifiedUser &&(isTrialPackUsed || (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null)) )requireActivity().showToast(getString(string.trial_already_availed_text))
+                            else findNavController().navigateTo(R.id.activateTrialPackFragment)
+
                         }
                         4 -> { // bKash
                             if (paymentTypes.bkash?.blPacks.isNullOrEmpty() && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both packs are not available
