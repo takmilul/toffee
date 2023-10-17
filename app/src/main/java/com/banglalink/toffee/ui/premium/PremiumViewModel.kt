@@ -29,6 +29,7 @@ import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.ClickableAInventories
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -102,6 +103,9 @@ class PremiumViewModel @Inject constructor(
     val clickedOnPackList = MutableLiveData<Boolean>()
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
     val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
+
+    var clickableAdInventories = savedState.getLiveData<ClickableAInventories>("clickableAdInventories")
+
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {

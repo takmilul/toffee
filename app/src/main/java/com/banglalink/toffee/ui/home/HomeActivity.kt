@@ -2931,6 +2931,7 @@ class HomeActivity : PlayerPageActivity(),
         mPref.isVerifiedUser = false
         mPref.isChannelDetailChecked = false
         mPref.isMnpStatusChecked = false
+        mPref.isBanglalinkNumber = "false"
         lifecycleScope.launch {
             tvChannelsRepo.deleteAllRecentItems()
         }

@@ -66,7 +66,14 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             progressDialog.show()
             activateTrialPack()
         })
-        binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
+        binding.backImg.safeClick({
+            viewModel.clickableAdInventories.value?.let {
+                this.closeDialog()
+                viewModel.clickableAdInventories.value = null
+            } ?: run {
+                findNavController().navigateTo(R.id.paymentMethodOptions)
+            }
+        })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
         observeActivateTrialPack()
