@@ -166,7 +166,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="pack_title, recyclerView, termsAndConditionsGroup, buyNowButton, buyWithRechargeButton, signInButton, buySimButton"
+            app:constraint_referenced_ids="pack_title, recyclerView"
             tools:visibility="visible"/>
         
         <androidx.constraintlayout.widget.Group
