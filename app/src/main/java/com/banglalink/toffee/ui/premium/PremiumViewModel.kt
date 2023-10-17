@@ -58,11 +58,11 @@ class PremiumViewModel @Inject constructor(
     private val mnpStatusService: MnpStatusService,
 ) : ViewModel() {
     
-//    private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
-//    val packListState = _packListState.asSharedFlow()
+    private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
+    val packListState = _packListState.asSharedFlow()
 
-    private val _packListState: MutableLiveData<Resource<List<PremiumPack>>> = savedState.getLiveData("packListState")
-    val packListState: MutableLiveData<Resource<List<PremiumPack>>> get() = _packListState
+//    private val _packListState: MutableLiveData<Resource<List<PremiumPack>>> = savedState.getLiveData("packListState")
+//    val packListState: MutableLiveData<Resource<List<PremiumPack>>> get() = _packListState
     
     val packListScrollState = savedState.getLiveData<Int>("packListScrollState")
     
@@ -114,8 +114,8 @@ class PremiumViewModel @Inject constructor(
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
-//            _packListState.emit(response)
-            packListState.value = response
+            _packListState.emit(response)
+//            packListState.value = response
         }
     }
     
