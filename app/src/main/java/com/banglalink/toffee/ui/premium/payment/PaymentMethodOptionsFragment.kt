@@ -221,20 +221,48 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                             // todo; validation before trial pack navigation
                             findNavController().navigateTo(R.id.activateTrialPackFragment)
                         }
-                        4 -> {
-                            findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
+                        4 -> { // bKash
+                            if (paymentTypes.bkash?.blPacks.isNullOrEmpty() && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both packs are not available
+                                viewModel.clickableAdInventories.value = null
+                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                                requireActivity().showToast("bKash payment method is not available for this pack!")
+                            } else {
+                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
+                            }
                         }
-                        10 -> {
-                            findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
+                        10 -> { // Bl Pack
+                            if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
+                                viewModel.clickableAdInventories.value = null
+                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                                requireActivity().showToast("Banglalink payment method is not available for this pack!")
+                            }
+                            else{
+                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
+                            }
                         }
-                        12 -> {
-                            findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
+                        12 -> { // Voucher
+                            if (!paymentTypes.Voucher.isNullOrEmpty()){ // checking payment methods availability
+                                findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
+                            }
+                            else{
+                                viewModel.clickableAdInventories.value = null
+                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                                requireActivity().showToast("Voucher is not available for this pack!")
+                            }
                         }
-                        13 -> {
-                            findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
+                        13 -> { // SSl
+                            if (paymentTypes.ssl?.blPacks.isNullOrEmpty() && paymentTypes.ssl?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both methods are not available
+                                viewModel.clickableAdInventories.value = null
+                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                                requireActivity().showToast("SSL payment method is not available for this pack!")
+                            } else {
+                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
+                            }
                         }
                         else -> {
-                            requireActivity().showToast("Select a valid payment method!")
+                            viewModel.clickableAdInventories.value = null
+                            findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                            requireActivity().showToast("Payment method is invalid!")
                         }
                     }
 
