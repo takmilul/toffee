@@ -16,6 +16,7 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
 import com.banglalink.toffee.extension.*
@@ -46,25 +47,54 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         else binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
 
         binding.enableNow.safeClick({
-            // Send Log to FirebaseAnalytics
-            ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.BEGIN_PURCHASE,
-                bundleOf(
-                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                    "currency" to "BDT",
-                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                    "provider" to "Trial",
-                    "type" to "trial",
-                    "subtype" to null,
-                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
-                    "discount" to null,
-                )
-            )
-            progressDialog.show()
-            activateTrialPack()
+            
+            /**
+             * Checking user verification and pack verification for deeplink user flow.
+             */
+            requireActivity().checkVerification {
+                viewModel.paymentMethod.value?.let { paymentTypes ->
+                    var blTrialPackMethod: PackPaymentMethod? = null
+                    var nonBlTrialPackMethod: PackPaymentMethod? = null
+
+                    paymentTypes.free?.forEach {
+
+                        if (it.isNonBlFree == 1) {
+                            nonBlTrialPackMethod = it
+                        } else {
+                            blTrialPackMethod = it
+                        }
+                    }
+                    if (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null) {
+                        requireContext().showToast(getString(R.string.only_for_bl_users))
+                    } else if (mPref.isBanglalinkNumber != "false" && blTrialPackMethod == null) {
+                        requireContext().showToast(getString(R.string.only_for_non_bl_users))
+                    } else {
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.BEGIN_PURCHASE,
+                            bundleOf(
+                                "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "currency" to "BDT",
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                "provider" to "Trial",
+                                "type" to "trial",
+                                "subtype" to null,
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "discount" to null,
+                            )
+                        )
+                        progressDialog.show()
+                        activateTrialPack()
+                    }
+                }
+
+            }
+
+
+
         })
         binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
