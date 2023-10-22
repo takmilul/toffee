@@ -53,12 +53,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.giftVoucherCode.setCompoundDrawablesWithIntrinsicBounds(null,null, null, null)
         binding.backImg.safeClick({
-            viewModel.clickableAdInventories.value?.let {
-                this.closeDialog()
-                viewModel.clickableAdInventories.value = null
-            } ?: run {
-                findNavController().popBackStack()
-            }
+            findNavController().popBackStack()
         })
 
         observeVoucherPurchase()

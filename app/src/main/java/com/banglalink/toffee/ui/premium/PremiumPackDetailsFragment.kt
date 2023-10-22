@@ -26,7 +26,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.ClickableAInventories
+import com.banglalink.toffee.model.ClickableAdInventories
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.showAlignBottom
@@ -61,13 +61,19 @@ class PremiumPackDetailsFragment : BaseFragment(){
         observePackStatus()
         observePremiumPackDetail()
 
+        /*
+         checking pack purchase separately,
+         when user comes from deeplink, first checking the pack is available or not. If available then checking pack purchase status
+         Otherwise checking as normal flow
+         */
+
         openPlanDetails =  arguments?.getBoolean("openPlanDetails")
         if (openPlanDetails == true){
             val packId = arguments?.getInt("packId")
             val paymentMethodId = arguments?.getInt("paymentMethodId")
 //            paymentMethod = arguments?.getString("paymentMethod")
             // Storing the value to access it from different pages
-            viewModel.clickableAdInventories.value = ClickableAInventories(packId, paymentMethodId)
+            viewModel.clickableAdInventories.value = ClickableAdInventories(packId, paymentMethodId)
             observeAndSelectPremiumPack(packId ?: 0)
         } else{
             viewModel.clickableAdInventories.value = null
@@ -278,8 +284,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     // Navigate back to the premium pack list while preserving the back stack
                     findNavController().navigatePopUpTo(
                         resId = R.id.packDetailsFragment,
-                        popUpTo = R.id.premiumPackListFragment,
-                        inclusive = false
+                        popUpTo = R.id.packDetailsFragment,
+                        inclusive = true
                     )
 
                     // Determine the next destination based on the payment flow

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -36,7 +37,6 @@ class PaymentMethodBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.clickableAdInventories.value?.let {
                 if (keyCode == KeyEvent.KEYCODE_BACK && keyEvent.action == KeyEvent.ACTION_UP && navController.currentDestination?.id == R.id.paymentDataPackOptionsFragment) {
                     dialog.dismiss() // Dismiss the BottomSheetDialog
-                    viewModel.clickableAdInventories.value = null
                 }
             } ?: run {
                 if (keyCode == KeyEvent.KEYCODE_BACK && keyEvent.action == KeyEvent.ACTION_UP && navController.currentDestination?.id != R.id.paymentMethodOptions) {
@@ -58,6 +58,12 @@ class PaymentMethodBottomSheetFragment : BottomSheetDialogFragment() {
         val bottomSheetBehavior = BottomSheetBehavior.from(parent)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         return dialog
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        // disabling payment flow by clickable ad inventories
+        viewModel.clickableAdInventories.value = null
     }
     
     override fun getTheme(): Int = R.style.SheetDialog

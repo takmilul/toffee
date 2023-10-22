@@ -221,49 +221,32 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                 viewModel.clickableAdInventories.value?.let {
                     // navigating to destination by paymentMethodId from deep link
                     when(it.paymentMethodId) {
-                        0 -> {
-
-                            if (paymentTypes.free.isNullOrEmpty()) requireActivity().showToast("No Trail Pack available For this pack")
-                            else if ( mPref.isVerifiedUser &&(isTrialPackUsed || (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null)) )requireActivity().showToast(getString(string.trial_already_availed_text))
-                            else findNavController().navigateTo(R.id.activateTrialPackFragment)
-
-                        }
-                        4 -> { // bKash
+                        PaymentMethod.BKASH.value-> {
                             if (paymentTypes.bkash?.blPacks.isNullOrEmpty() && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both packs are not available
                                 viewModel.clickableAdInventories.value = null
                                 findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
                                 requireActivity().showToast("bKash payment method is not available for this pack!")
                             } else {
-                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
+                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
                             }
                         }
-                        10 -> { // Bl Pack
+                        PaymentMethod.BL_PACK.value -> {
                             if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
                                 viewModel.clickableAdInventories.value = null
                                 findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
                                 requireActivity().showToast("Banglalink payment method is not available for this pack!")
                             }
                             else{
-                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
+                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
                             }
                         }
-                        12 -> { // Voucher
-                            if (!paymentTypes.Voucher.isNullOrEmpty()){ // checking payment methods availability
-                                findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
-                            }
-                            else{
-                                viewModel.clickableAdInventories.value = null
-                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
-                                requireActivity().showToast("Voucher is not available for this pack!")
-                            }
-                        }
-                        13 -> { // SSl
+                        PaymentMethod.SSL.value -> {
                             if (paymentTypes.ssl?.blPacks.isNullOrEmpty() && paymentTypes.ssl?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both methods are not available
                                 viewModel.clickableAdInventories.value = null
                                 findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
                                 requireActivity().showToast("SSL payment method is not available for this pack!")
                             } else {
-                                findNavController().navigateTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
+                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
                             }
                         }
                         else -> {
