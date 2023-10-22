@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.premium
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,7 +29,7 @@ import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.ClickableAInventories
+import com.banglalink.toffee.model.ClickableAdInventories
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -108,7 +107,7 @@ class PremiumViewModel @Inject constructor(
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
     val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
 
-    var clickableAdInventories = savedState.getLiveData<ClickableAInventories>("clickableAdInventories")
+    var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
 
     
     fun getPremiumPackList(contentId: String = "0") {

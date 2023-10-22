@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ClickableAInventories(
+data class ClickableAdInventories(
     @SerializedName("packId")
     val packId: Int? = null,
     @SerializedName("paymentMethodId")

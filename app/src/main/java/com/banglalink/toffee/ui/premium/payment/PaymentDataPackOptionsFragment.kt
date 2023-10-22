@@ -79,6 +79,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         observeMnpStatus()
         observePackStatus()
         observeBlDataPackPurchase()
+
+        // refreshing pack status, to observe pack is activated or not
+        viewModel.clickableAdInventories.value?.let {
+            it.packId?.let { packId -> viewModel.getPackStatusForDataPackOptions(packId = packId) }
+        }
         
         binding.recyclerView.setPadding(0, 0, 0, 24)
         
@@ -91,23 +96,23 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyNowButton.safeClick({
             progressDialog.show()
 
-            // Send Log to FirebaseAnalytics
-            ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.BEGIN_PURCHASE,
-                bundleOf(
-                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                    "currency" to "BDT",
-                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                    "provider" to provider,
-                    "type" to type,
-                    "subtype" to if(paymentName == "blPack") "balance" else null,
-                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
-                    "discount" to null,
+                // Send Log to FirebaseAnalytics
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.BEGIN_PURCHASE,
+                    bundleOf(
+                        "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        "currency" to "BDT",
+                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                        "provider" to provider,
+                        "type" to type,
+                        "subtype" to if(paymentName == "blPack") "balance" else null,
+                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                        "discount" to null,
+                    )
                 )
-            )
 
             // Determine the payment method based on the provided paymentName
             when (paymentName) {
