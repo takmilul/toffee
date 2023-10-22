@@ -48,6 +48,9 @@ import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
+import com.microsoft.clarity.models.LogLevel
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -187,11 +190,24 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
-        
+
         initFireworkSdk()
         initMedalliaSdk()
         mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
+
+        // Create an instance of ClarityConfig with configuration
+        val config = ClarityConfig(
+            projectId = "iinc7p89vm",
+            userId = null, // Optional: Provide a user ID if needed
+            logLevel = LogLevel.None, // Optional: Specify the desired log level
+            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+        )
+//        val config = ClarityConfig("iinc7p89vm")
+        // Initialize Clarity with the ClarityConfig
+        Clarity.initialize(applicationContext, config)
     }
     
     /**

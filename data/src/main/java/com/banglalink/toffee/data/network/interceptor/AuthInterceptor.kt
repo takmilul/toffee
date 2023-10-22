@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.interceptor
 
+import androidx.core.text.isDigitsOnly
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
@@ -11,6 +12,7 @@ import com.banglalink.toffee.di.ApiHeader
 import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.overrideUrl
+import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
 import com.google.gson.Gson
@@ -30,7 +32,7 @@ class AuthInterceptor @Inject constructor(
     private val mPref: SessionPreference,
     private val iGetMethodTracker: IGetMethodTracker,
     @ApiHeader private val apiUserAgent: Provider<String>,
-    @ToffeeHeader private val playerUserAgent: Provider<String>
+    @ToffeeHeader private val playerUserAgent: Provider<String>,
 ) : Interceptor {
     
     @Throws(IOException::class)
@@ -42,11 +44,9 @@ class AuthInterceptor @Inject constructor(
         val builder = FormBody.Builder()
         val requestJsonString = bodyToString(request.body)
         val baseRequest = try { Gson().fromJson(requestJsonString, BaseRequest::class.java) } catch (e: Exception) { null }
-//        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != "6.0.0")) {
-//            Response.Builder().apply {
-//                body(Gson().toJson(BaseResponse().apply {  }, BaseResponse::class.java).toResponseBody())
-//            }
-//        }
+        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || !baseRequest.appVersion.replace(".", "").isDigitsOnly() || BuildConfig.LIBRARY_PACKAGE != BuildConfig.LIBRARY_PACKAGE_NAME)) {
+            throw IOException()
+        }
         
         ToffeeAnalytics.logBreadCrumb("request: $requestJsonString")
         val string = EncryptionUtil.encryptRequest(requestJsonString)

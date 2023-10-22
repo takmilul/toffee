@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+import java.io.FileInputStream
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(libs.plugins.com.android.library.get().pluginId)
@@ -13,6 +16,11 @@ plugins {
 android {
     namespace = "com.banglalink.toffee.lib"
     compileSdk = 33
+    
+    val properties = Properties().apply {
+        load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
+    }
+    val libraryPackageName: String = properties.getProperty("libraryPackageName")
     
     defaultConfig {
         minSdk = 21
@@ -28,6 +36,7 @@ android {
         create("mobile") {
             dimension = "lib"
             buildConfigField("int", "DEVICE_TYPE", "1")
+            buildConfigField("String", "LIBRARY_PACKAGE", libraryPackageName)
         }
         create("tv") {
             dimension = "lib"

@@ -322,6 +322,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         }
     }
     
+    fun toggleFullScreenStatus(state: Boolean) {
+        isFullScreen = state
+    }
+    
     fun onPip(enabled: Boolean = false) {
         useController = !enabled
         setShowBuffering(/*if(enabled) SHOW_BUFFERING_NEVER else*/ SHOW_BUFFERING_ALWAYS)
@@ -772,13 +776,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     
     private val scaleType: Int
         get() {
-//            return if (isLinearChannel || !isUgc)
-//                AspectRatioFrameLayout.RESIZE_MODE_FILL
-//            else if (isFullScreen)
-//                AspectRatioFrameLayout.RESIZE_MODE_FIT
-//            else
-//                AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
-            return if (isFullScreen)
+            return if (isLinearChannel || !isUgc)
+                AspectRatioFrameLayout.RESIZE_MODE_FILL
+            else if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
             else
                 AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH

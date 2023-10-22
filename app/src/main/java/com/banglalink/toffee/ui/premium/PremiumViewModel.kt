@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -29,6 +30,7 @@ import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.ClickableAInventories
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -58,6 +60,9 @@ class PremiumViewModel @Inject constructor(
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
     val packListState = _packListState.asSharedFlow()
+
+//    private val _packListState: MutableLiveData<Resource<List<PremiumPack>>> = savedState.getLiveData("packListState")
+//    val packListState: MutableLiveData<Resource<List<PremiumPack>>> get() = _packListState
     
     val packListScrollState = savedState.getLiveData<Int>("packListScrollState")
     
@@ -93,7 +98,6 @@ class PremiumViewModel @Inject constructor(
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseCodeWebView = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
@@ -102,11 +106,16 @@ class PremiumViewModel @Inject constructor(
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+    val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
+
+    var clickableAdInventories = savedState.getLiveData<ClickableAInventories>("clickableAdInventories")
+
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
             _packListState.emit(response)
+//            packListState.value = response
         }
     }
     
@@ -194,15 +203,6 @@ class PremiumViewModel @Inject constructor(
         }
     }
     
-    fun purchaseDataPackWebView(dataPackPurchaseRequest: DataPackPurchaseRequest) {
-        viewModelScope.launch {
-            val response = resultFromResponse {
-                dataPackPurchaseService.loadData(dataPackPurchaseRequest)
-            }
-            packPurchaseResponseCodeWebView.value = response
-        }
-    }
-    
     fun getRechargeByBkashUrl(rechargeByBkashRequest: RechargeByBkashRequest) {
         viewModelScope.launch {
             val response = resultFromResponse { rechargeByBkashService.execute(rechargeByBkashRequest) }
@@ -245,6 +245,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { mnpStatusService.execute() }
             mnpStatusLiveData.value = response
+        }
+    }
+    
+    fun getMnpStatusForPaymentDetail() {
+        viewModelScope.launch {
+            val response = resultFromResponse { mnpStatusService.execute() }
+            mnpStatusLiveDataForPaymentDetail.value = response
         }
     }
 }

@@ -46,7 +46,6 @@ class AllChannelsViewModel @Inject constructor(
                 } else {
                     allChannelService.loadData(subcategoryId)
                 }
-                allChannelService.loadData(subcategoryId)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

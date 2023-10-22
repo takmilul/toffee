@@ -41,11 +41,11 @@
                 app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/passPriceTextView"
+                app:layout_constraintBottom_toTopOf="@id/premiumPackPriceTextView"
                 app:layout_constraintVertical_chainStyle="packed"/>
             
             <TextView
-                android:id="@+id/passPriceTextView"
+                android:id="@+id/premiumPackPriceTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -56,10 +56,10 @@
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/passNameTextView"
-                app:layout_constraintBottom_toTopOf="@id/passEligibleUserTextView"/>
+                app:layout_constraintBottom_toTopOf="@id/packEligibleUserTextView"/>
             
             <TextView
-                android:id="@+id/passEligibleUserTextView"
+                android:id="@+id/packEligibleUserTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -72,7 +72,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
-                app:layout_constraintTop_toBottomOf="@+id/passPriceTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/premiumPackPriceTextView" />
             
             <ImageView
                 android:id="@+id/passBrandImageView"

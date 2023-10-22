@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -140,6 +143,15 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "follow_channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             checkIfFragmentAttached {
                 if (item.isSubscribed == 0) {
