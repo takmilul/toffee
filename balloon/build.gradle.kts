@@ -1,7 +1,9 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id(libs.plugins.com.android.library.get().pluginId)
-    id(libs.plugins.org.jetbrains.kotlin.android.get().pluginId)
+    with(libs.plugins) {
+        id(com.android.library.get().pluginId)
+        id(org.jetbrains.kotlin.android.get().pluginId)
+    }
 }
 
 android {
@@ -41,8 +43,10 @@ android {
 }
 
 dependencies {
-    api(libs.annotation)
-    implementation(libs.activity)
-    implementation(libs.fragment.ktx)
-    implementation(libs.bundles.lifecycle)
+    with(libs) {
+        api(annotation)
+        implementation(activity)
+        implementation(fragment.ktx)
+        implementation(bundles.lifecycle)
+    }
 }

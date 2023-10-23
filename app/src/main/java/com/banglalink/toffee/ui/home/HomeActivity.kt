@@ -691,6 +691,7 @@ class HomeActivity : PlayerPageActivity(),
         return super.onOptionsItemSelected(item)
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)

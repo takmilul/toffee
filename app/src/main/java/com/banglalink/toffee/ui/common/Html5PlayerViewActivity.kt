@@ -10,7 +10,13 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.WebActionType.*
+import com.banglalink.toffee.enums.WebActionType.CLOSE_APP
+import com.banglalink.toffee.enums.WebActionType.DEEP_LINK
+import com.banglalink.toffee.enums.WebActionType.FORCE_LOGOUT
+import com.banglalink.toffee.enums.WebActionType.HOME_SCREEN
+import com.banglalink.toffee.enums.WebActionType.LOGIN_DIALOG
+import com.banglalink.toffee.enums.WebActionType.MESSAGE_DIALOG
+import com.banglalink.toffee.enums.WebActionType.PLAY_CONTENT
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
@@ -123,6 +129,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         return resources.assets
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (mWebView.canGoBack()) {
             mWebView.goBack()
