@@ -1,14 +1,16 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.kotlin.gradle) apply false
-    alias(libs.plugins.com.gms.google.services) apply false
-    alias(libs.plugins.com.google.firebase.crashlytics) apply false
-    alias(libs.plugins.com.android.library) apply false
-    alias(libs.plugins.org.jetbrains.kotlin.android) apply false
-    alias(libs.plugins.com.android.application) apply false
-    alias(libs.plugins.androidx.navigation.safeargs) apply false
-    alias(libs.plugins.com.google.dagger.hilt.android) apply false
+    with(libs.plugins) {
+        alias(ksp) apply false
+        alias(kotlin.gradle) apply false
+        alias(com.gms.google.services) apply false
+        alias(com.google.firebase.crashlytics) apply false
+        alias(com.android.library) apply false
+        alias(org.jetbrains.kotlin.android) apply false
+        alias(com.android.application) apply false
+        alias(androidx.navigation.safeargs) apply false
+        alias(com.google.dagger.hilt.android) apply false
+    }
 }
 
 tasks.register("clean", Delete::class) {
