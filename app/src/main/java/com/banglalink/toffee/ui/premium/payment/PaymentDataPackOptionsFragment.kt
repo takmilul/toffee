@@ -100,6 +100,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         binding.buyNowButton.safeClick({
             requireActivity().checkVerification {
+                viewModel.isLoggedInFromPaymentOptions.value = true
                 progressDialog.show()
 
                 // Send Log to FirebaseAnalytics
@@ -139,6 +140,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         binding.buyWithRechargeButton.safeClick({
             requireActivity().checkVerification {
+                viewModel.isLoggedInFromPaymentOptions.value = true
                 // Send Log to FirebaseAnalytics
                 ToffeeAnalytics.toffeeLogEvent(
                     ToffeeEvents.BEGIN_PURCHASE,
@@ -317,20 +319,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
             val sslNonBlPacks = paymentTypes.ssl?.nonBlPacks
+            //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
+            val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
 
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) }
-                        ?: requireContext().showToast(getString(string.try_again_message))
+                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
                 } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) }
-                        ?: requireContext().showToast(getString(string.try_again_message))
+                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
                 }
             }
             else if (paymentName == "ssl"){
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
+                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
                     sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
                 } else {
                     sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))

@@ -9,5 +9,7 @@ data class ClickableAdInventories(
     @SerializedName("packId")
     val packId: Int? = null,
     @SerializedName("paymentMethodId")
-    val paymentMethodId: Int? = null
+    val paymentMethodId: Int? = null,
+    @SerializedName("showBlPacks")
+    val showBlPacks: Boolean? = false,
 ) : Parcelable

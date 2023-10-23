@@ -224,8 +224,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         PaymentMethod.BKASH.value-> {
                             if (paymentTypes.bkash?.blPacks.isNullOrEmpty() && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both packs are not available
                                 viewModel.clickableAdInventories.value = null
-                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
-                                requireActivity().showToast("bKash payment method is not available for this pack!")
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                                requireActivity().showToast("Payment method is invalid!")
                             } else {
                                 findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
                             }
@@ -233,8 +233,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         PaymentMethod.BL_PACK.value -> {
                             if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
                                 viewModel.clickableAdInventories.value = null
-                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
-                                requireActivity().showToast("Banglalink payment method is not available for this pack!")
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                                requireActivity().showToast("Payment method is invalid!")
                             }
                             else{
                                 findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
@@ -243,15 +243,15 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         PaymentMethod.SSL.value -> {
                             if (paymentTypes.ssl?.blPacks.isNullOrEmpty() && paymentTypes.ssl?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both methods are not available
                                 viewModel.clickableAdInventories.value = null
-                                findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
-                                requireActivity().showToast("SSL payment method is not available for this pack!")
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                                requireActivity().showToast("Payment method is invalid!")
                             } else {
                                 findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
                             }
                         }
                         else -> {
                             viewModel.clickableAdInventories.value = null
-                            findNavController().navigatePopUpTo(R.id.paymentMethodOptions)
+                            this@PaymentMethodOptionsFragment.closeDialog()
                             requireActivity().showToast("Payment method is invalid!")
                         }
                     }
