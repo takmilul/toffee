@@ -71,9 +71,10 @@ class PremiumPackDetailsFragment : BaseFragment(){
         if (openPlanDetails == true){
             val packId = arguments?.getInt("packId")
             val paymentMethodId = arguments?.getInt("paymentMethodId")
+            val showBlPacks = arguments?.getBoolean("showBlPacks")
 //            paymentMethod = arguments?.getString("paymentMethod")
             // Storing the value to access it from different pages
-            viewModel.clickableAdInventories.value = ClickableAdInventories(packId, paymentMethodId)
+            viewModel.clickableAdInventories.value = ClickableAdInventories(packId, paymentMethodId, showBlPacks)
             observeAndSelectPremiumPack(packId ?: 0)
         } else{
             viewModel.clickableAdInventories.value = null
@@ -142,7 +143,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 )
             }
         })
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
                     //sends firebase event for users aborting premPack after looking at contents.
@@ -208,7 +209,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
 
                         if (!isPackFound){
                             viewModel.selectedPremiumPack.value = null
-                            requireActivity().showToast("Select a valid pack!")
+                            requireActivity().showToast("Selected pack not found!")
                             findNavController().navigatePopUpTo(R.id.premiumPackListFragment)
                         }
                     }

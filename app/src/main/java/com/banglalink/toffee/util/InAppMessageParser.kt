@@ -38,7 +38,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=featured_partner&id=5
 //    https://toffeelive.com?routing=internal&page=playlist&listid=99&ownerid=594383
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
-//    https://toffeelive.com?routing=internal&page=pack_from_ad&packId=6&paymentMethodId=10
+//    https://toffeelive.com?routing=internal&page=pack_from_ad&packId=6&paymentMethodId=10&showBlPacks=true
 
     suspend fun parseUrlV2(url: String): RouteV2? {
         try {
@@ -146,6 +146,7 @@ class InAppMessageParser @Inject constructor(
                     "pack_from_ad" ->{
                         val packId = link.getQueryParameter("packId")?.toIntOrNull()
                         val paymentMethodId = link.getQueryParameter("paymentMethodId")?.toIntOrNull()
+                        val showBlPacks = link.getQueryParameter("showBlPacks").toBoolean()
 
                         if (packId == null || paymentMethodId == null){
                             return RouteV2(R.id.menu_feed, "Home", null, navOptions)
@@ -156,7 +157,8 @@ class InAppMessageParser @Inject constructor(
                                 bundleOf(
                                     "openPlanDetails" to true,
                                     "packId" to packId,
-                                    "paymentMethodId" to paymentMethodId
+                                    "paymentMethodId" to paymentMethodId,
+                                    "showBlPacks" to showBlPacks
                                 ),
                                 navOptions
                             )

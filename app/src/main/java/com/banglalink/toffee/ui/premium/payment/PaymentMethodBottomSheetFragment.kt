@@ -2,18 +2,16 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentPaymentMethodBottomSheetBinding
-import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -62,8 +60,12 @@ class PaymentMethodBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        // disabling payment flow by clickable ad inventories
-        viewModel.clickableAdInventories.value = null
+        // disabling payment flow of clickable ad inventories
+        viewModel.isLoggedInFromPaymentOptions.value?.let {
+            if (!it){
+                viewModel.clickableAdInventories.value = null
+            }
+        }
     }
     
     override fun getTheme(): Int = R.style.SheetDialog

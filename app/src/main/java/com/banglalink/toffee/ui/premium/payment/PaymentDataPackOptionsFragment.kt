@@ -88,13 +88,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.recyclerView.setPadding(0, 0, 0, 24)
         
         binding.backImg.safeClick({
-            findNavController().popBackStack()
+            viewModel.clickableAdInventories.value?.let {
+                this.closeDialog()
+                viewModel.clickableAdInventories.value = null
+            } ?: run {
+                findNavController().popBackStack()
+            }
         })
         binding.termsAndConditionsTwo.safeClick({
             showTermsAndConditionDialog()
         })
         binding.buyNowButton.safeClick({
-            progressDialog.show()
+            requireActivity().checkVerification {
+                viewModel.isLoggedInFromPaymentOptions.value = true
+                progressDialog.show()
 
                 // Send Log to FirebaseAnalytics
                 ToffeeAnalytics.toffeeLogEvent(
@@ -114,41 +121,45 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     )
                 )
 
-            // Determine the payment method based on the provided paymentName
-            when (paymentName) {
-                "bkash" -> {
-                    // Initiate the Subscriber Payment Initialization for bKash
-                    callAndObserveSubscriberPaymentInit(paymentType = "bkash")
-                }
-                "ssl" -> {
-                    // Initiate the Subscriber Payment Initialization for SSL
-                    callAndObserveSubscriberPaymentInit(paymentType = "ssl")
-                }
-                "blPack" -> {
-                    // Purchase a Banglalink data pack
-                    purchaseBlDataPack()
+                // Determine the payment method based on the provided paymentName
+                when (paymentName) {
+                    "bkash" -> {
+                        // Initiate the Subscriber Payment Initialization for bKash
+                        callAndObserveSubscriberPaymentInit(paymentType = "bkash")
+                    }
+                    "ssl" -> {
+                        // Initiate the Subscriber Payment Initialization for SSL
+                        callAndObserveSubscriberPaymentInit(paymentType = "ssl")
+                    }
+                    "blPack" -> {
+                        // Purchase a Banglalink data pack
+                        purchaseBlDataPack()
+                    }
                 }
             }
         })
         binding.buyWithRechargeButton.safeClick({
-            // Send Log to FirebaseAnalytics
-            ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.BEGIN_PURCHASE,
-                bundleOf(
-                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                    "currency" to "BDT",
-                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                    "provider" to provider,
-                    "type" to type,
-                    "subtype" to "recharge",
-                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
-                    "discount" to null,
+            requireActivity().checkVerification {
+                viewModel.isLoggedInFromPaymentOptions.value = true
+                // Send Log to FirebaseAnalytics
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.BEGIN_PURCHASE,
+                    bundleOf(
+                        "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                        "currency" to "BDT",
+                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                        "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                        "provider" to provider,
+                        "type" to type,
+                        "subtype" to "recharge",
+                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                        "discount" to null,
+                    )
                 )
-            )
-            callAndObserveRechargeByBkash()
+                callAndObserveRechargeByBkash()
+            }
         })
         binding.signInButton.safeClick({
             // Send Log to FirebaseAnalytics
@@ -308,20 +319,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
             val sslNonBlPacks = paymentTypes.ssl?.nonBlPacks
+            //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
+            val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
 
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) }
-                        ?: requireContext().showToast(getString(string.try_again_message))
+                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
                 } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) }
-                        ?: requireContext().showToast(getString(string.try_again_message))
+                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
                 }
             }
             else if (paymentName == "ssl"){
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
+                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
                     sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
                 } else {
                     sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
@@ -338,6 +349,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         binding.errorMessageTextView.text = String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid")
                         binding.emptyView.show()
                         binding.contentView.hide()
+                        hidePaymentOption()
                     }
                 } else {
                     if (!prePaid.isNullOrEmpty()) {

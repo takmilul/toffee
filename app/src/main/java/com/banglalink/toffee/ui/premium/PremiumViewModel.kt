@@ -108,7 +108,7 @@ class PremiumViewModel @Inject constructor(
     val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
 
     var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
-
+    var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
