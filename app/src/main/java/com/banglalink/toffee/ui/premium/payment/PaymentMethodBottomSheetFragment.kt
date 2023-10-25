@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -61,11 +60,7 @@ class PaymentMethodBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         // disabling payment flow of clickable ad inventories
-        viewModel.isLoggedInFromPaymentOptions.value?.let {
-            if (!it){
-                viewModel.clickableAdInventories.value = null
-            }
-        }
+        viewModel.clickableAdInventories.value = null
     }
     
     override fun getTheme(): Int = R.style.SheetDialog

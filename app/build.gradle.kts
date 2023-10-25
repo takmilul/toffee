@@ -6,14 +6,14 @@ import java.util.*
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
+        id(ksp.get().pluginId)
+        id(kotlin.kapt.get().pluginId)
         id(com.android.application.get().pluginId)
         id(org.jetbrains.kotlin.android.get().pluginId)
         id(kotlin.parcelize.get().pluginId)
-        id(ksp.get().pluginId)
-        id(kotlin.kapt.get().pluginId)
-        id(com.google.dagger.hilt.android.get().pluginId)
-        id(androidx.navigation.safeargs.get().pluginId)
         id(com.gms.google.services.get().pluginId)
+        id(androidx.navigation.safeargs.get().pluginId)
+        id(com.google.dagger.hilt.android.get().pluginId)
         id(com.google.firebase.crashlytics.get().pluginId)
     }
 }
@@ -254,7 +254,7 @@ dependencies {
         testImplementation(coroutines.test)
         testImplementation(okhttp.mock.web.server)
         
-        kaptAndroidTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(test.runner)

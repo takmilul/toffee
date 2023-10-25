@@ -10,7 +10,6 @@ plugins {
         id(org.jetbrains.kotlin.android.get().pluginId)
         id(kotlin.parcelize.get().pluginId)
         id(ksp.get().pluginId)
-        id(kotlin.kapt.get().pluginId)
         id(com.google.dagger.hilt.android.get().pluginId)
     }
 }
@@ -124,7 +123,7 @@ dependencies {
         /////// Testing
         testImplementation(junit.core)
         
-        kaptAndroidTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(hilt.android.test)
