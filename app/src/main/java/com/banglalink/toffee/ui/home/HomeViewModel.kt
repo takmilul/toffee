@@ -116,7 +116,8 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-) : ViewModel() {
+    
+    ) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
