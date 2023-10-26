@@ -195,19 +195,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         initMedalliaSdk()
         mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
-
-        // Create an instance of ClarityConfig with configuration
-        val config = ClarityConfig(
-            projectId = "iinc7p89vm",
-            userId = null, // Optional: Provide a user ID if needed
-            logLevel = LogLevel.None, // Optional: Specify the desired log level
-            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
-            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
-            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
-        )
-//        val config = ClarityConfig("iinc7p89vm")
-        // Initialize Clarity with the ClarityConfig
-        Clarity.initialize(applicationContext, config)
     }
     
     /**
