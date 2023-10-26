@@ -2,7 +2,7 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.media3.common.util.Util
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import dagger.Module
@@ -19,14 +19,17 @@ object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false
     
-//    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"          // production server
-    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"  // staging server
+    init {
+        System.loadLibrary("data")
+    }
+    
+    private external fun getBaseUrl(): String
     
     @Provides
     @Singleton
-    fun providesToffeeConfig(): ToffeeConfig {
-        return ToffeeConfig(
-            toffeeBaseUrl = TOFFEE_BASE_URL
+    fun providesConfig(): Config {
+        return Config(
+            url = getBaseUrl()
         )
     }
     

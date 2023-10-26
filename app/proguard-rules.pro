@@ -22,7 +22,7 @@
 
 #********************************Start rules****************************************#
 
--repackageclasses
+#-repackageclasses
 -optimizationpasses 5
 -optimizations class/marking/final
 -optimizations field/marking/private
