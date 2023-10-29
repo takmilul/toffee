@@ -358,17 +358,45 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
+                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                        viewModel.clickableAdInventories.value?.let {
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            this.closeDialog()
+                        }?: run{
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        }
+                    }
                 } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(string.try_again_message))
+                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                        viewModel.clickableAdInventories.value?.let {
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            this.closeDialog()
+                        }?: run{
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        }
+                    }
                 }
             }
             else if (paymentName == "ssl"){
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                        viewModel.clickableAdInventories.value?.let {
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            this.closeDialog()
+                        }?: run{
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        }
+                    }
                 } else {
-                    sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                        viewModel.clickableAdInventories.value?.let {
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            this.closeDialog()
+                        }?: run{
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        }
+                    }
                 }
             }
             else if (paymentName == "blPack") {

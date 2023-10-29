@@ -69,10 +69,11 @@ class PremiumPackDetailsFragment : BaseFragment(){
 
         openPlanDetails =  arguments?.getBoolean("openPlanDetails")
         if (openPlanDetails == true){
+            openPlanDetails = false
             val packId = arguments?.getInt("packId")
             val paymentMethodId = arguments?.getInt("paymentMethodId")
             val showBlPacks = arguments?.getBoolean("showBlPacks")
-//            paymentMethod = arguments?.getString("paymentMethod")
+
             // Storing the value to access it from different pages
             viewModel.clickableAdInventories.value = ClickableAdInventories(packId, paymentMethodId, showBlPacks)
             observeAndSelectPremiumPack(packId ?: 0)
@@ -133,6 +134,20 @@ class PremiumPackDetailsFragment : BaseFragment(){
          * Observes `packDetailsPageRefreshRequired` LiveData and refreshes pack status if `true`.
          */
         observe(mPref.packDetailsPageRefreshRequired) { if (it == true) observePackStatusAfterSubscriberPayment() }
+
+
+        /**
+         * Observe to destrory the clickable ad inventories flow
+         */
+        observe(mPref.refreshRequiredForClickableAd) {
+            if (it == true) {
+                findNavController().navigatePopUpTo(
+                    resId = R.id.packDetailsFragment,
+                    popUpTo = R.id.packDetailsFragment,
+                    inclusive = true
+                )
+            }
+        }
 
         binding.infoIcon.safeClick({
             runCatching {
@@ -209,7 +224,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
 
                         if (!isPackFound){
                             viewModel.selectedPremiumPack.value = null
-                            requireActivity().showToast("Selected pack not found!")
+                            requireActivity().showToast(getString(R.string.selected_pack_not_found))
                             findNavController().navigatePopUpTo(R.id.premiumPackListFragment)
                         }
                     }
