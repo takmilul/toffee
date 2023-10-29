@@ -1584,15 +1584,15 @@ abstract class PlayerPageActivity :
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
             else -> {
-//                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
-//                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
+                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
+                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
             }
         }
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
         val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
-//        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
+        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
 //        showDebugMessage("AdLoadFailureMessage: $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)

@@ -7,11 +7,10 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.receiver.ConnectionWatcher
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.PingData
 import com.banglalink.toffee.util.currentDateTimeMillis
 import com.google.ads.interactivemedia.v3.api.Ad
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -21,6 +20,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class ToffeePlayerEventHelper @Inject constructor(
@@ -131,7 +132,7 @@ class ToffeePlayerEventHelper @Inject constructor(
     
     fun setAdData(ad: Ad?, eventName: String?, errorMessage: String? = null, isReset: Boolean = false) {
 //        Log.i(PLAYER_EVENT_TAG, "Event: $eventName, Error Message: $errorMessage")
-//        Log.i("ADs_", "Event: $eventName, Error Message: $errorMessage")
+        Log.i("ADs_", "Event: $eventName, Error Message: $errorMessage")
         playerEventData?.apply {
             dateTime = currentDateTimeMillis
             adId = ad?.adId
