@@ -22,7 +22,7 @@
 
 #********************************Start rules****************************************#
 
--repackageclasses
+#-repackageclasses
 -optimizationpasses 5
 -optimizations class/marking/final
 -optimizations field/marking/private
@@ -71,18 +71,18 @@
 #-keep class com.banglalink.toffee.ui.firework.FireworkFragment
 
 -dontwarn com.google.ads.**
-#-keep class com.google.** { *; }
-#-keep interface com.google.** { *; }
-#-keep class com.google.ads.interactivemedia.** { *; }
-#-keep interface com.google.ads.interactivemedia.** { *; }
+-keep class com.google.** { *; }
+-keep interface com.google.** { *; }
+-keep class com.google.ads.interactivemedia.** { *; }
+-keep interface com.google.ads.interactivemedia.** { *; }
 
 #-keep class * extends java.util.ListResourceBundle { *; }
 
-#-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
-#    public static final *** NULL;
-#}
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
 
-#-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
 #-keepclassmembernames class * {
 #    @com.google.android.gms.common.annotation.KeepName *;
 #}
