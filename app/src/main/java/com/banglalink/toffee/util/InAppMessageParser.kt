@@ -145,10 +145,10 @@ class InAppMessageParser @Inject constructor(
                     }
                     "pack_from_ad" ->{
                         val packId = link.getQueryParameter("packId")?.toIntOrNull()
-                        val paymentMethodId = link.getQueryParameter("paymentMethodId")?.toIntOrNull()
+                        val paymentMethodId = link.getQueryParameter("paymentMethodId")?.toIntOrNull() ?: -1
                         val showBlPacks = link.getQueryParameter("showBlPacks").toBoolean()
 
-                        if (packId == null || paymentMethodId == null){
+                        if (packId == null){
                             return RouteV2(R.id.menu_feed, "Home", null, navOptions)
                         } else {
                             return RouteV2(

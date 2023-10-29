@@ -220,45 +220,70 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 
                 viewModel.clickableAdInventories.value?.let {
                     // navigating to destination by paymentMethodId from deep link
-                    when(it.paymentMethodId) {
-                        PaymentMethod.BKASH.value-> {
-                            if (paymentTypes.bkash?.blPacks.isNullOrEmpty() && paymentTypes.bkash?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both packs are not available
-                                viewModel.clickableAdInventories.value = null
-                                this@PaymentMethodOptionsFragment.closeDialog()
-                                requireActivity().showToast("Payment method is invalid!")
+                    val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
+                    when (it.paymentMethodId) {
+                        PaymentMethod.BKASH.value -> {
+                            if (
+                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) ||
+                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
+                            ) {
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "bkash")
+                                )
                             } else {
-                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "bkash"))
+                                viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                                this@PaymentMethodOptionsFragment.closeDialog()
                             }
                         }
+
                         PaymentMethod.BL_PACK.value -> {
                             if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
                                 viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
                                 this@PaymentMethodOptionsFragment.closeDialog()
-                                requireActivity().showToast("Payment method is invalid!")
-                            }
-                            else{
-                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "blPack"))
-                            }
-                        }
-                        PaymentMethod.SSL.value -> {
-                            if (paymentTypes.ssl?.blPacks.isNullOrEmpty() && paymentTypes.ssl?.nonBlPacks.isNullOrEmpty()){ // when non bl and bl both methods are not available
-                                viewModel.clickableAdInventories.value = null
-                                this@PaymentMethodOptionsFragment.closeDialog()
-                                requireActivity().showToast("Payment method is invalid!")
                             } else {
-                                findNavController().navigatePopUpTo( resId = R.id.paymentDataPackOptionsFragment, args = bundleOf("paymentName" to "ssl"))
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "blPack")
+                                )
                             }
                         }
+
+                        PaymentMethod.SSL.value -> {
+                            if (
+                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser))  && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) ||
+                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
+                            ) {
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "ssl")
+                                )
+                            } else {
+                                viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                            }
+                        }
+
                         else -> {
                             viewModel.clickableAdInventories.value = null
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
                             this@PaymentMethodOptionsFragment.closeDialog()
-                            requireActivity().showToast("Payment method is invalid!")
                         }
                     }
 
                 } ?: run {
                     blPackCard.safeClick({
-                        findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "blPack")
+                        )
                         //Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PAYMENT_SELECTED,
@@ -274,7 +299,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     })
 
                     bKashPackCard.safeClick({
-                        findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bkash"))
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "bkash")
+                        )
                         //Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PAYMENT_SELECTED,
@@ -290,7 +318,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     })
 
                     SslPackCard.safeClick({
-                        findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "ssl"))
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "ssl")
+                        )
                         //Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PAYMENT_SELECTED,
@@ -306,7 +337,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                     })
 
                     giftVoucherCard.safeClick({
-                        findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
+                        findNavController().navigateTo(
+                            R.id.reedemVoucherCodeFragment,
+                            bundleOf("paymentName" to "VOUCHER")
+                        )
                         //Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PAYMENT_SELECTED,
@@ -324,7 +358,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
             }
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
