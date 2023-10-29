@@ -607,4 +607,6 @@
     <string name="go_back_text">go back</string>
     <string name="no_pack_option_msg">No Banglalink %s plans \n available</string>
     <string name="get_bl_sim">Get more with Banglalink SIM</string>
+    <string name="selected_pack_not_found">Selected pack not found!</string>
+    <string name="payment_method_invalid">Payment method is invalid!</string>
 </resources>
