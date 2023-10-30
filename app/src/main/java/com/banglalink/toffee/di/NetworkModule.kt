@@ -23,13 +23,13 @@ object NetworkModule {
         System.loadLibrary("data")
     }
     
-    private external fun getBaseUrl(): String
+    private external fun getUrl(): String
     
     @Provides
     @Singleton
     fun providesConfig(): Config {
         return Config(
-            url = getBaseUrl()
+            url = getUrl()
         )
     }
     

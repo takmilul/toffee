@@ -5,7 +5,7 @@ const char* serverUrl = "https://j1-staging.toffeelive.com/";    // staging serv
 
 extern "C" {
     JNIEXPORT jstring JNICALL
-    Java_com_banglalink_toffee_di_NetworkModule_getBaseUrl(JNIEnv *env, jobject obj) {
+    Java_com_banglalink_toffee_di_NetworkModule_getUrl(JNIEnv *env, jobject obj) {
         return env ->NewStringUTF(serverUrl);
     }
 }
