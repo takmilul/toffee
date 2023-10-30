@@ -675,7 +675,7 @@ class HomeActivity : PlayerPageActivity(),
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.MENU_OPEN,
                 bundleOf(
-                    "screen" to currentFragmentClassName
+                    "screen" to this.title
                 )
             )
             binding.drawerLayout.openDrawer(GravityCompat.END, true)

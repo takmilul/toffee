@@ -102,7 +102,7 @@ class DrawerHelper(
                         ToffeeEvents.MENU_SELECTED,
                         bundleOf(
                             "menu" to "Account",
-                            "screen" to activity.currentFragmentClassName
+                            "screen" to activity.title
                         )
                     )
                     it.navigateTo(R.id.accountFragment)
@@ -121,7 +121,7 @@ class DrawerHelper(
                 ToffeeEvents.MENU_SELECTED,
                 bundleOf(
                     "menu" to activity.getString(R.string.toffee_premium),
-                    "screen" to activity.currentFragmentClassName
+                    "screen" to activity.title
                 )
             )
             activity.getNavController().navigateTo(R.id.premiumPackListFragment)
@@ -167,7 +167,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_policies),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 activity.getNavController().navigateTo(R.id.menu_policies)
@@ -183,7 +183,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_faq),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 activity.getNavController().navigateTo(
@@ -201,7 +201,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_settings),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
             }
@@ -211,7 +211,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_log_out),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 binding.drawerLayout.closeDrawers()
@@ -224,7 +224,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_sign_in),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 binding.drawerLayout.closeDrawers()
@@ -246,7 +246,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.menu_dark_mode),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 when (val switch = item.actionView) {
@@ -268,7 +268,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.refer_a_friend_txt),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
 
@@ -293,7 +293,7 @@ class DrawerHelper(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
                         "menu" to activity.getString(R.string.redeem_code_txt),
-                        "screen" to activity.currentFragmentClassName
+                        "screen" to activity.title
                     )
                 )
                 ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
