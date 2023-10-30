@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -39,7 +39,7 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 33
-        versionCode = 122
+        versionCode = 123
         versionName = "6.0.2"
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true

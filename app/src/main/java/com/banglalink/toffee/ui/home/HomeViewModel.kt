@@ -30,7 +30,7 @@ import com.banglalink.toffee.apiservice.SetFcmToken
 import com.banglalink.toffee.apiservice.SubscribeChannelService
 import com.banglalink.toffee.apiservice.UpdateFavorite
 import com.banglalink.toffee.apiservice.VastTagServiceV3
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
     private val cacheManager: CacheManager,
-    private var toffeeConfig: ToffeeConfig,
+    private var config: Config,
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
     private val vastTagServiceV3: VastTagServiceV3,
@@ -116,8 +116,7 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-
-    ) : ViewModel() {
+) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
@@ -154,7 +153,7 @@ class HomeViewModel @Inject constructor(
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) {
+        if (config.url.isTestEnvironment()) {
             FirebaseMessaging.getInstance().subscribeToTopic("test-fcm")
             FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
             FirebaseMessaging.getInstance().unsubscribeFromTopic("prod-fifa-score")
