@@ -69,6 +69,12 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                     } else if (mPref.isBanglalinkNumber != "false" && blTrialPackMethod == null) {
                         requireContext().showToast(getString(R.string.only_for_non_bl_users))
                     } else {
+                       val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
                         // Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.BEGIN_PURCHASE,
@@ -82,7 +88,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                                 "provider" to "Trial",
                                 "type" to "trial",
                                 "subtype" to null,
-                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "MNO" to MNO,
                                 "discount" to null,
                             )
                         )
@@ -139,6 +145,12 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             when (it) {
                 is Success -> {
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                        val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
                         // Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PACK_SUCCESS,
@@ -151,7 +163,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                                 "provider" to "Trial",
                                 "type" to "trial",
                                 "reason" to "N/A",
-                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "MNO" to MNO,
                             )
                         )
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
@@ -164,6 +176,12 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                        val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
                         // Send Log to FirebaseAnalytics
                         ToffeeAnalytics.toffeeLogEvent(
                             ToffeeEvents.PACK_ERROR,
@@ -176,7 +194,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                                 "provider" to "Trial",
                                 "type" to "trial",
                                 "reason" to "Due to some technical error, the trial plan activation failed. Please retry.",
-                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "MNO" to MNO,
                             )
                         )
                         val args = bundleOf(
@@ -188,6 +206,12 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                     }
                 }
                 is Failure -> {
+                    val MNO = when {
+                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                        else -> "N/A"
+                    }
                     // Send Log to FirebaseAnalytics
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ERROR,
@@ -200,7 +224,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                             "provider" to "Trial",
                             "type" to "trial",
                             "reason" to it.error.msg,
-                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "MNO" to MNO,
                         )
                     )
                     requireContext().showToast(it.error.msg)
