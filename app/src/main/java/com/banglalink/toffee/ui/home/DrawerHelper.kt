@@ -230,7 +230,7 @@ class DrawerHelper(
                 binding.drawerLayout.closeDrawers()
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "menu",
                             "method" to "mobile"
@@ -275,7 +275,7 @@ class DrawerHelper(
                 if (!mPref.isVerifiedUser) {
                     if (!mPref.isVerifiedUser){
                         ToffeeAnalytics.toffeeLogEvent(
-                            ToffeeEvents.LOGIN,
+                            ToffeeEvents.LOGIN_SOURCE,
                             bundleOf(
                                 "source" to "referral",
                                 "method" to "mobile"
@@ -299,7 +299,7 @@ class DrawerHelper(
                 ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 if (!mPref.isVerifiedUser) {
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "referral",
                             "method" to "mobile"

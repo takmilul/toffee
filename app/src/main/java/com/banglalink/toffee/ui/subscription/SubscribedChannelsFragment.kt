@@ -113,7 +113,7 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "channel",
                     "method" to "mobile"

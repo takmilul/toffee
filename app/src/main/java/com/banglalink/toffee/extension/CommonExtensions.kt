@@ -152,7 +152,7 @@ fun Activity.handleReport(item: ChannelInfo) {
         if (!mPref.isVerifiedUser)
         {
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "report_content",
                     "method" to "mobile"
@@ -177,7 +177,7 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
         if (!mPref.isVerifiedUser)
         {
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "add_to_playlist",
                     "method" to "mobile"
@@ -215,7 +215,7 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
         if (!mPref.isVerifiedUser)
         {
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "add_to_favorites",
                     "method" to "mobile"

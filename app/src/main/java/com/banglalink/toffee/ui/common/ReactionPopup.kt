@@ -117,7 +117,7 @@ class ReactionPopup: Fragment() {
         ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
         if (!preference.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "content_reaction",
                     "method" to "mobile"

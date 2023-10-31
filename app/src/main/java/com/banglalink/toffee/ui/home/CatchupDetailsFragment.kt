@@ -145,7 +145,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         super.onSubscribeButtonClicked(view, item)
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "follow_channel",
                     "method" to "mobile"

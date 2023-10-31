@@ -107,7 +107,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 mPref.signingFromPrem.value = true
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "premium_pack_details",
                             "method" to "mobile"

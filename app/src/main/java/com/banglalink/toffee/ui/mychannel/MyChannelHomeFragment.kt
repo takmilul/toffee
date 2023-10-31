@@ -139,7 +139,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             _binding?.channelDetailView?.addBioButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "add_channel_bio",
                             "method" to "mobile"
@@ -151,7 +151,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             _binding?.channelDetailView?.editButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "create_channel",
                             "method" to "mobile"
@@ -163,7 +163,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             _binding?.channelDetailView?.ratingButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "rate_channel",
                             "method" to "mobile"
@@ -175,7 +175,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             _binding?.channelDetailView?.analyticsButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "create_channel_playlist",
                             "method" to "mobile"
@@ -193,7 +193,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             _binding?.channelDetailView?.subscriptionButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN,
+                        ToffeeEvents.LOGIN_SOURCE,
                         bundleOf(
                             "source" to "follow_channel",
                             "method" to "mobile"
