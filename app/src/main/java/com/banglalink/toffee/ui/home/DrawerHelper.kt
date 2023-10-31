@@ -210,7 +210,7 @@ class DrawerHelper(
                 ToffeeAnalytics.toffeeLogEvent(
                     ToffeeEvents.MENU_SELECTED,
                     bundleOf(
-                        "menu" to activity.getString(R.string.menu_log_out),
+                        "menu" to activity.getString(R.string.menu_sign_out),
                         "screen" to activity.title
                     )
                 )

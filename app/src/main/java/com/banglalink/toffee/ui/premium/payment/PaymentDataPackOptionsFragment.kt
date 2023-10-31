@@ -99,6 +99,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyNowButton.safeClick({
             pressedButtonName = "buyNowButton"
             val isLoggedInUser = mPref.isVerifiedUser
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN,
+                bundleOf(
+                    "source" to "buy_now_button",
+                    "method" to "mobile"
+                )
+            )
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
                 // Send Log to FirebaseAnalytics
                 ToffeeAnalytics.toffeeLogEvent(
@@ -239,6 +246,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private fun observeLogout() {
         observe(homeViewModel.isLogoutCompleted) {
             if (it) {
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN,
+                    bundleOf(
+                        "source" to "signin_with_banglalink",
+                        "method" to "mobile"
+                    )
+                )
                 requireActivity().checkVerification(shouldReloadAfterLogin = false) {
                     progressDialog.show()
                     viewModel.getMnpStatus()
