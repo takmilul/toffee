@@ -107,6 +107,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 )
             )
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                val MNO = when {
+                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                    else -> "N/A"
+                }
                 // Send Log to FirebaseAnalytics
                 ToffeeAnalytics.toffeeLogEvent(
                     ToffeeEvents.BEGIN_PURCHASE,
@@ -120,7 +126,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         "provider" to provider,
                         "type" to type,
                         "subtype" to if(paymentName == "blPack") "balance" else null,
-                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                        "MNO" to MNO,
                         "discount" to null,
                     )
                 )
@@ -140,6 +146,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             pressedButtonName = "buyWithRechargeButton"
             val isLoggedInUser = mPref.isVerifiedUser
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                val MNO = when {
+                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                    else -> "N/A"
+                }
                 // Send Log to FirebaseAnalytics
                 ToffeeAnalytics.toffeeLogEvent(
                     ToffeeEvents.BEGIN_PURCHASE,
@@ -153,7 +165,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         "provider" to provider,
                         "type" to type,
                         "subtype" to "recharge",
-                        "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                        "MNO" to MNO,
                         "discount" to null,
                     )
                 )
@@ -171,6 +183,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         
         binding.signInButton.safeClick({
+            val MNO = when {
+                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                else -> "N/A"
+            }
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
@@ -184,7 +202,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "signin",
-                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                    "MNO" to MNO,
                     "discount" to null,
                 )
             )
@@ -195,6 +213,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         })
         
         binding.buySimButton.safeClick({
+            val MNO = when {
+                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                else -> "N/A"
+            }
             // Send Log to FirebaseAnalytics
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.BEGIN_PURCHASE,
@@ -208,7 +232,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     "provider" to provider,
                     "type" to type,
                     "subtype" to "sim",
-                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                    "MNO" to MNO,
                     "discount" to null,
                 )
             )
@@ -484,6 +508,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
                             // Send Log to FirebaseAnalytics
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_SUCCESS,
@@ -496,7 +526,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "N/A",
-                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    "MNO" to MNO,
                                 )
                             )
                             val args = bundleOf(
@@ -505,6 +535,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
                         PaymentStatusDialog.UN_SUCCESS ->{
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
                             // Send Log to FirebaseAnalytics
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
@@ -517,7 +553,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to "Due to some technical issue, the data plan activation failed. Please retry.",
-                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    "MNO" to MNO,
                                 )
                             )
                             val args = bundleOf(
@@ -528,6 +564,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             findNavController().navigateTo(R.id.paymentStatusDialog, args)
                         }
                         PaymentStatusDialog.DataPackPurchaseFailedBalanceInsufficient_ERROR -> {
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
                             // Send Log to FirebaseAnalytics
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
@@ -540,7 +582,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to if (!mPref.isPrepaid) R.string.insufficient_balance_for_postpaid else R.string.insufficient_balance_subtitle,
-                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    "MNO" to MNO,
                                 )
                             )
                             if (!mPref.isPrepaid){
@@ -559,6 +601,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             }
                         }
                         else -> {
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
                             // Send Log to FirebaseAnalytics
                             ToffeeAnalytics.toffeeLogEvent(
                                 ToffeeEvents.PACK_ERROR,
@@ -571,7 +619,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                     "provider" to "Banglalink",
                                     "type" to "data pack",
                                     "reason" to getString(R.string.due_some_technical_issue),
-                                    "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                    "MNO" to MNO,
                                 )
                             )
                             val args = bundleOf(
@@ -582,6 +630,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     }
                 }
                 is Failure -> {
+                    val MNO = when {
+                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                        else -> "N/A"
+                    }
                     // Send Log to FirebaseAnalytics
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ERROR,
@@ -594,7 +648,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "provider" to "Banglalink",
                             "type" to "data pack",
                             "reason" to it.error.msg,
-                            "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                            "MNO" to MNO,
                         )
                     )
                     requireContext().showToast(it.error.msg)
