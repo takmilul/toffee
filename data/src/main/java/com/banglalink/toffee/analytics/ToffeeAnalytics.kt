@@ -151,6 +151,8 @@ object ToffeeAnalytics {
         combinedParams.keySet().forEach {
             if (combinedParams.getString(it).isNullOrBlank()) {
                 combinedParams.putString(it, "N/A")
+            } else if (combinedParams.getString(it) == "Toffee"){
+                combinedParams.putString(it, "Home")
             }
         }
 
