@@ -51,7 +51,7 @@ class AccountFragment : BaseFragment() {
     private fun onClickProfile() {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "account",
                     "method" to "mobile"
@@ -67,7 +67,7 @@ class AccountFragment : BaseFragment() {
     private fun onClickActivities() {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "account",
                     "method" to "mobile"
@@ -84,7 +84,7 @@ class AccountFragment : BaseFragment() {
     private fun onClickMyPlaylist() {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "account",
                     "method" to "mobile"
@@ -100,7 +100,7 @@ class AccountFragment : BaseFragment() {
     private fun onClickFavorites() {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "account",
                     "method" to "mobile"
@@ -117,7 +117,7 @@ class AccountFragment : BaseFragment() {
     private fun onClickSubscriptions() {
         if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "account",
                     "method" to "mobile"

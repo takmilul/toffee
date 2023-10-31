@@ -299,7 +299,7 @@ class HomeActivity : PlayerPageActivity(),
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             if(!mPref.isVerifiedUser){
                 ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.LOGIN,
+                    ToffeeEvents.LOGIN_SOURCE,
                     bundleOf(
                         "source" to "upload",
                         "method" to "mobile"
@@ -1103,7 +1103,7 @@ class HomeActivity : PlayerPageActivity(),
                     observeMnpStatus()
                     if (!mPref.isVerifiedUser){
                         ToffeeAnalytics.toffeeLogEvent(
-                            ToffeeEvents.LOGIN,
+                            ToffeeEvents.LOGIN_SOURCE,
                             bundleOf(
                                 "source" to "content_click",
                                 "method" to "mobile"

@@ -134,7 +134,7 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
 
         binding.btnSingin.safeClick({
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "premium_pack_menu",
                     "method" to "mobile"

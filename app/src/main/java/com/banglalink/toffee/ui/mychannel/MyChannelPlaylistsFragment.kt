@@ -122,7 +122,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 createPlaylistButton.setOnClickListener {
                     if (!mPref.isVerifiedUser){
                         ToffeeAnalytics.toffeeLogEvent(
-                            ToffeeEvents.LOGIN,
+                            ToffeeEvents.LOGIN_SOURCE,
                             bundleOf(
                                 "source" to "create_new_creators_playlist",
                                 "method" to "mobile"

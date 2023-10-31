@@ -100,7 +100,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             pressedButtonName = "buyNowButton"
             val isLoggedInUser = mPref.isVerifiedUser
             ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN,
+                ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
                     "source" to "buy_now_button",
                     "method" to "mobile"
@@ -271,7 +271,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         observe(homeViewModel.isLogoutCompleted) {
             if (it) {
                 ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.LOGIN,
+                    ToffeeEvents.LOGIN_SOURCE,
                     bundleOf(
                         "source" to "signin_with_banglalink",
                         "method" to "mobile"
