@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPacksBinding
@@ -156,6 +159,14 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     
     override fun onItemClicked(item: PremiumPack) {
         viewModel.selectedPremiumPack.value = item
+        ToffeeAnalytics.toffeeLogEvent(
+            ToffeeEvents.PREMIUM_PACK,
+            bundleOf(
+                "source" to "premium_pack_menu",
+                "pack_ID" to item.id.toString(),
+                "pack_name" to item.packTitle
+            )
+        )
         findNavController().navigateTo(R.id.packDetailsFragment)
     }
     

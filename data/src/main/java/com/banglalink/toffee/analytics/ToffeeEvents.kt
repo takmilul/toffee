@@ -53,4 +53,5 @@ object ToffeeEvents {
     const val PACK_SUCCESS = "pack_success"
     const val PACK_ERROR = "pack_error"
     const val BEGIN_PURCHASE = "begin_purchase"
+    const val PREMIUM_PACK = "premium_pack"
 }

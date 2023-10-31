@@ -135,7 +135,7 @@ object ToffeeAnalytics {
             putString("country", SessionPreference.getInstance().geoLocation)
             putString("device_model", CommonPreference.getInstance().deviceName )
             putString("operating_system", "Android")
-            putString("OS_version", Build.VERSION.RELEASE)
+            putString("OS_version", "Android " + Build.VERSION.RELEASE)
             putString("platform", "Android")
             putString("region", SessionPreference.getInstance().geoRegion)
         }
@@ -149,9 +149,10 @@ object ToffeeAnalytics {
 
         // Replacing blank or null values with N/A
         combinedParams.keySet().forEach {
-            if (combinedParams.getString(it).isNullOrBlank()) {
+            val value = combinedParams.getString(it)
+            if (value.isNullOrBlank() || value.equals("NULL", ignoreCase = true)) {
                 combinedParams.putString(it, "N/A")
-            } else if (combinedParams.getString(it) == "Toffee"){
+            } else if (value == "Toffee") {
                 combinedParams.putString(it, "Home")
             }
         }

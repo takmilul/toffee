@@ -109,7 +109,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.LOGIN,
                         bundleOf(
-                            "source" to "premium_pack_menu",
+                            "source" to "premium_pack_details",
                             "method" to "mobile"
                         )
                     )
