@@ -1,8 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import java.io.FileInputStream
-import java.util.*
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
@@ -16,15 +13,10 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee.lib"
-    compileSdk = 33
-    
-    val properties = Properties().apply {
-        load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
-    }
-    val libraryPackageName: String = properties.getProperty("libraryPackageName")
+    compileSdk = libs.versions.compileSdkVersion.get().toInt()
     
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdkVersion.get().toInt()
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
@@ -48,8 +40,13 @@ android {
     productFlavors {
         create("mobile") {
             dimension = "lib"
+            
+            val appVersionCode: String = libs.versions.appVersionCode.get()
+            val appVersionName: String = libs.versions.appVersionName.get()
+            
             buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("String", "LIBRARY_PACKAGE", libraryPackageName)
+            buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
+            buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
         }
         create("tv") {
             dimension = "lib"
