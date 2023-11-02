@@ -85,7 +85,6 @@ import com.banglalink.toffee.data.repository.CdnChannelItemRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
@@ -250,7 +249,7 @@ class HomeActivity : PlayerPageActivity(),
         // Create an instance of ClarityConfig with configuration
         val config = ClarityConfig(
             projectId = "iinc7p89vm",
-            userId = null, // Optional: Provide a user ID if needed
+            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
             logLevel = LogLevel.None, // Optional: Specify the desired log level
             allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
             enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
@@ -258,7 +257,7 @@ class HomeActivity : PlayerPageActivity(),
         )
         // Initialize Clarity with the ClarityConfig
         Clarity.initialize(applicationContext, config)
-
+        
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)

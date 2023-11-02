@@ -20,27 +20,21 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee"
-    compileSdk = 33
+    compileSdk = libs.versions.compileSdkVersion.get().toInt()
     
     val properties = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
     }
     val adsAppId: String = properties.getProperty("adsAppId")
-    val packageName: String = properties.getProperty("packageName")
     val facebookAppId: String = properties.getProperty("facebookAppId")
-    val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
     val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
-    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
     val facebookClientToken: String = properties.getProperty("facebookClientToken")
-    val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
-    val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
-//    val fireworkOAuthId: String = gradleLocalProperties(rootDir).getProperty("firework.oAuthId")
     
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 124
-        versionName = "6.1.0"
+        minSdk = libs.versions.minSdkVersion.get().toInt()
+        targetSdk = libs.versions.targetSdkVersion.get().toInt()
+        versionCode = libs.versions.appVersionCode.get().toInt()
+        versionName = libs.versions.appVersionName.get()
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
@@ -68,8 +62,13 @@ android {
     productFlavors {
         create("mobile") {
             dimension = "lib"
+            
+            val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
+            val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
+            val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
+            val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
+            
             buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("String", "PACKAGE_NAME", packageName)
             buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
             buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
             buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)

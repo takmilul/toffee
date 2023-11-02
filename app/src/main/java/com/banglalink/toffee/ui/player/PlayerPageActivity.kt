@@ -834,7 +834,7 @@ abstract class PlayerPageActivity :
             onContentExpired()
             return@launch
         }
-        if (BuildConfig.PACKAGE_NAME != BuildConfig.APPLICATION_ID) {
+        if (BuildConfig.APPLICATION_ID != "com.banglalink.toffee") {
             return@launch
         }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
