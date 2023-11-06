@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -396,7 +397,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    bKashBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                    if (!bKashBlPacks.isNullOrEmpty()){
+                        packPaymentMethodList.addAll(bKashBlPacks)
+                    } else {
                         viewModel.clickableAdInventories.value?.let {
                             requireActivity().showToast(getString(R.string.payment_method_invalid))
                             this.closeDialog()
@@ -405,7 +408,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
                     }
                 } else {
-                    bKashNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                    if (!bKashNonBlPacks.isNullOrEmpty()){
+                        packPaymentMethodList.addAll(bKashNonBlPacks)
+                    } else {
                         viewModel.clickableAdInventories.value?.let {
                             requireActivity().showToast(getString(R.string.payment_method_invalid))
                             this.closeDialog()
@@ -418,7 +423,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             else if (paymentName == "ssl"){
                 packPaymentMethodList.clear()
                 if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    sslBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                    if (!sslBlPacks.isNullOrEmpty()){
+                        packPaymentMethodList.addAll(sslBlPacks)
+                    } else {
                         viewModel.clickableAdInventories.value?.let {
                             requireActivity().showToast(getString(R.string.payment_method_invalid))
                             this.closeDialog()
@@ -427,7 +434,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
                     }
                 } else {
-                    sslNonBlPacks?.let { packPaymentMethodList.addAll(it) } ?: run {
+                    if (!sslNonBlPacks.isNullOrEmpty()){
+                        packPaymentMethodList.addAll(sslNonBlPacks)
+                    } else {
                         viewModel.clickableAdInventories.value?.let {
                             requireActivity().showToast(getString(R.string.payment_method_invalid))
                             this.closeDialog()
