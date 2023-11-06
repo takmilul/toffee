@@ -8,10 +8,10 @@ plugins {
 
 android {
     namespace = "com.banglalink.toffee.balloon"
-    compileSdk = 33
+    compileSdk = libs.versions.compileSdkVersion.get().toInt()
     
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdkVersion.get().toInt()
     }
     
     buildFeatures {
