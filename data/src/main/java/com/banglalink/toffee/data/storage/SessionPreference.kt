@@ -813,6 +813,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, false)
         set(value) = pref.edit { putBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, value) }
 
+    var playerScreenBrightness: Float
+        get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.5f)
+        set(value) = pref.edit { putFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, value) }
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -1095,6 +1099,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
         private const val RADIO_BANNER = "radio_banner"
+        private const val PREF_PLAYER_SCREEN_BRIGHTNESS = "player-screen-brightness"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
