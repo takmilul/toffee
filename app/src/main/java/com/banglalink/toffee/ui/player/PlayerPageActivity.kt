@@ -91,6 +91,7 @@ abstract class PlayerPageActivity :
     SessionAvailabilityListener,
     OnPlayerControllerChangedListener
 {
+    var isDisablePip = false
     private var startWindow = 0
     private var maxBitRate: Int = 0
     private var playCounter: Int = -1
@@ -1582,6 +1583,9 @@ abstract class PlayerPageActivity :
                 playerEventHelper.setAdData(it.ad, ALL_ADS_COMPLETED.name)
                 ConvivaHelper.onAllAdEnded()
                 playerEventHelper.setAdData(null, null, isReset = true)
+            }
+            CLICKED -> {
+                isDisablePip = true
             }
             else -> {
                 val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
