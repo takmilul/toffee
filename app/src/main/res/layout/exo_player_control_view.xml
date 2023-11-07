@@ -156,7 +156,8 @@
             app:srcCompat="@drawable/ic_screen_rotate"
             app:layout_constraintBottom_toBottomOf="@+id/minimize"
             app:layout_constraintEnd_toStartOf="@+id/minimize"
-            app:layout_constraintTop_toTopOf="@+id/minimize" />
+            app:layout_constraintTop_toTopOf="@+id/minimize"
+            android:visibility="gone"/>
         
         <ImageView
             android:id="@+id/minimize"

@@ -40,6 +40,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#40000000" />
+
+    <LinearLayout
+        android:id="@+id/brightnessContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="152dp"
+        android:layout_gravity="start|center_vertical"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:id="@+id/brightnessIcon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/brightness_icon"
+            android:layout_marginBottom="32dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/brightnessControlBar"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            app:trackHeight="6dp"
+            android:rotation="270"
+            android:valueFrom="0.0"
+            android:valueTo="1.0"
+            app:labelBehavior="gone"
+            app:thumbColor="@android:color/transparent"
+            app:thumbStrokeColor="@android:color/transparent"
+            app:thumbElevation="0dp"
+            app:thumbStrokeWidth="0dp"
+            app:trackColorActive="@color/white"
+            app:trackColorInactive="#454545"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_gravity="center_vertical"
+            />
+    </LinearLayout>
     
     <FrameLayout
         android:id="@+id/debug_container"
