@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -104,6 +105,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var playerBottomSpace: Space
     private lateinit var minimizeButton: ImageView
+    private lateinit var closeIcon: ImageView
     private lateinit var exoTimeSeparator: TextView
     private lateinit var exoProgress: DefaultTimeBar
     private lateinit var fullscreenButton: ImageView
@@ -142,6 +144,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         autoplayProgress = findViewById(R.id.autoplayProgress)
         rotateButton = findViewById(R.id.rotation)
         
+        closeIcon = findViewById(R.id.closeIcon)
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerBottomSpace = findViewById(R.id.player_bottom_space)
@@ -615,6 +618,20 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         return true
     }
     
+    fun togglePlayerCloseIconVisibility(isVisible: Boolean) {
+        closeIcon.isVisible = isVisible
+    }
+    
+    fun getPlayerCloseIconArea(): IntArray {
+        val viewLocation = IntArray(2)
+        closeIcon.getLocationOnScreen(viewLocation)
+        return viewLocation
+    }
+    
+    fun closePlayer() {
+        mPlayListListener?.closePlayer()
+    }
+    
     override fun onPlayerMinimize() {
         isMinimize = true
         hideController()
@@ -622,6 +639,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     
     override fun onPlayerMaximize() {
         isMinimize = false
+        togglePlayerCloseIconVisibility(false)
 //        binding.textureView.setOnClickListener(this)
         if (player?.isPlaying == true) {
 //            hideControls(2000)

@@ -202,7 +202,12 @@ class DraggerLayout @JvmOverloads constructor(
                         duration = System.currentTimeMillis()
                     }
                     MotionEvent.ACTION_UP -> if (lastAction == MotionEvent.ACTION_DOWN && System.currentTimeMillis() - duration < 250 && shouldMaximize()) {
-                        maximize()
+                        if (ev.x.toInt() >= dragView.getPlayerCloseIconArea()[0] && ev.y.toInt()<= dragView.getPlayerCloseIconArea()[1]) {
+                            dragView.closePlayer()
+                            dragView.dispatchTouchEvent(ev)
+                        } else {
+                            maximize()
+                        }
                     }
                 }
                 if (isMaximized() && System.currentTimeMillis() - duration < 250) {
@@ -336,8 +341,10 @@ class DraggerLayout @JvmOverloads constructor(
                     dragView.setPadding(padding, padding, padding, padding)
                     if (scale == getMinScale()) {
                         dragView.setBackgroundColor(Color.WHITE)
+                        dragView.togglePlayerCloseIconVisibility(true)
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)
+                        dragView.togglePlayerCloseIconVisibility(false)
                     }
 
 //                    val initX = 2 * dragView.minBound - capturedEnd
