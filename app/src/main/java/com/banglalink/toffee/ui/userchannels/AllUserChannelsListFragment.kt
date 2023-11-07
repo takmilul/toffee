@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.data.database.LocalSync
@@ -144,6 +147,15 @@ class AllUserChannelsListFragment : HomeBaseFragment(), LandingPopularChannelCal
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "follow_channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             trendingChannelInfo = info
             subscribedItemPosition = position

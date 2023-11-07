@@ -29,6 +29,7 @@ import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.ClickableAdInventories
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -58,6 +59,9 @@ class PremiumViewModel @Inject constructor(
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
     val packListState = _packListState.asSharedFlow()
+
+//    private val _packListState: MutableLiveData<Resource<List<PremiumPack>>> = savedState.getLiveData("packListState")
+//    val packListState: MutableLiveData<Resource<List<PremiumPack>>> get() = _packListState
     
     val packListScrollState = savedState.getLiveData<Int>("packListScrollState")
     
@@ -102,11 +106,15 @@ class PremiumViewModel @Inject constructor(
     val clickedOnPackList = MutableLiveData<Boolean>()
     val mnpStatusLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
     val mnpStatusLiveDataForPaymentDetail = SingleLiveEvent<Resource<MnpStatusBean?>>()
+
+    var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
+    var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
     
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
             _packListState.emit(response)
+//            packListState.value = response
         }
     }
     

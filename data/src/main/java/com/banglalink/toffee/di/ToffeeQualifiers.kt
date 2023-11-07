@@ -52,3 +52,12 @@ annotation class CoilHttpClient
 
 @Qualifier
 annotation class FirebaseInAppMessage
+
+@Qualifier
+annotation class ApplicationId
+
+@Qualifier
+annotation class AppVersionName
+
+@Qualifier
+annotation class AppVersionCode

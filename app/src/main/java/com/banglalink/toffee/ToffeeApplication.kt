@@ -48,6 +48,9 @@ import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
+import com.microsoft.clarity.models.LogLevel
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -187,7 +190,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
-        
+
         initFireworkSdk()
         initMedalliaSdk()
         mUploadObserver.start()

@@ -18,6 +18,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.databinding.FragmentReedemVoucherCodeBinding
 import com.banglalink.toffee.extension.navigateTo
@@ -78,6 +80,32 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
 
 
         binding.redeemVoucherBtn.safeClick({
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPackOption = viewModel.selectedDataPackOption.value
+            val MNO = when {
+                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                else -> "N/A"
+            }
+            // Send Log to FirebaseAnalytics
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.BEGIN_PURCHASE,
+                bundleOf(
+                    "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                    "pack_ID" to selectedPremiumPack?.id,
+                    "pack_name" to selectedPremiumPack?.packTitle,
+                    "currency" to "BDT",
+                    "amount" to selectedDataPackOption?.packPrice,
+                    "validity" to selectedPremiumPack?.expiryDate,
+                    "provider" to "Coupon",
+                    "type" to "coupon",
+                    "subtype" to null,
+                    "MNO" to MNO,
+                    "discount" to null,
+                )
+            )
+
             voucherCode = binding.giftVoucherCode.text.toString().trim()
 
             if (voucherCode.isBlank()) {
@@ -171,6 +199,28 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                 is Resource.Success -> {
 
                     if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                        val selectedPremiumPack = viewModel.selectedPremiumPack.value
+                        val selectedDataPackOption = viewModel.selectedDataPackOption.value
+                        val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PACK_SUCCESS,
+                            bundleOf(
+                                "pack_ID" to selectedPremiumPack?.id,
+                                "pack_name" to selectedPremiumPack?.packTitle,
+                                "currency" to "BDT",
+                                "amount" to selectedDataPackOption?.packPrice,
+                                "validity" to selectedPremiumPack?.expiryDate,
+                                "provider" to "Coupon",
+                                "type" to "coupon",
+                                "MNO" to MNO,
+                            )
+                        )
                         mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 200),
@@ -180,6 +230,28 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
                     else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                        val selectedPremiumPack = viewModel.selectedPremiumPack.value
+                        val selectedDataPackOption = viewModel.selectedDataPackOption.value
+                        val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PACK_ERROR,
+                            bundleOf(
+                                "pack_ID" to selectedPremiumPack?.id,
+                                "pack_name" to selectedPremiumPack?.packTitle,
+                                "currency" to "BDT",
+                                "amount" to selectedDataPackOption?.packPrice,
+                                "validity" to selectedPremiumPack?.expiryDate,
+                                "provider" to "Coupon",
+                                "type" to "coupon",
+                                "MNO" to MNO,
+                            )
+                        )
                         val args = bundleOf(
                             PaymentStatusDialog.ARG_STATUS_CODE to  0,
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption Failed!",
@@ -189,6 +261,28 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
+                    val selectedPremiumPack = viewModel.selectedPremiumPack.value
+                    val selectedDataPackOption = viewModel.selectedDataPackOption.value
+                    val MNO = when {
+                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                        else -> "N/A"
+                    }
+                    // Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ERROR,
+                        bundleOf(
+                            "pack_ID" to selectedPremiumPack?.id,
+                            "pack_name" to selectedPremiumPack?.packTitle,
+                            "currency" to "BDT",
+                            "amount" to selectedDataPackOption?.packPrice,
+                            "validity" to selectedPremiumPack?.expiryDate,
+                            "provider" to "Coupon",
+                            "type" to "coupon",
+                            "MNO" to MNO,
+                        )
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }

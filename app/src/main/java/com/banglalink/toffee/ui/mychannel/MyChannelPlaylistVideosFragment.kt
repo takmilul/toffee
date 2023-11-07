@@ -163,6 +163,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN_SOURCE,
+                        bundleOf(
+                            "source" to "channel",
+                            "method" to "mobile"
+                        )
+                    )
+                }
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)

@@ -149,6 +149,9 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
+import com.microsoft.clarity.models.LogLevel
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -171,7 +174,7 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-    
+
     private val gson = Gson()
     private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
@@ -210,8 +213,9 @@ class HomeActivity : PlayerPageActivity(),
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    var currentFragmentClassName: String ?= null
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
-    
+
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -246,6 +250,19 @@ class HomeActivity : PlayerPageActivity(),
                 WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+
+        // Create an instance of ClarityConfig with configuration
+        val config = ClarityConfig(
+            projectId = "iinc7p89vm",
+            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
+            logLevel = LogLevel.None, // Optional: Specify the desired log level
+            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+        )
+        // Initialize Clarity with the ClarityConfig
+        Clarity.initialize(applicationContext, config)
+        
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -284,6 +301,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN_SOURCE,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -657,8 +683,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to this.title
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -772,8 +806,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -1050,7 +1084,7 @@ class HomeActivity : PlayerPageActivity(),
             viewModel.sendViewContentEvent(it)
         }
     }
-    
+
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1077,6 +1111,15 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     lifecycleScope.launch {
                         /**
                          * if the user is not logged in and video is full screen: exit full screen, update player size and minimize the player. delay some time before minimizing the player otherwise the player will not be half minimized.
@@ -1144,9 +1187,9 @@ class HomeActivity : PlayerPageActivity(),
             }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
     }
-    
+
     /**
-     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when 
+     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when
      * configuration changes navigate to the premium page or if not in fullscreen then navigate immediately.
      */
     private fun handleNavigateToPremiumPackList() {
@@ -1160,7 +1203,7 @@ class HomeActivity : PlayerPageActivity(),
             false
         }
     }
-    
+
     /**
      * keep the content in a live data. navigate to the premium page. if the user purchase the pack then play the content from the live data.
      */
@@ -2820,7 +2863,7 @@ class HomeActivity : PlayerPageActivity(),
             initMqtt()
         }
     }
-    
+
     private fun handleRefreshPageOnLogin() {
         mPref.preLoginDestinationId.value?.let {
             if (it == id.menu_channel) {
@@ -2883,7 +2926,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
     private fun clearDataOnLogOut() {
         mPref.mqttHost = ""
         mPref.phoneNumber = ""
@@ -2904,6 +2947,7 @@ class HomeActivity : PlayerPageActivity(),
         mPref.isVerifiedUser = false
         mPref.isChannelDetailChecked = false
         mPref.isMnpStatusChecked = false
+        mPref.isBanglalinkNumber = "false"
         lifecycleScope.launch {
             tvChannelsRepo.deleteAllRecentItems()
         }

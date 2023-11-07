@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -114,6 +115,15 @@ class ReactionPopup: Fragment() {
             return
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
+        if (!preference.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "content_reaction",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification(doActionBeforeReload = true) {
             reactionPopupWindow?.dismiss()
             channelInfo?.let { info ->

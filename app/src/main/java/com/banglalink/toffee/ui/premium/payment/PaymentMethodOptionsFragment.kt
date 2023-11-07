@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
@@ -25,6 +29,10 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 class PaymentMethodOptionsFragment : ChildDialogFragment() {
     
     private var _binding: FragmentPaymentMethodOptionsBinding? = null
+    private var subType: String? = null
+    var isTrialPackUsed = false
+    var blTrialPackMethod: PackPaymentMethod? = null
+    var nonBlTrialPackMethod: PackPaymentMethod? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     
@@ -47,8 +55,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                  */
 
                 if (!paymentTypes.free.isNullOrEmpty()) {
-                    var blTrialPackMethod: PackPaymentMethod? = null
-                    var nonBlTrialPackMethod: PackPaymentMethod? = null
                     
                     paymentTypes.free?.forEach {
                         if (it.isNonBlFree == 1) {
@@ -64,7 +70,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         extraValidity = 0
                     }
                     trialDetails.isVisible = extraValidity > 0
-                    
+
+                    /**
+                     * This section handles the logics for trail packs title and sub-title depending on user being banglalink user or non-banglalink user.
+                     */
+
                     if (blTrialPackMethod != null && mPref.isBanglalinkNumber == "true") {
                         viewModel.selectedDataPackOption.value = blTrialPackMethod
                         trialTitle.text = blTrialPackMethod!!.packDetails.toString()
@@ -87,7 +97,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                         trialCard.alpha = 0.3f
                     }
                     
-                    var isTrialPackUsed = false
+
                     mPref.activePremiumPackList.value?.find {
                         it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
                     }?.let { isTrialPackUsed = true }
@@ -201,22 +211,154 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                  * These click handlers navigate to specific fragments based on the selected payment card.
                  */
 
-                blPackCard.safeClick({
-                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "blPack"))
-                })
-                bKashPackCard.safeClick({
-                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "bkash"))
-                })
-                SslPackCard.safeClick({
-                    findNavController().navigateTo(R.id.paymentDataPackOptionsFragment, bundleOf("paymentName" to "ssl"))
-                })
-                giftVoucherCard.safeClick({
-                    findNavController().navigateTo(R.id.reedemVoucherCodeFragment, bundleOf("paymentName" to "VOUCHER"))
-                })
+                subType = when {
+                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "prepaid"
+                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "postpaid"
+                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "N/A"
+                    else -> null
+                }
+
+                viewModel.clickableAdInventories.value?.let {
+                    // navigating to destination by paymentMethodId from deep link
+                    val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
+                    when (it.paymentMethodId) {
+                        PaymentMethod.BKASH.value -> {
+                            if (
+                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) ||
+                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
+                            ) {
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "bkash")
+                                )
+                            } else {
+                                viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                            }
+                        }
+
+                        PaymentMethod.BL_PACK.value -> {
+                            if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
+                                viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                            } else {
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "blPack")
+                                )
+                            }
+                        }
+
+                        PaymentMethod.SSL.value -> {
+                            if (
+                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser))  && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) ||
+                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
+                            ) {
+                                findNavController().navigatePopUpTo(
+                                    resId = R.id.paymentDataPackOptionsFragment,
+                                    args = bundleOf("paymentName" to "ssl")
+                                )
+                            } else {
+                                viewModel.clickableAdInventories.value = null
+                                requireActivity().showToast(getString(R.string.payment_method_invalid))
+                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                                this@PaymentMethodOptionsFragment.closeDialog()
+                            }
+                        }
+
+                        else -> {
+                            viewModel.clickableAdInventories.value = null
+                            requireActivity().showToast(getString(R.string.payment_method_invalid))
+                            mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                            this@PaymentMethodOptionsFragment.closeDialog()
+                        }
+                    }
+
+                } ?: run {
+                    blPackCard.safeClick({
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "blPack")
+                        )
+                        //Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PAYMENT_SELECTED,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "provider" to "Banglalink",
+                                "type" to "data pack",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "subtype" to subType,
+                            )
+                        )
+                    })
+
+                    bKashPackCard.safeClick({
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "bkash")
+                        )
+                        //Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PAYMENT_SELECTED,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "provider" to "bKash",
+                                "type" to "wallet",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "subtype" to subType,
+                            )
+                        )
+                    })
+
+                    SslPackCard.safeClick({
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "ssl")
+                        )
+                        //Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PAYMENT_SELECTED,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "provider" to "SSL Wireless",
+                                "type" to "aggregator",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "subtype" to subType,
+                            )
+                        )
+                    })
+
+                    giftVoucherCard.safeClick({
+                        findNavController().navigateTo(
+                            R.id.reedemVoucherCodeFragment,
+                            bundleOf("paymentName" to "VOUCHER")
+                        )
+                        //Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PAYMENT_SELECTED,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "provider" to "Banglalink",
+                                "type" to "coupon",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "subtype" to subType,
+                            )
+                        )
+                    })
+                }
             }
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

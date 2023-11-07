@@ -1,6 +1,5 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import androidx.core.text.isDigitsOnly
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
@@ -9,6 +8,9 @@ import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.ApiHeader
+import com.banglalink.toffee.di.AppVersionCode
+import com.banglalink.toffee.di.AppVersionName
+import com.banglalink.toffee.di.ApplicationId
 import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.extension.isNotNullOrBlank
 import com.banglalink.toffee.extension.overrideUrl
@@ -30,6 +32,9 @@ import javax.inject.Singleton
 @Singleton
 class AuthInterceptor @Inject constructor(
     private val mPref: SessionPreference,
+    @ApplicationId private val appId: String,
+    @AppVersionCode private val appVersionCode: Int,
+    @AppVersionName private val appVersionName: String,
     private val iGetMethodTracker: IGetMethodTracker,
     @ApiHeader private val apiUserAgent: Provider<String>,
     @ToffeeHeader private val playerUserAgent: Provider<String>,
@@ -44,7 +49,7 @@ class AuthInterceptor @Inject constructor(
         val builder = FormBody.Builder()
         val requestJsonString = bodyToString(request.body)
         val baseRequest = try { Gson().fromJson(requestJsonString, BaseRequest::class.java) } catch (e: Exception) { null }
-        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || !baseRequest.appVersion.replace(".", "").isDigitsOnly() || BuildConfig.LIBRARY_PACKAGE != BuildConfig.LIBRARY_PACKAGE_NAME)) {
+        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != BuildConfig.APP_VERSION_NAME || appId != "com.banglalink.toffee" || appVersionCode != BuildConfig.APP_VERSION_CODE || appVersionName != BuildConfig.APP_VERSION_NAME)) {
             throw IOException()
         }
         

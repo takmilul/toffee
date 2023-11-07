@@ -16,7 +16,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
+            android:contentDescription="@string/back_button_text"
             android:padding="8dp"
             android:src="@drawable/ic_arrow_back"
             app:layout_constraintBottom_toTopOf="@+id/recyclerView"
@@ -166,7 +166,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="pack_title, recyclerView, termsAndConditionsGroup, buyNowButton, buyWithRechargeButton, signInButton, buySimButton"
+            app:constraint_referenced_ids="pack_title, recyclerView"
             tools:visibility="visible"/>
         
         <androidx.constraintlayout.widget.Group
@@ -182,7 +182,7 @@
             android:layout_width="86dp"
             android:layout_height="86dp"
             android:layout_marginTop="32dp"
-            android:contentDescription="@string/image_alt_text"
+            android:contentDescription="@string/channel_image"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/errorMessageTextView"
             app:layout_constraintEnd_toEndOf="parent"

@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.SubsHistoryDetail
 import com.banglalink.toffee.databinding.FragmentSubscriptionHistoryBinding
@@ -130,6 +133,13 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
         binding.failureInfoLayout.show()
 
         binding.btnSingin.safeClick({
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "premium_pack_menu",
+                    "method" to "mobile"
+                )
+            )
             requireActivity().checkVerification{
                 mPref.isLoggedInFromSubHistory = true
             }

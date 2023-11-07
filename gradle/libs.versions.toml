@@ -2,7 +2,14 @@
 
 [versions]
 
-gradle-plugin-version = "8.1.1"
+#App Settings
+minSdkVersion = "21"
+compileSdkVersion = "33"
+targetSdkVersion = "33"
+appVersionCode = "124"
+appVersionName = "6.1.0"
+
+gradle-plugin-version = "8.1.2"
 
 # View
 activity-version = "1.6.1"
@@ -53,7 +60,7 @@ cast-version = "21.3.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
-play-services-ads-version = "22.4.0"
+play-services-ads-version = "22.5.0"
 ads-identifier-version = "1.0.0-alpha05"
 
 # Security
@@ -80,11 +87,11 @@ in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.2.1"
-firebase-analytics-version = "21.3.0"
-firebase-firestore-version = "24.8.1"
-firebase-in-app-message-version = "20.3.5"
-firebase-crashlytics-version = "18.4.3"
+firebase-messaging-version = "23.3.1"
+firebase-analytics-version = "21.5.0"
+firebase-firestore-version = "24.9.1"
+firebase-in-app-message-version = "20.4.0"
+firebase-crashlytics-version = "18.5.1"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
@@ -104,6 +111,7 @@ dahdit-version = "0.9.3"
 shimmer-version = "0.5.0"
 medallia-version = "4.2.0"
 butterknife-version = "10.2.3"
+clarity-version = "1.3.3"
 guava-version = "31.0.1-android"
 jlleitschuh-version = "11.3.2"
 
@@ -280,6 +288,7 @@ dahdit = { group = "com.xfinity", name = "dahdit", version.ref = "dahdit-version
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer-version" }
 butterknife = { group = "com.jakewharton", name = "butterknife", version.ref = "butterknife-version" }
 medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", version.ref = "medallia-version" }
+clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity-version" }
 org-jlleitschuh = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle:11.3.2", version.ref = "jlleitschuh-version" }
 
 ######## Testing

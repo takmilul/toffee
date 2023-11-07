@@ -15,6 +15,7 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -27,6 +28,8 @@ import androidx.media3.ui.PlayerView.ControllerVisibilityListener
 import androidx.mediarouter.app.MediaRouteButton
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
@@ -291,6 +294,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
             R.id.drawer -> {
                 onPlayerControllerChangedListeners.forEach {
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.MENU_OPEN,
+                        bundleOf(
+                            "screen" to "Player"
+                        )
+                    )
                     it.onDrawerButtonPressed()
                 }
             }

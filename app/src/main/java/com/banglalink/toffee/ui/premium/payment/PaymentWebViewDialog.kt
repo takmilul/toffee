@@ -20,7 +20,10 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.*
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -93,7 +96,7 @@ class PaymentWebViewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MedalliaDigital.disableIntercept()
-        
+
         paymentId = arguments?.getString("paymentId")
         paymentTypeFromDataPackOptionsFragment = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
@@ -186,8 +189,8 @@ class PaymentWebViewDialog : DialogFragment() {
                             (it.contains("success") || callBackStatus == "success") -> {
                                 if (isBkashBlRecharge) {
                                     // Handle specific actions for Banglalink recharge
-
                                     progressDialog.show()
+
                                     isBkashBlRecharge = false
                                     observeBlDataPackPurchase()
                                     purchaseBlDataPack()
@@ -197,7 +200,6 @@ class PaymentWebViewDialog : DialogFragment() {
                                     progressDialog.show()
 
                                     //Send Log to the Pub/Sub
-
                                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                         id = System.currentTimeMillis() + mPref.customerId,
                                         callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
@@ -220,11 +222,53 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "ssl" -> {
                                             when (statusCode) {
                                                 "200" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "SSL Wireless",
+                                                            "type" to "aggregator",
+                                                            "reason" to "N/A",
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // If statusCode is 200, create args with status code 200 and navigate
                                                     val args = bundleOf(ARG_STATUS_CODE to 200)
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 else -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "SSL Wireless",
+                                                            "type" to "aggregator",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // For any other statusCode, use the default args and navigate
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -237,11 +281,53 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "bkash" -> {
                                             when (statusCode) {
                                                 "200" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "reason" to "N/A",
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // If statusCode is 200, create args with status code 200 and navigate
                                                     val args = bundleOf(ARG_STATUS_CODE to 200)
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 "277" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // If statusCode is 277, create args with status code -2 and the status message
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -250,6 +336,27 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 "2029", "2062" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // If statusCode is 2029 or 2062, create args with status code -3 and the status message
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -3,
@@ -258,6 +365,27 @@ class PaymentWebViewDialog : DialogFragment() {
                                                     navigateToStatusDialogPage(args)
                                                 }
                                                 else -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "bKash",
+                                                            "type" to "wallet",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     // For any other statusCode, use the default args and navigate
                                                     val args = bundleOf(
                                                         ARG_STATUS_CODE to -2,
@@ -293,6 +421,27 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = mPref.merchantInvoiceNumber,
                                     rawResponse = getString(string.payment_failed_message)
                                 ))
+                                val MNO = when {
+                                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                    else -> "N/A"
+                                }
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_ERROR,
+                                    bundleOf(
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                        "currency" to "BDT",
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                        "provider" to "Banglalink",
+                                        "type" to "recharge",
+                                        "reason" to string.payment_failed_message,
+                                        "MNO" to MNO,
+                                    )
+                                )
                                 val args = bundleOf(
                                     ARG_STATUS_CODE to -1,
                                     ARG_STATUS_MESSAGE to getString(string.payment_failed_message)
@@ -304,6 +453,27 @@ class PaymentWebViewDialog : DialogFragment() {
                             (it.contains("recharge-cancel") && !it.contains("callBackStatus")) -> {
                                 progressDialog.dismiss()
 
+                                val MNO = when {
+                                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                    else -> "N/A"
+                                }
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_ERROR,
+                                    bundleOf(
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                        "currency" to "BDT",
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                        "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                        "type" to "wallet",
+                                        "reason" to "Payment canceled by user",
+                                        "MNO" to MNO,
+                                    )
+                                )
                                 //Send Log to the Pub/Sub
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
@@ -349,6 +519,53 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = null,
                                     rawResponse = url.toString()
                                 ))
+
+                                if (callBackStatus == "failure"){
+                                    val MNO = when {
+                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                        else -> "N/A"
+                                    }
+                                    // Send Log to FirebaseAnalytics
+                                    ToffeeAnalytics.toffeeLogEvent(
+                                        ToffeeEvents.PACK_ERROR,
+                                        bundleOf(
+                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                            "currency" to "BDT",
+                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "type" to "wallet",
+                                            "reason" to statusMessage,
+                                            "MNO" to MNO,
+                                        )
+                                    )
+                                }
+                                else{
+                                    val MNO = when {
+                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                        else -> "N/A"
+                                    }
+                                    // Send Log to FirebaseAnalytics
+                                    ToffeeAnalytics.toffeeLogEvent(
+                                        ToffeeEvents.PACK_ERROR,
+                                        bundleOf(
+                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                            "currency" to "BDT",
+                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "type" to "wallet",
+                                            "reason" to "Payment canceled by user",
+                                            "MNO" to MNO,
+                                        )
+                                    )
+                                }
 
                                 when {
                                     paymentType == "ssl" && statusCode != "200" -> {
@@ -495,12 +712,54 @@ class PaymentWebViewDialog : DialogFragment() {
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
                             mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_SUCCESS,
+                                bundleOf(
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "reason" to "N/A",
+                                    "MNO" to MNO,
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 200)
                             )
                             navigateToStatusDialogPage(args)
                         }
                         else -> {
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_ERROR,
+                                bundleOf(
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "reason" to R.string.due_some_technical_issue,
+                                    "MNO" to MNO,
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to (it.data.status ?: 0)
                             )
@@ -536,6 +795,27 @@ class PaymentWebViewDialog : DialogFragment() {
                         }
                         else {
                             progressDialog.dismiss()
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_ERROR,
+                                bundleOf(
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                                    "currency" to "BDT",
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
+                                    "provider" to "Banglalink",
+                                    "type" to "recharge",
+                                    "reason" to it.error.msg,
+                                    "MNO" to MNO,
+                                )
+                            )
                             val args = bundleOf(
                                 ARG_STATUS_CODE to 0,
                                 ARG_STATUS_TITLE to "Data Plan Activation Failed!",

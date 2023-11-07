@@ -68,8 +68,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
+    val refreshRequiredForClickableAd = SingleLiveEvent<Boolean?>()
+    val clickedFromChannelItem = SingleLiveEvent<Boolean?>()
     val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
     val radioBannerImgUrl = MutableLiveData<String>()
+    val signingFromPrem = SingleLiveEvent<Boolean?>()
+    val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
 
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

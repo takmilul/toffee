@@ -6,41 +6,35 @@ import java.util.*
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
+        id(ksp.get().pluginId)
+        id(kotlin.kapt.get().pluginId)
         id(com.android.application.get().pluginId)
         id(org.jetbrains.kotlin.android.get().pluginId)
         id(kotlin.parcelize.get().pluginId)
-        id(ksp.get().pluginId)
-        id(kotlin.kapt.get().pluginId)
-        id(com.google.dagger.hilt.android.get().pluginId)
-        id(androidx.navigation.safeargs.get().pluginId)
         id(com.gms.google.services.get().pluginId)
+        id(androidx.navigation.safeargs.get().pluginId)
+        id(com.google.dagger.hilt.android.get().pluginId)
         id(com.google.firebase.crashlytics.get().pluginId)
     }
 }
 
 android {
     namespace = "com.banglalink.toffee"
-    compileSdk = 33
+    compileSdk = libs.versions.compileSdkVersion.get().toInt()
     
     val properties = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
     }
     val adsAppId: String = properties.getProperty("adsAppId")
-    val packageName: String = properties.getProperty("packageName")
     val facebookAppId: String = properties.getProperty("facebookAppId")
-    val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
     val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
-    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
     val facebookClientToken: String = properties.getProperty("facebookClientToken")
-    val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
-    val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
-//    val fireworkOAuthId: String = gradleLocalProperties(rootDir).getProperty("firework.oAuthId")
     
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 123
-        versionName = "6.0.2"
+        minSdk = libs.versions.minSdkVersion.get().toInt()
+        targetSdk = libs.versions.targetSdkVersion.get().toInt()
+        versionCode = libs.versions.appVersionCode.get().toInt()
+        versionName = libs.versions.appVersionName.get()
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
@@ -68,8 +62,13 @@ android {
     productFlavors {
         create("mobile") {
             dimension = "lib"
+            
+            val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
+            val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
+            val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
+            val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
+            
             buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("String", "PACKAGE_NAME", packageName)
             buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
             buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
             buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
@@ -243,6 +242,7 @@ dependencies {
         implementation(shimmer)
         implementation(guava)
         implementation(medallia)
+        implementation(libs.clarity)
         
         
         /////// Testing
@@ -253,7 +253,7 @@ dependencies {
         testImplementation(coroutines.test)
         testImplementation(okhttp.mock.web.server)
         
-        kaptAndroidTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(test.runner)
