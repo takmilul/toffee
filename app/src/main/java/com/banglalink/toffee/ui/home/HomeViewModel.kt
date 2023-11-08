@@ -227,7 +227,7 @@ class HomeViewModel @Inject constructor(
             try {
                 val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
                 val redirUrl = resp.request.url
-                if (redirUrl.host == "toffeelive.com") redirUrl.toString()
+                if (redirUrl.host == "toffeelive.com" || redirUrl.host == "staging-web.toffeelive.com") redirUrl.toString()
                 else null
             } catch (ex: Exception) {
                 ex.printStackTrace()

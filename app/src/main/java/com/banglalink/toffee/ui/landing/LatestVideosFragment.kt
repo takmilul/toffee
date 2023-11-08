@@ -153,7 +153,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 if (isLoadAdAdapter) {
                     Log.i("Latest_", "onViewCreated:isLoadAdAdapter")
                     nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
-                    val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil)
+                    val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil, mPref)
                     adapter = nativeAdAdapter
                     layoutManager = LinearLayoutManager(requireContext())
                 } else {

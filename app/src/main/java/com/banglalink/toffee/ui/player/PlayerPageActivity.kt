@@ -91,7 +91,6 @@ abstract class PlayerPageActivity :
     SessionAvailabilityListener,
     OnPlayerControllerChangedListener
 {
-    var isDisablePip = false
     private var startWindow = 0
     private var maxBitRate: Int = 0
     private var playCounter: Int = -1
@@ -1585,7 +1584,7 @@ abstract class PlayerPageActivity :
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
             CLICKED -> {
-                isDisablePip = true
+                mPref.isDisablePip.value = true
             }
             else -> {
                 val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""

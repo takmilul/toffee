@@ -13,6 +13,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.NativeAdType
 import com.banglalink.toffee.enums.NativeAdType.LARGE
 import com.banglalink.toffee.enums.NativeAdType.SMALL
@@ -21,7 +22,11 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.gms.ads.*
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
@@ -29,6 +34,7 @@ import com.google.android.gms.ads.nativead.NativeAdView
 class NativeAdAdapter private constructor(
     private val mParam: Param,
     private val bindingUtil: BindingUtil,
+    private val mPref: SessionPreference
 ) : RecyclerViewAdapterWrapper(mParam.adapter) {
     
     private var currentNativeAd: NativeAd? = null
@@ -97,6 +103,11 @@ class NativeAdAdapter private constructor(
                         adHolder.adContainer.hide()
                         adHolder.placeholder.hide()
                         adHolder.placeholder.stopShimmer()
+                    }
+                    
+                    override fun onAdClicked() {
+                        super.onAdClicked()
+                        mPref.isDisablePip.value = true
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().setVideoOptions(
@@ -208,8 +219,8 @@ class NativeAdAdapter private constructor(
             return this
         }
         
-        fun build(bindingUtil: BindingUtil): NativeAdAdapter {
-            return NativeAdAdapter(mParam, bindingUtil)
+        fun build(bindingUtil: BindingUtil, mPref: SessionPreference): NativeAdAdapter {
+            return NativeAdAdapter(mParam, bindingUtil, mPref)
         }
         
         fun destroyAd() {

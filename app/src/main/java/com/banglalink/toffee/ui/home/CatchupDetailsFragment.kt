@@ -175,7 +175,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
 
         if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
             nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
+            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
             mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
         } else {
             mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
