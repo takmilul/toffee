@@ -475,6 +475,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onResume() {
         super.onResume()
+        isDisablePip = false
         inAppMessaging.setMessagesSuppressed(false)
         
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -1356,11 +1357,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun openInExternalBrowser(it: ChannelInfo) {
         runCatching {
             it.getHlsLink()?.let { url ->
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse(url)
-                    )
-                )
+                isDisablePip = true
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }.onFailure {
             showToast(it.message)
@@ -1859,7 +1857,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        if (player?.isPlaying == true && !isDisablePip && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         }
     }
@@ -1918,6 +1916,7 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        isDisablePip = false
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
@@ -2059,6 +2058,7 @@ class HomeActivity : PlayerPageActivity(),
                                         "timestamp" to currentDateTime
                                     )
                                 )
+                                isDisablePip = true
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
