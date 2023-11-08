@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -396,77 +395,63 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    if (!bKashBlPacks.isNullOrEmpty()){
-                        packPaymentMethodList.addAll(bKashBlPacks)
-                    } else {
-                        viewModel.clickableAdInventories.value?.let {
-                            requireActivity().showToast(getString(R.string.payment_method_invalid))
-                            this.closeDialog()
-                        }?: run{
-                            requireContext().showToast(getString(R.string.try_again_message))
+                if (bKashBlPacks.isNullOrEmpty() && bKashNonBlPacks.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                else {
+                    if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                        if (!bKashBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(bKashBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_non_bl_number))
                         }
-                    }
-                } else {
-                    if (!bKashNonBlPacks.isNullOrEmpty()){
-                        packPaymentMethodList.addAll(bKashNonBlPacks)
                     } else {
-                        viewModel.clickableAdInventories.value?.let {
-                            requireActivity().showToast(getString(R.string.payment_method_invalid))
-                            this.closeDialog()
-                        }?: run{
-                            requireContext().showToast(getString(R.string.try_again_message))
+                        if (!bKashNonBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(bKashNonBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_bl_number))
                         }
                     }
                 }
             }
             else if (paymentName == "ssl"){
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
-                    if (!sslBlPacks.isNullOrEmpty()){
-                        packPaymentMethodList.addAll(sslBlPacks)
-                    } else {
-                        viewModel.clickableAdInventories.value?.let {
-                            requireActivity().showToast(getString(R.string.payment_method_invalid))
-                            this.closeDialog()
-                        }?: run{
-                            requireContext().showToast(getString(R.string.try_again_message))
+                if (sslBlPacks.isNullOrEmpty() && sslNonBlPacks.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                else {
+                    if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                        if (!sslBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(sslBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_non_bl_number))
                         }
-                    }
-                } else {
-                    if (!sslNonBlPacks.isNullOrEmpty()){
-                        packPaymentMethodList.addAll(sslNonBlPacks)
                     } else {
-                        viewModel.clickableAdInventories.value?.let {
-                            requireActivity().showToast(getString(R.string.payment_method_invalid))
-                            this.closeDialog()
-                        }?: run{
-                            requireContext().showToast(getString(R.string.try_again_message))
+                        if (!sslNonBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(sslNonBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_bl_number))
                         }
                     }
                 }
             }
             else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
-                if (mPref.isBanglalinkNumber == "true") {
-                    if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
-                        packPaymentMethodList.addAll(prePaid)
-                    } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
-                        packPaymentMethodList.addAll(postPaid)
+                if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                else {
+                    if (mPref.isBanglalinkNumber == "true") {
+                        if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+                            packPaymentMethodList.addAll(prePaid)
+                        } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.addAll(postPaid)
+                        } else {
+                            showEmptyView(String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid"))
+                        }
                     } else {
-                        binding.errorMessageTextView.text = String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid")
-                        binding.emptyView.show()
-                        binding.contentView.hide()
-                        hidePaymentOption()
-                    }
-                } else {
-                    if (!prePaid.isNullOrEmpty()) {
-                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
-                        packPaymentMethodList.addAll(prePaid)
-                    }
-                    if (!postPaid.isNullOrEmpty()) {
-                        packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                        packPaymentMethodList.addAll(postPaid)
+                        if (!prePaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                            packPaymentMethodList.addAll(prePaid)
+                        }
+                        if (!postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
+                            packPaymentMethodList.addAll(postPaid)
+                        }
                     }
                 }
             }
@@ -481,6 +466,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 mAdapter.notifyDataSetChanged()
             }
         }
+    }
+    private fun showEmptyView(message: String){
+        binding.errorMessageTextView.text = message
+        binding.emptyView.show()
+        binding.contentView.hide()
+        hidePaymentOption()
+    }
+
+    private fun handleInvalidPaymentMethod(){
+        viewModel.clickableAdInventories.value = null
+        requireActivity().showToast(getString(R.string.payment_method_invalid))
+        mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+        this@PaymentDataPackOptionsFragment.closeDialog()
     }
     
     private fun purchaseBlDataPack() {

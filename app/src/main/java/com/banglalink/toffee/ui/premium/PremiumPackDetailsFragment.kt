@@ -167,7 +167,6 @@ class PremiumPackDetailsFragment : BaseFragment(){
                             "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
                             "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
                             "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
-                            "mno" to if (mPref.isBanglalinkNumber == "false") "Non-Bl" else "Bl",
                             "reason" to "content",
                             "action" to "goes back"
                         )
@@ -362,8 +361,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                         ToffeeEvents.PACK_ACTIVE, bundleOf(
                             "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
                             "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
-                            "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle,
-                            "mno" to if (mPref.isBanglalinkNumber == "false") "Non-Bl" else "Bl",
+                            "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
                         )
                     )
                     viewModel.paymentMethod.value = it.data
