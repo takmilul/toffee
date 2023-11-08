@@ -24,8 +24,7 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -74,7 +73,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val radioBannerImgUrl = MutableLiveData<String>()
     val signingFromPrem = SingleLiveEvent<Boolean?>()
     val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
-
+    var isDisablePip = MutableLiveData<Boolean>().apply { value = false } // when going outside of the app by using a toffee deeplink, disable pip to solve the player blackout issue
+    
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
