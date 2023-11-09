@@ -1515,10 +1515,6 @@ class HomeActivity : PlayerPageActivity(),
         return false
     }
     
-    override fun closePlayer() {
-        destroyPlayer()
-    }
-    
     private fun resetPlayer() {
         releasePlayer()
         initializePlayer()

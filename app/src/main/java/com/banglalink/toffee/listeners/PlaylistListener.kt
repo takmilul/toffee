@@ -6,5 +6,4 @@ interface PlaylistListener {
     fun playNext(): Boolean
     fun playPrevious(): Boolean
     fun isAutoplayEnabled(): Boolean
-    fun closePlayer()
 }
