@@ -111,6 +111,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -475,6 +476,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onResume() {
         super.onResume()
+        mPref.isDisablePip.value = false
         inAppMessaging.setMessagesSuppressed(false)
         
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -1356,11 +1358,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun openInExternalBrowser(it: ChannelInfo) {
         runCatching {
             it.getHlsLink()?.let { url ->
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse(url)
-                    )
-                )
+                mPref.isDisablePip.value = true
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }.onFailure {
             showToast(it.message)
@@ -1863,7 +1862,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        if (player?.isPlaying == true && mPref.isDisablePip.value == false && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         }
     }
@@ -1922,6 +1921,8 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        destroyPlayer()
+        mPref.isDisablePip.value = false
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
@@ -1968,7 +1969,7 @@ class HomeActivity : PlayerPageActivity(),
             var appLinkUriStr: String? = null
             try {
                 val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
-                if (appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                if (appLinkUri != null && (appLinkUri.host != "toffeelive.com" || appLinkUri.host != "staging-web.toffeelive.com")) {
                     appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
                 }
             } catch (ex: Exception) {
@@ -2063,6 +2064,7 @@ class HomeActivity : PlayerPageActivity(),
                                         "timestamp" to currentDateTime
                                     )
                                 )
+                                mPref.isDisablePip.value = true
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
@@ -2094,6 +2096,9 @@ class HomeActivity : PlayerPageActivity(),
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
                     } else {
+                        it.args?.getParcelable<Category>(CategoryDetailsFragment.ARG_CATEGORY_ITEM)?.let {
+                            landingPageViewModel.selectedCategory.value = it
+                        }
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -2127,9 +2132,6 @@ class HomeActivity : PlayerPageActivity(),
             }
             url.contains("explore/") -> {
                 commonDeepLink.replace("pagelink", "explore")
-            }
-            url.contains("/all-drama") -> {
-                categoryDeepLink.replace("categoryId", "18")
             }
             url.contains("/activities") -> {
                 commonDeepLink.replace("pagelink", "activities")

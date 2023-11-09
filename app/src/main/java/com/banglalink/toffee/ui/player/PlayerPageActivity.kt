@@ -1583,6 +1583,9 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAllAdEnded()
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
+            CLICKED -> {
+                mPref.isDisablePip.value = true
+            }
             else -> {
                 val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
                 Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")

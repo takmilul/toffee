@@ -220,56 +220,26 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 
                 viewModel.clickableAdInventories.value?.let {
                     // navigating to destination by paymentMethodId from deep link
-                    val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
                     when (it.paymentMethodId) {
                         PaymentMethod.BKASH.value -> {
-                            if (
-                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) && !paymentTypes.bkash?.blPacks.isNullOrEmpty()) ||
-                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.bkash?.nonBlPacks.isNullOrEmpty())
-                            ) {
-                                findNavController().navigatePopUpTo(
-                                    resId = R.id.paymentDataPackOptionsFragment,
-                                    args = bundleOf("paymentName" to "bkash")
-                                )
-                            } else {
-                                viewModel.clickableAdInventories.value = null
-                                requireActivity().showToast(getString(R.string.payment_method_invalid))
-                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
-                                this@PaymentMethodOptionsFragment.closeDialog()
-                            }
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.paymentDataPackOptionsFragment,
+                                args = bundleOf("paymentName" to "bkash")
+                            )
                         }
-
                         PaymentMethod.BL_PACK.value -> {
-                            if (paymentTypes.bl?.prepaid.isNullOrEmpty() && paymentTypes.bl?.postpaid.isNullOrEmpty()) { // when both prepaid and postpaid method is not available
-                                viewModel.clickableAdInventories.value = null
-                                requireActivity().showToast(getString(R.string.payment_method_invalid))
-                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
-                                this@PaymentMethodOptionsFragment.closeDialog()
-                            } else {
-                                findNavController().navigatePopUpTo(
-                                    resId = R.id.paymentDataPackOptionsFragment,
-                                    args = bundleOf("paymentName" to "blPack")
-                                )
-                            }
-                        }
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.paymentDataPackOptionsFragment,
+                                args = bundleOf("paymentName" to "blPack")
+                            )
 
+                        }
                         PaymentMethod.SSL.value -> {
-                            if (
-                                ((mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser))  && !paymentTypes.ssl?.blPacks.isNullOrEmpty()) ||
-                                (mPref.isBanglalinkNumber == "false" && !paymentTypes.ssl?.nonBlPacks.isNullOrEmpty())
-                            ) {
-                                findNavController().navigatePopUpTo(
-                                    resId = R.id.paymentDataPackOptionsFragment,
-                                    args = bundleOf("paymentName" to "ssl")
-                                )
-                            } else {
-                                viewModel.clickableAdInventories.value = null
-                                requireActivity().showToast(getString(R.string.payment_method_invalid))
-                                mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
-                                this@PaymentMethodOptionsFragment.closeDialog()
-                            }
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.paymentDataPackOptionsFragment,
+                                args = bundleOf("paymentName" to "ssl")
+                            )
                         }
-
                         else -> {
                             viewModel.clickableAdInventories.value = null
                             requireActivity().showToast(getString(R.string.payment_method_invalid))
