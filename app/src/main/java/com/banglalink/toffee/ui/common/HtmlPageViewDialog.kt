@@ -93,12 +93,12 @@ class HtmlPageViewDialog : DialogFragment() {
                     if (it.url.toString().contains("intent:") || it.url.toString().contains("deeplink") || it.url.toString().contains("routing=internal")) {
                         val intent = Intent(Intent.ACTION_VIEW, it.url).apply {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            setPackage("com.android.chrome")
+                            setPackage("com.banglalink.toffee")
                         }
                         runCatching {
                             requireContext().startActivity(intent)
                         }.onFailure {
-                            intent.setPackage(null)
+                            intent.setPackage("com.android.chrome")
                             requireContext().startActivity(intent)
                         }.onFailure {
                             ToffeeAnalytics.logException(it)
