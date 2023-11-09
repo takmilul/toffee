@@ -683,10 +683,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         return viewLocation
     }
     
-    fun closePlayer() {
-        mPlayListListener?.closePlayer()
-    }
-    
     override fun onPlayerMinimize() {
         isMinimize = true
         hideController()
