@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -84,6 +86,27 @@ class HtmlPageViewDialog : DialogFragment() {
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
+            }
+            
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                request?.let {
+                    if (it.url.toString().contains("intent:") || it.url.toString().contains("deeplink") || it.url.toString().contains("routing=internal")) {
+                        val intent = Intent(Intent.ACTION_VIEW, it.url).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            setPackage("com.android.chrome")
+                        }
+                        runCatching {
+                            requireContext().startActivity(intent)
+                        }.onFailure {
+                            intent.setPackage(null)
+                            requireContext().startActivity(intent)
+                        }.onFailure {
+                            ToffeeAnalytics.logException(it)
+                        }
+                        return true
+                    }
+                }
+                return super.shouldOverrideUrlLoading(view, request)
             }
         }
         
