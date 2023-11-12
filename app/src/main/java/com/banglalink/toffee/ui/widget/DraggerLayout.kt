@@ -116,13 +116,14 @@ class DraggerLayout @JvmOverloads constructor(
     private var scrollDir = 0
     private var lastScrollY = 0f
     private var isScrollCaptured = false
-//
+
 //    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 //        val ts = measureTimeMillis {
 //            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 //        }
 //        Log.e("MEASURE_T", "onMeasure_DraggerLayout ->> $ts")
 //    }
+    
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if (dragView.isFullScreenPortrait()) return false
         val bottomHit = isBottomHit(ev)
@@ -258,7 +259,7 @@ class DraggerLayout @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
-        //        super.onLayout(changed,l,t,r,b);
+//        super.onLayout(changed,l,t,r,b);
         dragView.layout(mLeft, mTop, mLeft + dragView.measuredWidth, mTop + dragView.measuredHeight)
         bottomView.layout(mLeft, mTop + dragView.measuredHeight, mLeft + bottomView.measuredWidth, mTop + b)
     }
@@ -270,7 +271,7 @@ class DraggerLayout @JvmOverloads constructor(
     }
     
     fun destroyView() {
-        if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (right - paddingRight), mTop)) {
+        if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (right - paddingRight), height - dragView.height)) {
             parent?.let {
                 if (it is View) ViewCompat.postInvalidateOnAnimation(it)
             }
@@ -278,8 +279,8 @@ class DraggerLayout @JvmOverloads constructor(
         onPositionChangedListenerList.forEach {
             it.onPlayerDestroy()
         }
-        dragView.scaleX = getMaxScale()
-        dragView.scaleY = getMaxScale()
+        dragView.scaleX = getMinScale()
+        dragView.scaleY = getMinScale()
     }
     
     inner class DraggableViewCallback constructor(private val parent: View) : ViewDragHelper.Callback() {
