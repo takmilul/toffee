@@ -209,7 +209,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                                         viewModel.selectedPremiumPack.value?.let {
                                             viewModel.getPackStatus(0, it.id)
                                         } ?: run {
-                                            progressDialog.hide()
+                                            progressDialog.dismiss()
                                             requireContext().showToast(getString(R.string.try_again_message))
                                         }
                                     }
@@ -246,9 +246,12 @@ class PremiumPackDetailsFragment : BaseFragment(){
                         viewModel.selectedPremiumPack.value?.let {
                             viewModel.getPackStatus(0, it.id)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }else{
+                        progressDialog.dismiss()
                     }
                 }
                 is Failure -> {
+                    progressDialog.dismiss()
                     requireContext().showToast(response.error.msg)
                 }
             }
