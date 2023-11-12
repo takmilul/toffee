@@ -111,6 +111,7 @@ import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -2091,6 +2092,9 @@ class HomeActivity : PlayerPageActivity(),
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
                     } else {
+                        it.args?.getParcelable<Category>(CategoryDetailsFragment.ARG_CATEGORY_ITEM)?.let {
+                            landingPageViewModel.selectedCategory.value = it
+                        }
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -2124,9 +2128,6 @@ class HomeActivity : PlayerPageActivity(),
             }
             url.contains("explore/") -> {
                 commonDeepLink.replace("pagelink", "explore")
-            }
-            url.contains("/all-drama") -> {
-                categoryDeepLink.replace("categoryId", "18")
             }
             url.contains("/activities") -> {
                 commonDeepLink.replace("pagelink", "activities")
