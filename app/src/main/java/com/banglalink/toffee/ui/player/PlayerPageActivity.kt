@@ -38,6 +38,7 @@ import androidx.media3.exoplayer.source.ads.AdsLoader
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.Parameters
+import androidx.media3.exoplayer.upstream.CmcdConfiguration
 import androidx.media3.exoplayer.util.*
 import androidx.media3.ui.PlayerView
 import com.banglalink.toffee.BuildConfig
@@ -318,8 +319,9 @@ abstract class PlayerPageActivity :
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setLocalAdInsertionComponents({adsLoader}, getPlayerView())
+                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
-            
+
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
