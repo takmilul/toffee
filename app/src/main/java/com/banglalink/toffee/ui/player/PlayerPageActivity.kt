@@ -319,7 +319,7 @@ abstract class PlayerPageActivity :
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setLocalAdInsertionComponents({adsLoader}, getPlayerView())
-                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
+//                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
 
             exoPlayer = Builder(this)

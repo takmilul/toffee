@@ -196,8 +196,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
                 if (isFullScreen && !controllerBg.isVisible){
                     coroutineScope.launch {
                         delay(1000)
-                        brightnessControllBar.hide()
-                        brightnessIcon.hide()
+                        if (!controllerBg.isVisible){
+                            brightnessControllBar.hide()
+                            brightnessIcon.hide()
+                        }
                     }
                 }
                 mPref.playerScreenBrightness = brightness
