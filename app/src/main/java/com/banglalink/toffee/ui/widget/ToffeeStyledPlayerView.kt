@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 
 @AndroidEntryPoint
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -280,16 +281,32 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
         }
     }
-    private fun setScreenBrightness(value: Float) {
+    private fun setScreenBrightness(value: Float, isTransformedValue: Boolean? = false) {
         /** This method works for value from -1.0F to 1.0F
          * Value 0.0F to 1.0F to increase or decrese brightness
          * Value -1.0F to set the brightness as device defaults
          */
-        brightness = value
+        brightness = if (value < 0 || isTransformedValue == true){ value } else {
+            // Adjusting the rate of change for screen brightness,
+            // This can help in achieving a more perceptually uniform brightness control
+            val transformedValue = transformSliderValue(value)
+            transformedValue
+        }
         val layoutParams = activity.window.attributes
         layoutParams.screenBrightness = brightness
         activity.window.attributes = layoutParams
     }
+
+    private fun transformSliderValue(value: Float): Float {
+        val exponent = 2.0
+        return value.toDouble().pow(exponent).toFloat()
+    }
+
+    private fun reverseTransformValue(transformedValue: Float): Float {
+        val exponent = 2.0
+        return transformedValue.toDouble().pow(1.0 / exponent).toFloat()
+    }
+
     fun addPlayerControllerChangeListener(listener: OnPlayerControllerChangedListener) {
         onPlayerControllerChangedListeners.add(listener)
     }
@@ -834,8 +851,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
                 brightnessIcon.show()
                 brightnessControllBar.show()
             }
-            setScreenBrightness(mPref.playerScreenBrightness)
-            brightnessControllBar.value = mPref.playerScreenBrightness
+            setScreenBrightness(value = mPref.playerScreenBrightness, isTransformedValue = true)
+            brightnessControllBar.value = reverseTransformValue(mPref.playerScreenBrightness)
         } else {
             minimizeButton.visibility = VISIBLE
             drawerButton.visibility = VISIBLE
