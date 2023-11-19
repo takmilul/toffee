@@ -814,7 +814,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, value) }
 
     var playerScreenBrightness: Float
-        get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.5f)
+        get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.36f)
         set(value) = pref.edit { putFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, value) }
 
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
