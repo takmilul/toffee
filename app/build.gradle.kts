@@ -38,9 +38,12 @@ android {
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
-//        ndk {
+        ndk {
 //            debugSymbolLevel = "FULL"
-//        }
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+            abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+        }
         manifestPlaceholders.putAll(
             mapOf(
                 "fireworkOAuthId" to fireworkOAuthId,
@@ -115,22 +118,22 @@ android {
     
     packaging {
         jniLibs {
-            useLegacyPackaging = false
-            excludes += listOf(
-                "lib/*/librsjni.so",
-                "lib/*/libRSSupport.so",
-                "lib/*/librsjni_androidx.so"
-            )
+            useLegacyPackaging = true
+//            excludes += listOf(
+//                "lib/*/librsjni.so",
+//                "lib/*/libRSSupport.so",
+//                "lib/*/librsjni_androidx.so"
+//            )
         }
         resources {
-            excludes += listOf("META-INF/*.kotlin_module")
-            pickFirsts += listOf(
-                "META-INF/services",
-                "META-INF/LICENSE",
-                "META-INF/INDEX.LIST",
-                "META-INF/io.netty.versions.properties",
-                "META-INF/annotation-experimental_release.kotlin_module"
-            )
+            excludes += listOf("META-INF/*") //META-INF/*.kotlin_module
+//            pickFirsts += listOf(
+//                "META-INF/services",
+//                "META-INF/LICENSE",
+//                "META-INF/INDEX.LIST",
+//                "META-INF/io.netty.versions.properties",
+//                "META-INF/annotation-experimental_release.kotlin_module"
+//            )
         }
     }
     

@@ -27,9 +27,12 @@ android {
                 cppFlags += ""
             }
         }
+//        Similar to other properties in the defaultConfig block,
+//        you can configure the ndk block for each product flavor
+//        in your build configuration.
         ndk {
-            // Specifies the ABI configurations of your native
-            // libraries Gradle should build and package with your app.
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
             abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
         }
     }
