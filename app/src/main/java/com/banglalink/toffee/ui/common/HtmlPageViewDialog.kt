@@ -34,6 +34,7 @@ import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
+import com.loopnow.fireworklibrary.FwSDK.destroy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -98,15 +99,19 @@ class HtmlPageViewDialog : DialogFragment() {
                         runCatching {
                             requireContext().startActivity(intent)
                         }.onFailure {
-                            intent.setPackage("com.android.chrome")
-                            requireContext().startActivity(intent)
+                            runCatching {
+                                intent.setPackage("com.android.chrome")
+                                requireContext().startActivity(intent)
+                            }.onFailure {
+                                ToffeeAnalytics.logException(it)
+                            }
                         }.onFailure {
                             ToffeeAnalytics.logException(it)
                         }
                         return true
                     }
                 }
-                return super.shouldOverrideUrlLoading(view, request)
+                return false
             }
         }
         
