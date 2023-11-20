@@ -173,6 +173,7 @@ dependencies {
         implementation(bundles.hilt)
         ksp(hilt.compiler)
         ksp(hilt.compiler.kapt)
+        ksp(hilt.android.compiler)
         
         // Jetpack
         ksp(room.kapt)

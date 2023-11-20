@@ -9,7 +9,7 @@ targetSdkVersion = "33"
 appVersionCode = "125"
 appVersionName = "6.2.0"
 
-gradle-plugin-version = "8.1.3"
+gradle-plugin-version = "8.1.4"
 
 # View
 activity-version = "1.6.1"
@@ -91,7 +91,7 @@ firebase-messaging-version = "23.3.1"
 firebase-analytics-version = "21.5.0"
 firebase-firestore-version = "24.9.1"
 firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.5.1"
+firebase-crashlytics-version = "18.6.0"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
@@ -161,6 +161,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-version" }
 
 # Hilt kapt
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-android-version" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt-android-version" }
 hilt-compiler-kapt = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-version" }
 
@@ -370,7 +371,6 @@ coil = ["coil-core", "coil-gif", "coil-transformer", "coil-transformer-core"]
 firebase = ["firebase-messaging", "firebase-in-app-message", "firebase-core", "firebase-analytics", "firebase-crashlytics", "firebase-firestore"]
 cast = ["cast-framework"] # "mediarouter", 
 hilt = ["hilt-android", "hilt-work"]
-#hiltkapt = ["hilt-compiler", "hilt-compiler-kapt"]
 room = ["room-db", "room-paging", "room-ktx"]
 navigation = ["navigation-ktx", "navigation-ui-ktx"]
 play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-update", "inapp-update-ktx"]

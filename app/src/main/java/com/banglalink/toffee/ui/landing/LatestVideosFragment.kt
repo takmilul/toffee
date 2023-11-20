@@ -19,7 +19,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState.Loading
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
@@ -155,7 +154,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
                     val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil, mPref)
                     adapter = nativeAdAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
+                    layoutManager = LatestVideosLayoutManager(requireContext())
                 } else {
                     Log.i("Latest_", "onViewCreated:isLoadAdAdapter else")
                     adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
@@ -348,6 +347,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                         Log.i("Latest_", "onViewCreated:loadLatestVideos-categoryId $categoryId")
                         mAdapter.submitData(it)
                         if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                            binding.latestVideosList.recycledViewPool.clear()
                             mAdapter.notifyDataSetChanged()
                         }
                     }
@@ -356,6 +356,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                         Log.i("Latest_", "onViewCreated:loadLatestVideos-categoryId $categoryId")
                         mAdapter.submitData(it)
                         if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                            binding.latestVideosList.recycledViewPool.clear()
                             mAdapter.notifyDataSetChanged()
                         }
                     }

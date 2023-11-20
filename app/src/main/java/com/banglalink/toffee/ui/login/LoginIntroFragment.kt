@@ -19,22 +19,21 @@ class LoginIntroFragment : ChildDialogFragment() {
     private var _binding: FragmentLoginIntroBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginIntroBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.signInButton.safeClick({
             findNavController().navigate(R.id.action_loginIntroFragment_to_loginContentFragment)
 //            findNavController().navigate(R.id.userInterestFragment)
         })
-
+        
         binding.skipSignIn.safeClick({
-
             //sends firebase event for users aborting premPack after signing popup.
-            if (mPref.signingFromPrem.value==true){
+            if (mPref.signingFromPrem.value != null && mPref.signingFromPrem.value == true){
                 ToffeeAnalytics.toffeeLogEvent(
                     ToffeeEvents.PACK_ABORT, bundleOf(
                         "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
@@ -46,10 +45,11 @@ class LoginIntroFragment : ChildDialogFragment() {
                 )
                 mPref.signingFromPrem.value=false
             }
-
-            closeDialog() })
+            
+            closeDialog() 
+        })
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
