@@ -31,7 +31,8 @@ class LatestVideosAdapterNew(
     private val AD_VIEW_LARGE = R.layout.item_native_ad_large
     
     override fun getItemViewType(position: Int): Int {
-        if(isAdActive && position >= adInterval && (position - ((position / adInterval)-1)) % adInterval == 0) {
+        if(isAdActive && (position == adInterval) || (position >= adInterval && (position - ((position / adInterval)-1)) % adInterval 
+                == 0 && ((position-1) - (((position-1) / adInterval)-1)) % adInterval != 0)) {
             return AD_VIEW_LARGE //if (nativeAdType == SMALL) R.layout.item_native_ad_small else R.layout.item_native_ad_large
         }
         return ITEM_VIEW
@@ -71,7 +72,7 @@ class LatestVideosAdapterNew(
     override fun getItemCount(): Int {
         val s = super.getItemCount()
         var t: Int = s + s / adInterval
-//        if (s > 0) t++ // +1 when list is not empty
+        if (s > 0) t++ // +1 when list is not empty
         return t
     }
     
