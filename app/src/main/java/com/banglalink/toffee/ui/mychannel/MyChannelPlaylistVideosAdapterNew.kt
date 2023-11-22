@@ -1,26 +1,19 @@
-package com.banglalink.toffee.ui.landing
+package com.banglalink.toffee.ui.mychannel
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.ListItemVideosBinding
-import com.banglalink.toffee.enums.NativeAdType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
+import com.banglalink.toffee.databinding.ListItemMyChannelPlaylistVideosBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.ads.AdListener
@@ -31,65 +24,54 @@ import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LatestVideosAdapterNew(
+class MyChannelPlaylistVideosAdapterNew(
     private val isAdActive: Boolean,
     private val adInterval: Int,
     private val adUnitId: String?,
-    private val adType: NativeAdType,
     private val mPref: SessionPreference,
-    private val bindingUtil: BindingUtil,
-    val cb: ContentReactionCallback<ChannelInfo>,
-) : PagingDataAdapter<ChannelInfo, ViewHolder>(ItemComparator()) {
+    private val bindingUtil: BindingUtil?,
+    callback: BaseListItemCallback<ChannelInfo>?,
+    private var selectedItem: ChannelInfo? = null,
+) : BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
     
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_videos
+        return R.layout.list_item_my_channel_playlist_videos
     }
     
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate<ViewDataBinding>(
-            layoutInflater, viewType, parent, false
-        )
-        return BaseViewHolder(binding)
-    }
-    
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (holder is BaseViewHolder && holder.binding is ListItemVideosBinding) {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        if (holder.binding is ListItemMyChannelPlaylistVideosBinding) {
             if (isAdActive && position > 0 && position % adInterval == 0) {
-                (if(adType == SMALL) holder.binding.nativeAdSmall else holder.binding.nativeAdLarge).root.show()
-                CoroutineScope(IO).launch {
+                holder.binding.nativeAdSmall.root.show()
+                CoroutineScope(Dispatchers.IO).launch {
                     loadAds(adUnitId!!, holder.binding)
                 }
             } else {
                 holder.binding.nativeAdSmall.root.hide()
-                holder.binding.nativeAdLarge.root.hide()
             }
             val obj = getItem(position)
             obj?.let {
-                holder.bind(obj, cb, position)
+                holder.bind(obj, callback, position, selectedItem)
             }
         }
     }
     
-    private fun loadAds(adUnitId: String, itemView: ListItemVideosBinding) {
-        val placeholder = if (adType == SMALL) itemView.nativeAdSmall.placeholder.root else itemView.nativeAdLarge.placeholder.root
+    private fun loadAds(adUnitId: String, itemView: ListItemMyChannelPlaylistVideosBinding) {
+        val placeholder = itemView.nativeAdSmall.placeholder.root
         placeholder.show()
         AdLoader.Builder(itemView.root.context, adUnitId)
             .forNativeAd { nativeAd ->
-                CoroutineScope(Main).launch {
+                CoroutineScope(Dispatchers.Main).launch {
                     populateNativeAdView(nativeAd, itemView)
                 }
             }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    CoroutineScope(Main).launch {
+                    CoroutineScope(Dispatchers.Main).launch {
                         placeholder.hide()
                         placeholder.stopShimmer()
                         itemView.nativeAdSmall.root.hide()
-                        itemView.nativeAdLarge.root.hide()
                     }
                 }
                 override fun onAdClicked() {
@@ -104,8 +86,8 @@ class LatestVideosAdapterNew(
             .loadAd(AdRequest.Builder().build())
     }
     
-    private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: ListItemVideosBinding) {
-        val adView = if(adType == SMALL) adContainerView.nativeAdSmall.nativeAdview else adContainerView.nativeAdLarge.nativeAdview
+    private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: ListItemMyChannelPlaylistVideosBinding) {
+        val adView = adContainerView.nativeAdSmall.nativeAdview
         adView.mediaView = adView.findViewById(R.id.ad_media)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
         adView.headlineView = adView.findViewById(R.id.ad_headline)
@@ -132,7 +114,7 @@ class LatestVideosAdapterNew(
             adView.iconView?.visibility = View.GONE
         } else {
             (adView.iconView as ImageView).setImageDrawable(nativeAd.icon?.drawable)
-            bindingUtil.bindSmallRoundImageFromDrawable((adView.iconView as ImageView), nativeAd.icon?.drawable)
+            bindingUtil?.bindSmallRoundImageFromDrawable((adView.iconView as ImageView), nativeAd.icon?.drawable)
             adView.iconView?.visibility = View.VISIBLE
         }
         
@@ -149,18 +131,13 @@ class LatestVideosAdapterNew(
         }
         adView.setNativeAd(nativeAd)
         val placeholderSmall = adContainerView.nativeAdSmall.placeholder.root
-        val placeholderLarge = adContainerView.nativeAdLarge.placeholder.root
         adView.show()
         placeholderSmall.hide()
-        placeholderLarge.hide()
         placeholderSmall.stopShimmer()
-        placeholderLarge.stopShimmer()
     }
     
-    override fun onViewRecycled(holder: ViewHolder) {
-        if (holder is BaseViewHolder && holder.binding is ListItemVideosBinding) {
-            holder.binding.poster.setImageDrawable(null)
-        }
-        super.onViewRecycled(holder)
+    fun setSelectedItem(item: ChannelInfo?) {
+        selectedItem = item
+        notifyDataSetChanged()
     }
 }

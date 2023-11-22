@@ -17,8 +17,6 @@ import androidx.paging.LoadState.Loading
 import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -30,7 +28,6 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.NativeAdAreaType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.checkIfFragmentAttached
 import com.banglalink.toffee.extension.checkVerification
@@ -65,7 +62,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private var _binding: FragmentCatchupBinding? = null
     private val binding get() = _binding!!
     private var headerAdapter: ChannelHeaderAdapter? = null
-    private var detailsAdapter: CatchUpDetailsAdapter? = null
+    private var detailsAdapter: CatchUpDetailsAdapterNew? = null
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
@@ -96,26 +93,6 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         binding.progressBar.load(R.drawable.content_loader)
         lifecycleScope.launch {
             currentItem?.let { localSync.syncData(it) }
-            detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
-                override fun onItemClicked(item: ChannelInfo) {
-                    checkIfFragmentAttached {
-                        homeViewModel.playContentLiveData.postValue(item)
-                    }
-                }
-                
-                override fun onOpenMenu(view: View, item: ChannelInfo) {
-                    super.onOpenMenu(view, item)
-                    onOptionClicked(view, item)
-                }
-                
-                override fun onProviderIconClicked(item: ChannelInfo) {
-                    super.onProviderIconClicked(item)
-                    checkIfFragmentAttached {
-                        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-                    }
-                }
-            })
-            headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
             _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
             checkIfFragmentAttached {
@@ -172,14 +149,38 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         val recommendedAdUnitId = nativeAdSettings?.adUnitId
         val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
         val isRecommendedActive = nativeAdSettings?.isActive ?:false
-
-        if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
-            mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
-        } else {
+        val isNativeAdActive = mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()
+        
+        headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
+        detailsAdapter = CatchUpDetailsAdapterNew(isNativeAdActive, recommendedAdInterval, recommendedAdUnitId, mPref, bindingUtil, 
+            object : 
+            ProviderIconCallback<ChannelInfo> {
+            override fun onItemClicked(item: ChannelInfo) {
+                checkIfFragmentAttached {
+                    homeViewModel.playContentLiveData.postValue(item)
+                }
+            }
+            
+            override fun onOpenMenu(view: View, item: ChannelInfo) {
+                super.onOpenMenu(view, item)
+                onOptionClicked(view, item)
+            }
+            
+            override fun onProviderIconClicked(item: ChannelInfo) {
+                super.onProviderIconClicked(item)
+                checkIfFragmentAttached {
+                    homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+                }
+            }
+        })
+        
+//        if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
+//            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
+//            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
+//            mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
+//        } else {
             mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
-        }
+//        }
         with(binding.listview) {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
