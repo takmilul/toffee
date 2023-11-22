@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -20,125 +20,140 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
     </data>
     
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
-        android:onClick="@{()-> callback.onItemClickAtPosition(position, data)}" >
-
-        <com.banglalink.toffee.ui.widget.CustomImageView
-            android:id="@+id/poster"
-            loadChannelImage="@{data}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="16:9"
-            android:contentDescription="@string/txt_poster"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guideline13" />
-
-        <ImageView
-            android:contentDescription="@string/txt_play"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/backgroundDarkAlpha"
-            android:visibility="@{selectedItem != null &amp;&amp; selectedItem.id.equals(data.id) ? View.VISIBLE : View.GONE}"
-            android:padding="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintStart_toStartOf="@+id/poster"
-            app:layout_constraintTop_toTopOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/poster"
-            app:srcCompat="@drawable/exo_styled_controls_play" />
-    
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline13"
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        
+        <include
+            android:id="@+id/nativeAdSmall"
+            layout="@layout/item_native_ad_small"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
-    
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dp"
-            android:max="1000"
-            bindViewProgress="@{data}"
-            android:progressBackgroundTint="#000000"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/duration"
-            app:layout_constraintStart_toStartOf="@id/poster" />
-    
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#88000000"
-            android:paddingVertical="@dimen/duration_vertical_padding"
-            android:paddingHorizontal="@dimen/duration_horizontal_padding"
-            android:text="@{data.formattedDuration}"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/duration_text_size"
-            app:layout_constraintEnd_toEndOf="@+id/poster"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
-            tools:text="00:00" />
-    
-        <TextView
-            android:id="@+id/title"
-            style="@style/programNameTextView"
-            android:layout_width="0dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="4dp"
-            app:layout_goneMarginEnd="12dp"
-            android:lines="2"
-            tools:text="Program Name"
-            android:text="@{data.program_name}"
-            app:layout_constraintEnd_toStartOf="@+id/options"
-            app:layout_constraintStart_toEndOf="@+id/poster"
-            app:layout_constraintTop_toTopOf="@+id/poster" />
-    
-        <ImageView
-            android:contentDescription="@string/txt_options"
-            android:id="@+id/options"
-            style="@style/OptionMenuStyle"
-            android:paddingStart="12dp"
-            android:paddingEnd="16dp"
-            android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
-            android:visibility="@{selectedItem.id.equals(data.id) &amp;&amp; data.isApproved != 1 ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/title"
-            app:srcCompat="@drawable/ic_menu_more" />
-    
-        <TextView
-            android:id="@+id/viewCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/fixed_second_text_color"
-            android:textSize="@dimen/default_text_size"
-            android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
-            app:layout_constraintStart_toStartOf="@id/title"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="18K views" />
-
-        <TextView
-            android:id="@+id/uploadTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-            android:textColor="@color/fixed_second_text_color"
-            android:textSize="@dimen/default_text_size"
-            tools:text=" &#8226; 14h"
-            app:layout_constraintBottom_toBottomOf="@+id/viewCount"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/viewCount"
-            app:layout_constraintTop_toTopOf="@+id/viewCount" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="?selectableItemBackground"
+            android:onClick="@{()-> callback.onItemClickAtPosition(position, data)}">
+            
+            <com.banglalink.toffee.ui.widget.CustomImageView
+                android:id="@+id/poster"
+                loadChannelImage="@{data}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/txt_poster"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="16:9"
+                app:layout_constraintEnd_toEndOf="@id/guideline13"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/backgroundDarkAlpha"
+                android:contentDescription="@string/txt_play"
+                android:padding="20dp"
+                android:visibility="@{selectedItem != null &amp;&amp; selectedItem.id.equals(data.id) ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/poster"
+                app:layout_constraintEnd_toEndOf="@+id/poster"
+                app:layout_constraintStart_toStartOf="@+id/poster"
+                app:layout_constraintTop_toTopOf="@+id/poster"
+                app:srcCompat="@drawable/exo_styled_controls_play" />
+            
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+            
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                bindViewProgress="@{data}"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:max="1000"
+                android:progressBackgroundTint="#000000"
+                app:layout_constraintBottom_toBottomOf="@+id/poster"
+                app:layout_constraintEnd_toEndOf="@+id/duration"
+                app:layout_constraintStart_toStartOf="@id/poster" />
+            
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#88000000"
+                android:paddingHorizontal="@dimen/duration_horizontal_padding"
+                android:paddingVertical="@dimen/duration_vertical_padding"
+                android:text="@{data.formattedDuration}"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/duration_text_size"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintEnd_toEndOf="@+id/poster"
+                tools:text="00:00" />
+            
+            <TextView
+                android:id="@+id/title"
+                style="@style/programNameTextView"
+                android:layout_width="0dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="4dp"
+                android:lines="2"
+                android:text="@{data.program_name}"
+                app:layout_constraintEnd_toStartOf="@+id/options"
+                app:layout_constraintStart_toEndOf="@+id/poster"
+                app:layout_constraintTop_toTopOf="@+id/poster"
+                app:layout_goneMarginEnd="12dp"
+                tools:text="Program Name" />
+            
+            <ImageView
+                android:id="@+id/options"
+                style="@style/OptionMenuStyle"
+                android:contentDescription="@string/txt_options"
+                android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
+                android:paddingStart="12dp"
+                android:paddingEnd="16dp"
+                android:visibility="@{selectedItem.id.equals(data.id) &amp;&amp; data.isApproved != 1 ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/title"
+                app:srcCompat="@drawable/ic_menu_more" />
+            
+            <TextView
+                android:id="@+id/viewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
+                android:textColor="@color/fixed_second_text_color"
+                android:textSize="@dimen/default_text_size"
+                app:layout_constraintStart_toStartOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:text="18K views" />
+            
+            <TextView
+                android:id="@+id/uploadTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@{` \u2022 ` + data.formattedCreateTime()}"
+                android:textColor="@color/fixed_second_text_color"
+                android:textSize="@dimen/default_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/viewCount"
+                app:layout_constraintTop_toTopOf="@+id/viewCount"
+                tools:text=" &#8226; 14h" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

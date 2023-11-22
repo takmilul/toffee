@@ -30,6 +30,7 @@ import com.banglalink.toffee.enums.FilterContentType.FEED
 import com.banglalink.toffee.enums.FilterContentType.LATEST_VIDEOS
 import com.banglalink.toffee.enums.FilterContentType.TRENDING_VIDEOS
 import com.banglalink.toffee.enums.NativeAdAreaType
+import com.banglalink.toffee.enums.NativeAdType.LARGE
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.hide
@@ -86,17 +87,14 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         binding.latestVideosList.addItemDecoration(MarginItemDecoration(12))
 //        loadStateFlow()
         observe(homeViewModel.vastTagLiveData) {
-            Log.i("Latest_", "onViewCreated:vastTagLiveData $it")
             initAdapter()
             observeLatestVideosList(category?.id?.toInt() ?: 0)
             if (mPref.nativeAdSettings.value == null) {
-                Log.i("Latest_", "onViewCreated:vastTagLiveData $it")
                 homeViewModel.getVastTagV3(false)
             }
         }
         binding.latestVideosList.doOnLayout {
             observe(mPref.isViewCountDbUpdatedLiveData) {
-                Log.i("Latest_", "onViewCreated:isViewCountDbUpdatedLiveData $it")
                 observeLatestVideosList(category?.id?.toInt() ?: 0)
             }
         }
@@ -132,7 +130,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun initAdapter() {
         runCatching {
-            Log.i("Latest_", "onViewCreated:initAdapter")
             val nativeAdSettings = if (selectedFilter == TRENDING_VIDEOS.value) {
                 mPref.nativeAdSettings.value?.find {
                     it.area == NativeAdAreaType.TRENDING_VIDEO.value
@@ -145,22 +142,13 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             val feedAdUnitId = nativeAdSettings?.adUnitId
             val adInterval = nativeAdSettings?.adInterval ?: 0
             val isAdActive = nativeAdSettings?.isActive ?: false
-            val isLoadAdAdapter = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
-            mAdapter = LatestVideosAdapterNew(isLoadAdAdapter, adInterval, feedAdUnitId, mPref, this)
+            val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
+            mAdapter = LatestVideosAdapterNew(isNativeAdActive, adInterval, feedAdUnitId, LARGE, mPref, bindingUtil, this)
             loadStateFlow()
             with(binding.latestVideosList) {
-//                if (isLoadAdAdapter) {
-//                    Log.i("Latest_", "onViewCreated:isLoadAdAdapter")
-//                    nativeAdBuilder = NativeAdAdapter.Builder.with(feedAdUnitId, mAdapter, LARGE)
-//                    val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(adInterval).build(bindingUtil, mPref)
-//                    adapter = nativeAdAdapter
-//                    layoutManager = LatestVideosLayoutManager(requireContext())
-//                } else {
-                    Log.i("Latest_", "onViewCreated:isLoadAdAdapter else")
-                    setHasFixedSize(true)
-                    layoutManager = LatestVideosLayoutManager(requireContext())
-                    adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-//                }
+                setHasFixedSize(true)
+                layoutManager = LatestVideosLayoutManager(requireContext())
+                adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             }
         }
     }

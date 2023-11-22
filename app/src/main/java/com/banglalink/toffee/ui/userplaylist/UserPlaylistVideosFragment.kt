@@ -33,13 +33,27 @@ import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentUserPlaylistVideosBinding
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.dp
+import com.banglalink.toffee.extension.handleAddToPlaylist
+import com.banglalink.toffee.extension.handleFavorite
+import com.banglalink.toffee.extension.handleReport
+import com.banglalink.toffee.extension.handleShare
+import com.banglalink.toffee.extension.handleUrlShare
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosAdapter
@@ -119,7 +133,6 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     }
     
     private fun initAdapter() {
-        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
         detailsAdapter = ChannelHeaderAdapter(playlistInfo, object : ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
@@ -171,6 +184,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
+        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
         mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
     }
     

@@ -19,8 +19,6 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -36,7 +34,6 @@ import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
 import com.banglalink.toffee.enums.NativeAdAreaType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.dp
@@ -84,7 +81,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private lateinit var playlistInfo: PlaylistPlaybackInfo
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
-    private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
+    private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapterNew
     private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
@@ -141,7 +138,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun initAdapter() {
-        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
         detailsAdapter = ChannelHeaderAdapter(playlistInfo, object : ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
@@ -208,13 +204,16 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         val playlistAdUnitId = nativeAdSettings?.adUnitId
         val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
         val isRecommendedActive = nativeAdSettings?.isActive ?:false
-        if (mPref.isNativeAdActive && currentItem != null && isRecommendedActive && recommendedAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
-            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
-        } else {
+        val isNativeAdActive = mPref.isNativeAdActive && currentItem != null && isRecommendedActive && recommendedAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()
+        playlistAdapter = MyChannelPlaylistVideosAdapterNew(isNativeAdActive, recommendedAdInterval, playlistAdUnitId, mPref, 
+            bindingUtil,this, currentItem)
+//        if (isNativeAdActive) {
+//            nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
+//            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
+//            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
+//        } else {
             mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter{playlistAdapter.retry()}))
-        }
+//        }
     }
     
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
