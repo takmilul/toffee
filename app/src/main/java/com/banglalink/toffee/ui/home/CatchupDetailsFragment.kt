@@ -55,12 +55,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     
+    private val binding get() = _binding!!
     @Inject lateinit var localSync: LocalSync
     private var mAdapter: ConcatAdapter? = null
     @Inject lateinit var bindingUtil: BindingUtil
     private var currentItem: ChannelInfo? = null
     private var _binding: FragmentCatchupBinding? = null
-    private val binding get() = _binding!!
     private var headerAdapter: ChannelHeaderAdapter? = null
     private var detailsAdapter: CatchUpDetailsAdapterNew? = null
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
@@ -78,12 +78,12 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             }
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentItem = arguments?.getParcelable(CHANNEL_INFO)!!
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
@@ -96,17 +96,11 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
             checkIfFragmentAttached {
-                observe(homeViewModel.vastTagLiveData) {
-                    initAdapter()
-                    
-                    if (currentItem?.channel_owner_id == mPref.customerId) {
-                        observeMyChannelVideos()
-                    } else {
-                        observeList()
-                    }
-                    if (mPref.nativeAdSettings.value == null) {
-                        homeViewModel.getVastTagV3(false)
-                    }
+                initAdapter()
+                if (currentItem?.channel_owner_id == mPref.customerId) {
+                    observeMyChannelVideos()
+                } else {
+                    observeList()
                 }
                 observeListState()
                 observeSubscribeChannel()
@@ -146,13 +140,13 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         val nativeAdSettings = mPref.nativeAdSettings.value?.find {
             it.area== NativeAdAreaType.RECOMMEND_VIDEO.value
         }
-        val recommendedAdUnitId = nativeAdSettings?.adUnitId
-        val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
-        val isRecommendedActive = nativeAdSettings?.isActive ?:false
-        val isNativeAdActive = mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()
+        val adUnitId = nativeAdSettings?.adUnitId
+        val adInterval =  nativeAdSettings?.adInterval ?: 0
+        val isAdActive = nativeAdSettings?.isActive ?:false
+        val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !adUnitId.isNullOrBlank()
         
         headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
-        detailsAdapter = CatchUpDetailsAdapterNew(isNativeAdActive, recommendedAdInterval, recommendedAdUnitId, mPref, bindingUtil, 
+        detailsAdapter = CatchUpDetailsAdapterNew(isNativeAdActive, adInterval, adUnitId, mPref, bindingUtil, 
             object : 
             ProviderIconCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
@@ -174,13 +168,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             }
         })
         
-//        if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
-//            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
-//            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil, mPref)
-//            mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
-//        } else {
-            mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
-//        }
+        mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
         with(binding.listview) {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
