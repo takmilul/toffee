@@ -56,7 +56,6 @@ import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosAdapter
 import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.mychannel.PlaylistVideosViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -78,7 +77,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private var _binding: FragmentUserPlaylistVideosBinding? = null
     private val binding get() = _binding!!
-    private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
+    private lateinit var playlistAdapter: UserPlaylistVideosAdapter
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val mViewModel by viewModels<PlaylistVideosViewModel>()
     private val reloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -184,7 +183,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
-        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
+        playlistAdapter = UserPlaylistVideosAdapter(this, currentItem)
         mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
     }
     
