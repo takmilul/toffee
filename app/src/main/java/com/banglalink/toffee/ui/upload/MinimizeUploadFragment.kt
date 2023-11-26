@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentMinimizeUploadBinding
 import com.banglalink.toffee.enums.UploadStatus
@@ -21,15 +23,14 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MinimizeUploadFragment: BaseFragment() {
-    private lateinit var uploadId: String
+    
     private var contentId: Long = -1
     private var uploadIdLong = -1L
-
+    private lateinit var uploadId: String
+    @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var uploadRepo: UploadInfoRepository
     private var _binding: FragmentMinimizeUploadBinding ? = null
     private val binding get() = _binding!!
-
-    @Inject
-    lateinit var uploadRepo: UploadInfoRepository
 
     companion object {
         const val UPLOAD_ID = "UPLOAD_ID"
@@ -93,6 +94,7 @@ class MinimizeUploadFragment: BaseFragment() {
                         binding.uploadPercent.text = "100%"
                         binding.progressBar.progress = 100
                         binding.uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
                         findNavController().popBackStack(R.id.menu_feed, false)
                     }
                     UploadStatus.ADDED.value,

@@ -28,7 +28,6 @@ import com.banglalink.toffee.enums.FilterContentType.FEED
 import com.banglalink.toffee.enums.FilterContentType.LATEST_VIDEOS
 import com.banglalink.toffee.enums.FilterContentType.TRENDING_VIDEOS
 import com.banglalink.toffee.enums.NativeAdAreaType
-import com.banglalink.toffee.enums.NativeAdType.LARGE
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.hide
@@ -60,7 +59,6 @@ import javax.inject.Inject
 class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     
     private var listJob: Job? = null
-    private val binding get() = _binding!!
     private var category: Category? = null
     @Inject lateinit var localSync: LocalSync
     private var selectedSubCategoryId: Int = 0
@@ -68,6 +66,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: LatestVideosAdapter
     private var _binding: FragmentLandingLatestVideosBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -124,7 +123,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             val isAdActive = nativeAdSettings?.isActive ?: false
             val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
             
-            mAdapter = LatestVideosAdapter(isNativeAdActive, adInterval, feedAdUnitId, LARGE, mPref, bindingUtil, this)
+            mAdapter = LatestVideosAdapter(isNativeAdActive, adInterval, feedAdUnitId, mPref, bindingUtil, this)
             
             loadStateFlow()
             with(binding.latestVideosList) {

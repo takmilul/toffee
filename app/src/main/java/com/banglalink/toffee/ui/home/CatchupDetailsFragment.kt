@@ -55,12 +55,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     
-    private val binding get() = _binding!!
     @Inject lateinit var localSync: LocalSync
     private var mAdapter: ConcatAdapter? = null
     @Inject lateinit var bindingUtil: BindingUtil
     private var currentItem: ChannelInfo? = null
     private var _binding: FragmentCatchupBinding? = null
+    private val binding get() = _binding!!
     private var headerAdapter: ChannelHeaderAdapter? = null
     private var detailsAdapter: CatchUpDetailsAdapterNew? = null
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null

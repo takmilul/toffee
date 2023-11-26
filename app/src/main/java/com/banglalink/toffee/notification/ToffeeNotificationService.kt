@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ToffeeMessagingService : FirebaseMessagingService() {
+class ToffeeNotificationService : FirebaseMessagingService() {
     
     private var notificationId = 1
     private val gson: Gson = Gson()
@@ -188,7 +188,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val isLocalBeta = betaVersionCode?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true
             if (isBeta && isLocalBeta) {
                 coroutineScope.launch {
-                    val intent = Intent(this@ToffeeMessagingService, NotificationActionReceiver::class.java).putExtras(
+                    val intent = Intent(this@ToffeeNotificationService, NotificationActionReceiver::class.java).putExtras(
                         bundleOf(
                             PUB_SUB_ID to notificationBuilder.pubSubId
                         ))
@@ -246,13 +246,13 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         private suspend fun insertIntoDB() = notificationInfoRepository.insert(notificationInfo)
         
         private suspend fun loadImageDrawable() {
-            imageDrawable = imageUrl?.let { CoilUtils.coilExecuteGet(this@ToffeeMessagingService, it) }
+            imageDrawable = imageUrl?.let { CoilUtils.coilExecuteGet(this@ToffeeNotificationService, it) }
         }
         
         private suspend fun getThumbnailImage(): Bitmap? {
             var thumbnailImage: Bitmap? = imageDrawable?.toBitmap(48, 48)
             if (!thumbnailUrl.isNullOrBlank()) {
-                val thumbnailDrawable = CoilUtils.coilExecuteGet(this@ToffeeMessagingService, thumbnailUrl) ?: imageDrawable
+                val thumbnailDrawable = CoilUtils.coilExecuteGet(this@ToffeeNotificationService, thumbnailUrl) ?: imageDrawable
                 thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
             }
             return thumbnailImage
@@ -261,7 +261,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         @SuppressLint("InlinedApi")
         private suspend fun getPendingIntent(hasActionButton: Boolean = false, isWatchNow: Boolean = false): PendingIntent {
             val isWatchLater = hasActionButton && !isWatchNow
-            val intent = Intent(this@ToffeeMessagingService, if (isWatchLater) NotificationActionReceiver::class.java else HomeActivity::class.java).apply {
+            val intent = Intent(this@ToffeeNotificationService, if (isWatchLater) NotificationActionReceiver::class.java else HomeActivity::class.java).apply {
                 /**if watchNow button is visible and playNowUrl is not empty then use playNowUrl.
                  * 
                  * if watchLater button is visible no url will be used with that button.
@@ -286,9 +286,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val requestCode = if (hasActionButton) { if (isWatchNow) 1 else 2 } else 0 // watchNow = 1, watchLater = 2, else = 0
             
             return if (isWatchLater) {
-                PendingIntent.getBroadcast(this@ToffeeMessagingService, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getBroadcast(this@ToffeeNotificationService, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             } else {
-                PendingIntent.getActivity(this@ToffeeMessagingService, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getActivity(this@ToffeeNotificationService, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             }
         }
         
@@ -313,7 +313,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             } else {
                 NotificationCompat.BigTextStyle().bigText(content)
             }
-            return NotificationCompat.Builder(this@ToffeeMessagingService, NOTIFICATION_CHANNEL_NAME).apply {
+            return NotificationCompat.Builder(this@ToffeeNotificationService, NOTIFICATION_CHANNEL_NAME).apply {
                 setSound(sound)
                 setContentTitle(title)
                 setContentText(content)

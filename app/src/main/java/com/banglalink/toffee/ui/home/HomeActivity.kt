@@ -101,13 +101,13 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PUBSUBMessageStatus.OPEN
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.CONTENT_VIEW
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.DISMISS
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIFICATION_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ACTION_NAME
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.CONTENT_VIEW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.DISMISS
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ROW_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
@@ -1333,6 +1333,7 @@ class HomeActivity : PlayerPageActivity(),
         if (player is CastPlayer) {
             maximizePlayer()
         }
+        mPref.isDisablePip.value = false
         ConvivaHelper.endPlayerSession(true)
         playerEventHelper.startContentPlayingSession(it.id)
         if (!isPlayerVisible()) {
