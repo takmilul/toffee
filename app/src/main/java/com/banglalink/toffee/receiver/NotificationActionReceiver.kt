@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import com.banglalink.toffee.notification.PUBSUBMessageStatus
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.DISMISS
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIFICATION_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_LATER
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ACTION_NAME
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.DISMISS
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_LATER
 
 class NotificationActionReceiver : BroadcastReceiver() {
     

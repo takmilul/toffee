@@ -72,7 +72,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
     
-    private val binding get() = _binding!!
     @Inject lateinit var localSync: LocalSync
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
@@ -86,6 +85,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
     private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
+    private val binding get() = _binding!!
     private val reloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {

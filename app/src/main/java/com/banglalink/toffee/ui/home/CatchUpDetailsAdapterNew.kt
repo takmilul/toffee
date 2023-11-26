@@ -47,6 +47,8 @@ class CatchUpDetailsAdapterNew(
         if (holder.binding is ListItemRelativeBinding) {
             if (isAdActive && position > 0 && position % adInterval == 0) {
                 holder.binding.nativeAdSmall.root.show()
+                holder.binding.nativeAdSmall.nativeAdview.hide()
+                holder.binding.nativeAdSmall.placeholder.root.show()
                 CoroutineScope(Dispatchers.IO).launch {
                     loadAds(adUnitId!!, holder.binding)
                 }
@@ -63,8 +65,6 @@ class CatchUpDetailsAdapterNew(
     }
     
     private fun loadAds(adUnitId: String, itemView: ListItemRelativeBinding) {
-        val placeholder = itemView.nativeAdSmall.placeholder.root
-        placeholder.show()
         AdLoader.Builder(itemView.root.context, adUnitId)
             .forNativeAd { nativeAd ->
                 CoroutineScope(Dispatchers.Main).launch {
@@ -73,6 +73,7 @@ class CatchUpDetailsAdapterNew(
             }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     CoroutineScope(Dispatchers.Main).launch {
+                        val placeholder = itemView.nativeAdSmall.placeholder.root
                         placeholder.hide()
                         placeholder.stopShimmer()
                         itemView.nativeAdSmall.root.hide()

@@ -15,8 +15,6 @@ import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ListItemVideosBinding
-import com.banglalink.toffee.enums.NativeAdType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
@@ -39,7 +37,6 @@ class LatestVideosAdapter(
     private val isAdActive: Boolean,
     private val adInterval: Int,
     private val adUnitId: String?,
-    private val adType: NativeAdType,
     private val mPref: SessionPreference,
     private val bindingUtil: BindingUtil,
     val callback: ContentReactionCallback<ChannelInfo>,
@@ -60,7 +57,10 @@ class LatestVideosAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (holder is BaseViewHolder && holder.binding is ListItemVideosBinding) {
             if (isAdActive && position > 0 && position % adInterval == 0) {
-                (if(adType == SMALL) holder.binding.nativeAdSmall else holder.binding.nativeAdLarge).root.show()
+                holder.binding.nativeAdLarge.root.show()
+                holder.binding.nativeAdLarge.nativeAdview.hide()
+                holder.binding.nativeAdLarge.placeholder.root.show()
+                
                 CoroutineScope(IO).launch {
                     loadAds(adUnitId!!, holder.binding)
                 }
@@ -76,8 +76,6 @@ class LatestVideosAdapter(
     }
     
     private fun loadAds(adUnitId: String, itemView: ListItemVideosBinding) {
-        val placeholder = if (adType == SMALL) itemView.nativeAdSmall.placeholder.root else itemView.nativeAdLarge.placeholder.root
-        placeholder.show()
         AdLoader.Builder(itemView.root.context, adUnitId)
             .forNativeAd { nativeAd ->
                 CoroutineScope(Main).launch {
@@ -86,6 +84,7 @@ class LatestVideosAdapter(
             }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     CoroutineScope(Main).launch {
+                        val placeholder = itemView.nativeAdLarge.placeholder.root
                         placeholder.hide()
                         placeholder.stopShimmer()
                         itemView.nativeAdSmall.root.hide()
@@ -105,7 +104,7 @@ class LatestVideosAdapter(
     }
     
     private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: ListItemVideosBinding) {
-        val adView = if(adType == SMALL) adContainerView.nativeAdSmall.nativeAdview else adContainerView.nativeAdLarge.nativeAdview
+        val adView = adContainerView.nativeAdLarge.nativeAdview
         adView.mediaView = adView.findViewById(R.id.ad_media)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
         adView.headlineView = adView.findViewById(R.id.ad_headline)
