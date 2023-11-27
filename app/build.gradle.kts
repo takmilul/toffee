@@ -42,7 +42,7 @@ android {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native
 //            libraries Gradle should build and package with your app.
-            abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
         }
         manifestPlaceholders.putAll(
             mapOf(
@@ -57,6 +57,12 @@ android {
                 force("androidx.emoji2:emoji2-views-helper:1.3.0")
                 force("androidx.emoji2:emoji2:1.3.0")
             }
+        }
+    }
+    
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir("src/main/libs")
         }
     }
     
@@ -104,6 +110,12 @@ android {
             isJniDebuggable = false
             isShrinkResources = true
             isRenderscriptDebuggable = false
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
@@ -112,6 +124,12 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             isRenderscriptDebuggable = true
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -119,21 +137,25 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-//            excludes += listOf(
-//                "lib/*/librsjni.so",
-//                "lib/*/libRSSupport.so",
-//                "lib/*/librsjni_androidx.so"
-//            )
+            pickFirsts += listOf(
+                "lib/*/libnative-lib.so"
+            )
+            excludes += listOf(
+                "lib/*/librsjni.so",
+                "lib/*/libRSSupport.so",
+                "lib/*/librsjni_androidx.so"
+            )
         }
         resources {
-            excludes += listOf("META-INF/*") //META-INF/*.kotlin_module
-//            pickFirsts += listOf(
-//                "META-INF/services",
-//                "META-INF/LICENSE",
-//                "META-INF/INDEX.LIST",
-//                "META-INF/io.netty.versions.properties",
-//                "META-INF/annotation-experimental_release.kotlin_module"
-//            )
+            excludes += listOf("META-INF/*.kotlin_module")
+            pickFirsts += listOf(
+                "lib/*/libnative-lib.so",
+                "META-INF/services",
+                "META-INF/LICENSE",
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/annotation-experimental_release.kotlin_module"
+            )
         }
     }
     
@@ -148,7 +170,7 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar", "*.so"))))
     implementation(project(":data"))
     implementation(project(":balloon"))
     

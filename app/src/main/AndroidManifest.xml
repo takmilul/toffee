@@ -181,6 +181,8 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
         
+        <meta-data android:name="android.app.lib_name" android:value="native-lib" />
+        
         <service
             android:name=".notification.ToffeeNotificationService"
             android:exported="false">

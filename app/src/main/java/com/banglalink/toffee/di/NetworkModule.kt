@@ -20,7 +20,7 @@ object NetworkModule {
     const val isDebugMessageActive: Boolean = false
     
     init {
-        System.loadLibrary("data")
+        System.loadLibrary("native-lib")
     }
     
     private external fun getUrl(): String

@@ -190,7 +190,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             initAdapter()
             listJob = viewLifecycleOwner.lifecycleScope.launch {
                 runCatching {
-                    binding.latestVideosList.recycledViewPool.clear()
+                    _binding?.latestVideosList?.recycledViewPool?.clear()
                     viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                         mAdapter.submitData(it)
                     }
@@ -321,7 +321,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             runCatching {
-                binding.latestVideosList.recycledViewPool.clear()
+                _binding?.latestVideosList?.recycledViewPool?.clear()
                 if (categoryId == 0) {
                     viewModel.loadLatestVideos().collectLatest {
                         mAdapter.submitData(it)
@@ -339,7 +339,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             runCatching {
-                binding.latestVideosList.recycledViewPool.clear()
+                _binding?.latestVideosList?.recycledViewPool?.clear()
                 viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                     mAdapter.submitData(it)
                 }
