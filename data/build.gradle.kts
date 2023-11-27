@@ -24,7 +24,12 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                // Passes optional arguments to CMake.
+                arguments += listOf("-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang")
+                // Sets a flag to enable format macro constants for the C compiler.
+                cFlags += listOf("-D__STDC_FORMAT_MACROS")
+                // Sets optional flags for the C++ compiler.
+                cppFlags += listOf("-fexceptions", "-frtti")
             }
         }
 //        Similar to other properties in the defaultConfig block,
@@ -33,7 +38,7 @@ android {
         ndk {
 //            Specifies the ABI configurations of your native
 //            libraries Gradle should build and package with your app.
-            abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
         }
     }
     
@@ -41,6 +46,12 @@ android {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
+        }
+    }
+    
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir("src/main/libs")
         }
     }
     
@@ -71,7 +82,27 @@ android {
             isMinifyEnabled = false
             isJniDebuggable = false
             isRenderscriptDebuggable = false
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+    
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+            pickFirsts += listOf(
+                "lib/*/libnative-lib.so"
+            )
+        }
+        resources {
+            pickFirsts += listOf(
+                "lib/*/libnative-lib.so"
+            )
         }
     }
     
