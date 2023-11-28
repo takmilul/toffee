@@ -47,7 +47,7 @@ class ToffeeNotificationService : FirebaseMessagingService() {
     
     private var notificationId = 1
     private val gson: Gson = Gson()
-    private val TAG = "ToffeeMessagingService"
+    private val TAG = "ToffeeNotificationService"
     @Inject lateinit var setFcmToken: SetFcmToken
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
