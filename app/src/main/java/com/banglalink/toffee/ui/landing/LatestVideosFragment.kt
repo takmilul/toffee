@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -46,11 +47,9 @@ import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.util.BindingUtil
-import com.banglalink.toffee.util.Log
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -82,14 +81,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         selectedFilter = FEED.value
         binding.latestVideosList.addItemDecoration(MarginItemDecoration(12))
         
-        if (mPref.isViewCountDbUpdatedLiveData.value == true && ((mPref.isNativeAdActive && homeViewModel.vastTagLiveData.value == true) || !mPref.isNativeAdActive)) {
+        observe(mPref.isViewCountDbUpdatedLiveData) {
+            Log.i("latest_", "viewCount")
             loadData()
-        } else {
-            lifecycleScope.launch {
-                delay(500)
-                loadData()
-            }
         }
+        observe(homeViewModel.vastTagLiveData) {
+            Log.i("latest_", "vastTag")
+            loadData()
+        }
+        if (!mPref.isNativeAdActive) {
+            loadData()
+        }
+        
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }
@@ -122,7 +125,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             val adInterval = nativeAdSettings?.adInterval ?: 0
             val isAdActive = nativeAdSettings?.isActive ?: false
             val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
-            
+            Log.i("latest_", "initAdapter: ")
             mAdapter = LatestVideosAdapter(isNativeAdActive, adInterval, feedAdUnitId, mPref, bindingUtil, this)
             
             loadStateFlow()
@@ -190,7 +193,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             initAdapter()
             listJob = viewLifecycleOwner.lifecycleScope.launch {
                 runCatching {
-                    _binding?.latestVideosList?.recycledViewPool?.clear()
+                    binding.latestVideosList.recycledViewPool.clear()
                     viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                         mAdapter.submitData(it)
                     }
@@ -201,7 +204,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeSubCategories() {
         observe(viewModel.subCategories) {
-            Log.i("Latest_", "onViewCreated:observeSubCategories $it")
             if (it.isNotEmpty()) {
                 binding.subCategoryChipGroup.removeAllViews()
                 binding.subCategoryChipGroupHolder.show()
@@ -321,14 +323,21 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             runCatching {
-                _binding?.latestVideosList?.recycledViewPool?.clear()
+                binding.latestVideosList.recycledViewPool.clear()
                 if (categoryId == 0) {
+                    Log.i("latest_", "observeLatestVideosList: ")
                     viewModel.loadLatestVideos().collectLatest {
                         mAdapter.submitData(it)
+//                        if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+//                            mAdapter.notifyDataSetChanged()
+//                        }
                     }
                 } else {
                     viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
                         mAdapter.submitData(it)
+//                        if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+//                            mAdapter.notifyDataSetChanged()
+//                        }
                     }
                 }
             }
@@ -339,7 +348,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             runCatching {
-                _binding?.latestVideosList?.recycledViewPool?.clear()
+                binding.latestVideosList.recycledViewPool.clear()
                 viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                     mAdapter.submitData(it)
                 }
@@ -397,7 +406,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun createSubCategoryList() {
         observe(viewModel.subCategories) {
-            Log.i("Latest_", "onViewCreated:createSubCategoryList $it")
             if (it.isNotEmpty()) {
                 binding.subCategoryChipGroup.removeAllViews()
                 val subList = it.sortedBy { sub -> sub.id }
