@@ -46,7 +46,7 @@ object NetworkModuleLib {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            retryOnConnectionFailure(false)
+            retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
@@ -67,7 +67,7 @@ object NetworkModuleLib {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            retryOnConnectionFailure(false)
+            retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY

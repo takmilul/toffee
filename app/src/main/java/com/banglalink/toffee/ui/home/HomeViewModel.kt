@@ -127,7 +127,7 @@ class HomeViewModel @Inject constructor(
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
     val shareUrlLiveData = SingleLiveEvent<String>()
-    val vastTagLiveData = MutableLiveData<Boolean>()
+    val nativeAdApiResponseLiveData = SingleLiveEvent<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
@@ -149,6 +149,7 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+    
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
             getProfile()
@@ -432,7 +433,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getVastTagV3(shouldObserve: Boolean = true) {
+    fun getVastTagV3() {
         viewModelScope.launch {
             try {
                 vastTagServiceV3.execute().response.let {
@@ -451,7 +452,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
-            if (shouldObserve) vastTagLiveData.value = true
+            if (mPref.isNativeAdActive) nativeAdApiResponseLiveData.value = true
         }
     }
     
