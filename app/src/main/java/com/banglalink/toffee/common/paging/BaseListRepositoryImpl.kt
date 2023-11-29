@@ -17,7 +17,7 @@ class BaseListRepositoryImpl<T: Any> constructor(
                 finalPageSize,
                 enablePlaceholders = true,
                 initialLoadSize = finalPageSize,
-                prefetchDistance = if(finalPageSize > 30) finalPageSize / 2 else 10,
+                prefetchDistance = finalPageSize / 3,
 //                maxSize = 2 * PAGE_SIZE
             ),
 //            remoteMediator = remoteMediator,

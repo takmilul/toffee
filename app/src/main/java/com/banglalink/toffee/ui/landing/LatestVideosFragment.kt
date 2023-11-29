@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -81,16 +80,27 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         selectedFilter = FEED.value
         binding.latestVideosList.addItemDecoration(MarginItemDecoration(12))
         
-        observe(mPref.isViewCountDbUpdatedLiveData) {
-            Log.i("latest_", "viewCount")
-            loadData()
-        }
-        observe(homeViewModel.vastTagLiveData) {
-            Log.i("latest_", "vastTag")
-            loadData()
-        }
+        /* if native ad is not active then immediately initiate the adapter and load content list from API */
         if (!mPref.isNativeAdActive) {
-            loadData()
+            initAdapter()
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
+        }
+        
+        /* if native ad is active, observe the live data which posted from the ad API response and initiate, load content list from 
+        content API. always initiate the adapter in this case otherwise the native ad will not be added into the adapter and it 
+        will not be shown. even if the content is already is displayed, load the content API again to refresh the list with the native ad attached in the content list */
+        observe(homeViewModel.nativeAdApiResponseLiveData) {
+            initAdapter()
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
+        }
+        
+        /* only if the adapter has not been initialized then initialize the adapter. always load content API to sync the content 
+        list with the view count and other counts. */
+        observe(mPref.isViewCountDbUpdatedLiveData) {
+            if (!this::mAdapter.isInitialized) {
+                initAdapter()
+            }
+            observeLatestVideosList(category?.id?.toInt() ?: 0)
         }
         
         if (category?.id?.toInt() == 1) {
@@ -103,11 +113,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         observeHashTagChange()
         
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
-    }
-    
-    private fun loadData() {
-        initAdapter()
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
     }
     
     private fun initAdapter() {
@@ -125,7 +130,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             val adInterval = nativeAdSettings?.adInterval ?: 0
             val isAdActive = nativeAdSettings?.isActive ?: false
             val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !feedAdUnitId.isNullOrBlank()
-            Log.i("latest_", "initAdapter: ")
             mAdapter = LatestVideosAdapter(isNativeAdActive, adInterval, feedAdUnitId, mPref, bindingUtil, this)
             
             loadStateFlow()
@@ -163,7 +167,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         popupMenu.setOnMenuItemClickListener { item ->
             selectedFilter = item.itemId
             binding.latestVideosHeader.text = item.title
-            initAdapter()
             when (item.itemId) {
                 LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
                 TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
@@ -178,7 +181,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
             }
             
-            initAdapter()
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 0, it)
             } else {
@@ -190,7 +192,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeHashTagChange() {
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
-            initAdapter()
             listJob = viewLifecycleOwner.lifecycleScope.launch {
                 runCatching {
                     binding.latestVideosList.recycledViewPool.clear()
@@ -325,19 +326,12 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             runCatching {
                 binding.latestVideosList.recycledViewPool.clear()
                 if (categoryId == 0) {
-                    Log.i("latest_", "observeLatestVideosList: ")
                     viewModel.loadLatestVideos().collectLatest {
                         mAdapter.submitData(it)
-//                        if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-//                            mAdapter.notifyDataSetChanged()
-//                        }
                     }
                 } else {
                     viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
                         mAdapter.submitData(it)
-//                        if (!binding.latestVideosList.isComputingLayout && binding.latestVideosList.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-//                            mAdapter.notifyDataSetChanged()
-//                        }
                     }
                 }
             }
