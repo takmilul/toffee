@@ -81,7 +81,6 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             isJniDebuggable = false
-            isRenderscriptDebuggable = false
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native
