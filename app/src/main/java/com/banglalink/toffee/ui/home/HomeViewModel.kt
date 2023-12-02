@@ -127,7 +127,7 @@ class HomeViewModel @Inject constructor(
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
     val shareUrlLiveData = SingleLiveEvent<String>()
-    val nativeAdApiResponseLiveData = SingleLiveEvent<Boolean>()
+    val nativeAdApiResponseLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()

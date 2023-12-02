@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -109,7 +109,6 @@ android {
             isMinifyEnabled = true
             isJniDebuggable = false
             isShrinkResources = true
-            isRenderscriptDebuggable = false
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native
@@ -123,7 +122,6 @@ android {
             isJniDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            isRenderscriptDebuggable = true
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native

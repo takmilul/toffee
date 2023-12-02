@@ -6,10 +6,10 @@
 minSdkVersion = "21"
 compileSdkVersion = "33"
 targetSdkVersion = "33"
-appVersionCode = "127"
+appVersionCode = "128"
 appVersionName = "6.2.0"
 
-gradle-plugin-version = "8.1.4"
+gradle-plugin-version = "8.2.0"
 
 # View
 activity-version = "1.6.1"
