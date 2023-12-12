@@ -80,7 +80,7 @@ class SplashScreenFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        if (BuildConfig.PACKAGE_NAME != BuildConfig.APPLICATION_ID) {
+        if (BuildConfig.APPLICATION_ID != "com.banglalink.toffee") {
             requireActivity().finishAffinity()
         }
         observeLoadingProgress()

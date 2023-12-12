@@ -30,7 +30,7 @@ import com.banglalink.toffee.apiservice.SetFcmToken
 import com.banglalink.toffee.apiservice.SubscribeChannelService
 import com.banglalink.toffee.apiservice.UpdateFavorite
 import com.banglalink.toffee.apiservice.VastTagServiceV3
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.response.MediaCdnSignUrl
@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
     private val cacheManager: CacheManager,
-    private var toffeeConfig: ToffeeConfig,
+    private var config: Config,
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
     private val vastTagServiceV3: VastTagServiceV3,
@@ -116,8 +116,7 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-
-    ) : ViewModel() {
+) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
@@ -127,7 +126,7 @@ class HomeViewModel @Inject constructor(
     val playContentLiveData = SingleLiveEvent<Any>()
     private var _playlistManager = PlaylistManager()
     val shareUrlLiveData = SingleLiveEvent<String>()
-    val vastTagLiveData = MutableLiveData<Boolean>()
+    val nativeAdApiResponseLiveData = MutableLiveData<Boolean>()
     val isFireworkActive = MutableLiveData<Boolean>()
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
@@ -149,12 +148,13 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+    
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
             getProfile()
         }
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-        if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) {
+        if (config.url.isTestEnvironment()) {
             FirebaseMessaging.getInstance().subscribeToTopic("test-fcm")
             FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
             FirebaseMessaging.getInstance().unsubscribeFromTopic("prod-fifa-score")
@@ -227,7 +227,7 @@ class HomeViewModel @Inject constructor(
             try {
                 val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
                 val redirUrl = resp.request.url
-                if (redirUrl.host == "toffeelive.com") redirUrl.toString()
+                if (redirUrl.host == "toffeelive.com" || redirUrl.host == "staging-web.toffeelive.com") redirUrl.toString()
                 else null
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -432,7 +432,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getVastTagV3(shouldObserve: Boolean = true) {
+    fun getVastTagV3() {
         viewModelScope.launch {
             try {
                 vastTagServiceV3.execute().response.let {
@@ -451,7 +451,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
-            if (shouldObserve) vastTagLiveData.value = true
+            if (mPref.isNativeAdActive) nativeAdApiResponseLiveData.value = true
         }
     }
     

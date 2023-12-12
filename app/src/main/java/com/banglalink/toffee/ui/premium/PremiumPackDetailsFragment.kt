@@ -5,12 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
@@ -23,6 +26,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.ClickableAdInventories
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.showAlignBottom
@@ -38,69 +42,113 @@ class PremiumPackDetailsFragment : BaseFragment(){
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-    
+    private var openPlanDetails : Boolean? = false
+//    private var paymentMethod : String? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
         
         requireActivity().title = "Pack Details"
-        
-//        if (viewModel.selectedPremiumPack.value?.isPackPurchased == false) {
-            checkPackPurchased()
-//        }
-        binding.isVerifiedUser = mPref.isVerifiedUser
-        binding.data = viewModel.selectedPremiumPack.value
-        
+
         observeMnpStatus()
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-        
-        viewModel.selectedPremiumPack.value?.let {
-            isFreeTrialOver = it.isAvailableFreePeriod == 1 && it.isPurchaseAvailable != 1 && mPref.activePremiumPackList.value?.any { activePack ->
-                it.id == activePack.packId && activePack.isTrialPackUsed
-            } ?: false
-            
-            viewModel.getPremiumPackDetail(it.id)
-            
-            with(binding) {
-                if (isFreeTrialOver && mPref.isVerifiedUser) {
-                    payNowButton.alpha = 0.5f
-                    payNowButton.isEnabled = false
-                    payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
+
+        /*
+         checking pack purchase separately,
+         when user comes from deeplink, first checking the pack is available or not. If available then checking pack purchase status
+         Otherwise checking as normal flow
+         */
+
+        openPlanDetails =  arguments?.getBoolean("openPlanDetails")
+        if (openPlanDetails == true){
+            openPlanDetails = false
+            val packId = arguments?.getInt("packId")
+            val paymentMethodId = arguments?.getInt("paymentMethodId")
+            val showBlPacks = arguments?.getBoolean("showBlPacks")
+
+            // Storing the value to access it from different pages
+            viewModel.clickableAdInventories.value = ClickableAdInventories(packId, paymentMethodId, showBlPacks)
+            observeAndSelectPremiumPack(packId ?: 0)
+        } else{
+            viewModel.clickableAdInventories.value = null
+            checkPackPurchased()
+            binding.isVerifiedUser = mPref.isVerifiedUser
+            binding.data = viewModel.selectedPremiumPack.value
+
+            viewModel.selectedPremiumPack.value?.let {
+                isFreeTrialOver = it.isAvailableFreePeriod == 1 && it.isPurchaseAvailable != 1 && mPref.activePremiumPackList.value?.any { activePack ->
+                    it.id == activePack.packId && activePack.isTrialPackUsed
+                } ?: false
+
+                viewModel.getPremiumPackDetail(it.id)
+
+            } ?: run {
+                binding.progressBar.hide()
+                requireContext().showToast(getString(R.string.try_again_message))
+            }
+        }
+
+        with(binding) {
+            if (isFreeTrialOver && mPref.isVerifiedUser) {
+                payNowButton.alpha = 0.5f
+                payNowButton.isEnabled = false
+                payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
+            }
+
+            payNowButton.safeClick({
+                mPref.signingFromPrem.value = true
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN_SOURCE,
+                        bundleOf(
+                            "source" to "premium_pack_details",
+                            "method" to "mobile"
+                        )
+                    )
                 }
-                
-                payNowButton.safeClick({
-                    requireActivity().checkVerification {
-                        progressDialog.show()
-                        if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
-                            viewModel.getMnpStatusForPaymentDetail()
-                        } else {
-                            viewModel.selectedPremiumPack.value?.let {
-                                viewModel.getPackStatus(0, it.id)
-                            } ?: run {
-                                progressDialog.hide()
-                                requireContext().showToast(getString(R.string.try_again_message))
-                            }
+                requireActivity().checkVerification {
+                    progressDialog.show()
+                    if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                        viewModel.getMnpStatusForPaymentDetail()
+                    } else {
+                        viewModel.selectedPremiumPack.value?.let {
+                            viewModel.getPackStatus(0, it.id)
+                        } ?: run {
+                            progressDialog.hide()
+                            requireContext().showToast(getString(R.string.try_again_message))
                         }
                     }
-                })
-            }
-        } ?: run { 
-            binding.progressBar.hide()
-            requireContext().showToast(getString(R.string.try_again_message))
+                }
+            })
         }
-        
+
         /**
          * Observes `packDetailsPageRefreshRequired` LiveData and refreshes pack status if `true`.
          */
         observe(mPref.packDetailsPageRefreshRequired) { if (it == true) observePackStatusAfterSubscriberPayment() }
-        
+
+
+        /**
+         * Observe to destrory the clickable ad inventories flow
+         */
+        observe(mPref.refreshRequiredForClickableAd) {
+            if (it == true) {
+                findNavController().navigatePopUpTo(
+                    resId = R.id.packDetailsFragment,
+                    popUpTo = R.id.packDetailsFragment,
+                    inclusive = true
+                )
+            }
+        }
+
         binding.infoIcon.safeClick({
             runCatching {
                 it.showAlignBottom(
@@ -110,6 +158,83 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 )
             }
         })
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isEnabled) {
+                    //sends firebase event for users aborting premPack after looking at contents.
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ABORT, bundleOf(
+                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                            "reason" to "content",
+                            "action" to "goes back"
+                        )
+                    )
+
+                    isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        })
+    }
+
+    private fun observeAndSelectPremiumPack(packId:Int) {
+        observe(viewModel.packListState) { response ->
+            when(response) {
+                is Success -> {
+                    binding.progressBar.hide()
+                    response.data.ifNotNullOrEmpty { premiumPacks ->
+                        var isPackFound = false
+                        premiumPacks.forEach { pack->
+                            if (pack.id == packId){
+                                isPackFound = true
+                                viewModel.selectedPremiumPack.value = pack
+                                checkPackPurchased()
+                                binding.data = pack
+                                binding.isVerifiedUser = mPref.isVerifiedUser
+
+                                viewModel.selectedPremiumPack.value?.let {
+                                    isFreeTrialOver = it.isAvailableFreePeriod == 1 && it.isPurchaseAvailable != 1 && mPref.activePremiumPackList.value?.any { activePack ->
+                                        it.id == activePack.packId && activePack.isTrialPackUsed
+                                    } ?: false
+
+                                    viewModel.getPremiumPackDetail(it.id)
+
+                                    // call payment methods
+                                    progressDialog.show()
+                                    if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                                        viewModel.getMnpStatusForPaymentDetail()
+                                    } else {
+                                        viewModel.selectedPremiumPack.value?.let {
+                                            viewModel.getPackStatus(0, it.id)
+                                        } ?: run {
+                                            progressDialog.dismiss()
+                                            requireContext().showToast(getString(R.string.try_again_message))
+                                        }
+                                    }
+
+                                } ?: run {
+                                    binding.progressBar.hide()
+                                    requireContext().showToast(getString(R.string.try_again_message))
+                                }
+                            }
+                        }
+
+                        if (!isPackFound){
+                            viewModel.selectedPremiumPack.value = null
+                            requireActivity().showToast(getString(R.string.selected_pack_not_found))
+                            findNavController().navigatePopUpTo(R.id.premiumPackListFragment)
+                        }
+                    }
+                }
+                is Failure -> {
+                    binding.progressBar.hide()
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+        viewModel.getPremiumPackList("0")
     }
     
     private fun observeMnpStatus() {
@@ -121,9 +246,12 @@ class PremiumPackDetailsFragment : BaseFragment(){
                         viewModel.selectedPremiumPack.value?.let {
                             viewModel.getPackStatus(0, it.id)
                         } ?: requireContext().showToast(getString(R.string.try_again_message))
+                    }else{
+                        progressDialog.dismiss()
                     }
                 }
                 is Failure -> {
+                    progressDialog.dismiss()
                     requireContext().showToast(response.error.msg)
                 }
             }
@@ -174,8 +302,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
                     // Navigate back to the premium pack list while preserving the back stack
                     findNavController().navigatePopUpTo(
                         resId = R.id.packDetailsFragment,
-                        popUpTo = R.id.premiumPackListFragment,
-                        inclusive = false
+                        popUpTo = R.id.packDetailsFragment,
+                        inclusive = true
                     )
 
                     // Determine the next destination based on the payment flow
@@ -230,6 +358,15 @@ class PremiumPackDetailsFragment : BaseFragment(){
             progressDialog.dismiss()
             when(it) {
                 is Success -> {
+
+                    //sends firebase event for users viewing payment methods.
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ACTIVE, bundleOf(
+                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
+                        )
+                    )
                     viewModel.paymentMethod.value = it.data
                     findNavController().navigateTo(
                         resId = R.id.bottomSheetPaymentMethods,

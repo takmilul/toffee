@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.widget
 
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
@@ -15,6 +16,8 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -27,6 +30,8 @@ import androidx.media3.ui.PlayerView.ControllerVisibilityListener
 import androidx.mediarouter.app.MediaRouteButton
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
@@ -46,6 +51,7 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.material.slider.Slider
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +64,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 
 @AndroidEntryPoint
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -71,6 +78,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     DraggerLayout.OnPositionChangedListener,
     PlayerView(context, attrs, defStyleAttr) 
 {
+    val activity = context as Activity
     
     var isVideoScalable = false
     var isVideoPortrait = false
@@ -101,11 +109,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var playerBottomSpace: Space
     private lateinit var minimizeButton: ImageView
+    private lateinit var closeIcon: ImageView
     private lateinit var exoTimeSeparator: TextView
     private lateinit var exoProgress: DefaultTimeBar
     private lateinit var fullscreenButton: ImageView
     private lateinit var debugContainer: FrameLayout
     private lateinit var castButton: MediaRouteButton
+    private lateinit var brightnessControllBar: Slider
+    private lateinit var brightnessIcon: ImageView
     private val screenWidth = Utils.getScreenWidth()
     private val screenHeight = Utils.getScreenHeight()
     private lateinit var textCasting: AppCompatTextView
@@ -119,7 +130,8 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     private lateinit var playerControlView: PlayerControlView
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
-    
+    private var brightness: Float = 0f
+    private var trackingBrightness: Boolean = false
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
@@ -139,6 +151,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         autoplayProgress = findViewById(R.id.autoplayProgress)
         rotateButton = findViewById(R.id.rotation)
         
+        closeIcon = findViewById(R.id.closeIcon)
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerBottomSpace = findViewById(R.id.player_bottom_space)
@@ -160,7 +173,40 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         controllerBg = findViewById(R.id.controller_bg)
         previewImage = findViewById(R.id.exo_shutter)
         buffering = findViewById(R.id.exo_buffering)
-        
+
+        brightnessControllBar = findViewById(R.id.brightnessControlBar)
+        brightnessIcon = findViewById(R.id.brightnessIcon)
+
+        brightnessControllBar.addOnChangeListener { rangeSlider, value, fromUser ->
+            /** Responds when slider's value is changed
+             * Sending instructions to control player brightness
+             */
+            setScreenBrightness(value)
+        }
+
+        brightnessControllBar.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                trackingBrightness = true
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                /** Responds when slider's touch event is being stopped
+                 * Storing players brightness value to use it as default brightness in next sessions
+                 */
+                trackingBrightness = false
+                if (isFullScreen && !controllerBg.isVisible){
+                    coroutineScope.launch {
+                        delay(1000)
+                        if (!controllerBg.isVisible){
+                            brightnessControllBar.hide()
+                            brightnessIcon.hide()
+                        }
+                    }
+                }
+                mPref.playerScreenBrightness = brightness
+            }
+        })
+
         if (isAutoRotationEnabled) {
             rotateButton.setImageResource(R.drawable.ic_screen_rotate)
         } else {
@@ -193,6 +239,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
                     val isLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                     changeTimerVisibility(isLive)
 //                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
+                    if (isFullScreen){
+                        brightnessIcon.show()
+                        brightnessControllBar.show()
+                    }
                     onPlayerControllerChangedListeners.forEach {
                         it.onControllerVisible()
                     }
@@ -200,6 +250,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
                 View.GONE -> {
                     if (textCasting.visibility != View.VISIBLE) {
                         controllerBg.visibility = View.GONE
+                    }
+                    if (isFullScreen && !trackingBrightness){
+                        brightnessIcon.hide()
+                        brightnessControllBar.hide()
                     }
                     onPlayerControllerChangedListeners.forEach {
                         it.onControllerInVisible()
@@ -227,7 +281,32 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
         }
     }
-    
+    private fun setScreenBrightness(value: Float, isTransformedValue: Boolean? = false) {
+        /** This method works for value from -1.0F to 1.0F
+         * Value 0.0F to 1.0F to increase or decrese brightness
+         * Value -1.0F to set the brightness as device defaults
+         */
+        brightness = if (value < 0 || isTransformedValue == true){ value } else {
+            // Adjusting the rate of change for screen brightness,
+            // This can help in achieving a more perceptually uniform brightness control
+            val transformedValue = transformSliderValue(value)
+            transformedValue
+        }
+        val layoutParams = activity.window.attributes
+        layoutParams.screenBrightness = brightness
+        activity.window.attributes = layoutParams
+    }
+
+    private fun transformSliderValue(value: Float): Float {
+        val exponent = 2.0
+        return value.toDouble().pow(exponent).toFloat()
+    }
+
+    private fun reverseTransformValue(transformedValue: Float): Float {
+        val exponent = 2.0
+        return transformedValue.toDouble().pow(1.0 / exponent).toFloat()
+    }
+
     fun addPlayerControllerChangeListener(listener: OnPlayerControllerChangedListener) {
         onPlayerControllerChangedListeners.add(listener)
     }
@@ -254,7 +333,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
 //    }
     
     private fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
-        rotateButton.visibility = if (status && !isVideoPortrait) View.VISIBLE else View.GONE
+//        rotateButton.visibility = if (status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
         rotateButton.setImageResource(if (!isAutoRotationEnabled) R.drawable.rotation_off else R.drawable.ic_screen_rotate)
         if (invokeListener) {
@@ -291,6 +370,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
             R.id.drawer -> {
                 onPlayerControllerChangedListeners.forEach {
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.MENU_OPEN,
+                        bundleOf(
+                            "screen" to "Player"
+                        )
+                    )
                     it.onDrawerButtonPressed()
                 }
             }
@@ -329,6 +414,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     fun onPip(enabled: Boolean = false) {
         useController = !enabled
         setShowBuffering(/*if(enabled) SHOW_BUFFERING_NEVER else*/ SHOW_BUFFERING_ALWAYS)
+        setScreenBrightness(-1.0f) // Set default brightness
     }
     
     fun isControllerVisible(): Boolean {
@@ -606,6 +692,16 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         return true
     }
     
+    fun togglePlayerCloseIconVisibility(isVisible: Boolean) {
+        closeIcon.isVisible = isVisible
+    }
+    
+    fun getPlayerCloseIconArea(): IntArray {
+        val viewLocation = IntArray(2)
+        closeIcon.getLocationOnScreen(viewLocation)
+        return viewLocation
+    }
+    
     override fun onPlayerMinimize() {
         isMinimize = true
         hideController()
@@ -613,6 +709,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     
     override fun onPlayerMaximize() {
         isMinimize = false
+        togglePlayerCloseIconVisibility(false)
 //        binding.textureView.setOnClickListener(this)
         if (player?.isPlaying == true) {
 //            hideControls(2000)
@@ -748,10 +845,23 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             minimizeButton.visibility = GONE
             drawerButton.visibility = INVISIBLE
             fullscreenButton.setImageResource(R.drawable.exo_styled_controls_fullscreen_exit)
+
+            // set brightness controller
+            if (isControllerVisible()){
+                brightnessIcon.show()
+                brightnessControllBar.show()
+            }
+            setScreenBrightness(value = mPref.playerScreenBrightness, isTransformedValue = true)
+            brightnessControllBar.value = reverseTransformValue(mPref.playerScreenBrightness)
         } else {
             minimizeButton.visibility = VISIBLE
             drawerButton.visibility = VISIBLE
             fullscreenButton.setImageResource(R.drawable.exo_styled_controls_fullscreen_enter)
+
+            // hide brightness controller
+            brightnessIcon.hide()
+            brightnessControllBar.hide()
+            setScreenBrightness(-1.0f)
         }
     }
     
@@ -799,7 +909,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(Utils.getRealScreenSize(context))
             
-            rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
+//            rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
             
             toggleVideoProfileMenuFromPlayer(channelInfo.isFmRadio)
@@ -838,7 +948,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         
         getCurrentChannelInfo()?.let {
             isVideoPortrait = it.isHorizontal != 1
-            rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
+//            rotateButton.visibility = if (isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }

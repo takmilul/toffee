@@ -24,8 +24,7 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -68,9 +67,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
+    val refreshRequiredForClickableAd = SingleLiveEvent<Boolean?>()
+    val clickedFromChannelItem = SingleLiveEvent<Boolean?>()
     val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
     val radioBannerImgUrl = MutableLiveData<String>()
-
+    val signingFromPrem = SingleLiveEvent<Boolean?>()
+    val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
+    var isDisablePip = MutableLiveData<Boolean>().apply { value = false } // when going outside of the app by using a toffee deeplink, disable pip to solve the player blackout issue
+    
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
@@ -809,6 +813,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, false)
         set(value) = pref.edit { putBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, value) }
 
+    var playerScreenBrightness: Float
+        get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.36f)
+        set(value) = pref.edit { putFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, value) }
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -1091,6 +1099,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
         private const val RADIO_BANNER = "radio_banner"
+        private const val PREF_PLAYER_SCREEN_BRIGHTNESS = "player-screen-brightness"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

@@ -38,6 +38,7 @@ import androidx.media3.exoplayer.source.ads.AdsLoader
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.Parameters
+import androidx.media3.exoplayer.upstream.CmcdConfiguration
 import androidx.media3.exoplayer.util.*
 import androidx.media3.ui.PlayerView
 import com.banglalink.toffee.BuildConfig
@@ -318,8 +319,9 @@ abstract class PlayerPageActivity :
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setLocalAdInsertionComponents({adsLoader}, getPlayerView())
+//                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
-            
+
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
@@ -834,7 +836,7 @@ abstract class PlayerPageActivity :
             onContentExpired()
             return@launch
         }
-        if (BuildConfig.PACKAGE_NAME != BuildConfig.APPLICATION_ID) {
+        if (BuildConfig.APPLICATION_ID != "com.banglalink.toffee") {
             return@launch
         }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
@@ -1583,16 +1585,19 @@ abstract class PlayerPageActivity :
                 ConvivaHelper.onAllAdEnded()
                 playerEventHelper.setAdData(null, null, isReset = true)
             }
+            CLICKED -> {
+                mPref.isDisablePip.value = true
+            }
             else -> {
-//                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
-//                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
+                val errorMessage = it?.adData?.get("errorMessage")?.let { ", ErrorMessage-> $it" } ?: ""
+                Log.i("ADs_", "adEventListener: EventType-> ${it?.type}$errorMessage")
             }
         }
     }
     
     private fun onAdErrorListener(it: AdErrorEvent?) {
         val errorMessage = it?.error?.message?.let { ", ErrorMessage-> $it" } ?: "Unknown error occurred."
-//        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
+        Log.i("ADs_", "AdErrorEvent: ErrorMessage-> $errorMessage")
 //        showDebugMessage("AdLoadFailureMessage: $errorMessage")
         playerEventHelper.setAdData(null, "Ad error", it?.error?.message ?: "Unknown error occurred.")
         ConvivaHelper.onAdError(it)

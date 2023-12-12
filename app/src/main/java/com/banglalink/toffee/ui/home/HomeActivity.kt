@@ -101,16 +101,17 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PUBSUBMessageStatus.OPEN
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.CONTENT_VIEW
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.DISMISS
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIFICATION_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ACTION_NAME
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.CONTENT_VIEW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.DISMISS
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ROW_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_NOW
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -132,9 +133,8 @@ import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
-import com.conviva.apptracker.ConvivaAppAnalytics
-import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
+import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -151,6 +151,9 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
+import com.microsoft.clarity.models.LogLevel
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -173,7 +176,7 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-    
+
     private val gson = Gson()
     private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
@@ -212,8 +215,9 @@ class HomeActivity : PlayerPageActivity(),
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    var currentFragmentClassName: String ?= null
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
-    
+
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -248,6 +252,19 @@ class HomeActivity : PlayerPageActivity(),
                 WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+
+        // Create an instance of ClarityConfig with configuration
+        val config = ClarityConfig(
+            projectId = "iinc7p89vm",
+            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
+            logLevel = LogLevel.None, // Optional: Specify the desired log level
+            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+        )
+        // Initialize Clarity with the ClarityConfig
+        Clarity.initialize(applicationContext, config)
+        
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -286,6 +303,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN_SOURCE,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -451,6 +477,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onResume() {
         super.onResume()
+        mPref.isDisablePip.value = false
         inAppMessaging.setMessagesSuppressed(false)
         
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -659,8 +686,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to this.title
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -693,6 +728,7 @@ class HomeActivity : PlayerPageActivity(),
         return super.onOptionsItemSelected(item)
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -773,8 +809,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -1051,7 +1087,7 @@ class HomeActivity : PlayerPageActivity(),
             viewModel.sendViewContentEvent(it)
         }
     }
-    
+
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1078,6 +1114,15 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     lifecycleScope.launch {
                         /**
                          * if the user is not logged in and video is full screen: exit full screen, update player size and minimize the player. delay some time before minimizing the player otherwise the player will not be half minimized.
@@ -1145,9 +1190,9 @@ class HomeActivity : PlayerPageActivity(),
             }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
     }
-    
+
     /**
-     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when 
+     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when
      * configuration changes navigate to the premium page or if not in fullscreen then navigate immediately.
      */
     private fun handleNavigateToPremiumPackList() {
@@ -1161,7 +1206,7 @@ class HomeActivity : PlayerPageActivity(),
             false
         }
     }
-    
+
     /**
      * keep the content in a live data. navigate to the premium page. if the user purchase the pack then play the content from the live data.
      */
@@ -1288,6 +1333,7 @@ class HomeActivity : PlayerPageActivity(),
         if (player is CastPlayer) {
             maximizePlayer()
         }
+        mPref.isDisablePip.value = false
         ConvivaHelper.endPlayerSession(true)
         playerEventHelper.startContentPlayingSession(it.id)
         if (!isPlayerVisible()) {
@@ -1314,11 +1360,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun openInExternalBrowser(it: ChannelInfo) {
         runCatching {
             it.getHlsLink()?.let { url ->
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse(url)
-                    )
-                )
+                mPref.isDisablePip.value = true
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }.onFailure {
             showToast(it.message)
@@ -1817,7 +1860,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        if (player?.isPlaying == true && mPref.isDisablePip.value == false && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         }
     }
@@ -1876,6 +1919,8 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        destroyPlayer()
+        mPref.isDisablePip.value = false
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
@@ -1922,7 +1967,7 @@ class HomeActivity : PlayerPageActivity(),
             var appLinkUriStr: String? = null
             try {
                 val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
-                if (appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                if (appLinkUri != null && (appLinkUri.host != "toffeelive.com" || appLinkUri.host != "staging-web.toffeelive.com")) {
                     appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
                 }
             } catch (ex: Exception) {
@@ -2017,6 +2062,7 @@ class HomeActivity : PlayerPageActivity(),
                                         "timestamp" to currentDateTime
                                     )
                                 )
+                                mPref.isDisablePip.value = true
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
@@ -2048,6 +2094,9 @@ class HomeActivity : PlayerPageActivity(),
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
                     } else {
+                        it.args?.getParcelable<Category>(CategoryDetailsFragment.ARG_CATEGORY_ITEM)?.let {
+                            landingPageViewModel.selectedCategory.value = it
+                        }
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -2081,9 +2130,6 @@ class HomeActivity : PlayerPageActivity(),
             }
             url.contains("explore/") -> {
                 commonDeepLink.replace("pagelink", "explore")
-            }
-            url.contains("/all-drama") -> {
-                categoryDeepLink.replace("categoryId", "18")
             }
             url.contains("/activities") -> {
                 commonDeepLink.replace("pagelink", "activities")
@@ -2620,25 +2666,13 @@ class HomeActivity : PlayerPageActivity(),
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
-//                val settings: Map<String, Any> = mutableMapOf(
-//                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
-//                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
-//                )
-//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
-//                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
-//                    applicationContext,
-//                    BuildConfig.CONVIVA_CUSTOMER_KEY_TEST,
-//                    "Toffee Android"
-//                )
-//                tracker?.subject?.userId = mPref.customerId.toString()
+                val settings: Map<String, Any> = mutableMapOf(
+                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
+                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+                )
+                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
             } else {
                 ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
-                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
-                    applicationContext,
-                    BuildConfig.CONVIVA_CUSTOMER_KEY_PROD,
-                    "Toffee Android"
-                )
-                tracker?.subject?.userId = mPref.customerId.toString()
             }
             ConvivaHelper.init(applicationContext, true)
         }
@@ -2833,7 +2867,7 @@ class HomeActivity : PlayerPageActivity(),
             initMqtt()
         }
     }
-    
+
     private fun handleRefreshPageOnLogin() {
         mPref.preLoginDestinationId.value?.let {
             if (it == id.menu_channel) {
@@ -2896,7 +2930,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         }
     }
-    
+
     private fun clearDataOnLogOut() {
         mPref.mqttHost = ""
         mPref.phoneNumber = ""
@@ -2917,6 +2951,7 @@ class HomeActivity : PlayerPageActivity(),
         mPref.isVerifiedUser = false
         mPref.isChannelDetailChecked = false
         mPref.isMnpStatusChecked = false
+        mPref.isBanglalinkNumber = "false"
         lifecycleScope.launch {
             tvChannelsRepo.deleteAllRecentItems()
         }

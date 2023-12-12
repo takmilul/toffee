@@ -2,7 +2,14 @@
 
 [versions]
 
-gradle-plugin-version = "8.1.2"
+#App Settings
+minSdkVersion = "21"
+compileSdkVersion = "33"
+targetSdkVersion = "33"
+appVersionCode = "128"
+appVersionName = "6.2.0"
+
+gradle-plugin-version = "8.2.0"
 
 # View
 activity-version = "1.6.1"
@@ -18,22 +25,20 @@ constraint-layout-version = "2.1.4"
 circular-progressbar-version = "3.1.0"
 
 # Kotlin
-kotlin-version = "1.8.10"
+kotlin-version = "1.9.0"
 kotlin-ktx-version = "1.10.1"
 kotlin-coroutine-version = "1.7.1"
-ksp-plugin-version = "1.8.10-1.0.9"
+ksp-plugin-version = "1.9.0-1.0.13"
 
 # Hilt
 hilt-version = "1.0.0"
-hilt-android-version = "2.44"
+hilt-android-version = "2.48.1"
 
 # Jetpack
 room-db-version = "2.5.2"
 paging-version = "3.2.1"
-compose-bom = "2023.06.01"
-compose-version = "1.4.3"
-compose-material-version = "1.4.3"
-compose-material3-version = "1.1.1"
+compose-bom = "2023.08.00"
+kotlin-compose-version = "1.5.0"
 lifecycle-version = "2.6.2"
 navigation-version = "2.5.3"
 work-manager-version = "2.8.1"
@@ -55,7 +60,7 @@ cast-version = "21.3.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
-play-services-ads-version = "22.4.0"
+play-services-ads-version = "22.5.0"
 ads-identifier-version = "1.0.0-alpha05"
 
 # Security
@@ -82,11 +87,11 @@ in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.2.1"
-firebase-analytics-version = "21.3.0"
-firebase-firestore-version = "24.8.1"
-firebase-in-app-message-version = "20.3.5"
-firebase-crashlytics-version = "18.4.3"
+firebase-messaging-version = "23.3.1"
+firebase-analytics-version = "21.5.0"
+firebase-firestore-version = "24.9.1"
+firebase-in-app-message-version = "20.4.0"
+firebase-crashlytics-version = "18.6.0"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
@@ -108,6 +113,7 @@ dahdit-version = "0.9.3"
 shimmer-version = "0.5.0"
 medallia-version = "4.2.0"
 butterknife-version = "10.2.3"
+clarity-version = "1.3.3"
 guava-version = "31.0.1-android"
 jlleitschuh-version = "11.3.2"
 
@@ -176,25 +182,25 @@ lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-lived
 
 # Jetpack Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-version" }
-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose-version" }
-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-version" }
-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-version" }
-compose-foundation = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "compose-version" }
-compose-theme-adapter = { group = "com.google.android.material", name = "compose-theme-adapter", version.ref = "compose-version" }
-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose-material-version" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3-version" }
-compose-material-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref ="compose-material3-version" }
-compose-icons = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "compose-version" }
-compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-version" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+#compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+#compose-foundation = { group = "androidx.compose.foundation", name = "foundation-layout" }
+#compose-theme-adapter = { group = "com.google.android.material", name = "compose-theme-adapter" }
+compose-material = { group = "androidx.compose.material", name = "material" }
+#compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+#compose-material-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+#compose-icons = { group = "androidx.compose.material", name = "material-icons-core" }
+#compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
+#compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+#compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-version" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-version" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-version" }
 compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle-version" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose-version" }
-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-version" }
-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose-version" }
-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose-version" }
 
 # Image
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop-version" }
@@ -287,6 +293,7 @@ dahdit = { group = "com.xfinity", name = "dahdit", version.ref = "dahdit-version
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer-version" }
 butterknife = { group = "com.jakewharton", name = "butterknife", version.ref = "butterknife-version" }
 medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", version.ref = "medallia-version" }
+clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity-version" }
 org-jlleitschuh = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle:11.3.2", version.ref = "jlleitschuh-version" }
 
 ######## Testing
@@ -357,7 +364,8 @@ conviva-tracker-plugin = { id = "com.conviva.sdk.android-plugin", version.ref = 
 
 [bundles]
 
-compose = ["compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-material", "compose-activity", "compose-runtime", "compose-coil", "compose-navigation", "compose-viewmodel"]
+compose = ["compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-material", "compose-activity", 
+    "compose-runtime", "compose-runtime-livedata", "compose-coil", "compose-navigation", "compose-viewmodel"]
 exoplayer = ["exoplayer-core", "exoplayer-hls", "exoplayer-dash", "exoplayer-ui", "exoplayer-ima", "exoplayer-cast", "exoplayer-okhttp", "exoplayer-session"]
 media3-player = ["media3-core", "media3-hls", "media3-dash", "media3-ui", "media3-ima", "media3-cast", "media3-okhttp", "media3-session"]
 security = ["security-crypto", "security-app-authenticator"]
@@ -368,7 +376,6 @@ coil = ["coil-core", "coil-gif", "coil-transformer", "coil-transformer-core"]
 firebase = ["firebase-messaging", "firebase-in-app-message", "firebase-core", "firebase-analytics", "firebase-crashlytics", "firebase-firestore"]
 cast = ["cast-framework"] # "mediarouter", 
 hilt = ["hilt-android", "hilt-work"]
-#hiltkapt = ["hilt-compiler", "hilt-android-compiler", "hilt-compiler-kapt"]
 room = ["room-db", "room-paging", "room-ktx"]
 navigation = ["navigation-ktx", "navigation-ui-ktx"]
 play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-update", "inapp-update-ktx"]

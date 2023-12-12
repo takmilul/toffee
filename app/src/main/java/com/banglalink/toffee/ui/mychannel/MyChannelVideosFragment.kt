@@ -125,6 +125,15 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             if (isOwner) {
                 emptyViewLabel.text = getString(R.string.owner_video_empty_msg)
                 uploadVideoButton.setOnClickListener {
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "upload",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     requireActivity().checkVerification {
                         requireActivity().let {
                             if(it is HomeActivity) it.checkChannelDetailAndUpload()

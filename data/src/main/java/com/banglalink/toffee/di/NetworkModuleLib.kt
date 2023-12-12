@@ -3,7 +3,7 @@ package com.banglalink.toffee.di
 import android.app.Application
 import android.content.Context
 import coil.disk.DiskCache
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -46,7 +46,7 @@ object NetworkModuleLib {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            retryOnConnectionFailure(false)
+            retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
@@ -67,7 +67,7 @@ object NetworkModuleLib {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            retryOnConnectionFailure(false)
+            retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                 addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
@@ -126,9 +126,9 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
-    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient, toffeeConfig: ToffeeConfig): Retrofit {
+    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient, config: Config): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(toffeeConfig.toffeeBaseUrl)
+            .baseUrl(config.url)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -137,9 +137,9 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @ExternalApiRetrofit
-    fun providesExternalApiRetrofit(@PlainHttpClient httpClient: OkHttpClient, toffeeConfig: ToffeeConfig): Retrofit {
+    fun providesExternalApiRetrofit(@PlainHttpClient httpClient: OkHttpClient, config: Config): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(toffeeConfig.toffeeBaseUrl)
+            .baseUrl(config.url)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

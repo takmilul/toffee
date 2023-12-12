@@ -49,6 +49,15 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClickProfile() {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Profile"))
             findNavController().navigate(R.id.profileFragment)
@@ -56,6 +65,15 @@ class AccountFragment : BaseFragment() {
     }
     
     private fun onClickActivities() {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_activities)))
             ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
@@ -64,6 +82,15 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClickMyPlaylist() {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_playlists)))
             findNavController().navigate(R.id.menu_playlist)
@@ -71,6 +98,15 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClickFavorites() {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_favorites)))
             ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
@@ -79,6 +115,15 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClickSubscriptions() {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_subscriptions)))
             findNavController().navigate(R.id.menu_subscriptions)

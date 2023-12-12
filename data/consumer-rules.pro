@@ -3,13 +3,13 @@
 
 # Gson uses generic type information stored in a class file when working with fields. Proguard
 # removes such information by default, so configure it to keep all of it.
-#-keepattributes Signature
+-keepattributes Signature
 
 # For using GSON @Expose annotation
-#-keepattributes *Annotation*
+-keepattributes *Annotation*
 
 # Gson specific classes
-#-dontwarn sun.misc.**
+-dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,

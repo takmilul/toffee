@@ -1,16 +1,16 @@
-package com.banglalink.toffee.ui.mychannel
+package com.banglalink.toffee.ui.home
 
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.databinding.ListItemMyChannelPlaylistVideosBinding
+import com.banglalink.toffee.databinding.ListItemRelativeBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
@@ -27,22 +27,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MyChannelPlaylistVideosAdapter(
+class CatchUpDetailsAdapterNew(
     private val isAdActive: Boolean,
     private val adInterval: Int,
     private val adUnitId: String?,
     private val mPref: SessionPreference,
     private val bindingUtil: BindingUtil?,
-    callback: BaseListItemCallback<ChannelInfo>?,
-    private var selectedItem: ChannelInfo? = null,
-) : BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
+    cb: ProviderIconCallback<ChannelInfo>
+): BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
     
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_my_channel_playlist_videos
+        if(getItem(position)?.isLinear == true){
+            return R.layout.list_item_live_new
+        }
+        return R.layout.list_item_relative
     }
     
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (holder.binding is ListItemMyChannelPlaylistVideosBinding) {
+        if (holder.binding is ListItemRelativeBinding) {
             if (isAdActive && position > 0 && position % adInterval == 0) {
                 holder.binding.nativeAdSmall.root.show()
                 holder.binding.nativeAdSmall.nativeAdview.hide()
@@ -55,12 +57,14 @@ class MyChannelPlaylistVideosAdapter(
             }
             val obj = getItem(position)
             obj?.let {
-                holder.bind(obj, callback, position, selectedItem)
+                holder.bind(obj, callback, position)
             }
+        } else {
+            super.onBindViewHolder(holder, position)
         }
     }
     
-    private fun loadAds(adUnitId: String, itemView: ListItemMyChannelPlaylistVideosBinding) {
+    private fun loadAds(adUnitId: String, itemView: ListItemRelativeBinding) {
         AdLoader.Builder(itemView.root.context, adUnitId)
             .forNativeAd { nativeAd ->
                 CoroutineScope(Dispatchers.Main).launch {
@@ -87,7 +91,7 @@ class MyChannelPlaylistVideosAdapter(
             .loadAd(AdRequest.Builder().build())
     }
     
-    private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: ListItemMyChannelPlaylistVideosBinding) {
+    private fun populateNativeAdView(nativeAd: NativeAd, adContainerView: ListItemRelativeBinding) {
         val adView = adContainerView.nativeAdSmall.nativeAdview
         adView.mediaView = adView.findViewById(R.id.ad_media)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
@@ -135,10 +139,5 @@ class MyChannelPlaylistVideosAdapter(
         adView.show()
         placeholderSmall.hide()
         placeholderSmall.stopShimmer()
-    }
-    
-    fun setSelectedItem(item: ChannelInfo?) {
-        selectedItem = item
-        notifyDataSetChanged()
     }
 }

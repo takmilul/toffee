@@ -3,6 +3,7 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
@@ -12,6 +13,7 @@ import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -121,6 +123,47 @@ object ToffeeAnalytics {
         }
         if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
             facebookAnalytics.logEvent(event, params)
+        }
+    }
+
+    /**
+     * toffeeLog Events in [FirebaseAnalytics] and [facebookAnalytics]
+     */
+    fun toffeeLogEvent(event: String, customParams: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
+        val commonParams = Bundle().apply {
+            putString("app_version", CommonPreference.getInstance().appVersionName)
+            putString("country", SessionPreference.getInstance().geoLocation)
+            putString("device_model", CommonPreference.getInstance().deviceName )
+            putString("operating_system", "Android")
+            putString("OS_version", "Android " + Build.VERSION.RELEASE)
+            putString("platform", "Android")
+            putString("region", SessionPreference.getInstance().geoRegion)
+        }
+
+        val combinedParams = customParams?.let { params ->
+            val mergedParams = Bundle(commonParams).apply {
+                putAll(params)
+            }
+            mergedParams
+        } ?: commonParams
+
+        // Replacing blank or null values with N/A
+        combinedParams.keySet().forEach {
+            val value = combinedParams.getString(it)
+            if (value.isNullOrBlank() || value.equals("NULL", ignoreCase = true)) {
+                combinedParams.putString(it, "N/A")
+            } else if (value == "Toffee") {
+                combinedParams.putString(it, "Home")
+            }
+        }
+
+        if (SessionPreference.getInstance().isFcmEventActive) {
+            firebaseAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
+        }
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
+            facebookAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
     }
     
