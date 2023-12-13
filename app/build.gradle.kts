@@ -136,9 +136,9 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-            pickFirsts += listOf(
-                "lib/*/libnative-lib.so"
-            )
+//            pickFirsts += listOf(
+//                "lib/*/libnative-lib.so"
+//            )
             excludes += listOf(
                 "lib/*/librsjni.so",
                 "lib/*/libRSSupport.so",
@@ -148,7 +148,7 @@ android {
         resources {
             excludes += listOf("META-INF/*.kotlin_module")
             pickFirsts += listOf(
-                "lib/*/libnative-lib.so",
+//                "lib/*/libnative-lib.so",
                 "META-INF/services",
                 "META-INF/LICENSE",
                 "META-INF/INDEX.LIST",
@@ -267,7 +267,7 @@ dependencies {
         implementation(shimmer)
         implementation(guava)
         implementation(medallia)
-        implementation(libs.clarity)
+//        implementation(libs.clarity)
         
         
         /////// Testing

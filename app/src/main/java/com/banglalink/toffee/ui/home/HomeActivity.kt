@@ -133,10 +133,7 @@ import com.banglalink.toffee.ui.widget.*
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
-import com.conviva.apptracker.ConvivaAppAnalytics
-import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -153,9 +150,6 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
-import com.microsoft.clarity.Clarity
-import com.microsoft.clarity.ClarityConfig
-import com.microsoft.clarity.models.LogLevel
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -256,16 +250,16 @@ class HomeActivity : PlayerPageActivity(),
         }
 
         // Create an instance of ClarityConfig with configuration
-        val config = ClarityConfig(
-            projectId = "iinc7p89vm",
-            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
-            logLevel = LogLevel.None, // Optional: Specify the desired log level
-            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
-            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
-            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
-        )
+//        val config = ClarityConfig(
+//            projectId = "iinc7p89vm",
+//            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
+//            logLevel = LogLevel.None, // Optional: Specify the desired log level
+//            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+//            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+//            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+//        )
         // Initialize Clarity with the ClarityConfig
-        Clarity.initialize(applicationContext, config)
+//        Clarity.initialize(applicationContext, config)
         
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -439,7 +433,9 @@ class HomeActivity : PlayerPageActivity(),
 //            val configuration =
 //                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
 //            MobileAds.setRequestConfiguration(configuration)
-            MobileAds.initialize(this)
+            runCatching {
+                MobileAds.initialize(this)
+            }
         }
     
         startBubbleService()
@@ -2382,16 +2378,25 @@ class HomeActivity : PlayerPageActivity(),
                     landingPageViewModel.sendFeaturePartnerReportData(
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                    
-                    navController.navigateTo(
-                        resId = R.id.htmlPageViewDialog_Home,
-                        args = bundleOf(
-                            "myTitle" to getString(string.back_to_toffee_text),
-                            "url" to url,
-                            "isHideBackIcon" to false,
-                            "isHideCloseIcon" to true
+                    if (packageManager.getInstalledApplications(0).find { it.packageName == "com.google.android.webview" } != null) {
+                        navController.navigateTo(
+                            resId = R.id.htmlPageViewDialog_Home,
+                            args = bundleOf(
+                                "myTitle" to getString(string.back_to_toffee_text),
+                                "url" to url,
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true
+                            )
                         )
-                    )
+                    } else {
+                        runCatching {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }.onFailure {
+                            showToast("No browser found")
+                        }
+                    }
                 } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
             }
         }
@@ -2681,12 +2686,12 @@ class HomeActivity : PlayerPageActivity(),
 //                tracker?.subject?.userId = mPref.customerId.toString()
             } else {
                 ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
-                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
-                    applicationContext,
-                    BuildConfig.CONVIVA_CUSTOMER_KEY_PROD,
-                    "Toffee Android"
-                )
-                tracker?.subject?.userId = mPref.customerId.toString()
+//                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+//                    applicationContext,
+//                    BuildConfig.CONVIVA_CUSTOMER_KEY_PROD,
+//                    "Toffee Android"
+//                )
+//                tracker?.subject?.userId = mPref.customerId.toString()
             }
             ConvivaHelper.init(applicationContext, true)
         }

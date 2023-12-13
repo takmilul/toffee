@@ -18,7 +18,13 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.BottomSheetBasicInfoBinding
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.isValid
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.validateInput
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource
@@ -32,7 +38,8 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -77,6 +84,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeEditChannel()
+        if (_binding == null) return
         with(binding) {
             saveBtn.safeClick({ handleSubmitButton() })
             dateOfBirthTv.safeClick({ showDatePicker() })

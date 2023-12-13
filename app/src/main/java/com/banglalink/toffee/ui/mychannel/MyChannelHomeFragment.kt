@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
@@ -51,7 +50,7 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.regex.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -107,7 +106,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        if (_binding == null) {
+            requireContext().showToast(getString(R.string.try_again_message))
+            return
+        }
         if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         binding.contentBody.hide()
         val showDetails = !(!mPref.isVerifiedUser && isMyChannel && isOwner)

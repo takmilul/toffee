@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.media3.common.util.Util
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -19,17 +20,21 @@ object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false
     
-    init {
-        System.loadLibrary("native-lib")
-    }
+//    private val BASE_URL: String = Constants.STAGING_URL
+    private val BASE_URL: String = Constants.PROD_URL
     
-    private external fun getUrl(): String
+//    init {
+//        System.loadLibrary("native-lib")
+//    }
+    
+//    private external fun getUrl(): String
     
     @Provides
     @Singleton
     fun providesConfig(): Config {
         return Config(
-            url = getUrl()
+//            url = getUrl()
+            url = BASE_URL
         )
     }
     
