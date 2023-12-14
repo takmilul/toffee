@@ -15,6 +15,7 @@ plugins {
         id(androidx.navigation.safeargs.get().pluginId)
         id(com.google.dagger.hilt.android.get().pluginId)
         id(com.google.firebase.crashlytics.get().pluginId)
+        id(conviva.tracker.plugin.get().pluginId)
     }
 }
 

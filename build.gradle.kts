@@ -13,6 +13,12 @@ plugins {
     }
 }
 
+buildscript {
+    dependencies {
+        classpath(libs.conviva.tracker.plugin)
+    }
+}
+
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }

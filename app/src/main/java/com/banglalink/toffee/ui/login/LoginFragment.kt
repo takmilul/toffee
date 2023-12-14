@@ -59,7 +59,7 @@ class LoginFragment : DialogFragment(), DefaultLifecycleObserver {
                     ToffeeAnalytics.toffeeLogEvent(
                         ToffeeEvents.PACK_ABORT, bundleOf(
                             "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id,
+                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
                             "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle,
                             "reason" to "signin",
                             "action" to "close button in sign in modal"
