@@ -94,14 +94,14 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-            pickFirsts += listOf(
-                "lib/*/libnative-lib.so"
-            )
+//            pickFirsts += listOf(
+//                "lib/*/libnative-lib.so"
+//            )
         }
         resources {
-            pickFirsts += listOf(
-                "lib/*/libnative-lib.so"
-            )
+//            pickFirsts += listOf(
+//                "lib/*/libnative-lib.so"
+//            )
         }
     }
     

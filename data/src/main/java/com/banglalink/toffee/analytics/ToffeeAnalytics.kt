@@ -13,7 +13,6 @@ import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -48,8 +47,10 @@ object ToffeeAnalytics {
      * Set UserId in [FirebaseAnalytics] and [FirebaseCrashlytics]
      */
     fun updateCustomerId(customerId: Int) {
-        firebaseAnalytics.setUserId(customerId.toString())
-        firebaseCrashlytics.setUserId(customerId.toString())
+        if (this::firebaseAnalytics.isInitialized) {
+            firebaseAnalytics.setUserId(customerId.toString())
+            firebaseCrashlytics.setUserId(customerId.toString())
+        }
     }
     
     /**
@@ -88,16 +89,20 @@ object ToffeeAnalytics {
             "error_value" to logValue.toString()
         )
         firebaseCrashlytics.log(logValue.toString())
-        firebaseAnalytics.logEvent("player_error", bundle)
+        if (this::firebaseAnalytics.isInitialized) {
+            firebaseAnalytics.logEvent("player_error", bundle)
+        }
     }
     
     /**
      * Log Force Play event in [FirebaseAnalytics]
      */
     fun logForcePlay() {
-        val params = Bundle()
-        params.putString("msg", "force play occurred")
-        firebaseAnalytics.logEvent("player_event", params)
+        if (this::firebaseAnalytics.isInitialized) {
+            val params = Bundle()
+            params.putString("msg", "force play occurred")
+            firebaseAnalytics.logEvent("player_event", params)
+        }
     }
     
     /**
@@ -118,10 +123,10 @@ object ToffeeAnalytics {
      * Log Events in [FirebaseAnalytics] and [facebookAnalytics]
      */
     fun logEvent(event: String, params: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
-        if (SessionPreference.getInstance().isFcmEventActive) {
+        if (SessionPreference.getInstance().isFcmEventActive && this::firebaseAnalytics.isInitialized) {
             firebaseAnalytics.logEvent(event, params)
         }
-        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent && this::facebookAnalytics.isInitialized) {
             facebookAnalytics.logEvent(event, params)
         }
     }
@@ -157,11 +162,11 @@ object ToffeeAnalytics {
             }
         }
 
-        if (SessionPreference.getInstance().isFcmEventActive) {
+        if (SessionPreference.getInstance().isFcmEventActive && this::firebaseAnalytics.isInitialized) {
             firebaseAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
         }
-        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent && this::facebookAnalytics.isInitialized) {
             facebookAnalytics.logEvent(event, combinedParams)
             Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
@@ -172,7 +177,9 @@ object ToffeeAnalytics {
      */
     fun logUserProperty(propertyMap: Map<String, String>) {
         propertyMap.forEach {
-            firebaseAnalytics.setUserProperty(it.key, it.value)
+            if (this::firebaseAnalytics.isInitialized) {
+                firebaseAnalytics.setUserProperty(it.key, it.value)
+            }
         }
     }
     

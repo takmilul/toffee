@@ -97,6 +97,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Edit Details"
+        
+        if (_binding == null) {
+            requireContext().showToast(getString(R.string.try_again_message))
+            return
+        }
+        
         binding.container.setOnClickListener(this)
         progressDialog.show()
         observeChannelDetail()
