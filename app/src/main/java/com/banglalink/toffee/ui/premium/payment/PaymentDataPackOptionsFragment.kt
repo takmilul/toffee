@@ -99,13 +99,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         binding.buyNowButton.safeClick({
             pressedButtonName = "buyNowButton"
             val isLoggedInUser = mPref.isVerifiedUser
-            ToffeeAnalytics.toffeeLogEvent(
-                ToffeeEvents.LOGIN_SOURCE,
-                bundleOf(
-                    "source" to "buy_now_button",
-                    "method" to "mobile"
+            if (!isLoggedInUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN_SOURCE,
+                    bundleOf(
+                        "source" to "buy_now_button",
+                        "method" to "mobile"
+                    )
                 )
-            )
+            }
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
                 val MNO = when {
                     (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
