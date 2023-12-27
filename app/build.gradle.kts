@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -265,7 +265,7 @@ dependencies {
         // Miscellaneous
         implementation(butterknife)
         implementation(shimmer)
-        implementation(guava)
+//        implementation(guava)
         implementation(medallia)
 //        implementation(libs.clarity)
         

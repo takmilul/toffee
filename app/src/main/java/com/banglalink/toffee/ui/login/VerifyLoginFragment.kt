@@ -1,7 +1,10 @@
 package com.banglalink.toffee.ui.login
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.IntentFilter
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -181,6 +184,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
         resendCodeTimer?.start()
     }
     
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun initSmsBroadcastReceiver() {
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
         observe(mSmsBroadcastReceiver!!.otpLiveData) {
@@ -195,7 +199,11 @@ class VerifyLoginFragment : ChildDialogFragment() {
         
         val intentFilter = IntentFilter()
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
-        requireActivity().registerReceiver(mSmsBroadcastReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(mSmsBroadcastReceiver, intentFilter)
+        } else {
+            requireActivity().registerReceiver(mSmsBroadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
+        }
         
         val mClient = SmsRetriever.getClient(requireActivity())
         mClient.startSmsRetriever()

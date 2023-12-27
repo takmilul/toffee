@@ -4,8 +4,8 @@
 
 #App Settings
 minSdkVersion = "21"
-compileSdkVersion = "33"
-targetSdkVersion = "33"
+compileSdkVersion = "34"
+targetSdkVersion = "34"
 appVersionCode = "128"
 appVersionName = "6.2.0"
 
@@ -13,10 +13,10 @@ gradle-plugin-version = "8.2.0"
 
 # View
 activity-version = "1.6.1"
-fragment-ktx-version = "1.5.7"
+fragment-ktx-version = "1.6.2"
 splashscreen-version = "1.0.1"
-annotation = "1.7.0"
-material-version = "1.9.0"
+annotation = "1.7.1"
+material-version = "1.11.0"
 cardview-version = "1.0.0"
 switch-button-version = "0.0.3"
 legacy-support-version = "1.0.0"
@@ -25,38 +25,38 @@ constraint-layout-version = "2.1.4"
 circular-progressbar-version = "3.1.0"
 
 # Kotlin
-kotlin-version = "1.9.0"
-kotlin-ktx-version = "1.10.1"
-kotlin-coroutine-version = "1.7.1"
-ksp-plugin-version = "1.9.0-1.0.13"
+kotlin-version = "1.9.21"
+kotlin-ktx-version = "1.12.0"
+kotlin-coroutine-version = "1.7.3"
+ksp-plugin-version = "1.9.21-1.0.16"
 
 # Hilt
-hilt-version = "1.0.0"
+hilt-version = "1.1.0"
 hilt-android-version = "2.48.1"
 
 # Jetpack
-room-db-version = "2.5.2"
+room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2023.08.00"
-kotlin-compose-version = "1.5.0"
+compose-bom = "2023.10.01"
+kotlin-compose-version = "1.5.7"
 lifecycle-version = "2.6.2"
-navigation-version = "2.5.3"
+navigation-version = "2.7.6"
 work-manager-version = "2.8.1"
 
 # Image
-coil-version = "2.4.0"
+coil-version = "2.5.0"
 ucrop-version = "2.2.8"
 lottie-version = "3.4.0"
 coil-transformer-version = "1.0.5"
-exifinterface-version = "1.3.6"
+exifinterface-version = "1.3.7"
 
 # Player
-media3-version = "1.1.1"
+media3-version = "1.2.0"
 exo-player-version = "2.19.1"
 
 # Cast
-mediarouter-version = "1.4.0"
-cast-version = "21.3.0"
+mediarouter-version = "1.7.0-alpha01"
+cast-version = "21.4.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
@@ -66,13 +66,13 @@ ads-identifier-version = "1.0.0-alpha05"
 # Security
 crypto-version = "1.1.0-alpha06"
 identity-credential-version = "1.0.0-alpha03"
-app-authenticator-version = "1.0.0-alpha02"
+app-authenticator-version = "1.0.0-alpha03"
 
 # Network
 gson-version = "2.10.1"
 okhttp-version = "4.11.0"
 retrofit-version = "2.9.0"
-upload-library-version = "4.8.0"
+upload-library-version = "4.9.2"
 
 # Google Services
 google-services-version = "4.4.0"
@@ -114,7 +114,7 @@ shimmer-version = "0.5.0"
 medallia-version = "4.2.0"
 butterknife-version = "10.2.3"
 clarity-version = "1.3.3"
-guava-version = "31.0.1-android"
+#guava-version = "31.0.1-android"
 jlleitschuh-version = "11.3.2"
 
 # Testing
@@ -132,7 +132,7 @@ robolectric-version = "4.8.1"
 core-testing-version = "2.1.0"
 
 google-truth-version = "1.1.3"
-fragment-test-version = "1.5.7"
+fragment-test-version = "1.6.2"
 leakcanary-version = "2.7"
 
 
@@ -288,7 +288,7 @@ mqtt-android-service = { group = "com.github.hannesa2", name = "paho.mqtt.androi
 #mqtt-android-service = { group = "org.eclipse.paho", name = "org.eclipse.paho.android.service", version.ref = "mqtt-android-service-version" }
 
 # Miscellaneous
-guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
+#guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
 dahdit = { group = "com.xfinity", name = "dahdit", version.ref = "dahdit-version" }
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer-version" }
 butterknife = { group = "com.jakewharton", name = "butterknife", version.ref = "butterknife-version" }

@@ -20,8 +20,8 @@ object NetworkModule {
     
     const val isDebugMessageActive: Boolean = false
     
-    private val BASE_URL: String = Constants.STAGING_URL
-//    private val BASE_URL: String = Constants.PROD_URL
+//    private val BASE_URL: String = Constants.STAGING_URL
+    private val BASE_URL: String = Constants.PROD_URL
     
 //    init {
 //        System.loadLibrary("native-lib")
