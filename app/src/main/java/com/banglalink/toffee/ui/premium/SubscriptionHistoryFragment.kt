@@ -136,7 +136,7 @@ class SubscriptionHistoryFragment : BaseFragment(), BaseListItemCallback<SubsHis
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
-                    "source" to "premium_pack_menu",
+                    "source" to "my_subscriptions",
                     "method" to "mobile"
                 )
             )

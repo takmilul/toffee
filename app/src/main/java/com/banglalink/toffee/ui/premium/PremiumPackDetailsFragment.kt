@@ -102,8 +102,16 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 payNowButton.isEnabled = false
                 payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
             }
-
+            
             payNowButton.safeClick({
+                //sends firebase event for users viewing payment methods.
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.PACK_ACTIVE, bundleOf(
+                        "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                        "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
+                        "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
+                    )
+                )
                 mPref.signingFromPrem.value = true
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
@@ -358,15 +366,6 @@ class PremiumPackDetailsFragment : BaseFragment(){
             progressDialog.dismiss()
             when(it) {
                 is Success -> {
-
-                    //sends firebase event for users viewing payment methods.
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.PACK_ACTIVE, bundleOf(
-                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                            "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
-                            "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
-                        )
-                    )
                     viewModel.paymentMethod.value = it.data
                     findNavController().navigateTo(
                         resId = R.id.bottomSheetPaymentMethods,
