@@ -265,9 +265,8 @@ dependencies {
         // Miscellaneous
         implementation(butterknife)
         implementation(shimmer)
-//        implementation(guava)
         implementation(medallia)
-//        implementation(libs.clarity)
+        implementation(libs.clarity)
         
         
         /////// Testing

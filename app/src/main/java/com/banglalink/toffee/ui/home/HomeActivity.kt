@@ -150,6 +150,9 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.microsoft.clarity.Clarity
+import com.microsoft.clarity.ClarityConfig
+import com.microsoft.clarity.models.LogLevel
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -248,18 +251,18 @@ class HomeActivity : PlayerPageActivity(),
                 WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
         }
-
+        
         // Create an instance of ClarityConfig with configuration
-//        val config = ClarityConfig(
-//            projectId = "iinc7p89vm",
-//            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
-//            logLevel = LogLevel.None, // Optional: Specify the desired log level
-//            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
-//            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
-//            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
-//        )
+        val config = ClarityConfig(
+            projectId = "iinc7p89vm",
+            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
+            logLevel = LogLevel.None, // Optional: Specify the desired log level
+            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+        )
         // Initialize Clarity with the ClarityConfig
-//        Clarity.initialize(applicationContext, config)
+        Clarity.initialize(applicationContext, config)
         
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
