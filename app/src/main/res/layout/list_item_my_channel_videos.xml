@@ -30,13 +30,15 @@
             android:scaleType="centerCrop"
             loadChannelImage="@{data}"
             android:contentDescription="@string/txt_poster"
+            android:foreground="@drawable/ripple_rectangle_shape"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/name"
-            tools:src="@drawable/placeholder" />
+            tools:src="@drawable/placeholder"
+            tools:ignore="UnusedAttribute" />
         
         <TextView
             android:id="@+id/duration"

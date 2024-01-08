@@ -9,7 +9,9 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
@@ -57,14 +59,16 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         }
         
         with(binding.channelList) {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.placeholder.isVisible = isEmpty
-                    binding.channelList.isVisible = ! isEmpty
-                    binding.placeholder.showLoadingAnimation(isLoading)
-                    isInitialized = true
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    mAdapter.loadStateFlow.collectLatest {
+                        val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                        val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                        binding.placeholder.isVisible = isEmpty
+                        binding.channelList.isVisible = ! isEmpty
+                        binding.placeholder.showLoadingAnimation(isLoading)
+                        isInitialized = true
+                    }
                 }
             }
             adapter = mAdapter
@@ -81,8 +85,10 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadChannels().collectLatest {
-                mAdapter.submitData(it)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadChannels().collectLatest {
+                    mAdapter.submitData(it)
+                }
             }
         }
     }

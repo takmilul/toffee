@@ -23,13 +23,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"
-        android:background="?selectableItemBackground"
+        android:background="@null"
         android:onClick="@{()->callback.onItemClicked(data)}">
 
         <FrameLayout
             android:id="@+id/poster_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:foreground="@drawable/ripple_rectangle_shape"
             android:background="@drawable/poster_container_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="16:9"
@@ -48,7 +49,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_profile" />
+                tools:src="@drawable/ic_profile"
+                tools:ignore="UnusedAttribute" />
             
         </FrameLayout>
 

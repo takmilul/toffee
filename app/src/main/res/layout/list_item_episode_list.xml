@@ -16,13 +16,13 @@
             name="selectedItem"
             type="com.banglalink.toffee.model.ChannelInfo" />
     </data>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
+        android:background="@null"
         android:onClick="@{()->callback.onItemClicked(data)}">
-
+        
         <FrameLayout
             android:id="@+id/poster_container"
             android:layout_width="0dp"
@@ -34,17 +34,19 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+            
             <ImageView
                 android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
+                android:foreground="@drawable/ripple_rectangle_shape"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/placeholder" />
-
+                tools:src="@drawable/placeholder"
+                tools:ignore="UnusedAttribute" />
+            
             <ImageView
                 android:contentDescription="@string/txt_play"
                 android:layout_width="match_parent"
@@ -66,7 +68,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="@+id/poster_container" />
-
+        
         <ImageView
             android:contentDescription="@string/txt_options"
             android:id="@+id/options"
@@ -75,7 +77,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
             app:srcCompat="@drawable/ic_menu_more" />
-
+        
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
@@ -90,7 +92,7 @@
             app:layout_constraintStart_toEndOf="@+id/poster_container"
             app:layout_constraintTop_toTopOf="@+id/poster_container"
             tools:text="NOW: ICC Women's World Cup 2019 Day 21 - AUS vs IND" />
-
+        
         <TextView
             android:id="@+id/duration"
             bindDuration="@{data}"
@@ -104,7 +106,7 @@
             app:layout_constraintBottom_toTopOf="@id/progress"
             app:layout_constraintEnd_toEndOf="@+id/poster_container"
             tools:text="00:00" />
-
+        
         <ImageView
             android:id="@+id/ownerPicture"
             loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
@@ -117,7 +119,7 @@
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:src="@drawable/ic_menu_profile"/>
-
+        
         <TextView
             android:id="@+id/provider_name"
             style="@style/TitleBoldTextStyle"
@@ -135,7 +137,7 @@
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
             app:layout_constraintTop_toTopOf="@+id/ownerPicture"
             tools:text="Content Provider" />
-
+        
         <TextView
             android:id="@+id/number_of_views"
             android:layout_width="wrap_content"
@@ -150,7 +152,7 @@
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/ownerPicture"
             tools:text="18K views" />
-
+        
         <TextView
             android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
@@ -164,7 +166,7 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/number_of_views"
             app:layout_constraintTop_toTopOf="@+id/number_of_views" />
-
+        
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
             android:layout_width="wrap_content"

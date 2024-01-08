@@ -21,15 +21,6 @@
         android:orientation="vertical">
         
         <include
-            android:id="@+id/nativeAdSmall"
-            layout="@layout/item_native_ad_small"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-        
-        <include
             android:id="@+id/nativeAdLarge"
             layout="@layout/item_native_ad_large"
             android:layout_width="match_parent"
@@ -51,13 +42,15 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_placeholder"
                 android:minHeight="200dp"
+                android:foreground="@drawable/ripple_rectangle_shape"
                 app:layout_constraintBottom_toTopOf="@id/name"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:onSafeClick="@{()->callback.onItemClicked(data)}"
-                tools:src="@drawable/placeholder" />
+                tools:src="@drawable/placeholder"
+                tools:ignore="UnusedAttribute" />
             
             <TextView
                 android:id="@+id/duration"

@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
+        android:background="@null"
         app:onSafeClick="@{()-> callback.onItemClicked(data)}">
         
         <ImageView
@@ -31,13 +31,15 @@
             android:background="@drawable/circular_white_bg"
             android:contentDescription="@string/channel_image"
             android:scaleType="centerCrop"
+            android:foreground="@drawable/ripple_circle_shape"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_profile"
-            tools:srcCompat="@drawable/ic_profile" />
+            tools:srcCompat="@drawable/ic_profile"
+            tools:ignore="UnusedAttribute" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

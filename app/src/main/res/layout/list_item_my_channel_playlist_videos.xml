@@ -37,7 +37,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
+            android:background="@null"
             android:onClick="@{()-> callback.onItemClickAtPosition(position, data)}">
             
             <com.banglalink.toffee.ui.widget.CustomImageView
@@ -49,11 +49,13 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_poster"
                 android:scaleType="centerCrop"
+                android:foreground="@drawable/ripple_rectangle_shape"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintEnd_toEndOf="@id/guideline13"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute" />
             
             <ImageView
                 android:layout_width="0dp"

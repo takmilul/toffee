@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="4dp"
-            android:background="?selectableItemBackground"
+            android:background="@null"
             android:onClick="@{()->callback.onItemClicked(data)}">
             
             <FrameLayout
@@ -54,7 +54,9 @@
                     android:layout_gravity="center"
                     android:contentDescription="@string/txt_placeholder"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/placeholder" />
+                    android:foreground="@drawable/ripple_rectangle_shape"
+                    tools:src="@drawable/placeholder"
+                    tools:ignore="UnusedAttribute" />
             
             </FrameLayout>
             

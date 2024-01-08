@@ -28,6 +28,7 @@ import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
@@ -109,7 +110,7 @@ class EditProfileFragment : BaseFragment() {
         }
 
         binding.accountDelete.setOnClickListener {
-            findNavController().navigate(R.id.bottomSheetDeleteFragment)
+            findNavController().navigateTo(R.id.bottomSheetDeleteFragment)
         }
 
         observeThumbnailChange()

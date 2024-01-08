@@ -30,12 +30,14 @@
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 loadChannelImage="@{data}"
-                tools:srcCompat="@drawable/placeholder"
+                android:foreground="@drawable/ripple_rectangle_shape"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/placeholder"
+                tools:ignore="UnusedAttribute" />
             
             <View
                 android:id="@+id/overlayView"

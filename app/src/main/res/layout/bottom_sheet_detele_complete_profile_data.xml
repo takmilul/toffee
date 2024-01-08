@@ -3,91 +3,74 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/views"
-        android:background="@drawable/bottom_round_bg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_round_bg"
+        tools:ignore="MissingConstraints">
+        
         <ImageView
-            android:id="@+id/bottom_sheet_top_image"
+            android:id="@+id/iconSuccess"
             android:layout_width="80dp"
-            android:layout_height="4dp"
-            android:layout_marginTop="8dp"
-            app:srcCompat="@drawable/bottom_sheet_top_icon"
+            android:layout_height="80dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/titleSuccess"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/txt_icon" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+            app:srcCompat="@drawable/ic_complete_delete"
+            android:contentDescription="@null" />
+        
+        <TextView
+            android:id="@+id/titleSuccess"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints">
-
-            <ImageView
-                android:id="@+id/iconSuccess"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintBottom_toTopOf="@+id/titleSuccess"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_complete_delete" />
-
-            <TextView
-                android:id="@+id/titleSuccess"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/delete_process_title"
-                android:textAlignment="center"
-                android:textColor="@color/main_text_color"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iconSuccess" />
-
-            <TextView
-                android:id="@+id/subTitleSuccess"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@string/delete_process_text_1"
-                android:textAlignment="center"
-                android:textColor="@color/main_text_color"
-                android:textSize="12sp"
-                app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintBottom_toTopOf="@+id/okayButton"
-                app:layout_constraintEnd_toEndOf="@+id/titleSuccess"
-                app:layout_constraintStart_toStartOf="@+id/titleSuccess"
-                app:layout_constraintTop_toBottomOf="@+id/titleSuccess" />
-
-            <Button
-                android:id="@+id/okayButton"
-                style="@style/EditChannelStyle"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="20dp"
-                android:text="Okay"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/subTitleSuccess"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/subTitleSuccess"
-                app:layout_constraintTop_toBottomOf="@+id/subTitleSuccess" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/delete_process_title"
+            android:textAlignment="center"
+            android:textColor="@color/main_text_color"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iconSuccess" />
+        
+        <TextView
+            android:id="@+id/subTitleSuccess"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/delete_process_text_1"
+            android:textAlignment="center"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/okayButton"
+            app:layout_constraintEnd_toEndOf="@+id/titleSuccess"
+            app:layout_constraintStart_toStartOf="@+id/titleSuccess"
+            app:layout_constraintTop_toBottomOf="@+id/titleSuccess"
+            app:layout_constraintVertical_bias="0.0" />
+        
+        <Button
+            android:id="@+id/okayButton"
+            style="@style/EditChannelStyle"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="20dp"
+            android:text="Okay"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/subTitleSuccess"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/subTitleSuccess"
+            app:layout_constraintTop_toBottomOf="@+id/subTitleSuccess" />
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-

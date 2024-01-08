@@ -443,11 +443,6 @@ class HomeActivity : PlayerPageActivity(),
     
         startBubbleService()
         
-        if (mPref.deleteDialogLiveData.value == true) {
-            getNavController().navigateTo(R.id.completeDeleteProfileDataBottomSheetFragment)
-            mPref.deleteDialogLiveData.value = false
-        }
-        
         observeLogout()
         onLoginSuccess()
 //        showDeviceId()
@@ -1645,8 +1640,8 @@ class HomeActivity : PlayerPageActivity(),
 //        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
-    private fun setFullScreen(visible: Boolean) {
-        if (visible) {
+    private fun setFullScreen(isFullScreen: Boolean) {
+        if (isFullScreen) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(
@@ -1654,11 +1649,11 @@ class HomeActivity : PlayerPageActivity(),
                 )
                 controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                window.attributes = window.attributes.apply {
-//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+            }
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
@@ -1666,11 +1661,11 @@ class HomeActivity : PlayerPageActivity(),
                     WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
                 )
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                window.attributes = window.attributes.apply {
-//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+                }
+            }
         }
     }
     

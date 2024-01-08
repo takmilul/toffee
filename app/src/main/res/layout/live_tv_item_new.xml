@@ -16,8 +16,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:onSafeClick="@{()-> callback.onItemClicked(data)}"
-        >
+        android:background="@null"
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}">
         
         <ImageView
             android:contentDescription="@string/txt_icon"
@@ -33,7 +33,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:foreground="@drawable/ripple_tv_channel"/>
+            android:foreground="@drawable/ripple_circle_shape"
+            tools:ignore="UnusedAttribute" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

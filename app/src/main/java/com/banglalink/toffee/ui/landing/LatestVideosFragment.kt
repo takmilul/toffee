@@ -16,7 +16,9 @@ import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState.Loading
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
@@ -143,16 +145,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun loadStateFlow() {
         var isInitialized = false
-        with(binding) {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    emptyView.isVisible = isEmpty && !isLoading
-                    placeholder.isVisible = isLoading
-                    latestVideosList.isVisible = !isEmpty && !isLoading
-                    placeholder.showLoadingAnimation(isLoading)
-                    isInitialized = true
+                    with(binding) {
+                        val isLoading = it.source.refresh is Loading || !isInitialized
+                        val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                        emptyView.isVisible = isEmpty && !isLoading
+                        placeholder.isVisible = isLoading
+                        latestVideosList.isVisible = !isEmpty && !isLoading
+                        placeholder.showLoadingAnimation(isLoading)
+                        isInitialized = true
+                    }
                 }
             }
         }

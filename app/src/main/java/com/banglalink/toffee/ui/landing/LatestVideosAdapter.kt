@@ -65,7 +65,6 @@ class LatestVideosAdapter(
                     loadAds(adUnitId!!, holder.binding)
                 }
             } else {
-                holder.binding.nativeAdSmall.root.hide()
                 holder.binding.nativeAdLarge.root.hide()
             }
             val obj = getItem(position)
@@ -87,7 +86,6 @@ class LatestVideosAdapter(
                         val placeholder = itemView.nativeAdLarge.placeholder.root
                         placeholder.hide()
                         placeholder.stopShimmer()
-                        itemView.nativeAdSmall.root.hide()
                         itemView.nativeAdLarge.root.hide()
                     }
                 }
@@ -147,12 +145,9 @@ class LatestVideosAdapter(
             }
         }
         adView.setNativeAd(nativeAd)
-        val placeholderSmall = adContainerView.nativeAdSmall.placeholder.root
         val placeholderLarge = adContainerView.nativeAdLarge.placeholder.root
         adView.show()
-        placeholderSmall.hide()
         placeholderLarge.hide()
-        placeholderSmall.stopShimmer()
         placeholderLarge.stopShimmer()
     }
     

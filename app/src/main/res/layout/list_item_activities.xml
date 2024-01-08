@@ -44,7 +44,6 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/round_activities_item"
-                android:foreground="?attr/selectableItemBackground"
                 android:onClick="@{()-> callback.onItemClicked(data)}">
     
                 <com.banglalink.toffee.ui.widget.CustomImageView
@@ -53,12 +52,14 @@
                     loadChannelImage="@{data.channelInfo}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:foreground="@drawable/ripple_rectangle_shape"
                     app:layout_constraintDimensionRatio="16:9"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/placeholder" />
+                    tools:src="@drawable/placeholder"
+                    tools:ignore="UnusedAttribute" />
     
                 <ProgressBar
                     android:id="@+id/progress"
