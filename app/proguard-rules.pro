@@ -70,6 +70,8 @@
 #-keep class com.loopnow.fireworkplayer** { *; }
 #-keep class com.banglalink.toffee.ui.firework.FireworkFragment
 
+-dontwarn com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+
 -dontwarn com.google.ads.**
 -keep class com.google.** { *; }
 -keep interface com.google.** { *; }
@@ -95,19 +97,19 @@
 -dontwarn com.medallia.**
 -keep class com.conviva.** { *; }
 
-#-keep class com.google.protobuf.** { *; }
-#-keep class com.google.android.gms.** { *; }
-#-keep class com.google.firebase.** { *; }
-#-keep class io.invertase.firebase.** { *; }
-#-dontwarn io.invertase.firebase.**
-#-keep class io.invertase.firebase.messaging.** { *; }
+-keep class com.google.protobuf.** { *; }
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+-keep class io.invertase.firebase.** { *; }
+-dontwarn io.invertase.firebase.**
+-keep class io.invertase.firebase.messaging.** { *; }
 
-#-keepattributes LineNumberTable,SourceFile
-#-renamesourcefileattribute SourceFile
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
 -keep public class * extends java.lang.Exception
 
-#-keep class com.google.obf.** { *; }
-#-keep interface com.google.obf.** { *; }
+-keep class com.google.obf.** { *; }
+-keep interface com.google.obf.** { *; }
 
 #-keepattributes InnerClasses -keep class **.R -keep class **.R$* { <fields>; }
 #-keepnames @dagger.hilt.android.lifecycle.HiltViewModel class * extends androidx.lifecycle.ViewModel
@@ -115,11 +117,11 @@
 -dontwarn com.beloo.widget.chipslayoutmanager.Orientation
 -dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
 
-#-keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
-#-keep class * extends com.google.protobuf.GeneratedMessageInfoFactory { *; }
-#-keep,allowobfuscation class * extends com.google.protobuf.GeneratedMessageLite { *; }
-#-assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
-#-dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite**
+-keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keep class * extends com.google.protobuf.GeneratedMessageInfoFactory { *; }
+-keep,allowobfuscation class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
+-dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite**
 #-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
 -dontwarn com.google.android.exoplayer2.ExoPlayer
