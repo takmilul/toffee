@@ -630,4 +630,9 @@
         tools:layout="@layout/fragment_fm_channels_base" />
 
 
+    <fragment
+        android:id="@+id/audioBookCategoryDetails"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookCategoryDetailsFragment"
+        android:label="Audio Book"
+        tools:layout="@layout/fragment_audiobook_category" />
 </navigation>

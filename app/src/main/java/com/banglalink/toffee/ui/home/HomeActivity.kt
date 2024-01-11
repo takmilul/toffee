@@ -108,6 +108,7 @@ import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NO
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_NOW
+import com.banglalink.toffee.ui.audiobook.AudioBookPlaylistFragment
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
@@ -117,7 +118,6 @@ import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.fmradio.FmChannelFragmentNew
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
@@ -1397,9 +1397,9 @@ class HomeActivity : PlayerPageActivity(),
         val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
         if (info is ChannelInfo) {
             if (info.isFmRadio){
-                if (fragment !is FmChannelFragmentNew) {
+                if (fragment !is AudioBookPlaylistFragment) {
                     loadFragmentById(
-                        R.id.details_viewer, FmChannelFragmentNew()
+                        R.id.details_viewer, AudioBookPlaylistFragment()
                     )
                 }
             } else if (info.isStingray) {
@@ -2370,7 +2370,13 @@ class HomeActivity : PlayerPageActivity(),
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
         if (featuredPartner.url_type == 1){
             navController.navigateTo(R.id.fmRadioFragment)
-        } else{
+        }
+        else if (featuredPartner.url_type == 2){
+            val args = bundleOf(
+                "myTitle" to "Kabbik - Audio Book",
+            )
+            navController.navigateTo(R.id.audioBookCategoryDetails, args)
+        }else{
             if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
                 featuredPartner.webViewUrl?.let { url ->
                     landingPageViewModel.sendFeaturePartnerReportData(
