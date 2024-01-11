@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.audiobook.carousel.PosterDemo
@@ -62,7 +63,7 @@ class AudioBookTrendingFragment : AudioBookCategoryBaseFragment<PosterDemo>() {
         }
 
         onSeeAllButtonClicked{
-            Toast.makeText(requireContext(), "See all clicked", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.audioBookCategoryDetails)
         }
     }
 
