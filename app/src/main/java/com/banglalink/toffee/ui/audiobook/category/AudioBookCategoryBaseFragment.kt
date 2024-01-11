@@ -38,9 +38,10 @@ abstract class AudioBookCategoryBaseFragment<T: Any> : BaseFragment(), ProviderI
     protected fun showCard(isShow: Boolean) {
         binding.root.isVisible = isShow
     }
-
-    override fun onItemClicked(item: T) {
-        super.onItemClicked(item)
+    protected fun onSeeAllButtonClicked(callback: ()->Unit){
+        binding.seeAllButton.setOnClickListener {
+            callback.invoke()
+        }
     }
 
 }
