@@ -1,10 +1,12 @@
 package com.banglalink.toffee.ui.audiobook.category
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.show
@@ -58,5 +60,15 @@ class AudioBookTrendingFragment : AudioBookCategoryBaseFragment<PosterDemo>() {
             adapter.addAll(it)
             showCard(it.isNotEmpty())
         }
+
+        onSeeAllButtonClicked{
+            Toast.makeText(requireContext(), "See all clicked", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onItemClicked(item: PosterDemo) {
+        super.onItemClicked(item)
+        Toast.makeText(requireContext(), "Item clicked", Toast.LENGTH_SHORT).show()
+
     }
 }
