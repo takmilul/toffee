@@ -18,14 +18,20 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.banglalink.toffee.ArrowPositionRules
 import com.banglalink.toffee.Balloon
 import com.banglalink.toffee.BalloonSizeSpec
 import com.banglalink.toffee.R
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
-import java.util.Scanner
+import java.util.*
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if(!message.isNullOrBlank()) {
@@ -138,5 +144,15 @@ suspend fun Context.vpnConnectivityStatus(): Pair<Boolean, String>? = withContex
     } catch (e: Exception) {
         e.printStackTrace()
         null
+    }
+}
+
+fun LifecycleOwner.launchWithLifecycle(observe: suspend (LifecycleOwner) -> Unit): Job {
+    val lifecycleOwner = if(this is Fragment) this.viewLifecycleOwner else this
+    
+    return lifecycleOwner.lifecycleScope.launch {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            observe(lifecycleOwner)
+        }
     }
 }
