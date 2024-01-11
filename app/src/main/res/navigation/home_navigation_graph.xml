@@ -628,6 +628,11 @@
         android:name="com.banglalink.toffee.ui.fmradio.FmChannelBaseFragment"
         android:label="FM Radio"
         tools:layout="@layout/fragment_fm_channels_base" />
+    <fragment
+        android:id="@+id/audioBookLandingFragment"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookLandingFragment"
+        android:label="Kabbik - Audio Book"
+        tools:layout="@layout/fragment_audio_book_landing" />
 
 
     <fragment
