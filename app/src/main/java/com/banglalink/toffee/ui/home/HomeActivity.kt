@@ -815,7 +815,7 @@ class HomeActivity : PlayerPageActivity(),
             currentFragmentDestinationId = controller.currentDestination?.id
         }
         
-        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
+        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
@@ -2370,7 +2370,11 @@ class HomeActivity : PlayerPageActivity(),
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
         if (featuredPartner.url_type == 1){
             navController.navigateTo(R.id.fmRadioFragment)
-        } else{
+        }
+        else if(featuredPartner.url_type == 2){
+            navController.navigateTo(R.id.audioBookLandingFragment)
+        }
+        else{
             if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
                 featuredPartner.webViewUrl?.let { url ->
                     landingPageViewModel.sendFeaturePartnerReportData(
