@@ -197,9 +197,8 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     /**
      * [androidx.work.WorkManager] configured in the application level to use in the full application.
      */
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
-    }
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
     
     /**
      * [<b>This SDK shows Shorts Video Reels</b>]
