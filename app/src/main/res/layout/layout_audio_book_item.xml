@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.ui.audiobook.carousel.PosterDemo" />
+            type="com.banglalink.toffee.data.network.response.KabbikItemBean" />
 
         <variable
             name="callback"
@@ -39,7 +39,7 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    loadImageFromUrl="@{data.imagePath}"
+                    loadImageFromUrl="@{data.thumbPath}"
                     android:foreground="@drawable/ripple_rounded_rectangle_shape"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
