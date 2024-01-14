@@ -410,8 +410,8 @@ object Utils {
         }
     }
     
-    fun getDate(dateTime: String?): Date {
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    fun getDate(dateTime: String?, dateFormat: String? = "yyyy-MM-dd HH:mm:ss"): Date {
+        val currentFormatter = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         return try {
             dateTime?.let { currentFormatter.parse(it) } ?: Date()
         } catch (e: ParseException) {

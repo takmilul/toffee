@@ -818,6 +818,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.36f)
         set(value) = pref.edit { putFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, value) }
 
+    var kabbikAccessToken: String
+        get() = pref.getString(PREF_KABBIK_ACCESS_TOKEN, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KABBIK_ACCESS_TOKEN, value) }
+
+    var kabbikTokenExpiryTime: String
+        get() = pref.getString(PREF_KABBIK_TOKEN_EXPIRY_TIME, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KABBIK_TOKEN_EXPIRY_TIME, value) }
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -1101,6 +1109,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
         private const val RADIO_BANNER = "radio_banner"
         private const val PREF_PLAYER_SCREEN_BRIGHTNESS = "player-screen-brightness"
+        private const val PREF_KABBIK_ACCESS_TOKEN = "pref_kabbik_access_token"
+        private const val PREF_KABBIK_TOKEN_EXPIRY_TIME = "pref_kabbik_token_expiry_time"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {
