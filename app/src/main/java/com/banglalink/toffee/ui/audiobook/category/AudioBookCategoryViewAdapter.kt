@@ -2,9 +2,12 @@ package com.banglalink.toffee.ui.audiobook.category
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.network.response.KabbikItemBean
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 
-class AudioBookCategoryBaseAdapter <T: Any>(listener: ProviderIconCallback<T>) : MyBaseAdapter<T>(listener) {
+class AudioBookCategoryViewAdapter(
+    cb: ProviderIconCallback<KabbikItemBean>
+): MyBaseAdapter<KabbikItemBean>(cb){
     override fun getLayoutIdForPosition(position: Int): Int {
         return R.layout.list_item_audio_book_category
     }
