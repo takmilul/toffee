@@ -11,10 +11,12 @@ import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
 import com.banglalink.toffee.data.network.response.KabbikLoginApiResponse
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
+import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface ExternalApi {
@@ -62,4 +64,11 @@ interface ExternalApi {
         @Url url: String?,
         @Header("Authorization") token : String,
     ) : KabbikHomeApiResponse
+
+    @GET
+    suspend fun audioBookSeeMoreList(
+        @Url url: String?,
+        @Header("Authorization") authorizationToken: String?,
+        @Query("name") name: String,
+    ): AudioBookSeeMoreResponse
 }

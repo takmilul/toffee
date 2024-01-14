@@ -3,12 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/failureInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="56dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"
+        >
+
+        <ImageView
+            android:id="@+id/iconFailureType"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="16dp"
+            app:srcCompat="@drawable/ic_videos_empty" />
+
+        <TextView
+            android:id="@+id/textFailureMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center_horizontal"
+            android:text="Empty or Null"
+            android:textColor="@color/subscription_history_color_secondary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoriesListAudioBook"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:clipChildren="false"
         android:orientation="vertical"
@@ -20,5 +55,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:spanCount="3"
         tools:itemCount="8"
+        tools:visibility="visible"
         tools:listitem="@layout/list_item_category_audiobook"/>
+
+    <ImageView
+        android:id="@+id/progress_bar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/gif_round_border"
+        android:contentDescription="@string/txt_content_loader"
+        android:elevation="2dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/content_loader"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

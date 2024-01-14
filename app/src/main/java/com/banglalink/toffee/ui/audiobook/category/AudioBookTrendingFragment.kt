@@ -63,7 +63,10 @@ class AudioBookTrendingFragment : AudioBookCategoryBaseFragment<PosterDemo>() {
         }
 
         onSeeAllButtonClicked{
-            findNavController().navigate(R.id.audioBookCategoryDetails)
+            val args = Bundle().apply {
+                putString("myTitle", "SeeMore")
+            }
+            findNavController().navigate(R.id.audioBookCategoryDetails, args)
         }
     }
 
