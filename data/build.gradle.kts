@@ -69,7 +69,13 @@ android {
         }
         create("tv") {
             dimension = "lib"
+            
+            val appVersionCode: String = libs.versions.appVersionCode.get()
+            val appVersionName: String = libs.versions.appVersionName.get()
+            
             buildConfigField("int", "DEVICE_TYPE", "4")
+            buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
+            buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
         }
     }
     
