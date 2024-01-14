@@ -49,6 +49,3 @@
 #    public static **[] values();
 #    public static ** valueOf(java.lang.String);
 #}
-
-#-keep class com.google.obf.** { *; }
-#-keep interface com.google.obf.** { *; }

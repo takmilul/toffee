@@ -1995,7 +1995,8 @@ class HomeActivity : PlayerPageActivity(),
             try {
                 if (!handleInAppDeepLink(url)) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                    val hash = url.substringAfter("#video/")
+                    val newDeepLinkHash = Uri.parse(url).getQueryParameter("share_url")
+                    val hash = newDeepLinkHash ?: url.substringAfter("#video/")
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()

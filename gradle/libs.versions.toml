@@ -9,7 +9,7 @@ targetSdkVersion = "34"
 appVersionCode = "128"
 appVersionName = "6.2.0"
 
-gradle-plugin-version = "8.2.0"
+gradle-plugin-version = "8.2.1"
 
 # View
 activity-version = "1.6.1"
@@ -41,7 +41,7 @@ compose-bom = "2023.10.01"
 kotlin-compose-version = "1.5.7"
 lifecycle-version = "2.6.2"
 navigation-version = "2.7.6"
-work-manager-version = "2.8.1"
+work-manager-version = "2.9.0"
 
 # Image
 coil-version = "2.5.0"
