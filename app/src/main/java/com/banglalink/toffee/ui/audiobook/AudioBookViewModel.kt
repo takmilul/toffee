@@ -41,9 +41,9 @@ class AudioBookViewModel @Inject constructor(
         }
     }
 
-    fun getAudioBookSeeMore() {
+    fun getAudioBookSeeMore(myTitle: String) {
         viewModelScope.launch {
-            val response = resultFromResponse { audioBookSeeMoreService.execute() }
+            val response = resultFromResponse { audioBookSeeMoreService.execute(myTitle) }
             audioBookSeeMoreResponse.value = response
         }
     }
