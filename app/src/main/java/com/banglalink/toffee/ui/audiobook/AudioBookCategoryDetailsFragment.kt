@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<DataBean> {
     
     private val binding get() = _binding!!
+    private var myTitle: String? = null
     private lateinit var mAdapter: AudioBookCategoryListAdapter
     private var _binding: FragmentAudiobookCategoryBinding ? =null
     val viewModel by activityViewModels<AudioBookViewModel>()
@@ -37,7 +38,8 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.title = arguments?.getString("myTitle", "Kabbik - Audio Book")
+        myTitle = arguments?.getString("myTitle")
+        activity?.title = myTitle
 
         binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookCategoryListAdapter(this)
@@ -56,7 +58,11 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
                         val flattenedData = audioBookSeeMoreResponse.data?.flatMap { it.data } ?: emptyList()
 
                         if (flattenedData.isNotEmpty()) {
-                            mAdapter.addAll(flattenedData)
+                            // Filter out items with premium = 0
+                            val filteredData = flattenedData.filter { it.premium == 0 && it.price == 0 }
+
+                            mAdapter.addAll(filteredData)
+
                             binding.categoriesListAudioBook.show()
                             binding.failureInfoLayout.hide()
                         } else {
@@ -64,6 +70,7 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
                             binding.failureInfoLayout.show()
                         }
                     }
+
                 }
                 is Resource.Failure -> {
                     binding.progressBar.hide()
@@ -72,7 +79,7 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
                 }
             }
         }
-        viewModel.getAudioBookSeeMore()
+        myTitle?.let { viewModel.getAudioBookSeeMore(it) }
 
     }
 

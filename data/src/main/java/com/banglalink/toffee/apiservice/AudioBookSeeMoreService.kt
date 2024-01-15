@@ -10,13 +10,13 @@ class AudioBookSeeMoreService @Inject constructor(
     private val toffeeApi: ExternalApi,
     private val preference: SessionPreference
 ) {
-    suspend fun execute(): AudioBookSeeMoreResponse {
+    suspend fun execute(myTitle : String): AudioBookSeeMoreResponse {
         
         return tryIOExternal {
             toffeeApi.audioBookSeeMoreList(
                 url = "https://api.kabbik.com/v1/audiobooks/home/seemore",
                 authorizationToken = "Bearer ${preference.kabbikAccessToken}",
-                name = "ক্লাসিক"
+                name = myTitle
             )
         }
     }
