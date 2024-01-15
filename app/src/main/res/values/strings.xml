@@ -611,4 +611,5 @@
     <string name="payment_method_invalid">Payment method is invalid!</string>
     <string name="buy_with_bl_number">Please sign in with a Banglalink number to buy these plans</string>
     <string name="buy_with_non_bl_number">Please sign in with a GP/ Robi/ Airtel/ Teletalk number to buy these plans</string>
+    <string name="redeem_dialog_title_text">Code didn\'t work</string>
 </resources>

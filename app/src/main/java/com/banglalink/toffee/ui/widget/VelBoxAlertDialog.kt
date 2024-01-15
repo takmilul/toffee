@@ -18,16 +18,15 @@ fun showAlertDialog(context: Context, title: String, message: String, cancellabl
     alertDialog.setView(alertView)
     alertDialog.setCancelable(cancellable)
     alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+    
     (alertView.findViewById(R.id.title_tv) as TextView).text = title
-
+    
     if (TextUtils.isEmpty(message)) {
         alertView.findViewById<TextView>(R.id.message_tv).setVisibility(View.GONE)
     } else {
         (alertView.findViewById(R.id.message_tv) as TextView).text = message
     }
-    alertView.findViewById<TextView>(R.id.ok_button)
-        .setOnClickListener { alertDialog.dismiss() }
+    alertView.findViewById<TextView>(R.id.ok_button).setOnClickListener { alertDialog.dismiss() }
     alertDialog.show()
 }
 
@@ -38,11 +37,10 @@ fun showAlertDialog(context: Context, title: String, message: String) {
 fun showDisplayMessageDialog(
     context: Context?,
     message: String?,
-    callbacks: () -> Unit = {}
+    callbacks: () -> Unit = {},
 ) {
     val factory = LayoutInflater.from(context)
-    val alertView: View =
-        factory.inflate(R.layout.alert_dialog_display_message_layout, null)
+    val alertView: View = factory.inflate(R.layout.alert_dialog_display_message_layout, null)
     val alertDialog = AlertDialog.Builder(context).create()
     alertDialog.setView(alertView)
     alertDialog.setCancelable(true)
@@ -58,32 +56,30 @@ fun showDisplayMessageDialog(
 
 fun showRedeemDisplayMessageDialog(
     context: Context?,
-    title:String?,
+    title: String?,
     message: String?,
     bulletMessage: List<String>?,
-    callbacks: () -> Unit = {}
+    callbacks: () -> Unit = {},
 ) {
     val factory = LayoutInflater.from(context)
-    val alertView: View =
-        factory.inflate(R.layout.alert_dialog_redem_invalid_layout, null)
+    val alertView: View = factory.inflate(R.layout.alert_dialog_redem_invalid_layout, null)
     val alertDialog = AlertDialog.Builder(context).create()
     alertDialog.setView(alertView)
     alertDialog.setCancelable(true)
     alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    val bullterContainer = alertView.findViewById<LinearLayout>(R.id.bulletContainer)
+    val bulletContainer = alertView.findViewById<LinearLayout>(R.id.bulletContainer)
     val titleTv = alertView.findViewById<TextView>(R.id.dialogTitleTextView)
-    val messageTv = alertView.findViewById<TextView>(R.id.texttitle1)
-
+    val messageTv = alertView.findViewById<TextView>(R.id.messageTitleTextView)
+    
     title?.let {
-        titleTv.text=it
+        titleTv.text = it
     }
     message?.let {
-        messageTv.text=it
+        messageTv.text = it
     }
-    bulletMessage?.let { bulletMsg->
-
-        bulletMsg.forEach {text->
-            bullterContainer.addView(context?.let {
+    bulletMessage?.let { bulletMsg ->
+        bulletMsg.forEach { text ->
+            bulletContainer.addView(context?.let {
                 RedeemBulletCardView(it).apply {
                     setConfiguration(text)
                 }
@@ -100,15 +96,14 @@ fun showRedeemDisplayMessageDialog(
 
 fun showSubscriptionDialog(
     context: Context?,
-    okCallBack: () -> Unit
+    okCallBack: () -> Unit,
 ) {
     val factory = LayoutInflater.from(context)
-    val alertView: View =
-        factory.inflate(R.layout.alert_dialog_subscribe_pack, null)
+    val alertView: View = factory.inflate(R.layout.alert_dialog_subscribe_pack, null)
     val alertDialog = AlertDialog.Builder(context).create()
     alertDialog.setView(alertView)
     alertDialog.setCancelable(true)
-
+    
     alertView.findViewById<View>(R.id.ok_button)
         .setOnClickListener {
             alertDialog.dismiss()
@@ -118,6 +113,6 @@ fun showSubscriptionDialog(
         .setOnClickListener {
             alertDialog.dismiss()
         }
-
+    
     alertDialog.show()
 }
