@@ -1,29 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/movieLatestScroller"
-            android:fillViewport="true"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="wrap_content">
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/allTvChannelsFragment"
-                android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
+            <LinearLayout
+                android:id="@+id/failureInfoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="56dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <!--        <ImageView-->
+                <!--            android:id="@+id/iconFailureType"-->
+                <!--            android:layout_width="120dp"-->
+                <!--            android:layout_height="120dp"-->
+                <!--            android:layout_marginBottom="16dp"-->
+                <!--            app:srcCompat="@drawable/ic_videos_empty" />-->
+
+                <TextView
+                    android:id="@+id/textFailureMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_horizontal"
+                    android:text="No item found"
+                    android:textColor="@color/subscription_history_color_secondary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+<!--            <ImageView-->
+<!--                android:id="@+id/progress_bar"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:background="@drawable/gif_round_border"-->
+<!--                android:contentDescription="@string/txt_content_loader"-->
+<!--                android:elevation="2dp"-->
+<!--                android:visibility="visible"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintVertical_bias="0.5"-->
+<!--                app:layout_constraintHorizontal_bias="0.5"-->
+<!--                app:srcCompat="@drawable/content_loader"-->
+<!--                tools:visibility="visible" />-->
+
+            <View
+                android:id="@+id/detailsView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/fragment_bg_bottom"
+                app:layout_constraintBottom_toBottomOf="@id/episode_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:focusable="false"
+                android:fontFamily="@font/roboto_medium"
+                android:maxLines="2"
+                android:textColor="@color/main_text_color"
+                android:textSize="16sp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginTop="12dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="NOW: ICC Women's World Cup 2019 Day 21 - AUS vs IND" />
+
+            <com.banglalink.toffee.ui.widget.ReadMoreTextView
+                android:id="@+id/episode_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingBottom="16dp"
+                android:textColor="@color/fixed_second_text_color"
+                android:textSize="@dimen/default_text_size"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                app:readMoreColorClickableText="@color/colorButtonSecondary"
+                app:readMoreFontFamily="@font/roboto_medium"
+                android:text="@string/delete_text_1"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/playListText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:focusable="false"
+                android:fontFamily="@font/roboto_medium"
+                android:maxLines="2"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:text="Play list"
+                android:visibility="gone"
+                android:textColor="@color/main_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/episode_description"
+                app:layout_constraintStart_toStartOf="@+id/episode_description"
+                app:layout_constraintTop_toBottomOf="@+id/detailsView"
+                tools:visibility="visible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/episodeListAudioBook"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:layout="@layout/fragment_channel_list"/>
+                android:layout_marginTop="8dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/playListText"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/playListText"
+                app:layout_constraintTop_toBottomOf="@+id/playListText"
+                app:layout_constraintVertical_bias="0.0"
+                tools:itemCount="10"
+                tools:listitem="@layout/list_item_episode_audiobook"
+                tools:visibility="visible" />
 
-        </androidx.core.widget.NestedScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

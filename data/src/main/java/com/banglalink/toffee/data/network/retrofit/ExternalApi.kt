@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.GrantTokenRequest
 import com.banglalink.toffee.data.network.request.KabbikLoginApiRequest
 import com.banglalink.toffee.data.network.request.QueryPaymentRequest
+import com.banglalink.toffee.data.network.response.AudioBookEpisodeResponse
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
 import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
@@ -69,6 +70,14 @@ interface ExternalApi {
     suspend fun audioBookSeeMoreList(
         @Url url: String?,
         @Header("Authorization") authorizationToken: String?,
+        @Header("Referrer") referrer: String?,
         @Query("name") name: String,
     ): AudioBookSeeMoreResponse
+
+    @GET
+    suspend fun audioBookEpisodeList(
+        @Url url: String?,
+        @Header("Authorization") authorizationToken: String?,
+        @Header("Referrer") referrer: String?,
+    ): AudioBookEpisodeResponse
 }

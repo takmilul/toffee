@@ -2,9 +2,11 @@ package com.banglalink.toffee.ui.audiobook
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.AudioBookEpisodeListService
 import com.banglalink.toffee.apiservice.AudioBookSeeMoreService
 import com.banglalink.toffee.apiservice.KabbikHomeApiService
 import com.banglalink.toffee.apiservice.KabbikLoginApiService
+import com.banglalink.toffee.data.network.response.AudioBookEpisodeResponse
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
 import com.banglalink.toffee.data.network.response.KabbikLoginApiResponse
 import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
@@ -21,11 +23,13 @@ class AudioBookViewModel @Inject constructor(
     private val apiService: KabbikLoginApiService,
     private val homeApiService: KabbikHomeApiService,
     private val audioBookSeeMoreService: AudioBookSeeMoreService,
+    private val audioBookEpisodeListService: AudioBookEpisodeListService,
 
     ) : ViewModel() {
     val loginResponse = SingleLiveEvent<Resource<KabbikLoginApiResponse>>()
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
+    val audioBookEpisodeResponse = SingleLiveEvent<Resource<AudioBookEpisodeResponse?>>()
 
     fun login() {
         viewModelScope.launch {
@@ -40,11 +44,17 @@ class AudioBookViewModel @Inject constructor(
             homeApiResponse.value = response
         }
     }
-
     fun getAudioBookSeeMore(myTitle: String) {
         viewModelScope.launch {
             val response = resultFromResponse { audioBookSeeMoreService.execute(myTitle) }
             audioBookSeeMoreResponse.value = response
+        }
+    }
+
+    fun getAudioBookEpisode(id: String) {
+        viewModelScope.launch {
+            val response = resultFromResponse { audioBookEpisodeListService.execute(id) }
+            audioBookEpisodeResponse.value = response
         }
     }
 }
