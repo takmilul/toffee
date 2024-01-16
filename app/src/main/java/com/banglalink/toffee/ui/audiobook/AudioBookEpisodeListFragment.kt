@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.audiobook
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
@@ -23,22 +25,12 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
     private var _binding: FragmentAudiobookPlaylistBinding?=null
     private lateinit var mAdapter: AudioBookEpisodeListAdapter
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-
+    val homeViewModel by activityViewModels<HomeViewModel>()
     val viewModel by activityViewModels<AudioBookViewModel>()
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val args = Bundle().apply {
-//            putInt("sub_category_id", 0)
-//            putString("sub_category", "")
-//            putString("category", "Karaoke - Stingray")
-//            putString("title", "Karaoke - Stingray")
-//            putBoolean("show_selected", true)
-//            putBoolean("is_stingray", false)
-//            putBoolean("is_fmRadio", true)
-//        }
-//        childFragmentManager.fragmentFactory = ChannelFragmentFactory(args)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -50,7 +42,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
         super.onViewCreated(view, savedInstanceState)
 
         id = arguments?.getString("id")
-        activity?.title = id
+
         progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookEpisodeListAdapter(this)
@@ -100,6 +92,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
         id?.let { viewModel.getAudioBookEpisode(it) }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onItemClicked(item: Episodes) {
         super.onItemClicked(item)
 
