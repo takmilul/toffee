@@ -38,7 +38,10 @@ class AudioBookCategoryView @JvmOverloads constructor(
     fun setConfiguration(cardTitle: String, items: List<KabbikItemBean>, onSeeAllClick: ()->Unit = {}){
         titleTextView?.text = cardTitle
         mAdapter?.removeAll()
-        mAdapter?.addAll(items)
+        val freeItems = items.filter {item->
+            item.premium == 0 && item.price == 0
+        }
+        mAdapter?.addAll(freeItems)
 
         seeAllButton?.setOnClickListener {
             onSeeAllClick.invoke()

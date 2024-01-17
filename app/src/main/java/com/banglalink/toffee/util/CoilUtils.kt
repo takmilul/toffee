@@ -2,9 +2,16 @@ package com.banglalink.toffee.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 
 object CoilUtils {
@@ -20,5 +27,20 @@ object CoilUtils {
     } catch (ex: Exception) {
         ToffeeAnalytics.logException(ex)
         null
+    }
+
+    @Composable
+    fun getAsyncImagePainter(
+        model: Any,
+        @DrawableRes placeholder: Int = R.drawable.placeholder,
+        filterQuality: FilterQuality = FilterQuality.Low
+    ): AsyncImagePainter {
+        return rememberAsyncImagePainter(
+            model = model,
+            error = painterResource(id = placeholder),
+            fallback = painterResource(id = placeholder),
+            placeholder = painterResource(id = placeholder),
+            filterQuality = filterQuality
+        )
     }
 }

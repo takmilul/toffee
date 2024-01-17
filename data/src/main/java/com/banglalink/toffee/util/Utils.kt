@@ -394,11 +394,11 @@ object Utils {
         return date?.let { currentFormatter.format(it) }
     }
     
-    fun formatPackExpiryDate(dateTime: String?): String? {
+    fun formatPackExpiryDate(dateTime: String?, pattern: String? = "yyyy-MM-dd HH:mm:ss"): String? {
         if (TextUtils.isEmpty(dateTime)) {
             return ""
         }
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH) //2016-10-20 06:45:29
+        val currentFormatter = SimpleDateFormat(pattern, Locale.ENGLISH) //2016-10-20 06:45:29
         val dateObj: Date?
         return try {
             dateObj = dateTime?.let { currentFormatter.parse(it) }
@@ -663,3 +663,18 @@ val currentDateTimeMillis: String
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
         return sdf.format(bdTime()) ?: sdf.format(Date())
     }
+enum class DateComparisonResult {
+    EARLIER, LATER, SAME
+}
+fun compareDates(fromDate: String, toDate: String): DateComparisonResult {
+    val parsedFrom = Utils.formatPackExpiryDate(fromDate)
+    val parsedTo = Utils.formatPackExpiryDate(toDate)
+
+    val result = parsedFrom?.compareTo(parsedTo ?: "") ?: 0
+
+    return when {
+        result < 0 -> DateComparisonResult.EARLIER // fromDate is earlier than toDate
+        result > 0 -> DateComparisonResult.LATER // fromDate is later than toDate
+        else -> DateComparisonResult.SAME // fromDate is same as toDate
+    }
+}
