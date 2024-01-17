@@ -640,4 +640,10 @@
         android:name="com.banglalink.toffee.ui.audiobook.AudioBookCategoryDetailsFragment"
         android:label="Audio Book"
         tools:layout="@layout/fragment_audiobook_category" />
+
+    <fragment
+        android:id="@+id/audioBookEpisodeList"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment"
+        android:label="Audio Book"
+        tools:layout="@layout/fragment_audiobook_playlist" />
 </navigation>

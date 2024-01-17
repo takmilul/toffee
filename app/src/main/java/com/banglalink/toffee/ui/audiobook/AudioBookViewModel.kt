@@ -5,12 +5,18 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.AudioBookEpisodeListService
+import com.banglalink.toffee.apiservice.AudioBookSeeMoreService
 import com.banglalink.toffee.apiservice.KabbikHomeApiService
 import com.banglalink.toffee.apiservice.KabbikLoginApiService
+import com.banglalink.toffee.data.network.response.AudioBookEpisodeResponse
 import com.banglalink.toffee.apiservice.KabbikTopBannerApiService
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
+import com.banglalink.toffee.data.network.response.KabbikLoginApiResponse
+import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
 import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
@@ -32,9 +38,14 @@ class AudioBookViewModel @Inject constructor(
     private val apiService: KabbikLoginApiService,
     private val homeApiService: KabbikHomeApiService,
     private val topBannerApiService: KabbikTopBannerApiService,
+    private val audioBookSeeMoreService: AudioBookSeeMoreService,
+    private val audioBookEpisodeListService: AudioBookEpisodeListService,
 ) : ViewModel() {
+    val loginResponse = SingleLiveEvent<Resource<KabbikLoginApiResponse>>()
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
+    val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
+    val audioBookEpisodeResponse = SingleLiveEvent<Resource<AudioBookEpisodeResponse?>>()
 
     fun grantToken(success:(token:String)->Unit, failure:()->Unit,) {
         viewModelScope.launch {
@@ -87,6 +98,19 @@ class AudioBookViewModel @Inject constructor(
         viewModelScope.launch {
             val response = homeApiService.execute(token)
             homeApiResponseCompose.value = response
+        }
+    }
+    fun getAudioBookSeeMore(myTitle: String) {
+        viewModelScope.launch {
+            val response = resultFromResponse { audioBookSeeMoreService.execute(myTitle) }
+            audioBookSeeMoreResponse.value = response
+        }
+    }
+
+    fun getAudioBookEpisode(id: String) {
+        viewModelScope.launch {
+            val response = resultFromResponse { audioBookEpisodeListService.execute(id) }
+            audioBookEpisodeResponse.value = response
         }
     }
 }

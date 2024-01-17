@@ -126,19 +126,6 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             }
         }
     }
-
-    @BindingAdapter("loadAudioBookBackground")
-    fun bindAudioBookBackground(view: ImageView, channelInfo: ChannelInfo?) {
-        if (channelInfo?.channel_logo.isNullOrBlank()) {
-            view.loadPlaceholder()
-        } else {
-            view.scaleType = ImageView.ScaleType.FIT_CENTER
-            view.load(channelInfo?.channel_logo) {
-                setImageRequestParams()
-                size(min(120.px, 360), min(61.px, 184))
-            }
-        }
-    }
     
     @BindingAdapter("loadCategoryIcon")
     fun bindCategoryIcon(view: ImageView, category: Category?) {

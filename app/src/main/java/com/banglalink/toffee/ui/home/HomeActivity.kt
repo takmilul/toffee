@@ -108,7 +108,7 @@ import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NO
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ROW_ID
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_NOW
-import com.banglalink.toffee.ui.audiobook.AudioBookPlaylistFragment
+import com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
@@ -118,6 +118,7 @@ import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.ui.fmradio.FmChannelFragmentNew
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlayerPageActivity
@@ -815,7 +816,7 @@ class HomeActivity : PlayerPageActivity(),
             currentFragmentDestinationId = controller.currentDestination?.id
         }
         
-        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment)
+        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails)
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
         binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
@@ -1397,9 +1398,9 @@ class HomeActivity : PlayerPageActivity(),
         val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
         if (info is ChannelInfo) {
             if (info.isFmRadio){
-                if (fragment !is AudioBookPlaylistFragment) {
+                if (fragment !is FmChannelFragmentNew) {
                     loadFragmentById(
-                        R.id.details_viewer, AudioBookPlaylistFragment()
+                        R.id.details_viewer, AudioBookEpisodeListFragment()
                     )
                 }
             } else if (info.isStingray) {
