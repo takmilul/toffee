@@ -30,7 +30,7 @@ import com.banglalink.toffee.util.currentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +46,7 @@ class AudioBookViewModel @Inject constructor(
     
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
+    val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikTopBannerApiResponse.BannerItemBean>())
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = MutableLiveData<Resource<List<ChannelInfo>?>>()
     val isLoadingCategory = mutableStateOf(false)
@@ -94,6 +95,20 @@ class AudioBookViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromExternalResponse { topBannerApiService.execute(token) }
             topBannerApiResponse.value = response
+        }
+    }
+
+    fun topBannerApiCompose(token:String) {
+        viewModelScope.launch {
+            val response = resultFromExternalResponse { topBannerApiService.execute(token) }
+            when(response) {
+                is Success -> {
+                    topBannerApiResponseCompose.value = response.data.bannerItems
+                }
+                is Failure -> {
+                    
+                }
+            }
         }
     }
 
