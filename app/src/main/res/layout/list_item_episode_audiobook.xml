@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
         <variable
             name="data"
-            type="com.banglalink.toffee.data.network.response.Episodes" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
 
         <import type="android.view.View" />
     </data>
@@ -27,7 +27,7 @@
 
             <TextView
                 android:id="@+id/name"
-                android:text="@{data.name}"
+                android:text="@{data.program_name}"
                 style="@style/programNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

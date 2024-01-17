@@ -38,7 +38,6 @@ import androidx.media3.exoplayer.source.ads.AdsLoader
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.Parameters
-import androidx.media3.exoplayer.upstream.CmcdConfiguration
 import androidx.media3.exoplayer.util.*
 import androidx.media3.ui.PlayerView
 import com.banglalink.toffee.BuildConfig
@@ -783,7 +782,7 @@ abstract class PlayerPageActivity :
         }
         hlsUrl ?: return null
         
-        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray || channelInfo.urlType == PLAY_CDN) {
+        val uri = if (channelInfo.isBucketUrl || channelInfo.isStingray || channelInfo.isAudioBook || channelInfo.urlType == PLAY_CDN) {
             hlsUrl
         } else {
             Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref)
@@ -792,7 +791,7 @@ abstract class PlayerPageActivity :
             if (mPref.shouldOverrideHlsHostUrl) it.overrideUrl(mPref.overrideHlsHostUrl) else it
         } ?: return null
         return MediaItem.Builder().apply {
-            if (!channelInfo.isBucketUrl) {
+            if (!channelInfo.isBucketUrl && !channelInfo.isAudioBook) {
                 setMimeType(if (channelInfo.isFmRadio) MimeTypes.AUDIO_MPEG else MimeTypes.APPLICATION_M3U8)
             }
             setUri(playingUrl)
@@ -1577,7 +1576,7 @@ abstract class PlayerPageActivity :
             ALL_ADS_COMPLETED -> {
                 getCurrentChannelInfo()?.let {
                     if (isAdRunning && it.isFmRadio) {
-                        (getPlayerView() as ToffeeStyledPlayerView).setFmRadioPlayerImage(getCurrentChannelInfo())
+                        (getPlayerView() as ToffeeStyledPlayerView).setPlayerImage(getCurrentChannelInfo())
                     }
                 }
                 isAdRunning = false

@@ -247,7 +247,7 @@ class HomeActivity : PlayerPageActivity(),
         ).not()
         
         //disable screen capture
-        if (isDisableScreenshot) {
+        if (isDisableScreenshot && !BuildConfig.DEBUG) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
@@ -1400,7 +1400,13 @@ class HomeActivity : PlayerPageActivity(),
             if (info.isFmRadio){
                 if (fragment !is FmChannelFragmentNew) {
                     loadFragmentById(
-                        R.id.details_viewer, AudioBookEpisodeListFragment()
+                        R.id.details_viewer, FmChannelFragmentNew()
+                    )
+                }
+            } else if (info.isAudioBook) {
+                if (fragment !is AudioBookEpisodeListFragment) {
+                    loadFragmentById(
+                        R.id.details_viewer, AudioBookEpisodeListFragment.newInstance(info.playlistContentId.toString())
                     )
                 }
             } else if (info.isStingray) {

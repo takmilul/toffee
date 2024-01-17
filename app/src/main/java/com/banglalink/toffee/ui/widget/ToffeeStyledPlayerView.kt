@@ -103,6 +103,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     private var isLinearChannel: Boolean = false
     @Inject lateinit var cPref: CommonPreference
     private lateinit var previewImage: ImageView
+    private lateinit var audioBookImageView: RatioImageView
     private lateinit var rotateButton: ImageView
     private lateinit var drawerButton: ImageView
     @Inject lateinit var mPref: SessionPreference
@@ -172,6 +173,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         controllerBg = findViewById(R.id.controller_bg)
         previewImage = findViewById(R.id.exo_shutter)
+        audioBookImageView = findViewById(R.id.audio_book_image_view)
         buffering = findViewById(R.id.exo_buffering)
 
         brightnessControllBar = findViewById(R.id.brightnessControlBar)
@@ -776,6 +778,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
                 }
                 errorMessageContainer.hide()
                 previewImage.setImageResource(0)
+                audioBookImageView.setImageResource(0)
                 playPause.visibility = View.GONE
                 doubleTapInterceptor.setOnClickListener(this)
                 nextButtonVisibility(false)
@@ -795,6 +798,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
             Player.STATE_IDLE -> {
                 previewImage.setImageResource(0)
+                audioBookImageView.setImageResource(0)
                 playPause.visibility = View.VISIBLE
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
@@ -804,7 +808,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
             Player.STATE_READY -> {
                 errorMessageContainer.hide()
-                setFmRadioPlayerImage(getCurrentChannelInfo())
+                setPlayerImage(getCurrentChannelInfo())
                 playPause.visibility = View.VISIBLE
                 val isChannelLive = player?.isCurrentMediaItemLive == true || isLinearChannel
                 nextButtonVisibility(!isChannelLive)
@@ -910,27 +914,32 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             resizeView(Utils.getRealScreenSize(context))
             
 //            rotateButton.visibility = if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
-            shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+            shareButton.visibility = if (channelInfo.isApproved == 1 && !channelInfo.isAudioBook) View.VISIBLE else View.GONE
             
-            toggleVideoProfileMenuFromPlayer(channelInfo.isFmRadio)
+            toggleVideoProfileMenuFromPlayer(channelInfo.isFmRadio || channelInfo.isAudioBook)
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()
         }
     }
     
-    fun setFmRadioPlayerImage(channelInfo: ChannelInfo?) {
-        if (channelInfo != null && channelInfo.isFmRadio) {
+    fun setPlayerImage(channelInfo: ChannelInfo?) {
+        if (channelInfo != null && (channelInfo.isFmRadio || channelInfo.isAudioBook)) {
             channelInfo.ugcFeaturedImage?.let {
-                previewImage.load(it)
+                if (channelInfo.isAudioBook) {
+                    audioBookImageView.load(it)
+                } else {
+                    previewImage.load(it)
+                }
             }
         } else {
             previewImage.setImageResource(0)
+            audioBookImageView.setImageResource(0)
         }
     }
     
-    private fun toggleVideoProfileMenuFromPlayer(isFmRadio: Boolean = false) {
-        if (isFmRadio) {
+    private fun toggleVideoProfileMenuFromPlayer(isHide: Boolean = false) {
+        if (isHide) {
             videoOption.invisible()
             videoOption.layoutParams.width = 1.px
         } else {

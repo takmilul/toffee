@@ -5,33 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
-import coil.load
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.data.network.response.DataBean
+import com.banglalink.toffee.data.network.response.KabbikItemBean
 import com.banglalink.toffee.databinding.FragmentAudiobookCategoryBinding
 import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<DataBean> {
+class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<KabbikItemBean> {
     
     private val binding get() = _binding!!
     private var myTitle: String? = null
     private lateinit var mAdapter: AudioBookCategoryListAdapter
     private var _binding: FragmentAudiobookCategoryBinding ? =null
-    val viewModel by activityViewModels<AudioBookViewModel>()
+    private val viewModel by activityViewModels<AudioBookViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -61,7 +57,7 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
                     progressDialog.dismiss()
 
                     response.data?.let { audioBookSeeMoreResponse ->
-                        val flattenedData = audioBookSeeMoreResponse.data?.flatMap { it.data } ?: emptyList()
+                        val flattenedData = audioBookSeeMoreResponse.data.flatMap { it.data } ?: emptyList()
 
                         if (flattenedData.isNotEmpty()) {
                             // Filter out items with premium = 0 and price = 0
@@ -89,12 +85,34 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Dat
         myTitle?.let { viewModel.getAudioBookSeeMore(it) }
     }
 
-    override fun onItemClicked(item: DataBean) {
+    override fun onItemClicked(item: KabbikItemBean) {
         super.onItemClicked(item)
-        val bundle = Bundle().apply {
-            putString("id", item.id.toString())
+        launchWithLifecycle {
+            observeAudioBookEpisode()
+            viewModel.getAudioBookEpisode(item.id.toString())
         }
-        findNavController().navigate(R.id.audioBookEpisodeList, args = bundle)
+    }
+    
+    private fun observeAudioBookEpisode() {
+        observe(viewModel.audioBookEpisodeResponse) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    progressDialog.dismiss()
+                    response.data?.let { responseData ->
+                        if (responseData.isNotEmpty()) {
+                            responseData.firstOrNull()?.let { 
+                                homeViewModel.playContentLiveData.value = it
+                            }
+                        } else {
+                            progressDialog.dismiss()
+                        }
+                    }
+                }
+                is Resource.Failure -> {
+                    progressDialog.dismiss()
+                }
+            }
+        }
     }
     
     override fun onDestroyView() {

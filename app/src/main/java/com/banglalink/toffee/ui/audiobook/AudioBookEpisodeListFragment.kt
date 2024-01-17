@@ -1,38 +1,45 @@
 package com.banglalink.toffee.ui.audiobook
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.data.network.response.Episodes
 import com.banglalink.toffee.databinding.FragmentAudiobookPlaylistBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
-class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episodes> {
+class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private var id: String? = null
 
     private var _binding: FragmentAudiobookPlaylistBinding?=null
     private lateinit var mAdapter: AudioBookEpisodeListAdapter
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-    val homeViewModel by activityViewModels<HomeViewModel>()
-    val viewModel by activityViewModels<AudioBookViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val viewModel by activityViewModels<AudioBookViewModel>()
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    
+    companion object {
+        fun newInstance(id: String): AudioBookEpisodeListFragment {
+            val args = bundleOf(
+                Pair("id", id)
+            )
+            val fragment = AudioBookEpisodeListFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAudiobookPlaylistBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,8 +49,8 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
         super.onViewCreated(view, savedInstanceState)
 
         id = arguments?.getString("id")
-
-        progressDialog.show()
+        activity?.title = id
+//        progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookEpisodeListAdapter(this)
         binding.episodeListAudioBook.adapter = mAdapter
@@ -60,17 +67,19 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
                     binding.episodeDescription.show()
                     binding.title.show()
 
-                    binding.title.text = response.data?.name.toString()
-                    binding.episodeDescription.text = HtmlCompat.fromHtml(response.data?.description.toString()
+                    binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
+                    binding.episodeDescription.text = HtmlCompat.fromHtml(response.data?.firstOrNull()?.playlistDescription.toString()
                         .trim()
                         .replace("\n", "<br/>"),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
 
                     response.data?.let { responseData ->
-                        val episodesList = responseData.episodes ?: emptyList()
-
-                        if (episodesList.isNotEmpty()) {
-                            mAdapter.addAll(episodesList)
+                        if (responseData.isNotEmpty()) {
+                            mAdapter.removeAll()
+                            mAdapter.addAll(responseData.mapIndexed { index, channelInfo ->
+                                channelInfo.isSelected = index == 0
+                                channelInfo
+                            })
                             binding.playListText.show()
                             binding.episodeListAudioBook.show()
                             binding.failureInfoLayout.hide()
@@ -89,21 +98,20 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Episod
                 }
             }
         }
-        id?.let { viewModel.getAudioBookEpisode(it) }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onItemClicked(item: Episodes) {
+    override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
 
         for (index in 0 until mAdapter.itemCount) {
             val currentItem = mAdapter.getItem(index)
-            currentItem?.isSelected = false
+            currentItem.isSelected = false
         }
         item.isSelected = !item.isSelected!!
+        homeViewModel.playContentLiveData.value = item
         mAdapter.notifyDataSetChanged()
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

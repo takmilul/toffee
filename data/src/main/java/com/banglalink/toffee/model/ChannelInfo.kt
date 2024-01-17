@@ -178,6 +178,13 @@ data class ChannelInfo(
     var signedCookie: String? = null,
     @SerializedName("sign_cookie_expire")
     var signedCookieExpiryDate: String? =null,
+    
+    @SerializedName("playlist_name")
+    var playlistName: String? = null,
+    @SerializedName("playlist_description")
+    var playlistDescription: String? = null,
+    @SerializedName("isSelected")
+    var isSelected: Boolean? = false,
 ) :Parcelable {
     
     @get:SerializedName("isApproved")
@@ -211,6 +218,10 @@ data class ChannelInfo(
     @get:SerializedName("isFmRadio")
     val isFmRadio: Boolean
         get() = "RADIO".equals(type, ignoreCase = true)
+    
+    @get:SerializedName("isFmRadio")
+    val isAudioBook: Boolean
+        get() = "Audio_Book".equals(type, ignoreCase = true)
     
     @get:SerializedName("isCatchup")
     val isCatchup: Boolean

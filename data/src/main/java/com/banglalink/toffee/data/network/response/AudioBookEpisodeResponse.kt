@@ -1,6 +1,5 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.lib.R
 import com.google.gson.annotations.SerializedName
 
 data class AudioBookEpisodeResponse(
@@ -48,7 +47,7 @@ data class Episodes (
     @SerializedName("created_at"   ) var createdAt   : String? = null,
     @SerializedName("updated_at"   ) var updatedAt   : String? = null,
     @SerializedName("audiobook_id" ) var audiobookId : Int?    = null,
-    @SerializedName("isfree"       ) var isfree      : Int?    = null,
+    @SerializedName("isfree"       ) var isFree      : Int?    = null,
     @SerializedName("play_count"   ) var playCount   : String? = null,
     @SerializedName("duration"     ) var duration    : String? = null
 
