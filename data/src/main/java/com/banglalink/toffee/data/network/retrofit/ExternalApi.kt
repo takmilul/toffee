@@ -10,6 +10,7 @@ import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
 import com.banglalink.toffee.data.network.response.KabbikLoginApiResponse
+import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.data.network.response.QueryPaymentResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -62,4 +63,10 @@ interface ExternalApi {
         @Url url: String?,
         @Header("Authorization") token : String,
     ) : KabbikHomeApiResponse
+
+    @GET
+    suspend fun kabbikTopBanner(
+        @Url url: String?,
+        @Header("Authorization") token : String,
+    ): KabbikTopBannerApiResponse
 }

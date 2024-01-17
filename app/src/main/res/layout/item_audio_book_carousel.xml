@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.ui.audiobook.carousel.PosterDemo" />
+            type="com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse.BannerItemBean" />
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:adjustViewBounds="true"
-            loadImageFromUrl="@{data.imagePath}"
+            bindAudioBookBannerImage="@{data.thumbPath}"
             android:onClick="@{()->callback.onItemClicked(data)}"
             android:contentDescription="@string/txt_featured_image"
             app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintDimensionRatio="1:1.1"
             tools:src="@drawable/placeholder"
-            tools:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

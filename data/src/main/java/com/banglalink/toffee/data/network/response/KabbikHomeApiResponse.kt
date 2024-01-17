@@ -3,12 +3,12 @@ package com.banglalink.toffee.data.network.response
 import com.google.gson.annotations.SerializedName
 
 data class KabbikHomeApiResponse(
-    @SerializedName("data" ) var data : ArrayList<KabbikCategory> = arrayListOf()
+    @SerializedName("data" ) var data : List<KabbikCategory> = listOf()
 ) : ExternalBaseResponse()
 
 data class KabbikCategory (
     @SerializedName("name" ) var name : String?         = null,
-    @SerializedName("data" ) var itemsData : ArrayList<KabbikItemBean> = arrayListOf()
+    @SerializedName("data" ) var itemsData : List<KabbikItemBean> = listOf()
 )
 
 data class KabbikItemBean (

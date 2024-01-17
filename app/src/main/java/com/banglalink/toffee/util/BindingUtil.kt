@@ -53,6 +53,18 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             }
         }
     }
+    @BindingAdapter(value = ["bindAudioBookBannerImage", "maintainRatio"], requireAll = false)
+    fun bindAudioBookBannerImage(view: ImageView, imageUrl: String?, maintainRatio: Boolean = true) {
+        if (imageUrl.isNullOrEmpty()) {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
+            view.loadPlaceholder()
+        } else {
+            view.scaleType = ImageView.ScaleType.FIT_XY
+            view.load(imageUrl) {
+                setImageRequestParams()
+            }
+        }
+    }
     
     @BindingAdapter("loadSmallImageFromUrlRounded")
     fun bindSmallRoundImage(view: ImageView, imageUrl: String?) {
