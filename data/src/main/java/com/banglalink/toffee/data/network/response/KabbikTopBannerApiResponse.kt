@@ -13,8 +13,9 @@ data class KabbikTopBannerApiResponse(
         @SerializedName("author_name" ) var authorName  : String? = null,
         @SerializedName("premium"     ) var premium     : Int?    = null,
         @SerializedName("thumb_path"  ) var thumbPath   : String? = null,
+        @SerializedName("featured_image"  ) var featuredImage   : String? = null,
         @SerializedName("price"       ) var price       : Int?    = null,
         @SerializedName("play_count"  ) var playCount   : Int?    = null,
-        @SerializedName("rating"      ) var rating      : Int?    = null
+        @SerializedName("rating"      ) var rating      : Double?    = null
     )
 }

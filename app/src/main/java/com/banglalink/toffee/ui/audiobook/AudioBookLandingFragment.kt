@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -118,13 +119,11 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             progressDialog.dismiss()
             
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 24.dp),
+                modifier = Modifier.fillMaxSize(),
                 state = rememberLazyListState(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(bottom = 8.dp),
             ) {
                 item { 
                     if (topBannerList.isNotEmpty()) {
@@ -135,6 +134,9 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 }
                 items(categoryList.size) {
                     AudioBookCategory(kabbikCategory = categoryList[it])
+                }
+                item { 
+                    Spacer(modifier = Modifier.padding(4.dp))
                 }
             }
         }

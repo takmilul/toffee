@@ -816,10 +816,13 @@ class HomeActivity : PlayerPageActivity(),
             currentFragmentDestinationId = controller.currentDestination?.id
         }
         
-        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails)
+        bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
+        
+        val hasBackStack = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails)
+        
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
-        binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
+        binding.tbar.toolbar.setNavigationIcon(if(hasBackStack) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
     }
     
     private fun initializeDraggableView() {
