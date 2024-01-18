@@ -37,21 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.KabbikItemBean
-import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
-import com.banglalink.toffee.databinding.FragmentAudioBookLandingBinding
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
-import com.banglalink.toffee.ui.audiobook.category.AudioBookCategoryView
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
@@ -59,8 +53,8 @@ import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
-
-    private val viewModel by viewModels<AudioBookViewModel>()
+    
+    private val viewModel by activityViewModels<AudioBookViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
@@ -88,6 +82,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
         viewModel: AudioBookViewModel,
     ) {
         LaunchedEffect(key1 = true) {
+            observeAudioBookEpisode()
             viewModel.grantToken(
                 success = { token ->
                     viewModel.topBannerApiCompose(token)
@@ -118,19 +113,15 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 contentPadding = PaddingValues(bottom = 8.dp),
             ) {
                 item {
-//                    topBannerList = topBannerList.filter { it.premium == 0 && it.price == 0 }
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
-                            observeAudioBookEpisode()
                             viewModel.getAudioBookEpisode(item.id.toString())
                         }
                     }
                 }
                 items(categoryList.size) {
                     val category = categoryList[it]
-                    if (category.itemsData.containsFree()){
-                        AudioBookCategory(kabbikCategory = category)
-                    }
+                    AudioBookCategory(kabbikCategory = category)
                 }
                 item { 
                     Spacer(modifier = Modifier.size(4.dp))
@@ -179,16 +170,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             ) {
                 items(kabbikCategory.itemsData.size) {
                     val item = kabbikCategory.itemsData[it]
-                    if (item.isFree()){
-                        AudioBookCard(kabbikItemBean = item, onclick = {
-                            observeAudioBookEpisode()
-                            viewModel.getAudioBookEpisode(item.id.toString())
-                        })
-                    }
+                    AudioBookCard(kabbikItemBean = item, onclick = {
+                        viewModel.getAudioBookEpisode(item.id.toString())
+                    })
                 }
             }
         }
     }
+    
     @Composable
     fun AudioBookCard(
         modifier: Modifier = Modifier,
@@ -223,13 +212,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
         progressDialog.dismiss()
     }
     
-    private fun List<KabbikItemBean>.containsFree(): Boolean {
-        return any { it.premium == 0 && it.price == 0 }
-    }
-    private fun KabbikItemBean.isFree(): Boolean {
-        return premium == 0 && price == 0
-    }
-
     private fun observeAudioBookEpisode() {
         observe(viewModel.audioBookEpisodeResponse) { response ->
             when (response) {
