@@ -5,14 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +36,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -41,6 +45,7 @@ import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.KabbikItemBean
+import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.databinding.FragmentAudioBookLandingBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -48,24 +53,21 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.audiobook.category.AudioBookCategoryView
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
-    
-    private var _binding: FragmentAudioBookLandingBinding? = null
-    private val binding get() = _binding!!
+
     private val viewModel by viewModels<AudioBookViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        // Inflate the layout for this fragment
-//        _binding = FragmentAudioBookLandingBinding.inflate(inflater, container, false)
-//        return binding.root
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -79,15 +81,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Kabbik - Audio Book"
-//        progressDialog.show()
-//        observeHomeApiResponse()
-//
-//        launchWithLifecycle {
-//            viewModel.grantToken(
-//                success = { token -> viewModel.homeApi(token) },
-//                failure = { progressDialog.dismiss() }
-//            )
-//        }
     }
     
     @Composable
@@ -112,24 +105,25 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
         }
         
         val categoryList = viewModel.homeApiResponseCompose.value
-        val topBannerList = viewModel.topBannerApiResponseCompose.value
+        var topBannerList = viewModel.topBannerApiResponseCompose.value
         
         if (categoryList.isNotEmpty()) {
             progressDialog.dismiss()
             
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 24.dp),
+                    .fillMaxSize(),
                 state = rememberLazyListState(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                item { 
+                item {
+                    topBannerList = topBannerList.filter { it.premium == 0 && it.price == 0 }
                     if (topBannerList.isNotEmpty()) {
-                        ImageCarousel(topBannerList) {
-                            requireContext().showToast(it.name ?: "")
+                        ImageCarousel(topBannerList) { item->
+                            observeAudioBookEpisode()
+                            viewModel.getAudioBookEpisode(item.id.toString())
                         }
                     }
                 }
@@ -138,6 +132,9 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     if (category.itemsData.containsFree()){
                         AudioBookCategory(kabbikCategory = category)
                     }
+                }
+                item { 
+                    Spacer(modifier = Modifier.size(24.dp))
                 }
             }
         }
@@ -184,7 +181,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 items(kabbikCategory.itemsData.size) {
                     val item = kabbikCategory.itemsData[it]
                     if (item.isFree()){
-                        AudioBookCard(kabbikItemBean = item)
+                        AudioBookCard(kabbikItemBean = item, onclick = {
+                            observeAudioBookEpisode()
+                            viewModel.getAudioBookEpisode(item.id.toString())
+                        })
                     }
                 }
             }
@@ -194,6 +194,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     fun AudioBookCard(
         modifier: Modifier = Modifier,
         kabbikItemBean: KabbikItemBean,
+        onclick: ()->Unit? = {}
     ) {
         Card(
             shape = RoundedCornerShape(10.dp),
@@ -201,8 +202,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 .padding(end = 8.dp)
                 .height(147.dp)
                 .width(98.dp)
+                .clickable {
+                    onclick.invoke()
+                }
         ) {
-//            Box(modifier = Modifier.fillMaxWidth()) {
             Image(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -213,51 +216,11 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 ),
                 contentDescription = "image_"
             )
-//            }
-        }
-    }
-    
-    private fun observeHomeApiResponse() {
-        observe(viewModel.homeApiResponse) {
-            when (it) {
-                is Resource.Success -> {
-                    it.data.data.forEach { kabbikCategory ->
-                        if (kabbikCategory.itemsData.containsFree()) {
-                            binding.audioBookFragmentContainer.addView(
-                                AudioBookCategoryView(
-                                    requireContext()
-                                ).apply {
-                                    setConfiguration(
-                                        cardTitle = kabbikCategory.name ?: "",
-                                        items = kabbikCategory.itemsData,
-                                        onSeeAllClick = {
-                                            val bundle = bundleOf(
-                                                "myTitle" to kabbikCategory.name
-                                            )
-                                            findNavController().navigate(
-                                                R.id.audioBookCategoryDetails,
-                                                args = bundle
-                                            )
-                                            requireContext().showToast(kabbikCategory.name ?: "")
-                                        }
-                                    )
-                                })
-                        }
-                    }.also {
-                        progressDialog.dismiss()
-                    }
-                }
-                
-                is Resource.Failure -> {
-                    progressDialog.dismiss()
-                }
-            }
         }
     }
     
     override fun onDestroyView() {
         super.onDestroyView()
-//        _binding = null
         progressDialog.dismiss()
     }
     
@@ -266,5 +229,27 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     }
     private fun KabbikItemBean.isFree(): Boolean {
         return premium == 0 && price == 0
+    }
+
+    private fun observeAudioBookEpisode() {
+        observe(viewModel.audioBookEpisodeResponse) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    progressDialog.dismiss()
+                    response.data?.let { responseData ->
+                        if (responseData.isNotEmpty()) {
+                            responseData.firstOrNull()?.let {
+                                homeViewModel.playContentLiveData.value = it
+                            }
+                        } else {
+                            progressDialog.dismiss()
+                        }
+                    }
+                }
+                is Resource.Failure -> {
+                    progressDialog.dismiss()
+                }
+            }
+        }
     }
 }
