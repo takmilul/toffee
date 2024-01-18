@@ -14,7 +14,7 @@ class KabbikHomeApiService @Inject constructor(
     suspend fun execute(token : String): KabbikHomeApiResponse {
         return tryIOExternal {
             externalApi.kabbikHomeApi(
-                url = "https://api.kabbik.com/v4/home/home",
+                url = "https://api.kabbik.com/v4/toffee/home/free",
                 token = "Bearer $token"
             )
         }
