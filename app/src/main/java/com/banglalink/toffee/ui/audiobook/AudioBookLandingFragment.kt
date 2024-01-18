@@ -134,7 +134,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     }
                 }
                 items(categoryList.size) {
-                    AudioBookCategory(kabbikCategory = categoryList[it])
+                    val category = categoryList[it]
+                    if (category.itemsData.containsFree()){
+                        AudioBookCategory(kabbikCategory = category)
+                    }
                 }
             }
         }
@@ -179,7 +182,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 state = rememberLazyListState(),
             ) {
                 items(kabbikCategory.itemsData.size) {
-                    AudioBookCard(kabbikItemBean = kabbikCategory.itemsData[it])
+                    val item = kabbikCategory.itemsData[it]
+                    if (item.isFree()){
+                        AudioBookCard(kabbikItemBean = item)
+                    }
                 }
             }
         }
@@ -257,5 +263,8 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     
     private fun List<KabbikItemBean>.containsFree(): Boolean {
         return any { it.premium == 0 && it.price == 0 }
+    }
+    private fun KabbikItemBean.isFree(): Boolean {
+        return premium == 0 && price == 0
     }
 }
