@@ -14,11 +14,11 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
 
 #********************************Start rules****************************************#
 
@@ -122,7 +122,7 @@
 -keep,allowobfuscation class * extends com.google.protobuf.GeneratedMessageLite { *; }
 -assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
 -dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite**
-#-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
 -dontwarn com.google.android.exoplayer2.ExoPlayer
 -dontwarn com.google.android.exoplayer2.ExoPlayerLibraryInfo

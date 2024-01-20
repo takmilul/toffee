@@ -23,8 +23,6 @@ data class QueryPaymentResponse(
 	val transactionStatus: String? = null,
 	@SerializedName("verificationStatus")
 	val verificationStatus: String? = null,
-	@SerializedName("statusCode")
-	val statusCode: String? = null,
 	@SerializedName("statusMessage")
 	val statusMessage: String? = null,
 	@SerializedName("payerReference")

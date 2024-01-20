@@ -50,6 +50,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
@@ -87,7 +88,9 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 success = { token ->
                     viewModel.topBannerApiCompose(token)
                 },
-                failure = {}
+                failure = {
+                    progressDialog.dismiss()
+                }
             )
         }
         LaunchedEffect(key1 = true) {
@@ -95,7 +98,9 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 success = {
                     viewModel.homeApiCompose(it)
                 },
-                failure = {}
+                failure = {
+                    progressDialog.dismiss()
+                }
             )
         }
         

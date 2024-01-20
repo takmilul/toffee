@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 
 suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
     val response = block()
-    return when{
+    return when {
         response.errorCode == UN_ETHICAL_ACTIVITIES_ERROR_CODE -> {
             EventProvider.post(UnEthicalActivitiesException(response.errorMsg ?: "You are trying to do unethical activities"))
             throw ApiException(
@@ -28,6 +28,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
                 response.errorMsg ?: "You are trying to do unethical activity"
             )
         }
+        
         response.errorCode == OUTSIDE_OF_BD_ERROR_CODE -> {
             EventProvider.post(OutsideOfBDException(response.errorMsg ?: "You are trying to connect out of Bangladesh"))
             throw ApiException(
@@ -35,6 +36,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
                 response.errorMsg ?: "Toffee is available only in Bangladesh"
             )
         }
+        
         response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE -> {
             EventProvider.post(CustomerNotFoundException(response.errorCode, "Customer multiple login occurred"))
             throw CustomerNotFoundException(
@@ -42,19 +44,22 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
                 ""//we do not want to show error message for this error code
             )
         }
-        response.status == 1 ->{//server suffered a serious error
+        
+        response.status == 1 -> {//server suffered a serious error
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again."
+                response.errorMsg ?: "Something went wrong. Please try again."
             )
         }
-        response.errorCode != 0 ->{//hmmm....error occurred ....throw it
+        
+        response.errorCode != 0 -> {//hmmm....error occurred ....throw it
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again."
+                response.errorMsg ?: "Something went wrong. Please try again."
             )
         }
-        else->{
+        
+        else -> {
             response//seems like all fine ...return the body
         }
     }
@@ -62,20 +67,22 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> T): T {
 
 suspend fun <T : ExternalBaseResponse> tryIOExternal(block: suspend () -> T): T {
     val response = block()
-    return when{
-        response.status != 200 -> {//server suffered a serious error
+    return when {
+        response.statusCode != 200 -> {//server suffered a serious error
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again."
+                response.errorMsg ?: "Something went wrong. Please try again."
             )
         }
+        
         response.errorCode != 0 -> {//hmmm....error occurred ....throw it
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again."
+                response.errorMsg ?: "Something went wrong. Please try again."
             )
         }
-        else-> {
+        
+        else -> {
             response//seems like all fine ...return the body
         }
     }
@@ -86,7 +93,7 @@ fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
         try {
             val response = networkCall.invoke()
             emit(Resource.Success(response))
-        } catch (e:Exception){
+        } catch (e: Exception) {
             emit(Resource.Failure(getError(e)))
         }
     }
@@ -95,7 +102,8 @@ suspend fun <T> resultFromResponse(networkCall: suspend () -> T): Resource<T> =
     try {
         val response = networkCall.invoke()
         Resource.Success(response)
-    } catch (e:Exception){
+    } catch (e: Exception) {
+        e.printStackTrace()
         ToffeeAnalytics.logBreadCrumb(e.message ?: "")
         Resource.Failure(getError(e))
     }
@@ -104,7 +112,8 @@ suspend fun <T> resultFromExternalResponse(networkCall: suspend () -> T): Resour
     try {
         val response = networkCall.invoke()
         Resource.Success(response)
-    } catch (e:Exception){
+    } catch (e: Exception) {
+        e.printStackTrace()
         ToffeeAnalytics.logBreadCrumb(e.message ?: "")
         Resource.Failure(getExternalError(e))
     }

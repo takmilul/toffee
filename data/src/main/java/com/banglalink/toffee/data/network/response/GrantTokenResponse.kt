@@ -3,8 +3,6 @@ package com.banglalink.toffee.data.network.response
 import com.google.gson.annotations.SerializedName
 
 data class GrantTokenResponse (
-	@SerializedName("statusCode")
-	val statusCode : String? = null,
 	@SerializedName("statusMessage")
 	val statusMessage : String? = null,
 	@SerializedName("id_token")

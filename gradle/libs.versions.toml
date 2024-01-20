@@ -29,6 +29,7 @@ kotlin-version = "1.9.21"
 kotlin-ktx-version = "1.12.0"
 kotlin-coroutine-version = "1.7.3"
 ksp-plugin-version = "1.9.21-1.0.16"
+kotlin-serialization-json-version = "1.6.2"
 
 # Hilt
 hilt-version = "1.1.0"
@@ -158,6 +159,7 @@ legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", ver
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "kotlin-ktx-version" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin-version" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutine-version" }
+kotlin-json-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref ="kotlin-serialization-json-version" }
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-android-version" }
@@ -351,14 +353,15 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin-version" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin-version" }
 kotlin-gradle = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin-version" }
-com-android-application = { id = "com.android.application", version.ref = "gradle-plugin-version" }
-com-android-library = { id = "com.android.library", version.ref = "gradle-plugin-version" }
+kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
+android-application = { id = "com.android.application", version.ref = "gradle-plugin-version" }
+android-library = { id = "com.android.library", version.ref = "gradle-plugin-version" }
 org-jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "jlleitschuh-version" }
-androidx-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation-version" }
-com-gms-google-services = { id = "com.google.gms.google-services", version.ref = "google-services-version" }
-org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
-com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android-version" }
-com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin-version" }
+navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation-version" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services-version" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android-version" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin-version" }
 conviva-tracker-plugin = { id = "com.conviva.sdk.android-plugin", version.ref = "conviva-plugin-version" }
 
 

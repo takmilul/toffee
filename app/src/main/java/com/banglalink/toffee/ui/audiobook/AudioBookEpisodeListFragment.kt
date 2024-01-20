@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentAudiobookPlaylistBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -58,44 +59,49 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     }
     
     private fun observeAudioBookEpisodeList() {
-        when (val response = viewModel.audioBookEpisodeResponse.value) {
-            is Resource.Success -> {
-//                binding.progressBar.hide()
-                progressDialog.dismiss()
-                binding.episodeDescription.show()
-                binding.title.show()
-                
-                binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
-                binding.episodeDescription.text = HtmlCompat.fromHtml(response.data?.firstOrNull()?.playlistDescription.toString()
-                    .trim()
-                    .replace("\n", "<br/>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-                
-                response.data?.let { responseData ->
-                    if (responseData.isNotEmpty()) {
-                        mAdapter.removeAll()
-                        mAdapter.addAll(responseData.mapIndexed { index, channelInfo ->
-                            channelInfo.isSelected = index == 0
-                            channelInfo
-                        })
-                        binding.playListText.show()
-                        binding.episodeListAudioBook.show()
-                        binding.failureInfoLayout.hide()
-                    } else {
-                        progressDialog.dismiss()
-                        binding.episodeListAudioBook.hide()
-                        binding.failureInfoLayout.show()
+        observe(viewModel.audioBookEpisodeResponseObserver) { response ->
+            when (response) {
+                is Resource.Success -> {
+    //                binding.progressBar.hide()
+                    progressDialog.dismiss()
+                    binding.episodeDescription.show()
+                    binding.title.show()
+                    
+                    binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
+                    binding.episodeDescription.text = HtmlCompat.fromHtml(
+                        response.data?.firstOrNull()?.playlistDescription.toString()
+                            .trim()
+                            .replace("\n", "<br/>"),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                    
+                    response.data?.let { responseData ->
+                        if (responseData.isNotEmpty()) {
+                            mAdapter.removeAll()
+                            mAdapter.addAll(responseData.mapIndexed { index, channelInfo ->
+                                channelInfo.isSelected = index == 0
+                                channelInfo
+                            })
+                            binding.playListText.show()
+                            binding.episodeListAudioBook.show()
+                            binding.failureInfoLayout.hide()
+                        } else {
+                            progressDialog.dismiss()
+                            binding.episodeListAudioBook.hide()
+                            binding.failureInfoLayout.show()
+                        }
                     }
                 }
+                
+                is Resource.Failure -> {
+    //                    binding.progressBar.hide()
+                    progressDialog.dismiss()
+                    binding.episodeListAudioBook.hide()
+                    binding.failureInfoLayout.show()
+                }
+                
+                else -> {}
             }
-            is Resource.Failure -> {
-//                    binding.progressBar.hide()
-                progressDialog.dismiss()
-                binding.episodeListAudioBook.hide()
-                binding.failureInfoLayout.show()
-            }
-            
-            else -> {}
         }
     }
     
