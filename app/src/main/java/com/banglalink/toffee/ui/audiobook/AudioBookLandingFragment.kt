@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
@@ -58,11 +57,12 @@ import com.banglalink.toffee.ui.compose_theme.ScreenBackground
 import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
-    private val viewModel by viewModels<AudioBookViewModel>()
+    private val viewModel by activityViewModels<AudioBookViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
@@ -90,11 +90,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
         viewModel: AudioBookViewModel,
     ) {
         LaunchedEffect(key1 = true) {
+            observeAudioBookEpisode()
             viewModel.grantToken(
                 success = { token ->
                     viewModel.topBannerApiCompose(token)
                 },
-                failure = {}
+                failure = {
+                    progressDialog.dismiss()
+                }
             )
         }
         LaunchedEffect(key1 = true) {
@@ -102,12 +105,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 success = {
                     viewModel.homeApiCompose(it)
                 },
-                failure = {}
+                failure = {
+                    progressDialog.dismiss()
+                }
             )
         }
         
         val categoryList = viewModel.homeApiResponseCompose.value
-        var topBannerList = viewModel.topBannerApiResponseCompose.value
+        val topBannerList = viewModel.topBannerApiResponseCompose.value
         
         if (categoryList.isNotEmpty()) {
             progressDialog.dismiss()
@@ -125,25 +130,21 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 state = rememberLazyListState(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(bottom = 8.dp),
             ) {
                 item {
-                    topBannerList = topBannerList.filter { it.premium == 0 && it.price == 0 }
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
-                            observeAudioBookEpisode()
                             viewModel.getAudioBookEpisode(item.id.toString())
                         }
                     }
                 }
                 items(categoryList.size) {
                     val category = categoryList[it]
-                    if (category.itemsData.containsFree()){
-                        AudioBookCategory(kabbikCategory = category)
-                    }
+                    AudioBookCategory(kabbikCategory = category)
                 }
                 item { 
-                    Spacer(modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.size(4.dp))
                 }
             }
         }
@@ -200,16 +201,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             ) {
                 items(kabbikCategory.itemsData.size) {
                     val item = kabbikCategory.itemsData[it]
-                    if (item.isFree()){
-                        AudioBookCard(kabbikItemBean = item, onclick = {
-                            observeAudioBookEpisode()
-                            viewModel.getAudioBookEpisode(item.id.toString())
-                        })
-                    }
+                    AudioBookCard(kabbikItemBean = item, onclick = {
+                        viewModel.getAudioBookEpisode(item.id.toString())
+                    })
                 }
             }
         }
     }
+
     @Composable
     fun AudioBookCard(
         modifier: Modifier = Modifier,
@@ -242,13 +241,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()
-    }
-    
-    private fun List<KabbikItemBean>.containsFree(): Boolean {
-        return any { it.premium == 0 && it.price == 0 }
-    }
-    private fun KabbikItemBean.isFree(): Boolean {
-        return premium == 0 && price == 0
     }
 
     private fun observeAudioBookEpisode() {

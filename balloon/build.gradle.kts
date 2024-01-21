@@ -1,8 +1,7 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
-        id(com.android.library.get().pluginId)
-        id(org.jetbrains.kotlin.android.get().pluginId)
+        alias(android.library)
+        alias(kotlin.android)
     }
 }
 
@@ -23,7 +22,6 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             isJniDebuggable = false
-            isRenderscriptDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

@@ -20,8 +20,8 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
+    
     private var id: String? = null
-
     private var _binding: FragmentAudiobookPlaylistBinding?=null
     private lateinit var mAdapter: AudioBookEpisodeListAdapter
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
@@ -44,35 +44,37 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         _binding = FragmentAudiobookPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         id = arguments?.getString("id")
         activity?.title = id
 //        progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookEpisodeListAdapter(this)
         binding.episodeListAudioBook.adapter = mAdapter
-
-        observeAudioBookEpisode()
+        
+        observeAudioBookEpisodeList()
     }
-
-    private fun observeAudioBookEpisode() {
-        observe(viewModel.audioBookEpisodeResponse) { response ->
+    
+    private fun observeAudioBookEpisodeList() {
+        observe(viewModel.audioBookEpisodeResponseObserver) { response ->
             when (response) {
                 is Resource.Success -> {
-//                    binding.progressBar.hide()
+    //                binding.progressBar.hide()
                     progressDialog.dismiss()
                     binding.episodeDescription.show()
                     binding.title.show()
-
+                    
                     binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
-                    binding.episodeDescription.text = HtmlCompat.fromHtml(response.data?.firstOrNull()?.playlistDescription.toString()
-                        .trim()
-                        .replace("\n", "<br/>"),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY)
-
+                    binding.episodeDescription.text = HtmlCompat.fromHtml(
+                        response.data?.firstOrNull()?.playlistDescription.toString()
+                            .trim()
+                            .replace("\n", "<br/>"),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                    
                     response.data?.let { responseData ->
                         if (responseData.isNotEmpty()) {
                             mAdapter.removeAll()
@@ -90,19 +92,22 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
                         }
                     }
                 }
+                
                 is Resource.Failure -> {
-//                    binding.progressBar.hide()
+    //                    binding.progressBar.hide()
                     progressDialog.dismiss()
                     binding.episodeListAudioBook.hide()
                     binding.failureInfoLayout.show()
                 }
+                
+                else -> {}
             }
         }
     }
-
+    
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-
+        
         for (index in 0 until mAdapter.itemCount) {
             val currentItem = mAdapter.getItem(index)
             currentItem.isSelected = false

@@ -1,20 +1,18 @@
-@file:Suppress("UnstableApiUsage")
-
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
+        id(android.application.get().pluginId)
+        id(kotlin.android.get().pluginId)
         id(ksp.get().pluginId)
         id(kotlin.kapt.get().pluginId)
-        id(com.android.application.get().pluginId)
-        id(org.jetbrains.kotlin.android.get().pluginId)
         id(kotlin.parcelize.get().pluginId)
-        id(com.gms.google.services.get().pluginId)
-        id(androidx.navigation.safeargs.get().pluginId)
-        id(com.google.dagger.hilt.android.get().pluginId)
-        id(com.google.firebase.crashlytics.get().pluginId)
+        id(kotlin.serialize.get().pluginId) version libs.versions.kotlin.version.get()
+        id(google.services.get().pluginId)
+        id(navigation.safeargs.get().pluginId)
+        id(hilt.android.get().pluginId)
+        id(firebase.crashlytics.get().pluginId)
         id(conviva.tracker.plugin.get().pluginId)
     }
 }
@@ -120,9 +118,9 @@ android {
         }
         getByName("debug") {
             isDebuggable = true
-            isJniDebuggable = true
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isJniDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native
@@ -189,6 +187,7 @@ dependencies {
         implementation(kotlin.stdlib)
         implementation(core.ktx)
         implementation(kotlin.coroutines)
+        implementation(kotlin.json.serialization)
         
         // Hilt
         implementation(bundles.hilt)

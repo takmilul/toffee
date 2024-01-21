@@ -1,13 +1,13 @@
 @file:Suppress("UnstableApiUsage")
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     with(libs.plugins) {
-        id(com.android.library.get().pluginId)
-        id(org.jetbrains.kotlin.android.get().pluginId)
+        id(android.library.get().pluginId)
+        id(kotlin.android.get().pluginId)
         id(kotlin.parcelize.get().pluginId)
+        id(kotlin.serialize.get().pluginId) version libs.versions.kotlin.version.get()
         id(ksp.get().pluginId)
-        id(com.google.dagger.hilt.android.get().pluginId)
+        id(hilt.android.get().pluginId)
     }
 }
 
@@ -87,6 +87,18 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             isJniDebuggable = false
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("debug") {
+            isJniDebuggable = false
+            isMinifyEnabled = false
+            isShrinkResources = false
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native

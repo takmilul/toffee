@@ -3,8 +3,8 @@ package com.banglalink.toffee.data.network.response
 import com.google.gson.annotations.SerializedName
 
 open class ExternalBaseResponse {
-    @SerializedName("status")
-    var status: Int = 200
+    @SerializedName("statusCode")
+    var statusCode: Int = 200
     
     @SerializedName("version")
     var version: String? = null

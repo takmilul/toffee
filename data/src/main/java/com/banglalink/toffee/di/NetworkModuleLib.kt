@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
 import com.banglalink.toffee.data.network.interceptor.IGetMethodTracker
+import com.banglalink.toffee.data.network.interceptor.PlainInterceptor
 import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -63,7 +64,7 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @PlainHttpClient
-    fun providesPlainHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+    fun providesPlainHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, mPref:com.banglalink.toffee.data.storage.SessionPreference, plainInterceptor: PlainInterceptor): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
@@ -73,6 +74,7 @@ object NetworkModuleLib {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })
             }
+            addInterceptor(plainInterceptor)
             dns(toffeeDns)
             cache(cache)
         }
