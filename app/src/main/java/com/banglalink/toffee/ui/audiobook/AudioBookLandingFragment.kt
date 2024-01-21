@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -33,27 +34,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.KabbikItemBean
-import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
-import com.banglalink.toffee.databinding.FragmentAudioBookLandingBinding
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
-import com.banglalink.toffee.ui.audiobook.category.AudioBookCategoryView
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
+import com.banglalink.toffee.ui.compose_theme.CardTitleColor
+import com.banglalink.toffee.ui.compose_theme.Fonts
+import com.banglalink.toffee.ui.compose_theme.ScreenBackground
+import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
@@ -112,7 +114,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(
+                        if (isSystemInDarkTheme()) {
+                            ScreenBackgroundDark
+                        } else {
+                            ScreenBackground
+                        }
+                    ),
                 state = rememberLazyListState(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
@@ -161,7 +170,13 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                Text(text = kabbikCategory.name ?: "Unknown", fontSize = 16.sp, color = MaterialTheme.colors.onPrimary)
+                Text(
+                    text = kabbikCategory.name ?: "Unknown",
+                    fontSize = 16.sp,
+                    fontFamily = Fonts.roboto,
+                    fontWeight = FontWeight.Medium,
+                    color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor }
+                )
                 TextButton(onClick = {
                     val bundle = bundleOf(
                         "myTitle" to kabbikCategory.name
@@ -171,7 +186,12 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                         args = bundle
                     )
                 }) {
-                    Text(text = "See All", fontSize = 12.sp, color = MaterialTheme.colors.onPrimary)
+                    Text(
+                        text = "See All",
+                        fontSize = 12.sp,
+                        fontFamily = Fonts.roboto,
+                        fontWeight = FontWeight.Medium,
+                        color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor })
                 }
             }
             LazyRow(
