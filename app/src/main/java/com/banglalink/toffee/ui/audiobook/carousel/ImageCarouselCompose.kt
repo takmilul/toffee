@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.audiobook.carousel
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -13,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -29,17 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse.BannerItemBean
 import com.banglalink.toffee.ui.compose_theme.ColorAccent
 import com.banglalink.toffee.util.CoilUtils
-import com.google.accompanist.pager.HorizontalPagerIndicator
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
@@ -50,7 +43,7 @@ fun ImageCarousel(
 ) {
     var itemIndex = 0
 //    val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(initialPage = 1){ sliderList.size }
+    val pagerState = rememberPagerState(initialPage = 0){ sliderList.size }
     Box(
         modifier = Modifier.wrapContentSize(),
         contentAlignment = Alignment.BottomCenter

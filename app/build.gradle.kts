@@ -105,8 +105,8 @@ android {
     buildTypes {
         getByName("release") {
             isDebuggable = false
-            isMinifyEnabled = true
             isJniDebuggable = false
+            isMinifyEnabled = true
             isShrinkResources = true
             ndk {
 //            debugSymbolLevel = "FULL"
@@ -118,9 +118,9 @@ android {
         }
         getByName("debug") {
             isDebuggable = true
-            isJniDebuggable = false
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isJniDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             ndk {
 //            debugSymbolLevel = "FULL"
 //            Specifies the ABI configurations of your native
