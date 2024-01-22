@@ -1,26 +1,28 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class KabbikHomeApiResponse(
-    @SerializedName("data" ) val data : List<KabbikCategory> = listOf()
+    @SerialName("data" ) val data : List<KabbikCategory> = listOf()
 ) : ExternalBaseResponse()
-
+@Serializable
 data class KabbikCategory (
-    @SerializedName("name" ) val name : String?         = null,
-    @SerializedName("data" ) val itemsData : List<KabbikItemBean> = listOf()
+    @SerialName("name" ) val name : String?         = null,
+    @SerialName("data" ) val itemsData : List<KabbikItemBean> = listOf()
 )
-
+@Serializable
 data class KabbikItemBean (
-    @SerializedName("id"           ) val id          : Int?    = null,
-    @SerializedName("name"         ) val name        : String? = null,
-    @SerializedName("en_name"      ) val enName      : String? = null,
-    @SerializedName("description"  ) val description : String? = null,
-    @SerializedName("author_name"  ) val authorName  : String? = null,
-    @SerializedName("premium"      ) val premium     : Int?    = null,
-    @SerializedName("thumb_path"   ) val thumbPath   : String? = null,
-    @SerializedName("price"        ) val price       : Int?    = null,
-    @SerializedName("play_count"   ) val playCount   : Int?    = null,
-    @SerializedName("rating"       ) val rating      : Double? = null,
-    @SerializedName("total_played" ) val totalPlayed : Int?    = null
+    @SerialName("id"           ) val id          : Int?    = null,
+    @SerialName("name"         ) val name        : String? = null,
+    @SerialName("en_name"      ) val enName      : String? = null,
+    @SerialName("description"  ) val description : String? = null,
+    @SerialName("author_name"  ) val authorName  : String? = null,
+    @SerialName("premium"      ) val premium     : Int?    = null,
+    @SerialName("thumb_path"   ) val thumbPath   : String? = null,
+    @SerialName("price"        ) val price       : Int?    = null,
+    @SerialName("play_count"   ) val playCount   : Int?    = null,
+    @SerialName("rating"       ) val rating      : Double? = null,
+    @SerialName("total_played" ) val totalPlayed : Int?    = null
 )

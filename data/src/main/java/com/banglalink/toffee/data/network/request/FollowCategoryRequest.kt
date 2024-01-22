@@ -1,14 +1,16 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FollowCategoryRequest(
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int,
-    @SerializedName("isFollowed")
+    @SerialName("isFollowed")
     val isFollowed: Int,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String
 ) : BaseRequest("ugcFollowOnCategory")

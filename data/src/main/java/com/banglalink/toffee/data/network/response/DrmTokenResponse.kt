@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.DrmToken
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DrmTokenResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: DrmToken?
 ) : BaseResponse()

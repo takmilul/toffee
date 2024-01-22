@@ -5,9 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import javax.inject.Qualifier
 
 @Qualifier

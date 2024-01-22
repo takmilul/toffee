@@ -5,7 +5,9 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
 

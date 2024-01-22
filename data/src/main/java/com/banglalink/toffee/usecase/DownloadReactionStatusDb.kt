@@ -1,7 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import android.util.*
+import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
-import java.util.zip.*
+import java.util.zip.CRC32
 
 class DownloadReactionStatusDb(
     private val dbApi: DbApi,

@@ -2,142 +2,99 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
-data class PlayerEventData (
-    
+@Serializable
+data class PlayerEventData(
     @PrimaryKey(autoGenerate = true)
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long = 0,
-    
-    @SerializedName("sessionId")
+    @SerialName("sessionId")
     var sessionId: String? = null,
-    
-    @SerializedName("contentPlayingSessionId")
+    @SerialName("contentPlayingSessionId")
     var contentPlayingSessionId: String? = null,
-    
-    @SerializedName("contentPlayingSessionSequenceId")
+    @SerialName("contentPlayingSessionSequenceId")
     var contentPlayingSessionSequenceId: String? = null,
-    
-    @SerializedName("appLifeCycleId")
+    @SerialName("appLifeCycleId")
     var appLifeCycleId: String? = null,
-    
-    @SerializedName("isForeground")
+    @SerialName("isForeground")
     var isForeground: String? = null,
-    
-    @SerializedName("isInternetAvailable")
+    @SerialName("isInternetAvailable")
     var isInternetAvailable: Boolean? = null,                               //ping tool
-    
-    @SerializedName("networkType")
+    @SerialName("networkType")
     var networkType: String? = null,                                        //ping tool
-    
-    @SerializedName("ispOrTelecomOperator")
+    @SerialName("ispOrTelecomOperator")
     var ispOrTelecomOperator: String? = null,                               //ping tool
-    
-    @SerializedName("remoteHost")
+    @SerialName("remoteHost")
     var remoteHost: String? = null,                                         //ping tool
-    
-    @SerializedName("remoteIp")
+    @SerialName("remoteIp")
     var remoteIp: String? = null,                                           //ping tool
-    
-    @SerializedName("latencyClientToCdn")
+    @SerialName("latencyClientToCdn")
     var latencyClientToCdn: String? = null,                                 //ping tool
-    
-    @SerializedName("playerEventId")
+    @SerialName("playerEventId")
     var playerEventId: Int? = null,
-    
-    @SerializedName("playerEvent")
+    @SerialName("playerEvent")
     var playerEvent: String? = null,
-    
-    @SerializedName("contentId")
+    @SerialName("contentId")
     var contentId: String? = null,
-    
-    @SerializedName("contentTitle")
+    @SerialName("contentTitle")
     var contentTitle: String? = null,
-    
-    @SerializedName("contentProviderId")
+    @SerialName("contentProviderId")
     var contentProviderId: String? = null,
-    
-    @SerializedName("contentProviderName")
+    @SerialName("contentProviderName")
     var contentProviderName: String? = null,
-    
-    @SerializedName("contentCategoryId")
+    @SerialName("contentCategoryId")
     var contentCategoryId: Int? = 0,
-    
-    @SerializedName("contentCategoryName")
+    @SerialName("contentCategoryName")
     var contentCategoryName: String? = null,
-    
-    @SerializedName("contentDuration")
+    @SerialName("contentDuration")
     var contentDuration: String? = null,
-    
-    @SerializedName("seasonName")
+    @SerialName("seasonName")
     var seasonName: String? = null,
-    
-    @SerializedName("seasonNo")
+    @SerialName("seasonNo")
     var seasonNo: Int? = null,
-    
-    @SerializedName("episodeName")
+    @SerialName("episodeName")
     var episodeName: String? = null,
-    
-    @SerializedName("episodeNo")
+    @SerialName("episodeNo")
     var episodeNo: String? = null,
-    
-    @SerializedName("contentType")
+    @SerialName("contentType")
     var contentType: String? = null,
-    
-    @SerializedName("isDrm")
+    @SerialName("isDrm")
     var isDrm: Boolean? = null,
-    
-    @SerializedName("playingUrl")
+    @SerialName("playingUrl")
     var playingUrl: String? = null,
-    
-    @SerializedName("affiliate")
+    @SerialName("affiliate")
     var affiliate: String? = null,
-    
-    @SerializedName("agent")
+    @SerialName("agent")
     var agent: String? = null,
-    
-    @SerializedName("errorMessage")
+    @SerialName("errorMessage")
     var errorMessage: String? = null,
-    
-    @SerializedName("errorCause")
+    @SerialName("errorCause")
     var errorCause: String? = null,
-    
-    @SerializedName("adId")
+    @SerialName("adId")
     var adId: String? = null,
-    
-    @SerializedName("adEvents")
+    @SerialName("adEvents")
     var adEvent: String? = null,
-    
-    @SerializedName("adPosition")
+    @SerialName("adPosition")
     var adPosition: String? = null,
-    
-    @SerializedName("adIsLive")
+    @SerialName("adIsLive")
     var adIsLive: String? = null,
-    
-    @SerializedName("adCreativeId")
+    @SerialName("adCreativeId")
     var adCreativeId: String? = null,
-    
-    @SerializedName("adFirstCreativeId")
+    @SerialName("adFirstCreativeId")
     var adFirstCreativeId: String? = null,
-    
-    @SerializedName("adFirstAdId")
+    @SerialName("adFirstAdId")
     var adFirstAdId: String? = null,
-    
-    @SerializedName("adFirstAdSystem")
+    @SerialName("adFirstAdSystem")
     var adFirstAdSystem: String? = null,
-    
-    @SerializedName("adSystem")
+    @SerialName("adSystem")
     var adSystem: String? = null,
-    
-    @SerializedName("adTechnology")
+    @SerialName("adTechnology")
     var adTechnology: String? = null,
-    
-    @SerializedName("adIsSlate")
+    @SerialName("adIsSlate")
     var adIsSlate: String? = null,
-    
-    @SerializedName("adErrorMessage")
+    @SerialName("adErrorMessage")
     var adErrorMessage: String? = null,
-
-): BasePlayerEventData()
+) : BasePlayerEventData()

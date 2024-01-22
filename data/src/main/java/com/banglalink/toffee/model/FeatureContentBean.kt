@@ -1,29 +1,31 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.enums.PageType
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FeatureContentBean(
-    @SerializedName(value = "channels", alternate = ["channelInfo"])
+    @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
     val channels: List<ChannelInfo>?,
-    @SerializedName("subcategory")
+    @SerialName("subcategory")
     val subcategories: List<SubCategory>?,
-    @SerializedName("hashTags")
+    @SerialName("hashTags")
     val hashTags: List<String>? = null,
-    @SerializedName("followers")
+    @SerialName("followers")
     val followers: Long,
-    @SerializedName("isFollowed")
+    @SerialName("isFollowed")
     val isFollowed: Int = 0,
-    @SerializedName("count")
+    @SerialName("count")
     val count: Int,
-    @SerializedName("totalCount")
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null,
-    @SerializedName("featureType")
+    @SerialName("featureType")
     val featureType: Int? = null
 ) {
-    @get:SerializedName("pageType")
+//    @get:SerializedName("pageType")
     val pageType: PageType
         get() {
             return when(featureType) {

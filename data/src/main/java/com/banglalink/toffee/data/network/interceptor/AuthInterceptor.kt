@@ -17,7 +17,7 @@ import com.banglalink.toffee.extension.overrideUrl
 import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.Log
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.RequestBody
@@ -31,6 +31,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
+    private val json: Json,
     private val mPref: SessionPreference,
     @ApplicationId private val appId: String,
     @AppVersionCode private val appVersionCode: Int,
@@ -48,7 +49,7 @@ class AuthInterceptor @Inject constructor(
         val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
         val requestJsonString = bodyToString(request.body)
-        val baseRequest = try { Gson().fromJson(requestJsonString, BaseRequest::class.java) } catch (e: Exception) { null }
+        val baseRequest = try { json.decodeFromString<BaseRequest>(requestJsonString) } catch (e: Exception) { null }
         if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != BuildConfig.APP_VERSION_NAME || appId != "com.banglalink.toffee" || appVersionCode != BuildConfig.APP_VERSION_CODE || appVersionName != BuildConfig.APP_VERSION_NAME)) {
             throw IOException()
         }
@@ -109,7 +110,7 @@ class AuthInterceptor @Inject constructor(
                         .message(msg)
                         .build()
                 } else {
-                    val errorBody = Gson().fromJson(responseJsonString, BaseResponse::class.java)
+                    val errorBody = json.decodeFromString<BaseResponse>(responseJsonString)
                     response.newBuilder()
                         .code(200)
                         .body(body)

@@ -1,18 +1,20 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContentUploadResponseBean(
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String,
-    @SerializedName("message")
+    @SerialName("message")
     val message: String,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Long,
-    @SerializedName("messageType")
+    @SerialName("messageType")
     val messageType: String,
-    @SerializedName("uploadVODSignedUrl")
+    @SerialName("uploadVODSignedUrl")
     val uploadVODSignedUrl: String,
-    @SerializedName("uploadCopyrightSignedUrl")
+    @SerialName("uploadCopyrightSignedUrl")
     val uploadCopyrightSignedUrl: String? = null
 )

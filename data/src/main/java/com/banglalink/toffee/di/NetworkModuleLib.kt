@@ -18,19 +18,21 @@ import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.util.CustomCookieJar
 import com.banglalink.toffee.util.Log
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.json.Json
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.TlsVersion.*
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.CookieManager
 import java.util.concurrent.*
 import javax.inject.Singleton
@@ -128,22 +130,22 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
-    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient, config: Config): Retrofit {
+    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient, config: Config, json: Json): Retrofit {
         return Retrofit.Builder()
             .baseUrl(config.url)
             .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
     
     @Provides
     @Singleton
     @ExternalApiRetrofit
-    fun providesExternalApiRetrofit(@PlainHttpClient httpClient: OkHttpClient, config: Config): Retrofit {
+    fun providesExternalApiRetrofit(@PlainHttpClient httpClient: OkHttpClient, config: Config, json: Json): Retrofit {
         return Retrofit.Builder()
             .baseUrl(config.url)
             .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
     
@@ -245,5 +247,14 @@ object NetworkModuleLib {
     @Singleton
     fun providesGetTracker(): IGetMethodTracker {
         return GetTracker()
+    }
+    
+    @Provides
+    @Singleton
+    fun providesJsonWithConfig(): Json {
+        return Json {
+            encodeDefaults = false
+            ignoreUnknownKeys = true
+        }
     }
 }

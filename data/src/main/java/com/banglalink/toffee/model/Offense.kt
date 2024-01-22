@@ -1,16 +1,17 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Parcelize@Serializable
 data class Offense(
-    @SerializedName(value="id", alternate = ["sub_id"])
+    @SerialName(value="id"/*, alternate = ["sub_id"]*/)
     val id: Long,
-    @SerializedName("sub_head_name")
+    @SerialName("sub_head_name")
     val name: String,
-    @SerializedName("sub_head_sorting")
+    @SerialName("sub_head_sorting")
     val sorting: Int = 0
 ): Parcelable {
     override fun toString() = name

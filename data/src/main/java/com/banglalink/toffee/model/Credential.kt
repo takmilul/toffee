@@ -1,15 +1,17 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.data.network.response.BodyResponse
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class Credential : BodyResponse() {
-    @SerializedName("password")
+    @SerialName("password")
     var password: String? = null
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     var systemTime: String? = null
-    @SerializedName("customerId")
+    @SerialName("customerId")
     var customerId: Int = 0
-    @SerializedName("isVerifiedUser")
+    @SerialName("isVerifiedUser")
     var isVerifiedUser: Boolean? = false
 }

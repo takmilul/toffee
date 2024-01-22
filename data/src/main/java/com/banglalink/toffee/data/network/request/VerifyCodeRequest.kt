@@ -1,21 +1,23 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class VerifyCodeRequest(
-    @SerializedName("code")
+    @SerialName("code")
     val code: String,
-    @SerializedName("regSessionToken")
+    @SerialName("regSessionToken")
     val regSessionToken: String,
-    @SerializedName("referralCode")
+    @SerialName("referralCode")
     val referralCode: String,
-    @SerializedName("fcmToken")
+    @SerialName("fcmToken")
     val fcmToken: String,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String,
-    @SerializedName("parentId")
+    @SerialName("parentId")
     val parentId: Int = 1
 ) : BaseRequest(ApiNames.VERIFY_OTP)

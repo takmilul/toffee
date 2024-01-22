@@ -1,9 +1,6 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.network.request.PackVoucherMethodRequest
-import com.banglalink.toffee.data.network.request.PremiumPackDetailRequest
-import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
-import com.banglalink.toffee.data.network.response.VoucherPaymentMethodResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference

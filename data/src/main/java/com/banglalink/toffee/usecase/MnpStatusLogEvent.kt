@@ -3,21 +3,24 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class MnpStatusLogEvent @Inject constructor() {
-    private val gson = Gson()
+class MnpStatusLogEvent @Inject constructor(
+    private val json: Json
+) {
 
     fun execute(mnpStatusData: MnpStatusData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(mnpStatusData), PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(json.encodeToString(mnpStatusData), PAYMENT_LOG_FROM_DEVICE)
     }
 }
-
+@Serializable
 data class MnpStatusData(
-    @SerializedName("callingApiName")
+    @SerialName("callingApiName")
     val callingApiName  : String? = null,
-    @SerializedName("rawResponse")
+    @SerialName("rawResponse")
     val rawResponse : String? = null,
 ) : PubSubBaseRequest()

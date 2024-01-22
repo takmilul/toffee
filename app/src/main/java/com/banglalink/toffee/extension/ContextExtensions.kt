@@ -31,7 +31,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
-import java.util.*
+import java.util.Scanner
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if(!message.isNullOrBlank()) {

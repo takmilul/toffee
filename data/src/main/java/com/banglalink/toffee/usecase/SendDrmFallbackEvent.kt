@@ -5,16 +5,20 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.DRM_FALLBACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SendDrmFallbackEvent @Inject constructor(private val mPref: SessionPreference) {
-    private val gson = Gson()
+class SendDrmFallbackEvent @Inject constructor(
+    private val json: Json,
+    private val mPref: SessionPreference
+) {
     
     fun execute(channelId: Long, reason: String) {
         PubSubMessageUtil.sendMessage(
-            gson.toJson(DrmFallbackData(reason, channelId).also {
+            json.encodeToString(DrmFallbackData(reason, channelId).also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             }),
             DRM_FALLBACK_TOPIC
@@ -22,18 +26,19 @@ class SendDrmFallbackEvent @Inject constructor(private val mPref: SessionPrefere
     }
 }
 
+@Serializable
 data class DrmFallbackData(
-    @SerializedName("reason")
+    @SerialName("reason")
     val reason: String,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Long,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
-    @SerializedName("deviceManufacturer")
+    @SerialName("deviceManufacturer")
     val deviceManufacturer: String = Build.MANUFACTURER,
-    @SerializedName("deviceModel")
+    @SerialName("deviceModel")
     val deviceModel: String = Build.MODEL,
 ) : PubSubBaseRequest() {
     override var phoneNumber: String

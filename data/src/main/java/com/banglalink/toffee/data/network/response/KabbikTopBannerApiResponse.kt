@@ -1,22 +1,25 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class KabbikTopBannerApiResponse(
-    @SerializedName("data" ) var bannerItems : List<BannerItemBean> = listOf()
+    @SerialName("data" ) var bannerItems : List<BannerItemBean> = listOf()
 ): ExternalBaseResponse(){
+    @Serializable
     data class BannerItemBean (
-        @SerializedName("id"             ) var id            : Int?    = null,
-        @SerializedName("en_name"        ) var enName        : String? = null,
-        @SerializedName("name"           ) var name          : String? = null,
-        @SerializedName("description"    ) var description   : String? = null,
-        @SerializedName("author_name"    ) var authorName    : String? = null,
-        @SerializedName("premium"        ) var premium       : Int?    = null,
-        @SerializedName("thumb_path"     ) var thumbPath     : String? = null,
-        @SerializedName("isFeatured"     ) var isFeatured    : Int?    = null,
-        @SerializedName("featured_image" ) var featuredImage : String? = null,
-        @SerializedName("price"          ) var price         : Int?    = null,
-        @SerializedName("play_count"     ) var playCount     : Int?    = null,
-        @SerializedName("rating"         ) var rating        : Double? = null
+        @SerialName("id"             ) var id            : Int?    = null,
+        @SerialName("en_name"        ) var enName        : String? = null,
+        @SerialName("name"           ) var name          : String? = null,
+        @SerialName("description"    ) var description   : String? = null,
+        @SerialName("author_name"    ) var authorName    : String? = null,
+        @SerialName("premium"        ) var premium       : Int?    = null,
+        @SerialName("thumb_path"     ) var thumbPath     : String? = null,
+        @SerialName("isFeatured"     ) var isFeatured    : Int?    = null,
+        @SerialName("featured_image" ) var featuredImage : String? = null,
+        @SerialName("price"          ) var price         : Int?    = null,
+        @SerialName("play_count"     ) var playCount     : Int?    = null,
+        @SerialName("rating"         ) var rating        : Double? = null
     )
 }

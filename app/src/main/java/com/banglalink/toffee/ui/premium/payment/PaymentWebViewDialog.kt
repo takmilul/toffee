@@ -22,8 +22,6 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.*
-import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -39,22 +37,22 @@ import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.util.*
 import java.util.ResourceBundle.*
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class PaymentWebViewDialog : DialogFragment() {
     
     val TAG = "premium_log"
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     private var retryCountBLDataPackPurchase = 0
     private var header: String? = ""
     private var title: String? = null
@@ -707,7 +705,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = null,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = gson.toJson(it.data)
+                        rawResponse = json.encodeToString(it.data)
                     ))
                     when (it.data.status) {
                         PaymentStatusDialog.SUCCESS -> {
@@ -783,7 +781,7 @@ class PaymentWebViewDialog : DialogFragment() {
                         transactionStatus = transactionStatus,
                         amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = "${gson.toJson(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBLDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
+                        rawResponse = "${json.encodeToString(it.error.msg)}, RetryCountDataPackPurchase: $retryCountBLDataPackPurchase, RetryingDuration: ${mPref.bkashApiRetryingDuration}"
                     ))
                     viewLifecycleOwner.lifecycleScope.launch {
                         if (retryCountBLDataPackPurchase < mPref.bkashApiRetryingCount) {

@@ -1,6 +1,5 @@
 package com.banglalink.toffee.apiservice
 
-import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
 import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.data.network.retrofit.ExternalApi
 import com.banglalink.toffee.data.network.util.tryIOExternal

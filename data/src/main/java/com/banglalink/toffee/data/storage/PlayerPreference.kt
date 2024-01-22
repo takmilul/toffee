@@ -6,7 +6,10 @@ import com.banglalink.toffee.model.PlayerSessionDetails
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.currentDateTime
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
+import java.util.UUID
 
 class PlayerPreference private constructor(val context: Context) {
     private val pref: SharedPreferences =

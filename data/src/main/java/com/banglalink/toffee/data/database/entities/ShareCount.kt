@@ -2,13 +2,15 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 data class ShareCount(
     @PrimaryKey
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val contentId: Int,
-    @SerializedName("count")
+    @SerialName("count")
     var count: Long = 0L,
 )

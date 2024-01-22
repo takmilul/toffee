@@ -1,20 +1,22 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class HeaderEnrichmentResponse(
-    @SerializedName("msisdn")
+    @SerialName("msisdn")
     val phoneNumber: String,
-    @SerializedName("is_bl")
+    @SerialName("is_bl")
     val isBanglalinkNumber: Boolean,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String? = null,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String? = null,
-    @SerializedName("user_ip")
+    @SerialName("user_ip")
     val userIp: String? = null,
-    @SerializedName("geo_city")
+    @SerialName("geo_city")
     val geoCity: String? = null,
-    @SerializedName("geo_location")
+    @SerialName("geo_location")
     val geoLocation: String? = null
 ) : BaseResponse()

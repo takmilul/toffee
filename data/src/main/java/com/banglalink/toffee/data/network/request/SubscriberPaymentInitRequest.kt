@@ -1,37 +1,39 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SubscriberPaymentInitRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int? = null,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String? = null,
-    @SerializedName("is_bl_number")
+    @SerialName("is_bl_number")
     val is_Bl_Number : Int? = null,
-    @SerializedName("is_prepaid")
+    @SerialName("is_prepaid")
     val isPrepaid: Int? = null,
-    @SerializedName("pack_id")
+    @SerialName("pack_id")
     val packId: Int? = null,
-    @SerializedName("pack_title")
+    @SerialName("pack_title")
     val packTitle: String? = null,
-    @SerializedName("contents")
+    @SerialName("contents")
     val contents: List<Int>? = null,
-    @SerializedName("payment_method_id")
+    @SerialName("payment_method_id")
     val paymentMethodId: Int? = null,
-    @SerializedName("pack_code")
+    @SerialName("pack_code")
     val packCode: String? = null,
-    @SerializedName("pack_details")
+    @SerialName("pack_details")
     val packDetails: String? = null,
-    @SerializedName("pack_price")
+    @SerialName("pack_price")
     val packPrice: Int? = null,
-    @SerializedName("pack_duration")
+    @SerialName("pack_duration")
     val packDuration: Int? = null,
-    @SerializedName("geo_city")
+    @SerialName("geo_city")
     val geoCity: String? = null,
-    @SerializedName("geo_location")
+    @SerialName("geo_location")
     val geoLocation: String? = null,
-    @SerializedName("cus_email")
+    @SerialName("cus_email")
     val cusEmail: String? = null
 ) : BaseRequest(ApiNames.SUBSCRIBER_PAYMENT_INIT)

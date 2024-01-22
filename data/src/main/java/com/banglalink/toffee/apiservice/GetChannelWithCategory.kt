@@ -10,9 +10,12 @@ import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class GetChannelWithCategory @Inject constructor(
+    private val json: Json,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
@@ -49,7 +52,7 @@ class GetChannelWithCategory @Inject constructor(
                         it.type ?: "LIVE",
                         index + 1,
                         channelCategory.categoryName,
-                        gson.toJson(it),
+                        json.encodeToString(it),
                         it.view_count?.toLong() ?: 0L,
                         it.isStingray,
                     ).apply {

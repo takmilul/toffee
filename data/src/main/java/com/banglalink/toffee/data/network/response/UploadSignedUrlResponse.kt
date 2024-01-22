@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.UploadSignedUrl
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UploadSignedUrlResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: UploadSignedUrl
 ) : BaseResponse()

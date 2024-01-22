@@ -1,18 +1,19 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Parcelize@Serializable
 data class OffenseType(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long = 0L,
-    @SerializedName("head_name")
+    @SerialName("head_name")
     val type: String,
-    @SerializedName("head_sorting")
+    @SerialName("head_sorting")
     val sorting: Int,
-    @SerializedName("subHeads")
+    @SerialName("subHeads")
     val offenseList: List<Offense>? = null
 ): Parcelable {
     override fun toString(): String = type

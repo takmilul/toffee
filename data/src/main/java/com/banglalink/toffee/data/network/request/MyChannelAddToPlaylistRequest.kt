@@ -1,21 +1,23 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelAddToPlaylistRequest(
-    @SerializedName("playlistId")
+    @SerialName("playlistId")
     val playlistId: Int,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Int,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Int,
-    @SerializedName("isOwner")
+    @SerialName("isOwner")
     val isOwner: Int,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("isUserPlaylist")
+    @SerialName("isUserPlaylist")
     val isUserPlaylist: Int = 0
 ) : BaseRequest(ApiNames.ADD_CONTENT_TO_PLAYLIST)

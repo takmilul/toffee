@@ -3,15 +3,17 @@ package com.banglalink.toffee.data.database.entities
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["channelId"], unique = true)])
 data class FavoriteItem(
-    @SerializedName("id")
+    @SerialName("id")
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Long,
-    @SerializedName("isFavorite")
+    @SerialName("isFavorite")
     val isFavorite: Int
 )

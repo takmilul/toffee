@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AllChannelRequest(
-    @SerializedName("subCategoryId")
+    @SerialName("subCategoryId")
     val subCategoryId: Int,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("telcoId")
+    @SerialName("telcoId")
     val telcoId: Int = 1,
-    @SerializedName("limit")
+    @SerialName("limit")
     val limit: Int = 200
 ) : BaseRequest(ApiNames.GET_ALL_TV_CHANNELS)

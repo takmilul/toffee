@@ -8,6 +8,7 @@ import androidx.media3.common.MediaItem.DrmConfiguration
 import androidx.media3.common.util.Assertions
 import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Log
 import com.google.android.gms.cast.MediaInfo
@@ -116,8 +117,8 @@ class ToffeeMediaItemConverter(
         }
     }
 
-    private fun jsonToChannelInfo(json: JSONObject): ChannelInfo {
-        return Gson().fromJson(json.getString("channel_info"), ChannelInfo::class.java)
+    private fun jsonToChannelInfo(jsonObject: JSONObject): ChannelInfo {
+        return NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(jsonObject.getString("channel_info"))
     }
 
     private fun getCastUrl(uri: String): String {

@@ -1,19 +1,21 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UpdateProfileRequest(
-    @SerializedName("fullname")
+    @SerialName("fullname")
     val fullname: String,
-    @SerializedName("email")
+    @SerialName("email")
     val email: String,
-    @SerializedName("phoneNo")
+    @SerialName("phoneNo")
     val phoneNo: String,
-    @SerializedName("address")
+    @SerialName("address")
     val address: String,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String
 ) : BaseRequest(ApiNames.UPDATE_USER_PROFILE)

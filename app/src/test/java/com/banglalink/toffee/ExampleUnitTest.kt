@@ -7,7 +7,13 @@ import com.banglalink.toffee.data.network.response.CheckUpdateResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.CheckUpdateBean
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.check
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -15,7 +21,6 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mock
 import retrofit2.Response
-
 
 /**
  * Example local unit test, which will execute on the development machine (host).

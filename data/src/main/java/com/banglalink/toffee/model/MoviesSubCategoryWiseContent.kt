@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MoviesSubCategoryWiseContent(
-    @SerializedName("order_id")
+    @SerialName("order_id")
     val orderId: Int = 0,
-    @SerializedName("sub_category_name")
+    @SerialName("sub_category_name")
     val subCategoryName: String? = null,
-    @SerializedName(value = "channels", alternate = ["channelInfo"])
+    @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
     val channels: List<ChannelInfo>?,
 )

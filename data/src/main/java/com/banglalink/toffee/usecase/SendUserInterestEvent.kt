@@ -5,33 +5,35 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.USER_INTEREST_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendUserInterestEvent @Inject constructor(
+    private val json: Json,
     private val preference: SessionPreference,
 ) {
     
-    private val gson = Gson()
-    
     suspend fun execute(interestList: Map<String, Int>, sendToPubSub: Boolean = true) {
         val interestData = InterestData(preference.customerId, interestList)
-        PubSubMessageUtil.sendMessage(gson.toJson(interestData), USER_INTEREST_TOPIC)
+        PubSubMessageUtil.sendMessage(json.encodeToString(interestData), USER_INTEREST_TOPIC)
     }
 }
 
+@Serializable
 data class InterestData(
-    @SerializedName("user_id")
+    @SerialName("user_id")
     val customerId: Int,
-    @SerializedName("interest_list")
+    @SerialName("interest_list")
     val interestList: Map<String, Int>,
-    @SerializedName("device_type")
+    @SerialName("device_type")
     val deviceType: Int = 1,
-    @SerializedName("device_id")
+    @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
-    @SerializedName("date_time")
+    @SerialName("date_time")
     val interestDateTime: String = currentDateTime,
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

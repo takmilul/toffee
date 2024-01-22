@@ -9,13 +9,15 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 
 /**
  * Posts some events in [FirebaseAnalytics] and [facebookAnalytics]
@@ -24,7 +26,6 @@ import com.google.gson.annotations.SerializedName
  */
 object ToffeeAnalytics {
     
-    private val gson = Gson()
     private lateinit var facebookAnalytics: AppEventsLogger
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private var firebaseCrashlytics = FirebaseCrashlytics.getInstance()
@@ -60,7 +61,7 @@ object ToffeeAnalytics {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
         }
-        val logMsg = gson.toJson(ApiFailData(apiName, errorMsg))
+        val logMsg = NetworkModuleLib.providesJsonWithConfig().encodeToString(ApiFailData(apiName, errorMsg))
         PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
     }
     
@@ -186,10 +187,11 @@ object ToffeeAnalytics {
     /**
      * API fail log in PUB/SUB
      */
-    class ApiFailData(
-        @SerializedName("apiName")
+    @Serializable
+    data class ApiFailData(
+        @SerialName("apiName")
         val apiName: String,
-        @SerializedName("errorMsg")
+        @SerialName("errorMsg")
         val apiError: String
     ) : PubSubBaseRequest()
 } 

@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.LoginByPhoneBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LoginByPhoneResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: LoginByPhoneBean
 ) : BaseResponse()

@@ -3,50 +3,55 @@ package com.banglalink.toffee.model
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.response.BaseResponse
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FeaturedPartner(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int = 0,
-    @SerializedName("web_view_url")
+    @SerialName("web_view_url")
     val webViewUrl: String? = null,
-    @SerializedName("feature_partner_name")
+    @SerialName("feature_partner_name")
     val featurePartnerName: String? = null,
-    @SerializedName("display_title")
+    @SerialName("display_title")
     val partnerName: String? = "",
-    @SerializedName("feature_partner_description")
+    @SerialName("feature_partner_description")
     val featurePartnerDescription: String? = null,
-    @SerializedName("sorting")
+    @SerialName("sorting")
     val sorting: Int = 0,
-    @SerializedName("profile_url")
+    @SerialName("profile_url")
     val profileUrl: String? = null,
-    @SerializedName("banner_url")
+    @SerialName("banner_url")
     val bannerUrl: String? = null,
-    @SerializedName("is_login_required")
+    @SerialName("is_login_required")
     val isLoginRequired:Boolean=false,
-    @SerializedName("url_type")
+    @SerialName("url_type")
     val url_type: Int = 0
 )
 
+@Serializable
 data class FeaturedPartnerRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId:Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password:String,
 ): BaseRequest(ApiNames.GET_FEATURED_PARTNERS)
 
+@Serializable
 data class FeaturedPartnerResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: FeaturedPartnerBean?
 ): BaseResponse()
 
+@Serializable
 data class FeaturedPartnerBean(
-    @SerializedName("code")
+    @SerialName("code")
     val code: Int = 0,
-    @SerializedName("count")
+    @SerialName("count")
     val count: Int = 0,
-    @SerializedName("totalCount")
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("partners")
+    @SerialName("partners")
     val featuredPartners: List<FeaturedPartner>? = null
 )

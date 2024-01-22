@@ -7,16 +7,18 @@ import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.PlayerEventsDao
 import com.banglalink.toffee.data.database.entities.PlayerEventData
 import com.banglalink.toffee.data.repository.PlayerEventRepository
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.notification.PLAYER_EVENTS_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class PlayerEventRepositoryImpl(
     private val db: ToffeeDatabase,
     private val dao: PlayerEventsDao
 ): PlayerEventRepository {
     
-    private val gson: Gson = Gson()
+    private val json: Json = NetworkModuleLib.providesJsonWithConfig()
     
     override suspend fun insert(item: PlayerEventData): Long {
         return try {
@@ -38,7 +40,7 @@ class PlayerEventRepositoryImpl(
         try {
             db.withTransaction {
                 dao.getTopEventData()?.onEach {
-                    PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
+                    PubSubMessageUtil.sendMessage(json.encodeToString(it), PLAYER_EVENTS_TOPIC)
                 }?.size?.also {
                     if (it > 0) {
                         dao.deleteTopEventData(it)
@@ -55,7 +57,7 @@ class PlayerEventRepositoryImpl(
         try {
             db.withTransaction {
                 dao.getAllRemainingEventData()?.onEach {
-                    PubSubMessageUtil.sendMessage(gson.toJson(it), PLAYER_EVENTS_TOPIC)
+                    PubSubMessageUtil.sendMessage(json.encodeToString(it), PLAYER_EVENTS_TOPIC)
                 }?.size?.also {
                     if (it > 0) {
                         dao.deleteTopEventData(it)

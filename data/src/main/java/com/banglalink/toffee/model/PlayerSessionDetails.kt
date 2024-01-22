@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PlayerSessionDetails(
-    @SerializedName("durationInSec")
+    @SerialName("durationInSec")
     val durationInSec: Long,
-    @SerializedName("bandWidthInMB")
+    @SerialName("bandWidthInMB")
     val bandWidthInMB: Double
 )

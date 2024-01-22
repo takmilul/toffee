@@ -1,13 +1,15 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.enums.PageType
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class EditorsChoiceFeaturedRequestParams (
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("pageType")
+    @SerialName("pageType")
     val pageType: PageType,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int
 )

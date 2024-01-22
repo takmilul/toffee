@@ -1,92 +1,98 @@
 package com.banglalink.toffee.data.network.response
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PackPaymentMethodResponse(
-    @SerializedName("apiLanguage")
+    @SerialName("apiLanguage")
     val apiLanguage: String,
-    @SerializedName("debugCode")
+    @SerialName("debugCode")
     val debugCode: Int,
-    @SerializedName("debugMsg")
+    @SerialName("debugMsg")
     val debugMsg: String,
-    @SerializedName("response")
+    @SerialName("response")
     val response: PackPaymentMethodBean,
 ) : BaseResponse()
 
 @Parcelize
+@Serializable
 data class PackPaymentMethodBean(
-    @SerializedName("BKASH")
+    @SerialName("BKASH")
     val bkash: Bkash?,
-    @SerializedName("BL")
+    @SerialName("BL")
     val bl: @RawValue Bl?,
-    @SerializedName("FREE")
+    @SerialName("FREE")
     val free: @RawValue List<PackPaymentMethod>?,
-    @SerializedName("VOUCHER")
+    @SerialName("VOUCHER")
     val Voucher: @RawValue List<PackPaymentMethod>?,
-    @SerializedName("SSL")
+    @SerialName("SSL")
     val ssl: SSL?,
 ) : Parcelable
 
 @Parcelize
+@Serializable
 data class Bkash(
-    @SerializedName("minimum_price")
+    @SerialName("minimum_price")
     val minimumPrice: Int,
-    @SerializedName("BL")
+    @SerialName("BL")
     val blPacks: List<PackPaymentMethod>?,
-    @SerializedName("NON_BL")
+    @SerialName("NON_BL")
     val nonBlPacks: List<PackPaymentMethod>?,
 ) : Parcelable
 
 @Parcelize
+@Serializable
 data class SSL(
-    @SerializedName("BL")
+    @SerialName("BL")
     val blPacks: List<PackPaymentMethod>?,
-    @SerializedName("NON_BL")
+    @SerialName("NON_BL")
     val nonBlPacks: List<PackPaymentMethod>?,
 ) : Parcelable
 
 @Parcelize
+@Serializable
 data class Bl(
-    @SerializedName("minimum_price")
+    @SerialName("minimum_price")
     val minimumPrice: Int,
-    @SerializedName("POSTPAID")
+    @SerialName("POSTPAID")
     val postpaid: List<PackPaymentMethod>?,
-    @SerializedName("PREPAID")
+    @SerialName("PREPAID")
     val prepaid: List<PackPaymentMethod>?,
 ) : Parcelable
 
-
 @Parcelize
+@Serializable
 data class PackPaymentMethod(
-    @SerializedName("data_pack_id")
+    @SerialName("data_pack_id")
     val dataPackId: Int? = null,
-    @SerializedName("payment_method_id")
+    @SerialName("payment_method_id")
     val paymentMethodId: Int? = null,
-    @SerializedName("is_non_bl_free")
+    @SerialName("is_non_bl_free")
     val isNonBlFree: Int? = null,
-    @SerializedName("pack_code")
+    @SerialName("pack_code")
     val packCode: String? = null,
-    @SerializedName("pack_details")
+    @SerialName("pack_details")
     val packDetails: String? = null,
-    @SerializedName("pack_price")
+    @SerialName("pack_price")
     val packPrice: Int? = null,
-    @SerializedName("pack_duration")
+    @SerialName("pack_duration")
     val packDuration: Int? = null,
-    @SerializedName("sort_by_code")
+    @SerialName("sort_by_code")
     val sortByCode: Int? = null,
-    @SerializedName("is_prepaid")
+    @SerialName("is_prepaid")
     val isPrepaid: Int? = null,
-    @SerializedName("listTitle")
+    @SerialName("listTitle")
     val listTitle: String? = null,
-    @SerializedName("is_auto_renew")
+    @SerialName("is_auto_renew")
     val isAutoRenew: Int? = null,
-    @SerializedName("partner_id")
+    @SerialName("partner_id")
     val partnerId: Int? = null,
-    @SerializedName("campaigns_id")
+    @SerialName("campaigns_id")
     val campaignsId: Int? = null,
-    @SerializedName("data_pack_cta_button")
-    val dataPackCtaButton: Int? = null
-    ) : Parcelable
+    @SerialName("data_pack_cta_button")
+    val dataPackCtaButton: Int? = null,
+) : Parcelable

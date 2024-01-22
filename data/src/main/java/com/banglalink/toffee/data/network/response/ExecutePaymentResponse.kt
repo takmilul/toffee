@@ -1,28 +1,30 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ExecutePaymentResponse (
-	@SerializedName("statusMessage")
+	@SerialName("statusMessage")
 	val statusMessage : String? = null,
-	@SerializedName("paymentID")
+	@SerialName("paymentID")
 	val paymentID : String? = null,
-	@SerializedName("payerReference")
+	@SerialName("payerReference")
 	val payerReference : String? = null,
-	@SerializedName("customerMsisdn")
+	@SerialName("customerMsisdn")
 	val customerMsisdn : String? = null,
-	@SerializedName("trxID")
+	@SerialName("trxID")
 	val transactionId : String? = null,
-	@SerializedName("amount")
+	@SerialName("amount")
 	val amount : String? = null,
-	@SerializedName("transactionStatus")
+	@SerialName("transactionStatus")
 	val transactionStatus : String? = null,
-	@SerializedName("paymentExecuteTime")
+	@SerialName("paymentExecuteTime")
 	val paymentExecuteTime : String? = null,
-	@SerializedName("currency")
+	@SerialName("currency")
 	val currency : String? = null,
-	@SerializedName("intent")
+	@SerialName("intent")
 	val intent : String? = null,
-	@SerializedName("merchantInvoiceNumber")
+	@SerialName("merchantInvoiceNumber")
 	val merchantInvoiceNumber : String? = null
 ) : ExternalBaseResponse()

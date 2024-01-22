@@ -1,26 +1,29 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SubscriberPaymentInitResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: SubscriberPaymentInitBean?
 ) : BaseResponse()
 
+@Serializable
 data class SubscriberPaymentInitBean(
-    @SerializedName("status_code")
+    @SerialName("status_code")
     val statusCode: Int? = null,
-    @SerializedName("transaction_identifier_id")
+    @SerialName("transaction_identifier_id")
     val transactionIdentifierId: String? = null,
-    @SerializedName("web_view_url")
+    @SerialName("web_view_url")
     val webViewUrl: String? = null,
-    @SerializedName("callback_url")
+    @SerialName("callback_url")
     val callbackUrl: String? = null,
-    @SerializedName("success_callback_url")
+    @SerialName("success_callback_url")
     val successCallbackUrl: String? = null,
-    @SerializedName("failure_callback_url")
+    @SerialName("failure_callback_url")
     val failureCallbackUrl: String? = null,
-    @SerializedName("cancelled_callback_url")
+    @SerialName("cancelled_callback_url")
     val cancelledCallbackUrl: String? = null,
-    @SerializedName("message") val message: String? = null
+    @SerialName("message") val message: String? = null
 )

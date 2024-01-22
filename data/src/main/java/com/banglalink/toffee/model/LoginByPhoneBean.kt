@@ -1,11 +1,13 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.data.network.response.BodyResponse
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LoginByPhoneBean(
-    @SerializedName("authorize")
+    @SerialName("authorize")
     val authorize: Boolean,
-    @SerializedName("regSessionToken")
+    @SerialName("regSessionToken")
     val regSessionToken: String
 ) : BodyResponse()

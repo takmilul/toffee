@@ -13,17 +13,18 @@ import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendHeartBeat @Inject constructor(
+    private val json: Json,
     private val preference: SessionPreference, private val toffeeApi: ToffeeApi
 ) {
-    
-    private val gson = Gson()
     
     suspend fun execute(
         contentId: Int,
@@ -55,7 +56,7 @@ class SendHeartBeat @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken() ?: ""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), HEARTBEAT_TOPIC)
+        PubSubMessageUtil.sendMessage(json.encodeToString(heartBeatData), HEARTBEAT_TOPIC)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: 
@@ -95,40 +96,41 @@ class SendHeartBeat @Inject constructor(
         }
     }
     
+    @Serializable
     private data class HeartBeatData(
-        @SerializedName("id")
+        @SerialName("id")
         val id: Long = System.nanoTime(),
-        @SerializedName("customer_id")
+        @SerialName("customer_id")
         val customerId: Int,
-        @SerializedName("device_type")
+        @SerialName("device_type")
         val deviceType: Int = Constants.DEVICE_TYPE,
-        @SerializedName("content_id")
+        @SerialName("content_id")
         val contentId: Int,
-        @SerializedName("content_type")
+        @SerialName("content_type")
         val contentType: String,
-        @SerializedName("data_source")
+        @SerialName("data_source")
         val dataSource: String? = "iptv_programs",
-        @SerializedName("channel_owner_id")
+        @SerialName("channel_owner_id")
         val ownerId: Int = 0,
-        @SerializedName("lat")
+        @SerialName("lat")
         val latitude: String,
-        @SerializedName("lon")
+        @SerialName("lon")
         val longitude: String,
-        @SerializedName("os_name")
+        @SerialName("os_name")
         val os: String = "android " + Build.VERSION.RELEASE,
-        @SerializedName("app_version")
+        @SerialName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
-        @SerializedName("is_bl_number")
+        @SerialName("is_bl_number")
         val isBlNumber: Int,
-        @SerializedName("net_type")
+        @SerialName("net_type")
         val netType: String,
-        @SerializedName("session_token")
+        @SerialName("session_token")
         val sessionToken: String,
-        @SerializedName("device_id")
+        @SerialName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
-        @SerializedName("date_time")
+        @SerialName("date_time")
         val dateTime: String = currentDateTime,
-        @SerializedName("reportingTime")
+        @SerialName("reportingTime")
         val reportingTime: String = currentDateTime
     )
 }

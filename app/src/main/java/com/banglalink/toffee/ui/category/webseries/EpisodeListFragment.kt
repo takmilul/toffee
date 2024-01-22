@@ -47,17 +47,18 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.util.EncryptionUtil
-import com.google.gson.Gson
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
     private var seasonListJob: Job? = null
@@ -159,11 +160,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         var shareUrl = seriesInfo.shareUrl
                         val hash = shareUrl?.substringAfter("data=")?.trim()
                         hash?.let {
-                            val shareableData = gson.fromJson(EncryptionUtil.decryptResponse(it).trimIndent(), ShareableData::class.java)
+                            val shareableData = json.decodeFromString<ShareableData>(EncryptionUtil.decryptResponse(it).trimIndent())
                             val currentSeasonNo = seriesInfo.activeSeasonList?.getOrElse(mViewModel.selectedSeason.value ?: 0){1} ?: 1
                             if (shareableData.seasonNo != currentSeasonNo) {
                                 val newShareableData = shareableData.copy(seasonNo = currentSeasonNo)
-                                val jsonString = gson.toJson(newShareableData, ShareableData::class.java).toString()
+                                val jsonString = json.encodeToString(newShareableData)
                                 val prefix = shareUrl?.substringBefore("data=")?.trim()?.plus("data=")
                                 shareUrl = prefix.plus(EncryptionUtil.encryptRequest(jsonString))
                             }

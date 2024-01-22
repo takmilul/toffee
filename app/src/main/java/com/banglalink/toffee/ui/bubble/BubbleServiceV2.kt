@@ -30,8 +30,11 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit.DAYS
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     

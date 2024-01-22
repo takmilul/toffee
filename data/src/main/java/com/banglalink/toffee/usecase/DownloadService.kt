@@ -1,12 +1,16 @@
 package com.banglalink.toffee.usecase
 
-import android.content.*
-import com.banglalink.toffee.data.network.retrofit.*
-import com.banglalink.toffee.data.repository.*
+import android.content.Context
+import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.repository.ReactionCountRepository
+import com.banglalink.toffee.data.repository.ShareCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.di.*
-import dagger.hilt.android.qualifiers.*
-import kotlinx.coroutines.*
+import com.banglalink.toffee.di.AppCoroutineScope
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 

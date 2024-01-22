@@ -1,25 +1,27 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class ReactionStatus(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long,
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val content_id: Long,
-    @SerializedName("like")
+    @SerialName("like")
     var like: Long = 0,
-    @SerializedName("love")
+    @SerialName("love")
     var love: Long = 0,
-    @SerializedName("haha")
+    @SerialName("haha")
     var haha: Long = 0,
-    @SerializedName("wow")
+    @SerialName("wow")
     var wow: Long = 0,
-    @SerializedName("sad")
+    @SerialName("sad")
     var sad: Long = 0,
-    @SerializedName("angry")
+    @SerialName("angry")
     var angry: Long = 0
 ): Parcelable

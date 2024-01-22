@@ -1,21 +1,23 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LoginByPhoneRequest(
-    @SerializedName("phoneNo")
+    @SerialName("phoneNo")
     val phoneNo: String,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String,
-    @SerializedName("parentId")
+    @SerialName("parentId")
     val parentId: Int = 1,
-    @SerializedName("email")
+    @SerialName("email")
     val email: String = "",
-    @SerializedName("serviceOperatorType")
+    @SerialName("serviceOperatorType")
     val serviceOperatorType: String = "TELCO",
-    @SerializedName("referralCode")
+    @SerialName("referralCode")
     val referralCode: String = ""
 ) : BaseRequest(ApiNames.LOGIN_BY_PHONE_NO)

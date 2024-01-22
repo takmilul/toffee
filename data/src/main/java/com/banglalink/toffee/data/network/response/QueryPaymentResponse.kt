@@ -1,40 +1,42 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class QueryPaymentResponse(
-	@SerializedName("paymentID")
+	@SerialName("paymentID")
 	val paymentID: String? = null,
-	@SerializedName("trxID")
+	@SerialName("trxID")
 	var transactionId: String? = null,
-	@SerializedName("mode")
+	@SerialName("mode")
 	val mode: String? = null,
-	@SerializedName("paymentCreateTime")
+	@SerialName("paymentCreateTime")
 	val paymentCreateTime: String? = null,
-	@SerializedName("amount")
+	@SerialName("amount")
 	val amount: String? = null,
-	@SerializedName("currency")
+	@SerialName("currency")
 	val currency: String? = null,
-	@SerializedName("intent")
+	@SerialName("intent")
 	val intent: String? = null,
-	@SerializedName("merchantInvoice")
+	@SerialName("merchantInvoice")
 	val merchantInvoice: String? = null,
-	@SerializedName("transactionStatus")
+	@SerialName("transactionStatus")
 	val transactionStatus: String? = null,
-	@SerializedName("verificationStatus")
+	@SerialName("verificationStatus")
 	val verificationStatus: String? = null,
-	@SerializedName("statusMessage")
+	@SerialName("statusMessage")
 	val statusMessage: String? = null,
-	@SerializedName("payerReference")
+	@SerialName("payerReference")
 	val payerReference: String? = null,
-	@SerializedName("customerMsisdn")
+	@SerialName("customerMsisdn")
 	var customerMsisdn: String? = null,
-	@SerializedName("agreementID")
+	@SerialName("agreementID")
 	val agreementID: String? = null,
-	@SerializedName("agreementStatus")
+	@SerialName("agreementStatus")
 	val agreementStatus: String? = null,
-	@SerializedName("agreementCreateTime")
+	@SerialName("agreementCreateTime")
 	val agreementCreateTime: String? = null,
-	@SerializedName("agreementExecuteTime")
+	@SerialName("agreementExecuteTime")
 	val agreementExecuteTime: String? = null,
 ) : ExternalBaseResponse()

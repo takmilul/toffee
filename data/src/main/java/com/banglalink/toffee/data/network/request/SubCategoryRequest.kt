@@ -1,10 +1,12 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SubCategoryRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String
 ) : BaseRequest("getUgcSubCategories")

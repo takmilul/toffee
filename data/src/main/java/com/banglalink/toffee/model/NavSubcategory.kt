@@ -1,15 +1,17 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class NavSubcategory(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("category_id")
+    @SerialName("category_id")
     val categoryId: String,
-    @SerializedName("sub_category_name")
+    @SerialName("sub_category_name")
     val subcategoryName: String
 ): Parcelable

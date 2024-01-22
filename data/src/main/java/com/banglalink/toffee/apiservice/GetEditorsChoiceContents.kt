@@ -10,7 +10,9 @@ import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
 import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ApiCategoryRequestParams(
     val type: String,
     val isCategory: Int,

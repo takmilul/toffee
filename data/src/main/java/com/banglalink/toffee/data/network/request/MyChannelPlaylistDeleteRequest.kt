@@ -1,15 +1,17 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelPlaylistDeleteRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("playlistId")
+    @SerialName("playlistId")
     val playlistId: Int,
-    @SerializedName("isUserPlaylist")
+    @SerialName("isUserPlaylist")
     val isUserPlaylist: Int = 0
 ) : BaseRequest(ApiNames.DELETE_PLAYLIST)

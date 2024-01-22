@@ -3,19 +3,21 @@ package com.banglalink.toffee.data.database.entities
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["customerId", "contentId"], unique = true)])
 data class ContentViewProgress(
-    @SerializedName("id")
+    @SerialName("id")
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Long,
-    @SerializedName("progress")
+    @SerialName("progress")
     val progress: Long,
-    @SerializedName("watchTime")
+    @SerialName("watchTime")
     val watchTime: Long = System.currentTimeMillis(),
 )

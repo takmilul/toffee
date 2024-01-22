@@ -36,11 +36,15 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCallback<PackPaymentMethod> {
     
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     private var paymentName: String? = null
     private var pressedButtonName = ""
     private var transactionIdentifier: String? = null
@@ -732,7 +736,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 merchantInvoiceNumber = null,
-                                rawResponse = gson.toJson(it)
+                                rawResponse = json.encodeToString(it)
                             )
                         )
                         
@@ -771,7 +775,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = gson.toJson(it.error.msg)
+                            rawResponse = json.encodeToString(it.error.msg)
                         )
                     )
                     requireContext().showToast(it.error.msg)
@@ -821,7 +825,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = null,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = gson.toJson(it.data)
+                            rawResponse = json.encodeToString(it.data)
                         )
                     )
                     it.data?.let {
@@ -856,7 +860,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             transactionStatus = null,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = gson.toJson(it.error.msg)
+                            rawResponse = json.encodeToString(it.error.msg)
                         )
                     )
                     requireContext().showToast(it.error.msg)

@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DrmTokenRequest(
-    @SerializedName("contentID")
+    @SerialName("contentID")
     val contentID: String,
-    @SerializedName("userID")
+    @SerialName("userID")
     val userID: String,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("drmType")
+    @SerialName("drmType")
     val drmType: String = "Widevine",
-    @SerializedName("licenseDuration")
+    @SerialName("licenseDuration")
     val licenseDuration: Int = 0
 ) : BaseRequest(ApiNames.GET_DRM_TOKEN)

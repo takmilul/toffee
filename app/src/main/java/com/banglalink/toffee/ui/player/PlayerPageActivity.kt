@@ -74,6 +74,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
@@ -93,6 +94,7 @@ abstract class PlayerPageActivity :
 {
     private var startWindow = 0
     private var maxBitRate: Int = 0
+    @Inject lateinit var json: Json
     private var playCounter: Int = -1
     private var startAutoPlay = false
     private var retryCounter: Int = 0
@@ -482,7 +484,7 @@ abstract class PlayerPageActivity :
             castSession.let {
                 val cInfo = try {
                     val customData = it.remoteMediaClient?.currentItem?.customData!!
-                    Gson().fromJson(customData.getString("channel_info"), ChannelInfo::class.java)
+                    json.decodeFromString<ChannelInfo>(customData.getString("channel_info"))
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     null
@@ -776,7 +778,7 @@ abstract class PlayerPageActivity :
         val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM) {
             channelInfo.paidPlainHlsUrl
         } else if (channelInfo.urlTypeExt == NON_PREMIUM) {
-            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+            channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
         } else {
             null
         }
@@ -1280,7 +1282,7 @@ abstract class PlayerPageActivity :
                         val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM) {
                             channelInfo.paidPlainHlsUrl
                         } else if (channelInfo.urlTypeExt == NON_PREMIUM) {
-                            channelInfo.hlsLinks?.get(0)?.hls_url_mobile
+                            channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
                         } else null
                         hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
                     }

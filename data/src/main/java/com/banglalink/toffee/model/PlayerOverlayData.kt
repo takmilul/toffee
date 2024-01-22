@@ -1,40 +1,43 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PlayerOverlayData(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long,
-    @SerializedName("function")
+    @SerialName("function")
     val function: String,
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val contentId: String,
-    @SerializedName("timestamp")
+    @SerialName("timestamp")
     val timeStamp: String,
-    @SerializedName("parameters")
+    @SerialName("parameters")
     val params: OverlayParams
 )
 
+@Serializable
 data class OverlayParams(
-    @SerializedName("show")
+    @SerialName("show")
     val displayParams: List<String>,
-    @SerializedName("custom_text")
+    @SerialName("custom_text")
     val customText: String,
-    @SerializedName("bg_color_code")
+    @SerialName("bg_color_code")
     val bgColorCode: String,
-    @SerializedName("font_color_code")
+    @SerialName("font_color_code")
     val fontColorCode: String,
-    @SerializedName("font_size")
+    @SerialName("font_size")
     val fontSize: String,
-    @SerializedName("opacity")
+    @SerialName("opacity")
     val opacity: String,
-    @SerializedName("position")
+    @SerialName("position")
     val position: String, // constant/floating
-    @SerializedName("duration")
+    @SerialName("duration")
     val duration: Long,
-    @SerializedName("from_position")
+    @SerialName("from_position")
     val fromPosition: List<Float>? = listOf(0.0F, 0.0F),
-    @SerializedName("to_position")
+    @SerialName("to_position")
     val toPosition: List<Float>? = listOf(1.0F, 0.0F),
 )
 

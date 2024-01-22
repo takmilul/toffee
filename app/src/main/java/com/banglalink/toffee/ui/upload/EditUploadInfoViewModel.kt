@@ -32,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import java.util.*
+import java.util.UUID
 import kotlin.math.round
 
 class EditUploadInfoViewModel @AssistedInject constructor(

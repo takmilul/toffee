@@ -2,16 +2,18 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.Index
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity(
     indices = [Index(value = ["contentId", "reactionType"], unique = true)]
 )
+@Serializable
 data class ReactionStatusItem(
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Int = 0,
-    @SerializedName("reactionType")
+    @SerialName("reactionType")
     val reactionType: Int = 0,
-    @SerializedName("reactionCount")
+    @SerialName("reactionCount")
     var reactionCount: Long = 0L,
 ) : BaseEntity()

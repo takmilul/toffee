@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContentShareLogBean(
-    @SerializedName("code")
+    @SerialName("code")
     val code: Int,
-    @SerializedName("message")
+    @SerialName("message")
     val message: String? = null,
-    @SerializedName("messageType")
+    @SerialName("messageType")
     val messageType: String? = null
 )

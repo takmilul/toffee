@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.Credential
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CredentialResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val credential: Credential?
 ) : BaseResponse()

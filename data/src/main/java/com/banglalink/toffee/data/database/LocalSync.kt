@@ -22,12 +22,14 @@ import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.util.Utils
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LocalSync @Inject constructor(
+    private val json: Json,
     private val reactionDao: ReactionDao,
     private val favoriteDao: FavoriteItemDao,
     private val preference: SessionPreference,
@@ -41,7 +43,7 @@ class LocalSync @Inject constructor(
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) {
-    val gson = Gson()
+//    val gson = Gson()
     
     suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL, isFromCache: Boolean = false) {
         val contentId = channelInfo.getContentId()
@@ -91,7 +93,7 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
             if (channelInfo.isLive) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray ) 1 else 0,if (channelInfo.isFmRadio ) 1 else 0)?.let {
-                    val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    val dbRecentPayload = json.decodeFromString<ChannelInfo>(it.payload)
                     if (!dbRecentPayload.equals(channelInfo)) {
                         val isStingray = if (channelInfo.isStingray) 1 else 0
                         val isFmRadio = if (channelInfo.isStingray) 1 else 0
@@ -100,7 +102,7 @@ class LocalSync @Inject constructor(
                             isStingray,
                             isFmRadio,
                             channelInfo.view_count?.toLong() ?: 0L,
-                            gson.toJson(channelInfo)
+                            json.encodeToString(channelInfo)
                         )
                     }
                 }
@@ -110,7 +112,7 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
             if (channelInfo.isFmRadio) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), 0, 1 )?.let {
-                    val dbRecentPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    val dbRecentPayload = json.decodeFromString<ChannelInfo>(it.payload)
                     if (!dbRecentPayload.equals(channelInfo)) {
                         val isStingray =  0
                         val isFmRadio = 1
@@ -119,7 +121,7 @@ class LocalSync @Inject constructor(
                             isStingray,
                             isFmRadio,
                             channelInfo.view_count?.toLong() ?: 0L,
-                            gson.toJson(channelInfo)
+                            json.encodeToString(channelInfo)
                         )
                     }
                 }
@@ -127,12 +129,12 @@ class LocalSync @Inject constructor(
         }
         if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
             userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
-                val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                val dbUserActivityPayload = json.decodeFromString<ChannelInfo>(it.payload)
                 if (!dbUserActivityPayload.equals(channelInfo)) {
                     userActivityRepo.updateUserActivityPayload(
                         contentId.toLong(),
                         channelInfo.type ?: "VOD",
-                        gson.toJson(channelInfo)
+                        json.encodeToString(channelInfo)
                     )
                 }
             }
@@ -141,12 +143,12 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_FM_ACTIVITY == SYNC_FLAG_FM_ACTIVITY) {
             if (channelInfo.isFmRadio) {
                 userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "RADIO")?.let {
-                    val dbUserActivityPayload = gson.fromJson(it.payload, ChannelInfo::class.java)
+                    val dbUserActivityPayload = json.decodeFromString<ChannelInfo>(it.payload)
                     if (!dbUserActivityPayload.equals(channelInfo)) {
                         userActivityRepo.updateUserActivityPayload(
                             contentId.toLong(),
                             channelInfo.type ?: "RADIO",
-                            gson.toJson(channelInfo)
+                            json.encodeToString(channelInfo)
                         )
                     }
                 }
@@ -161,7 +163,7 @@ class LocalSync @Inject constructor(
                             cdnChannelItemRepository.updateCdnChannelItemByChannelId(
                                 contentId.toLong(), 
                                 channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
-                                gson.toJson(channelInfo)
+                                json.encodeToString(channelInfo)
                             )
                         } else {
                             channelInfo.signedUrlExpiryDate = it.expiryDate
@@ -173,7 +175,7 @@ class LocalSync @Inject constructor(
                     }
                 } ?: run {
                     cdnChannelItemRepository.insert(CdnChannelItem(contentId.toLong(), channelInfo.urlType, channelInfo.signedUrlExpiryDate ?: channelInfo
-                        .signedCookieExpiryDate, gson.toJson(channelInfo)))
+                        .signedCookieExpiryDate, json.encodeToString(channelInfo)))
                 }
             }
         }

@@ -137,6 +137,8 @@ dependencies {
     with(libs) {
         // Kotlin
         implementation(kotlin.coroutines)
+        implementation(kotlin.json.serialization)
+        implementation(kotlin.json.converter.factory)
         
         // Hilt
         implementation(bundles.hilt)
@@ -154,7 +156,7 @@ dependencies {
         implementation(exifinterface)
         
         // Network
-        implementation(gson)
+//        implementation(gson)
         implementation(bundles.retrofit)
         
         // Google Services

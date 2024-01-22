@@ -1,14 +1,16 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class Payment(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long = 0L,
-    @SerializedName("method")
+    @SerialName("method")
     val method: String = "",
 ): Parcelable {
     override fun toString(): String = method

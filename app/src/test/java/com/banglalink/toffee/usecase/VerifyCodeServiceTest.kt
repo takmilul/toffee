@@ -1,18 +1,20 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.apiservice.VerifyCodeService
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.response.VerifyCodeResponse
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.apiservice.VerifyCodeService
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.check
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.Mockito
 import retrofit2.Response
-
 
 class VerifyCodeServiceTest :BaseUseCaseTest(){
 

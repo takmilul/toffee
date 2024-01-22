@@ -2,13 +2,15 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 data class SubscriptionCount(
     @PrimaryKey
-    @SerializedName("channel_id")
+    @SerialName("channel_id")
     val channelId: Int,
-    @SerializedName("status")
+    @SerialName("status")
     var status: Long = 0L
 )

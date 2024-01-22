@@ -3,29 +3,31 @@ package com.banglalink.toffee.data.database.entities
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["customerId", "channelId"], unique = true)])
 data class ContinueWatchingItem(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Long,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int,
-    @SerializedName("payload")
+    @SerialName("payload")
     val payload: String,
-    @SerializedName("progress")
+    @SerialName("progress")
     val progress: Long
 ) : BaseEntity() {
     @Ignore
-    @SerializedName("channelInfo")
+    @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        Gson().fromJson(payload, ChannelInfo::class.java)
+        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(payload)
     } catch (ex: Exception) {
         null
     }

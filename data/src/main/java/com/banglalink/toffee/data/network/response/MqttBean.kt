@@ -1,18 +1,20 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MqttBean(
-    @SerializedName("code")
+    @SerialName("code")
     val code: Int,
-    @SerializedName("message")
+    @SerialName("message")
     val message: String,
-    @SerializedName("mqttIsActive")
+    @SerialName("mqttIsActive")
     val mqttIsActive: Int,
-    @SerializedName("mqttUrl")
+    @SerialName("mqttUrl")
     val mqttUrl: String,
-    @SerializedName("mqttUserId")
+    @SerialName("mqttUserId")
     val mqttUserId: String,
-    @SerializedName("mqttPassword")
+    @SerialName("mqttPassword")
     val mqttPassword: String
 )

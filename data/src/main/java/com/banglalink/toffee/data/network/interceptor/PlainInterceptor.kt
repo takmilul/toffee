@@ -4,8 +4,8 @@ import com.banglalink.toffee.data.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.data.exception.AuthInterceptorException
 import com.banglalink.toffee.data.network.response.ExternalBaseResponse
 import com.banglalink.toffee.util.Log
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -14,9 +14,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PlainInterceptor @Inject constructor() : Interceptor {
-    
-    private val gson: Gson = GsonBuilder().serializeNulls().create()
+class PlainInterceptor @Inject constructor(
+    private val json: Json
+) : Interceptor {
     
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -47,13 +47,13 @@ class PlainInterceptor @Inject constructor() : Interceptor {
             var body = responseJsonString?.toResponseBody(contentType)
             if (!response.isSuccessful) {
                 val errorBody = try {
-                    gson.fromJson(responseJsonString, ExternalBaseResponse::class.java)
+                    json.decodeFromString<ExternalBaseResponse>(responseJsonString ?: "")
                 } catch (ex: Exception) {
                     val customErrorBody = ExternalBaseResponse().apply {
                         errorCode = 400
                         errorMsg = responseJsonString
                     }
-                    body = gson.toJson(customErrorBody).toResponseBody(contentType)
+                    body = json.encodeToString(customErrorBody).toResponseBody(contentType)
                     customErrorBody
                 }
                 return response.newBuilder()

@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelPlaylistCreateBean (
-    @SerializedName("message")
+    @SerialName("message")
     val message: String?,
-    @SerializedName("messageType")
+    @SerialName("messageType")
     val messageType: String?,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String?,
-    @SerializedName("playlist_name_id")
+    @SerialName("playlist_name_id")
     val playlistNameId: Int,
-    @SerializedName("channel_id")
+    @SerialName("channel_id")
     val channelId: Int
 )

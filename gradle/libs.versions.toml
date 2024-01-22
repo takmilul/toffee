@@ -30,6 +30,7 @@ kotlin-ktx-version = "1.12.0"
 kotlin-coroutine-version = "1.7.3"
 ksp-plugin-version = "1.9.21-1.0.16"
 kotlin-serialization-json-version = "1.6.2"
+kotlin-json-converter-factory-version = "1.0.0"
 
 # Hilt
 hilt-version = "1.1.0"
@@ -160,6 +161,7 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "kotlin-k
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin-version" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutine-version" }
 kotlin-json-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref ="kotlin-serialization-json-version" }
+kotlin-json-converter-factory = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref ="kotlin-json-converter-factory-version" }
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-android-version" }

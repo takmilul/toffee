@@ -5,7 +5,9 @@ import android.view.View.OnFocusChangeListener
 import android.widget.EditText
 import androidx.annotation.DrawableRes
 import com.banglalink.toffee.R.drawable
-import com.banglalink.toffee.ui.widget.ToffeeFieldTextWatcher.FieldType.*
+import com.banglalink.toffee.ui.widget.ToffeeFieldTextWatcher.FieldType.ADDRESS_FIELD
+import com.banglalink.toffee.ui.widget.ToffeeFieldTextWatcher.FieldType.EMAIL_FIELD
+import com.banglalink.toffee.ui.widget.ToffeeFieldTextWatcher.FieldType.NAME_FIELD
 
 class ToffeeFieldTextWatcher(editText: EditText, type: FieldType) : OnFocusChangeListener {
     

@@ -10,7 +10,11 @@ import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.MyChannelDetail
+import com.banglalink.toffee.model.MyChannelEditBean
+import com.banglalink.toffee.model.Payment
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

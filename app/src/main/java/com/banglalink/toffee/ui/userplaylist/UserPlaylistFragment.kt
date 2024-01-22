@@ -46,10 +46,10 @@ import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {

@@ -1,92 +1,95 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.RawValue
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DataPackPurchaseRequest(
     //Common for All (trial, BL, bKash)
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("isBanglalinkNumber")
+    @SerialName("isBanglalinkNumber")
     val isBanglalinkNumber: Int,
-    @SerializedName("pack_id")
+    @SerialName("pack_id")
     val packId: Int,
-    @SerializedName("payment_method_id")
+    @SerialName("payment_method_id")
     val paymentMethodId: Int,
-    @SerializedName("is_prepaid")
+    @SerialName("is_prepaid")
     val isPrepaid: Int,
 
     
     //Only for BL and Trial Pack
-    @SerializedName("pack_title")
+    @SerialName("pack_title")
     val packTitle: String? = null,
-    @SerializedName("contents")
+    @SerialName("contents")
     val contentList: List<Int>? = null,
-    @SerializedName("pack_code")
+    @SerialName("pack_code")
     val packCode: String? = null,
-    @SerializedName("pack_details")
+    @SerialName("pack_details")
     val packDetails: String? = null,
-    @SerializedName("pack_price")
+    @SerialName("pack_price")
     val packPrice: Int? = null,
-    @SerializedName("pack_duration")
+    @SerialName("pack_duration")
     val packDuration: Int? = null,
-    @SerializedName("is_purchase_call_after_recharge")
+    @SerialName("is_purchase_call_after_recharge")
     val purchaseCallAfterRecharge: Boolean? = false,
 
     //Only for voucher
-    @SerializedName("voucher")
+    @SerialName("voucher")
     val voucher: String? = null,
-    @SerializedName("partner_type")
+    @SerialName("partner_type")
     val partnerType: String? = null,
-    @SerializedName("partner_name")
+    @SerialName("partner_name")
     val partnerName: String? = null,
-    @SerializedName("partner_id")
+    @SerialName("partner_id")
     val partnerId: Int? = null,
-    @SerializedName("partner_campaigns_name")
+    @SerialName("partner_campaigns_name")
     val partnerCampaignsName: String? = null,
-    @SerializedName("partner_campaigns_id")
+    @SerialName("partner_campaigns_id")
     val partnerCampaignsId: Int? = null,
-    @SerializedName("campaigns_expire_date")
+    @SerialName("campaigns_expire_date")
     val campaignsExpireDate: String? = null,
 
     
     //Only for bKash
-    @SerializedName("data_pack_id")
+    @SerialName("data_pack_id")
     val bKashDataPackId: Int? = null,
-    @SerializedName("bkash")
+    @SerialName("bkash")
     val bKashRequest: @RawValue BkashDataPackRequest? = null,
 ) : BaseRequest(ApiNames.DATA_PACK_PURCHASE)
 
+@Serializable
 data class BkashDataPackRequest(
-    @SerializedName("amount")
+    @SerialName("amount")
     val amount: String? = null,
-    @SerializedName("createTime")
+    @SerialName("createTime")
     val createTime: String? = null,
-    @SerializedName("currency")
+    @SerialName("currency")
     val currency: String? = null,
-    @SerializedName("customerMsisdn")
+    @SerialName("customerMsisdn")
     val customerMsisdn: String? = null,
-    @SerializedName("errorCode")
+    @SerialName("errorCode")
     val errorCode: String? = null,
-    @SerializedName("errorMessage")
+    @SerialName("errorMessage")
     val errorMessage: String? = null,
-    @SerializedName("intent")
+    @SerialName("intent")
     val intent: String? = null,
-    @SerializedName("merchantInvoiceNumber")
+    @SerialName("merchantInvoiceNumber")
     val merchantInvoiceNumber: String? = null,
-    @SerializedName("paymentID")
+    @SerialName("paymentID")
     val paymentId: String? = null,
-    @SerializedName("refundAmount")
+    @SerialName("refundAmount")
     val refundAmount: String? = null,
-    @SerializedName("status")
+    @SerialName("status")
     val status: Boolean = false,
-    @SerializedName("transactionStatus")
+    @SerialName("transactionStatus")
     val transactionStatus: String? = null,
-    @SerializedName("trxID")
+    @SerialName("trxID")
     val transactionId: String? = null,
-    @SerializedName("updateTime")
+    @SerialName("updateTime")
     val updateTime: String? = null
 )

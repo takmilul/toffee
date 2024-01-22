@@ -23,7 +23,11 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.databinding.PlaceholderUserChannelsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.showLoadingAnimation
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelNavParams

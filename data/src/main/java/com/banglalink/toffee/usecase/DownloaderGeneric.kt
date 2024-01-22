@@ -1,13 +1,13 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.util.Log
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.*
+import java.util.UUID
 
 class DownloaderGeneric(private val context: Context, private val dbApi: DbApi) {
 

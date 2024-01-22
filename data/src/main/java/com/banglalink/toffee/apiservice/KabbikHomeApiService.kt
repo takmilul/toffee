@@ -1,9 +1,6 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
-import com.banglalink.toffee.data.network.request.KabbikLoginApiRequest
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
-import com.banglalink.toffee.data.network.response.KabbikLoginApiResponse
 import com.banglalink.toffee.data.network.retrofit.ExternalApi
 import com.banglalink.toffee.data.network.util.tryIOExternal
 import javax.inject.Inject

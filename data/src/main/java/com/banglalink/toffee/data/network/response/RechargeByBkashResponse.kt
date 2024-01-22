@@ -1,38 +1,44 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RechargeByBkashResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: RechargeByBkashBean?
 ) : BaseResponse()
 
+@Serializable
 data class RechargeByBkashBean(
-    @SerializedName("statusCode")
+    @SerialName("statusCode")
     val statusCode: Int,
-    @SerializedName("status")
+    @SerialName("status")
     val status: String,
-    @SerializedName("message")
+    @Contextual
+    @SerialName("message")
     val message: Any? = null,
-    @SerializedName("data")
+    @SerialName("data")
     val data: RechargeByBkashData? = null
 )
 
+@Serializable
 data class RechargeByBkashData(
-    @SerializedName("tran_id")
+    @SerialName("tran_id")
     val transactionId: String? = null,
-    @SerializedName("total_payment_amount")
+    @SerialName("total_payment_amount")
     val totalPaymentAmount: Int? = 0,
-    @SerializedName("currency")
+    @SerialName("currency")
     val currency: String? = null,
-    @SerializedName("payment_create_time")
+    @SerialName("payment_create_time")
     val paymentCreateTime: String? = null,
-    @SerializedName("webview_url")
+    @SerialName("webview_url")
     val bKashWebUrl: String? = null,
-    @SerializedName("success_callback_url")
+    @SerialName("success_callback_url")
     val successCallbackUrl: String? = null,
-    @SerializedName("cancel_callback_url")
+    @SerialName("cancel_callback_url")
     val cancelCallbackUrl: String? = null,
-    @SerializedName("failure_callback_url")
+    @SerialName("failure_callback_url")
     val failureCallbackUrl: String? = null
 )

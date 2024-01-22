@@ -1,14 +1,16 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ComingSoonContent(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long,
-    @SerializedName("program_name")
+    @SerialName("program_name")
     val program_name: String?,
-    @SerializedName("url_type")
+    @SerialName("url_type")
     val url_type: Int,
-    @SerializedName("coming_soon_poster_url")
+    @SerialName("coming_soon_poster_url")
     val coming_soon_poster_url: String?,
 )

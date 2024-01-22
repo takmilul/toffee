@@ -11,7 +11,7 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import java.util.*
+import java.util.Locale
 
 class WebSeriesFragment: BaseFragment() {
     private var category: Category? = null

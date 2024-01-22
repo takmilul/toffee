@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
-import com.banglalink.toffee.util.Log
 
 class SubscriptionHistoryFooterAdapter(private val baseAdapter: MyBaseAdapter<*>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

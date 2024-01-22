@@ -6,64 +6,66 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.currentDateTimeMillis
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 abstract class BasePlayerEventData {
     
-    @SerializedName("appVersion")
+    @SerialName("appVersion")
     var appVersion: String = CommonPreference.getInstance().appVersionName
     
-    @SerializedName("osName")
+    @SerialName("osName")
     var osName: String = Utils.getOsName()
     
-    @SerializedName("userId")
+    @SerialName("userId")
     var userId: Int = SessionPreference.getInstance().customerId
     
-    @SerializedName("deviceId")
+    @SerialName("deviceId")
     var deviceId: String = CommonPreference.getInstance().deviceId
     
-    @SerializedName("deviceManufacturer")
+    @SerialName("deviceManufacturer")
     var deviceManufacturer: String = Build.MANUFACTURER
     
-    @SerializedName("deviceModel")
+    @SerialName("deviceModel")
     var deviceModel: String = Build.MODEL
     
-    @SerializedName("msisdn")
+    @SerialName("msisdn")
     var msisdn: String = SessionPreference.getInstance().phoneNumber
     
-    @SerializedName("osVersion")
+    @SerialName("osVersion")
     var osVersion: String = Build.VERSION.SDK_INT.toString()
     
-    @SerializedName("city")
+    @SerialName("city")
     var city: String = SessionPreference.getInstance().geoCity
     
-    @SerializedName("region")
+    @SerialName("region")
     var region: String = SessionPreference.getInstance().geoRegion
     
-    @SerializedName("country")
+    @SerialName("country")
     var country: String = SessionPreference.getInstance().geoLocation
     
-    @SerializedName("lat")
+    @SerialName("lat")
     var lat: String = SessionPreference.getInstance().latitude
     
-    @SerializedName("lon")
+    @SerialName("lon")
     var lon: String = SessionPreference.getInstance().longitude
     
-    @SerializedName("clientIp")
+    @SerialName("clientIp")
     var clientIp: String = SessionPreference.getInstance().userIp
     
-    @SerializedName("deviceType")
+    @SerialName("deviceType")
     var deviceType: String = if(CommonPreference.getInstance().isTablet) "Tablet" else "Mobile Phone"
     
-    @SerializedName("applicationType")
+    @SerialName("applicationType")
     var applicationType: String = "Android"
     
-    @SerializedName("statusCode")
+    @SerialName("statusCode")
     var statusCode: Int = 200
     
-    @SerializedName("dateTime")
+    @SerialName("dateTime")
     var dateTime: String = currentDateTimeMillis
     
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     var reportingTime: String = currentDateTime
 }

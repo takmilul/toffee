@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MovieCategoryDetailBean (
-    @SerializedName("count")
+    @SerialName("count")
     val count: Int = 0,
-    @SerializedName("totalCount")
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("cards")
+    @SerialName("cards")
     val cards: MoviesContentVisibilityCards? = null,
-    @SerializedName("subCategoryWiseContent")
+    @SerialName("subCategoryWiseContent")
     val subCategoryWiseContent: List<MoviesSubCategoryWiseContent>?,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null,
 )

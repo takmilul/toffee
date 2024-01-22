@@ -9,10 +9,12 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.util.Base64
+import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.os.bundleOf
+import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ApiRoutes
@@ -34,19 +36,18 @@ import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ToffeeNotificationService : FirebaseMessagingService() {
-    
     private var notificationId = 1
-    private val gson: Gson = Gson()
+    @Inject lateinit var json: Json
     private val TAG = "ToffeeNotificationService"
     @Inject lateinit var setFcmToken: SetFcmToken
     @Inject lateinit var mPref: SessionPreference
@@ -91,8 +92,8 @@ class ToffeeNotificationService : FirebaseMessagingService() {
         when (notificationBuilder.notificationType?.lowercase()) {
             OVERLAY.type -> {
                 try {
-                    gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
-                        ?.let { mPref.playerOverlayLiveData.postValue(it) }
+                    remoteMessage.data["notificationText"]?.trimIndent()
+                        ?.let { json.decodeFromString<PlayerOverlayData>(it).let { mPref.playerOverlayLiveData.postValue(it) } }
                 } catch (e: Exception) {
                     Log.e(TAG, "playerOverlay: ${e.message}")
                 }
@@ -161,11 +162,13 @@ class ToffeeNotificationService : FirebaseMessagingService() {
             }
             BUBBLE_CONFIG.type -> {
                 try {
-                    val bubbleConfig = gson.fromJson(remoteMessage.data["bubbleConfig"]?.trimIndent(), BubbleConfig::class.java)
-                    mPref.isBubbleActive = bubbleConfig.isFifaBubbleActive
-                    mPref.startBubbleService.postValue(bubbleConfig.isFifaBubbleActive)
-                    if (mPref.isBubbleActive) {
-                        mPref.bubbleConfigLiveData.postValue(bubbleConfig)
+                    remoteMessage.data["bubbleConfig"]?.trimIndent()?.let {
+                        val bubbleConfig = json.decodeFromString<BubbleConfig>(it)
+                        mPref.isBubbleActive = bubbleConfig.isFifaBubbleActive
+                        mPref.startBubbleService.postValue(bubbleConfig.isFifaBubbleActive)
+                        if (mPref.isBubbleActive) {
+                            mPref.bubbleConfigLiveData.postValue(bubbleConfig)
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e("Bubble_", "bubbleConfig: ${e.message}")
@@ -211,7 +214,7 @@ class ToffeeNotificationService : FirebaseMessagingService() {
     
     private fun kickOutUser(data: Map<String, String>) {
         try {
-            val authList: Array<String>? = Gson().fromJson(data["message"]?.trimIndent(), Array<String>::class.java)
+            val authList: Array<String>? = data["message"]?.trimIndent()?.let { json.decodeFromString<Array<String>>(it) }
             authList?.forEach { value ->
                 var decryptedData = Base64.decode(value, Base64.DEFAULT)
                 repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
@@ -258,6 +261,7 @@ class ToffeeNotificationService : FirebaseMessagingService() {
             return thumbnailImage
         }
         
+        @OptIn(UnstableApi::class)
         @SuppressLint("InlinedApi")
         private suspend fun getPendingIntent(hasActionButton: Boolean = false, isWatchNow: Boolean = false): PendingIntent {
             val isWatchLater = hasActionButton && !isWatchNow

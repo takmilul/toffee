@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class VastTagV3(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int = 0,
-    @SerializedName("adGroup")
+    @SerialName("adGroup")
     val adGroup: String,
-    @SerializedName("url")
+    @SerialName("url")
     val tags: List<String>?,
 )

@@ -1,8 +1,10 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class PackageBean(
-    @SerializedName("subscribedPackages")
+    @SerialName("subscribedPackages")
     val packageList: List<Package>
 )

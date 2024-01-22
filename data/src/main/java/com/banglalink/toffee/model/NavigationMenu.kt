@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NavigationMenu(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("iconResoluteID")
+    @SerialName("iconResoluteID")
     val iconResoluteID: Int,
-    @SerializedName("categories")
+    @SerialName("categories")
     val categories: List<NavCategory>,
-    @SerializedName("hasTopBorder")
+    @SerialName("hasTopBorder")
     val hasTopBorder: Boolean = false
 )

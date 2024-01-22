@@ -3,16 +3,15 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.request.PlayerSessionDetailsRequest
 import com.banglalink.toffee.data.storage.PlayerPreference
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.notification.BANDWIDTH_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 
 class ReportLastPlayerSession(private val playerPreference: PlayerPreference) {
-
-    private val gson = Gson()
-
+    
     suspend fun execute(){
         withContext(Dispatchers.IO){
             try {
@@ -22,7 +21,7 @@ class ReportLastPlayerSession(private val playerPreference: PlayerPreference) {
                     val request = PlayerSessionDetailsRequest(sessionList).apply {
                         initialTime = playerInitialTime
                     }
-                    PubSubMessageUtil.sendMessage(gson.toJson(request),BANDWIDTH_TRACK_TOPIC)
+                    PubSubMessageUtil.sendMessage(NetworkModuleLib.providesJsonWithConfig().encodeToString(request),BANDWIDTH_TRACK_TOPIC)
                 }
             }catch (e:Exception){
                 ToffeeAnalytics.logBreadCrumb("Exception in ReportLastPlayerSession")

@@ -7,15 +7,16 @@ import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.REACTION_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendReactionEvent @Inject constructor(
+    private val json: Json,
     private val mqttService: ToffeeMqttService
 ) {
-
-    private val gson = Gson()
     
     suspend fun execute(channelInfo: ChannelInfo, reactionInfo: ReactionInfo, reactionCount: Int, sendToPubSub:Boolean = true){
         if(sendToPubSub){
@@ -36,8 +37,8 @@ class SendReactionEvent @Inject constructor(
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(reactionData), REACTION_TOPIC)
-        mqttService.sendMessage(gson.toJson(reactionData), REACTION_TOPIC)
+        PubSubMessageUtil.sendMessage(json.encodeToString(reactionData), REACTION_TOPIC)
+        mqttService.sendMessage(json.encodeToString(reactionData), REACTION_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(reactionInfo: ReactionInfo, reactionCount: Int){
@@ -56,21 +57,22 @@ class SendReactionEvent @Inject constructor(
     }
 }
 
+@Serializable
 data class ReactionData(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("customer_id")
+    @SerialName("customer_id")
     val customerId: Int,
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val contentId: Long,
-    @SerializedName("reaction_type")
+    @SerialName("reaction_type")
     val reactionType: Int,
-    @SerializedName("reaction_status")
+    @SerialName("reaction_status")
     val reactionStatus: Int,
-    @SerializedName("device_id")
+    @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
-    @SerializedName("reaction_time")
+    @SerialName("reaction_time")
     val reactionTime: String,
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

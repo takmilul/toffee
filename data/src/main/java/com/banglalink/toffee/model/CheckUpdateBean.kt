@@ -1,40 +1,42 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CheckUpdateBean(
-    @SerializedName("updateAvailable")
+    @SerialName("updateAvailable")
     val updateAvailable: Int,
-    @SerializedName("message")
+    @SerialName("message")
     val message: String,
-    @SerializedName("messageTitle")
+    @SerialName("messageTitle")
     var messageTitle: String,
-    @SerializedName("decorationConfig")
+    @SerialName("decorationConfig")
     val decorationConfig : List<DecorationConfig>? = null
 )
-
+@Serializable
 data class DecorationConfig (
-    @SerializedName("splashScreen")
+    @SerialName("splashScreen")
     val splashScreen : List<DecorationData>?,
-    @SerializedName("topBar")
+    @SerialName("topBar")
     val topBar : List<DecorationData>?,
-    @SerializedName("isFromCache")
+    @SerialName("isFromCache")
     var isFromCache: Boolean = true
 )
-
+@Serializable
 data class DecorationData (
-    @SerializedName("type")
+    @SerialName("type")
     val type : String,
-    @SerializedName("is_active")
+    @SerialName("is_active")
     val isActive : Int,
-    @SerializedName("image_path")
+    @SerialName("image_path")
     val imagePathLight : String? = null,
-    @SerializedName("image_path_dark_mode")
+    @SerialName("image_path_dark_mode")
     val imagePathDark : String? = null,
-    @SerializedName("start_date")
+    @SerialName("start_date")
     val startDate : String,
-    @SerializedName("end_date")
+    @SerialName("end_date")
     val endDate : String,
-    @SerializedName("duration")
+    @SerialName("duration")
     val duration : Int
 )

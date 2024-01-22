@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SubscriberPhotoBean(
-    @SerializedName("message")
+    @SerialName("message")
     val message: String?,
-    @SerializedName("user_photo")
+    @SerialName("user_photo")
     val userPhoto: String?
 )

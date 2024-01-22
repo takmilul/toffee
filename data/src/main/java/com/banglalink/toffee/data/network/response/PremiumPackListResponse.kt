@@ -1,43 +1,47 @@
 package com.banglalink.toffee.data.network.response
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PremiumPackListResponse(
-    @SerializedName("response")
-    val response: PremiumPackListBean? = PremiumPackListBean()
+    @SerialName("response")
+    val response: PremiumPackListBean? = PremiumPackListBean(),
 ) : BaseResponse()
 
+@Serializable
 data class PremiumPackListBean(
-    @SerializedName("packs")
-    val premiumPacks: List<PremiumPack>? = listOf()
+    @SerialName("packs")
+    val premiumPacks: List<PremiumPack>? = listOf(),
 )
 
 @Parcelize
+@Serializable
 data class PremiumPack(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int = 0,
-    @SerializedName("pack_title")
+    @SerialName("pack_title")
     val packTitle: String? = null,
-    @SerializedName("pack_poster_mobile")
+    @SerialName("pack_poster_mobile")
     val packImage: String? = null,
-    @SerializedName("pack_description")
+    @SerialName("pack_description")
     val packDescriptionForBl: String? = null,
-    @SerializedName("non_bl_pack_description")
+    @SerialName("non_bl_pack_description")
     val packDescriptionForNonBl: String? = null,
-    @SerializedName("free_pack_details_text")
+    @SerialName("free_pack_details_text")
     val packDescriptionForTrial: String? = null,
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val contentId: List<Int> = listOf(),
-    @SerializedName("isPurchaseAvailable")
+    @SerialName("isPurchaseAvailable")
     val isPurchaseAvailable: Int = 0,
-    @SerializedName("isAvailableFreePeriod")
+    @SerialName("isAvailableFreePeriod")
     val isAvailableFreePeriod: Int = 0,
-    @SerializedName("isPackPurchased")
+    @SerialName("isPackPurchased")
     var isPackPurchased: Boolean = false,
-    @SerializedName("expiryDate")
+    @SerialName("expiryDate")
     var expiryDate: String? = null,
-    @SerializedName("packDetail")
-    var packDetail: String? = null
-): Parcelable
+    @SerialName("packDetail")
+    var packDetail: String? = null,
+) : Parcelable

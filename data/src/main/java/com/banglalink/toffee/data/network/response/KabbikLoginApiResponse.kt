@@ -1,10 +1,12 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class KabbikLoginApiResponse(
-    @SerializedName("success" ) val success : String? = null,
-    @SerializedName("token"   ) val token   : String? = null,
-    @SerializedName("expiry"  ) val expiry  : String? = null,
-    @SerializedName("message" ) val message : String? = null
+    @SerialName("success" ) val success : String? = null,
+    @SerialName("token"   ) val token   : String? = null,
+    @SerialName("expiry"  ) val expiry  : String? = null,
+    @SerialName("message" ) val message : String? = null
 ): ExternalBaseResponse()

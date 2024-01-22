@@ -1,11 +1,15 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.apiservice.ApiLoginService
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.data.exception.ApiException
-import com.banglalink.toffee.apiservice.ApiLoginService
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.check
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

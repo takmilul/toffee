@@ -9,7 +9,9 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CatchupParams(
     val id: String,
     val tags: String?,

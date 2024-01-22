@@ -5,11 +5,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import java.net.InetAddress
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
 
+@Serializable
 data class PingData(
     val isOnline: Boolean = false,
     val networkType: String? = null,

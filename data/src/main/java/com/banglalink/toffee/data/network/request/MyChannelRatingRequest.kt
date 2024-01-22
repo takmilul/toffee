@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelRatingRequest(
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Int,
-    @SerializedName("rating")
+    @SerialName("rating")
     val rating: Float,
-    @SerializedName("channelOwnerId")
+    @SerialName("channelOwnerId")
     val channelOwnerId: Int,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String
 ) : BaseRequest(ApiNames.RATE_CHANNEL)

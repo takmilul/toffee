@@ -1,16 +1,18 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CredentialRequest(
-    @SerializedName("parentId")
+    @SerialName("parentId")
     val parentId: Int = 1,
-    @SerializedName("fcmToken")
+    @SerialName("fcmToken")
     val fcmToken: String,
-    @SerializedName("msisdn")
+    @SerialName("msisdn")
     val msisdn: String = "",
 ) : BaseRequest("ugcCredentialByDeviceId") {
-    @get:SerializedName("isBlNumber")
+//    @get:SerializedName("isBlNumber")
     override var isBlNumber: String
         get() = super.isBlNumber
         set(value) {

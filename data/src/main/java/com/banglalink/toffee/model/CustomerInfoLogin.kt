@@ -5,276 +5,282 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.banglalink.toffee.data.network.response.BodyResponse
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class CustomerInfoLogin(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int = 0,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String? = null,
-    @SerializedName("sessionToken")
+    @SerialName("sessionToken")
     val sessionToken: String? = null,
-    @SerializedName("profileImage")
+    @SerialName("profileImage")
     val profileImage: String? = null,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null,
-    @SerializedName("balance")
+    @SerialName("balance")
     val balance: Int = 0,
-    @SerializedName("dbVersionV2")
+    @SerialName("dbVersionV2")
     val dbVersionList: List<DBVersionV2>? = null,
-    @SerializedName("customerName")
+    @SerialName("customerName")
     val customerName: String? = null,
     
-//    @SerializedName("isBanglalinkNumber")
+//    @SerialName("isBanglalinkNumber")
 //    val isBanglalinkNumber: String? = "false",
-    @SerializedName("hlsUrlOverride")
+    @SerialName("hlsUrlOverride")
     val hlsUrlOverride: Boolean = false,
-    @SerializedName("hlsOverrideUrl")
+    @SerialName("hlsOverrideUrl")
     val hlsOverrideUrl: String? = null,
-    @SerializedName("headerSessionToken")
+    @SerialName("headerSessionToken")
     val headerSessionToken: String? = null,
-    @SerializedName("tokenLifeSpan")
+    @SerialName("tokenLifeSpan")
     val tokenLifeSpan: Int = 0,
-    @SerializedName("isSubscriptionActive")
+    @SerialName("isSubscriptionActive")
     val isSubscriptionActive: String? = "true",
     
-    @SerializedName("real_db_01_url")
+    @SerialName("real_db_01_url")
     val viewCountDbUrl: String? = null,
-    @SerializedName("reaction_db")
+    @SerialName("reaction_db")
     val reactionStatusDbUrl: String? = null,
-    @SerializedName("share_log_db")
+    @SerialName("share_log_db")
     val shareCountDbUrl: String? = null,
-    @SerializedName("subscribe_count_db")
+    @SerialName("subscribe_count_db")
     val subscriberStatusDbUrl: String? = null,
-    @SerializedName("isAllTvChannelsMenuEnabled")
+    @SerialName("isAllTvChannelsMenuEnabled")
     val isAllTvChannelsMenuEnabled: Boolean = false,
-    @SerializedName("geo_city")
+    @SerialName("geo_city")
     val geoCity: String? = null,
-    @SerializedName("geo_region")
+    @SerialName("geo_region")
     val geoRegion: String? = null,
-    @SerializedName("geo_location")
+    @SerialName("geo_location")
     val geoLocation: String? = null,
-    @SerializedName("user_ip")
+    @SerialName("user_ip")
     val userIp: String? = null,
-    @SerializedName("isFeaturePartnerActive")
+    @SerialName("isFeaturePartnerActive")
     val isFeaturePartnerActive: String? = "false",
-    @SerializedName("mqttIsActive")
+    @SerialName("mqttIsActive")
     val mqttIsActive: Int = 0,
-    @SerializedName("mqttIsRealtimeSync")
+    @SerialName("mqttIsRealtimeSync")
     val isMqttRealtimeSyncActive: Int = 0,
-    @SerializedName("mqttUrl")
+    @SerialName("mqttUrl")
     val mqttUrl: String? = null,
-    @SerializedName("isCastEnable")
+    @SerialName("isCastEnable")
     val isCastEnabled: Int = 0,
-    @SerializedName("castRecieverId")
+    @SerialName("castRecieverId")
     val castReceiverId: String? = null,
-    @SerializedName("isCastUrlOverride")
+    @SerialName("isCastUrlOverride")
     val isCastUrlOverride: Int = 0,
-    @SerializedName("castOverrideUrl")
+    @SerialName("castOverrideUrl")
     val castOverrideUrl: String? = null,
-    @SerializedName("verified_status")
+    @SerialName("verified_status")
     val verified_status: Boolean = false,
-    @SerializedName("internetPackUrl")
+    @SerialName("internetPackUrl")
     val internetPackUrl: String? = null,
-    @SerializedName("tusUploadServerUrl")
+    @SerialName("tusUploadServerUrl")
     val tusUploadServerUrl: String? = null,
-    @SerializedName("privacyPolicyUrl")
+    @SerialName("privacyPolicyUrl")
     val privacyPolicyUrl: String? = null,
-    @SerializedName("creatorsPolicyUrl")
+    @SerialName("creatorsPolicyUrl")
     val creatorsPolicyUrl: String? = null,
-    @SerializedName("termsAndConditionsUrl")
+    @SerialName("termsAndConditionsUrl")
     val termsAndConditionsUrl: String? = null,
-    @SerializedName("facebookPageUrl")
+    @SerialName("facebookPageUrl")
     val facebookPageUrl: String = "https://www.facebook.com/100869298504557",
-    @SerializedName("instagramPageUrl")
+    @SerialName("instagramPageUrl")
     val instagramPageUrl: String = "https://www.instagram.com/toffee.bangladesh/?hl=en",
-    @SerializedName("youtubePageUrl")
+    @SerialName("youtubePageUrl")
     val youtubePageUrl: String = "https://www.youtube.com/channel/UCv9NYIjz4jhw-KSqdRulSuw",
-    @SerializedName("screenCaptureEnabledUsers")
+    @SerialName("screenCaptureEnabledUsers")
     val screenCaptureEnabledUsers: Set<String>? = null,
     
-    @SerializedName("android_in_app_update_version_codes")
+    @SerialName("android_in_app_update_version_codes")
     val forceUpdateVersionCodes: String? = null,
-    @SerializedName("isVastActive")
+    @SerialName("isVastActive")
     val isVastActive: Int = 0,
-    @SerializedName("vastFrequency")
+    @SerialName("vastFrequency")
     val vastFrequency: Int = 0,
-    @SerializedName("gcpVodBucketDirectory")
+    @SerialName("gcpVodBucketDirectory")
     val gcpVodBucketDirectory: String? = null,
-    @SerializedName("isFcmEventActive")
+    @SerialName("isFcmEventActive")
     val isFcmEventActive: Int = 0,
-    @SerializedName("isFbEventActive")
+    @SerialName("isFbEventActive")
     val isFbEventActive: Int = 0,
-    @SerializedName("isGlobalDrmActive")
+    @SerialName("isGlobalDrmActive")
     val isGlobalDrmActive: Int = 0,
-    @SerializedName("defaultDrmCastReceiver")
+    @SerialName("defaultDrmCastReceiver")
     val defaultDrmCastReceiver: String? = null,
     
-    @SerializedName("widevineLicenseUrl")
+    @SerialName("widevineLicenseUrl")
     val widevineLicenseUrl: String? = null,
-    @SerializedName("fpsLicenseUrl")
+    @SerialName("fpsLicenseUrl")
     val fpsLicenseUrl: String? = null,
-    @SerializedName("playreadyLicenseUrl")
+    @SerialName("playreadyLicenseUrl")
     val playreadyLicenseUrl: String? = null,
-    @SerializedName("drmTokenUrl")
+    @SerialName("drmTokenUrl")
     val drmTokenUrl: String? = null,
-    @SerializedName("isGlobalCidActive")
+    @SerialName("isGlobalCidActive")
     val isGlobalCidActive: Int = 0,
-    @SerializedName("globalCidName")
+    @SerialName("globalCidName")
     val globalCidName: String? = null,
-    @SerializedName("androidBetaVersionCode")
+    @SerialName("androidBetaVersionCode")
     val androidBetaVersionCode: String? = null,
-    @SerializedName("paymentStatus")
+    @SerialName("paymentStatus")
     val paymentStatus: Boolean = false,
-    @SerializedName("isFireworksActiveForAndroid")
+    @SerialName("isFireworksActiveForAndroid")
     val isFireworkActive: Boolean = false,
-    @SerializedName("isStingrayActive")
+    @SerialName("isStingrayActive")
     val isStingrayActive: Boolean = false,
-    @SerializedName("isMedalliaActiveForAndroid")
+    @SerialName("isMedalliaActiveForAndroid")
     val isMedalliaActive: Boolean = false,
-    @SerializedName("isConvivaActiveForAndroid")
+    @SerialName("isConvivaActiveForAndroid")
     val isConvivaActive: Boolean = false,
-    @SerializedName("isNdMonitoringActiveAndroid")
+    @SerialName("isNdMonitoringActiveAndroid")
     val isPlayerMonitoringActive: Boolean = false,
-    @SerializedName("showBuyInternetForAndroid")
+    @SerialName("showBuyInternetForAndroid")
     val showBuyInternetForAndroid: Boolean = false,
-    @SerializedName("isNativeAdActive")
+    @SerialName("isNativeAdActive")
     val isNativeAdActive: Boolean = false,
-    @SerializedName("playerMaxBitRateAndroid")
+    @SerialName("playerMaxBitRateAndroid")
     val maxBitRateWifi: Int = -1,
-    @SerializedName("playerMaxBitRateCellular")
+    @SerialName("playerMaxBitRateCellular")
     val maxBitRateCellular: Int = -1,
-    @SerializedName("isAppRetrying")
+    @SerialName("isAppRetrying")
     val isRetryActive: Boolean = true,
-    @SerializedName("isAppFailover")
+    @SerialName("isAppFailover")
     val isFallbackActive: Boolean = true,
-    @SerializedName("appRetryingCount")
+    @SerialName("appRetryingCount")
     val retryCount: Int = -1,
-    @SerializedName("appWaitDuration")
+    @SerialName("appWaitDuration")
     val retryWaitDuration: Int = -1,
-    @SerializedName("videoMinDuration")
+    @SerialName("videoMinDuration")
     val videoMinDuration: Int = -1,
-    @SerializedName("videoMaxDuration")
+    @SerialName("videoMaxDuration")
     val videoMaxDuration: Int = -1,
-    @SerializedName("bubbleConfig")
+    @SerialName("bubbleConfig")
     val bubbleConfig: @RawValue BubbleConfig?,
-    @SerializedName("feature_partner_title")
+    @SerialName("feature_partner_title")
     val featuredPartnerTitle: String? = null,
-    @SerializedName("internalTimeout")
+    @SerialName("internalTimeout")
     val internalTimeOut: Int? = 60,
-    @SerializedName("externalTimeout")
+    @SerialName("externalTimeout")
     val externalTimeout: Int? = 60,
-    @SerializedName("fStoreTblContentBlacklist")
+    @SerialName("fStoreTblContentBlacklist")
     val fStoreTblContentBlacklist: String? = null,
-    @SerializedName("isfireStoreTblContentBlacklist")
+    @SerialName("isfireStoreTblContentBlacklist")
     var isCircuitBreakerActive: Boolean = false,
-    @SerializedName("isBubbleActive")
+    @SerialName("isBubbleActive")
     var isBubbleActive: Int = -1,
-    @SerializedName("bubbleType")
+    @SerialName("bubbleType")
     var bubbleType: Int = -1,
-    @SerializedName("bubbleDeepLink")
+    @SerialName("bubbleDeepLink")
     val ramadanBubbleDeepLink: String? = null,
-    @SerializedName("premium_packages")
+    @SerialName("premium_packages")
     var activePackList: @RawValue List<ActivePack>? = null,
-    @SerializedName("blDataPackTermsAndConditionsUrl")
+    @SerialName("blDataPackTermsAndConditionsUrl")
     val blDataPackTermsAndConditionsUrl : String? = null,
-    @SerializedName("bkashDataPackTermsAndConditionsUrl")
+    @SerialName("bkashDataPackTermsAndConditionsUrl")
     val bkashDataPackTermsAndConditionsUrl : String? = null,
-    @SerializedName("bkashAppKey")
+    @SerialName("bkashAppKey")
     val bkashAppKey : String? = null,
-    @SerializedName("bkashAppSecret")
+    @SerialName("bkashAppSecret")
     val bkashAppSecret : String? = null,
-    @SerializedName("bkashPassword")
+    @SerialName("bkashPassword")
     val bkashPassword : String? = null,
-    @SerializedName("bkashUsername")
+    @SerialName("bkashUsername")
     val bkashUsername : String? = null,
-    @SerializedName("bkashApiUrl")
+    @SerialName("bkashApiUrl")
     val bkashApiUrl : String? = null,
-    @SerializedName("bkashGrantTokenUrl")
+    @SerialName("bkashGrantTokenUrl")
     val bkashGrantTokenUrl : String? = null,
-    @SerializedName("bkashRefreshTokenUrl")
+    @SerialName("bkashRefreshTokenUrl")
     val bkashRefreshTokenUrl : String? = null,
-    @SerializedName("bkashCreateUrl")
+    @SerialName("bkashCreateUrl")
     val bkashCreateUrl : String? = null,
-    @SerializedName("bkashExecuteUrl")
+    @SerialName("bkashExecuteUrl")
     val bkashExecuteUrl : String? = null,
-    @SerializedName("bkashQueryPaymentUrl")
+    @SerialName("bkashQueryPaymentUrl")
     val bkashQueryPaymentUrl : String? = null,
-    @SerializedName("bkashCallbackUrl")
+    @SerialName("bkashCallbackUrl")
     val bkashCallbackUrl : String? = null,
-    @SerializedName("merchantInvoiceNumber")
+    @SerialName("merchantInvoiceNumber")
     val merchantInvoiceNumber : String? = null,
-    @SerializedName("bkashApiRetryingCount")
+    @SerialName("bkashApiRetryingCount")
     val bkashApiRetryingCount : Int? = 0,
-    @SerializedName("bkashApiRetryingDuration")
+    @SerialName("bkashApiRetryingDuration")
     val bkashApiRetryingDuration : Long? = 0L,
-    @SerializedName("is_prepaid")
+    @SerialName("is_prepaid")
     val isPrepaid : Boolean?,
-    @SerializedName("isMnpCallForSubscription")
+    @SerialName("isMnpCallForSubscription")
     val isMnpCallForSubscription : Boolean?,
-    @SerializedName("faqUrl")
+    @SerialName("faqUrl")
     val faqUrl : String?,
 ) : BodyResponse(), Parcelable
 
 @Entity
+@Serializable
 data class BubbleConfig(
     @PrimaryKey(autoGenerate = true)
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long? = null,
-    @SerializedName("isBubbleActive")
+    @SerialName("isBubbleActive")
     val isFifaBubbleActive : Boolean,
-    @SerializedName("imageType")
+    @SerialName("imageType")
     val imageType : String? = null,
-    @SerializedName("adIconUrl")
+    @SerialName("adIconUrl")
     val adIconUrl : String? = null,
-    @SerializedName("bubbleText")
+    @SerialName("bubbleText")
     val bubbleText : String? = null,
-    @SerializedName("adForwardUrl")
+    @SerialName("adForwardUrl")
     val adForwardUrl : String? = null,
-    @SerializedName("isGlobalCountDownActive")
+    @SerialName("isGlobalCountDownActive")
     val isGlobalCountDownActive : Boolean,
-    @SerializedName("countDownEndTime")
+    @SerialName("countDownEndTime")
     val countDownEndTime : String? = null,
-    @SerializedName("type")
+    @SerialName("type")
     val type : String? = null,
-    @SerializedName("matchStartTime")
+    @SerialName("matchStartTime")
     val matchStartTime : String? = null,
-    @SerializedName("venue")
+    @SerialName("venue")
     val venue : String? = null,
-    @SerializedName("poweredBy")
+    @SerialName("poweredBy")
     val poweredBy : String? = null,
-    @SerializedName("poweredByIconUrl")
+    @SerialName("poweredByIconUrl")
     val poweredByIconUrl : String? = null,
-    @SerializedName("match")
+    @SerialName("match")
     @Embedded val match : Match? = null,
-    @SerializedName("receiveTime")
+    @SerialName("receiveTime")
     val receiveTime: Long = System.currentTimeMillis()
 )
 
+@Serializable
 data class Match (
-    @SerializedName("homeTeam")
+    @SerialName("homeTeam")
     @Embedded val homeTeam : HomeTeam? = null,
-    @SerializedName("awayTeam")
+    @SerialName("awayTeam")
     @Embedded val awayTeam : AwayTeam? = null
 )
 
+@Serializable
 data class HomeTeam (
-    @SerializedName("score")
+    @SerialName("score")
     val homeScore : String? = null,
-    @SerializedName("countryName")
+    @SerialName("countryName")
     val homeCountryName : String? = null,
-    @SerializedName("countryFlag")
+    @SerialName("countryFlag")
     val homeCountryFlag : String? = null
 )
 
+@Serializable
 data class AwayTeam (
-    @SerializedName("score")
+    @SerialName("score")
     val awayScore : String? = null,
-    @SerializedName("countryName")
+    @SerialName("countryName")
     val awayCountryName : String? = null,
-    @SerializedName("countryFlag")
+    @SerialName("countryFlag")
     val awayCountryFlag : String? = null
 )

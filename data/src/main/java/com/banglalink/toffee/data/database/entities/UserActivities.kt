@@ -3,31 +3,33 @@ package com.banglalink.toffee.data.database.entities
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["customerId", "channelId", "activityType", "activitySubType"], unique = true)])
 data class UserActivities(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int = 0,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Long,
-    @SerializedName("category")
+    @SerialName("category")
     val category: String,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("payload")
+    @SerialName("payload")
     val payload: String,
-    @SerializedName("activityType")
+    @SerialName("activityType")
     val activityType: Int,
-    @SerializedName("activitySubType")
+    @SerialName("activitySubType")
     val activitySubType: Int,
 ) : BaseEntity() {
     @Ignore
-    @SerializedName("channelInfo")
+    @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        Gson().fromJson(payload, ChannelInfo::class.java)
+        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(payload)
     } catch (ex: Exception) {
         null
     }

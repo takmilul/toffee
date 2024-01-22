@@ -1,14 +1,16 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Transaction(
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("date")
+    @SerialName("date")
     val date: String,
-    @SerializedName("amount")
+    @SerialName("amount")
     val amount: String,
-    @SerializedName("remainingAmount")
+    @SerialName("remainingAmount")
     val remainingAmount: String
 )

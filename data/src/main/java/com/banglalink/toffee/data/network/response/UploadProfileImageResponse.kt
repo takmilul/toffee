@@ -1,9 +1,9 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.SubscriberPhotoBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
 class UploadProfileImageResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: SubscriberPhotoBean
 ) : BaseResponse()

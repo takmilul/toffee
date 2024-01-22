@@ -1,54 +1,56 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Package(
-    @SerializedName("id")
+    @SerialName("id")
     val packageId: Int = 0,
-    @SerializedName("package_name")
+    @SerialName("package_name")
     val packageName: String? = null,
-    @SerializedName("package_badge_name")
+    @SerialName("package_badge_name")
     val packageBadgeName: String? = null,
-    @SerializedName("package_type")
+    @SerialName("package_type")
     val packageType: String? = null,
-    @SerializedName("package_badge_icon")
+    @SerialName("package_badge_icon")
     val packageIcon: String? = null,
-    @SerializedName("duration")
+    @SerialName("duration")
     val duration: Int = 0,
-    @SerializedName("is_initial")
+    @SerialName("is_initial")
     val isInitial: Int = 0,
-    @SerializedName("is_base_package")
+    @SerialName("is_base_package")
     val isBasePackage: Int = 0,
-    @SerializedName("price")
+    @SerialName("price")
     val price: Int = 0,
-    @SerializedName("discount")
+    @SerialName("discount")
     val discount: Int = 0,
-    @SerializedName("programs")
+    @SerialName("programs")
     val programs: Int = 0,
-    @SerializedName("is_subscribed")
+    @SerialName("is_subscribed")
     val isSubscribed: Boolean = false,
-    @SerializedName("is_commercial")
+    @SerialName("is_commercial")
     val isCommercial: Int = 0,
-    @SerializedName("is_active")
+    @SerialName("is_active")
     val isActive: Int = 0,
-    @SerializedName("is_percentage")
+    @SerialName("is_percentage")
     var isPercentage: Int = 0,
-    @SerializedName("is_free")
+    @SerialName("is_free")
     val isFree: Int = 0,
-    @SerializedName("package_mobile_logo")
+    @SerialName("package_mobile_logo")
     val mobileLogo: String? = null,
-    @SerializedName("package_stb_logo")
+    @SerialName("package_stb_logo")
     val stbLogo: String? = null,
-    @SerializedName("package_poster_stb")
+    @SerialName("package_poster_stb")
     val posterStb: String? = null,
-    @SerializedName("package_poster_mobile")
+    @SerialName("package_poster_mobile")
     val posterMobile: String? = null,
-    @SerializedName("package_start_date")
+    @SerialName("package_start_date")
     val startDate: String? = null,
-    @SerializedName("package_expire_date")
+    @SerialName("package_expire_date")
     val expireDate: String? = null,
-    @SerializedName("is_auto_renew")
+    @SerialName("is_auto_renew")
     var isAutoRenewable: Int = 0,
-    @SerializedName("auto_renew_button")
+    @SerialName("auto_renew_button")
     val autoRenewButton: Int = 0
 )

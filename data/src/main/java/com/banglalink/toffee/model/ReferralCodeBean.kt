@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ReferralCodeBean(
-    @SerializedName("referralCode")
+    @SerialName("referralCode")
     val referralCode: String,
-    @SerializedName("sharableText")
+    @SerialName("sharableText")
     val sharableText: String
 )

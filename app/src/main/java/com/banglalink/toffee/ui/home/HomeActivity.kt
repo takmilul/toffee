@@ -149,7 +149,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.microsoft.clarity.Clarity
 import com.microsoft.clarity.ClarityConfig
@@ -158,6 +157,7 @@ import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.serialization.encodeToString
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
@@ -176,8 +176,6 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-
-    private val gson = Gson()
     private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
@@ -1270,7 +1268,7 @@ class HomeActivity : PlayerPageActivity(),
                         channelInfo.getContentId().toLong(),
                         channelInfo.urlType,
                         channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
-                        gson.toJson(channelInfo)
+                        json.encodeToString(channelInfo)
                     )
                 )
                 loadMediaCdnConfig(channelInfo, onSuccess)
@@ -1293,7 +1291,7 @@ class HomeActivity : PlayerPageActivity(),
                                 } else {
                                     hlsLinks = cInfo?.hlsLinks?.mapIndexed { index, hlsLinks ->
                                         if (index == 0) {
-                                            hlsLinks.hls_url_mobile = mediaCdnData.signedUrl
+                                            hlsLinks.hlsUrlMobile = mediaCdnData.signedUrl
                                         }
                                         hlsLinks
                                     }
@@ -1308,7 +1306,7 @@ class HomeActivity : PlayerPageActivity(),
                         lifecycleScope.launch {
                             newChannelInfo?.getContentId()?.toLong()?.let {
                                 cdnChannelItemRepository.updateCdnChannelItemByChannelId(
-                                    it, expiryDate, gson.toJson(newChannelInfo)
+                                    it, expiryDate, json.encodeToString(newChannelInfo)
                                 )
                             }
                         }
@@ -1369,7 +1367,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun playInWebView(it: ChannelInfo) {
-        showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hls_url_mobile}")
+        showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hlsUrlMobile}")
         it.getHlsLink()?.let { url ->
             viewModel.sendViewContentEvent(it.copy(id = "0"))
             val shareableUrl = it.video_share_url
@@ -1782,7 +1780,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
         lifecycleScope.launch {
-            /*val playerOverlayData = Gson().fromJson("""
+            /*val playerOverlayData = Json{ encodeDefaults = true }.decodeFromString<>"""
                     {
                         "id": 234,
                         "content_id": "254896",
@@ -2011,7 +2009,7 @@ class HomeActivity : PlayerPageActivity(),
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
                         val encryptedUrl = EncryptionUtil.decryptResponse(newHash).trimIndent()
-                        shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
+                        shareableData = json.decodeFromString<ShareableData>(encryptedUrl)
                         when (shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -2167,7 +2165,7 @@ class HomeActivity : PlayerPageActivity(),
         val sharableData = ShareableData(
             "playlist", 0, null, null, 0, isOwner, ownerId, playlistId, playlistName
         )
-        val json = gson.toJson(sharableData, ShareableData::class.java)
+        val json = json.encodeToString(sharableData)
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
         return newUrl + shareableJsonData
     }

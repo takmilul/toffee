@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
-import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.ui.common.BaseFragment

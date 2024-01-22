@@ -7,7 +7,8 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
 import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqttService) {
@@ -24,17 +25,18 @@ class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqtt
     }
 }
 
+@Serializable
 data class SubscriptionCountData(
-    @SerializedName("channel_id")
+    @SerialName("channel_id")
     val channelId: Int,
-    @SerializedName("subscriber_id")
+    @SerialName("subscriber_id")
     val subscriberId: Int,
-    @SerializedName("status")
+    @SerialName("status")
     val status: Int,
-    @SerializedName("device_id")
+    @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
-    @SerializedName("date_time")
+    @SerialName("date_time")
     val date_time: String,
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

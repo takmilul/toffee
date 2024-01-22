@@ -1,12 +1,15 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AudioBookSeeMoreResponse(
-    @SerializedName("data" ) var data : List<CategoryData> = listOf()
+    @SerialName("data" ) var data : List<CategoryData> = listOf()
 ): ExternalBaseResponse()
 
+@Serializable
 data class CategoryData (
-    @SerializedName("name" ) var name : String?         = null,
-    @SerializedName("data" ) var data : List<KabbikItemBean> = listOf()
+    @SerialName("name" ) var name : String?         = null,
+    @SerialName("data" ) var data : List<KabbikItemBean> = listOf()
 )

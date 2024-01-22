@@ -1,20 +1,22 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 open class ExternalBaseResponse {
-    @SerializedName("statusCode")
+    @SerialName("statusCode")
     var statusCode: Int = 200
     
-    @SerializedName("version")
+    @SerialName("version")
     var version: String? = null
     
-    @SerializedName("errorCode")
+    @SerialName("errorCode")
     var errorCode: Int = 0
     
-    @SerializedName("errorMsg")
+    @SerialName("errorMsg")
     var errorMsg: String? = null
     
-    @SerializedName("isFromCache")
+    @SerialName("isFromCache")
     var isFromCache: Boolean = false
 }

@@ -1,7 +1,9 @@
 package com.banglalink.toffee.ui.upload
 
+import kotlinx.serialization.Serializable
 import net.gotev.uploadservice.persistence.PersistableData
 
+@Serializable
 data class TusUploadTaskParameters(
     var fingerprint: String,
     var uploadUrl: String? = null,

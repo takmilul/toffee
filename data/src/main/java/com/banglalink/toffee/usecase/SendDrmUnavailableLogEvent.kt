@@ -5,16 +5,20 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.DRM_UNAVAILABLE_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SendDrmUnavailableLogEvent @Inject constructor(private val mPref: SessionPreference) {
-    private val gson = Gson()
+class SendDrmUnavailableLogEvent @Inject constructor(
+    private val json: Json,
+    private val mPref: SessionPreference
+) {
     
     fun execute(sendToPubSub: Boolean = true) {
         PubSubMessageUtil.sendMessage(
-            gson.toJson(DrmUnavailableLogData().also {
+            json.encodeToString(DrmUnavailableLogData().also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             }),
             DRM_UNAVAILABLE_TOPIC
@@ -22,14 +26,15 @@ class SendDrmUnavailableLogEvent @Inject constructor(private val mPref: SessionP
     }
 }
 
+@Serializable
 data class DrmUnavailableLogData(
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
-    @SerializedName("device")
+    @SerialName("device")
     val device: String = Build.MANUFACTURER,
-    @SerializedName("deviceModel")
+    @SerialName("deviceModel")
     val deviceModel: String = Build.MODEL,
 ) : PubSubBaseRequest() {
     override var phoneNumber: String

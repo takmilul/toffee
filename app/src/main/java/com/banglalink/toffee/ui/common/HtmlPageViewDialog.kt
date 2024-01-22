@@ -34,7 +34,6 @@ import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
-import com.loopnow.fireworklibrary.FwSDK.destroy
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers

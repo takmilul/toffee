@@ -2,33 +2,35 @@ package com.banglalink.toffee.model
 
 import android.os.Parcelable
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @KeepName
 @Parcelize
+@Serializable
 data class PlaylistPlaybackInfo(
-    @SerializedName("playlistId")
+    @SerialName("playlistId")
     val playlistId: Int,
-    @SerializedName("channelOwnerId")
+    @SerialName("channelOwnerId")
     val channelOwnerId: Int,
-    @SerializedName("playlistName")
+    @SerialName("playlistName")
     val playlistName: String,
-    @SerializedName("playlistItemCount")
+    @SerialName("playlistItemCount")
     var playlistItemCount: Int,
-    @SerializedName("playlist_share_url")
+    @SerialName("playlist_share_url")
     val playlistShareUrl: String? = null,
-    @SerializedName("is_approved")
+    @SerialName("is_approved")
     val isApproved: Int = 0,
-    @SerializedName("isUserPlaylist")
+    @SerialName("isUserPlaylist")
     var isUserPlaylist: Boolean = false,
-    @SerializedName("playIndex")
+    @SerialName("playIndex")
     var playIndex: Int = 0,
-    @SerializedName("currentItem")
+    @SerialName("currentItem")
     var currentItem: ChannelInfo? = null,
-    @SerializedName("isOwner")
+    @SerialName("isOwner")
     var isOwner: Int = 0,
-    @SerializedName("isFromShare")
+    @SerialName("isFromShare")
     var isFromShare: Boolean = false
 ): Parcelable {
     fun getPlaylistIdLong(): Long = playlistId * 10L + 1L

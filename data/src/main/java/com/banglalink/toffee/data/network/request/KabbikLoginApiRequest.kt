@@ -1,15 +1,16 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
-import retrofit2.http.Header
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class KabbikLoginApiRequest(
-    @SerializedName("subscriber_id")
+    @SerialName("subscriber_id")
     val subscriberId: String? = null,
 
-    @SerializedName("client_id")
+    @SerialName("client_id")
     val clientId: String? = null,
 
-    @SerializedName("client_secret")
+    @SerialName("client_secret")
     val clientSecret: String? = null
 )

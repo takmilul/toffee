@@ -49,15 +49,14 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
 import com.banglalink.toffee.ui.compose_theme.CardTitleColor
+import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
 import com.banglalink.toffee.ui.compose_theme.Fonts
 import com.banglalink.toffee.ui.compose_theme.ScreenBackground
 import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {

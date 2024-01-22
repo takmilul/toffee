@@ -1,32 +1,34 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 open class BaseResponse {
-    @SerializedName("status")
+    @SerialName("status")
     var status: Int = 0
     
-    @SerializedName("product")
+    @SerialName("product")
     var product: String? = null
     
-    @SerializedName("version")
+    @SerialName("version")
     var version: String? = null
     
-    @SerializedName("apiName")
+    @SerialName("apiName")
     var apiName: String? = null
     
-    @SerializedName("errorCode")
+    @SerialName("errorCode")
     var errorCode: Int = 0
     
-    @SerializedName("errorMsg")
+    @SerialName("errorMsg")
     var errorMsg: String? = null
     
-    @SerializedName("errorMsgTitle")
+    @SerialName("errorMsgTitle")
     var errorMsgTitle: String? = null
     
-    @SerializedName("displayMsg")
+    @SerialName("displayMsg")
     var displayMsg: String? = null
     
-    @SerializedName("isFromCache")
+    @SerialName("isFromCache")
     var isFromCache: Boolean = false
 }

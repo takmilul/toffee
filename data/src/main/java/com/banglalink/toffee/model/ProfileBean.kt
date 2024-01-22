@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProfileBean(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("balance")
+    @SerialName("balance")
     val balance: Int,
-    @SerializedName("customer")
+    @SerialName("customer")
     val customer: Customer
 )

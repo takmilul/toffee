@@ -5,25 +5,27 @@ import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 open class PubSubBaseRequest {
-    @SerializedName("deviceType")
+    @SerialName("deviceType")
     val deviceType: Int = Constants.DEVICE_TYPE
-    @SerializedName("appVersion")
+    @SerialName("appVersion")
     val appVersion: String = CommonPreference.getInstance().appVersionName
-    @SerializedName("osVersion")
+    @SerialName("osVersion")
     val osVersion: String = "android " + Build.VERSION.RELEASE
-    @SerializedName("netType")
+    @SerialName("netType")
     val netType: String = SessionPreference.getInstance().netType
-    @SerializedName("isBlNumber")
+    @SerialName("isBlNumber")
     open var isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
-    @SerializedName("deviceId")
+    @SerialName("deviceId")
     val deviceId: String = CommonPreference.getInstance().deviceId
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Long = SessionPreference.getInstance().customerId.toLong()
-    @SerializedName("msisdn")
+    @SerialName("msisdn")
     open var phoneNumber: String = SessionPreference.getInstance().phoneNumber
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 }

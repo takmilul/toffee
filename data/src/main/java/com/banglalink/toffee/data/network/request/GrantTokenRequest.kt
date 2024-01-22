@@ -1,10 +1,12 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GrantTokenRequest(
-    @SerializedName("app_key")
+    @SerialName("app_key")
     var appKey: String? = null,
-    @SerializedName("app_secret")
+    @SerialName("app_secret")
     var appSecret: String? = null
 )

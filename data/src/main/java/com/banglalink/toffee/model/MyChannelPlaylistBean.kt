@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelPlaylistBean(
-    @SerializedName("count")
+    @SerialName("count")
     val count: Int,
-    @SerializedName("totalCount")
+    @SerialName("totalCount")
     val totalCount: Int,
-    @SerializedName("isOwner")
+    @SerialName("isOwner")
     val isOwner: Int,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Int,
-    @SerializedName("playlistNames")
+    @SerialName("playlistNames")
     val channelPlaylist: List<MyChannelPlaylist>?,
 )

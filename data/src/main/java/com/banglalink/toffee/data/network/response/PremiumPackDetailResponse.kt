@@ -1,18 +1,21 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PremiumPackDetailResponse(
-    @SerializedName("response")
-    val response: PremiumPackDetailBean? = PremiumPackDetailBean()
-): BaseResponse()
+    @SerialName("response")
+    val response: PremiumPackDetailBean? = PremiumPackDetailBean(),
+) : BaseResponse()
 
+@Serializable
 data class PremiumPackDetailBean(
-    @SerializedName("LIVE")
+    @SerialName("LIVE")
     val linearChannelList: List<ChannelInfo>? = listOf(),
-    @SerializedName("VOD")
+    @SerialName("VOD")
     val vodChannelList: List<ChannelInfo>? = listOf(),
-    @SerializedName("totalCount")
-    val totalCount: Int = 0
+    @SerialName("totalCount")
+    val totalCount: Int = 0,
 )

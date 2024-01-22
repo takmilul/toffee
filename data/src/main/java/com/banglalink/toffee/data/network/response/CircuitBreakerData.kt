@@ -1,13 +1,18 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
-import java.util.*
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import java.util.Date
 
+@Serializable
 data class CircuitBreakerData (
-    @SerializedName("isActive")
+    @SerialName("isActive")
     val isActive: Boolean,
-    @SerializedName("updatedAt")
+    @Contextual
+    @SerialName("updatedAt")
     val updatedAt: Date,
-    @SerializedName("expiredAt")
+    @Contextual
+    @SerialName("expiredAt")
     val expiredAt: Date
 )

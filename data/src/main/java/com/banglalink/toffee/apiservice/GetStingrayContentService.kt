@@ -10,9 +10,12 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class GetStingrayContentService @Inject constructor(
+    private val json: Json,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
@@ -55,7 +58,7 @@ class GetStingrayContentService @Inject constructor(
                         it.type ?: "Stingray",
                         1,
                         "Music Playlist",
-                        gson.toJson(it),
+                        json.encodeToString(it),
                         it.view_count?.toLong() ?: 0L,
                         it.isStingray
                     ).apply {

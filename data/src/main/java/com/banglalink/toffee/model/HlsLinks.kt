@@ -1,22 +1,25 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class HlsLinks(
-    @SerializedName("hls_url_mobile") 
-    var hls_url_mobile: String?
+    @SerialName("hls_url_mobile") 
+    var hlsUrlMobile: String?
 ) : Parcelable
 
 @Parcelize
+@Serializable
 class DrmHlsLinks(
-    @SerializedName("drm_hls_url")
-    private val drm_hls_url: String? = null
+    @SerialName("drm_hls_url")
+    private val drmHlsUrl: String? = null
 ) : Parcelable {
     
     fun urlList(): List<String> {
-        return drm_hls_url?.split(",")?.map { it.trim() } ?: listOf()
+        return drmHlsUrl?.split(",")?.map { it.trim() } ?: listOf()
     }
 }

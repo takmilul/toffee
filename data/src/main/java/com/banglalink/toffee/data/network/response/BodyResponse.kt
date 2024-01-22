@@ -1,32 +1,34 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 open class BodyResponse {
-    @SerializedName("code")
+    @SerialName("code")
     var code: Int = 0
     
-    @SerializedName("notification")
+    @SerialName("notification")
     var notification: Boolean = false
     
-    @SerializedName("notificationType")
+    @SerialName("notificationType")
     var notificationType: Int = 0
     
-    @SerializedName("ads")
+    @SerialName("ads")
     var ads: Boolean = false
     
-    @SerializedName("adsType")
+    @SerialName("adsType")
     var adsType: Int = 0
     
-    @SerializedName("message")
+    @SerialName("message")
     var message: String? = null
     
-    @SerializedName("messageType")
+    @SerialName("messageType")
     var messageType: String? = null
     
-    @SerializedName("lat")
+    @SerialName("lat")
     var lat: String? = ""
     
-    @SerializedName("long")
+    @SerialName("long")
     var lon: String? = ""
 }

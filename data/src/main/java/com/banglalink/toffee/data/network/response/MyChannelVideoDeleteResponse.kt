@@ -1,10 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.MyChannelDeleteVideoBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class MyChannelVideoDeleteResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: MyChannelDeleteVideoBean
 ) : BaseResponse()
