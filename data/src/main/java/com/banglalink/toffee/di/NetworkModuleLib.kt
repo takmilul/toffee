@@ -134,7 +134,7 @@ object NetworkModuleLib {
         return Retrofit.Builder()
             .baseUrl(config.url)
             .client(httpClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory("text/plain".toMediaType()))
             .build()
     }
     
