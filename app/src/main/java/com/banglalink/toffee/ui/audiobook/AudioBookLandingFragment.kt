@@ -265,9 +265,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                                     isApproved = 1,
                                     playlistType = Audio_Book_Playlist
                                 )
-//                                launchWithLifecycle {
-//                                    viewModel.audioBookPlaylistPlaybackInfoFlow.emit(playlistPlaybackInfo)
-//                                }
                                 homeViewModel.addToPlayListMutableLiveData.postValue(
                                     AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
                                 )

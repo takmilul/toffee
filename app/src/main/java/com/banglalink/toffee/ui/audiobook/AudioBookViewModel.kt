@@ -19,7 +19,6 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -52,7 +51,6 @@ class AudioBookViewModel @Inject constructor(
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
     val audioBookEpisodeResponseFlow = MutableSharedFlow<Resource<List<ChannelInfo>?>>(replay = 1)
-    val audioBookPlaylistPlaybackInfoFlow = MutableSharedFlow<PlaylistPlaybackInfo>(replay = 1)
     val isLoadingCategory = mutableStateOf(false)
     val homeApiResponseCompose = mutableStateOf(emptyList<KabbikCategory>())
     
