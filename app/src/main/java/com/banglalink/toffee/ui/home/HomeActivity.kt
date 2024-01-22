@@ -94,6 +94,9 @@ import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
 import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
 import com.banglalink.toffee.enums.PlayingPage.STINGRAY
+import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
+import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
+import com.banglalink.toffee.enums.PlaylistType.User_Playlist
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -1099,12 +1102,12 @@ class HomeActivity : PlayerPageActivity(),
             }
             else -> null
         }
-        circuitBreakerDataList[channelInfo?.id]?.let {
-            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
-                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
-                return
-            }
-        }
+//        circuitBreakerDataList[channelInfo?.id]?.let {
+//            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
+//                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
+//                return
+//            }
+//        }
         MedalliaDigital.disableIntercept()
         
         channelInfo?.let {
@@ -1404,12 +1407,6 @@ class HomeActivity : PlayerPageActivity(),
                         R.id.details_viewer, FmChannelFragmentNew()
                     )
                 }
-            } else if (info.isAudioBook) {
-                if (fragment !is AudioBookEpisodeListFragment) {
-                    loadFragmentById(
-                        R.id.details_viewer, AudioBookEpisodeListFragment.newInstance(info.playlistContentId.toString())
-                    )
-                }
             } else if (info.isStingray) {
                 if (fragment !is StingrayChannelFragmentNew) {
                     loadFragmentById(
@@ -1430,21 +1427,31 @@ class HomeActivity : PlayerPageActivity(),
         } else if (info is PlaylistPlaybackInfo) {
             when {
                 /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
-                !info.isUserPlaylist -> {
+                info.playlistType == My_Channel_Playlist -> {
                     loadFragmentById(
                         R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
                     )
                 }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
-                info.isUserPlaylist -> {
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/
+                info.playlistType == User_Playlist -> {
                     loadFragmentById(
                         R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
                     )
+                }
+                info.playlistType == Audio_Book_Playlist -> {
+                    if (fragment !is AudioBookEpisodeListFragment) {
+                        loadFragmentById(
+                            R.id.details_viewer, AudioBookEpisodeListFragment.newInstance(info)
+                        )
+                    }
                 }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
                 fragment is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
+                fragment is AudioBookEpisodeListFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
             }
@@ -1457,6 +1464,9 @@ class HomeActivity : PlayerPageActivity(),
                     fragment.setCurrentChannel(info.channelInfo)
                 }
                 is EpisodeListFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is AudioBookEpisodeListFragment -> {
                     fragment.setCurrentChannel(info.channelInfo)
                 }
             }
@@ -2183,7 +2193,7 @@ class HomeActivity : PlayerPageActivity(),
                                 response.data.totalCount,
                                 playlistShareableUrl,
                                 1,
-                                shareableData?.isUserPlaylist == 1,
+                                if (shareableData?.isUserPlaylist == 1) User_Playlist else My_Channel_Playlist,
                                 0,
                                 it[0],
                                 shareableData?.isOwner ?: 1,

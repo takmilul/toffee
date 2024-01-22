@@ -11,5 +11,5 @@ data class AudioBookSeeMoreResponse(
 @Serializable
 data class CategoryData (
     @SerialName("name" ) var name : String?         = null,
-    @SerialName("data" ) var data : List<KabbikItemBean> = listOf()
+    @SerialName("data" ) var data : List<KabbikItem> = listOf()
 )

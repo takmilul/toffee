@@ -29,7 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse.BannerItemBean
+import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.ui.compose_theme.ColorAccent
 import com.banglalink.toffee.util.CoilUtils
 import kotlinx.coroutines.delay
@@ -38,8 +38,8 @@ import kotlinx.coroutines.delay
 @Preview
 @Composable
 fun ImageCarousel(
-    sliderList: List<BannerItemBean> = emptyList(),
-    onItemClick: ((BannerItemBean) -> Unit)? = null
+    sliderList: List<KabbikItem> = emptyList(),
+    onItemClick: ((KabbikItem) -> Unit)? = null
 ) {
     var itemIndex = 0
 //    val coroutineScope = rememberCoroutineScope()

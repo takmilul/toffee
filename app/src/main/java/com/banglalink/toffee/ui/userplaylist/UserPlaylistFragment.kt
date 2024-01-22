@@ -29,6 +29,7 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
+import com.banglalink.toffee.enums.PlaylistType.User_Playlist
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.handleUrlShare
 import com.banglalink.toffee.extension.observe
@@ -177,7 +178,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
         super.onItemClicked(item)
         findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
             putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, item.playlistShareUrl, item
-                .isApproved, true))
+                .isApproved, User_Playlist))
         })
     }
 

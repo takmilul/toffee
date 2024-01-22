@@ -8,14 +8,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.data.network.response.KabbikItemBean
+import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.extension.showToast
 
 class AudioBookCategoryView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defAttrStyle: Int = 0
-): ConstraintLayout(context, attrs, defAttrStyle), ProviderIconCallback<KabbikItemBean> {
+): ConstraintLayout(context, attrs, defAttrStyle), ProviderIconCallback<KabbikItem> {
     private var titleTextView: TextView? = null
     private var seeAllButton: TextView? = null
     private var recyclerView: RecyclerView? = null
@@ -33,7 +33,7 @@ class AudioBookCategoryView @JvmOverloads constructor(
         }
     }
 
-    fun setConfiguration(cardTitle: String, items: List<KabbikItemBean>, onSeeAllClick: ()->Unit = {}){
+    fun setConfiguration(cardTitle: String, items: List<KabbikItem>, onSeeAllClick: ()->Unit = {}){
         titleTextView?.text = cardTitle
         mAdapter?.removeAll()
         val freeItems = items.filter {item->
@@ -46,7 +46,7 @@ class AudioBookCategoryView @JvmOverloads constructor(
         }
     }
 
-    override fun onItemClicked(item: KabbikItemBean) {
+    override fun onItemClicked(item: KabbikItem) {
         super.onItemClicked(item)
         context.showToast("Clicked")
     }

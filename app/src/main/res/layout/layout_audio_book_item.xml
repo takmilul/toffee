@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.data.network.response.KabbikItemBean" />
+            type="com.banglalink.toffee.data.network.response.KabbikItem" />
 
         <variable
             name="callback"

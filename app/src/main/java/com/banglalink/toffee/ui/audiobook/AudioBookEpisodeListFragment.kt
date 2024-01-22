@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -13,30 +12,32 @@ import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
-    private var id: String? = null
-    private var _binding: FragmentAudiobookPlaylistBinding?=null
+    private var currentItem: ChannelInfo? = null
+    private lateinit var playlistInfo: PlaylistPlaybackInfo
     private lateinit var mAdapter: AudioBookEpisodeListAdapter
-    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+    private var _binding: FragmentAudiobookPlaylistBinding? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<AudioBookViewModel>()
-    private val binding get() = _binding!!
+    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     
     companion object {
-        fun newInstance(id: String): AudioBookEpisodeListFragment {
-            val args = bundleOf(
-                Pair("id", id)
-            )
-            val fragment = AudioBookEpisodeListFragment()
-            fragment.arguments = args
-            return fragment
+        fun newInstance(info: PlaylistPlaybackInfo): AudioBookEpisodeListFragment {
+            return AudioBookEpisodeListFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("playlistInfo", info)
+                }
+            }
         }
     }
     
@@ -48,8 +49,10 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        id = arguments?.getString("id")
-        activity?.title = id
+        playlistInfo = arguments?.getParcelable("playlistInfo")!!
+        currentItem = playlistInfo.currentItem?.apply { feature_image = playlistInfo.playlistThumbnail }
+        activity?.title = playlistInfo.playlistName
+        
 //        progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookEpisodeListAdapter(this)
@@ -58,8 +61,19 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         observeAudioBookEpisodeList()
     }
     
+    fun setCurrentChannel(channelInfo: ChannelInfo?) {
+        currentItem = channelInfo
+        for (index in 0 until mAdapter.itemCount) {
+            val currentItem = mAdapter.getItem(index)
+            currentItem.isSelected = false
+        }
+        currentItem?.isSelected = !(currentItem?.isSelected ?: false)
+//        homeViewModel.playContentLiveData.value = item
+        mAdapter.notifyDataSetChanged()
+    }
+    
     private fun observeAudioBookEpisodeList() {
-        observe(viewModel.audioBookEpisodeResponseObserver) { response ->
+        observe(viewModel.audioBookEpisodeResponseFlow) { response ->
             when (response) {
                 is Resource.Success -> {
     //                binding.progressBar.hide()
@@ -80,6 +94,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
                             mAdapter.removeAll()
                             mAdapter.addAll(responseData.mapIndexed { index, channelInfo ->
                                 channelInfo.isSelected = index == 0
+                                channelInfo.feature_image = playlistInfo.playlistThumbnail
                                 channelInfo
                             })
                             binding.playListText.show()
@@ -107,14 +122,17 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        
-        for (index in 0 until mAdapter.itemCount) {
-            val currentItem = mAdapter.getItem(index)
-            currentItem.isSelected = false
+        if (item == currentItem || item.id == currentItem?.id) {
+            return
         }
-        item.isSelected = !item.isSelected!!
-        homeViewModel.playContentLiveData.value = item
-        mAdapter.notifyDataSetChanged()
+        val index = mAdapter.getItems().indexOf(item)
+        homeViewModel.addToPlayListMutableLiveData.postValue(
+            AddToPlaylistData(playlistInfo.getPlaylistIdLong(), mAdapter.getItems())
+        )
+        homeViewModel.playContentLiveData.postValue(
+            playlistInfo.copy(playIndex = index, currentItem = currentItem)
+        )
+        setCurrentChannel(item)
     }
     
     override fun onDestroyView() {

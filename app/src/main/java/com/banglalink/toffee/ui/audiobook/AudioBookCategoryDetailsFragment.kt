@@ -6,22 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.data.network.response.KabbikItemBean
+import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.databinding.FragmentAudiobookCategoryBinding
+import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<KabbikItemBean> {
+class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<KabbikItem> {
     
+    private var selectedItem: KabbikItem? = null
     private val binding get() = _binding!!
     private var myTitle: String? = null
     private lateinit var mAdapter: AudioBookCategoryListAdapter
@@ -85,8 +89,9 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
         myTitle?.let { viewModel.getAudioBookSeeMore(it) }
     }
 
-    override fun onItemClicked(item: KabbikItemBean) {
+    override fun onItemClicked(item: KabbikItem) {
         super.onItemClicked(item)
+        selectedItem = item
         launchWithLifecycle {
             observeAudioBookEpisode()
             viewModel.getAudioBookEpisode(item.id.toString())
@@ -100,8 +105,25 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
                     progressDialog.dismiss()
                     response.data?.let { responseData ->
                         if (responseData.isNotEmpty()) {
-                            responseData.firstOrNull()?.let { 
-                                homeViewModel.playContentLiveData.value = it
+                            responseData.firstOrNull()?.let { channelInfo ->
+                                val playlistPlaybackInfo = PlaylistPlaybackInfo(
+                                    playlistId = selectedItem?.id ?: 0,
+                                    playlistName = selectedItem?.name.toString(),
+                                    channelOwnerId = 0,
+                                    playlistItemCount = responseData.size,
+                                    playlistThumbnail = selectedItem?.thumbPath.toString(),
+                                    isApproved = 1,
+                                    playlistType = Audio_Book_Playlist
+                                )
+//                                launchWithLifecycle {
+//                                    viewModel.audioBookPlaylistPlaybackInfoFlow.emit(playlistPlaybackInfo)
+//                                }
+                                homeViewModel.addToPlayListMutableLiveData.postValue(
+                                    AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
+                                )
+                                homeViewModel.playContentLiveData.postValue(
+                                    playlistPlaybackInfo.copy(playIndex = 0, currentItem = channelInfo)
+                                )
                             }
                         } else {
                             progressDialog.dismiss()

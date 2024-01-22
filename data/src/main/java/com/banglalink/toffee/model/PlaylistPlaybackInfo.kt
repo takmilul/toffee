@@ -1,7 +1,10 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import com.banglalink.toffee.enums.PlaylistType
+import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
 import com.google.android.gms.common.annotation.KeepName
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -22,8 +25,8 @@ data class PlaylistPlaybackInfo(
     val playlistShareUrl: String? = null,
     @SerialName("is_approved")
     val isApproved: Int = 0,
-    @SerialName("isUserPlaylist")
-    var isUserPlaylist: Boolean = false,
+    @SerialName("playlistType")
+    var playlistType: PlaylistType = My_Channel_Playlist,
     @SerialName("playIndex")
     var playIndex: Int = 0,
     @SerialName("currentItem")
@@ -31,7 +34,9 @@ data class PlaylistPlaybackInfo(
     @SerialName("isOwner")
     var isOwner: Int = 0,
     @SerialName("isFromShare")
-    var isFromShare: Boolean = false
+    var isFromShare: Boolean = false,
+    @SerialName("playlistThumbnail")
+    var playlistThumbnail: String? = null,
 ): Parcelable {
     fun getPlaylistIdLong(): Long = playlistId * 10L + 1L
 }
