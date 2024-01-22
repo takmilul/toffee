@@ -765,8 +765,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     }
     
     fun showCustomErrorMessage(errorMessage: String? = null) {
-        errorMessageContainer.show()
-        errorMessage?.ifNotNullOrBlank { errorMessageView.text = it }
+        errorMessage?.ifNotNullOrBlank {
+            errorMessageContainer.show()
+            previewImage.setImageResource(0)
+            audioBookImageView.setImageResource(0)
+            errorMessageView.text = it
+        }
     }
     
     override fun onPlaybackStateChanged(playbackState: Int) {

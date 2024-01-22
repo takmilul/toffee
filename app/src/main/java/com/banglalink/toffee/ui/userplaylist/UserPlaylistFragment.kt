@@ -29,6 +29,7 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
+import com.banglalink.toffee.enums.PlaylistType.User_Playlist
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.handleUrlShare
 import com.banglalink.toffee.extension.observe
@@ -46,10 +47,10 @@ import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
@@ -177,7 +178,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
         super.onItemClicked(item)
         findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
             putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, item.playlistShareUrl, item
-                .isApproved, true))
+                .isApproved, User_Playlist))
         })
     }
 

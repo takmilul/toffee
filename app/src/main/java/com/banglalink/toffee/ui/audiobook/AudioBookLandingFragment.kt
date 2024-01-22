@@ -44,24 +44,27 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.drawable
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.network.response.KabbikCategory
-import com.banglalink.toffee.data.network.response.KabbikItemBean
+import com.banglalink.toffee.data.network.response.KabbikItem
+import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
 import com.banglalink.toffee.ui.compose_theme.CardTitleColor
+import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
 import com.banglalink.toffee.ui.compose_theme.Fonts
 import com.banglalink.toffee.ui.compose_theme.ScreenBackground
 import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
+    private var selectedItem: KabbikItem? = null
     private val viewModel by activityViewModels<AudioBookViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
@@ -135,6 +138,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 item {
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
+                            selectedItem = item
                             viewModel.getAudioBookEpisode(item.id.toString())
                         }
                     }
@@ -201,7 +205,8 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             ) {
                 items(kabbikCategory.itemsData.size) {
                     val item = kabbikCategory.itemsData[it]
-                    AudioBookCard(kabbikItemBean = item, onclick = {
+                    AudioBookCard(kabbikItem = item, onclick = {
+                        selectedItem = item
                         viewModel.getAudioBookEpisode(item.id.toString())
                     })
                 }
@@ -212,7 +217,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     @Composable
     fun AudioBookCard(
         modifier: Modifier = Modifier,
-        kabbikItemBean: KabbikItemBean,
+        kabbikItem: KabbikItem,
         onclick: ()->Unit? = {}
     ) {
         Card(
@@ -230,7 +235,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     .fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 painter = CoilUtils.getAsyncImagePainter(
-                    model = kabbikItemBean.thumbPath ?: drawable.placeholder,
+                    model = kabbikItem.thumbPath ?: drawable.placeholder,
                     placeholder = drawable.placeholder
                 ),
                 contentDescription = "image_"
@@ -250,8 +255,25 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     progressDialog.dismiss()
                     response.data?.let { responseData ->
                         if (responseData.isNotEmpty()) {
-                            responseData.firstOrNull()?.let {
-                                homeViewModel.playContentLiveData.value = it
+                            responseData.firstOrNull()?.let { channelInfo ->
+                                val playlistPlaybackInfo = PlaylistPlaybackInfo(
+                                    playlistId = selectedItem?.id ?: 0,
+                                    playlistName = selectedItem?.name.toString(),
+                                    channelOwnerId = 0,
+                                    playlistItemCount = responseData.size,
+                                    playlistThumbnail = selectedItem?.thumbPath.toString(),
+                                    isApproved = 1,
+                                    playlistType = Audio_Book_Playlist
+                                )
+//                                launchWithLifecycle {
+//                                    viewModel.audioBookPlaylistPlaybackInfoFlow.emit(playlistPlaybackInfo)
+//                                }
+                                homeViewModel.addToPlayListMutableLiveData.postValue(
+                                    AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
+                                )
+                                homeViewModel.playContentLiveData.postValue(
+                                    playlistPlaybackInfo.copy(playIndex = 0, currentItem = channelInfo)
+                                )
                             }
                         } else {
                             progressDialog.dismiss()

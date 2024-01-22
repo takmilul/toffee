@@ -35,7 +35,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.response.KabbikCategory
-import com.banglalink.toffee.data.network.response.KabbikItemBean
+import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.ui.audiobook.AudioBookViewModel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
@@ -129,7 +129,7 @@ class AudioBookCategoryFragment: BaseFragment() {
             }
             LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 items(kabbikCategory.itemsData.size) {
-                    AudioBookCard (kabbikItemBean = kabbikCategory.itemsData[it])
+                    AudioBookCard (kabbikItem = kabbikCategory.itemsData[it])
                 }
             }
         }
@@ -138,7 +138,7 @@ class AudioBookCategoryFragment: BaseFragment() {
     @Composable
     fun AudioBookCard(
         modifier: Modifier = Modifier,
-        kabbikItemBean: KabbikItemBean
+        kabbikItem: KabbikItem
     ) {
         Card(
             shape = RoundedCornerShape(10.dp),
@@ -153,7 +153,7 @@ class AudioBookCategoryFragment: BaseFragment() {
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     painter = CoilUtils.getAsyncImagePainter(
-                        model = kabbikItemBean.thumbPath ?: R.drawable.placeholder,
+                        model = kabbikItem.thumbPath ?: R.drawable.placeholder,
                         placeholder = R.drawable.placeholder
                     ),
                     contentDescription = "image_"

@@ -8,10 +8,10 @@ data class KabbikHomeApiResponse(
 
 data class KabbikCategory (
     @SerializedName("name" ) val name : String?         = null,
-    @SerializedName("data" ) val itemsData : List<KabbikItemBean> = listOf()
+    @SerializedName("data" ) val itemsData : List<KabbikItem> = listOf()
 )
 
-data class KabbikItemBean (
+data class KabbikItem (
     @SerializedName("id"           ) val id          : Int?    = null,
     @SerializedName("name"         ) val name        : String? = null,
     @SerializedName("en_name"      ) val enName      : String? = null,
@@ -19,6 +19,8 @@ data class KabbikItemBean (
     @SerializedName("author_name"  ) val authorName  : String? = null,
     @SerializedName("premium"      ) val premium     : Int?    = null,
     @SerializedName("thumb_path"   ) val thumbPath   : String? = null,
+    @SerializedName("isFeatured"     ) var isFeatured    : Int?    = null,
+    @SerializedName("featured_image" ) var featuredImage : String? = null,
     @SerializedName("price"        ) val price       : Int?    = null,
     @SerializedName("play_count"   ) val playCount   : Int?    = null,
     @SerializedName("rating"       ) val rating      : Double? = null,

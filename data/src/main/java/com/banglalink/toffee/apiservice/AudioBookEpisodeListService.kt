@@ -38,7 +38,8 @@ class AudioBookEpisodeListService @Inject constructor(
                 is_horizontal = 1,
                 playlistContentId = result.id ?: 0,
                 playlistName = result.name,
-                playlistDescription = result.description
+                playlistDescription = result.description,
+                contentExpiryTime = "2040-12-31 23:59:59",
             )
         }
         

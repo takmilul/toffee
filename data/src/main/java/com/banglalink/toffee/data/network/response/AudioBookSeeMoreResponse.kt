@@ -8,5 +8,5 @@ data class AudioBookSeeMoreResponse(
 
 data class CategoryData (
     @SerializedName("name" ) var name : String?         = null,
-    @SerializedName("data" ) var data : List<KabbikItemBean> = listOf()
+    @SerializedName("data" ) var data : List<KabbikItem> = listOf()
 )

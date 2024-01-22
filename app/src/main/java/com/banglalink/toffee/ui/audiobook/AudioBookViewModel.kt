@@ -12,12 +12,14 @@ import com.banglalink.toffee.apiservice.KabbikTopBannerApiService
 import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
+import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -46,10 +48,11 @@ class AudioBookViewModel @Inject constructor(
 ) : ViewModel() {
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
-    val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikTopBannerApiResponse.BannerItemBean>())
+    val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikItem>())
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
-    val audioBookEpisodeResponseObserver = MutableSharedFlow<Resource<List<ChannelInfo>?>>(replay = 1)
+    val audioBookEpisodeResponseFlow = MutableSharedFlow<Resource<List<ChannelInfo>?>>(replay = 1)
+    val audioBookPlaylistPlaybackInfoFlow = MutableSharedFlow<PlaylistPlaybackInfo>(replay = 1)
     val isLoadingCategory = mutableStateOf(false)
     val homeApiResponseCompose = mutableStateOf(emptyList<KabbikCategory>())
     
@@ -143,7 +146,7 @@ class AudioBookViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { audioBookEpisodeListService.execute(id) }
             audioBookEpisodeResponse.value = response
-            audioBookEpisodeResponseObserver.emit(response)
+            audioBookEpisodeResponseFlow.emit(response)
         }
     }
 }
