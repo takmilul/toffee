@@ -49,9 +49,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         super.onViewCreated(view, savedInstanceState)
         
         id = arguments?.getString("id")
-        activity?.title = id
 //        progressDialog.show()
-//        binding.progressBar.load(R.drawable.content_loader)
         mAdapter = AudioBookEpisodeListAdapter(this)
         binding.episodeListAudioBook.adapter = mAdapter
         
@@ -104,15 +102,19 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
             }
         }
     }
-    
+
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        
+        if (item.isSelected == true) {
+            // Item is already selected, return early and do nothing
+            return
+        }
         for (index in 0 until mAdapter.itemCount) {
             val currentItem = mAdapter.getItem(index)
             currentItem.isSelected = false
         }
-        item.isSelected = !item.isSelected!!
+
+        item.isSelected = true
         homeViewModel.playContentLiveData.value = item
         mAdapter.notifyDataSetChanged()
     }
