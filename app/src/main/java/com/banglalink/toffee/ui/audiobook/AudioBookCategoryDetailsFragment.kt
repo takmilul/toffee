@@ -86,15 +86,29 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
                 }
             }
         }
-        myTitle?.let { viewModel.getAudioBookSeeMore(it) }
+        myTitle?.let { title->
+            launchWithLifecycle {
+                viewModel.grantToken(
+                    success = {token->
+                        viewModel.getAudioBookSeeMore(title, token)
+                    },
+                    failure = {}
+                )
+            }
+        }
     }
 
     override fun onItemClicked(item: KabbikItem) {
         super.onItemClicked(item)
         selectedItem = item
         launchWithLifecycle {
-            observeAudioBookEpisode()
-            viewModel.getAudioBookEpisode(item.id.toString())
+            viewModel.grantToken(
+                success = {token->
+                    observeAudioBookEpisode()
+                    viewModel.getAudioBookEpisode(item.id.toString(), token)
+                },
+                failure = {}
+            )
         }
     }
     

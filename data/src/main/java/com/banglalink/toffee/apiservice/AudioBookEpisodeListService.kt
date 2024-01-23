@@ -11,12 +11,12 @@ class AudioBookEpisodeListService @Inject constructor(
     private val toffeeApi: ExternalApi,
     private val preference: SessionPreference
 ) {
-    suspend fun execute(id : String): List<ChannelInfo> {
+    suspend fun execute(id : String, token: String): List<ChannelInfo> {
         
         val result = tryIOExternal {
             toffeeApi.audioBookEpisodeList(
                 url = "https://api.kabbik.com/v4/toffee/audiobook/$id/${preference.customerId}",
-                authorizationToken = "Bearer ${preference.kabbikAccessToken}",
+                authorizationToken = "Bearer $token",
                 referrer = "https://toffeelive.com/",
             )
         }

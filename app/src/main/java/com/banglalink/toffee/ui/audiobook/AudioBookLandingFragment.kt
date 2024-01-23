@@ -46,6 +46,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
+import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
@@ -61,6 +62,7 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
+import kotlinx.coroutines.Job
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
@@ -139,7 +141,14 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
                             selectedItem = item
-                            viewModel.getAudioBookEpisode(item.id.toString())
+                            launchWithLifecycle {
+                                viewModel.grantToken(
+                                    success = {token->
+                                        viewModel.getAudioBookEpisode(item.id.toString(), token)
+                                    },
+                                    failure = {}
+                                )
+                            }
                         }
                     }
                 }
@@ -203,11 +212,19 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 state = rememberLazyListState(),
             ) {
+
                 items(kabbikCategory.itemsData.size) {
                     val item = kabbikCategory.itemsData[it]
                     AudioBookCard(kabbikItem = item, onclick = {
                         selectedItem = item
-                        viewModel.getAudioBookEpisode(item.id.toString())
+                        launchWithLifecycle {
+                            viewModel.grantToken(
+                                success = {token->
+                                    viewModel.getAudioBookEpisode(item.id.toString(), token)
+                                },
+                                failure = {}
+                            )
+                        }
                     })
                 }
             }
@@ -218,7 +235,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
     fun AudioBookCard(
         modifier: Modifier = Modifier,
         kabbikItem: KabbikItem,
-        onclick: ()->Unit? = {}
+        onclick: () -> Unit = {}
     ) {
         Card(
             shape = RoundedCornerShape(10.dp),

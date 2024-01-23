@@ -8,14 +8,13 @@ import javax.inject.Inject
 
 class AudioBookSeeMoreService @Inject constructor(
     private val toffeeApi: ExternalApi,
-    private val preference: SessionPreference
 ) {
-    suspend fun execute(myTitle : String): AudioBookSeeMoreResponse {
+    suspend fun execute(myTitle : String, token: String): AudioBookSeeMoreResponse {
         
         return tryIOExternal {
             toffeeApi.audioBookSeeMoreList(
                 url = "https://api.kabbik.com/v1/audiobooks/home/seemore",
-                authorizationToken = "Bearer ${preference.kabbikAccessToken}",
+                authorizationToken = "Bearer $token",
                 referrer = "https://toffeelive.com/",
                 name = myTitle
             )
