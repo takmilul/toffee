@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -148,7 +149,7 @@ suspend fun Context.vpnConnectivityStatus(): Pair<Boolean, String>? = withContex
 }
 
 fun LifecycleOwner.launchWithLifecycle(observe: suspend (LifecycleOwner) -> Unit): Job {
-    val lifecycleOwner = if(this is Fragment) this.viewLifecycleOwner else this
+    val lifecycleOwner = if(this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this
     
     return lifecycleOwner.lifecycleScope.launch {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
