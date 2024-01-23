@@ -13,6 +13,7 @@ class KabbikTopBannerApiService @Inject constructor(
         return tryIOExternal {
             externalApi.kabbikTopBanner(
                 url = "https://api.kabbik.com/v4/toffee/home/top-banner",
+                referrer = "https://toffeelive.com/",
                 token = "Bearer $token"
             )
         }

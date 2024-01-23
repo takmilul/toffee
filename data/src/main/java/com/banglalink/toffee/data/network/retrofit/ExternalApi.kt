@@ -58,6 +58,7 @@ interface ExternalApi {
     @POST
     suspend fun kabbikLoginApi(
         @Url url: String?,
+        @Header("Referrer") referrer: String?,
         @Body request: KabbikLoginApiRequest
     ): KabbikLoginApiResponse
 
@@ -65,13 +66,15 @@ interface ExternalApi {
     suspend fun kabbikHomeApi(
         @Url url: String?,
         @Header("Authorization") token : String,
-    ) : KabbikHomeApiResponse
+        @Header("Referrer") referrer: String?,
+        ) : KabbikHomeApiResponse
 
     @GET
     suspend fun kabbikTopBanner(
         @Url url: String?,
         @Header("Authorization") token : String,
-    ): KabbikTopBannerApiResponse
+        @Header("Referrer") referrer: String?,
+        ): KabbikTopBannerApiResponse
 
     @GET
     suspend fun audioBookSeeMoreList(

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.audiobook
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -72,6 +73,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         mAdapter.notifyDataSetChanged()
     }
     
+    @SuppressLint("SetTextI18n")
     private fun observeAudioBookEpisodeList() {
         observe(viewModel.audioBookEpisodeResponseFlow) { response ->
             when (response) {
@@ -80,8 +82,10 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
                     progressDialog.dismiss()
                     binding.episodeDescription.show()
                     binding.title.show()
+                    binding.authorName.show()
                     
                     binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
+                    binding.authorName.text = "By - ${response.data?.firstOrNull()?.authorName.toString()}"
                     binding.episodeDescription.text = HtmlCompat.fromHtml(
                         response.data?.firstOrNull()?.playlistDescription.toString()
                             .trim()
