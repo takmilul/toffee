@@ -178,11 +178,12 @@ data class ChannelInfo(
     var signedCookie: String? = null,
     @SerializedName("sign_cookie_expire")
     var signedCookieExpiryDate: String? =null,
-    
     @SerializedName("playlist_name")
     var playlistName: String? = null,
     @SerializedName("playlist_description")
     var playlistDescription: String? = null,
+    @SerializedName("authorName")
+    var authorName: String? = null,
     @SerializedName("isSelected")
     var isSelected: Boolean? = false,
 ) :Parcelable {

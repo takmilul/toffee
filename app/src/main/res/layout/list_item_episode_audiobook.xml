@@ -42,7 +42,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="NOW: ICC Women's World Cup 2019 Day 21 - AUS vs IND NOW: ICC Women's World Cup 2019 Day 21 - AUS vs IND" />
+                tools:text="হঠাৎ এক বন্ধু - Episode 01" />
 
 
             <View

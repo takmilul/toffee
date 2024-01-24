@@ -20,12 +20,14 @@ class AudioBookEpisodeListService @Inject constructor(
                 referrer = "https://toffeelive.com/",
             )
         }
+
         
-        val channels = result.episodes.map { 
+        val channels = result.episodes.map {
             ChannelInfo(
                 id = it.id.toString(),
                 program_name = it.name,
                 description = it.description,
+                authorName = result.authorName,
                 duration = it.duration?.replace(".", ":"),
                 ugcFeaturedImage = result.bannerPath,
                 urlType = 0,
