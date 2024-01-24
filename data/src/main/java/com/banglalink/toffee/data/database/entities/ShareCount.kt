@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class ShareCount(
     @PrimaryKey
     @SerialName("content_id")
-    val contentId: Int,
+    val contentId: Int = 0,
     @SerialName("count")
     var count: Long = 0L,
 )

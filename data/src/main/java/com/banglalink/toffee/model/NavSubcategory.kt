@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NavSubcategory(
     @SerialName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerialName("category_id")
-    val categoryId: String,
+    val categoryId: String? = "0",
     @SerialName("sub_category_name")
-    val subcategoryName: String
+    val subcategoryName: String? = null
 ): Parcelable

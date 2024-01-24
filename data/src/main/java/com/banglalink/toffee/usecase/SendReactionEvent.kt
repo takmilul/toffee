@@ -60,19 +60,19 @@ class SendReactionEvent @Inject constructor(
 @Serializable
 data class ReactionData(
     @SerialName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerialName("customer_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("content_id")
-    val contentId: Long,
+    val contentId: Long = 0,
     @SerialName("reaction_type")
-    val reactionType: Int,
+    val reactionType: Int = 0,
     @SerialName("reaction_status")
-    val reactionStatus: Int,
+    val reactionStatus: Int = 0,
     @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerialName("reaction_time")
-    val reactionTime: String,
+    val reactionTime: String? = null,
     @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

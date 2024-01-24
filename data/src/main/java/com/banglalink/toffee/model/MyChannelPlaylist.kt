@@ -6,33 +6,33 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelPlaylist (
     @SerialName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerialName("name")
-    val name: String,
+    val name: String? = null,
     @SerialName("channel_creator_id")
-    val channelCreatorId: Int,
+    val channelCreatorId: Int = 0,
     @SerialName("is_channel_owner")
-    val isChannelOwner: String,
+    val isChannelOwner: String? = "0",
     @SerialName("channel_id")
-    val channelId: Int,
+    val channelId: Int = 0,
     @SerialName("playlist_table_id")
-    val playlistTableId: Int,
+    val playlistTableId: Int = 0,
     @SerialName("content_id")
-    val contentId: Int,
+    val contentId: Int = 0,
     @SerialName("logo_web_url")
-    val logoWebUrl: String?,
+    val logoWebUrl: String? = null,
     @SerialName("logo_mobile_url")
-    val logoMobileUrl: String?,
+    val logoMobileUrl: String? = null,
     @SerialName("logo_stb_url")
-    val logoStbUrl: String?,
+    val logoStbUrl: String? = null,
     @SerialName("channel_logo")
-    val channelLogo: String?,
+    val channelLogo: String? = null,
     @SerialName("totalContent")
-    val totalContent: Int,
+    val totalContent: Int = 0,
     @SerialName("channel_name")
-    val channelName: String?,
+    val channelName: String? = null,
     @SerialName("added_content_in_playlist")
-    val playlistContentIdList: List<MyChannelPlaylistContentId>?,
+    val playlistContentIdList: List<MyChannelPlaylistContentId>? = null,
     @SerialName("create_time")
     val createTime: String? = null,
     @SerialName("formattedCreateTime")

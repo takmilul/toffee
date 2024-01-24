@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EditorsChoiceFeaturedRequestParams (
     @SerialName("type")
-    val type: String,
+    val type: String? = null,
     @SerialName("pageType")
-    val pageType: PageType,
+    val pageType: PageType? = PageType.Landing,
     @SerialName("categoryId")
-    val categoryId: Int
+    val categoryId: Int = 0
 )

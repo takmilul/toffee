@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ReferralCodeStatusBean(
     @SerialName("referralStatus")
-    val referralStatus: String,
+    val referralStatus: String? = null,
     @SerialName("referralStatusMessage")
-    val referralStatusMessage: String
+    val referralStatusMessage: String? = null
 ) : BodyResponse()

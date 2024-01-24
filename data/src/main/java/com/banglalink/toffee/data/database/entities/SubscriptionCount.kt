@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class SubscriptionCount(
     @PrimaryKey
     @SerialName("channel_id")
-    val channelId: Int,
+    val channelId: Int = 0,
     @SerialName("status")
     var status: Long = 0L
 )

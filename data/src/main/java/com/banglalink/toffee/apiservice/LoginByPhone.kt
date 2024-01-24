@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class LoginByPhone @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(phoneNumber: String, referralCode: String): String {
+    suspend fun execute(phoneNumber: String, referralCode: String): String? {
         val response = tryIO {
             toffeeApi.loginByPhone(
                 LoginByPhoneRequest(

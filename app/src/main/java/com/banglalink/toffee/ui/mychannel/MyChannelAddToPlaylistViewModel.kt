@@ -30,7 +30,8 @@ class MyChannelAddToPlaylistViewModel @Inject constructor(
     
     fun addToPlaylist(playlistId: Int, contentId: Int, channelOwnerId: Int, isUserPlaylist:Int) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId,isUserPlaylist) })
+            val response = resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId, isUserPlaylist) }
+            _data.postValue(response)
         }
     }
     

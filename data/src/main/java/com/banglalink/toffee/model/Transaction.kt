@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Transaction(
     @SerialName("type")
-    val type: String,
+    val type: String? = null,
     @SerialName("date")
-    val date: String,
+    val date: String? = null,
     @SerialName("amount")
-    val amount: String,
+    val amount: String? = null,
     @SerialName("remainingAmount")
-    val remainingAmount: String
+    val remainingAmount: String? = null
 )

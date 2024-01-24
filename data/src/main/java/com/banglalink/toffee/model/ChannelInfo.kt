@@ -7,21 +7,19 @@ import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.*
 
 @KeepName
 @Parcelize
 @Serializable
 data class ChannelInfo(
     @SerialName("id")
-    var id: String,
+    var id: String = "0",
     @SerialName("main_table_id")
     var mainTableId: String? = "0",
     @SerialName("iptv_programs_id")
@@ -190,59 +188,59 @@ data class ChannelInfo(
     var isSelected: Boolean? = false,
 ) :Parcelable {
     
-    @get:SerializedName("isApproved")
+    @SerialName("isApproved")
     val isApproved: Int
         get() = if (is_approved == null || is_approved == 1) 1 else 0
     
-    @get:SerializedName("isHorizontal")
+    @SerialName("isHorizontal")
     val isHorizontal: Int
         get() = if (is_horizontal == null || is_horizontal == 1) 1 else 0
 
-    @get:SerializedName("isLive")
+    @SerialName("isLive")
     val isLive: Boolean
         get() = "LIVE".equals(type, ignoreCase = true)
     
-    @get:SerializedName("isLinear")
+    @SerialName("isLinear")
     val isLinear: Boolean
         get() = "LIVE".equals(type, ignoreCase = true) || "Stingray".equals(type, ignoreCase = true) || "RADIO".equals(type, ignoreCase = true)
     
-    @get:SerializedName("isVOD")
+    @SerialName("isVOD")
     val isVOD: Boolean
         get() = "VOD".equals(type, ignoreCase = true)
 
-    @get:SerializedName("isChannel")
+    @SerialName("isChannel")
     val isChannel: Boolean
         get() = "CHANNEL".equals(type, ignoreCase = true)
 
-    @get:SerializedName("isStingray")
+    @SerialName("isStingray")
     val isStingray: Boolean
         get() = "stingray".equals(type, ignoreCase = true)
 
-    @get:SerializedName("isFmRadio")
+    @SerialName("isFmRadio")
     val isFmRadio: Boolean
         get() = "RADIO".equals(type, ignoreCase = true)
     
-    @get:SerializedName("isFmRadio")
+    @SerialName("isFmRadio")
     val isAudioBook: Boolean
         get() = "Audio_Book".equals(type, ignoreCase = true)
     
-    @get:SerializedName("isCatchup")
+    @SerialName("isCatchup")
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
     
-    @get:SerializedName("isBucketUrl")
+    @SerialName("isBucketUrl")
     val isBucketUrl: Boolean
         get() = isEncoded == 0
     
-    @get:SerializedName("isDrmActive")
+    @SerialName("isDrmActive")
     val isDrmActive: Boolean
         get() = is_drm_active == 1
     
-    @get:SerializedName("isAdActive")
+    @SerialName("isAdActive")
     val isAdActive: Boolean
         get() = is_ad_active == 1
     
-    @get:SerializedName("isFcmEventActive")
+    @SerialName("isFcmEventActive")
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
     
@@ -334,13 +332,13 @@ data class ChannelInfo(
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
 
-    @get:SerializedName("isPurchased")
+    @SerialName("isPurchased")
     val isPurchased: Boolean
-        get() = (individual_price?.toInt() ?: 0) > 0 && individual_purchase
+        get() = (individual_price?.toInt() ?: 0) > 0 && individual_purchase ?: false
     
-    @get:SerializedName("isPaidSubscribed")
+    @SerialName("isPaidSubscribed")
     val isPaidSubscribed: Boolean
-        get() = individual_price?.toInt() == 0 && subscription
+        get() = individual_price?.toInt() == 0 && subscription ?: false
 
     fun isExpired(serverDate: Date): Boolean {
         return try {

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UploadSignedUrl(
     @SerialName("uploadSignedUrl")
-    val uploadSignedUrl: String
+    val uploadSignedUrl: String? = null
 )

@@ -14,7 +14,7 @@ class PremiumPackStatusService @Inject constructor(
     
     suspend fun loadData(contentId: Int, packId: Int): List<ActivePack> {
         val request = PremiumPackStatusRequest(
-            preference.customerId, preference.password, packId, if (preference.isPrepaid==true) 1 else 0
+            preference.customerId, preference.password, packId, if (preference.isPrepaid) 1 else 0
         )
         val isBlNumber = if (preference.isBanglalinkNumber == "true") 1 else 0
         

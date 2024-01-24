@@ -62,19 +62,19 @@ class ReferAFriendFragment : BaseFragment() {
                 is Resource.Success -> {
                     progressDialog.dismiss()
                     binding.data = it.data
-                    if (it.data.promotionMessage.isNotEmpty()) {
+                    if (!it.data.promotionMessage.isNullOrBlank()) {
                         binding.policyText.setTextColor(Color.parseColor(it.data.fontColor))
                         binding.policyText.textSize = it.data.fontSize.toFloat()
                         binding.policyText.visibility = View.VISIBLE
-                        setSpannableString(it.data.promotionMessage)
+                        it.data.promotionMessage?.let { setSpannableString(it) }
                     } else {
                         binding.policyText.visibility = View.GONE
                     }
                     binding.shareBtn.isEnabled = true
                     binding.copyBtn.isEnabled = true
 
-                    setCopyBtnClick(it.data.referralCode)
-                    setShareBtnClick(it.data.shareableString)
+                    setCopyBtnClick(it.data.referralCode ?: "")
+                    setShareBtnClick(it.data.shareableString ?: "")
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -102,8 +102,8 @@ class ReferAFriendFragment : BaseFragment() {
                 if (SystemClock.elapsedRealtime() - lastClickTime < 1000L) {
                     return
                 }
-                else binding.data?.let {
-                    showReadMoreDialog(it.readMoreMessage)
+                else binding.data?.readMoreMessage?.let {
+                    showReadMoreDialog(it)
                 }
                 lastClickTime = SystemClock.elapsedRealtime()
             }

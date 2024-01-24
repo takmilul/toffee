@@ -138,7 +138,10 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getListData().collectLatest {
                 mAdapter.submitData(it.filter {
-                    (!(it is ChannelInfo && it.isExpired) && !(it is UserActivities && json.decodeFromString<ChannelInfo>(it.payload).isExpired))
+                    (
+                        !(it is ChannelInfo && it.isExpired) && 
+                        !(it is UserActivities && it.payload != null && json.decodeFromString<ChannelInfo>(it.payload!!).isExpired)
+                    )
                 }.map {
                     if (it is ChannelInfo) {
                         localSync.syncData(it as ChannelInfo)

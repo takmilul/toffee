@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseBean(
     @SerialName("systemTime")
-    val systemTime: String,
+    val systemTime: String? = null,
     @SerialName("message")
-    val message: String,
+    val message: String? = null,
     @SerialName("messageType")
-    val messageType: String
+    val messageType: String? = null
 )

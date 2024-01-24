@@ -363,13 +363,13 @@ class SplashScreenFragment : BaseFragment() {
                 is Success -> {
                     val data = response.data
                     mPref.heUpdateDate = today
-                    if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                    if (data.isBanglalinkNumber && !data.phoneNumber.isNullOrBlank()) {
                         mPref.latitude = data.lat ?: ""
                         mPref.longitude = data.lon ?: ""
                         mPref.userIp = data.userIp ?: ""
                         mPref.geoCity = data.geoCity ?: ""
                         mPref.geoLocation = data.geoLocation ?: ""
-                        mPref.hePhoneNumber = data.phoneNumber
+                        mPref.hePhoneNumber = data.phoneNumber!!
                         mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
                         viewModel.sendHeLogData(HeaderEnrichmentLogData().also {
                             it.phoneNumber = mPref.hePhoneNumber

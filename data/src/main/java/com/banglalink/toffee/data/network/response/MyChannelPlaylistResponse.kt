@@ -9,7 +9,7 @@ data class MyChannelPlaylistResponse(
     @SerialName("response")
     val response: MyChannelPlaylistBean,
     @SerialName("isOwner")
-    val isOwner: Int,
+    val isOwner: Int = 0,
     @SerialName("channelId")
-    val channelId: String
+    val channelId: String? = "0"
 ) : BaseResponse()

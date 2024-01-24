@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Profile(
     @SerialName("subscriber_name")
-    val name: String?,
+    val name: String? = null,
     @SerialName("address1")
-    val address: String?,
+    val address: String? = null,
     @SerialName("contact")
-    val contact: String?,
+    val contact: String? = null,
     @SerialName("user_photo")
-    val photoUrl: String?,
+    val photoUrl: String? = null,
     @SerialName("email")
-    val email: String?,
+    val email: String? = null,
 ) {
     fun toProfileForm(): EditProfileForm {
         return EditProfileForm().apply {

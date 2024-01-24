@@ -13,9 +13,9 @@ data class SubscriptionInfo(
     @SerialName("id")
     val id: Long? = null,
     @SerialName("channel_id")
-    val channelId: Int,
+    val channelId: Int = 0,
     @SerialName("customer_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("date_time")
     val dateTime: Long = System.currentTimeMillis()
 ) {

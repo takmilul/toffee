@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerSessionDetails(
     @SerialName("durationInSec")
-    val durationInSec: Long,
+    val durationInSec: Long = 0,
     @SerialName("bandWidthInMB")
-    val bandWidthInMB: Double
+    val bandWidthInMB: Double = 0.0
 )

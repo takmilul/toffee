@@ -10,22 +10,22 @@ import kotlinx.serialization.Serializable
 data class VoucherPaymentBean (
 
     @SerialName("is_valid_voucher")
-    val isValidVoucher: Boolean,
+    val isValidVoucher: Boolean = false,
     @SerialName("partner_type")
-    val partnerType: String?=null,
+    val partnerType: String? = null,
     @SerialName("partner_name")
-    val partnerName: String?=null,
+    val partnerName: String? = null,
     @SerialName("partner_id")
-    val partnerId: Int?=null,
+    val partnerId: Int? = null,
     @SerialName("partner_campaigns_name")
-    val partnerCampaignsName: String?=null,
+    val partnerCampaignsName: String? = null,
     @SerialName("partner_campaigns_id")
-    val partnerCampaignsId: Int?=null,
+    val partnerCampaignsId: Int? = null,
     @SerialName("campaigns_duration")
-    val campaignsDuration: Int,
+    val campaignsDuration: Int = 0,
     @SerialName("campaigns_expire_date")
-    val campaignsExpireDate: String,
+    val campaignsExpireDate: String? = null,
     @SerialName("message")
-    val message: String
+    val message: String? = null
 
 ): Parcelable

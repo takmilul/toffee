@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HistoryItem(
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("type")
     val type: String = "",
     @SerialName("category")

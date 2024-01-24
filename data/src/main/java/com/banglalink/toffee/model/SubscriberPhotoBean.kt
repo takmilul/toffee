@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SubscriberPhotoBean(
     @SerialName("message")
-    val message: String?,
+    val message: String? = null,
     @SerialName("user_photo")
-    val userPhoto: String?
+    val userPhoto: String? = null
 )

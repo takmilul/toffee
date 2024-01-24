@@ -6,19 +6,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RedeemReferralCodeBean(
     @SerialName("referralStatus")
-    val referralStatus: String,
+    val referralStatus: String? = null,
     @SerialName("referralStatusMessage")
-    val referralStatusMessage: String,
+    val referralStatusMessage: String? = null,
     @SerialName("isRedeemSuccess")
-    val isRedeemSuccess:Boolean?=false,
+    val isRedeemSuccess: Boolean? = false,
     @SerialName("messageTitle")
-    val title:String?=null,
+    val title: String? = null,
     @SerialName("messageBody")
-    val message:String?=null,
+    val message: String? = null,
     @SerialName("isBulletPointMessage")
-    val isBullterPointMessage:Boolean? = false,
+    val isBullterPointMessage: Boolean? = false,
     @SerialName("bulletMessage")
-    val bulletMessage:List<String>?,
+    val bulletMessage: List<String>? = null,
     @SerialName("messageType")
-    val messageType:String?
+    val messageType: String? = null
 )

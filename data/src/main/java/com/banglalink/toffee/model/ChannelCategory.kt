@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChannelCategory(
     @SerialName("category_name")
-    val categoryName: String,
+    val categoryName: String? = null,
     @SerialName("channels") 
     val channels: List<ChannelInfo>? = null
 )

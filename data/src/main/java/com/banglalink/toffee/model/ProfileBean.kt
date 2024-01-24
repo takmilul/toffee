@@ -8,7 +8,7 @@ data class ProfileBean(
     @SerialName("customerId")
     val customerId: Int,
     @SerialName("balance")
-    val balance: Int,
+    val balance: Int = 0,
     @SerialName("customer")
     val customer: Customer
 )

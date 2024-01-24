@@ -29,9 +29,9 @@ class SendDrmFallbackEvent @Inject constructor(
 @Serializable
 data class DrmFallbackData(
     @SerialName("reason")
-    val reason: String,
+    val reason: String? = null,
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
     @SerialName("lon")

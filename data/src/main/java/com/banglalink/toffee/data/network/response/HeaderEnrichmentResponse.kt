@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HeaderEnrichmentResponse(
     @SerialName("msisdn")
-    val phoneNumber: String,
+    val phoneNumber: String? = null,
     @SerialName("is_bl")
-    val isBanglalinkNumber: Boolean,
+    val isBanglalinkNumber: Boolean = false,
     @SerialName("lat")
     val lat: String? = null,
     @SerialName("lon")

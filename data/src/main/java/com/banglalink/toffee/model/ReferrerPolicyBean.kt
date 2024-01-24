@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReferrerPolicyBean(
     @SerialName("isPromotionMessageEnabled")
-    val isPromotionMessageEnabled: Boolean,
+    val isPromotionMessageEnabled: Boolean = false,
     @SerialName("promotionMessage")
-    val promotionMessage: String?,
+    val promotionMessage: String? = null,
     @SerialName("messageReadMoreEnabled")
-    val messageReadMoreEnabled: Boolean,
+    val messageReadMoreEnabled: Boolean = false,
     @SerialName("readMoreDetails")
-    val readMoreDetails: String?,
+    val readMoreDetails: String? = null,
     @SerialName("fontSize")
-    val fontSize: Int,
+    val fontSize: Int = 0,
     @SerialName("fontColor")
-    val fontColor: String
+    val fontColor: String? = null
 )

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginByPhoneBean(
     @SerialName("authorize")
-    val authorize: Boolean,
+    val authorize: Boolean = false,
     @SerialName("regSessionToken")
-    val regSessionToken: String
+    val regSessionToken: String? = null
 ) : BodyResponse()

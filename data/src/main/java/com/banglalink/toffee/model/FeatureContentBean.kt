@@ -7,17 +7,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FeatureContentBean(
     @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
-    val channels: List<ChannelInfo>?,
+    val channels: List<ChannelInfo>? = null,
     @SerialName("subcategory")
-    val subcategories: List<SubCategory>?,
+    val subcategories: List<SubCategory>? = null,
     @SerialName("hashTags")
     val hashTags: List<String>? = null,
     @SerialName("followers")
-    val followers: Long,
+    val followers: Long = 0,
     @SerialName("isFollowed")
     val isFollowed: Int = 0,
     @SerialName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerialName("totalCount")
     val totalCount: Int = 0,
     @SerialName("systemTime")

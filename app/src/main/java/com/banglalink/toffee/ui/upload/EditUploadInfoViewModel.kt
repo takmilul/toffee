@@ -32,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import java.util.UUID
+import java.util.*
 import kotlin.math.round
 
 class EditUploadInfoViewModel @AssistedInject constructor(
@@ -258,10 +258,11 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
             Log.i("RESP", resp.toString())
-            if (resp.contentId > 0L) {
-                val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl, isUploadCopyrightFile)
+            if ((resp.contentId ?: 0) > 0L && resp.uploadVODSignedUrl != null) {
+                val uploadId = startUpload(resp.contentId!!, resp.uploadVODSignedUrl!!, resp.uploadCopyrightSignedUrl, 
+                    isUploadCopyrightFile)
                 Log.i("uploadId", uploadId)
-                resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
+                resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId!!))
                 progressDialog.value = false
                 return
             }

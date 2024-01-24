@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReactionStatus(
     @SerialName("id")
-    val id: Long,
+    val id: Long = 0,
     @SerialName("content_id")
-    val content_id: Long,
+    val content_id: Long = 0,
     @SerialName("like")
     var like: Long = 0,
     @SerialName("love")

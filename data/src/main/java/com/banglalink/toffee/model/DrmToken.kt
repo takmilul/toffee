@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DrmToken(
     @SerialName("drmToken")
-    val drmToken: String
+    val drmToken: String? = null
 )

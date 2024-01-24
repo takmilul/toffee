@@ -12,7 +12,7 @@ data class MovieCategoryDetailBean (
     @SerialName("cards")
     val cards: MoviesContentVisibilityCards? = null,
     @SerialName("subCategoryWiseContent")
-    val subCategoryWiseContent: List<MoviesSubCategoryWiseContent>?,
+    val subCategoryWiseContent: List<MoviesSubCategoryWiseContent>? = null,
     @SerialName("systemTime")
     val systemTime: String? = null,
 )

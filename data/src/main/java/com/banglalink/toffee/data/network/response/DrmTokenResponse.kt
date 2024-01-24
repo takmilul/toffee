@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DrmTokenResponse(
     @SerialName("response")
-    val response: DrmToken?
+    val response: DrmToken? = null
 ) : BaseResponse()

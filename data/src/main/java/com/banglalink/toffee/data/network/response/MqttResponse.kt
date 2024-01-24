@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MqttResponse(
     @SerialName("response")
-    val response: MqttBean?
+    val response: MqttBean? = null
 ) : BaseResponse()

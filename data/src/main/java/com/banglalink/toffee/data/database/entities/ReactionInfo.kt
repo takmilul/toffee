@@ -13,11 +13,11 @@ data class ReactionInfo(
     @SerialName("id")
     val id: Long? = null,
     @SerialName("customer_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("content_id")
-    val contentId: Long,
+    val contentId: Long = 0,
     @SerialName("reaction_type")
-    val reactionType: Int,
+    val reactionType: Int = 0,
     @SerialName("reaction_time")
     val reactionTime: Long = System.currentTimeMillis()
 ) {

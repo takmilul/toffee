@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HlsLinks(
     @SerialName("hls_url_mobile") 
-    var hlsUrlMobile: String?
+    var hlsUrlMobile: String? = null
 ) : Parcelable
 
 @Parcelize

@@ -162,7 +162,7 @@ data class CustomerInfoLogin(
     @SerialName("videoMaxDuration")
     val videoMaxDuration: Int = -1,
     @SerialName("bubbleConfig")
-    val bubbleConfig: @RawValue BubbleConfig?,
+    val bubbleConfig: @RawValue BubbleConfig? = null,
     @SerialName("feature_partner_title")
     val featuredPartnerTitle: String? = null,
     @SerialName("internalTimeout")
@@ -214,11 +214,11 @@ data class CustomerInfoLogin(
     @SerialName("bkashApiRetryingDuration")
     val bkashApiRetryingDuration : Long? = 0L,
     @SerialName("is_prepaid")
-    val isPrepaid : Boolean?,
+    val isPrepaid : Boolean? = false,
     @SerialName("isMnpCallForSubscription")
-    val isMnpCallForSubscription : Boolean?,
+    val isMnpCallForSubscription : Boolean? = false,
     @SerialName("faqUrl")
-    val faqUrl : String?,
+    val faqUrl : String? = null,
 ) : BodyResponse(), Parcelable
 
 @Entity

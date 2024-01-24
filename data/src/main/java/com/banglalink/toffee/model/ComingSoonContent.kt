@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ComingSoonContent(
     @SerialName("id")
-    val id: Long,
+    val id: Long = 0,
     @SerialName("program_name")
-    val program_name: String?,
+    val program_name: String? = null,
     @SerialName("url_type")
-    val url_type: Int,
+    val url_type: Int = 0,
     @SerialName("coming_soon_poster_url")
-    val coming_soon_poster_url: String?,
+    val coming_soon_poster_url: String? = null,
 )

@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelRatingBean (
     @SerialName("isRated")
-    val isRated: Int,
+    val isRated: Int = 0,
     @SerialName("ratingCount")
-    val ratingCount: Float,
+    val ratingCount: Float = 0f,
     @SerialName("message")
-    val message: String,
+    val message: String? = null,
     @SerialName("messageType")
-    val messageType: String,
+    val messageType: String? = null,
     @SerialName("systemTime")
-    val systemTime: String
+    val systemTime: String? = null
 )

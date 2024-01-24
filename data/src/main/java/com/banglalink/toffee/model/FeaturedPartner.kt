@@ -25,7 +25,7 @@ data class FeaturedPartner(
     @SerialName("banner_url")
     val bannerUrl: String? = null,
     @SerialName("is_login_required")
-    val isLoginRequired:Boolean=false,
+    val isLoginRequired:Boolean = false,
     @SerialName("url_type")
     val url_type: Int = 0
 )
@@ -33,15 +33,15 @@ data class FeaturedPartner(
 @Serializable
 data class FeaturedPartnerRequest(
     @SerialName("customerId")
-    val customerId:Int,
+    val customerId:Int = 0,
     @SerialName("password")
-    val password:String,
+    val password:String? = null,
 ): BaseRequest(ApiNames.GET_FEATURED_PARTNERS)
 
 @Serializable
 data class FeaturedPartnerResponse(
     @SerialName("response")
-    val response: FeaturedPartnerBean?
+    val response: FeaturedPartnerBean? = null
 ): BaseResponse()
 
 @Serializable

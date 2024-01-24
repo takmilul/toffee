@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PremiumPackStatusResponse(
     @SerialName("apiLanguage")
-    val apiLanguage: String,
+    val apiLanguage: String? = null,
     @SerialName("debugCode")
-    val debugCode: Int,
+    val debugCode: Int = 0,
     @SerialName("debugMsg")
-    val debugMsg: String,
+    val debugMsg: String? = null,
     @SerialName("response")
     val response: PremiumPackStatusBean,
 ) : BaseResponse()
@@ -19,7 +19,7 @@ data class PremiumPackStatusResponse(
 @Serializable
 data class PremiumPackStatusBean(
     @SerialName("status")
-    var status: Int?,
+    var status: Int? = 0,
     @SerialName("login_related_subs_history")
-    val loginRelatedSubsHistory: List<ActivePack>?
+    val loginRelatedSubsHistory: List<ActivePack>? = null
 )

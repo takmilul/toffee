@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProfileResponseBean(
     @SerialName("code")
-    val code: Int,
+    val code: Int = 0,
     @SerialName("message")
-    val message: String?
+    val message: String? = null
 )

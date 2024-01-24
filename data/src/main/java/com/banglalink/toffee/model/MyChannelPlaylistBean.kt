@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelPlaylistBean(
     @SerialName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerialName("totalCount")
-    val totalCount: Int,
+    val totalCount: Int = 0,
     @SerialName("isOwner")
-    val isOwner: Int,
+    val isOwner: Int = 0,
     @SerialName("channelId")
-    val channelId: Int,
+    val channelId: Int = 0,
     @SerialName("playlistNames")
-    val channelPlaylist: List<MyChannelPlaylist>?,
+    val channelPlaylist: List<MyChannelPlaylist>? = null,
 )

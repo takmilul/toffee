@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MnpStatusResponse(
     @SerialName("response")
-    val response: MnpStatusBean?
+    val response: MnpStatusBean? = null
 ) : BaseResponse()
 
 @Serializable

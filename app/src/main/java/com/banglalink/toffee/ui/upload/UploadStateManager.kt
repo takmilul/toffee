@@ -108,12 +108,14 @@ class UploadStateManager(
             retryUploadId = info.uploadId ?: -1L
         }
         withContext(Dispatchers.IO + Job()) {
-            TusUploadRequest(app, mPref.tusUploadServerUrl)
-                .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
-                .setMetadata(info.getFileNameMetadata())
-                .setUploadID(info.getUploadIdStr()!!)
-                .setFileToUpload(info.fileUri)
-                .startUpload()
+            info.fileUri?.let {
+                TusUploadRequest(app, mPref.tusUploadServerUrl)
+                    .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
+                    .setMetadata(info.getFileNameMetadata())
+                    .setUploadID(info.getUploadIdStr()!!)
+                    .setFileToUpload(it)
+                    .startUpload()
+            }
         }
     }
 

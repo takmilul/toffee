@@ -9,13 +9,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NavCategory(
     @SerialName("id")
-    val id:Int,
+    val id:Int = 0,
     @SerialName("category_name")
     val categoryName:String,
     @SerialName("sub_categorie")
-    val subCategoryList: List<NavSubcategory>?,
+    val subCategoryList: List<NavSubcategory>? = null,
     @SerialName("bgColor")
-    val bgColor: String,
+    val bgColor: String? = null,
     @SerialName("icon")
-    val icon: Int
+    val icon: Int = 0
 ): Parcelable

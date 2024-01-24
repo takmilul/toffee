@@ -12,22 +12,22 @@ import kotlinx.serialization.Serializable
 @Entity(indices = [Index(value = ["customerId", "channelId"], unique = true)])
 data class ContinueWatchingItem(
     @SerialName("customerId")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("type")
-    val type: String,
+    val type: String? = null,
     @SerialName("categoryId")
-    val categoryId: Int,
+    val categoryId: Int = 0,
     @SerialName("payload")
-    val payload: String,
+    val payload: String? = null,
     @SerialName("progress")
-    val progress: Long
+    val progress: Long = 0
 ) : BaseEntity() {
     @Ignore
     @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(payload)
+        payload?.let { NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(it) }
     } catch (ex: Exception) {
         null
     }

@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountDeleteBean(
     @SerialName("status")
-    val status: Boolean?,
+    val status: Boolean? = false,
     @SerialName("user_id")
-    val user_id: Long?,
+    val user_id: Long? = 0,
     @SerialName("message")
-    val message:String?
+    val message:String? = null
 )

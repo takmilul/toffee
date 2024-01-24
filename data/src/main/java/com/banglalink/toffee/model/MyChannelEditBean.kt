@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelEditBean (
     @SerialName("profileImage")
-    val profileImage: String?,
+    val profileImage: String? = null,
     @SerialName("bannerImage")
-    val bannerImage: String?,
+    val bannerImage: String? = null,
     @SerialName("systemTime")
-    val systemTime: String?,
+    val systemTime: String? = null,
     @SerialName("message")
-    val message: String?,
+    val message: String? = null,
     @SerialName("messageType")
-    val messageType: String?
+    val messageType: String? = null
 )

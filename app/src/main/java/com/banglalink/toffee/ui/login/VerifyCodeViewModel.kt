@@ -21,7 +21,7 @@ class VerifyCodeViewModel @Inject constructor(
 ) : ViewModel() {
     
     val verifyResponse = SingleLiveEvent<Resource<CustomerInfoLogin>>()
-    val resendCodeResponse = SingleLiveEvent<Resource<String>>()
+    val resendCodeResponse = SingleLiveEvent<Resource<String?>>()
 
     fun verifyCode(code: String, regSessionToken: String, referralCode: String){
         viewModelScope.launch {
@@ -33,7 +33,7 @@ class VerifyCodeViewModel @Inject constructor(
     fun resendCode(phoneNumber: String, referralCode: String){
         viewModelScope.launch {
             val response = resultFromResponse {  loginByPhone.execute(phoneNumber, referralCode) }
-            resendCodeResponse.value=response
+            resendCodeResponse.value = response
         }
     }
     

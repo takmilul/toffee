@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MediaCdnSignUrlResponse(
     @SerialName("response")
-    val response: MediaCdnSignUrl?
+    val response: MediaCdnSignUrl? = null
 ) : BaseResponse()

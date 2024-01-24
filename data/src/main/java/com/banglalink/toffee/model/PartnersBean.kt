@@ -1,14 +1,17 @@
 package com.banglalink.toffee.model
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
+@OptIn(ExperimentalSerializationApi::class)
 data class PartnersBean(
-    @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
-    val channels: List<ChannelInfo>?,
+    @JsonNames("channelInfo")
+    val channels: List<ChannelInfo>? = null,
     @SerialName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerialName("totalCount")
     val totalCount: Int = 0,
     @SerialName("systemTime")

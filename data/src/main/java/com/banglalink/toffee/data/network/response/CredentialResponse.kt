@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CredentialResponse(
     @SerialName("response")
-    val credential: Credential?
+    val credential: Credential? = null
 ) : BaseResponse()

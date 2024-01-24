@@ -24,8 +24,11 @@ import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.invisible
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.CustomerInfoLogin
@@ -137,9 +140,11 @@ class VerifyLoginFragment : ChildDialogFragment() {
             ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP)
             when (it) {
                 is Resource.Success -> {
-                    regSessionToken = it.data//update reg session token
-                    binding.resendButton.visibility = View.GONE
-                    startCountDown()
+                    it.data?.let {
+                        regSessionToken = it//update reg session token
+                        binding.resendButton.hide()
+                        startCountDown()
+                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
@@ -156,7 +161,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     }
     
     private fun startCountDown() {
-        binding.countdownTextView.visibility = View.VISIBLE
+        binding.countdownTextView.show()
         resendCodeTimer?.cancel()
         resendCodeTimer = ResendCodeTimer(this, 1).also { timer ->
             observe(timer.tickLiveData) {
@@ -173,8 +178,8 @@ class VerifyLoginFragment : ChildDialogFragment() {
             
             observe(timer.finishLiveData) {
                 binding.resendButton.isEnabled = true
-                binding.resendButton.visibility = View.VISIBLE
-                binding.countdownTextView.visibility = View.INVISIBLE
+                binding.resendButton.show()
+                binding.countdownTextView.invisible()
                 binding.countdownTextView.text = ""
                 
                 timer.finishLiveData.removeObservers(this)

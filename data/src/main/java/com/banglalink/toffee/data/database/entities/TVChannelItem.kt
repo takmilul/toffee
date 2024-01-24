@@ -11,17 +11,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TVChannelItem(
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("type")
-    val type: String,
+    val type: String? = null,
     @SerialName("priority")
-    val priority: Int,
+    val priority: Int = 0,
     @SerialName("categoryName")
-    val categoryName: String,
+    val categoryName: String? = null,
     @SerialName("payload")
-    val payload: String,
+    val payload: String? = null,
     @SerialName("viewCount")
-    val viewCount: Long,
+    val viewCount: Long = 0,
     @SerialName("isStingray")
     val isStingray: Boolean = false,
     @SerialName("isFmRadio")
@@ -30,7 +30,7 @@ data class TVChannelItem(
     @Ignore
     @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(payload)
+        payload?.let { NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(it) }
     } catch (ex: Exception) {
         null
     }

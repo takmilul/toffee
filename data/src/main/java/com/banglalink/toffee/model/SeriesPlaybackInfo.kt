@@ -9,13 +9,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SeriesPlaybackInfo(
     @SerialName("seriesId")
-    val seriesId: Int,
+    val seriesId: Int = 0,
     @SerialName("serialName")
-    val serialName: String,
+    val serialName: String? = null,
     @SerialName("seasonNo")
-    var seasonNo: Int,
+    var seasonNo: Int = 0,
     @SerialName("totalSeason")
-    val totalSeason: Int,
+    val totalSeason: Int = 0,
     @SerialName("active_season_list")
     var activeSeasonList: List<Int>? = listOf(1),
     @SerialName("shareUrl")

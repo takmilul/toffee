@@ -30,13 +30,13 @@ class SendCategoryChannelShareCountEvent @Inject constructor(
 @Serializable
 data class CategoryChannelShareData(
     @SerialName("user_id")
-    val customerId: Long,
+    val customerId: Long = 0,
     @SerialName("content_type")
-    val contentType: String,
+    val contentType: String? = null,
     @SerialName("content_id")
-    val contentId: Int,
+    val contentId: Int = 0,
     @SerialName("shared_url")
-    val sharedUrl: String,
+    val sharedUrl: String? = null,
     @SerialName("device_type")
     val deviceType: Int = Constants.DEVICE_TYPE,
     @SerialName("device_id")

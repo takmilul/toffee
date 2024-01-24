@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HeartBeatBean(
     @SerialName("mqttIsActive")
-    val mqttIsActive: Int,
+    val mqttIsActive: Int = 0,
     @SerialName("systemTime")
     val systemTime: String? = null,
     @SerialName("sessionToken")

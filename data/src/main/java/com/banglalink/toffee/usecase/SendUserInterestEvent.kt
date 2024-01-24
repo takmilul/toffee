@@ -25,9 +25,9 @@ class SendUserInterestEvent @Inject constructor(
 @Serializable
 data class InterestData(
     @SerialName("user_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("interest_list")
-    val interestList: Map<String, Int>,
+    val interestList: Map<String, Int>? = null,
     @SerialName("device_type")
     val deviceType: Int = 1,
     @SerialName("device_id")

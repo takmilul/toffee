@@ -11,5 +11,5 @@ data class FmRadioContentBean(
     @SerialName("radio_banner")
     val radioBanner: String? = null,
     @SerialName("channels")
-    val channels: List<ChannelInfo>?,
+    val channels: List<ChannelInfo>? = null,
 ) : Parcelable

@@ -1818,7 +1818,7 @@ class HomeActivity : PlayerPageActivity(),
 //                    it.setBackgroundColor(Color.TRANSPARENT)
 //                }
 //            }
-            if (playerOverlayData.params.position == "floating") {
+            if (playerOverlayData.params?.position == "floating") {
                 debugOverlayView?.let {
                     val observer = object : ViewTreeObserver.OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
@@ -1829,8 +1829,8 @@ class HomeActivity : PlayerPageActivity(),
                                 val playerWidth = binding.playerView.measuredWidth.toFloat()
                                 val playerHeight = binding.playerView.measuredHeight.toFloat()
                                 
-                                val fromPosition = playerOverlayData.params.fromPosition ?: listOf(0.0F, 0.0F)
-                                val toPosition = playerOverlayData.params.toPosition ?: listOf(1.0F, 0.0F)
+                                val fromPosition = playerOverlayData.params?.fromPosition ?: listOf(0.0F, 0.0F)
+                                val toPosition = playerOverlayData.params?.toPosition ?: listOf(1.0F, 0.0F)
                                 
                                 val fromPositionX = fromPosition.first().coerceAtMost(1.0F)
                                 val fromPositionY = fromPosition.last().coerceAtMost(1.0F)
@@ -1849,7 +1849,7 @@ class HomeActivity : PlayerPageActivity(),
                                     lineTo(endX, endY)
                                 }
                                 ObjectAnimator.ofFloat(it, View.X, View.Y, path).apply {
-                                    duration = playerOverlayData.params.duration * 1_000
+                                    duration = (playerOverlayData.params?.duration ?: 0) * 1_000
                                     repeatMode = ValueAnimator.REVERSE
                                     repeatCount = 2
                                 }.start()
@@ -2650,23 +2650,25 @@ class HomeActivity : PlayerPageActivity(),
                     when (it) {
                         is Success -> {
                             it.data?.let { data ->
-                                mPref.mqttIsActive = data.mqttIsActive == 1
-                                mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
-                                mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
-                                mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
-                                mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                                
-                                appScope.launch {
-                                    val mqttDir = withContext(Dispatchers.IO + Job()) {
-                                        val mqttTag = "MqttConnection"
-                                        var tempDir = getExternalFilesDir(mqttTag)
-                                        if (tempDir == null) {
-                                            tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                if (data.mqttUrl != null && data.mqttUserId != null && data.mqttPassword != null) {
+                                    mPref.mqttIsActive = data.mqttIsActive == 1
+                                    mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl!!)
+                                    mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId!!)
+                                    mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId!!)
+                                    mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword!!)
+                                    
+                                    appScope.launch {
+                                        val mqttDir = withContext(Dispatchers.IO + Job()) {
+                                            val mqttTag = "MqttConnection"
+                                            var tempDir = getExternalFilesDir(mqttTag)
+                                            if (tempDir == null) {
+                                                tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                            }
+                                            tempDir
                                         }
-                                        tempDir
-                                    }
-                                    if (mPref.mqttIsActive && mqttDir != null) {
-                                        mqttService.initialize()
+                                        if (mPref.mqttIsActive && mqttDir != null) {
+                                            mqttService.initialize()
+                                        }
                                     }
                                 }
                             }

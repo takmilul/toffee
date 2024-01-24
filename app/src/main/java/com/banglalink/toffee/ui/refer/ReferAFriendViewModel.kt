@@ -19,6 +19,7 @@ class ReferAFriendViewModel @Inject constructor(
         return resultLiveData {
             val refPolicy = referrerPolicy.execute()
             val refCode = myReferralCode.execute()
+            
             ReferralForm(refCode.referralCode,
                 refCode.sharableText,
                 if (refPolicy.isPromotionMessageEnabled) refPolicy.promotionMessage ?: "" else "",

@@ -29,17 +29,17 @@ class SendContentReportEvent @Inject constructor(
 @Serializable
 data class ReportInAppropriateVideoData(
     @SerialName("customer_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("content_id")
-    val contentId: Long,
+    val contentId: Long = 0,
     @SerialName("offense_type_id")
-    val offenseTypeId: Int,
+    val offenseTypeId: Int = 0,
     @SerialName("offense_id")
-    val offenseId: Int,
+    val offenseId: Int = 0,
     @SerialName("time_stamp")
-    val timeStamp: String,
+    val timeStamp: String? = null,
     @SerialName("additional_detail")
-    val additionalDetail: String?,
+    val additionalDetail: String? = null,
     @SerialName("report_time")
     val reportTime: String = currentDateTime,
     @SerialName("device_type")

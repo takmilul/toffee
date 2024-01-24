@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PaymentMethodBean(
     @SerialName("payment")
-    val paymentList: List<Payment>?
+    val paymentList: List<Payment>? = null
 )

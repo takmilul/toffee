@@ -13,11 +13,11 @@ data class ContentViewProgress(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @SerialName("customerId")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("contentId")
-    val contentId: Long,
+    val contentId: Long = 0,
     @SerialName("progress")
-    val progress: Long,
+    val progress: Long = 0,
     @SerialName("watchTime")
     val watchTime: Long = System.currentTimeMillis(),
 )

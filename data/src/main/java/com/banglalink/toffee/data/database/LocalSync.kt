@@ -93,8 +93,8 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
             if (channelInfo.isLive) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray ) 1 else 0,if (channelInfo.isFmRadio ) 1 else 0)?.let {
-                    val dbRecentPayload = json.decodeFromString<ChannelInfo>(it.payload)
-                    if (!dbRecentPayload.equals(channelInfo)) {
+                    val dbRecentPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
+                    if (dbRecentPayload?.equals(channelInfo) == false) {
                         val isStingray = if (channelInfo.isStingray) 1 else 0
                         val isFmRadio = if (channelInfo.isStingray) 1 else 0
                         tvChannelRepo.updateRecentItemPayload(
@@ -112,8 +112,8 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
             if (channelInfo.isFmRadio) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), 0, 1 )?.let {
-                    val dbRecentPayload = json.decodeFromString<ChannelInfo>(it.payload)
-                    if (!dbRecentPayload.equals(channelInfo)) {
+                    val dbRecentPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
+                    if (dbRecentPayload?.equals(channelInfo) == false) {
                         val isStingray =  0
                         val isFmRadio = 1
                         tvChannelRepo.updateRecentItemPayload(
@@ -129,8 +129,8 @@ class LocalSync @Inject constructor(
         }
         if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
             userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
-                val dbUserActivityPayload = json.decodeFromString<ChannelInfo>(it.payload)
-                if (!dbUserActivityPayload.equals(channelInfo)) {
+                val dbUserActivityPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
+                if (dbUserActivityPayload?.equals(channelInfo) == false) {
                     userActivityRepo.updateUserActivityPayload(
                         contentId.toLong(),
                         channelInfo.type ?: "VOD",
@@ -143,8 +143,8 @@ class LocalSync @Inject constructor(
         if (syncFlag and SYNC_FLAG_FM_ACTIVITY == SYNC_FLAG_FM_ACTIVITY) {
             if (channelInfo.isFmRadio) {
                 userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "RADIO")?.let {
-                    val dbUserActivityPayload = json.decodeFromString<ChannelInfo>(it.payload)
-                    if (!dbUserActivityPayload.equals(channelInfo)) {
+                    val dbUserActivityPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
+                    if (dbUserActivityPayload?.equals(channelInfo) == false) {
                         userActivityRepo.updateUserActivityPayload(
                             contentId.toLong(),
                             channelInfo.type ?: "RADIO",

@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MqttBean(
     @SerialName("code")
-    val code: Int,
+    val code: Int = 0,
     @SerialName("message")
-    val message: String,
+    val message: String? = null,
     @SerialName("mqttIsActive")
-    val mqttIsActive: Int,
+    val mqttIsActive: Int = 0,
     @SerialName("mqttUrl")
-    val mqttUrl: String,
+    val mqttUrl: String? = null,
     @SerialName("mqttUserId")
-    val mqttUserId: String,
+    val mqttUserId: String? = null,
     @SerialName("mqttPassword")
-    val mqttPassword: String
+    val mqttPassword: String? = null
 )

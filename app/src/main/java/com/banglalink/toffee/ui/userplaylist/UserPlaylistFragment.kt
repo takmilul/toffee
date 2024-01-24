@@ -177,7 +177,8 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
-            putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, item.playlistShareUrl, item
+            putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name ?: "", item.totalContent, item
+                .playlistShareUrl, item
                 .isApproved, User_Playlist))
         })
     }
@@ -278,7 +279,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_playlist -> {
-                        showEditPlaylistDialog(item.id, item.name)
+                        item.name?.let { it1 -> showEditPlaylistDialog(item.id, it1) }
                     }
                     R.id.menu_delete_playlist -> {
                         showDeletePlaylistDialog(item.id)

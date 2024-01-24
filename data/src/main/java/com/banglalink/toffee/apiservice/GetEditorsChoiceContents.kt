@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.network.request.AllUserChannelsEditorsChoiceRe
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
 import com.banglalink.toffee.util.Utils
@@ -35,8 +36,8 @@ class GetEditorsChoiceContents @AssistedInject constructor(
 
         val response = tryIO {
             toffeeApi.getUgcEditorsChoice(
-                requestParams.type,
-                requestParams.pageType.value,
+                requestParams.type ?: "",
+                requestParams.pageType?.value ?: PageType.Landing.value,
                 requestParams.categoryId,
                 preference.getDBVersionByApiName(ApiNames.GET_EDITOR_CHOICE),
                 request

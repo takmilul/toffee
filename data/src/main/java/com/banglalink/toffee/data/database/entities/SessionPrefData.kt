@@ -12,5 +12,5 @@ data class SessionPrefData(
     @PrimaryKey
     val prefName: String,
     @SerialName("prefValue")
-    val prefValue: String?,
+    val prefValue: String? = null,
 )

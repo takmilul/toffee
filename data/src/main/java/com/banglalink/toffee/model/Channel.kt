@@ -24,7 +24,7 @@ class Channel(
 ) {
     
     @Contextual
-//    @SerializedName("bundle")
+//    @SerialName("bundle")
     val bundle: Bundle = Bundle().apply {
         putString("name", name)
         putString("contentid", contentId)

@@ -16,9 +16,9 @@ data class UploadInfo(
     val uploadId: Long? = null,
     
     @SerialName("fileUri")
-    val fileUri: String,
+    val fileUri: String? = null,
     @SerialName("fileName")
-    var fileName: String,
+    var fileName: String? = null,
     
     @SerialName("tusUploadUri")
     var tusUploadUri: String? = null,
@@ -54,7 +54,7 @@ data class UploadInfo(
     @SerialName("submitToChallengeIndex")
     var submitToChallengeIndex: Int = 0,
     @SerialName("serverContentId")
-    val serverContentId: Long,
+    val serverContentId: Long = 0,
 ) {
     fun getFingerprint(): String? {
         if (uploadId != null && uploadId >= 0L) {
@@ -76,5 +76,5 @@ data class UploadInfo(
         } else null
     }
     
-    fun getFileNameMetadata() = "filename " + Base64.encodeToString(fileName.toByteArray(), Base64.NO_WRAP)
+    fun getFileNameMetadata() = "filename " + Base64.encodeToString(fileName?.toByteArray(), Base64.NO_WRAP)
 }

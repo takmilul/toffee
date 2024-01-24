@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelDetail(
     @SerialName("id")
-    val id: Long,
+    val id: Long = 0,
     @SerialName("channel_name")
     val channelName: String? = null,
     @SerialName("channel_desc")

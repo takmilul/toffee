@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrendingChannelBean(
     @SerialName("channels")
-    val channels: List<UserChannelInfo>?,
+    val channels: List<UserChannelInfo>? = null,
     @SerialName("code")
     var code: Int = 0,
     @SerialName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerialName("totalCount")
     val totalCount: Int = 0,
     @SerialName("systemTime")

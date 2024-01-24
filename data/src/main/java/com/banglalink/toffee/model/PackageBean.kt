@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class PackageBean(
     @SerialName("subscribedPackages")
-    val packageList: List<Package>
+    val packageList: List<Package>? = null
 )

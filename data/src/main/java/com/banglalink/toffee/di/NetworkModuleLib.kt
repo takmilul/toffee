@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -134,7 +135,7 @@ object NetworkModuleLib {
         return Retrofit.Builder()
             .baseUrl(config.url)
             .client(httpClient)
-            .addConverterFactory(json.asConverterFactory("text/plain".toMediaType()))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
     
@@ -251,10 +252,16 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
+    @OptIn(ExperimentalSerializationApi::class)
     fun providesJsonWithConfig(): Json {
         return Json {
-            encodeDefaults = false
+            isLenient = true
+            encodeDefaults = true
+//            explicitNulls = false
+            coerceInputValues = true
             ignoreUnknownKeys = true
+            allowStructuredMapKeys = true
+            decodeEnumsCaseInsensitive = true
         }
     }
 }

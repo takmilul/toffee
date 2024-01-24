@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DramaSeriesContentBean (
     @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
-    val channels: List<ChannelInfo>?,
+    val channels: List<ChannelInfo>? = null,
     @SerialName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerialName("totalCount")
     val totalCount: Int = 0,
     @SerialName("systemTime")
-    val systemTime: String?=null
+    val systemTime: String? = null
 )

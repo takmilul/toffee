@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DBVersionV2(
     @SerialName(value = "api_name")
-    val apiName: String,
+    val apiName: String? = null,
     @SerialName(value = "db_version")
-    val dbVersion: Int
+    val dbVersion: Int = 0
 ) : Parcelable

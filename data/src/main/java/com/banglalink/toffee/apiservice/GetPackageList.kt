@@ -14,8 +14,8 @@ class GetPackageList @Inject constructor(private val preference: SessionPreferen
             toffeeApi.getPackageList(PackageListRequest(preference.customerId,preference.password))
         }
 
-        return response.response.packageList.filter {
+        return response.response.packageList?.filter {
             !it.packageType.equals("VOD",true)//Filtering out the VOD
-        }
+        } ?: emptyList()
     }
 }

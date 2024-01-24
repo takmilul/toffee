@@ -8,20 +8,16 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 data class SubCategory(
-    @SerialName(value="id")
-    val id: Long,
-
+    @SerialName(value = "id")
+    val id: Long = 0,
     @SerialName("category_id")
     var categoryId: Long = 0L,
-
     @SerialName("sub_category_name")
-    val name: String,
-
+    val name: String = "",
     @SerialName("updated_by")
     val updatedBy: Int = 0,
-
     @SerialName("is_active")
     val isActive: Int = 0,
-): Parcelable {
+) : Parcelable {
     override fun toString() = name
 }

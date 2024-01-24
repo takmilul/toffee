@@ -123,8 +123,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         viewLifecycleOwner.lifecycleScope.launch {
             with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
                 collectLatest { tvList ->
-                    val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
-                        val categoryName = it.key.trimIndent()
+                    val res = tvList?.groupBy { it.categoryName?.trimIndent() }?.map {
+                        val categoryName = it.key?.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }

@@ -29,11 +29,11 @@ class SendFeaturePartnerEvent @Inject constructor(
 @Serializable
 data class ReportFeaturePartnerData(
     @SerialName("last_login_date_time")
-    val lastLoginDateTime: String,
+    val lastLoginDateTime: String? = null,
     @SerialName("partner_name")
-    val partnerName: String,
+    val partnerName: String? = null,
     @SerialName("partnerId")
-    val partnerId: Int,
+    val partnerId: Int = 0,
     @SerialName("isLoggedIn")
-    val isLoggedIn: Int,
+    val isLoggedIn: Int = 0,
     ) : PubSubBaseRequest()

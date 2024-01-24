@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelDetailBean(
     @SerialName("code")
-    val code: Int,
+    val code: Int = 0,
     @SerialName("details")
-    val myChannelDetail: MyChannelDetail?,
+    val myChannelDetail: MyChannelDetail? = null,
     @SerialName("isRated")
     val isRated: Int = 0,
     @SerialName("myRating")

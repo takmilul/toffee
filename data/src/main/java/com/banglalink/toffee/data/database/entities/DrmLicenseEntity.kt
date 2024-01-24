@@ -10,14 +10,14 @@ import kotlinx.serialization.Serializable
 @Entity(indices = [Index(value = ["channelId"], unique = true)])
 data class DrmLicenseEntity(
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("contentId")
-    val contentId: String,
+    val contentId: String? = null,
     @SerialName("license")
     @ColumnInfo(name = "data", typeAffinity = ColumnInfo.BLOB)
-    val license: ByteArray,
+    val license: ByteArray? = null,
     @SerialName("expiryTime")
-    val expiryTime: Long
+    val expiryTime: Long = 0
 ) : BaseEntity() {
     
     override fun equals(other: Any?): Boolean {

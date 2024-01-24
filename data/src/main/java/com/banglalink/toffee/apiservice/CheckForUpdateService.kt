@@ -20,8 +20,8 @@ class CheckForUpdateService @Inject constructor(private val preference: SessionP
         val checkUpdateBean = response.response
         if (checkUpdateBean.updateAvailable != 0) {
             throw UpdateRequiredException(
-                checkUpdateBean.messageTitle,
-                checkUpdateBean.message,
+                checkUpdateBean.messageTitle ?: "Update Available",
+                checkUpdateBean.message ?: "An update is available. Please update to the latest version",
                 checkUpdateBean.updateAvailable == 2
             )
         }

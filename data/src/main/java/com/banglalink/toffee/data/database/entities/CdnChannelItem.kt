@@ -6,24 +6,23 @@ import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 @Entity
 @Serializable
 data class CdnChannelItem(
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("urlType")
-    val urlType: Int,
+    val urlType: Int = 0,
     @SerialName("expiryDate")
     var expiryDate: String? = null,
     @SerialName("payload")
-    var payload: String,
+    var payload: String? = null,
 ) : BaseEntity() {
     @Ignore
     @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(payload)
+        payload?.let { NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(it) }
     } catch (ex: Exception) {
         null
     }

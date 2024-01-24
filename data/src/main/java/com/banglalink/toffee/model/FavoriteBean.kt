@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FavoriteBean(
     @SerialName("isFavorite")
-    val isFavorite: Int,
+    val isFavorite: Int = 0,
     @SerialName("message")
     val message: String? = null
 )

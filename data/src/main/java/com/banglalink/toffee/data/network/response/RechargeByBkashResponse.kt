@@ -7,15 +7,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RechargeByBkashResponse(
     @SerialName("response")
-    val response: RechargeByBkashBean?
+    val response: RechargeByBkashBean? = null
 ) : BaseResponse()
 
 @Serializable
 data class RechargeByBkashBean(
     @SerialName("statusCode")
-    val statusCode: Int,
+    val statusCode: Int = 0,
     @SerialName("status")
-    val status: String,
+    val status: String? = null,
     @Contextual
     @SerialName("message")
     val message: Any? = null,

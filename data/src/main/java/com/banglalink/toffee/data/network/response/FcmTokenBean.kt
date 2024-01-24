@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FcmTokenBean(
     @SerialName("message")
-    val message: String
+    val message: String? = null
 )

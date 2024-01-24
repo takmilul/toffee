@@ -101,31 +101,31 @@ class SendHeartBeat @Inject constructor(
         @SerialName("id")
         val id: Long = System.nanoTime(),
         @SerialName("customer_id")
-        val customerId: Int,
+        val customerId: Int = 0,
         @SerialName("device_type")
         val deviceType: Int = Constants.DEVICE_TYPE,
         @SerialName("content_id")
-        val contentId: Int,
+        val contentId: Int = 0,
         @SerialName("content_type")
-        val contentType: String,
+        val contentType: String? = null,
         @SerialName("data_source")
         val dataSource: String? = "iptv_programs",
         @SerialName("channel_owner_id")
         val ownerId: Int = 0,
         @SerialName("lat")
-        val latitude: String,
+        val latitude: String? = null,
         @SerialName("lon")
-        val longitude: String,
+        val longitude: String? = null,
         @SerialName("os_name")
         val os: String = "android " + Build.VERSION.RELEASE,
         @SerialName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
         @SerialName("is_bl_number")
-        val isBlNumber: Int,
+        val isBlNumber: Int = 0,
         @SerialName("net_type")
-        val netType: String,
+        val netType: String? = null,
         @SerialName("session_token")
-        val sessionToken: String,
+        val sessionToken: String? = null,
         @SerialName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerialName("date_time")

@@ -19,15 +19,15 @@ data class NotificationInfo(
     @SerialName("userId")
     val userId: Int = 0,
     @SerialName("notificationType")
-    val notificationType: String?,
+    val notificationType: String? = null,
     @SerialName("notificationId")
-    val notificationId: String?,
+    val notificationId: String? = null,
     @SerialName("topic")
-    val topic: Int,
+    val topic: Int = 0,
     @SerialName("sender")
-    val sender: Int,
+    val sender: Int = 0,
     @SerialName("title")
-    val title: String?,
+    val title: String? = null,
     @SerialName("content")
     val content: String? = null,
     @SerialName("description")

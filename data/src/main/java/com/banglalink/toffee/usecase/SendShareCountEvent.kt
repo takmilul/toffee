@@ -36,9 +36,9 @@ class SendShareCountEvent @Inject constructor(
 @Serializable
 data class ShareData(
     @SerialName("subscriber_id")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("content_id")
-    val contentId: Long,
+    val contentId: Long = 0,
     @SerialName("device_type")
     val deviceType: Int = 1,
     @SerialName("device_id")

@@ -43,7 +43,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -135,13 +135,13 @@ class HeartBeatManager @Inject constructor(
                             val data = response.data
                             mPref.heUpdateDate = today
                             try {
-                                if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                                if (data.isBanglalinkNumber && !data.phoneNumber.isNullOrBlank()) {
                                     mPref.latitude = data.lat ?: ""
                                     mPref.longitude = data.lon ?: ""
                                     mPref.userIp = data.userIp ?: ""
                                     mPref.geoCity = data.geoCity ?: ""
                                     mPref.geoLocation = data.geoLocation ?: ""
-                                    mPref.hePhoneNumber = data.phoneNumber
+                                    mPref.hePhoneNumber = data.phoneNumber!!
                                     mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
                                     sendHeLogEvent.execute(HeaderEnrichmentLogData().also {
                                         it.phoneNumber = mPref.hePhoneNumber

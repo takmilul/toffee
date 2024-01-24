@@ -10,9 +10,9 @@ data class OffenseType(
     @SerialName("id")
     val id: Long = 0L,
     @SerialName("head_name")
-    val type: String,
+    val type: String = "",
     @SerialName("head_sorting")
-    val sorting: Int,
+    val sorting: Int = 0,
     @SerialName("subHeads")
     val offenseList: List<Offense>? = null
 ): Parcelable {

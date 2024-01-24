@@ -9,11 +9,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PackPaymentMethodResponse(
     @SerialName("apiLanguage")
-    val apiLanguage: String,
+    val apiLanguage: String? = null,
     @SerialName("debugCode")
-    val debugCode: Int,
+    val debugCode: Int = 0,
     @SerialName("debugMsg")
-    val debugMsg: String,
+    val debugMsg: String? = null,
     @SerialName("response")
     val response: PackPaymentMethodBean,
 ) : BaseResponse()
@@ -22,15 +22,15 @@ data class PackPaymentMethodResponse(
 @Serializable
 data class PackPaymentMethodBean(
     @SerialName("BKASH")
-    val bkash: Bkash?,
+    val bkash: Bkash? = null,
     @SerialName("BL")
-    val bl: @RawValue Bl?,
+    val bl: @RawValue Bl? = null,
     @SerialName("FREE")
-    val free: @RawValue List<PackPaymentMethod>?,
+    val free: @RawValue List<PackPaymentMethod>? = null,
     @SerialName("VOUCHER")
-    val Voucher: @RawValue List<PackPaymentMethod>?,
+    val Voucher: @RawValue List<PackPaymentMethod>? = null,
     @SerialName("SSL")
-    val ssl: SSL?,
+    val ssl: SSL? = null,
 ) : Parcelable
 
 @Parcelize
@@ -39,29 +39,29 @@ data class Bkash(
     @SerialName("minimum_price")
     val minimumPrice: Int,
     @SerialName("BL")
-    val blPacks: List<PackPaymentMethod>?,
+    val blPacks: List<PackPaymentMethod>? = null,
     @SerialName("NON_BL")
-    val nonBlPacks: List<PackPaymentMethod>?,
+    val nonBlPacks: List<PackPaymentMethod>? = null,
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class SSL(
     @SerialName("BL")
-    val blPacks: List<PackPaymentMethod>?,
+    val blPacks: List<PackPaymentMethod>? = null,
     @SerialName("NON_BL")
-    val nonBlPacks: List<PackPaymentMethod>?,
+    val nonBlPacks: List<PackPaymentMethod>? = null,
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class Bl(
     @SerialName("minimum_price")
-    val minimumPrice: Int,
+    val minimumPrice: Int = 0,
     @SerialName("POSTPAID")
-    val postpaid: List<PackPaymentMethod>?,
+    val postpaid: List<PackPaymentMethod>? = null,
     @SerialName("PREPAID")
-    val prepaid: List<PackPaymentMethod>?,
+    val prepaid: List<PackPaymentMethod>? = null,
 ) : Parcelable
 
 @Parcelize

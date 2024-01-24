@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReportListModel(
-    val id:Int,
-    val title:String
+    val id: Int = 0,
+    val title: String? = null
 )

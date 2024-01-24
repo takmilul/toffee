@@ -28,15 +28,15 @@ class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqtt
 @Serializable
 data class SubscriptionCountData(
     @SerialName("channel_id")
-    val channelId: Int,
+    val channelId: Int = 0,
     @SerialName("subscriber_id")
-    val subscriberId: Int,
+    val subscriberId: Int = 0,
     @SerialName("status")
-    val status: Int,
+    val status: Int = 0,
     @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerialName("date_time")
-    val date_time: String,
+    val date_time: String? = null,
     @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

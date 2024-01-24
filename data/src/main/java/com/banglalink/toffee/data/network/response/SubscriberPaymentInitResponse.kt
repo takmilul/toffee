@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SubscriberPaymentInitResponse(
     @SerialName("response")
-    val response: SubscriberPaymentInitBean?
+    val response: SubscriberPaymentInitBean? = null
 ) : BaseResponse()
 
 @Serializable

@@ -13,7 +13,7 @@ data class FavoriteItem(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @SerialName("channelId")
-    val channelId: Long,
+    val channelId: Long = 0,
     @SerialName("isFavorite")
-    val isFavorite: Int
+    val isFavorite: Int = 0
 )

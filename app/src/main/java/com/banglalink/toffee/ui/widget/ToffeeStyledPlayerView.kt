@@ -496,7 +496,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
             
             debugJob = coroutineScope.launch {
-                delay(data.params.duration * 1000)
+                delay((data.params?.duration ?: 0) * 1000)
                 clearDebugWindow()
             }
         }
