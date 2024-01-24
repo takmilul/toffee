@@ -63,9 +63,11 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.ShareableData
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.usecase.SendCategoryChannelShareCountEvent
 import com.banglalink.toffee.usecase.SendContentReportEvent
+import com.banglalink.toffee.usecase.SendLogFromKabbikAudioBookEvent
 import com.banglalink.toffee.usecase.SendOTPLogEvent
 import com.banglalink.toffee.usecase.SendShareCountEvent
 import com.banglalink.toffee.usecase.SendSubscribeEvent
@@ -101,6 +103,7 @@ class HomeViewModel @Inject constructor(
     private val sendSubscribeEvent: SendSubscribeEvent,
     private val sendShareCountEvent: SendShareCountEvent,
     private val sendViewContentEvent: SendViewContentEvent,
+    private val sendLogFromKabbikAudioBookEvent: SendLogFromKabbikAudioBookEvent,
     @SimpleHttpClient private val httpClient: OkHttpClient,
     private val checkForUpdateService: CheckForUpdateService,
     private val mqttCredentialService: MqttCredentialService,
@@ -116,7 +119,7 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-    
+
     ) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
@@ -465,6 +468,16 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse {  getBubbleService.loadData(0,100) }
             ramadanScheduleLiveData.postValue(response)
+        }
+    }
+
+    fun sendLogFromKabbikAudioBookDta(kabbikAudioBookLogData: KabbikAudioBookLogData) {
+        viewModelScope.launch {
+            try {
+                sendLogFromKabbikAudioBookEvent.execute(kabbikAudioBookLogData)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

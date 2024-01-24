@@ -48,6 +48,7 @@ import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
@@ -60,13 +61,15 @@ import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.util.CoilUtils
+import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.Job
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
     private var selectedItem: KabbikItem? = null
+    private var selectedCategoryItem: KabbikCategory? = null
     private val viewModel by activityViewModels<AudioBookViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
@@ -141,6 +144,16 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
                             selectedItem = item
+                            viewModel.sendLogFromKabbikAudioBookDta(
+                                KabbikAudioBookLogData(
+                                    contentId = selectedItem?.id.toString(),
+                                    bookName = selectedItem?.name,
+                                    bookCategory = "Top Banner",
+                                    bookType = if (selectedItem?.premium == 0 && selectedItem?.price == 0) "free" else "paid",
+                                    lat = mPref.latitude,
+                                    lon = mPref.longitude,
+                                )
+                            )
                             launchWithLifecycle {
                                 viewModel.grantToken(
                                     success = {token->
@@ -217,9 +230,20 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     val item = kabbikCategory.itemsData[it]
                     AudioBookCard(kabbikItem = item, onclick = {
                         selectedItem = item
+                        selectedCategoryItem = kabbikCategory
+                        viewModel.sendLogFromKabbikAudioBookDta(
+                            KabbikAudioBookLogData(
+                                contentId = selectedItem?.id.toString(),
+                                bookName = selectedItem?.name,
+                                bookCategory = selectedCategoryItem?.name.toString(),
+                                bookType = if (selectedItem?.premium == 0 && selectedItem?.price == 0) "free" else "paid",
+                                lat = mPref.latitude,
+                                lon = mPref.longitude,
+                            )
+                        )
                         launchWithLifecycle {
                             viewModel.grantToken(
-                                success = {token->
+                                success = { token ->
                                     viewModel.getAudioBookEpisode(item.id.toString(), token)
                                 },
                                 failure = {}

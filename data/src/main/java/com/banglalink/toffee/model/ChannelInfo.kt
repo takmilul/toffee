@@ -184,6 +184,8 @@ data class ChannelInfo(
     var playlistDescription: String? = null,
     @SerializedName("authorName")
     var authorName: String? = null,
+    @SerializedName("bookName")
+    var bookName: String? = null,
     @SerializedName("isSelected")
     var isSelected: Boolean? = false,
 ) :Parcelable {

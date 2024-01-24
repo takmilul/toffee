@@ -134,6 +134,7 @@ import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.*
+import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.util.*
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
@@ -2393,6 +2394,16 @@ class HomeActivity : PlayerPageActivity(),
             navController.navigateTo(R.id.fmRadioFragment)
         }
         else if(featuredPartner.url_type == 2){
+            viewModel.sendLogFromKabbikAudioBookDta(
+                KabbikAudioBookLogData(
+                    contentId = "N/A",
+                    bookName = "N/A",
+                    bookCategory = "N/A",
+                    bookType = "N/A",
+                    lat = mPref.latitude,
+                    lon = mPref.longitude,
+                )
+            )
             navController.navigateTo(R.id.audioBookLandingFragment)
         }
         else{

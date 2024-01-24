@@ -48,6 +48,7 @@ const val PLAYER_EVENTS_TOPIC = "projects/$PROJECT_ID/topics/player-events"
 const val CATEGORY_CHANNEL_SHARE_COUNT_TOPIC = "projects/$PROJECT_ID/topics/share_log"
 const val FEATURE_PARTNER_LOG = "projects/$PROJECT_ID/topics/featured_partner_log"
 const val PAYMENT_LOG_FROM_DEVICE = "projects/$PROJECT_ID/topics/payment_log_from_device"
+const val KABBIK = "projects/$PROJECT_ID/topics/kabbik"
 
 object PubSubMessageUtil {
 

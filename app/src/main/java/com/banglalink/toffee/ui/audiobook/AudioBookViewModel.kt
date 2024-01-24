@@ -22,6 +22,8 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.usecase.KabbikAudioBookLogData
+import com.banglalink.toffee.usecase.SendLogFromKabbikAudioBookEvent
 import com.banglalink.toffee.util.DateComparisonResult
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -44,7 +46,8 @@ class AudioBookViewModel @Inject constructor(
     private val topBannerApiService: KabbikTopBannerApiService,
     private val audioBookSeeMoreService: AudioBookSeeMoreService,
     private val audioBookEpisodeListService: AudioBookEpisodeListService,
-) : ViewModel() {
+    private val sendLogFromKabbikAudioBookEvent: SendLogFromKabbikAudioBookEvent,
+    ) : ViewModel() {
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
     val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikItem>())
@@ -145,6 +148,15 @@ class AudioBookViewModel @Inject constructor(
             val response = resultFromResponse { audioBookEpisodeListService.execute(id, token) }
             audioBookEpisodeResponse.value = response
             audioBookEpisodeResponseFlow.emit(response)
+        }
+    }
+    fun sendLogFromKabbikAudioBookDta(kabbikAudioBookLogData: KabbikAudioBookLogData) {
+        viewModelScope.launch {
+            try {
+                sendLogFromKabbikAudioBookEvent.execute(kabbikAudioBookLogData)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

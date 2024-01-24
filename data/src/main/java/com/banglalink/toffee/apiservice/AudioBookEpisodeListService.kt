@@ -28,6 +28,7 @@ class AudioBookEpisodeListService @Inject constructor(
                 program_name = it.name,
                 description = it.description,
                 authorName = result.authorName,
+                bookName = result.name,
                 duration = it.duration?.replace(".", ":"),
                 ugcFeaturedImage = result.bannerPath,
                 urlType = 0,
