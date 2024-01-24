@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -62,7 +61,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.Job
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
@@ -175,7 +173,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 12.dp)
+                .padding(top = 24.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -191,25 +189,24 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     fontWeight = FontWeight.Medium,
                     color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor }
                 )
-                TextButton(onClick = {
-                    val bundle = bundleOf(
-                        "myTitle" to kabbikCategory.name
-                    )
-                    findNavController().navigate(
-                        R.id.audioBookCategoryDetails,
-                        args = bundle
-                    )
-                }) {
-                    Text(
-                        text = "See All",
-                        fontSize = 12.sp,
-                        fontFamily = Fonts.roboto,
-                        fontWeight = FontWeight.Medium,
-                        color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor })
-                }
+                Text(
+                    modifier = Modifier.clickable {
+                        val bundle = bundleOf(
+                            "myTitle" to kabbikCategory.name
+                        )
+                        findNavController().navigate(
+                            R.id.audioBookCategoryDetails,
+                            args = bundle
+                        )
+                    },
+                    text = "See All",
+                    fontSize = 12.sp,
+                    fontFamily = Fonts.roboto,
+                    fontWeight = FontWeight.Medium,
+                    color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor })
             }
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp),
                 state = rememberLazyListState(),
             ) {
 
