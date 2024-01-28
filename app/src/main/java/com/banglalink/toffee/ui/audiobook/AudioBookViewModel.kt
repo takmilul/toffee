@@ -29,6 +29,7 @@ import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.compareDates
+import com.banglalink.toffee.util.currentDate
 import com.banglalink.toffee.util.currentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -69,9 +70,7 @@ class AudioBookViewModel @Inject constructor(
                 else -> {
                     when (val loginResponse = resultFromExternalResponse { loginApiService.execute() }) {
                         is Success -> {
-                            val systemDate =
-                                Utils.dateToStr(Utils.getDate(Date().toString(), "yyyy-MM-dd")).toString()
-                            mPref.kabbikTokenExpiryTime = systemDate + " " + loginResponse.data.expiry
+                            mPref.kabbikTokenExpiryTime = currentDate + " " + loginResponse.data.expiry
                             loginResponse.data.token?.let {
                                 mPref.kabbikAccessToken = it
                                 success.invoke(it)
