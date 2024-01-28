@@ -85,7 +85,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
                     binding.title.show()
                     binding.authorName.show()
                     
-                    binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
+                    binding.title.text = response.data?.firstOrNull()?.program_name.toString()
                     binding.authorName.text = "By - ${response.data?.firstOrNull()?.authorName.toString()}"
                     binding.episodeDescription.text = HtmlCompat.fromHtml(
                         response.data?.firstOrNull()?.playlistDescription.toString()
@@ -149,6 +149,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
             playlistInfo.copy(playIndex = index, currentItem = currentItem)
         )
         setCurrentChannel(item)
+        binding.title.text = item.program_name
     }
     
     override fun onDestroyView() {
