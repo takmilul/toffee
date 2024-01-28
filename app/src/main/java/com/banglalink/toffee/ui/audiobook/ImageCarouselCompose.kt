@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.audiobook.carousel
+package com.banglalink.toffee.ui.audiobook
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
