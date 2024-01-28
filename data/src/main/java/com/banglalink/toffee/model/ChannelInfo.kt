@@ -183,6 +183,8 @@ data class ChannelInfo(
     var playlistName: String? = null,
     @SerializedName("playlist_description")
     var playlistDescription: String? = null,
+    @SerializedName("episodeName")
+    var episodeName: String? = null,
     @SerializedName("authorName")
     var authorName: String? = null,
     @SerializedName("bookName")

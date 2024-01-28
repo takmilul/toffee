@@ -29,6 +29,7 @@ import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.compareDates
+import com.banglalink.toffee.util.currentDate
 import com.banglalink.toffee.util.currentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,8 +49,6 @@ class AudioBookViewModel @Inject constructor(
     private val audioBookEpisodeListService: AudioBookEpisodeListService,
     private val sendAudioBookViewContentEvent: SendAudioBookViewContentEvent,
     ) : ViewModel() {
-    val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
-    val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
     val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikItem>())
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
@@ -71,9 +70,7 @@ class AudioBookViewModel @Inject constructor(
                 else -> {
                     when (val loginResponse = resultFromExternalResponse { loginApiService.execute() }) {
                         is Success -> {
-                            val systemDate =
-                                Utils.dateToStr(Utils.getDate(Date().toString(), "yyyy-MM-dd")).toString()
-                            mPref.kabbikTokenExpiryTime = systemDate + " " + loginResponse.data.expiry
+                            mPref.kabbikTokenExpiryTime = currentDate + " " + loginResponse.data.expiry
                             loginResponse.data.token?.let {
                                 mPref.kabbikAccessToken = it
                                 success.invoke(it)
@@ -89,24 +86,8 @@ class AudioBookViewModel @Inject constructor(
             }
         }
     }
-    
-    fun homeApi(token: String) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { homeApiService.execute(token) }
-            homeApiResponse.value = response
-        }
-    }
-    
-    fun topBannerApi(token: String) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { topBannerApiService.execute(token) }
-            topBannerApiResponse.value = response
-        }
-    }
-    
     fun topBannerApiCompose(token: String) {
         viewModelScope.launch {
-            Log.i("kabbik_", "in banner api token: $token")
             val response = resultFromExternalResponse { topBannerApiService.execute(token) }
             when (response) {
                 is Success -> {
@@ -122,7 +103,6 @@ class AudioBookViewModel @Inject constructor(
     fun homeApiCompose(token: String) {
         isLoadingCategory.value = true
         viewModelScope.launch {
-            Log.i("kabbik_", "in home api token: $token")
             val response = resultFromExternalResponse { homeApiService.execute(token) }
             isLoadingCategory.value = false
             when (response) {

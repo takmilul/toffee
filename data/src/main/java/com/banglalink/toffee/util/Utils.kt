@@ -658,6 +658,12 @@ val currentDateTime: String
         return sdf.format(bdTime()) ?: sdf.format(Date())
     }
 
+val currentDate: String
+    get() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        return sdf.format(bdTime()) ?: sdf.format(Date())
+    }
+
 val currentDateTimeMillis: String
     get() {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)

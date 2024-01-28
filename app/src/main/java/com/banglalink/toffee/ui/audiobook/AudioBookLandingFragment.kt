@@ -49,7 +49,6 @@ import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.compose_theme.CardTitleColor
 import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
