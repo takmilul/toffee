@@ -19,7 +19,6 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
@@ -127,17 +126,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-
-        viewModel.sendLogFromKabbikAudioBookDta(
-            KabbikAudioBookLogData(
-                contentId = item?.id.toString(),
-                bookName = item?.bookName,
-                bookCategory = "myTitle",
-                bookType = "",
-                lat = mPref.latitude,
-                lon = mPref.longitude,
-            )
-        )
+        
         if (item == currentItem || item.id == currentItem?.id) {
             return
         }

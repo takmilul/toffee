@@ -49,6 +49,6 @@ data class Episodes (
     @SerializedName("audiobook_id" ) var audiobookId : Int?    = null,
     @SerializedName("isfree"       ) var isFree      : Int?    = null,
     @SerializedName("play_count"   ) var playCount   : String? = null,
-    @SerializedName("duration"     ) var duration    : String? = null
-
+    @SerializedName("duration"     ) var duration    : String? = null,
+    @SerializedName("price"        ) var price       : Int?    = null,
 )

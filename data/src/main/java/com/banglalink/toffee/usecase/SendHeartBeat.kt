@@ -10,7 +10,9 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
+import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWERS_HEARTBEAT
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
 import com.google.gson.Gson
@@ -39,6 +41,20 @@ class SendHeartBeat @Inject constructor(
             } else {
                 sendToPubSub(contentId, contentType, dataSource, ownerId)
             }
+        }
+    }
+    
+    suspend fun executeKabbik(channelInfo: ChannelInfo) {
+        withContext(Dispatchers.IO) {
+            val kabbikAudioBookLogData = KabbikAudioBookLogData(
+                contentId = channelInfo.getContentId(),
+                bookName = channelInfo.bookName,
+                bookCategory = channelInfo.category,
+                bookType = if(channelInfo.isPremium) "paid" else "free",
+                lat = preference.latitude,
+                lon = preference.longitude,
+            )
+            PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWERS_HEARTBEAT)
         }
     }
     

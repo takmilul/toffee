@@ -4,6 +4,7 @@ import android.os.Parcelable
 import android.text.Spanned
 import android.util.Base64
 import androidx.core.text.HtmlCompat
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.common.annotation.KeepName
@@ -245,6 +246,10 @@ data class ChannelInfo(
     @get:SerializedName("isFcmEventActive")
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
+    
+    @get:SerializedName("isPremium")
+    val isPremium: Boolean
+        get() = urlTypeExt == PREMIUM
     
     @IgnoredOnParcel
     @SerializedName("isExpired")

@@ -11,7 +11,11 @@ class AudioBookEpisodeListService @Inject constructor(
     private val toffeeApi: ExternalApi,
     private val preference: SessionPreference
 ) {
-    suspend fun execute(id : String, token: String): List<ChannelInfo> {
+    suspend fun execute(
+        id : String,
+        token: String,
+        category: String
+    ): List<ChannelInfo> {
         
         val result = tryIOExternal {
             toffeeApi.audioBookEpisodeList(
@@ -20,19 +24,20 @@ class AudioBookEpisodeListService @Inject constructor(
                 referrer = "https://toffeelive.com/",
             )
         }
-
         
         val channels = result.episodes.map {
             ChannelInfo(
                 id = it.id.toString(),
+                channel_owner_id = -1,
                 program_name = it.name,
                 description = it.description,
                 authorName = result.authorName,
                 bookName = result.name,
+                category = category,
                 duration = it.duration?.replace(".", ":"),
                 ugcFeaturedImage = result.bannerPath,
                 urlType = 0,
-                urlTypeExt = 0,
+                urlTypeExt = 0/*if (it.isFree == 1 && it.price == 0) NON_PREMIUM else PREMIUM*/,
                 type = "Audio_Book",
                 is_available = 1,
                 is_approved = 1,

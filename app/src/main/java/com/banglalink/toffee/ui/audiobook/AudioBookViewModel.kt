@@ -23,7 +23,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.usecase.KabbikAudioBookLogData
-import com.banglalink.toffee.usecase.SendLogFromKabbikAudioBookEvent
+import com.banglalink.toffee.usecase.SendAudioBookViewContentEvent
 import com.banglalink.toffee.util.DateComparisonResult
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -46,7 +46,7 @@ class AudioBookViewModel @Inject constructor(
     private val topBannerApiService: KabbikTopBannerApiService,
     private val audioBookSeeMoreService: AudioBookSeeMoreService,
     private val audioBookEpisodeListService: AudioBookEpisodeListService,
-    private val sendLogFromKabbikAudioBookEvent: SendLogFromKabbikAudioBookEvent,
+    private val sendAudioBookViewContentEvent: SendAudioBookViewContentEvent,
     ) : ViewModel() {
     val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
     val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
@@ -143,9 +143,9 @@ class AudioBookViewModel @Inject constructor(
         }
     }
     
-    fun getAudioBookEpisode(id: String, token: String) {
+    fun getAudioBookEpisode(id: String, token: String, category: String) {
         viewModelScope.launch {
-            val response = resultFromResponse { audioBookEpisodeListService.execute(id, token) }
+            val response = resultFromResponse { audioBookEpisodeListService.execute(id, token, category) }
             audioBookEpisodeResponse.value = response
             audioBookEpisodeResponseFlow.emit(response)
         }
@@ -153,7 +153,7 @@ class AudioBookViewModel @Inject constructor(
     fun sendLogFromKabbikAudioBookDta(kabbikAudioBookLogData: KabbikAudioBookLogData) {
         viewModelScope.launch {
             try {
-                sendLogFromKabbikAudioBookEvent.execute(kabbikAudioBookLogData)
+                sendAudioBookViewContentEvent.execute(kabbikAudioBookLogData)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

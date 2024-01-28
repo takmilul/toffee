@@ -19,7 +19,6 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -101,22 +100,12 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
 
     override fun onItemClicked(item: KabbikItem) {
         super.onItemClicked(item)
-        viewModel.sendLogFromKabbikAudioBookDta(
-            KabbikAudioBookLogData(
-                contentId = selectedItem?.id.toString(),
-                bookName = selectedItem?.name,
-                bookCategory = myTitle,
-                bookType = if (selectedItem?.premium == 0 && selectedItem?.price == 0) "free" else "paid",
-                lat = mPref.latitude,
-                lon = mPref.longitude,
-            )
-        )
         selectedItem = item
         launchWithLifecycle {
             viewModel.grantToken(
                 success = {token->
                     observeAudioBookEpisode()
-                    viewModel.getAudioBookEpisode(item.id.toString(), token)
+                    viewModel.getAudioBookEpisode(item.id.toString(), token, myTitle ?: "")
                 },
                 failure = {}
             )
@@ -140,14 +129,14 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
                                     isApproved = 1,
                                     playlistType = Audio_Book_Playlist
                                 )
-//                                launchWithLifecycle {
-//                                    viewModel.audioBookPlaylistPlaybackInfoFlow.emit(playlistPlaybackInfo)
-//                                }
                                 homeViewModel.addToPlayListMutableLiveData.postValue(
                                     AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
                                 )
                                 homeViewModel.playContentLiveData.postValue(
-                                    playlistPlaybackInfo.copy(playIndex = 0, currentItem = channelInfo)
+                                    playlistPlaybackInfo.copy(
+                                        playIndex = 0,
+                                        currentItem = channelInfo
+                                    )
                                 )
                             }
                         } else {
