@@ -47,10 +47,8 @@ import com.banglalink.toffee.data.network.response.KabbikItem
 import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.compose_theme.CardTitleColor
 import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
@@ -62,7 +60,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.util.CoilUtils
-import com.banglalink.toffee.util.currentDateTime
 import com.banglalink.toffee.util.unsafeLazy
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {

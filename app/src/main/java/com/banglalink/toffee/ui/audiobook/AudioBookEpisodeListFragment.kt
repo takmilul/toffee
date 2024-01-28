@@ -53,7 +53,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         
         playlistInfo = arguments?.getParcelable("playlistInfo")!!
         currentItem = playlistInfo.currentItem?.apply { feature_image = playlistInfo.playlistThumbnail }
-        activity?.title = playlistInfo.playlistName
+//        activity?.title = playlistInfo.playlistName
         
 //        progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
@@ -65,6 +65,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
+        binding.title.text = currentItem?.program_name
         for (index in 0 until mAdapter.itemCount) {
             val currentItem = mAdapter.getItem(index)
             currentItem.isSelected = false
@@ -149,7 +150,6 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
             playlistInfo.copy(playIndex = index, currentItem = currentItem)
         )
         setCurrentChannel(item)
-        binding.title.text = item.program_name
     }
     
     override fun onDestroyView() {

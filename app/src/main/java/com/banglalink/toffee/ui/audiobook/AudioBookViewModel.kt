@@ -48,8 +48,6 @@ class AudioBookViewModel @Inject constructor(
     private val audioBookEpisodeListService: AudioBookEpisodeListService,
     private val sendLogFromKabbikAudioBookEvent: SendLogFromKabbikAudioBookEvent,
     ) : ViewModel() {
-    val homeApiResponse = SingleLiveEvent<Resource<KabbikHomeApiResponse>>()
-    val topBannerApiResponse = SingleLiveEvent<Resource<KabbikTopBannerApiResponse>>()
     val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikItem>())
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
@@ -89,24 +87,8 @@ class AudioBookViewModel @Inject constructor(
             }
         }
     }
-    
-    fun homeApi(token: String) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { homeApiService.execute(token) }
-            homeApiResponse.value = response
-        }
-    }
-    
-    fun topBannerApi(token: String) {
-        viewModelScope.launch {
-            val response = resultFromExternalResponse { topBannerApiService.execute(token) }
-            topBannerApiResponse.value = response
-        }
-    }
-    
     fun topBannerApiCompose(token: String) {
         viewModelScope.launch {
-            Log.i("kabbik_", "in banner api token: $token")
             val response = resultFromExternalResponse { topBannerApiService.execute(token) }
             when (response) {
                 is Success -> {
@@ -122,7 +104,6 @@ class AudioBookViewModel @Inject constructor(
     fun homeApiCompose(token: String) {
         isLoadingCategory.value = true
         viewModelScope.launch {
-            Log.i("kabbik_", "in home api token: $token")
             val response = resultFromExternalResponse { homeApiService.execute(token) }
             isLoadingCategory.value = false
             when (response) {
