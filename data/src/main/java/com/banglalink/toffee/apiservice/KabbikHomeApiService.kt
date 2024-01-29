@@ -12,6 +12,7 @@ class KabbikHomeApiService @Inject constructor(
         return tryIOExternal {
             externalApi.kabbikHomeApi(
                 url = "https://api.kabbik.com/v4/toffee/home/free",
+                referrer = "https://toffeelive.com/",
                 token = "Bearer $token"
             )
         }

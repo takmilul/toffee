@@ -54,7 +54,7 @@ coil-transformer-version = "1.0.5"
 exifinterface-version = "1.3.7"
 
 # Player
-media3-version = "1.2.0"
+media3-version = "1.2.1"
 exo-player-version = "2.19.1"
 
 # Cast
@@ -92,9 +92,9 @@ in-app-update-version = "2.1.0"
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "23.4.0"
 firebase-analytics-version = "21.5.0"
-firebase-firestore-version = "24.10.0"
+firebase-firestore-version = "24.10.1"
 firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.6.0"
+firebase-crashlytics-version = "18.6.1"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting

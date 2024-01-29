@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -50,7 +49,6 @@ import com.banglalink.toffee.extension.launchWithLifecycle
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.audiobook.carousel.ImageCarousel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.compose_theme.CardTitleColor
 import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
@@ -62,11 +60,11 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.Job
 
 class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T> {
 
     private var selectedItem: KabbikItem? = null
+    private var selectedCategoryName: String? = null
     private val viewModel by activityViewModels<AudioBookViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
@@ -141,10 +139,11 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     if (topBannerList.isNotEmpty()) {
                         ImageCarousel(topBannerList) { item->
                             selectedItem = item
+                            selectedCategoryName = "Top Banner"
                             launchWithLifecycle {
                                 viewModel.grantToken(
                                     success = {token->
-                                        viewModel.getAudioBookEpisode(item.id.toString(), token)
+                                        viewModel.getAudioBookEpisode(item.id.toString(), token, selectedCategoryName ?: "")
                                     },
                                     failure = {}
                                 )
@@ -175,7 +174,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 12.dp)
+                .padding(top = 24.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -191,25 +190,24 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     fontWeight = FontWeight.Medium,
                     color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor }
                 )
-                TextButton(onClick = {
-                    val bundle = bundleOf(
-                        "myTitle" to kabbikCategory.name
-                    )
-                    findNavController().navigate(
-                        R.id.audioBookCategoryDetails,
-                        args = bundle
-                    )
-                }) {
-                    Text(
-                        text = "See All",
-                        fontSize = 12.sp,
-                        fontFamily = Fonts.roboto,
-                        fontWeight = FontWeight.Medium,
-                        color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor })
-                }
+                Text(
+                    modifier = Modifier.clickable {
+                        val bundle = bundleOf(
+                            "myTitle" to kabbikCategory.name
+                        )
+                        findNavController().navigate(
+                            R.id.audioBookCategoryDetails,
+                            args = bundle
+                        )
+                    },
+                    text = "See All",
+                    fontSize = 12.sp,
+                    fontFamily = Fonts.roboto,
+                    fontWeight = FontWeight.Medium,
+                    color = if(isSystemInDarkTheme()){ CardTitleColorDark } else { CardTitleColor })
             }
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp),
                 state = rememberLazyListState(),
             ) {
 
@@ -217,10 +215,11 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     val item = kabbikCategory.itemsData[it]
                     AudioBookCard(kabbikItem = item, onclick = {
                         selectedItem = item
+                        selectedCategoryName = kabbikCategory.name
                         launchWithLifecycle {
                             viewModel.grantToken(
-                                success = {token->
-                                    viewModel.getAudioBookEpisode(item.id.toString(), token)
+                                success = { token ->
+                                    viewModel.getAudioBookEpisode(item.id.toString(), token, selectedCategoryName ?: "")
                                 },
                                 failure = {}
                             )
@@ -286,7 +285,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                                     AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
                                 )
                                 homeViewModel.playContentLiveData.postValue(
-                                    playlistPlaybackInfo.copy(playIndex = 0, currentItem = channelInfo)
+                                    playlistPlaybackInfo.copy(
+                                        playIndex = 0,
+                                        currentItem = channelInfo
+                                    )
                                 )
                             }
                         } else {

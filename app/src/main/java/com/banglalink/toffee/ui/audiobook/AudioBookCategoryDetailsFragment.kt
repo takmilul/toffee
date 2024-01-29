@@ -105,7 +105,7 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
             viewModel.grantToken(
                 success = {token->
                     observeAudioBookEpisode()
-                    viewModel.getAudioBookEpisode(item.id.toString(), token)
+                    viewModel.getAudioBookEpisode(item.id.toString(), token, myTitle ?: "")
                 },
                 failure = {}
             )
@@ -129,14 +129,14 @@ class AudioBookCategoryDetailsFragment: BaseFragment(), BaseListItemCallback<Kab
                                     isApproved = 1,
                                     playlistType = Audio_Book_Playlist
                                 )
-//                                launchWithLifecycle {
-//                                    viewModel.audioBookPlaylistPlaybackInfoFlow.emit(playlistPlaybackInfo)
-//                                }
                                 homeViewModel.addToPlayListMutableLiveData.postValue(
                                     AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
                                 )
                                 homeViewModel.playContentLiveData.postValue(
-                                    playlistPlaybackInfo.copy(playIndex = 0, currentItem = channelInfo)
+                                    playlistPlaybackInfo.copy(
+                                        playIndex = 0,
+                                        currentItem = channelInfo
+                                    )
                                 )
                             }
                         } else {

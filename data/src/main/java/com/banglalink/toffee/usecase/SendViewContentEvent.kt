@@ -12,6 +12,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWER
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.VIEW_CONTENT_TOPIC
 import com.banglalink.toffee.util.currentDateTime
@@ -30,10 +31,23 @@ class SendViewContentEvent @Inject constructor(
     
     suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            val contentId = channelInfo.getContentId()
-            sendToPubSub(contentId.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
+            if (channelInfo.isAudioBook) {
+                sendAudioBookViewContentToPusSub(channelInfo)
+            } else {
+                sendViewContentToPubSub(
+                    channelInfo.getContentId().toInt(),
+                    channelInfo.type ?: "0",
+                    channelInfo.dataSource ?: "iptv_programs",
+                    channelInfo.channel_owner_id.toString()
+                )
+            }
         } else {
-            sendToToffeeServer(channelInfo.id.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
+            sendToToffeeServer(
+                channelInfo.id.toInt(),
+                channelInfo.type ?: "0",
+                channelInfo.dataSource ?: "iptv_programs",
+                channelInfo.channel_owner_id.toString()
+            )
         }
         saveToLocalDb(channelInfo)
     }
@@ -51,7 +65,7 @@ class SendViewContentEvent @Inject constructor(
         activityRepo.insert(channelDataModel)
     }
     
-    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
+    private fun sendViewContentToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         val viewContentData = ViewContentData(
             customerId = preference.customerId,
             contentId = contentId,
@@ -67,11 +81,30 @@ class SendViewContentEvent @Inject constructor(
         PubSubMessageUtil.sendMessage(json.encodeToString(viewContentData), VIEW_CONTENT_TOPIC)
     }
     
+    private fun sendAudioBookViewContentToPusSub(channelInfo: ChannelInfo) {
+        val kabbikAudioBookLogData = KabbikAudioBookLogData(
+            contentId = channelInfo.getContentId(),
+            bookName = channelInfo.bookName,
+            bookCategory = channelInfo.category,
+            bookType = if(channelInfo.isPremium) "paid" else "free",
+            lat = preference.latitude,
+            lon = preference.longitude,
+        )
+        PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWER)
+    }
+    
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         tryIO {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
-                    contentType, contentId, dataSource, ownerId, preference.customerId, preference.password, preference.latitude, preference.longitude
+                    contentType,
+                    contentId,
+                    dataSource,
+                    ownerId,
+                    preference.customerId,
+                    preference.password,
+                    preference.latitude,
+                    preference.longitude
                 )
             )
         }

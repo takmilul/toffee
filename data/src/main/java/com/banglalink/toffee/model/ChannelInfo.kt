@@ -4,6 +4,7 @@ import android.os.Parcelable
 import android.text.Spanned
 import android.util.Base64
 import androidx.core.text.HtmlCompat
+import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.common.annotation.KeepName
@@ -13,6 +14,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.*
 
 @KeepName
 @Parcelize
@@ -184,6 +186,12 @@ data class ChannelInfo(
     var playlistName: String? = null,
     @SerialName("playlist_description")
     var playlistDescription: String? = null,
+    @SerialName("episodeName")
+    var episodeName: String? = null,
+    @SerialName("authorName")
+    var authorName: String? = null,
+    @SerialName("bookName")
+    var bookName: String? = null,
     @SerialName("isSelected")
     var isSelected: Boolean? = false,
 ) :Parcelable {
@@ -243,6 +251,10 @@ data class ChannelInfo(
     @SerialName("isFcmEventActive")
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
+    
+    @SerialName("isPremium")
+    val isPremium: Boolean
+        get() = urlTypeExt == PREMIUM
     
     @IgnoredOnParcel
     @SerialName("isExpired")

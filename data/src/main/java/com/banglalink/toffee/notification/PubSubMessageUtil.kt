@@ -48,15 +48,16 @@ const val PLAYER_EVENTS_TOPIC = "projects/$PROJECT_ID/topics/player-events"
 const val CATEGORY_CHANNEL_SHARE_COUNT_TOPIC = "projects/$PROJECT_ID/topics/share_log"
 const val FEATURE_PARTNER_LOG = "projects/$PROJECT_ID/topics/featured_partner_log"
 const val PAYMENT_LOG_FROM_DEVICE = "projects/$PROJECT_ID/topics/payment_log_from_device"
+const val KABBIK_CURRENT_VIEWER = "projects/$PROJECT_ID/topics/kabbik_current_viewer"
+const val KABBIK_CURRENT_VIEWERS_HEARTBEAT = "projects/$PROJECT_ID/topics/kabbik_current_viewers_heartbeat"
 
 object PubSubMessageUtil {
-
-    private lateinit var client:Pubsub
+    private lateinit var client: Pubsub
     private const val TAG = "PubSubMessageUtil"
     private val coroutineContext = IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
     
-    fun init(context: Context){
+    fun init(context: Context) {
         val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
         val timeout = SessionPreference.getInstance().externalTimeOut
@@ -91,19 +92,20 @@ object PubSubMessageUtil {
             }
         }
     }
-
+    
     var callback: JsonBatchCallback<PublishResponse?> =
         object : JsonBatchCallback<PublishResponse?>() {
             override fun onSuccess(t: PublishResponse?, responseHeaders: HttpHeaders?) {
-                Log.i("PUBSUB", "published ! "+t?.messageIds)
+                Log.i("PUBSUB", "published ! " + t?.messageIds)
             }
+            
             override fun onFailure(e: GoogleJsonError, responseHeaders: HttpHeaders) {
                 Log.e("PUBSUB", "error Message: " + e.message)
             }
         }
-
+    
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
-        val jObj = JsonObject().apply { 
+        val jObj = JsonObject().apply {
             addProperty("notificationId", notificationId)
             addProperty("userId", SessionPreference.getInstance().customerId)
             addProperty("messageStatus", messageStatus.ordinal)

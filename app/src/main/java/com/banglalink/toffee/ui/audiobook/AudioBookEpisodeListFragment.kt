@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.audiobook
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +52,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         
         playlistInfo = arguments?.getParcelable("playlistInfo")!!
         currentItem = playlistInfo.currentItem?.apply { feature_image = playlistInfo.playlistThumbnail }
-        activity?.title = playlistInfo.playlistName
+//        activity?.title = playlistInfo.playlistName
         
 //        progressDialog.show()
 //        binding.progressBar.load(R.drawable.content_loader)
@@ -63,6 +64,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
+        binding.title.text = currentItem?.program_name
         for (index in 0 until mAdapter.itemCount) {
             val currentItem = mAdapter.getItem(index)
             currentItem.isSelected = false
@@ -72,6 +74,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
         mAdapter.notifyDataSetChanged()
     }
     
+    @SuppressLint("SetTextI18n")
     private fun observeAudioBookEpisodeList() {
         observe(viewModel.audioBookEpisodeResponseFlow) { response ->
             when (response) {
@@ -80,8 +83,10 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
                     progressDialog.dismiss()
                     binding.episodeDescription.show()
                     binding.title.show()
+                    binding.authorName.show()
                     
-                    binding.title.text = response.data?.firstOrNull()?.playlistName.toString()
+                    binding.title.text = response.data?.firstOrNull()?.program_name.toString()
+                    binding.authorName.text = "By - ${response.data?.firstOrNull()?.authorName.toString()}"
                     binding.episodeDescription.text = HtmlCompat.fromHtml(
                         response.data?.firstOrNull()?.playlistDescription.toString()
                             .trim()
@@ -122,6 +127,7 @@ class AudioBookEpisodeListFragment : BaseFragment(), BaseListItemCallback<Channe
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
+        
         if (item == currentItem || item.id == currentItem?.id) {
             return
         }

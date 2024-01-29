@@ -14,43 +14,39 @@
 
         <import type="android.view.View" />
     </data>
-    <LinearLayout
-        android:layout_width="wrap_content"
+    
+    <androidx.cardview.widget.CardView
+        android:id="@+id/categoryCardView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:gravity="center_horizontal">
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginVertical="6dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="false">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/categoryCardView"
-            android:layout_width="105dp"
-            android:layout_height="163dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:cardUseCompatPadding="false">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="@{()->callback.onItemClicked(data)}">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
+                android:id="@+id/category_background"
+                loadImageFromUrl="@{data.thumbPath}"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:onClick="@{()->callback.onItemClicked(data)}">
-
-                <ImageView
-                    android:id="@+id/category_background"
-                    loadImageFromUrl="@{data.thumbPath}"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/txt_category"
-                    android:foreground="@drawable/ripple_rounded_rectangle_shape"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="3:4.5"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="UnusedAttribute"
-                    tools:src="@drawable/placeholder" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/txt_category"
+                android:foreground="@drawable/ripple_rounded_rectangle_shape"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="H,3:4.5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute"
+                tools:src="@drawable/placeholder" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

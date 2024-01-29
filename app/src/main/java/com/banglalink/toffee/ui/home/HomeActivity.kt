@@ -2387,10 +2387,10 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
-        if (featuredPartner.url_type == 1){
+        if (featuredPartner.url_type == 1) {
             navController.navigateTo(R.id.fmRadioFragment)
         }
-        else if(featuredPartner.url_type == 2){
+        else if(featuredPartner.url_type == 2) {
             navController.navigateTo(R.id.audioBookLandingFragment)
         }
         else{

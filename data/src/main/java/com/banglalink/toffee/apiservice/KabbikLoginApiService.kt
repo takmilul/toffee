@@ -15,6 +15,7 @@ class KabbikLoginApiService @Inject constructor(
         return tryIOExternal {
             externalApi.kabbikLoginApi(
                 url = "https://api.kabbik.com/v1/auth/toffee/login",
+                referrer = "https://toffeelive.com/",
                 request = KabbikLoginApiRequest(
                     subscriberId = preference.customerId.toString(),
                     clientId = "toffee-client-2024",

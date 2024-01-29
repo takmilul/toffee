@@ -158,10 +158,8 @@ class HomeViewModel @Inject constructor(
         if (config.url.isTestEnvironment()) {
             FirebaseMessaging.getInstance().subscribeToTopic("test-fcm")
             FirebaseMessaging.getInstance().subscribeToTopic("test-fifa-score")
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("prod-fifa-score")
         } else {
             FirebaseMessaging.getInstance().subscribeToTopic("prod-fifa-score")
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("test-fifa-score")
         }
         // Disable this in production.
         if (mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {

@@ -903,7 +903,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             }
-            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id)
+            triggerHeartBeatEventStart(channelInfo)
             it.playWhenReady = !isReload || it.playWhenReady
             
             if (isReload) { //We need to start where we left off for VODs
@@ -1332,10 +1332,25 @@ abstract class PlayerPageActivity :
                 retryCounter = 0
                 reloadCounter = 0
                 fallbackCounter = 0
-                heartBeatManager.triggerEventViewingContentStart(channelInfo?.id?.toInt() ?: 0,channelInfo?.type ?: "VOD", channelInfo?.dataSource ?: "iptv_programs", channelInfo?.channel_owner_id ?: 0)
+                triggerHeartBeatEventStart(channelInfo)
                 return
             } else {
                 heartBeatManager.triggerEventViewingContentStop()
+            }
+        }
+    }
+    
+    private fun triggerHeartBeatEventStart(channelInfo: ChannelInfo?) {
+        channelInfo?.let {
+            if (it.isAudioBook) {
+                heartBeatManager.triggerEventViewingKabbikStart(it)
+            } else {
+                heartBeatManager.triggerEventViewingContentStart(
+                    it.id.toInt() ?: 0,
+                    it.type ?: "VOD",
+                    it.dataSource ?: "iptv_programs",
+                    it.channel_owner_id ?: 0
+                )
             }
         }
     }
