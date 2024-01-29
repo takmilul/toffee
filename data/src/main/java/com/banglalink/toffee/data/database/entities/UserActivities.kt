@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
@@ -14,6 +15,7 @@ data class UserActivities(
     @SerialName("customerId")
     val customerId: Int = 0,
     @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
     val channelId: Long = 0,
     @SerialName("category")
     val category: String? = null,
@@ -22,8 +24,10 @@ data class UserActivities(
     @SerialName("payload")
     val payload: String? = null,
     @SerialName("activityType")
+    @ColumnInfo(defaultValue = "0")
     val activityType: Int = 0,
     @SerialName("activitySubType")
+    @ColumnInfo(defaultValue = "0")
     val activitySubType: Int = 0,
 ) : BaseEntity() {
     @Ignore

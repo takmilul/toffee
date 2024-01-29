@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 @Entity(indices = [Index(value = ["channelId"], unique = true)])
 data class DrmLicenseEntity(
     @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
     val channelId: Long = 0,
     @SerialName("contentId")
     val contentId: String? = null,
@@ -17,6 +18,7 @@ data class DrmLicenseEntity(
     @ColumnInfo(name = "data", typeAffinity = ColumnInfo.BLOB)
     val license: ByteArray? = null,
     @SerialName("expiryTime")
+    @ColumnInfo(defaultValue = "0")
     val expiryTime: Long = 0
 ) : BaseEntity() {
     

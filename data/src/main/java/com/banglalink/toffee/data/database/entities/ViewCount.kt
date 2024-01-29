@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
 class ViewCount {
     @SerialName("channelId")
     @PrimaryKey
-    @ColumnInfo(name = "channel_id")
+    @ColumnInfo(name = "channel_id", defaultValue = "0")
     var channelId: Long = 0
     @SerialName("viewCount")
-    @ColumnInfo(name = "view_count")
+    @ColumnInfo(name = "view_count", defaultValue = "0")
     var viewCount: Long = 0
 }

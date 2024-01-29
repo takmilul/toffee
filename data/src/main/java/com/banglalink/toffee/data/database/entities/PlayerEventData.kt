@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
 data class PlayerEventData(
     @PrimaryKey(autoGenerate = true)
     @SerialName("id")
+    @ColumnInfo(defaultValue = "0")
     val id: Long = 0,
     @SerialName("sessionId")
     var sessionId: String? = null,
@@ -46,6 +48,7 @@ data class PlayerEventData(
     @SerialName("contentProviderName")
     var contentProviderName: String? = null,
     @SerialName("contentCategoryId")
+    @ColumnInfo(defaultValue = "0")
     var contentCategoryId: Int? = 0,
     @SerialName("contentCategoryName")
     var contentCategoryName: String? = null,

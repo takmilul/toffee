@@ -8,6 +8,8 @@ open class BaseResponse {
     @SerialName("status")
     var status: Int = 0
     
+    var statusCode: Int = 200
+    
     @SerialName("product")
     var product: String? = null
     

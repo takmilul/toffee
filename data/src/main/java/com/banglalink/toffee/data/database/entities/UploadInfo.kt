@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.database.entities
 
 import android.util.Base64
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.banglalink.toffee.enums.UploadStatus
@@ -54,6 +55,7 @@ data class UploadInfo(
     @SerialName("submitToChallengeIndex")
     var submitToChallengeIndex: Int = 0,
     @SerialName("serverContentId")
+    @ColumnInfo(defaultValue = "0")
     val serverContentId: Long = 0,
 ) {
     fun getFingerprint(): String? {

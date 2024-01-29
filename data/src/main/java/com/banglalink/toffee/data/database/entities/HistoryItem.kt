@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import com.banglalink.toffee.di.NetworkModuleLib
@@ -11,6 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HistoryItem(
     @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
     val channelId: Long = 0,
     @SerialName("type")
     val type: String = "",

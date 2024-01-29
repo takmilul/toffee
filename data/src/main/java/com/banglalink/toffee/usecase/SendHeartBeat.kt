@@ -55,7 +55,7 @@ class SendHeartBeat @Inject constructor(
                 lat = preference.latitude,
                 lon = preference.longitude,
             )
-            PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWERS_HEARTBEAT)
+            PubSubMessageUtil.sendMessage(json.encodeToString(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWERS_HEARTBEAT)
         }
     }
     

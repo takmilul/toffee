@@ -90,7 +90,7 @@ class SendViewContentEvent @Inject constructor(
             lat = preference.latitude,
             lon = preference.longitude,
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWER)
+        PubSubMessageUtil.sendMessage(json.encodeToString(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWER)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
@@ -109,6 +109,7 @@ class SendViewContentEvent @Inject constructor(
             )
         }
     }
+    
     @Serializable
     private data class ViewContentData(
         @SerialName("id")

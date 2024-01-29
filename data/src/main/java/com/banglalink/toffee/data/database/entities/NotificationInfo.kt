@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.database.entities
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.android.gms.common.annotation.KeepName
@@ -17,14 +18,17 @@ data class NotificationInfo(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @SerialName("userId")
+    @ColumnInfo(defaultValue = "0")
     val userId: Int = 0,
     @SerialName("notificationType")
     val notificationType: String? = null,
     @SerialName("notificationId")
     val notificationId: String? = null,
     @SerialName("topic")
+    @ColumnInfo(defaultValue = "0")
     val topic: Int = 0,
     @SerialName("sender")
+    @ColumnInfo(defaultValue = "0")
     val sender: Int = 0,
     @SerialName("title")
     val title: String? = null,

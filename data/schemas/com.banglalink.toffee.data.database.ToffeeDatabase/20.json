@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "9248e75308a98c7d15d0e8ef86495b78",
+    "identityHash": "a9c824b454678d00db9319b95f59f081",
     "entities": [
       {
         "tableName": "UploadInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uploadId` INTEGER PRIMARY KEY AUTOINCREMENT, `fileUri` TEXT, `fileName` TEXT, `tusUploadUri` TEXT, `thumbUri` TEXT, `status` INTEGER NOT NULL, `fileSize` INTEGER NOT NULL, `completedSize` INTEGER NOT NULL, `completedPercent` INTEGER NOT NULL, `statusMessage` TEXT, `title` TEXT, `description` TEXT, `tags` TEXT, `category` TEXT, `categoryIndex` INTEGER NOT NULL, `ageGroup` TEXT, `ageGroupIndex` INTEGER NOT NULL, `submitToChallenge` TEXT, `submitToChallengeIndex` INTEGER NOT NULL, `serverContentId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uploadId` INTEGER PRIMARY KEY AUTOINCREMENT, `fileUri` TEXT, `fileName` TEXT, `tusUploadUri` TEXT, `thumbUri` TEXT, `status` INTEGER NOT NULL, `fileSize` INTEGER NOT NULL, `completedSize` INTEGER NOT NULL, `completedPercent` INTEGER NOT NULL, `statusMessage` TEXT, `title` TEXT, `description` TEXT, `tags` TEXT, `category` TEXT, `categoryIndex` INTEGER NOT NULL, `ageGroup` TEXT, `ageGroupIndex` INTEGER NOT NULL, `submitToChallenge` TEXT, `submitToChallengeIndex` INTEGER NOT NULL, `serverContentId` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "uploadId",
@@ -126,7 +126,8 @@
             "fieldPath": "serverContentId",
             "columnName": "serverContentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -140,19 +141,21 @@
       },
       {
         "tableName": "channel_view_count",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channel_id` INTEGER NOT NULL, `view_count` INTEGER NOT NULL, PRIMARY KEY(`channel_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channel_id` INTEGER NOT NULL DEFAULT 0, `view_count` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`channel_id`))",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channel_id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "viewCount",
             "columnName": "view_count",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -166,7 +169,7 @@
       },
       {
         "tableName": "NotificationInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `userId` INTEGER NOT NULL, `notificationType` TEXT, `notificationId` TEXT, `topic` INTEGER NOT NULL, `sender` INTEGER NOT NULL, `title` TEXT, `content` TEXT, `description` TEXT, `thumbnailUrl` TEXT, `imageUrl` TEXT, `resourceUrl` TEXT, `playNowUrl` TEXT, `watchLaterUrl` TEXT, `receiveTime` INTEGER NOT NULL, `seenTime` INTEGER, `isSeen` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `userId` INTEGER NOT NULL DEFAULT 0, `notificationType` TEXT, `notificationId` TEXT, `topic` INTEGER NOT NULL DEFAULT 0, `sender` INTEGER NOT NULL DEFAULT 0, `title` TEXT, `content` TEXT, `description` TEXT, `thumbnailUrl` TEXT, `imageUrl` TEXT, `resourceUrl` TEXT, `playNowUrl` TEXT, `watchLaterUrl` TEXT, `receiveTime` INTEGER NOT NULL, `seenTime` INTEGER, `isSeen` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -178,7 +181,8 @@
             "fieldPath": "userId",
             "columnName": "userId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "notificationType",
@@ -196,13 +200,15 @@
             "fieldPath": "topic",
             "columnName": "topic",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "sender",
             "columnName": "sender",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "title",
@@ -282,7 +288,7 @@
       },
       {
         "tableName": "ReactionInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL, `contentId` INTEGER NOT NULL, `reactionType` INTEGER NOT NULL, `reactionTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL DEFAULT 0, `contentId` INTEGER NOT NULL DEFAULT 0, `reactionType` INTEGER NOT NULL DEFAULT 0, `reactionTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -294,19 +300,22 @@
             "fieldPath": "customerId",
             "columnName": "customerId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "contentId",
             "columnName": "contentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "reactionType",
             "columnName": "reactionType",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "reactionTime",
@@ -326,13 +335,14 @@
       },
       {
         "tableName": "HistoryItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `payload` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL DEFAULT 0, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `payload` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "type",
@@ -382,7 +392,7 @@
       },
       {
         "tableName": "UserActivities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`customerId` INTEGER NOT NULL, `channelId` INTEGER NOT NULL, `category` TEXT, `type` TEXT, `payload` TEXT, `activityType` INTEGER NOT NULL, `activitySubType` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`customerId` INTEGER NOT NULL, `channelId` INTEGER NOT NULL DEFAULT 0, `category` TEXT, `type` TEXT, `payload` TEXT, `activityType` INTEGER NOT NULL DEFAULT 0, `activitySubType` INTEGER NOT NULL DEFAULT 0, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "customerId",
@@ -394,7 +404,8 @@
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "category",
@@ -418,13 +429,15 @@
             "fieldPath": "activityType",
             "columnName": "activityType",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "activitySubType",
             "columnName": "activitySubType",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "id",
@@ -469,7 +482,7 @@
       },
       {
         "tableName": "FavoriteItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL DEFAULT 0, `isFavorite` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -481,13 +494,15 @@
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "isFavorite",
             "columnName": "isFavorite",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -511,7 +526,7 @@
       },
       {
         "tableName": "SubscribedItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL DEFAULT 0, `isFavorite` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -523,13 +538,15 @@
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "isFavorite",
             "columnName": "isFavorite",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -553,13 +570,14 @@
       },
       {
         "tableName": "TVChannelItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL, `type` TEXT, `priority` INTEGER NOT NULL, `categoryName` TEXT, `payload` TEXT, `viewCount` INTEGER NOT NULL, `isStingray` INTEGER NOT NULL, `isFmRadio` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL DEFAULT 0, `type` TEXT, `priority` INTEGER NOT NULL DEFAULT 0, `categoryName` TEXT, `payload` TEXT, `viewCount` INTEGER NOT NULL DEFAULT 0, `isStingray` INTEGER NOT NULL, `isFmRadio` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "type",
@@ -571,7 +589,8 @@
             "fieldPath": "priority",
             "columnName": "priority",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "categoryName",
@@ -589,7 +608,8 @@
             "fieldPath": "viewCount",
             "columnName": "viewCount",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "isStingray",
@@ -633,7 +653,7 @@
       },
       {
         "tableName": "ContentViewProgress",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL, `contentId` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL DEFAULT 0, `contentId` INTEGER NOT NULL DEFAULT 0, `progress` INTEGER NOT NULL DEFAULT 0, `watchTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -645,19 +665,22 @@
             "fieldPath": "customerId",
             "columnName": "customerId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "contentId",
             "columnName": "contentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "progress",
             "columnName": "progress",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "watchTime",
@@ -688,43 +711,49 @@
       },
       {
         "tableName": "ContinueWatchingItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`customerId` INTEGER NOT NULL, `channelId` INTEGER NOT NULL, `type` TEXT, `categoryId` INTEGER NOT NULL, `payload` TEXT, `progress` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`customerId` INTEGER NOT NULL DEFAULT 0, `channelId` INTEGER NOT NULL DEFAULT 0, `type` TEXT DEFAULT '', `categoryId` INTEGER NOT NULL DEFAULT 0, `payload` TEXT DEFAULT '', `progress` INTEGER NOT NULL DEFAULT 0, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "customerId",
             "columnName": "customerId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "type",
             "columnName": "type",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": false,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "categoryId",
             "columnName": "categoryId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "payload",
             "columnName": "payload",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": false,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "progress",
             "columnName": "progress",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "id",
@@ -767,25 +796,28 @@
       },
       {
         "tableName": "ReactionStatusItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contentId` INTEGER NOT NULL, `reactionType` INTEGER NOT NULL, `reactionCount` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contentId` INTEGER NOT NULL DEFAULT 0, `reactionType` INTEGER NOT NULL DEFAULT 0, `reactionCount` INTEGER NOT NULL DEFAULT 0, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "contentId",
             "columnName": "contentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "reactionType",
             "columnName": "reactionType",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "reactionCount",
             "columnName": "reactionCount",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "id",
@@ -828,19 +860,21 @@
       },
       {
         "tableName": "SubscriptionCount",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL, `status` INTEGER NOT NULL, PRIMARY KEY(`channelId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL DEFAULT 0, `status` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`channelId`))",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "status",
             "columnName": "status",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -854,7 +888,7 @@
       },
       {
         "tableName": "SubscriptionInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL, `customerId` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `channelId` INTEGER NOT NULL DEFAULT 0, `customerId` INTEGER NOT NULL DEFAULT 0, `dateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -866,13 +900,15 @@
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "customerId",
             "columnName": "customerId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "dateTime",
@@ -892,19 +928,21 @@
       },
       {
         "tableName": "ShareCount",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contentId` INTEGER NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`contentId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contentId` INTEGER NOT NULL DEFAULT 0, `count` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`contentId`))",
         "fields": [
           {
             "fieldPath": "contentId",
             "columnName": "contentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "count",
             "columnName": "count",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -918,13 +956,14 @@
       },
       {
         "tableName": "DrmLicenseEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL, `contentId` TEXT, `data` BLOB, `expiryTime` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL DEFAULT 0, `contentId` TEXT, `data` BLOB, `expiryTime` INTEGER NOT NULL DEFAULT 0, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "contentId",
@@ -942,7 +981,8 @@
             "fieldPath": "expiryTime",
             "columnName": "expiryTime",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "id",
@@ -1010,13 +1050,14 @@
       },
       {
         "tableName": "PlayerEventData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sessionId` TEXT, `contentPlayingSessionId` TEXT, `contentPlayingSessionSequenceId` TEXT, `appLifeCycleId` TEXT, `isForeground` TEXT, `isInternetAvailable` INTEGER, `networkType` TEXT, `ispOrTelecomOperator` TEXT, `remoteHost` TEXT, `remoteIp` TEXT, `latencyClientToCdn` TEXT, `playerEventId` INTEGER, `playerEvent` TEXT, `contentId` TEXT, `contentTitle` TEXT, `contentProviderId` TEXT, `contentProviderName` TEXT, `contentCategoryId` INTEGER, `contentCategoryName` TEXT, `contentDuration` TEXT, `seasonName` TEXT, `seasonNo` INTEGER, `episodeName` TEXT, `episodeNo` TEXT, `contentType` TEXT, `isDrm` INTEGER, `playingUrl` TEXT, `affiliate` TEXT, `agent` TEXT, `errorMessage` TEXT, `errorCause` TEXT, `adId` TEXT, `adEvent` TEXT, `adPosition` TEXT, `adIsLive` TEXT, `adCreativeId` TEXT, `adFirstCreativeId` TEXT, `adFirstAdId` TEXT, `adFirstAdSystem` TEXT, `adSystem` TEXT, `adTechnology` TEXT, `adIsSlate` TEXT, `adErrorMessage` TEXT, `appVersion` TEXT NOT NULL, `osName` TEXT NOT NULL, `userId` INTEGER NOT NULL, `deviceId` TEXT NOT NULL, `deviceManufacturer` TEXT NOT NULL, `deviceModel` TEXT NOT NULL, `msisdn` TEXT NOT NULL, `osVersion` TEXT NOT NULL, `city` TEXT NOT NULL, `region` TEXT NOT NULL, `country` TEXT NOT NULL, `lat` TEXT NOT NULL, `lon` TEXT NOT NULL, `clientIp` TEXT NOT NULL, `deviceType` TEXT NOT NULL, `applicationType` TEXT NOT NULL, `statusCode` INTEGER NOT NULL, `dateTime` TEXT NOT NULL, `reportingTime` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `sessionId` TEXT, `contentPlayingSessionId` TEXT, `contentPlayingSessionSequenceId` TEXT, `appLifeCycleId` TEXT, `isForeground` TEXT, `isInternetAvailable` INTEGER, `networkType` TEXT, `ispOrTelecomOperator` TEXT, `remoteHost` TEXT, `remoteIp` TEXT, `latencyClientToCdn` TEXT, `playerEventId` INTEGER, `playerEvent` TEXT, `contentId` TEXT, `contentTitle` TEXT, `contentProviderId` TEXT, `contentProviderName` TEXT, `contentCategoryId` INTEGER DEFAULT 0, `contentCategoryName` TEXT, `contentDuration` TEXT, `seasonName` TEXT, `seasonNo` INTEGER, `episodeName` TEXT, `episodeNo` TEXT, `contentType` TEXT, `isDrm` INTEGER, `playingUrl` TEXT, `affiliate` TEXT, `agent` TEXT, `errorMessage` TEXT, `errorCause` TEXT, `adId` TEXT, `adEvent` TEXT, `adPosition` TEXT, `adIsLive` TEXT, `adCreativeId` TEXT, `adFirstCreativeId` TEXT, `adFirstAdId` TEXT, `adFirstAdSystem` TEXT, `adSystem` TEXT, `adTechnology` TEXT, `adIsSlate` TEXT, `adErrorMessage` TEXT, `appVersion` TEXT NOT NULL, `osName` TEXT NOT NULL, `userId` INTEGER NOT NULL, `deviceId` TEXT NOT NULL, `deviceManufacturer` TEXT NOT NULL, `deviceModel` TEXT NOT NULL, `msisdn` TEXT NOT NULL, `osVersion` TEXT NOT NULL, `city` TEXT NOT NULL, `region` TEXT NOT NULL, `country` TEXT NOT NULL, `lat` TEXT NOT NULL, `lon` TEXT NOT NULL, `clientIp` TEXT NOT NULL, `deviceType` TEXT NOT NULL, `applicationType` TEXT NOT NULL, `statusCode` INTEGER NOT NULL, `dateTime` TEXT NOT NULL, `reportingTime` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "sessionId",
@@ -1124,7 +1165,8 @@
             "fieldPath": "contentCategoryId",
             "columnName": "contentCategoryId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": false,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "contentCategoryName",
@@ -1402,19 +1444,21 @@
       },
       {
         "tableName": "CdnChannelItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL, `urlType` INTEGER NOT NULL, `expiryDate` TEXT, `payload` TEXT, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelId` INTEGER NOT NULL DEFAULT 0, `urlType` INTEGER NOT NULL DEFAULT 0, `expiryDate` TEXT, `payload` TEXT, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "channelId",
             "columnName": "channelId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "urlType",
             "columnName": "urlType",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "expiryDate",
@@ -1594,7 +1638,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9248e75308a98c7d15d0e8ef86495b78')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a9c824b454678d00db9319b95f59f081')"
     ]
   }
 }

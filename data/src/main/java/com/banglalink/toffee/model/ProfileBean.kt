@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProfileBean(
     @SerialName("customerId")
-    val customerId: Int,
+    val customerId: Int = 0,
     @SerialName("balance")
     val balance: Int = 0,
     @SerialName("customer")

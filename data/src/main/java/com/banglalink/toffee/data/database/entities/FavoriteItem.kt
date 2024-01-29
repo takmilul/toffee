@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -13,7 +14,9 @@ data class FavoriteItem(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
     val channelId: Long = 0,
     @SerialName("isFavorite")
+    @ColumnInfo(defaultValue = "0")
     val isFavorite: Int = 0
 )
