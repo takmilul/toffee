@@ -22,7 +22,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val PROJECT_ID = "toffee-261507"
 const val TOPIC_ID = "fcm-notification-response"
@@ -76,19 +75,17 @@ object PubSubMessageUtil {
     
     fun sendMessage(jsonMessage: String, topic: String) {
         coroutineScope.launch {
-            withContext(IO) {
-                runCatching {
-                    val batch = client.batch()
-                    Log.i("PUBSUB - $topic", jsonMessage)
-                    val pubsubMessage = PubsubMessage()
-                    pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
-                    val publishRequest = PublishRequest()
-                    publishRequest.messages = listOf(pubsubMessage)
-                    client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
-                    batch?.execute()
-                }.onFailure {
-                    Log.e("PUBSUB - $topic", it.message, it)
-                }
+            runCatching {
+                val batch = client.batch()
+                Log.i("PUBSUB - $topic", jsonMessage)
+                val pubsubMessage = PubsubMessage()
+                pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
+                val publishRequest = PublishRequest()
+                publishRequest.messages = listOf(pubsubMessage)
+                client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+                batch?.execute()
+            }.onFailure {
+                Log.e("PUBSUB - $topic", it.message, it)
             }
         }
     }

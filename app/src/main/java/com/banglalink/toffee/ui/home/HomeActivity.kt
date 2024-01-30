@@ -515,6 +515,7 @@ class HomeActivity : PlayerPageActivity(),
         mqttService.destroy()
         viewModelStore.clear()
         playerEventHelper.release()
+        binding.playerView.clearListeners()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         ConvivaHelper.release()

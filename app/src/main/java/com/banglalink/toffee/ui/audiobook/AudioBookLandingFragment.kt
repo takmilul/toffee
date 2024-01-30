@@ -140,6 +140,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                         ImageCarousel(topBannerList) { item->
                             selectedItem = item
                             selectedCategoryName = "Top Banner"
+                            viewModel.isItemClicked.value = true
                             launchWithLifecycle {
                                 viewModel.grantToken(
                                     success = {token->
@@ -216,6 +217,7 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                     AudioBookCard(kabbikItem = item, onclick = {
                         selectedItem = item
                         selectedCategoryName = kabbikCategory.name
+                        viewModel.isItemClicked.value = true
                         launchWithLifecycle {
                             viewModel.grantToken(
                                 success = { token ->
@@ -258,11 +260,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
             )
         }
     }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        progressDialog.dismiss()
-    }
 
     private fun observeAudioBookEpisode() {
         observe(viewModel.audioBookEpisodeResponse) { response ->
@@ -281,15 +278,19 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                                     isApproved = 1,
                                     playlistType = Audio_Book_Playlist
                                 )
+                                
                                 homeViewModel.addToPlayListMutableLiveData.postValue(
-                                    AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData)
+                                    AddToPlaylistData(playlistPlaybackInfo.getPlaylistIdLong(), responseData, viewModel.isItemClicked.value)
                                 )
-                                homeViewModel.playContentLiveData.postValue(
-                                    playlistPlaybackInfo.copy(
-                                        playIndex = 0,
-                                        currentItem = channelInfo
+                                if (viewModel.isItemClicked.value) {
+                                    homeViewModel.playContentLiveData.postValue(
+                                        playlistPlaybackInfo.copy(
+                                            playIndex = 0,
+                                            currentItem = channelInfo
+                                        )
                                     )
-                                )
+                                }
+                                viewModel.isItemClicked.value = false
                             }
                         } else {
                             progressDialog.dismiss()
@@ -301,5 +302,10 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 }
             }
         }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        progressDialog.dismiss()
     }
 }
