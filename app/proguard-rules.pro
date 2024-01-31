@@ -84,6 +84,7 @@
     public static final *** NULL;
 }
 
+-dontwarn java.lang.reflect.AnnotatedType
 -keepnames @com.google.android.gms.common.annotation.KeepName class *
 #-keepclassmembernames class * {
 #    @com.google.android.gms.common.annotation.KeepName *;

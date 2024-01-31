@@ -1907,6 +1907,7 @@ class HomeActivity : PlayerPageActivity(),
             if (Settings.canDrawOverlays(this)) {
                 startBubbleService()
             }
+            releasePlayer()
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
