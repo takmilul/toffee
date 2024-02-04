@@ -673,14 +673,11 @@ enum class DateComparisonResult {
     EARLIER, LATER, SAME
 }
 fun compareDates(fromDate: String, toDate: String): DateComparisonResult {
-    val parsedFrom = Utils.formatPackExpiryDate(fromDate)
-    val parsedTo = Utils.formatPackExpiryDate(toDate)
-
-    val result = parsedFrom?.compareTo(parsedTo ?: "") ?: 0
+    val result = fromDate.compareTo(toDate)
 
     return when {
-        result < 0 -> DateComparisonResult.EARLIER // fromDate is earlier than toDate
-        result > 0 -> DateComparisonResult.LATER // fromDate is later than toDate
+        result < 0 -> DateComparisonResult.EARLIER // if negative value -> fromDate is earlier than toDate
+        result > 0 -> DateComparisonResult.LATER // if positive value -> fromDate is later than toDate
         else -> DateComparisonResult.SAME // fromDate is same as toDate
     }
 }
