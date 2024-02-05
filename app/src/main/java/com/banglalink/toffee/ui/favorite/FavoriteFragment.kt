@@ -62,7 +62,10 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
+        
+        popupMenu.menu.findItem(R.id.menu_fav).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        popupMenu.menu.findItem(R.id.menu_report).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
