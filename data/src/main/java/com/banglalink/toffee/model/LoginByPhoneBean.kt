@@ -7,5 +7,7 @@ data class LoginByPhoneBean(
     @SerializedName("authorize")
     val authorize: Boolean,
     @SerializedName("regSessionToken")
-    val regSessionToken: String
+    val regSessionToken: String,
+    @SerializedName("userType")
+    val userType: String
 ) : BodyResponse()
