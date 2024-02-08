@@ -495,10 +495,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                             it.isActive && mPref.getSystemTime().before(Utils.getDate(it.expiryDate)) && !it.isTrialPackUsed
                         }) view.context.getString(string.active_text)
                     else {
-                        view.context.getString(string.see_details_text)
+                        view.context.getString(string.pack_details_btn)
                     }
                 } ?: run {
-                    view.context.getString(string.see_details_text)
+                    view.context.getString(string.pack_details_btn)
                 }
             }
         }
