@@ -19,6 +19,7 @@ import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPacksBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
@@ -142,11 +143,30 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
                     }
 
                     response.data.ifNotNullOrEmpty {
-                        binding.packListHeader.show()
-                        binding.premiumPackList.show()
+
                         mAdapter.removeAll()
-                        mAdapter.addAll(it.toList())
                         binding.emptyView.hide()
+                        if (response.data.size==1){
+
+                            viewModel.selectedPremiumPack.value = response.data.get(0)
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PREMIUM_PACK,
+                                bundleOf(
+                                    "source" to "premium_pack_menu",
+                                    "pack_ID" to response.data.get(0).id.toString(),
+                                    "pack_name" to response.data.get(0).packTitle
+                                )
+                            )
+                            findNavController().navigatePopUpTo(R.id.packDetailsFragment,
+                                popUpTo = R.id.premiumPackListFragment)
+//                            findNavController().popBackStack(R.id.packDetailsFragment, true)
+                        }else{
+
+                            binding.packListHeader.show()
+                            binding.premiumPackList.show()
+                            mAdapter.addAll(it.toList())
+
+                        }
                     }
                 }
                 is Resource.Failure -> {

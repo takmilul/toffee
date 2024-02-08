@@ -6,9 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.OptIn
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
@@ -32,9 +36,12 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayout
 
 class PremiumPackDetailsFragment : BaseFragment(){
 
@@ -55,7 +62,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-
+        
         requireActivity().title = "Pack Details"
 
         observeMnpStatus()
@@ -141,6 +148,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
         })
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+
+
                 if (isEnabled) {
                     //sends firebase event for users aborting premPack after looking at contents.
                     ToffeeAnalytics.toffeeLogEvent(
@@ -152,6 +161,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                             "action" to "goes back"
                         )
                     )
+                    findNavController().popBackStack()
 
                     isEnabled = false
                     requireActivity().onBackPressed()
@@ -337,7 +347,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
             progressDialog.dismiss()
-            when (it) {
+            when(it) {
                 is Success -> {
                     paymentMethods = it.data
                     viewModel.paymentMethod.value = paymentMethods
@@ -388,19 +398,18 @@ class PremiumPackDetailsFragment : BaseFragment(){
         }
     }
 
-    private fun triggerButtonSheet() {
+    private fun triggerButtonSheet(){
+
         //sends firebase event for users viewing payment methods.
         ToffeeAnalytics.toffeeLogEvent(
             ToffeeEvents.PACK_ACTIVE, bundleOf(
-                "source" to if (mPref.packSource.value == true) "content_click " else "premium_pack_menu",
+                "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
                 "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
                 "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
             )
         )
-
         mPref.signingFromPrem.value = true
-
-        if (!mPref.isVerifiedUser) {
+        if (!mPref.isVerifiedUser){
             ToffeeAnalytics.toffeeLogEvent(
                 ToffeeEvents.LOGIN_SOURCE,
                 bundleOf(
@@ -411,7 +420,6 @@ class PremiumPackDetailsFragment : BaseFragment(){
         }
         requireActivity().checkVerification {
             progressDialog.show()
-            isCheckVerification = true
             if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
                 viewModel.getMnpStatusForPaymentDetail()
             } else {
@@ -423,6 +431,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 }
             }
         }
+
     }
 
     override fun onDestroyView() {
