@@ -6,7 +6,7 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "131"
+appVersionCode = "132"
 appVersionName = "6.3.0"
 
 gradle-plugin-version = "8.2.2"
@@ -38,10 +38,10 @@ hilt-android-version = "2.48.1"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2024.01.00"
+compose-bom = "2024.02.00"
 kotlin-compose-version = "1.5.8"
 lifecycle-version = "2.7.0"
-navigation-version = "2.7.6"
+navigation-version = "2.7.7"
 work-manager-version = "2.9.0"
 pager-indicator-version = "0.30.1"
 
@@ -57,7 +57,7 @@ media3-version = "1.2.1"
 exo-player-version = "2.19.1"
 
 # Cast
-mediarouter-version = "1.7.0-alpha01"
+mediarouter-version = "1.7.0-alpha02"
 cast-version = "21.4.0"
 
 # ADS
