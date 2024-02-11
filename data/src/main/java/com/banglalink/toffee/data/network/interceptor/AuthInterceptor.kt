@@ -86,10 +86,10 @@ class AuthInterceptor @Inject constructor(
         }
         
         if (response.cacheResponse != null) {
-            Log.i("API_LOG", "FROM CACHE  : ${response.request.url}")
+            Log.i("API_CACHING_LOG", "FROM CACHE  : ${response.request.url}")
         }
         if (response.networkResponse != null) {
-            Log.i("API_LOG", "FROM NETWORK: ${response.request.url}")
+            Log.i("API_CACHING_LOG", "FROM NETWORK: ${response.request.url}")
         }
         
         try {
