@@ -3,16 +3,14 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.USER_OTP_TOPIC
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendOTPLogEvent @Inject constructor() {
-    private val gson = Gson()
     
     fun execute(otpLogData: OTPLogData, phoneNumber: String, sendToPubSub: Boolean = true) {
         otpLogData.phoneNumber = phoneNumber
-        PubSubMessageUtil.sendMessage(gson.toJson(otpLogData), USER_OTP_TOPIC)
+        PubSubMessageUtil.send(otpLogData, USER_OTP_TOPIC)
     }
 }
 

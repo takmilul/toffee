@@ -20,10 +20,23 @@ import com.banglalink.toffee.util.Log
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import info.mqtt.android.service.MqttAndroidClient
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions
+import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttCallback
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.net.ssl.SSLSocketFactory
@@ -141,6 +154,21 @@ class ToffeeMqttService @Inject constructor(
         }
         catch (e: Exception){
             Log.e("MQ_", "sendMessageError: ${e.cause}")
+        }
+    }
+    
+    fun <T> send(data: T, topic: String) {
+        try {
+            if (mPref.mqttIsActive) {
+                val jsonMessage = Gson().toJson(data)
+                MqttMessage().apply {
+                    payload = jsonMessage.toByteArray(charset("UTF-8"))
+                    client?.publish(topic, payload, 2, true)
+                }
+            }
+        }
+        catch (e: Exception) {
+            Log.e("MQ_", "sendError: ${e.cause}")
         }
     }
     

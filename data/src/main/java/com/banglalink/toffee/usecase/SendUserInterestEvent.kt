@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.USER_INTEREST_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
@@ -13,11 +12,9 @@ class SendUserInterestEvent @Inject constructor(
     private val preference: SessionPreference,
 ) {
     
-    private val gson = Gson()
-    
     suspend fun execute(interestList: Map<String, Int>, sendToPubSub: Boolean = true) {
         val interestData = InterestData(preference.customerId, interestList)
-        PubSubMessageUtil.sendMessage(gson.toJson(interestData), USER_INTEREST_TOPIC)
+        PubSubMessageUtil.send(interestData, USER_INTEREST_TOPIC)
     }
 }
 

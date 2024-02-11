@@ -188,6 +188,9 @@ dependencies {
             exclude(group = "com.google.guava")
         }
         
+        // Logging
+        implementation(bundles.logger)
+        
         
         /////// Testing
         testImplementation(junit.core)
