@@ -178,6 +178,11 @@
         <action
             android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
             app:destination="@id/musicDetailsFragmant" />
+
+        <action
+            android:id="@+id/action_menu_feed_to_qr_signIn_tv"
+            app:destination="@id/menu_active_tv"
+            />
     </fragment>
     
     <fragment
@@ -643,4 +648,10 @@
         android:id="@+id/audioBookEpisodeList"
         android:name="com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment"
         tools:layout="@layout/fragment_audiobook_playlist" />
+
+    <fragment
+        android:id="@+id/menu_active_tv"
+        android:name="com.banglalink.toffee.ui.QrBasedSigning.ActiveTvQrFragment"
+        tools:layout="@layout/fragment_active_tv_qr" />
+
 </navigation>
