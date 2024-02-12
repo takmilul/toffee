@@ -18,6 +18,7 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
@@ -43,14 +44,15 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 
 class PremiumPackDetailsFragment : BaseFragment(){
-    
+
     private var isFreeTrialOver = false
     private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     private var openPlanDetails : Boolean? = false
-//    private var paymentMethod : String? = null
+    private var paymentMethods: PackPaymentMethodBean? = null
+    private var isCheckVerification : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
@@ -110,9 +112,9 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 payNowButton.isEnabled = false
                 payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
             }
-            
+
             payNowButton.safeClick({
-                 triggerButtonSheet()
+                triggerButtonSheet()
             })
         }
 
@@ -225,7 +227,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
         }
         viewModel.getPremiumPackList("0")
     }
-    
+
     private fun observeMnpStatus() {
         observe(viewModel.mnpStatusLiveDataForPaymentDetail) { response ->
             when (response) {
@@ -246,7 +248,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
     private fun observePackStatus() {
         observe(viewModel.activePackListLiveData) {
             when(it) {
@@ -272,7 +274,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
     /**
      * Observes the pack status after a subscriber's payment is successfully processed.
      * This function updates the active premium pack list, checks for pack purchases, and navigates
@@ -317,7 +319,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             viewModel.getPackStatusAfterSubscriberPayment(0, it.id)
         }
     }
-    
+
     private fun checkPackPurchased(): Boolean {
         return viewModel.selectedPremiumPack.value?.let { selectedPack ->
             mPref.activePremiumPackList.value?.getPurchasedPack(
@@ -341,16 +343,17 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         } ?: false
     }
-    
+
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
             progressDialog.dismiss()
             when(it) {
                 is Success -> {
-                    viewModel.paymentMethod.value = it.data
+                    paymentMethods = it.data
+                    viewModel.paymentMethod.value = paymentMethods
                     findNavController().navigateTo(
                         resId = R.id.bottomSheetPaymentMethods,
-                        args = bundleOf("paymentMethods" to it.data)
+                        args = bundleOf("paymentMethods" to paymentMethods)
                     )
                 }
                 is Failure -> {
@@ -359,7 +362,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
+
     private fun observePremiumPackDetail() {
         observe(viewModel.packDetailState) { response ->
             when (response) {

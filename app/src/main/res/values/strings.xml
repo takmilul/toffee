@@ -496,7 +496,7 @@
     <string name="prem_content_title">Choose any of the following bundles to avail the content</string>
     <string name="pack_name">Super saver bundle</string>
     <string name="pack_price">Starting from 20 BDT</string>
-    <string name="pack_details_btn">SEE DETAILS</string>
+    <string name="pack_details_btn">BUY NOW</string>
     <string name="pack_active_btn">ACTIVE</string>
     <string name="pay_now_button_text">Activate</string>
     <string name="activate_tv_text">Activate TV</string>
