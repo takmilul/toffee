@@ -2,15 +2,13 @@ package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.notification.ADVERTISING_ID_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendAdvertisingIdLogEvent @Inject constructor() {
-    private val gson = Gson()
     
     fun execute(adIdLogData: AdvertisingIdLogData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(adIdLogData), ADVERTISING_ID_TOPIC)
+        PubSubMessageUtil.send(adIdLogData, ADVERTISING_ID_TOPIC)
     }
 }
 

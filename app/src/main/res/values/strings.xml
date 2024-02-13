@@ -615,4 +615,6 @@
     <string name="buy_with_bl_number">Please sign in with a Banglalink number to buy these plans</string>
     <string name="buy_with_non_bl_number">Please sign in with a GP/ Robi/ Airtel/ Teletalk number to buy these plans</string>
     <string name="redeem_dialog_title_text">Code didn\'t work</string>
+    <string name="menu_manage_payment_methods">Manage Payment Methods</string>
+    <string name="add_payment_methods">Add Payment Methods</string>
 </resources>

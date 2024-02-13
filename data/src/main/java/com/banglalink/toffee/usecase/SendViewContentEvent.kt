@@ -26,8 +26,6 @@ class SendViewContentEvent @Inject constructor(
     private val activityRepo: UserActivitiesRepository,
 ) {
     
-    private val gson = Gson()
-    
     suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
             if (channelInfo.isAudioBook) {
@@ -57,7 +55,7 @@ class SendViewContentEvent @Inject constructor(
             channel.id.toLong(),
             "history",
             channel.type ?: "",
-            gson.toJson(channel),
+            Gson().toJson(channel),
             ActivityType.WATCHED.value,
             Reaction.Watched.value
         )
@@ -77,7 +75,7 @@ class SendViewContentEvent @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken() ?: ""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEW_CONTENT_TOPIC)
+        PubSubMessageUtil.send(viewContentData, VIEW_CONTENT_TOPIC)
     }
     
     private fun sendAudioBookViewContentToPusSub(channelInfo: ChannelInfo) {
@@ -89,7 +87,7 @@ class SendViewContentEvent @Inject constructor(
             lat = preference.latitude,
             lon = preference.longitude,
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWER)
+        PubSubMessageUtil.send(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWER)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {

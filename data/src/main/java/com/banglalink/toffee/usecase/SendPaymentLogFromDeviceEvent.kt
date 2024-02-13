@@ -3,15 +3,13 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendPaymentLogFromDeviceEvent @Inject constructor() {
-    private val gson = Gson()
-
+    
     fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(paymentLogFromDeviceData), PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.send(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
     }
 }
 

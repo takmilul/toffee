@@ -44,6 +44,7 @@ class AccountFragment : BaseFragment() {
         binding.prefMyProfile.setOnClickListener { onClickProfile() }
         binding.prefActivities.setOnClickListener { onClickActivities() }
         binding.prefPlaylist.setOnClickListener { onClickMyPlaylist() }
+        binding.prefManagePaymentMethod.setOnClickListener{ onClickManagePaymentMehtods() }
         binding.prefFavorites.setOnClickListener { onClickFavorites() }
         binding.prefSubscriptions.setOnClickListener { onClickSubscriptions() }
     }
@@ -94,6 +95,22 @@ class AccountFragment : BaseFragment() {
         activity?.checkVerification {
             ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_playlists)))
             findNavController().navigate(R.id.menu_playlist)
+        }
+    }
+
+    private fun onClickManagePaymentMehtods(){
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "account",
+                    "method" to "mobile"
+                )
+            )
+        }
+        activity?.checkVerification {
+            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to getString(R.string.menu_manage_payment_methods)))
+            findNavController().navigate(R.id.menu_manage_payment_methods)
         }
     }
 

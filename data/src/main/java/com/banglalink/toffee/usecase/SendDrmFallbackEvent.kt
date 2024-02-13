@@ -5,18 +5,16 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.DRM_FALLBACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendDrmFallbackEvent @Inject constructor(private val mPref: SessionPreference) {
-    private val gson = Gson()
     
     fun execute(channelId: Long, reason: String) {
-        PubSubMessageUtil.sendMessage(
-            gson.toJson(DrmFallbackData(reason, channelId).also {
+        PubSubMessageUtil.send(
+            DrmFallbackData(reason, channelId).also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
-            }),
+            },
             DRM_FALLBACK_TOPIC
         )
     }

@@ -156,6 +156,9 @@ dependencies {
         // Network
         implementation(gson)
         implementation(bundles.retrofit)
+        implementation(okhttp.pretty.logger) {
+            exclude(group = "org.json", module = "json")
+        }
         
         // Google Services
         implementation(google.api.client) {
@@ -184,6 +187,9 @@ dependencies {
             exclude(module = "support-annotations")
             exclude(group = "com.google.guava")
         }
+        
+        // Logging
+        implementation(bundles.logger)
         
         
         /////// Testing
