@@ -261,6 +261,9 @@ dependencies {
             exclude(group = "com.google.guava")
         }
         
+        // Logging
+        implementation(bundles.logger)
+        
         // Miscellaneous
         implementation(butterknife)
         implementation(shimmer)

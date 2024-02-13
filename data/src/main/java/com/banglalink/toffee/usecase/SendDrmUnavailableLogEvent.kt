@@ -5,18 +5,16 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.DRM_UNAVAILABLE_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendDrmUnavailableLogEvent @Inject constructor(private val mPref: SessionPreference) {
-    private val gson = Gson()
     
     fun execute(sendToPubSub: Boolean = true) {
-        PubSubMessageUtil.sendMessage(
-            gson.toJson(DrmUnavailableLogData().also {
+        PubSubMessageUtil.send(
+            DrmUnavailableLogData().also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
-            }),
+            },
             DRM_UNAVAILABLE_TOPIC
         )
     }
