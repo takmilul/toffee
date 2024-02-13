@@ -10,15 +10,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentActiveTvQrBinding
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 
 class ActiveTvQrFragment: BaseFragment() {
 
     private var _binding: FragmentActiveTvQrBinding? = null
     val binding get() = _binding!!
+
+    var qrCodeNumber : String?=null
+
+    private val viewModel by activityViewModels<ActiveTvQrViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentActiveTvQrBinding.inflate(layoutInflater)
@@ -32,7 +42,29 @@ class ActiveTvQrFragment: BaseFragment() {
 
         }
 
+        qrCodeNumber = arguments?.getString("code")
 
+        Log.d("TAG", "qrCodeNumber: "+qrCodeNumber)
+
+
+        if (!arguments?.getString("code").isNullOrEmpty()){
+
+            binding.enterCodeView.visibility=View.GONE
+
+            binding.activeWithQrView.visibility=View.VISIBLE
+
+        }else{
+
+            binding.enterCodeView.visibility=View.VISIBLE
+
+            binding.activeWithQrView.visibility=View.GONE
+        }
+
+        binding.activeNowButton.setOnClickListener {
+
+            Log.d("TAG", "onViewCreated:111111 "+qrCodeNumber)
+            viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
+        }
 
         binding.etCode1.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -298,6 +330,57 @@ class ActiveTvQrFragment: BaseFragment() {
             }
         })
 
+
+        binding.pairWithTv.setOnClickListener {
+
+            val input1 =  binding.etCode1.text.toString()
+            val input2 =  binding.etCode2.text.toString()
+            val input3 =  binding.etCode3.text.toString()
+            val input4 =  binding.etCode4.text.toString()
+            val input5 =  binding.etCode5.text.toString()
+            val input6 =  binding.etCode6.text.toString()
+
+
+            qrCodeNumber = "$input1$input2$input3$input4$input5$input6"
+
+
+            Log.d("TAG", "pairWithTv: "+qrCodeNumber)
+            viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
+
+        }
+        observeSignInStatus()
+    }
+
+    fun observeSignInStatus(){
+
+        /**
+         * ( 0 = wrong code, 1 = active, 2 = expired )
+         */
+
+        observe(viewModel.qrSignInStatus){ responseCode->
+            Log.d("TAG", "pairWithTv:11 "+responseCode)
+            if (responseCode.equals(0)){
+
+                binding.activeWithQrView.visibility=View.GONE
+
+                binding.enterCodeView.visibility=View.VISIBLE
+                binding.wrongCode.visibility=View.VISIBLE
+
+            }
+            else if (responseCode.equals(1)){
+
+                findNavController().navigateTo(R.id.Qr_code_res)
+            }
+            else if (responseCode.equals(2)){
+
+                findNavController().navigateTo(R.id.Qr_code_res)
+            }
+            else{
+
+
+            }
+        }
+
     }
 
     private fun View.hideKeyboard() {
@@ -305,5 +388,8 @@ class ActiveTvQrFragment: BaseFragment() {
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

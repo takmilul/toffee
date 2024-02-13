@@ -544,4 +544,8 @@ interface ToffeeApi {
         @Body packVoucherMethodRequest: PackVoucherMethodRequest
     ): VoucherPaymentMethodResponse
 
+
+    @POST("device/pair")
+    suspend fun pairWithTv(@Body pairWithTvRequest: PairWithTvRequest):PairWithTvResponse
+
 }

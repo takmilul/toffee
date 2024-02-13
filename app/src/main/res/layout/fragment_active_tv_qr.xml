@@ -32,7 +32,7 @@
             android:textSize="24sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/payNowButton"
+            android:id="@+id/activeNowButton"
             style="@style/activeButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -47,76 +47,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/qrSignInActivatedView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/activatedImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/activated"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
-            android:layout_marginVertical="20dp"
-            android:text="Android TV has been activated!"
-            android:textSize="24sp"
-            android:layout_weight="1"/>
-
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/qrCodeExpiredView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:visibility="gone"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/expiredImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/expired"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="Code has been expired!"
-            android:textSize="24sp"
-            android:layout_weight="1"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android:gravity="center"
-            android:text="Please re-scan the QR code from your TV."
-            android:textSize="14sp"
-            android:layout_weight="1"/>
-
-
-    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/enterCodeView"
@@ -274,6 +205,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/wrongCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

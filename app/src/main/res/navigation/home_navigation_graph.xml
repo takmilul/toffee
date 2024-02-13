@@ -653,5 +653,8 @@
         android:id="@+id/menu_active_tv"
         android:name="com.banglalink.toffee.ui.QrBasedSigning.ActiveTvQrFragment"
         tools:layout="@layout/fragment_active_tv_qr" />
-
+    <fragment
+        android:id="@+id/Qr_code_res"
+        android:name="com.banglalink.toffee.ui.QrBasedSigning.QrCodeReasultFragment"
+        tools:layout="@layout/fragment_qr_code_reasult" />
 </navigation>
