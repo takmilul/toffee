@@ -64,6 +64,7 @@ class ActiveTvQrFragment: BaseFragment() {
 
             Log.d("TAG", "onViewCreated:111111 "+qrCodeNumber)
             viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
+            observeSignInStatus()
         }
 
         binding.etCode1.addTextChangedListener(object : TextWatcher {
@@ -346,9 +347,10 @@ class ActiveTvQrFragment: BaseFragment() {
 
             Log.d("TAG", "pairWithTv: "+qrCodeNumber)
             viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
+            observeSignInStatus()
 
         }
-        observeSignInStatus()
+//        observeSignInStatus()
     }
 
     fun observeSignInStatus(){
