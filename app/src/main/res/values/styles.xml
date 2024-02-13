@@ -329,6 +329,11 @@
         <item name="android:textColor">#ffffff</item>
     </style>
 
+    <style name="ButtonStyleSolidRemove" parent="ToffeeButtonStyle">
+        <item name="backgroundTint">#F12525</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
     <style name="ButtonStyleSolidDelete" parent="ToffeeButtonStyle">
         <item name="backgroundTint">@color/button_bg_color_delete</item>
         <item name="android:textColor">@color/text_bg_color_delete</item>

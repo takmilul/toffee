@@ -30,6 +30,10 @@
         android:id="@+id/menu_playlist"
         android:name="com.banglalink.toffee.ui.userplaylist.UserPlaylistFragment"
         android:label="Playlists" />
+    <fragment
+        android:id="@+id/menu_manage_payment_methods"
+        android:name="com.banglalink.toffee.ui.payment_methods.ManagePaymentMethodsFragment"
+        android:label="@string/menu_manage_payment_methods" />
     
     <fragment
         android:id="@+id/userPlaylistVideos"
@@ -576,7 +580,7 @@
             app:argType="string" />
         <deepLink app:uri="app.toffee://search/{keyword}" />
     </fragment>
-    
+
     <dialog
         android:id="@+id/loginDialog"
         android:name="com.banglalink.toffee.ui.login.LoginFragment"
