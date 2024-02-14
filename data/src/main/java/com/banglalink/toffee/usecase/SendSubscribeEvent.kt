@@ -20,8 +20,8 @@ class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqtt
             status = status,
             date_time=subscriptionInfo.getDate()
         )
-        PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
-        mqttService.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
+        PubSubMessageUtil.send(subscriptionCountData, SUBSCRIPTION_TOPIC)
+        mqttService.send(subscriptionCountData, SUBSCRIPTION_TOPIC)
     }
 }
 

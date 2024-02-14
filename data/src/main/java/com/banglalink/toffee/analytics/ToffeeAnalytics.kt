@@ -62,7 +62,7 @@ object ToffeeAnalytics {
             return
         }
         val logMsg = NetworkModuleLib.providesJsonWithConfig().encodeToString(ApiFailData(apiName, errorMsg))
-        PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
+        PubSubMessageUtil.send(ApiFailData(apiName, errorMsg), API_ERROR_TRACK_TOPIC)
     }
     
     /**

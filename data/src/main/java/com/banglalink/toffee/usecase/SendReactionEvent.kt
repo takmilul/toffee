@@ -37,8 +37,8 @@ class SendReactionEvent @Inject constructor(
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
-        PubSubMessageUtil.sendMessage(json.encodeToString(reactionData), REACTION_TOPIC)
-        mqttService.sendMessage(json.encodeToString(reactionData), REACTION_TOPIC)
+        PubSubMessageUtil.send(reactionData, REACTION_TOPIC)
+        mqttService.send(reactionData, REACTION_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(reactionInfo: ReactionInfo, reactionCount: Int){

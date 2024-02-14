@@ -18,8 +18,6 @@ class PlayerEventRepositoryImpl(
     private val dao: PlayerEventsDao
 ): PlayerEventRepository {
     
-    private val json: Json = NetworkModuleLib.providesJsonWithConfig()
-    
     override suspend fun insert(item: PlayerEventData): Long {
         return try {
             dao.insert(item)
@@ -40,7 +38,7 @@ class PlayerEventRepositoryImpl(
         try {
             db.withTransaction {
                 dao.getTopEventData()?.onEach {
-                    PubSubMessageUtil.sendMessage(json.encodeToString(it), PLAYER_EVENTS_TOPIC)
+                    PubSubMessageUtil.send(it, PLAYER_EVENTS_TOPIC)
                 }?.size?.also {
                     if (it > 0) {
                         dao.deleteTopEventData(it)
@@ -57,7 +55,7 @@ class PlayerEventRepositoryImpl(
         try {
             db.withTransaction {
                 dao.getAllRemainingEventData()?.onEach {
-                    PubSubMessageUtil.sendMessage(json.encodeToString(it), PLAYER_EVENTS_TOPIC)
+                    PubSubMessageUtil.send(it, PLAYER_EVENTS_TOPIC)
                 }?.size?.also {
                     if (it > 0) {
                         dao.deleteTopEventData(it)

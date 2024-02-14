@@ -6,10 +6,10 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "128"
-appVersionName = "6.2.0"
+appVersionCode = "132"
+appVersionName = "6.3.0"
 
-gradle-plugin-version = "8.2.1"
+gradle-plugin-version = "8.2.2"
 
 # View
 activity-version = "1.6.1"
@@ -25,10 +25,10 @@ constraint-layout-version = "2.1.4"
 circular-progressbar-version = "3.1.0"
 
 # Kotlin
-kotlin-version = "1.9.21"
+kotlin-version = "1.9.22"
 kotlin-ktx-version = "1.12.0"
 kotlin-coroutine-version = "1.7.3"
-ksp-plugin-version = "1.9.21-1.0.16"
+ksp-plugin-version = "1.9.22-1.0.16"
 kotlin-serialization-json-version = "1.6.2"
 kotlin-json-converter-factory-version = "1.0.0"
 
@@ -39,10 +39,10 @@ hilt-android-version = "2.48.1"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2023.10.01"
-kotlin-compose-version = "1.5.7"
-lifecycle-version = "2.6.2"
-navigation-version = "2.7.6"
+compose-bom = "2024.02.00"
+kotlin-compose-version = "1.5.8"
+lifecycle-version = "2.7.0"
+navigation-version = "2.7.7"
 work-manager-version = "2.9.0"
 pager-indicator-version = "0.30.1"
 
@@ -58,7 +58,7 @@ media3-version = "1.2.1"
 exo-player-version = "2.19.1"
 
 # Cast
-mediarouter-version = "1.7.0-alpha01"
+mediarouter-version = "1.7.0-alpha02"
 cast-version = "21.4.0"
 
 # ADS
@@ -75,26 +75,27 @@ app-authenticator-version = "1.0.0-alpha03"
 gson-version = "2.10.1"
 okhttp-version = "4.11.0"
 retrofit-version = "2.9.0"
+pretty-logger-version = "3.1.0"
 upload-library-version = "4.9.2"
 
 # Google Services
-google-services-version = "4.4.0"
+google-services-version = "4.4.1"
 google-api-client-version = "2.2.0"
 google-http-client-gson-version = "1.43.1"
 
 # Play Services
 play-services-auth-version = "20.7.0"
-play-services-auth-api-phone-version = "18.0.1"
+play-services-auth-api-phone-version = "18.0.2"
 play-core-version = "1.10.3"
 in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.4.0"
-firebase-analytics-version = "21.5.0"
-firebase-firestore-version = "24.10.1"
+firebase-messaging-version = "23.4.1"
+firebase-analytics-version = "21.5.1"
+firebase-firestore-version = "24.10.2"
 firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.6.1"
+firebase-crashlytics-version = "18.6.2"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
@@ -107,6 +108,10 @@ pub-sub-version = "v1-rev452-1.25.0"
 mqtt-client-version = "1.2.5"
 mqtt-android-service-version = "3.3.8"
 
+# Logging
+timber-version = "5.0.1"
+orhanobut-version = "2.2.0"
+
 # Firework
 firework-sdk-version = "v5.10.0"
 firework-ads-version = "v20.0.0"
@@ -117,7 +122,6 @@ shimmer-version = "0.5.0"
 medallia-version = "4.2.0"
 butterknife-version = "10.2.3"
 clarity-version = "1.3.3"
-#guava-version = "31.0.1-android"
 jlleitschuh-version = "11.3.2"
 
 # Testing
@@ -255,6 +259,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson-vers
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-version" }
 okhttp-logger = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp-version" }
+okhttp-pretty-logger = { group = "com.github.ihsanbal", name = "LoggingInterceptor", version.ref = "pretty-logger-version" }
 okhttp-dnshttp = { group = "com.squareup.okhttp3", name = "okhttp-dnsoverhttps", version.ref = "okhttp-version" }
 net-gotev-uploadservice = { group = "net.gotev", name = "uploadservice", version.ref = "upload-library-version" }
 net-gotev-uploadservice-okhttp = { group = "net.gotev", name = "uploadservice-okhttp", version.ref = "upload-library-version" }
@@ -292,6 +297,10 @@ pub-sub = { group = "com.google.apis", name = "google-api-services-pubsub", vers
 mqtt-client = { group = "org.eclipse.paho", name = "org.eclipse.paho.client.mqttv3", version.ref = "mqtt-client-version" }
 mqtt-android-service = { group = "com.github.hannesa2", name = "paho.mqtt.android", version.ref = "mqtt-android-service-version" }
 #mqtt-android-service = { group = "org.eclipse.paho", name = "org.eclipse.paho.android.service", version.ref = "mqtt-android-service-version" }
+
+# Logging
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber-version" }
+orhanobut = { group = "com.orhanobut", name = "logger", version.ref = "orhanobut-version" }
 
 # Miscellaneous
 #guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
@@ -389,4 +398,5 @@ play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-up
 conviva = ["conviva-core", "conviva-player", "conviva-tracker"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
+logger = ["timber", "orhanobut"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]

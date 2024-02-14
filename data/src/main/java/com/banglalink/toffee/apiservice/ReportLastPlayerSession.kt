@@ -21,7 +21,7 @@ class ReportLastPlayerSession(private val playerPreference: PlayerPreference) {
                     val request = PlayerSessionDetailsRequest(sessionList).apply {
                         initialTime = playerInitialTime
                     }
-                    PubSubMessageUtil.sendMessage(NetworkModuleLib.providesJsonWithConfig().encodeToString(request),BANDWIDTH_TRACK_TOPIC)
+                    PubSubMessageUtil.send(request,BANDWIDTH_TRACK_TOPIC)
                 }
             }catch (e:Exception){
                 ToffeeAnalytics.logBreadCrumb("Exception in ReportLastPlayerSession")

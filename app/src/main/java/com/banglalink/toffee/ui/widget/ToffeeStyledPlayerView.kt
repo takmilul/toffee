@@ -133,6 +133,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     private var brightness: Float = 0f
     private var trackingBrightness: Boolean = false
+    
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000

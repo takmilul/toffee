@@ -17,12 +17,14 @@ import com.google.api.services.pubsub.PubsubScopes
 import com.google.api.services.pubsub.model.PublishRequest
 import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 const val PROJECT_ID = "toffee-261507"
 const val TOPIC_ID = "fcm-notification-response"
@@ -70,25 +72,41 @@ object PubSubMessageUtil {
     
     fun sendNotificationStatus(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
         coroutineScope.launch {
-            sendMessage(getPubSubMessage(notificationId, messageStatus), NOTIFICATION_TOPIC)
+            send(getPubSubMessage(notificationId, messageStatus), NOTIFICATION_TOPIC)
         }
     }
     
     fun sendMessage(jsonMessage: String, topic: String) {
         coroutineScope.launch {
-            withContext(IO) {
-                runCatching {
-                    val batch = client.batch()
-                    Log.i("PUBSUB - $topic", jsonMessage)
-                    val pubsubMessage = PubsubMessage()
-                    pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
-                    val publishRequest = PublishRequest()
-                    publishRequest.messages = listOf(pubsubMessage)
-                    client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
-                    batch?.execute()
-                }.onFailure {
-                    Log.e("PUBSUB - $topic", it.message, it)
-                }
+            runCatching {
+                val batch = client.batch()
+                Log.i("PUBSUB - $topic", jsonMessage)
+                val pubsubMessage = PubsubMessage()
+                pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
+                val publishRequest = PublishRequest()
+                publishRequest.messages = listOf(pubsubMessage)
+                client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+                batch?.execute()
+            }.onFailure {
+                Log.e("PUBSUB - $topic", it.message, it)
+            }
+        }
+    }
+    
+    fun <T> send(data: T, topic: String) {
+        coroutineScope.launch {
+            runCatching {
+                val batch = client.batch()
+                val pubsubMessage = PubsubMessage()
+                val prettyJson = GsonBuilder().setPrettyPrinting().setLenient().create().toJson(data)
+                Timber.tag("PUBSUB - $topic").i(prettyJson)
+                pubsubMessage.encodeData(Gson().toJson(data).toByteArray(charset("UTF-8")))
+                val publishRequest = PublishRequest()
+                publishRequest.messages = listOf(pubsubMessage)
+                client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+                batch?.execute()
+            }.onFailure {
+                Log.e("PUBSUB - $topic", it.message, it)
             }
         }
     }
@@ -104,7 +122,7 @@ object PubSubMessageUtil {
             }
         }
     
-    private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
+    private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): JsonObject {
         val jObj = JsonObject().apply {
             addProperty("notificationId", notificationId)
             addProperty("userId", SessionPreference.getInstance().customerId)
@@ -112,6 +130,6 @@ object PubSubMessageUtil {
             addProperty("device_id", CommonPreference.getInstance().deviceId)
         }
         Log.i(TAG, jObj.toString())
-        return jObj.toString()
+        return jObj
     }
 }

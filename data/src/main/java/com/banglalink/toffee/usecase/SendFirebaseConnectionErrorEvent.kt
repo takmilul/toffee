@@ -16,7 +16,7 @@ class SendFirebaseConnectionErrorEvent @Inject constructor(
 ) {
     
     suspend fun execute(sendToPubSub: Boolean = true) {
-        PubSubMessageUtil.sendMessage(json.encodeToString(FirebaseConnectionErrorData()), FIREBASE_ERROR_TRACK_TOPIC)
+        PubSubMessageUtil.send(FirebaseConnectionErrorData(), FIREBASE_ERROR_TRACK_TOPIC)
     }
 }
 

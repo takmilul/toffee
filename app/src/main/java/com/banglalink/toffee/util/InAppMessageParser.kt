@@ -164,6 +164,12 @@ class InAppMessageParser @Inject constructor(
                             )
                         }
                     }
+                    "fm-radio" -> {
+                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
+                    }
+                    "kabbik" -> {
+                        return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
+                    }
                     else -> null
                 }
             }
@@ -172,6 +178,9 @@ class InAppMessageParser @Inject constructor(
                 when (it) {
                     "fm-radio" -> {
                         return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
+                    }
+                    "kabbik" -> {
+                        return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
                     }
                     else -> null
                 }

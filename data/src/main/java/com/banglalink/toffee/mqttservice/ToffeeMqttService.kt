@@ -157,6 +157,21 @@ class ToffeeMqttService @Inject constructor(
         }
     }
     
+    fun <T> send(data: T, topic: String) {
+        try {
+            if (mPref.mqttIsActive) {
+                val jsonMessage = Gson().toJson(data)
+                MqttMessage().apply {
+                    payload = jsonMessage.toByteArray(charset("UTF-8"))
+                    client?.publish(topic, payload, 2, true)
+                }
+            }
+        }
+        catch (e: Exception) {
+            Log.e("MQ_", "sendError: ${e.cause}")
+        }
+    }
+    
     override fun onSuccess(token: IMqttToken?) {
         try {
             if (client?.isConnected == true && token?.topics.isNullOrEmpty()) {

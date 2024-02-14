@@ -20,7 +20,7 @@ class SendLoginLogEvent @Inject constructor(
     
     fun execute(sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            PubSubMessageUtil.sendMessage(json.encodeToString(LoginLogData()), LOGIN_LOG_TOPIC)
+            PubSubMessageUtil.send(LoginLogData(), LOGIN_LOG_TOPIC)
         }
     }
 }

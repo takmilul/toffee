@@ -11,7 +11,7 @@ class ReportAppLaunch {
     
     fun execute(){
         try {
-            PubSubMessageUtil.sendMessage(NetworkModuleLib.providesJsonWithConfig().encodeToString(PubSubBaseRequest()), APP_LAUNCH_TOPIC)
+            PubSubMessageUtil.send(PubSubBaseRequest(), APP_LAUNCH_TOPIC)
         }catch (e:Exception){
             ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")
             ToffeeAnalytics.logException(e)

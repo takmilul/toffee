@@ -3,15 +3,13 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWER
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendAudioBookViewContentEvent @Inject constructor() {
-    private val gson = Gson()
-
+    
     fun execute(kabbikAudioBookLogData: KabbikAudioBookLogData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWER)
+        PubSubMessageUtil.send(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWER)
     }
 }
 

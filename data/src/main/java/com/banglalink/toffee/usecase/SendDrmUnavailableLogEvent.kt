@@ -17,10 +17,10 @@ class SendDrmUnavailableLogEvent @Inject constructor(
 ) {
     
     fun execute(sendToPubSub: Boolean = true) {
-        PubSubMessageUtil.sendMessage(
-            json.encodeToString(DrmUnavailableLogData().also {
+        PubSubMessageUtil.send(
+            DrmUnavailableLogData().also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
-            }),
+            },
             DRM_UNAVAILABLE_TOPIC
         )
     }

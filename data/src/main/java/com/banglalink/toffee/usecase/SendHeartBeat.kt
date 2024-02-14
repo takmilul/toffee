@@ -55,7 +55,7 @@ class SendHeartBeat @Inject constructor(
                 lat = preference.latitude,
                 lon = preference.longitude,
             )
-            PubSubMessageUtil.sendMessage(json.encodeToString(kabbikAudioBookLogData), KABBIK_CURRENT_VIEWERS_HEARTBEAT)
+            PubSubMessageUtil.send(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWERS_HEARTBEAT)
         }
     }
     
@@ -72,7 +72,7 @@ class SendHeartBeat @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken() ?: ""
         )
-        PubSubMessageUtil.sendMessage(json.encodeToString(heartBeatData), HEARTBEAT_TOPIC)
+        PubSubMessageUtil.send(heartBeatData, HEARTBEAT_TOPIC)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: 

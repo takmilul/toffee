@@ -16,7 +16,7 @@ class SendHeaderEnrichmentLogEvent @Inject constructor(
 ) {
     
     fun execute(heLogData: HeaderEnrichmentLogData) {
-        PubSubMessageUtil.sendMessage(json.encodeToString(heLogData), HE_REPORT_TOPIC)
+        PubSubMessageUtil.send(heLogData, HE_REPORT_TOPIC)
     }
 }
 

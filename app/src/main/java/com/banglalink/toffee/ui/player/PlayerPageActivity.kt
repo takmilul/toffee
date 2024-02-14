@@ -199,7 +199,7 @@ abstract class PlayerPageActivity :
         super.onStart()
         val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT > 23 /*&& isAppBackgrounded*/) {
-            if (channelInfo == null || !channelInfo.isFmRadio) {
+            if (channelInfo == null /*|| !channelInfo.isFmRadio*/) {
                 initializePlayer()
             }
         }
@@ -210,7 +210,7 @@ abstract class PlayerPageActivity :
         super.onResume()
         val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT <= 23 || player == null /*&& isAppBackgrounded*/) {
-            if (channelInfo == null || !channelInfo.isFmRadio) {
+            if (channelInfo == null /*|| !channelInfo.isFmRadio*/) {
                 initializePlayer()
             }
         }
@@ -220,7 +220,7 @@ abstract class PlayerPageActivity :
         super.onPause()
         val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT <= 23) {
-            if (channelInfo == null || !channelInfo.isFmRadio) {
+            if (channelInfo == null /*|| !channelInfo.isFmRadio*/) {
                 releasePlayer()
             }
             isAppBackgrounded = true
@@ -231,7 +231,7 @@ abstract class PlayerPageActivity :
         super.onStop()
         val channelInfo = getCurrentChannelInfo()
         if (Util.SDK_INT > 23) {
-            if (channelInfo == null || !channelInfo.isFmRadio) {
+            if (channelInfo == null /*|| !channelInfo.isFmRadio*/) {
                 releasePlayer()
             }
             isAppBackgrounded = true
@@ -241,7 +241,7 @@ abstract class PlayerPageActivity :
     override fun onDestroy() {
         super.onDestroy()
         val channelInfo = getCurrentChannelInfo()
-        if (channelInfo != null && channelInfo.isFmRadio) {
+        if (channelInfo != null /*&& channelInfo.isFmRadio*/) {
             releasePlayer()
         }
         playChannelJob?.cancel()

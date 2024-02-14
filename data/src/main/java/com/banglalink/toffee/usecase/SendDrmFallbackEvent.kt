@@ -17,10 +17,10 @@ class SendDrmFallbackEvent @Inject constructor(
 ) {
     
     fun execute(channelId: Long, reason: String) {
-        PubSubMessageUtil.sendMessage(
-            json.encodeToString(DrmFallbackData(reason, channelId).also {
+        PubSubMessageUtil.send(
+            DrmFallbackData(reason, channelId).also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
-            }),
+            },
             DRM_FALLBACK_TOPIC
         )
     }

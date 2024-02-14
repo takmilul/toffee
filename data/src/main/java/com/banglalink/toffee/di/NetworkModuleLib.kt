@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
+import android.util.Log.VERBOSE
 import coil.disk.DiskCache
 import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
@@ -18,6 +19,8 @@ import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.util.CustomCookieJar
 import com.banglalink.toffee.util.Log
+import com.ihsanbal.logging.Level
+import com.ihsanbal.logging.LoggingInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -52,9 +55,13 @@ object NetworkModuleLib {
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
-                addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BODY
-                })
+                addInterceptor(
+                    LoggingInterceptor.Builder()
+                        .setLevel(Level.BODY)
+                        .log(VERBOSE)
+                        .tag("API_LOG")
+                        .build()
+                )
             }
             addInterceptor(authInterceptor)
             dns(toffeeDns)

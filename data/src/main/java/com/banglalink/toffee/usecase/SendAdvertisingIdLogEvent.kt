@@ -13,7 +13,7 @@ class SendAdvertisingIdLogEvent @Inject constructor(
 ) {
     
     fun execute(adIdLogData: AdvertisingIdLogData) {
-        PubSubMessageUtil.sendMessage(json.encodeToString(adIdLogData), ADVERTISING_ID_TOPIC)
+        PubSubMessageUtil.send(adIdLogData, ADVERTISING_ID_TOPIC)
     }
 }
 

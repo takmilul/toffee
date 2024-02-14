@@ -14,7 +14,7 @@ class SendPaymentLogFromDeviceEvent @Inject constructor(
 ) {
 
     fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
-        PubSubMessageUtil.sendMessage(json.encodeToString(paymentLogFromDeviceData), PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.send(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
     }
 }
 

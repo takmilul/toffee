@@ -11,9 +11,7 @@ import com.banglalink.toffee.apiservice.KabbikLoginApiService
 import com.banglalink.toffee.apiservice.KabbikTopBannerApiService
 import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
 import com.banglalink.toffee.data.network.response.KabbikCategory
-import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
 import com.banglalink.toffee.data.network.response.KabbikItem
-import com.banglalink.toffee.data.network.response.KabbikTopBannerApiResponse
 import com.banglalink.toffee.data.network.util.resultFromExternalResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -25,9 +23,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.usecase.KabbikAudioBookLogData
 import com.banglalink.toffee.usecase.SendAudioBookViewContentEvent
 import com.banglalink.toffee.util.DateComparisonResult
-import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.compareDates
 import com.banglalink.toffee.util.currentDate
 import com.banglalink.toffee.util.currentDateTime
@@ -35,7 +31,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,13 +43,15 @@ class AudioBookViewModel @Inject constructor(
     private val audioBookSeeMoreService: AudioBookSeeMoreService,
     private val audioBookEpisodeListService: AudioBookEpisodeListService,
     private val sendAudioBookViewContentEvent: SendAudioBookViewContentEvent,
-    ) : ViewModel() {
+) : ViewModel() {
+        
+    val isItemClicked = mutableStateOf(false)
+    val isLoadingCategory = mutableStateOf(false)
     val topBannerApiResponseCompose = mutableStateOf(emptyList<KabbikItem>())
+    val homeApiResponseCompose = mutableStateOf(emptyList<KabbikCategory>())
     val audioBookSeeMoreResponse = SingleLiveEvent<Resource<AudioBookSeeMoreResponse?>>()
     val audioBookEpisodeResponse = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
     val audioBookEpisodeResponseFlow = MutableSharedFlow<Resource<List<ChannelInfo>?>>(replay = 1)
-    val isLoadingCategory = mutableStateOf(false)
-    val homeApiResponseCompose = mutableStateOf(emptyList<KabbikCategory>())
     
     fun grantToken(success: suspend (token: String) -> Unit, failure: () -> Unit) {
         viewModelScope.launch {

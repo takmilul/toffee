@@ -20,7 +20,7 @@ class SendCategoryChannelShareCountEvent @Inject constructor(
     suspend fun execute(contentType: String, contentId: Int, sharedUrl: String, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
             val categoryChannelShareCount = CategoryChannelShareData(preference.customerId.toLong(), contentType, contentId, sharedUrl)
-            PubSubMessageUtil.sendMessage(json.encodeToString(categoryChannelShareCount), CATEGORY_CHANNEL_SHARE_COUNT_TOPIC)
+            PubSubMessageUtil.send(categoryChannelShareCount, CATEGORY_CHANNEL_SHARE_COUNT_TOPIC)
         } else {
 //            shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url)
         }
