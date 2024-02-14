@@ -78,7 +78,7 @@ pretty-logger-version = "3.1.0"
 upload-library-version = "4.9.2"
 
 # Google Services
-google-services-version = "4.4.0"
+google-services-version = "4.4.1"
 google-api-client-version = "2.2.0"
 google-http-client-gson-version = "1.43.1"
 
@@ -90,11 +90,11 @@ in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.4.0"
-firebase-analytics-version = "21.5.0"
-firebase-firestore-version = "24.10.1"
+firebase-messaging-version = "23.4.1"
+firebase-analytics-version = "21.5.1"
+firebase-firestore-version = "24.10.2"
 firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.6.1"
+firebase-crashlytics-version = "18.6.2"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
