@@ -263,6 +263,7 @@ object NetworkModuleLib {
     fun providesJsonWithConfig(): Json {
         return Json {
             isLenient = true
+            prettyPrint = true
             encodeDefaults = true
 //            explicitNulls = false
             coerceInputValues = true

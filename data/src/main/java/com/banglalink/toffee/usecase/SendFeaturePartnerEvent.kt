@@ -6,12 +6,9 @@ import com.banglalink.toffee.notification.FEATURE_PARTNER_LOG
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendFeaturePartnerEvent @Inject constructor(
-    private val json: Json,
     private val preference: SessionPreference,
 ) {
     

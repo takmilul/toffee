@@ -6,14 +6,9 @@ import com.banglalink.toffee.notification.FIREBASE_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SendFirebaseConnectionErrorEvent @Inject constructor(
-    private val json: Json,
-    private val preference: SessionPreference,
-) {
+class SendFirebaseConnectionErrorEvent @Inject constructor() {
     
     suspend fun execute(sendToPubSub: Boolean = true) {
         PubSubMessageUtil.send(FirebaseConnectionErrorData(), FIREBASE_ERROR_TRACK_TOPIC)

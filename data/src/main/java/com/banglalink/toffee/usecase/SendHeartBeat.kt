@@ -19,13 +19,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendHeartBeat @Inject constructor(
-    private val json: Json,
-    private val preference: SessionPreference, private val toffeeApi: ToffeeApi
+    private val toffeeApi: ToffeeApi,
+    private val preference: SessionPreference,
 ) {
     
     suspend fun execute(

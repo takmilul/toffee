@@ -9,7 +9,6 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
@@ -17,7 +16,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 /**
  * Posts some events in [FirebaseAnalytics] and [facebookAnalytics]
@@ -61,7 +59,6 @@ object ToffeeAnalytics {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
         }
-        val logMsg = NetworkModuleLib.providesJsonWithConfig().encodeToString(ApiFailData(apiName, errorMsg))
         PubSubMessageUtil.send(ApiFailData(apiName, errorMsg), API_ERROR_TRACK_TOPIC)
     }
     

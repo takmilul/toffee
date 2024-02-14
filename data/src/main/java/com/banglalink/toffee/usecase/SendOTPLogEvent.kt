@@ -5,13 +5,9 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.USER_OTP_TOPIC
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SendOTPLogEvent @Inject constructor(
-    private val json: Json,
-) {
+class SendOTPLogEvent @Inject constructor() {
     
     fun execute(otpLogData: OTPLogData, phoneNumber: String, sendToPubSub: Boolean = true) {
         otpLogData.phoneNumber = phoneNumber

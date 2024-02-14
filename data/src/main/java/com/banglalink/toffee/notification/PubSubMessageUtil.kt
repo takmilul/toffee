@@ -5,6 +5,7 @@ import android.util.Base64
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.util.Log
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback
@@ -17,13 +18,12 @@ import com.google.api.services.pubsub.PubsubScopes
 import com.google.api.services.pubsub.model.PublishRequest
 import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
 import timber.log.Timber
 
 const val PROJECT_ID = "toffee-261507"
@@ -54,10 +54,11 @@ const val KABBIK_CURRENT_VIEWER = "projects/$PROJECT_ID/topics/kabbik_current_vi
 const val KABBIK_CURRENT_VIEWERS_HEARTBEAT = "projects/$PROJECT_ID/topics/kabbik_current_viewers_heartbeat"
 
 object PubSubMessageUtil {
-    private lateinit var client: Pubsub
+    lateinit var client: Pubsub
     private const val TAG = "PubSubMessageUtil"
     private val coroutineContext = IO + SupervisorJob()
-    private val coroutineScope = CoroutineScope(coroutineContext)
+    val coroutineScope = CoroutineScope(coroutineContext)
+    val json = NetworkModuleLib.providesJsonWithConfig()
     
     fun init(context: Context) {
         val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
@@ -93,14 +94,14 @@ object PubSubMessageUtil {
         }
     }
     
-    fun <T> send(data: T, topic: String) {
+    inline fun <reified T: Any> send(data: T, topic: String) {
         coroutineScope.launch {
             runCatching {
                 val batch = client.batch()
                 val pubsubMessage = PubsubMessage()
-                val prettyJson = GsonBuilder().setPrettyPrinting().setLenient().create().toJson(data)
+                val prettyJson = json.encodeToString<T>(data)
                 Timber.tag("PUBSUB - $topic").i(prettyJson)
-                pubsubMessage.encodeData(Gson().toJson(data).toByteArray(charset("UTF-8")))
+                pubsubMessage.encodeData(prettyJson.toByteArray(charset("UTF-8")))
                 val publishRequest = PublishRequest()
                 publishRequest.messages = listOf(pubsubMessage)
                 client.projects().topics().publish(topic, publishRequest).queue(batch, callback)

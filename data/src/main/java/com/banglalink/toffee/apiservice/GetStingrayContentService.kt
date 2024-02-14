@@ -9,7 +9,6 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
-import com.google.gson.Gson
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -21,8 +20,6 @@ class GetStingrayContentService @Inject constructor(
     private val preference: SessionPreference,
     private val tvChannelRepo: TVChannelRepository
 ): BaseApiService<ChannelInfo> {
-
-    val gson = Gson()
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO {

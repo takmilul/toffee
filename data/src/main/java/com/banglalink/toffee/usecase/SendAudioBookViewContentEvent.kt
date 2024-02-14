@@ -3,7 +3,8 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWER
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendAudioBookViewContentEvent @Inject constructor() {
@@ -13,11 +14,12 @@ class SendAudioBookViewContentEvent @Inject constructor() {
     }
 }
 
+@Serializable
 data class KabbikAudioBookLogData(
-    @SerializedName("content_id"     ) var contentId     : String? = null,
-    @SerializedName("book_name"      ) var bookName      : String? = null,
-    @SerializedName("book_category"  ) var bookCategory  : String? = null,
-    @SerializedName("book_type"      ) var bookType      : String? = null,
-    @SerializedName("lat"            ) var lat           : String? = null,
-    @SerializedName("lon"            ) var lon           : String? = null,
+    @SerialName("content_id"     ) var contentId     : String? = null,
+    @SerialName("book_name"      ) var bookName      : String? = null,
+    @SerialName("book_category"  ) var bookCategory  : String? = null,
+    @SerialName("book_type"      ) var bookType      : String? = null,
+    @SerialName("lat"            ) var lat           : String? = null,
+    @SerialName("lon"            ) var lon           : String? = null,
 ) : PubSubBaseRequest()

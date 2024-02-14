@@ -7,12 +7,9 @@ import com.banglalink.toffee.notification.DRM_UNAVAILABLE_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendDrmUnavailableLogEvent @Inject constructor(
-    private val json: Json,
     private val mPref: SessionPreference
 ) {
     
