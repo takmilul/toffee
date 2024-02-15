@@ -22,7 +22,7 @@ class ActiveTvQrViewModel @Inject constructor(
     private val qrSignInService: QrSignInService
 ):ViewModel() {
 
-    var qrSignInStatus = MutableLiveData<Int>()
+    var qrSignInStatus = SingleLiveEvent<Int>()
 
 
     fun getSubscriberPaymentInit(code: String) {
