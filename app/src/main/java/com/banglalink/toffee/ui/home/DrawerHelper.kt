@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -210,7 +211,10 @@ class DrawerHelper(
 
                 activity.checkVerification {
 
-                    activity.getNavController().navigateTo(R.id.menu_active_tv)
+                    val bundle = Bundle()
+                    bundle.putString("code", "0")
+
+                    activity.getNavController().navigateTo(R.id.menu_active_tv,bundle)
                     binding.drawerLayout.closeDrawers()
 
                 }

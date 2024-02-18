@@ -76,6 +76,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
     var isDisablePip = MutableLiveData<Boolean>().apply { value = false } // when going outside of the app by using a toffee deeplink, disable pip to solve the player blackout issue
     val newUser = SingleLiveEvent<String>()
+    var qrSignInStatus = MutableLiveData<String>()
+    var qrSignInResponseCode = MutableLiveData<String>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }

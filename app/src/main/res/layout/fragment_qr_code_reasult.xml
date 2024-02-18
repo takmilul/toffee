@@ -33,10 +33,17 @@
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
             android:layout_marginVertical="20dp"
-            android:text="Android TV has been activated!"
+            android:text="Signed into TV \nsuccessfully!"
             android:textSize="24sp"
             android:layout_weight="1"/>
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:text="Stay on the TV screen to complete sign in"
+            android:textSize="14sp" />
 
     </LinearLayout>
     <LinearLayout
@@ -64,7 +71,7 @@
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
             android:layout_marginTop="20dp"
-            android:text="Code has been expired!"
+            android:text="QR code is invalid!"
             android:textSize="24sp"
             android:layout_weight="1"/>
         <TextView
@@ -72,7 +79,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center"
-            android:text="Please re-scan the QR code from your TV."
+            android:text="Re-scan the QR code from your TV to sign in"
             android:textSize="14sp"
             android:layout_weight="1"/>
 
