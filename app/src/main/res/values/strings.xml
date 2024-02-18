@@ -427,7 +427,7 @@
     <string name="menu_policies">Policies</string>
     <string name="menu_faq">FAQ</string>
     <string name="menu_settings">Settings</string>
-    <string name="menu_active_tv">Activate TV</string>
+    <string name="menu_active_tv">Sign into TV</string>
     <string name="menu_sign_in">Sign in</string>
     <string name="menu_log_out">Log out</string>
     <string name="menu_sign_out">Sign out</string>

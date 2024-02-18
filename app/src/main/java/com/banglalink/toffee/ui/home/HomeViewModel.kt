@@ -149,6 +149,8 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+
+
     
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {

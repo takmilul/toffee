@@ -1,16 +1,15 @@
 package com.banglalink.toffee.ui.payment_methods
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,29 +17,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -60,40 +54,46 @@ import com.banglalink.toffee.ui.compose_theme.CardTitleColorDark
 import com.banglalink.toffee.ui.compose_theme.Fonts
 import com.banglalink.toffee.ui.compose_theme.MainTextColor
 import com.banglalink.toffee.ui.compose_theme.MainTextColorDark
-import com.banglalink.toffee.ui.compose_theme.ScreenBackground
-import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
+import com.banglalink.toffee.data.network.response.NagadAccountInfo
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.ui.compose_theme.ColorAccent2
 import com.banglalink.toffee.ui.compose_theme.RedButtonColor
+import com.banglalink.toffee.ui.premium.PremiumViewModel
+import timber.log.Timber
 
 @Composable
-@Preview
-fun ManagePaymentMethodsScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                if (isSystemInDarkTheme()) {
-                    ScreenBackgroundDark
-                } else {
-                    ScreenBackground
-                }
-            )
-    ) {
-        SavedPaymentMethods()
-        AddPaymentMethods()
-    }
-}
-
-@Composable
-fun SavedPaymentMethods() {
+fun SavedPaymentMethods(
+    nagadAccountInfo: NagadAccountInfo,
+    viewModel: PremiumViewModel,
+    mPref: SessionPreference,
+    appContext: Context
+) {
     var openDialog by remember {
         mutableStateOf(false)
     }
+
     if (openDialog){
         RemoveAccountDialog(
+            walletNumber = nagadAccountInfo.walletNumber,
+            viewModel = viewModel,
+            mPref = mPref,
+            appContext = appContext,
             onDismissRequest = {
                 openDialog = false
+            },
+            onRemoveClick = {
+                viewModel.removeTokenizeAccount(nagadAccountInfo.paymentMethodId?:0, RemoveTokenizedAccountApiRequest(
+                    customerId = mPref.customerId,
+                    password = mPref.password,
+                    isPrepaid = if(mPref.isPrepaid) 1 else 0,
+                    clientType = "MOBILE_APP",
+                    walletNumber = nagadAccountInfo.walletNumber,
+                    paymentToken = nagadAccountInfo.paymentToken,
+                    paymentCusId = nagadAccountInfo.paymentCusId,
+                ))
             }
         )
     }
@@ -144,7 +144,7 @@ fun SavedPaymentMethods() {
                         modifier = Modifier
                             .weight(1F)
                             .padding(start = 12.dp),
-                        text = "01671109898",
+                        text = nagadAccountInfo.walletNumber ?: "Unknown",
                         fontSize = 14.sp,
                         fontFamily = Fonts.roboto,
                         fontWeight = FontWeight.Medium,
@@ -171,7 +171,9 @@ fun SavedPaymentMethods() {
 }
 
 @Composable
-fun AddPaymentMethods() {
+fun AddPaymentMethods(
+    onClickNagad: () ->Unit? = {}
+) {
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)
     ) {
@@ -216,6 +218,7 @@ fun AddPaymentMethods() {
                         contentDescription = ""
                     )
                     Icon(
+                        modifier = Modifier.clickable { onClickNagad.invoke() },
                         painter = painterResource(id = R.drawable.ic_arrow_forward_new),
                         contentDescription = "",
                         tint = if (isSystemInDarkTheme()) {
@@ -231,11 +234,46 @@ fun AddPaymentMethods() {
 }
 
 @Composable
-@Preview
-fun RemoveAccountDialog(onDismissRequest: () -> Unit = {}) {
-    var removedSuccess by remember {
-        mutableStateOf(false)
+fun RemoveAccountDialog(
+    walletNumber: String? = "",
+    onDismissRequest: () -> Unit = {},
+    onRemoveClick: ()->Unit = {},
+    viewModel: PremiumViewModel,
+    mPref: SessionPreference,
+    appContext: Context
+) {
+    var removedSuccess by remember { mutableStateOf(false) }
+    var removeClicked by remember { mutableStateOf(false) }
+
+    if (removedSuccess){
+        LaunchedEffect(key1 = true, block = {
+            viewModel.getTokenizedPaymentMethods(
+                TokenizedPaymentMethodsApiRequest(
+                    customerId = mPref.customerId,
+                    password = mPref.password
+                )
+            )
+        })
     }
+
+    if (removeClicked){
+        LaunchedEffect(key1 = true, block = {
+            onRemoveClick.invoke()
+        })
+    }
+
+    val removeResponse = viewModel.removeTokenizeAccountResponse.observeAsState()
+
+
+    removeResponse.value.let {
+        if (it?.status == true){
+            removedSuccess = true
+        } else if (it?.status == false){
+            Toast.makeText(appContext, it.message ?: "Something went wrong. Please try again later!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             shape = RoundedCornerShape(24.dp),
@@ -255,7 +293,7 @@ fun RemoveAccountDialog(onDismissRequest: () -> Unit = {}) {
             ){
                 Icon(
                     modifier = Modifier
-                        .size(13 .dp)
+                        .size(13.dp)
                         .clickable {
                             onDismissRequest.invoke()
                         },
@@ -302,7 +340,7 @@ fun RemoveAccountDialog(onDismissRequest: () -> Unit = {}) {
                             append("Are you sure you want to remove the saved Nagad account ")
                         }
                         withStyle(style = SpanStyle(color = if (isSystemInDarkTheme()) CardTitleColorDark else CardTitleColor)) {
-                            append("01671109898?")
+                            append("$walletNumber?")
                         }
                     }
 
@@ -358,7 +396,8 @@ fun RemoveAccountDialog(onDismissRequest: () -> Unit = {}) {
                                 .padding(start = 16.dp),
                             text = "REMOVE",
                             onClick = {
-                                removedSuccess = true
+                                removeClicked = true
+//                                removedSuccess = true
                             }
                         )
                     }
@@ -379,7 +418,7 @@ fun PinkOutlinedButton(
     OutlinedButton(
         modifier = modifier,
         onClick = { onClick.invoke() },
-        border = BorderStroke(color = ColorAccent2, width = 1.dp, ),
+        border = BorderStroke(color = ColorAccent2, width = 1.dp),
         shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
