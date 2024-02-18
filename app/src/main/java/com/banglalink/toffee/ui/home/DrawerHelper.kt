@@ -205,6 +205,18 @@ class DrawerHelper(
                     )
                 )
             }
+
+            R.id.menu_active_tv -> {
+
+                activity.checkVerification {
+
+                    activity.getNavController().navigateTo(R.id.menu_active_tv)
+                    binding.drawerLayout.closeDrawers()
+
+                }
+                return true
+            }
+
             R.id.menu_logout -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_log_out)))
                 ToffeeAnalytics.toffeeLogEvent(

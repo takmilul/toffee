@@ -8,7 +8,6 @@ import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SHARE_COUNT_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
@@ -17,15 +16,13 @@ class SendShareCountEvent @Inject constructor(
     private val mqttService: ToffeeMqttService,
     private val shareLogApiService: SendShareLogApiService,
 ) {
-
-    private val gson = Gson()
-
+    
     suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
             val contentId = channelInfo.getContentId()
             val shareCount = ShareData(preference.customerId, contentId.toLong())
-            PubSubMessageUtil.sendMessage(gson.toJson(shareCount), SHARE_COUNT_TOPIC)
-            mqttService.sendMessage(gson.toJson(shareCount), SHARE_COUNT_TOPIC)
+            PubSubMessageUtil.send(shareCount, SHARE_COUNT_TOPIC)
+            mqttService.send(shareCount, SHARE_COUNT_TOPIC)
         } else {
             shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url)
         }

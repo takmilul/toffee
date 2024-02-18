@@ -6,20 +6,17 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.CATEGORY_CHANNEL_SHARE_COUNT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendCategoryChannelShareCountEvent @Inject constructor(
     private val preference: SessionPreference,
 ) {
-
-    private val gson = GsonBuilder().disableHtmlEscaping().create()
-
+    
     suspend fun execute(contentType: String, contentId: Int, sharedUrl: String, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
             val categoryChannelShareCount = CategoryChannelShareData(preference.customerId.toLong(), contentType, contentId, sharedUrl)
-            PubSubMessageUtil.sendMessage(gson.toJson(categoryChannelShareCount), CATEGORY_CHANNEL_SHARE_COUNT_TOPIC)
+            PubSubMessageUtil.send(categoryChannelShareCount, CATEGORY_CHANNEL_SHARE_COUNT_TOPIC)
         } else {
 //            shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url)
         }

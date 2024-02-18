@@ -48,12 +48,17 @@ import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
 import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.FormatStrategy
+import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import timber.log.Timber
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
@@ -112,6 +117,8 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      */
     override fun onCreate() {
         super.onCreate()
+        
+        initLogger()
         
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
         if (CookieHandler.getDefault() !== defaultCookieManager) {
@@ -192,6 +199,33 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         initMedalliaSdk()
         mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
+    }
+    
+    private fun initLogger() {
+        runCatching {
+            val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
+                .methodCount(0)
+                .methodOffset(5)
+                .showThreadInfo(false)
+                .build()
+            
+            Logger.addLogAdapter(AndroidLogAdapter(formatStrategy))
+            
+            Timber.plant(object : Timber.DebugTree() {
+                override fun createStackElementTag(element: StackTraceElement): String {
+                    return String.format(
+                        "Class:%s: Line: %s, Method: %s",
+                        super.createStackElementTag(element),
+                        element.lineNumber,
+                        element.methodName
+                    )
+                }
+                
+                override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+                    Logger.log(priority, tag, message, t)
+                }
+            })
+        }
     }
     
     /**

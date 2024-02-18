@@ -78,7 +78,7 @@ pretty-logger-version = "3.1.0"
 upload-library-version = "4.9.2"
 
 # Google Services
-google-services-version = "4.4.0"
+google-services-version = "4.4.1"
 google-api-client-version = "2.2.0"
 google-http-client-gson-version = "1.43.1"
 
@@ -90,11 +90,11 @@ in-app-update-version = "2.1.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.4.0"
-firebase-analytics-version = "21.5.0"
-firebase-firestore-version = "24.10.1"
+firebase-messaging-version = "23.4.1"
+firebase-analytics-version = "21.5.1"
+firebase-firestore-version = "24.10.2"
 firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.6.1"
+firebase-crashlytics-version = "18.6.2"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
@@ -106,6 +106,10 @@ conviva-plugin-version = "0.3.2"
 pub-sub-version = "v1-rev452-1.25.0"
 mqtt-client-version = "1.2.5"
 mqtt-android-service-version = "3.3.8"
+
+# Logging
+timber-version = "5.0.1"
+orhanobut-version = "2.2.0"
 
 # Firework
 firework-sdk-version = "v5.10.0"
@@ -292,6 +296,10 @@ mqtt-client = { group = "org.eclipse.paho", name = "org.eclipse.paho.client.mqtt
 mqtt-android-service = { group = "com.github.hannesa2", name = "paho.mqtt.android", version.ref = "mqtt-android-service-version" }
 #mqtt-android-service = { group = "org.eclipse.paho", name = "org.eclipse.paho.android.service", version.ref = "mqtt-android-service-version" }
 
+# Logging
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber-version" }
+orhanobut = { group = "com.orhanobut", name = "logger", version.ref = "orhanobut-version" }
+
 # Miscellaneous
 #guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
 dahdit = { group = "com.xfinity", name = "dahdit", version.ref = "dahdit-version" }
@@ -388,4 +396,5 @@ play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-up
 conviva = ["conviva-core", "conviva-player", "conviva-tracker"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
+logger = ["timber", "orhanobut"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]

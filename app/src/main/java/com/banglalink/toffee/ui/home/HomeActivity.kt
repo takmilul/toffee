@@ -919,7 +919,8 @@ class HomeActivity : PlayerPageActivity(),
                 R.id.menu_invite,
                 R.id.menu_redeem,
                 R.id.menu_creators_policy,
-                R.id.premiumPackListFragment
+                R.id.premiumPackListFragment,
+                R.id.menu_active_tv
             ), binding.drawerLayout
         )
 //        setupActionBarWithNavController(navController, appbarConfig)

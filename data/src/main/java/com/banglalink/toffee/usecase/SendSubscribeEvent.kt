@@ -6,7 +6,6 @@ import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
@@ -19,8 +18,8 @@ class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqtt
             status = status,
             date_time=subscriptionInfo.getDate()
         )
-        PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
-        mqttService.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
+        PubSubMessageUtil.send(subscriptionCountData, SUBSCRIPTION_TOPIC)
+        mqttService.send(subscriptionCountData, SUBSCRIPTION_TOPIC)
     }
 }
 

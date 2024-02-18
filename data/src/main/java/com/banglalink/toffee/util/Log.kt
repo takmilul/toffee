@@ -1,6 +1,6 @@
 package com.banglalink.toffee.util
 
-import android.util.Log
+import timber.log.Timber
 
 object Log {
     
@@ -9,22 +9,22 @@ object Log {
     private const val EMPTY_MSG = "Log message is empty."
     
     fun v(tag: String?, msg: String?, tr: Throwable? = null) {
-        if (SHOULD_LOG) Log.v(tag ?: TAG, msg ?: EMPTY_MSG, tr)
+        if (SHOULD_LOG) Timber.tag(tag ?: TAG).v(tr, msg ?: EMPTY_MSG)
     }
     
     fun d(tag: String?, msg: String?, tr: Throwable? = null) {
-        if (SHOULD_LOG) Log.d(tag ?: TAG, msg ?: EMPTY_MSG, tr)
+        if (SHOULD_LOG) Timber.tag(tag ?: TAG).d(tr, msg ?: EMPTY_MSG)
     }
     
     fun i(tag: String?, msg: String?, tr: Throwable? = null) {
-        if (SHOULD_LOG) Log.i(tag ?: TAG, msg ?: EMPTY_MSG, tr)
+        if (SHOULD_LOG) Timber.tag(tag ?: TAG).i(tr, msg ?: EMPTY_MSG)
     }
     
     fun w(tag: String?, msg: String?, tr: Throwable? = null) {
-        if (SHOULD_LOG) Log.w(tag ?: TAG, msg ?: EMPTY_MSG, tr)
+        if (SHOULD_LOG) Timber.tag(tag ?: TAG).w(tr, msg ?: EMPTY_MSG)
     }
     
     fun e(tag: String?, msg: String?, tr: Throwable? = null) {
-        if (SHOULD_LOG) Log.e(tag ?: TAG, msg ?: EMPTY_MSG, tr)
+        if (SHOULD_LOG) Timber.tag(tag ?: TAG).e(tr, msg ?: EMPTY_MSG)
     }
 }

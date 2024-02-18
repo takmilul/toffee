@@ -8,20 +8,17 @@ import com.banglalink.toffee.model.ReportInfo
 import com.banglalink.toffee.notification.CONTENT_REPORT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendContentReportEvent @Inject constructor(
     private val preference: SessionPreference,
 ) {
-
-    private val gson = Gson()
-
+    
     fun execute(reportInfo: ReportInfo) {
         val reportData = ReportInAppropriateVideoData(preference.customerId, reportInfo.contentId, reportInfo.offenseTypeId, reportInfo.offenseId, 
             reportInfo.timeStamp, reportInfo.additionalDetail)
-        PubSubMessageUtil.sendMessage(gson.toJson(reportData), CONTENT_REPORT_TOPIC)
+        PubSubMessageUtil.send(reportData, CONTENT_REPORT_TOPIC)
     }
 }
 

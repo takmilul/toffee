@@ -84,5 +84,10 @@
         android:name="com.banglalink.toffee.ui.premium.payment.RedeemVoucherCodeFragment"
         android:label="fragment_reedem_voucher_code"
         tools:layout="@layout/fragment_reedem_voucher_code" />
+    <fragment
+        android:id="@+id/savedAccountFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.SavedAccountFragment"
+        android:label="fragment_saved_account"
+        tools:layout="@layout/fragment_saved_account" />
 
 </navigation>

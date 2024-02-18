@@ -7,17 +7,14 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.LOGIN_LOG_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendLoginLogEvent @Inject constructor() {
-
-    private val gson = Gson()
     
     fun execute(sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            PubSubMessageUtil.sendMessage(gson.toJson(LoginLogData()), LOGIN_LOG_TOPIC)
+            PubSubMessageUtil.send(LoginLogData(), LOGIN_LOG_TOPIC)
         }
     }
 }

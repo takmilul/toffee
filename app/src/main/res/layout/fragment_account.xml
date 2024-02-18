@@ -97,6 +97,30 @@
                 android:background="@color/colorSettingsDivider" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/pref_manage_payment_method"
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/menu_manage_payment_methods"
+                    app:srcCompat="@drawable/ic_taka" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_manage_payment_methods" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/pref_favorites"
                 style="@style/PrefItemStyle"
                 android:layout_width="match_parent"
