@@ -89,4 +89,6 @@ object ApiNames {
     const val GET_FM_RADIO_CONTENTS = "getFmRadioContents"
     const val CHECK_VOUCHER_STATUS = "checkVoucherStatus"
     const val PAIR_WITH_TV = "devicePair"
+    const val TOKENIZED_PAYMENT_METHODS = "getTokenizedPaymentManageMethods"
+    const val REMOVE_TOKENIZE_ACCOUNT = "removeTokenizedAccount"
 }

@@ -548,4 +548,15 @@ interface ToffeeApi {
     @POST("device/pair")
     suspend fun pairWithTv(@Body pairWithTvRequest: PairWithTvRequest):PairWithTvResponse
 
+    @POST("/tokenized-payment-manage-methods")
+    suspend fun getTokenizedPaymentMethods(
+        @Body body: TokenizedPaymentMethodsApiRequest
+    ): TokenizedPaymentMethodsBaseApiResponse
+
+    @POST("/remove-tokenized-account/{paymentMethodId}")
+    suspend fun removeTokenizeAccount(
+        @Path("paymentMethodId") paymentMethodId:Int,
+        @Body body: RemoveTokenizedAccountApiRequest
+    ) : RemoveTokenizeAccountApiBaseResponse
+
 }
