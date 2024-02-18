@@ -89,6 +89,7 @@
     <string name="confirm_purchase_text"><b>৳120</b> will be deducted from your balance after you tap \'Confirm Purchase\'</string>
     <string name="confirm_purchase_formatted_text">৳%1$d will be deducted from your balance after you tap \'Confirm Purchase\'</string>
     <string name="confirm_purchase">Confirm Purchase</string>
+    <string name="confirm">Confirm</string>
     <string name="auto_renew_formatted_text">Auto Renew in %1$d %2$s</string>
     <string name="subscribe_text">Subscribe ৳30</string>
     <string name="discount_formatted_text"><strike>৳%1$d</strike></string>
@@ -551,6 +552,7 @@
     <string name="choose_a_plan">Choose a Plan</string>
     <string name="pay_by_bkash">Pay by bKash</string>
     <string name="pay_by_card">Pay by Card</string>
+    <string name="pay_by_nagad">Pay by Nagad</string>
     <string name="only_for_bl_text">Only for Banglalink Subscribers</string>
     <!--    <string name="only_for_bl_text">Up to 5GB FREE, Best Experience</string>-->
     <string name="pay_by_banglalink">Pay by Banglalink</string>
@@ -617,4 +619,6 @@
     <string name="redeem_dialog_title_text">Code didn\'t work</string>
     <string name="menu_manage_payment_methods">Manage Payment Methods</string>
     <string name="add_payment_methods">Add Payment Methods</string>
+    <string name="saved_account_fragment_title">Purchase Confirmation</string>
+    <string name="use_another_account">Use another account</string>
 </resources>
