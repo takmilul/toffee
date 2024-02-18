@@ -206,6 +206,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
             val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
                 .methodCount(0)
                 .methodOffset(5)
+                .showThreadInfo(false)
                 .build()
             
             Logger.addLogAdapter(AndroidLogAdapter(formatStrategy))
