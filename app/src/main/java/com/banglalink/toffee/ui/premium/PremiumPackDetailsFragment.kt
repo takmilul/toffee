@@ -69,7 +69,11 @@ class PremiumPackDetailsFragment : BaseFragment(){
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-        triggerButtonSheet()
+//        triggerButtonSheet()
+        if (!checkPackPurchased()){
+            triggerButtonSheet()
+        }
+
 
         /*
          checking pack purchase separately,
