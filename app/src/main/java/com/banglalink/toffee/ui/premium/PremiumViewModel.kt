@@ -1,5 +1,7 @@
 package com.banglalink.toffee.ui.premium
 
+import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,11 +14,16 @@ import com.banglalink.toffee.apiservice.PremiumPackListService
 import com.banglalink.toffee.apiservice.PremiumPackStatusService
 import com.banglalink.toffee.apiservice.PremiumPackSubHistoryService
 import com.banglalink.toffee.apiservice.RechargeByBkashService
+import com.banglalink.toffee.apiservice.RemoveTokenizeAccountApiService
 import com.banglalink.toffee.apiservice.SubscriberPaymentInitService
+import com.banglalink.toffee.apiservice.TokenizedPaymentMethodApiService
 import com.banglalink.toffee.apiservice.VoucherService
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
+import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
+import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
@@ -24,9 +31,12 @@ import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
 import com.banglalink.toffee.data.network.response.RechargeByBkashBean
+import com.banglalink.toffee.data.network.response.RemoveTokenizeAccountApiResponse
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
+import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ClickableAdInventories
@@ -36,6 +46,7 @@ import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.usecase.SendPaymentLogFromDeviceEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -43,6 +54,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val savedState: SavedStateHandle,
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
@@ -55,6 +67,8 @@ class PremiumViewModel @Inject constructor(
     private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
     private val voucherService: VoucherService,
     private val mnpStatusService: MnpStatusService,
+    private val tokenizedPaymentMethodApiService: TokenizedPaymentMethodApiService,
+    private val removeTokenizeAccountApiService: RemoveTokenizeAccountApiService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -109,7 +123,10 @@ class PremiumViewModel @Inject constructor(
 
     var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
     var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
-    
+
+    val tokenizedPaymentMethodsResponseCompose = SingleLiveEvent<TokenizedPaymentMethodsApiResponse?>()
+    val removeTokenizeAccountResponse = SingleLiveEvent<RemoveTokenizeAccountApiResponse?>()
+
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
             val response = resultFromResponse { premiumPackListService.loadData(contentId) }
@@ -251,6 +268,34 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { mnpStatusService.execute() }
             mnpStatusLiveDataForPaymentDetail.value = response
+        }
+    }
+
+    fun getTokenizedPaymentMethods(body: TokenizedPaymentMethodsApiRequest){
+        viewModelScope.launch {
+            val response = resultFromResponse { tokenizedPaymentMethodApiService.execute(body) }
+            when (response){
+                is Resource.Success->{
+                    tokenizedPaymentMethodsResponseCompose.value = response.data
+                }
+                is Resource.Failure ->{
+                    appContext.showToast("Something went wrong. Please try again later.")
+                }
+            }
+        }
+    }
+
+    fun removeTokenizeAccount(paymentMethodId: Int, body: RemoveTokenizedAccountApiRequest){
+        viewModelScope.launch {
+            val response = resultFromResponse { removeTokenizeAccountApiService.execute(paymentMethodId, body) }
+            when (response){
+                is Resource.Success->{
+                    removeTokenizeAccountResponse.value = response.data
+                }
+                is Resource.Failure ->{
+                    appContext.showToast("Something went wrong. Please try again later.")
+                }
+            }
         }
     }
 }
