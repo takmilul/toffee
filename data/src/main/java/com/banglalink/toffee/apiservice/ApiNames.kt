@@ -91,5 +91,6 @@ object ApiNames {
     const val CHECK_VOUCHER_STATUS = "checkVoucherStatus"
     const val PAIR_WITH_TV = "devicePair"
     const val TOKENIZED_PAYMENT_METHODS = "getTokenizedPaymentManageMethods"
+    const val TOKENIZED_ACCOUNT_INFO = "getTokenizedAccountInfo"
     const val REMOVE_TOKENIZE_ACCOUNT = "removeTokenizedAccount"
 }

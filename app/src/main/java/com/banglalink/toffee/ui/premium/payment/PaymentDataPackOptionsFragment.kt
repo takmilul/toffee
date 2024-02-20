@@ -15,6 +15,8 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
 import com.banglalink.toffee.extension.checkVerification
@@ -44,6 +46,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private var paymentName: String? = null
     private var pressedButtonName = ""
     private var transactionIdentifier: String? = null
+    private var paymentToken: String? = null
+    private var walletNumber: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
     private var ctaButtonValue = 0
@@ -260,7 +264,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             "nagad" -> {
                 // Initiate the Subscriber Payment Initialization for Nagad
-                subscriberPaymentInit()
+                observeTokenizedPaymentMethodsApi()
+                tokenizedPaymentMethodsApi()
             }
             "ssl" -> {
                 // Initiate the Subscriber Payment Initialization for SSL
@@ -755,7 +760,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                 paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                 paymentMsisdn = null,
-                                paymentId = if (paymentName == "bkash") transactionIdentifier else null,
+                                paymentId = if (paymentName == "bkash" || paymentName == "nagad") transactionIdentifier else null,
                                 transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
@@ -794,7 +799,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                             paymentMsisdn = null,
-                            paymentId = if (paymentName == "bkash") transactionIdentifier else null,
+                            paymentId = if (paymentName == "bkash" || paymentName == "nagad") transactionIdentifier else null,
                             transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
@@ -892,7 +897,39 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
     }
-    
+
+    private fun tokenizedPaymentMethodsApi() {
+        val paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0
+        val request = TokenizedAccountInfoApiRequest(
+            customerId = mPref.customerId,
+            password = mPref.password
+        )
+        viewModel.getTokenizedAccountInfo(paymentMethodId, request)
+    }
+    private fun observeTokenizedPaymentMethodsApi() {
+        observe(viewModel.tokenizedAccountInfoResponse) {
+            when (it) {
+                is Success -> {
+                    it.data?.firstOrNull()?.let { accountInfo ->
+                        paymentToken = accountInfo.paymentToken
+                        walletNumber = accountInfo.walletNumber
+
+                        val args = bundleOf(
+                            "paymentName" to paymentName,
+                            "paymentToken" to paymentToken,
+                            "walletNumber" to walletNumber
+                        )
+                        findNavController().navigateTo(R.id.savedAccountFragment, args)
+                    } ?: subscriberPaymentInit()
+                }
+
+                is Failure -> {
+                    progressDialog.dismiss() // Dismiss the progress dialog
+                    requireContext().showToast("Something went wrong. Please try again later.")
+                }
+            }
+        }
+    }
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
         super.onItemClicked(view, item, position)
         showPaymentOption(item)
