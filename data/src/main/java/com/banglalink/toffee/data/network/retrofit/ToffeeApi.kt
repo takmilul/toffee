@@ -559,6 +559,12 @@ interface ToffeeApi {
         @Body body: TokenizedPaymentMethodsApiRequest
     ): TokenizedPaymentMethodsBaseApiResponse
 
+    @POST("/tokenized-account-info/{paymentMethodId}")
+    suspend fun getTokenizedAccountInfo(
+        @Path("paymentMethodId") paymentMethodId:Int,
+        @Body body: TokenizedAccountInfoApiRequest
+    ): TokenizedAccountInfoApiResponse
+
     @POST("/remove-tokenized-account/{paymentMethodId}")
     suspend fun removeTokenizeAccount(
         @Path("paymentMethodId") paymentMethodId:Int,

@@ -17,6 +17,7 @@ import com.banglalink.toffee.apiservice.PremiumPackSubHistoryService
 import com.banglalink.toffee.apiservice.RechargeByBkashService
 import com.banglalink.toffee.apiservice.RemoveTokenizeAccountApiService
 import com.banglalink.toffee.apiservice.SubscriberPaymentInitService
+import com.banglalink.toffee.apiservice.TokenizedAccountInfoApiService
 import com.banglalink.toffee.apiservice.TokenizedPaymentMethodApiService
 import com.banglalink.toffee.apiservice.VoucherService
 import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
@@ -24,6 +25,7 @@ import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.MnpStatusBean
@@ -36,6 +38,8 @@ import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.response.RemoveTokenizeAccountApiResponse
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
+import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
+import com.banglalink.toffee.data.network.response.TokenizedAccountInfoApiResponse
 import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.showToast
@@ -71,6 +75,7 @@ class PremiumViewModel @Inject constructor(
     private val voucherService: VoucherService,
     private val mnpStatusService: MnpStatusService,
     private val tokenizedPaymentMethodApiService: TokenizedPaymentMethodApiService,
+    private val tokenizedAccountInfoApiService: TokenizedAccountInfoApiService,
     private val removeTokenizeAccountApiService: RemoveTokenizeAccountApiService,
 ) : ViewModel() {
     
@@ -129,6 +134,7 @@ class PremiumViewModel @Inject constructor(
     var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
 
     val tokenizedPaymentMethodsResponseCompose = SingleLiveEvent<TokenizedPaymentMethodsApiResponse?>()
+    val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
     val removeTokenizeAccountResponse = SingleLiveEvent<RemoveTokenizeAccountApiResponse?>()
 
     fun getPremiumPackList(contentId: String = "0") {
@@ -293,6 +299,13 @@ class PremiumViewModel @Inject constructor(
                     appContext.showToast("Something went wrong. Please try again later.")
                 }
             }
+        }
+    }
+
+    fun getTokenizedAccountInfo(paymentMethodId: Int, body: TokenizedAccountInfoApiRequest){
+        viewModelScope.launch {
+            val response = resultFromResponse { tokenizedAccountInfoApiService.execute(paymentMethodId, body) }
+            tokenizedAccountInfoResponse.value = response
         }
     }
 

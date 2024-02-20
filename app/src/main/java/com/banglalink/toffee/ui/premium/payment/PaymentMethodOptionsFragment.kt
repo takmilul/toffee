@@ -322,8 +322,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                             bundleOf(
                                 "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
                                 "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                "provider" to "SSL Wireless",
-                                "type" to "aggregator",
+                                "provider" to "nagad",
+                                "type" to "wallet",
                                 "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 "subtype" to subType,
                             )
