@@ -28,6 +28,8 @@ data class PackPaymentMethodBean(
     val Voucher: @RawValue List<PackPaymentMethod>?,
     @SerializedName("SSL")
     val ssl: SSL?,
+    @SerializedName("NAGAD")
+    val nagad: NAGAD?,
 ) : Parcelable
 
 @Parcelize
@@ -42,6 +44,14 @@ data class Bkash(
 
 @Parcelize
 data class SSL(
+    @SerializedName("BL")
+    val blPacks: List<PackPaymentMethod>?,
+    @SerializedName("NON_BL")
+    val nonBlPacks: List<PackPaymentMethod>?,
+) : Parcelable
+
+@Parcelize
+data class NAGAD(
     @SerializedName("BL")
     val blPacks: List<PackPaymentMethod>?,
     @SerializedName("NON_BL")

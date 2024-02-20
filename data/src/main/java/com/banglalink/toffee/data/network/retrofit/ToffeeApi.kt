@@ -519,6 +519,12 @@ interface ToffeeApi {
         @Body subscriberPaymentInitRequest: SubscriberPaymentInitRequest
     ): SubscriberPaymentInitResponse
 
+    @POST("/subscriber/v1/tokenized/account/add/init/{paymentType}")
+    suspend fun getAddTokenizedAccountInit(
+        @Path("paymentType") paymentType: String,
+        @Body addTokenizedAccountInitRequest: AddTokenizedAccountInitRequest
+    ): SubscriberPaymentInitResponse
+
     @POST("/mnp-status")
     suspend fun getMnpStatus(
         @Body mnpStatusRequest: MnpStatusRequest

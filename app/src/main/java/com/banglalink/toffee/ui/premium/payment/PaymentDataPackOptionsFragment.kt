@@ -258,6 +258,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 // Initiate the Subscriber Payment Initialization for bKash
                 subscriberPaymentInit()
             }
+            "nagad" -> {
+                // Initiate the Subscriber Payment Initialization for Nagad
+                subscriberPaymentInit()
+            }
             "ssl" -> {
                 // Initiate the Subscriber Payment Initialization for SSL
                 subscriberPaymentInit()
@@ -392,6 +396,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
             val sslNonBlPacks = paymentTypes.ssl?.nonBlPacks
+            val nagadBlPacks = paymentTypes.nagad?.blPacks
+            val nagadNonBlPacks = paymentTypes.nagad?.nonBlPacks
             //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
             val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
             
@@ -408,6 +414,25 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     } else {
                         if (!bKashNonBlPacks.isNullOrEmpty()){
                             packPaymentMethodList.addAll(bKashNonBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_bl_number))
+                        }
+                    }
+                }
+            }
+            else if (paymentName == "nagad"){
+                packPaymentMethodList.clear()
+                if (nagadBlPacks.isNullOrEmpty() && nagadNonBlPacks.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                else {
+                    if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                        if (!nagadBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(nagadBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_non_bl_number))
+                        }
+                    } else {
+                        if (!nagadNonBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(nagadNonBlPacks)
                         } else {
                             showEmptyView(getString(R.string.buy_with_bl_number))
                         }
@@ -692,6 +717,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packDetails = selectedDataPackOption?.packDetails,
                 packPrice = selectedDataPackOption?.packPrice ?: 0,
                 packDuration = selectedDataPackOption?.packDuration ?: 0,
+                clientType = "MOBILE_APP",
+                paymentPurpose = "ECOM_TXN",
+                paymentToken = null,
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
                 cusEmail = mPref.customerEmail
@@ -885,6 +913,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 binding.buyNowButton.show()
             }
             "ssl" -> {
+                binding.buyNowButton.text = getString(R.string.buy_now_ssl)
+                binding.buyNowButton.show()
+            }
+            "nagad" -> {
                 binding.buyNowButton.text = getString(R.string.buy_now_ssl)
                 binding.buyNowButton.show()
             }

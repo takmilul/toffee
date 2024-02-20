@@ -288,6 +288,89 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/nagadPackCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/payment_option_card_bg"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bKashPackCard"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/nagadPackTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:text="@string/pay_by_nagad"
+                    android:textColor="@color/cardTitleColor"
+                    android:textFontWeight="700"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/nagadPackPrice"
+                    app:layout_constraintEnd_toStartOf="@+id/nagadImg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <ImageView
+                    android:id="@+id/nagadImg"
+                    android:layout_width="71dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/pass_brand_image_view"
+                    app:layout_constraintBottom_toBottomOf="@id/nagadPackTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/nagadPackTitle"
+                    app:srcCompat="@drawable/ic_nagad_logo" />
+
+                <TextView
+                    android:id="@+id/nagadPackPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleSecondColor"
+                    android:textSize="12sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@id/nagadPackDetails"
+                    app:layout_constraintEnd_toEndOf="@+id/nagadPackTitle"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/nagadPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/nagadPackTitle"
+                    tools:text="From BDT X, Access Only" />
+
+                <TextView
+                    android:id="@+id/nagadPackDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/for_all_users_text"
+                    android:textColor="@color/light_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/nagadPackTitle"
+                    app:layout_constraintStart_toStartOf="@id/nagadPackTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/nagadPackPrice"
+                    app:layout_goneMarginTop="8dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/SslPackCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -297,7 +380,7 @@
             app:cardElevation="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bKashPackCard"
+            app:layout_constraintTop_toBottomOf="@+id/nagadPackCard"
             tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout

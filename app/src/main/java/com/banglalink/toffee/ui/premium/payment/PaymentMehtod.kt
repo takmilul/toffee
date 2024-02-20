@@ -6,4 +6,5 @@ enum class PaymentMethod(val value: Int) {
     VOUCHER(12),
     TRIAL(0),
     SSL(13),
+    NAGAD(9),
 }

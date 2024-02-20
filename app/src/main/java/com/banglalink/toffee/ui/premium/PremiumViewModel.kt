@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.AddTokenizedAccountInitService
 import com.banglalink.toffee.apiservice.DataPackPurchaseService
 import com.banglalink.toffee.apiservice.MnpStatusService
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
@@ -18,6 +19,7 @@ import com.banglalink.toffee.apiservice.RemoveTokenizeAccountApiService
 import com.banglalink.toffee.apiservice.SubscriberPaymentInitService
 import com.banglalink.toffee.apiservice.TokenizedPaymentMethodApiService
 import com.banglalink.toffee.apiservice.VoucherService
+import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiRequest
@@ -63,6 +65,7 @@ class PremiumViewModel @Inject constructor(
     private val premiumPackStatusService: PremiumPackStatusService,
     private val rechargeByBkashService: RechargeByBkashService,
     private val subscriberPaymentInitService: SubscriberPaymentInitService,
+    private val addTokenizedAccountInitService: AddTokenizedAccountInitService,
     private val sendPaymentLogFromDeviceEvent: SendPaymentLogFromDeviceEvent,
     private val premiumPackSubHistoryService: PremiumPackSubHistoryService,
     private val voucherService: VoucherService,
@@ -115,6 +118,7 @@ class PremiumViewModel @Inject constructor(
     
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     val subscriberPaymentInitLiveData = SingleLiveEvent<Resource<SubscriberPaymentInitBean?>>()
+    val addTokenizedAccountInitLiveData = SingleLiveEvent<Resource<SubscriberPaymentInitBean?>>()
     val premiumPackSubHistoryLiveData = SingleLiveEvent<Resource<SubHistoryResponseBean?>>()
     val clickedOnSubHistory = MutableLiveData<Boolean>()
     val clickedOnPackList = MutableLiveData<Boolean>()
@@ -230,6 +234,13 @@ class PremiumViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { subscriberPaymentInitService.execute(paymentType, subscriberPaymentInitRequest) }
             subscriberPaymentInitLiveData.value = response
+        }
+    }
+
+    fun getAddTokenizedAccountInit(paymentType: String, addTokenizedAccountInitRequest: AddTokenizedAccountInitRequest) {
+        viewModelScope.launch {
+            val response = resultFromResponse { addTokenizedAccountInitService.execute(paymentType, addTokenizedAccountInitRequest) }
+            addTokenizedAccountInitLiveData.value = response
         }
     }
     
