@@ -491,7 +491,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         "nagadAddAccount" -> {
                                             when (statusCode) {
                                                 "200" -> {
-                                                    requireContext().showToast(statusMessage)
+                                                    requireContext().showToast("Payment method added successfully!")
                                                     mPref.isManagePaymentPageReloaded.value = true
                                                     dialog?.dismiss()
                                                 }
