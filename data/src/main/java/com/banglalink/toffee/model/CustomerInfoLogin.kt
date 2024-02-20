@@ -213,6 +213,8 @@ data class CustomerInfoLogin(
     val bkashApiRetryingDuration : Long? = 0L,
     @SerializedName("is_prepaid")
     val isPrepaid : Boolean?,
+    @SerializedName("isQrCodeEnable")
+    val isQrCodeEnable: Int = 0,
     @SerializedName("isMnpCallForSubscription")
     val isMnpCallForSubscription : Boolean?,
     @SerializedName("faqUrl")

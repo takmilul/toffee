@@ -852,6 +852,15 @@ class HomeActivity : PlayerPageActivity(),
                 val subMenu = findItem(R.id.ic_menu_internet_packs)
                 subMenu?.isVisible = false
             }
+
+            if (mPref.isQrCodeEnable) {
+                val subMenu = findItem(R.id.menu_active_tv)
+                subMenu?.isVisible = true
+            }else{
+                val subMenu = findItem(R.id.menu_active_tv)
+                subMenu?.isVisible = false
+            }
+
             binding.sideNavigation.getHeaderView(0).findViewById<LinearLayout>(R.id.menu_toffee_premium).isVisible = mPref.isSubscriptionActive
             findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
             findItem(R.id.menu_login).isVisible = !mPref.isVerifiedUser
@@ -905,7 +914,7 @@ class HomeActivity : PlayerPageActivity(),
     private fun setupNavController() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
-        
+
         appbarConfig = AppBarConfiguration(
             setOf(
                 R.id.menu_feed,

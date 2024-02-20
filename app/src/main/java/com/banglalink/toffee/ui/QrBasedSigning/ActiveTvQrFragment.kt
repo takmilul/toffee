@@ -264,7 +264,8 @@ class ActiveTvQrFragment : BaseFragment() {
             }
         })
 
-        binding.pairWithTv.setOnClickListener {
+        binding.pairWithTv.setOnClickListener{
+
             val input1 = binding.etCode1.text.toString()
             val input2 = binding.etCode2.text.toString()
             val input3 = binding.etCode3.text.toString()
@@ -272,10 +273,19 @@ class ActiveTvQrFragment : BaseFragment() {
             val input5 = binding.etCode5.text.toString()
             val input6 = binding.etCode6.text.toString()
 
+        if (input1.isEmpty()||input1.isEmpty()||input1.isEmpty()||
+            input1.isEmpty()||input1.isEmpty()||input1.isEmpty()){
+
+            binding.wrongCode.visibility=View.VISIBLE
+
+        }else{
+            binding.wrongCode.visibility=View.GONE
             qrCodeNumber = "$input1$input2$input3$input4$input5$input6"
 
             viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
             observeSignInStatus()
+        }
+            binding.pairWithTv.hideKeyboard()
         }
 //        observeSignInStatus()
     }
