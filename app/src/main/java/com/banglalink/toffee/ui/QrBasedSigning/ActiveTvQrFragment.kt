@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.text.toUpperCase
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -42,6 +44,9 @@ class ActiveTvQrFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.title = "Sign into TV"
+        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
         qrCodeNumber = arguments?.getString("code")
 
         /**
@@ -68,11 +73,11 @@ class ActiveTvQrFragment : BaseFragment() {
                  * and dont nedd to auto navigate to next page
                  */
 
-                if (mPref.qrSignInResponseCode.value!="2"){
+//                if (mPref.qrSignInResponseCode.value!="2"){
                     progressDialog.show()
                     observeSignInStatus()
                     viewModel.getSubscriberPaymentInit(mPref.qrSignInStatus.value !!)
-                }
+//                }
 
                 binding.enterCodeView.visibility = View.GONE
                 binding.activeWithQrView.visibility = View.VISIBLE
@@ -94,6 +99,7 @@ class ActiveTvQrFragment : BaseFragment() {
 
         binding.etCode1.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -107,6 +113,7 @@ class ActiveTvQrFragment : BaseFragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
+
                     if (it.length > 1) {
                         if (binding.etCode1.selectionStart == 2) {
                             binding.etCode1.setText(it.get(it.length - 1).toString())
@@ -264,6 +271,10 @@ class ActiveTvQrFragment : BaseFragment() {
             }
         })
 
+
+
+
+
         binding.pairWithTv.setOnClickListener{
 
             val input1 = binding.etCode1.text.toString()
@@ -288,6 +299,11 @@ class ActiveTvQrFragment : BaseFragment() {
             binding.pairWithTv.hideKeyboard()
         }
 //        observeSignInStatus()
+
+        toolbar?.setNavigationOnClickListener {
+
+            activity?.onBackPressed()
+        }
     }
 
     fun observeSignInStatus() {
@@ -297,12 +313,21 @@ class ActiveTvQrFragment : BaseFragment() {
          */
 
         observe(viewModel.qrSignInStatus) { responseCode ->
-
+            Log.d("TAG", "observeSignInStatus: "+responseCode)
             if (responseCode.equals(0)) {
+
+                if (mPref.qrSignInStatus.value=="0"){
+
                     progressDialog.dismiss()
                     binding.activeWithQrView.visibility = View.GONE
                     binding.enterCodeView.visibility = View.VISIBLE
                     binding.wrongCode.visibility = View.VISIBLE
+                }else{
+                    progressDialog.dismiss()
+                    mPref.qrSignInResponseCode.value="0"
+                    findNavController().navigateTo(R.id.Qr_code_res)
+                }
+
 
             } else if (responseCode.equals(1)) {
 //                    val bundle = Bundle()
@@ -314,9 +339,18 @@ class ActiveTvQrFragment : BaseFragment() {
             } else if (responseCode.equals(2)) {
 //                    val bundle = Bundle()
 //                    bundle.putString("responseCode", "2")
+                if (mPref.qrSignInStatus.value=="0"){
+
+                    progressDialog.dismiss()
+                    binding.activeWithQrView.visibility = View.GONE
+                    binding.enterCodeView.visibility = View.VISIBLE
+                    binding.wrongCode.visibility = View.VISIBLE
+                }else{
                     progressDialog.dismiss()
                     mPref.qrSignInResponseCode.value="2"
                     findNavController().navigateTo(R.id.Qr_code_res)
+                }
+
 
             } else {
 
