@@ -22,8 +22,6 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.*
-import com.banglalink.toffee.data.network.response.PackPaymentMethod
-import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -60,7 +58,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var title: String? = null
     private var htmlUrl: String? = null
     private var paymentId: String? = null
-    private var paymentTypeFromDataPackOptionsFragment: String? = null
+    private var paymentTypeFromAddAccount: String? = null
     private var paymentType: String? = null
     private var callBackStatus: String? = null
     private var statusCode: String? = null
@@ -98,7 +96,7 @@ class PaymentWebViewDialog : DialogFragment() {
         MedalliaDigital.disableIntercept()
 
         paymentId = arguments?.getString("paymentId")
-        paymentTypeFromDataPackOptionsFragment = arguments?.getString("paymentType")
+        paymentTypeFromAddAccount = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
         htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
@@ -395,6 +393,115 @@ class PaymentWebViewDialog : DialogFragment() {
                                                 }
                                             }
                                         }
+
+                                        //nagad
+
+
+
+                                        "nagad" -> {
+                                            when (statusCode) {
+                                                "200" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "nagad",
+                                                            "type" to "wallet",
+                                                            "reason" to "N/A",
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
+                                                    // If statusCode is 200, create args with status code 200 and navigate
+                                                    val args = bundleOf(ARG_STATUS_CODE to 200)
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                                "277" -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "nagad",
+                                                            "type" to "wallet",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
+                                                    // If statusCode is 277, create args with status code -2 and the status message
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -2,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
+
+                                                else -> {
+                                                    val MNO = when {
+                                                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                        else -> "N/A"
+                                                    }
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_ERROR,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "nagad",
+                                                            "type" to "wallet",
+                                                            "reason" to statusMessage,
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
+                                                    // For any other statusCode, use the default args and navigate
+                                                    val args = bundleOf(
+                                                        ARG_STATUS_CODE to -2,
+                                                        ARG_STATUS_MESSAGE to statusMessage
+                                                    )
+                                                    navigateToStatusDialogPage(args)
+                                                }
+                                            }
+                                        }
+
+                                        "nagadAddAccount" -> {
+                                            when (statusCode) {
+                                                "200" -> {
+                                                    requireContext().showToast(statusMessage)
+                                                    mPref.isManagePaymentPageReloaded.value = true
+                                                    dialog?.dismiss()
+                                                }
+                                                else -> {
+                                                    requireContext().showToast(statusMessage)
+                                                    dialog?.dismiss()
+                                                }
+                                            }
+                                        }
+
                                         else -> {}
                                     }
                                 }
@@ -499,7 +606,7 @@ class PaymentWebViewDialog : DialogFragment() {
                             }
 
                             // Handle failure or cancellation callbacks for bKask or SSL
-                            (callBackStatus == "failure" || callBackStatus == "cancel") -> {
+                            (callBackStatus == "failure" || callBackStatus == "cancel" || callBackStatus == "aborted") -> {
                                 progressDialog.dismiss()
 
                                 //Send Log to the Pub/Sub
@@ -577,6 +684,17 @@ class PaymentWebViewDialog : DialogFragment() {
                                             ARG_STATUS_MESSAGE to statusMessage
                                         )
                                         navigateToStatusDialogPage(args)
+                                    }
+                                    paymentType == "nagad" && statusCode != "200" -> {
+                                        val args = bundleOf(
+                                            ARG_STATUS_CODE to -4,
+                                            ARG_STATUS_MESSAGE to statusMessage
+                                        )
+                                        navigateToStatusDialogPage(args)
+                                    }
+                                    paymentType == "nagadAddAccount" && statusCode != "200" -> {
+                                        requireContext().showToast(statusMessage)
+                                        dialog?.dismiss()
                                     }
                                     else -> {}
                                 }

@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -63,10 +64,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val isManagePaymentPageReloaded = MutableLiveData<Boolean>()
     val shouldReloadAfterLogin = MutableLiveData<Boolean>()
     val shouldIgnoreReloadAfterLogout = MutableLiveData<Boolean>()
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
+    val tokenizedAccountInfoList = MutableLiveData<List<TokenizedAccountInfo>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
     val refreshRequiredForClickableAd = SingleLiveEvent<Boolean?>()
     val clickedFromChannelItem = SingleLiveEvent<Boolean?>()

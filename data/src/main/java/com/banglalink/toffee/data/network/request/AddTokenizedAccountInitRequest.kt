@@ -3,7 +3,7 @@ package com.banglalink.toffee.data.network.request
 import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
-data class SubscriberPaymentInitRequest(
+data class AddTokenizedAccountInitRequest(
     @SerializedName("customerId")
     val customerId: Int? = null,
     @SerializedName("password")
@@ -40,4 +40,4 @@ data class SubscriberPaymentInitRequest(
     val geoLocation: String? = null,
     @SerializedName("cus_email")
     val cusEmail: String? = null
-) : BaseRequest(ApiNames.SUBSCRIBER_PAYMENT_INIT)
+) : BaseRequest(ApiNames.SUBSCRIBER_ADD_TOKENIZED_ACCOUNT_INIT)

@@ -84,11 +84,13 @@ object ApiNames {
     const val DATA_PACK_PURCHASE = "dataPackPurchase"
     const val RECHARGE_BY_BKASH = "rechargeInitialized"
     const val SUBSCRIBER_PAYMENT_INIT = "subscriberPaymentInit"
+    const val SUBSCRIBER_ADD_TOKENIZED_ACCOUNT_INIT = "tokenizedAccountAddInit"
     const val MNP_STATUS = "mnpStatus"
     const val PREMIUM_PACK_SUBSCRIPTION_HISTORY = "premiumPackSubscriptionHistory"
     const val GET_FM_RADIO_CONTENTS = "getFmRadioContents"
     const val CHECK_VOUCHER_STATUS = "checkVoucherStatus"
     const val PAIR_WITH_TV = "devicePair"
     const val TOKENIZED_PAYMENT_METHODS = "getTokenizedPaymentManageMethods"
+    const val TOKENIZED_ACCOUNT_INFO = "getTokenizedAccountInfo"
     const val REMOVE_TOKENIZE_ACCOUNT = "removeTokenizedAccount"
 }

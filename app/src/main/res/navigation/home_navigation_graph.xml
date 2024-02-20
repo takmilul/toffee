@@ -57,6 +57,18 @@
         android:label="backToffeeBottomSheetFragment"
         tools:layout="@layout/bottom_sheet_back_toffee">
     </dialog>
+
+    <dialog
+        android:id="@+id/paymentWebViewDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentWebViewDialog"
+        tools:layout="@layout/dialog_html_page_view">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </dialog>
     
     <fragment
         android:id="@+id/menu_favorites"
