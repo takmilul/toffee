@@ -207,7 +207,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     
     @BindingAdapter("bindButtonState")
     fun bindButtonState(view: Button, isPressed: Boolean) {
-        view.isPressed = isPressed
+        view.isPressed = isPressed && mPref.isVerifiedUser
     }
     
     @BindingAdapter(value = ["bindSubscriptionStatus", "channelOwnerId"], requireAll = false)
