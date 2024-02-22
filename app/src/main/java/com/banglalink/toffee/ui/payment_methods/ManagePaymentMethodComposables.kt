@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.payment_methods
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,7 +19,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +34,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.navigation.NavController
 import com.banglalink.toffee.ui.compose_theme.CardBgColor
 import com.banglalink.toffee.ui.compose_theme.CardBgColorDark
@@ -142,11 +140,18 @@ fun SavedPaymentMethods(
         val removeResponse = viewModel.removeTokenizeAccountResponse.observeAsState()
 
         Dialog(
-            onDismissRequest = { openDialog = false },
-            properties = DialogProperties(
-                dismissOnClickOutside = false,
-                dismissOnBackPress = false,
-            )
+            onDismissRequest = {
+                openDialog = false
+                removeResponse.value?.status?.let {
+                    viewModel.getTokenizedPaymentMethods(
+                        TokenizedPaymentMethodsApiRequest(
+                            customerId = mPref.customerId,
+                            password = mPref.password
+                        )
+                    )
+                    viewModel.removeTokenizeAccountResponse.value = null
+                }
+            },
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
@@ -550,5 +555,115 @@ fun RemoveAccountFailureCard(
             )
         }
 
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+fun SaveAccountFailureDialog(
+    onTryAgainClick: () -> Unit? = {}
+) {
+    var openDialog by remember {
+        mutableStateOf(true)
+    }
+
+    if (openDialog){
+        Dialog(
+            onDismissRequest = { openDialog = false },
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = false,
+            )
+        ) {
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                backgroundColor = if (isSystemInDarkTheme()) {
+                    CardBgColorDark
+                } else {
+                    CardBgColor
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(13.dp)
+                            .clickable {
+                                openDialog = false
+                            },
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = "",
+                        tint = if (isSystemInDarkTheme()) {
+                            MainTextColorDark
+                        } else {
+                            MainTextColor
+                        }
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 32.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Image(
+                        modifier = Modifier
+                            .width(88.dp)
+                            .height(88.dp),
+                        painter = painterResource(id = R.drawable.ic_purchase_warning),
+                        contentDescription = ""
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = "Failed to Save Nagad Account",
+                        fontSize = 20.sp,
+                        fontFamily = Fonts.roboto,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = if (isSystemInDarkTheme()) CardTitleColorDark else CardTitleColor
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        text = "Your Nagad account could not be saved due to a technical error. Please try again.",
+                        fontSize = 14.sp,
+                        fontFamily = Fonts.roboto,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                        color = if (isSystemInDarkTheme()) {
+                            MainTextColorDark
+                        } else {
+                            MainTextColor
+                        }
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        PinkFilledButton(
+                            modifier = Modifier.padding(start = 16.dp),
+                            text = "TRY AGAIN",
+                            onClick = {
+                                openDialog = false
+                                onTryAgainClick.invoke()
+                            }
+                        )
+                    }
+
+                }
+            }
+        }
     }
 }

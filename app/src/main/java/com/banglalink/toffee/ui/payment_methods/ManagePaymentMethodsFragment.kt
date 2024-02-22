@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
@@ -43,7 +43,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
     private var transactionIdentifier: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
-    private val viewModel by viewModels<PremiumViewModel>()
+    private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
 
 
@@ -75,6 +75,18 @@ class ManagePaymentMethodsFragment : BaseFragment() {
         })
         val data = viewModel.tokenizedPaymentMethodsResponseCompose.observeAsState()
         val isApiResponded = viewModel.isTokenizedPaymentMethodApiRespond.observeAsState()
+        val isFailedAddingAccount = viewModel.isTokenizedAccountInitFailed.observeAsState()
+
+        isFailedAddingAccount.value?.let {
+            if (it) {
+                SaveAccountFailureDialog {
+                    data.value?.nagadBean?.paymentMethodId.let {id->
+                        paymentMethodId = id
+                        addTokenizedAccountInit(paymentMethodId)
+                    }
+                }
+            }
+        }
 
         isApiResponded.value?.let {
             Column(
@@ -100,13 +112,13 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                                 progressDialog = progressDialog,
                                 navController = navController,
                                 nagadPaymentInit = {
-                                    paymentMethodId = data.value!!.nagadBean?.paymentMethodId
+                                    paymentMethodId = nagadAccountInfo.paymentMethodId
                                     addTokenizedAccountInit(paymentMethodId)
                                 }
                             )
                         } ?: run {// No saved account found, Showing Add account section
                             AddPaymentMethods {
-                                paymentMethodId = data.value!!.nagadBean?.paymentMethodId
+                                paymentMethodId = nagadBean.paymentMethodId
                                 addTokenizedAccountInit(paymentMethodId)
                             }
                         }
@@ -169,7 +181,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             return@observe
                         }
                         val args = bundleOf(
-                            "myTitle" to "Pack Details",
+                            "myTitle" to "Manage Payment Methods",
                             "url" to it.webViewUrl,
                             "paymentType" to "nagadAddAccount",
                             "isHideBackIcon" to false,

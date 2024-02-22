@@ -133,6 +133,7 @@ class PremiumViewModel @Inject constructor(
 
     val tokenizedPaymentMethodsResponseCompose = MutableLiveData<TokenizedPaymentMethodsApiResponse?>()
     val isTokenizedPaymentMethodApiRespond = MutableLiveData<Boolean?>(null)
+    val isTokenizedAccountInitFailed = MutableLiveData<Boolean?>(null)
     val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
     val removeTokenizeAccountResponse = MutableLiveData<RemoveTokenizeAccountApiResponse?>()
 
