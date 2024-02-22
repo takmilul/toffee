@@ -193,6 +193,15 @@ fun SavedPaymentMethods(
                         RemoveAccountSuccessfulCard(
                             onAddAccountClick = {
                                 openDialog = false
+                                removeResponse.value?.status?.let {
+                                    viewModel.getTokenizedPaymentMethods(
+                                        TokenizedPaymentMethodsApiRequest(
+                                            customerId = mPref.customerId,
+                                            password = mPref.password
+                                        )
+                                    )
+                                    viewModel.removeTokenizeAccountResponse.value = null
+                                }
                                 nagadPaymentInit.invoke()
                             },
                             onCancelClick = {
