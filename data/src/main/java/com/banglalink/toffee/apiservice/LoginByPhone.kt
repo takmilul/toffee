@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import android.util.Log
 import com.banglalink.toffee.data.network.request.LoginByPhoneRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
@@ -23,6 +24,7 @@ class LoginByPhone @Inject constructor(private val preference: SessionPreference
         /*if (response.response.authorize) {
             preference.phoneNumber = phoneNumber
         }*/
+        preference.newUser.value = response.response.userType
         return response.response.regSessionToken
     }
 }

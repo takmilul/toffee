@@ -15,6 +15,8 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
 import com.banglalink.toffee.extension.checkVerification
@@ -48,6 +50,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private var paymentName: String? = null
     private var pressedButtonName = ""
     private var transactionIdentifier: String? = null
+    private var paymentToken: String? = null
+    private var walletNumber: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
     private var ctaButtonValue = 0
@@ -262,6 +266,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 // Initiate the Subscriber Payment Initialization for bKash
                 subscriberPaymentInit()
             }
+            "nagad" -> {
+                // Initiate the Subscriber Payment Initialization for Nagad
+                observeTokenizedPaymentMethodsApi()
+                tokenizedPaymentMethodsApi()
+            }
             "ssl" -> {
                 // Initiate the Subscriber Payment Initialization for SSL
                 subscriberPaymentInit()
@@ -396,6 +405,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
             val sslNonBlPacks = paymentTypes.ssl?.nonBlPacks
+            val nagadBlPacks = paymentTypes.nagad?.blPacks
+            val nagadNonBlPacks = paymentTypes.nagad?.nonBlPacks
             //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
             val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
             
@@ -412,6 +423,25 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                     } else {
                         if (!bKashNonBlPacks.isNullOrEmpty()){
                             packPaymentMethodList.addAll(bKashNonBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_bl_number))
+                        }
+                    }
+                }
+            }
+            else if (paymentName == "nagad"){
+                packPaymentMethodList.clear()
+                if (nagadBlPacks.isNullOrEmpty() && nagadNonBlPacks.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                else {
+                    if (mPref.isBanglalinkNumber == "true" || (showBlPacks && !mPref.isVerifiedUser)) {
+                        if (!nagadBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(nagadBlPacks)
+                        } else {
+                            showEmptyView(getString(R.string.buy_with_non_bl_number))
+                        }
+                    } else {
+                        if (!nagadNonBlPacks.isNullOrEmpty()){
+                            packPaymentMethodList.addAll(nagadNonBlPacks)
                         } else {
                             showEmptyView(getString(R.string.buy_with_bl_number))
                         }
@@ -696,6 +726,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packDetails = selectedDataPackOption?.packDetails,
                 packPrice = selectedDataPackOption?.packPrice ?: 0,
                 packDuration = selectedDataPackOption?.packDuration ?: 0,
+                clientType = "MOBILE_APP",
+                paymentPurpose = "ECOM_TXN",
+                paymentToken = null,
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
                 cusEmail = mPref.customerEmail
@@ -731,7 +764,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                 paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                 paymentMsisdn = null,
-                                paymentId = if (paymentName == "bkash") transactionIdentifier else null,
+                                paymentId = if (paymentName == "bkash" || paymentName == "nagad") transactionIdentifier else null,
                                 transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
@@ -770,7 +803,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                             paymentMsisdn = null,
-                            paymentId = if (paymentName == "bkash") transactionIdentifier else null,
+                            paymentId = if (paymentName == "bkash" || paymentName == "nagad") transactionIdentifier else null,
                             transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
@@ -868,7 +901,39 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
         }
     }
-    
+
+    private fun tokenizedPaymentMethodsApi() {
+        val paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0
+        val request = TokenizedAccountInfoApiRequest(
+            customerId = mPref.customerId,
+            password = mPref.password
+        )
+        viewModel.getTokenizedAccountInfo(paymentMethodId, request)
+    }
+    private fun observeTokenizedPaymentMethodsApi() {
+        observe(viewModel.tokenizedAccountInfoResponse) {
+            when (it) {
+                is Success -> {
+                    it.data?.firstOrNull()?.let { accountInfo ->
+                        paymentToken = accountInfo.paymentToken
+                        walletNumber = accountInfo.walletNumber
+
+                        val args = bundleOf(
+                            "paymentName" to paymentName,
+                            "paymentToken" to paymentToken,
+                            "walletNumber" to walletNumber
+                        )
+                        findNavController().navigateTo(R.id.savedAccountFragment, args)
+                    } ?: subscriberPaymentInit()
+                }
+
+                is Failure -> {
+                    progressDialog.dismiss() // Dismiss the progress dialog
+                    requireContext().showToast("Something went wrong. Please try again later.")
+                }
+            }
+        }
+    }
     override fun onItemClicked(view: View, item: PackPaymentMethod, position: Int) {
         super.onItemClicked(view, item, position)
         showPaymentOption(item)
@@ -889,6 +954,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 binding.buyNowButton.show()
             }
             "ssl" -> {
+                binding.buyNowButton.text = getString(R.string.buy_now_ssl)
+                binding.buyNowButton.show()
+            }
+            "nagad" -> {
                 binding.buyNowButton.text = getString(R.string.buy_now_ssl)
                 binding.buyNowButton.show()
             }

@@ -519,6 +519,12 @@ interface ToffeeApi {
         @Body subscriberPaymentInitRequest: SubscriberPaymentInitRequest
     ): SubscriberPaymentInitResponse
 
+    @POST("/subscriber/v1/tokenized/account/add/init/{paymentType}")
+    suspend fun getAddTokenizedAccountInit(
+        @Path("paymentType") paymentType: String,
+        @Body addTokenizedAccountInitRequest: AddTokenizedAccountInitRequest
+    ): SubscriberPaymentInitResponse
+
     @POST("/mnp-status")
     suspend fun getMnpStatus(
         @Body mnpStatusRequest: MnpStatusRequest
@@ -543,5 +549,26 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body packVoucherMethodRequest: PackVoucherMethodRequest
     ): VoucherPaymentMethodResponse
+
+
+    @POST("device/pair")
+    suspend fun pairWithTv(@Body pairWithTvRequest: PairWithTvRequest):PairWithTvResponse
+
+    @POST("/tokenized-payment-manage-methods")
+    suspend fun getTokenizedPaymentMethods(
+        @Body body: TokenizedPaymentMethodsApiRequest
+    ): TokenizedPaymentMethodsBaseApiResponse
+
+    @POST("/tokenized-account-info/{paymentMethodId}")
+    suspend fun getTokenizedAccountInfo(
+        @Path("paymentMethodId") paymentMethodId:Int,
+        @Body body: TokenizedAccountInfoApiRequest
+    ): TokenizedAccountInfoApiResponse
+
+    @POST("/remove-tokenized-account/{paymentMethodId}")
+    suspend fun removeTokenizeAccount(
+        @Path("paymentMethodId") paymentMethodId:Int,
+        @Body body: RemoveTokenizedAccountApiRequest
+    ) : RemoveTokenizeAccountApiBaseResponse
 
 }

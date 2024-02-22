@@ -30,6 +30,10 @@
         android:id="@+id/menu_playlist"
         android:name="com.banglalink.toffee.ui.userplaylist.UserPlaylistFragment"
         android:label="Playlists" />
+    <fragment
+        android:id="@+id/menu_manage_payment_methods"
+        android:name="com.banglalink.toffee.ui.payment_methods.ManagePaymentMethodsFragment"
+        android:label="@string/menu_manage_payment_methods" />
     
     <fragment
         android:id="@+id/userPlaylistVideos"
@@ -52,6 +56,18 @@
         android:name="com.banglalink.toffee.ui.home.BackToffeeBottomSheetFragment"
         android:label="backToffeeBottomSheetFragment"
         tools:layout="@layout/bottom_sheet_back_toffee">
+    </dialog>
+
+    <dialog
+        android:id="@+id/paymentWebViewDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentWebViewDialog"
+        tools:layout="@layout/dialog_html_page_view">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
     </dialog>
     
     <fragment
@@ -178,6 +194,11 @@
         <action
             android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
             app:destination="@id/musicDetailsFragmant" />
+
+        <action
+            android:id="@+id/action_menu_feed_to_qr_signIn_tv"
+            app:destination="@id/menu_active_tv"
+            />
     </fragment>
     
     <fragment
@@ -576,7 +597,7 @@
             app:argType="string" />
         <deepLink app:uri="app.toffee://search/{keyword}" />
     </fragment>
-    
+
     <dialog
         android:id="@+id/loginDialog"
         android:name="com.banglalink.toffee.ui.login.LoginFragment"
@@ -643,4 +664,13 @@
         android:id="@+id/audioBookEpisodeList"
         android:name="com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment"
         tools:layout="@layout/fragment_audiobook_playlist" />
+
+    <fragment
+        android:id="@+id/menu_active_tv"
+        android:name="com.banglalink.toffee.ui.QrBasedSigning.ActiveTvQrFragment"
+        tools:layout="@layout/fragment_active_tv_qr" />
+    <fragment
+        android:id="@+id/Qr_code_res"
+        android:name="com.banglalink.toffee.ui.QrBasedSigning.QrCodeReasultFragment"
+        tools:layout="@layout/fragment_qr_code_reasult" />
 </navigation>

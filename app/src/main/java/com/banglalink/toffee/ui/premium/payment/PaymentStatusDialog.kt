@@ -65,6 +65,8 @@ class PaymentStatusDialog : DialogFragment() {
         const val BKASH_PAYMENT_CANCEL_OR_FAILED = -1
         const val SUBSCRIBER_PAYMENT_FAILED = -2
         const val SUBSCRIBER_PAYMENT_RETRY  = -3
+        const val NAGAD_PAYMENT_ABORTED_OR_FAILED = -4
+
 
         const val ARG_STATUS_CODE = "statusCode"
         const val ARG_STATUS_MESSAGE = "statusMessage"
@@ -206,6 +208,14 @@ class PaymentStatusDialog : DialogFragment() {
             BKASH_PAYMENT_CANCEL_OR_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
                 binding.titleMsg.text = getString(R.string.bkash_activation_failed)
+                binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
+                binding.tryAgainBtn.show()
+                binding.callBtn.hide()
+                binding.goToHomePageBtn.show()
+            }
+            NAGAD_PAYMENT_ABORTED_OR_FAILED -> {
+                binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
+                binding.titleMsg.text = getString(R.string.nagad_activation_failed)
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.bkash_technical_issue_occured)
                 binding.tryAgainBtn.show()
                 binding.callBtn.hide()

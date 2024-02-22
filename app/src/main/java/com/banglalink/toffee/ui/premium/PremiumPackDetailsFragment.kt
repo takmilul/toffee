@@ -6,14 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.OptIn
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
@@ -31,19 +36,23 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayout
 
 class PremiumPackDetailsFragment : BaseFragment(){
-    
+
     private var isFreeTrialOver = false
     private var _binding: FragmentPremiumPackDetailsBinding? = null
     val binding get() = _binding!!
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     private var openPlanDetails : Boolean? = false
-//    private var paymentMethod : String? = null
+    private var paymentMethods: PackPaymentMethodBean? = null
+    private var isCheckVerification : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
@@ -60,6 +69,11 @@ class PremiumPackDetailsFragment : BaseFragment(){
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
+//        triggerButtonSheet()
+        if (!checkPackPurchased()){
+            triggerButtonSheet()
+        }
+
 
         /*
          checking pack purchase separately,
@@ -102,39 +116,9 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 payNowButton.isEnabled = false
                 payNowButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled_text_color))
             }
-            
+
             payNowButton.safeClick({
-                //sends firebase event for users viewing payment methods.
-                ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.PACK_ACTIVE, bundleOf(
-                        "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                        "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
-                        "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
-                    )
-                )
-                mPref.signingFromPrem.value = true
-                if (!mPref.isVerifiedUser){
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN_SOURCE,
-                        bundleOf(
-                            "source" to "premium_pack_details",
-                            "method" to "mobile"
-                        )
-                    )
-                }
-                requireActivity().checkVerification {
-                    progressDialog.show()
-                    if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
-                        viewModel.getMnpStatusForPaymentDetail()
-                    } else {
-                        viewModel.selectedPremiumPack.value?.let {
-                            viewModel.getPackStatus(0, it.id)
-                        } ?: run {
-                            progressDialog.hide()
-                            requireContext().showToast(getString(R.string.try_again_message))
-                        }
-                    }
-                }
+                triggerButtonSheet()
             })
         }
 
@@ -168,6 +152,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
         })
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+
+
                 if (isEnabled) {
                     //sends firebase event for users aborting premPack after looking at contents.
                     ToffeeAnalytics.toffeeLogEvent(
@@ -179,6 +165,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                             "action" to "goes back"
                         )
                     )
+                    findNavController().popBackStack()
 
                     isEnabled = false
                     requireActivity().onBackPressed()
@@ -244,7 +231,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
         }
         viewModel.getPremiumPackList("0")
     }
-    
+
     private fun observeMnpStatus() {
         observe(viewModel.mnpStatusLiveDataForPaymentDetail) { response ->
             when (response) {
@@ -265,7 +252,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
     private fun observePackStatus() {
         observe(viewModel.activePackListLiveData) {
             when(it) {
@@ -291,7 +278,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
     /**
      * Observes the pack status after a subscriber's payment is successfully processed.
      * This function updates the active premium pack list, checks for pack purchases, and navigates
@@ -336,7 +323,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
             viewModel.getPackStatusAfterSubscriberPayment(0, it.id)
         }
     }
-    
+
     private fun checkPackPurchased(): Boolean {
         return viewModel.selectedPremiumPack.value?.let { selectedPack ->
             mPref.activePremiumPackList.value?.getPurchasedPack(
@@ -360,16 +347,17 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         } ?: false
     }
-    
+
     private fun observePaymentMethodList() {
         observe(viewModel.paymentMethodState) {
             progressDialog.dismiss()
             when(it) {
                 is Success -> {
-                    viewModel.paymentMethod.value = it.data
+                    paymentMethods = it.data
+                    viewModel.paymentMethod.value = paymentMethods
                     findNavController().navigateTo(
                         resId = R.id.bottomSheetPaymentMethods,
-                        args = bundleOf("paymentMethods" to it.data)
+                        args = bundleOf("paymentMethods" to paymentMethods)
                     )
                 }
                 is Failure -> {
@@ -378,7 +366,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
+
     private fun observePremiumPackDetail() {
         observe(viewModel.packDetailState) { response ->
             when (response) {
@@ -412,7 +401,43 @@ class PremiumPackDetailsFragment : BaseFragment(){
             }
         }
     }
-    
+
+    private fun triggerButtonSheet(){
+
+        //sends firebase event for users viewing payment methods.
+        ToffeeAnalytics.toffeeLogEvent(
+            ToffeeEvents.PACK_ACTIVE, bundleOf(
+                "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
+                "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
+            )
+        )
+        mPref.signingFromPrem.value = true
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "premium_pack_details",
+                    "method" to "mobile"
+                )
+            )
+        }
+        requireActivity().checkVerification {
+            progressDialog.show()
+            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                viewModel.getMnpStatusForPaymentDetail()
+            } else {
+                viewModel.selectedPremiumPack.value?.let {
+                    viewModel.getPackStatus(0, it.id)
+                } ?: run {
+                    progressDialog.hide()
+                    requireContext().showToast(getString(R.string.try_again_message))
+                }
+            }
+        }
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()

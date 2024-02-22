@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -204,6 +205,22 @@ class DrawerHelper(
                     )
                 )
             }
+
+            R.id.menu_active_tv -> {
+
+                activity.checkVerification {
+
+                    val bundle = Bundle()
+                    bundle.putString("code", "0")
+
+                    activity.getNavController().navigateTo(R.id.menu_active_tv,bundle)
+                    binding.drawerLayout.closeDrawers()
+
+                }
+                binding.drawerLayout.closeDrawers()
+                return true
+            }
+
             R.id.menu_logout -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_log_out)))
                 ToffeeAnalytics.toffeeLogEvent(

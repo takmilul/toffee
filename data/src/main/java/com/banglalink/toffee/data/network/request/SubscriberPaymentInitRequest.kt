@@ -30,6 +30,12 @@ data class SubscriberPaymentInitRequest(
     val packPrice: Int? = null,
     @SerialName("pack_duration")
     val packDuration: Int? = null,
+    @SerialName("client_type")
+    val clientType: String? = null,
+    @SerialName("payment_purpose")
+    val paymentPurpose: String? = null,
+    @SerialName("payment_token")
+    val paymentToken: String? = null,
     @SerialName("geo_city")
     val geoCity: String? = null,
     @SerialName("geo_location")

@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.banglalink.toffee.data.network.response.BodyResponse
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import kotlinx.serialization.SerialName
@@ -219,6 +220,8 @@ data class CustomerInfoLogin(
     val isMnpCallForSubscription : Boolean? = false,
     @SerialName("faqUrl")
     val faqUrl : String? = null,
+    @SerialName("isQrCodeEnable")
+    val isQrCodeEnable: Int = 0,
 ) : BodyResponse(), Parcelable
 
 @Entity

@@ -10,6 +10,7 @@
     <color name="fab_icon_bg">#111F31</color>
     <color name="editTextBg">#29466B</color>
     <color name="title_color">#FFFFFF</color>
+    <color name="otp_text_clr">#F2F2F2</color>
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
     <color name="bottom_navbar_disabled_color">#829AB8</color>

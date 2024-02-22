@@ -207,6 +207,24 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
 
 
                 /**
+                 * This code determines the starting price for Nagad payment packages based on user preferences and available data.
+                 * It calculates the starting price differently for Banglalink and non-Banglalink users,
+                 * sets the corresponding text view, and controls the visibility of the Nagad payment package card based on availability.
+                 */
+
+                val nagadStartingPrice = if (mPref.isBanglalinkNumber == "true") {
+                    paymentTypes.nagad?.blPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                } else {
+                    paymentTypes.nagad?.nonBlPacks?.minOfOrNull { it.packPrice ?: 0 } ?: 0
+                }
+
+                nagadPackPrice.text = String.format(getString(R.string.starting_price_ssl), nagadStartingPrice)
+                nagadPackPrice.isVisible = nagadStartingPrice > 0
+
+                val isNagadAvailable = paymentTypes.nagad != null && (mPref.isBanglalinkNumber == "true" && !paymentTypes.nagad?.blPacks.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !paymentTypes.nagad?.nonBlPacks.isNullOrEmpty())
+                nagadPackCard.isVisible = isNagadAvailable
+
+                /**
                  * These click handlers navigate to specific fragments based on the selected payment card.
                  */
 
@@ -224,6 +242,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                             findNavController().navigatePopUpTo(
                                 resId = R.id.paymentDataPackOptionsFragment,
                                 args = bundleOf("paymentName" to "bkash")
+                            )
+                        }
+                        PaymentMethod.NAGAD.value -> {
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.paymentDataPackOptionsFragment,
+                                args = bundleOf("paymentName" to "nagad")
                             )
                         }
                         PaymentMethod.BL_PACK.value -> {
@@ -279,6 +303,25 @@ class PaymentMethodOptionsFragment : ChildDialogFragment() {
                                 "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
                                 "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                 "provider" to "bKash",
+                                "type" to "wallet",
+                                "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
+                                "subtype" to subType,
+                            )
+                        )
+                    })
+
+                    nagadPackCard.safeClick({
+                        findNavController().navigateTo(
+                            R.id.paymentDataPackOptionsFragment,
+                            bundleOf("paymentName" to "nagad")
+                        )
+                        //Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.PAYMENT_SELECTED,
+                            bundleOf(
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "provider" to "nagad",
                                 "type" to "wallet",
                                 "MNO" to if ((mPref.isBanglalinkNumber).toBoolean()) "BL" else "non-BL",
                                 "subtype" to subType,

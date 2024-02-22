@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -63,10 +64,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val isManagePaymentPageReloaded = MutableLiveData<Boolean>()
     val shouldReloadAfterLogin = MutableLiveData<Boolean>()
     val shouldIgnoreReloadAfterLogout = MutableLiveData<Boolean>()
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
+    val tokenizedAccountInfoList = MutableLiveData<List<TokenizedAccountInfo>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
     val refreshRequiredForClickableAd = SingleLiveEvent<Boolean?>()
     val clickedFromChannelItem = SingleLiveEvent<Boolean?>()
@@ -75,7 +78,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val signingFromPrem = SingleLiveEvent<Boolean?>()
     val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
     var isDisablePip = MutableLiveData<Boolean>().apply { value = false } // when going outside of the app by using a toffee deeplink, disable pip to solve the player blackout issue
-    
+    val newUser = SingleLiveEvent<String>()
+    var qrSignInStatus = MutableLiveData<String>()
+    var qrSignInResponseCode = MutableLiveData<String>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
@@ -148,7 +154,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(isVerified) {
             pref.edit().putBoolean(PREF_VERIFICATION, isVerified).apply()
         }
-    
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
         set(balance) {
@@ -786,6 +791,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isPrepaid: Boolean
         get() = pref.getBoolean(PREF_IS_PREPAID, true)
         set(value) = pref.edit { putBoolean(PREF_IS_PREPAID, value) }
+
+    var isQrCodeEnable: Boolean
+        get() = pref.getBoolean(PREF_IS_QR_CODE_ENABLE, true)
+        set(value) = pref.edit { putBoolean(PREF_IS_QR_CODE_ENABLE, value) }
     
     var bkashExecuteUrl: String
         get() = pref.getString(PREF_BKASH_EXECUTE_URL, "") ?: ""
@@ -943,6 +952,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
             isPrepaid = it.isPrepaid ?: true
+            isQrCodeEnable = it.isQrCodeEnable == 1
+
             isMnpCallForSubscription = it.isMnpCallForSubscription ?: false
             faqUrl = it.faqUrl ?: ""
 
@@ -1101,6 +1112,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BKASH_API_RETRYING_COUNT = "pref_bkash_api_retrying_count"
         private const val PREF_BKASH_API_RETRYING_DURATION = "pref_bkash_api_retrying_duration"
         private const val PREF_IS_PREPAID = "pref_is_prepaid"
+        private const val PREF_IS_QR_CODE_ENABLE = "pref_is_Qr_Code_Enable"
         private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
         private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
         private const val PREF_FAQ_URL = "pref_faq_url"

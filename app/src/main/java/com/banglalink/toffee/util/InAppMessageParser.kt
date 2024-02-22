@@ -182,6 +182,19 @@ class InAppMessageParser @Inject constructor(
                     "kabbik" -> {
                         return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
                     }
+                    "tvsignin" -> {
+                        val code = link.getQueryParameter("code")
+                        code?.let {
+                            return RouteV2(
+                                R.id.menu_active_tv,
+                                "Activate Tv",
+                                bundleOf(
+                                    "code" to it,
+                                ),
+                                navOptions
+                            )
+                        }
+                    }
                     else -> null
                 }
             }

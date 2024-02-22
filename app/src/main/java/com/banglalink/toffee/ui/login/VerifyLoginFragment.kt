@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,12 +110,19 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     mPref.lastLoginDateTime =  System.currentTimeMillis().toFormattedDate()
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
-                    if (cPref.isUserInterestSubmitted(phoneNumber)) {
+
+                    if (mPref.newUser.value.equals("Old User")){
                         closeDialog()
                     }
-                    else {
+                    else{
                         findNavController().navigate(R.id.userInterestFragment)
                     }
+//                    if (cPref.isUserInterestSubmitted(phoneNumber)) {
+//                        closeDialog()
+//                    }
+//                    else {
+//                        findNavController().navigate(R.id.userInterestFragment)
+//                    }
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)

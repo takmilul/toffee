@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.network.response
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import kotlinx.serialization.SerialName
@@ -31,6 +32,8 @@ data class PackPaymentMethodBean(
     val Voucher: @RawValue List<PackPaymentMethod>? = null,
     @SerialName("SSL")
     val ssl: SSL? = null,
+    @SerializedName("NAGAD")
+    val nagad: NAGAD? = null,
 ) : Parcelable
 
 @Parcelize
@@ -47,6 +50,15 @@ data class Bkash(
 @Parcelize
 @Serializable
 data class SSL(
+    @SerialName("BL")
+    val blPacks: List<PackPaymentMethod>? = null,
+    @SerialName("NON_BL")
+    val nonBlPacks: List<PackPaymentMethod>? = null,
+) : Parcelable
+
+@Parcelize
+@Serializable
+data class NAGAD(
     @SerialName("BL")
     val blPacks: List<PackPaymentMethod>? = null,
     @SerialName("NON_BL")
