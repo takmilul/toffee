@@ -19,6 +19,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.banglalink.toffee.ui.compose_theme.CardBgColor
 import com.banglalink.toffee.ui.compose_theme.CardBgColorDark
@@ -58,6 +61,7 @@ import com.banglalink.toffee.ui.compose_theme.RedFilledButton
 import com.banglalink.toffee.ui.compose_theme.ColorAccent2
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import timber.log.Timber
 
 @Composable
 fun AddPaymentMethods(
@@ -227,25 +231,25 @@ fun SavedPaymentMethods(
 
                     false -> {
                         RemoveAccountFailureCard(
-                            onTryAgainClick = {
-                                progressDialog.show()
-                                nagadAccountInfo.paymentMethodId?.let {
-                                    viewModel.removeTokenizeAccount(
-                                        paymentMethodId = it,
-                                        body = RemoveTokenizedAccountApiRequest(
-                                            customerId = mPref.customerId,
-                                            password = mPref.password,
-                                            isPrepaid = if (mPref.isPrepaid) 1 else 0,
-                                            clientType = "MOBILE_APP",
-                                            walletNumber = nagadAccountInfo.walletNumber,
-                                            paymentToken = nagadAccountInfo.paymentToken,
-                                            paymentCusId = nagadAccountInfo.paymentCusId,
-                                        ),
-                                        onFailure = { progressDialog.dismiss() },
-                                        onSuccess = { progressDialog.dismiss() }
-                                    )
-                                }
-                            }
+//                            onTryAgainClick = {
+//                                progressDialog.show()
+//                                nagadAccountInfo.paymentMethodId?.let {
+//                                    viewModel.removeTokenizeAccount(
+//                                        paymentMethodId = it,
+//                                        body = RemoveTokenizedAccountApiRequest(
+//                                            customerId = mPref.customerId,
+//                                            password = mPref.password,
+//                                            isPrepaid = if (mPref.isPrepaid) 1 else 0,
+//                                            clientType = "MOBILE_APP",
+//                                            walletNumber = nagadAccountInfo.walletNumber,
+//                                            paymentToken = nagadAccountInfo.paymentToken,
+//                                            paymentCusId = nagadAccountInfo.paymentCusId,
+//                                        ),
+//                                        onFailure = { progressDialog.dismiss() },
+//                                        onSuccess = { progressDialog.dismiss() }
+//                                    )
+//                                }
+//                            }
                         )
                     }
 
@@ -559,22 +563,36 @@ fun RemoveAccountFailureCard(
 }
 
 
-@PreviewLightDark
 @Composable
 fun SaveAccountFailureDialog(
-    onTryAgainClick: () -> Unit? = {}
+    viewModel: PremiumViewModel,
+    onTryAgainClick: () -> Unit = {},
+    onDismissClick: () -> Unit = {}
 ) {
     var openDialog by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
+    }
+    DisposableEffect(key1 = viewModel.isTokenizedAccountInitFailed.value) {
+        val observer = Observer<Boolean?> { isFailed ->
+            Timber.tag("DILG").d("isFailedAddingAccount changed: $isFailed")
+            isFailed?.let {
+                openDialog = isFailed
+            }
+        }
+        viewModel.isTokenizedAccountInitFailed.observeForever(observer)
+
+        onDispose {
+            openDialog = false
+            viewModel.isTokenizedAccountInitFailed.removeObserver(observer)
+        }
     }
 
     if (openDialog){
         Dialog(
-            onDismissRequest = { openDialog = false },
-            properties = DialogProperties(
-                dismissOnClickOutside = false,
-                dismissOnBackPress = false,
-            )
+            onDismissRequest = {
+                openDialog = false
+                onDismissClick.invoke()
+            }
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
@@ -597,6 +615,7 @@ fun SaveAccountFailureDialog(
                             .size(13.dp)
                             .clickable {
                                 openDialog = false
+                                onDismissClick.invoke()
                             },
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = "",
@@ -657,7 +676,7 @@ fun SaveAccountFailureDialog(
                             text = "TRY AGAIN",
                             onClick = {
                                 openDialog = false
-                                onTryAgainClick.invoke()
+                                onDismissClick.invoke()
                             }
                         )
                     }

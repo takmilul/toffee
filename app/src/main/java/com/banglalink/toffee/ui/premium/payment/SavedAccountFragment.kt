@@ -68,6 +68,9 @@ class SavedAccountFragment : BaseFragment() {
             paymentPurpose = "ECOM_TXN"
             subscriberPaymentInit(paymentPurpose, null)
         })
+        binding.backImg.safeClick({
+            findNavController().popBackStack()
+        })
     }
 
 

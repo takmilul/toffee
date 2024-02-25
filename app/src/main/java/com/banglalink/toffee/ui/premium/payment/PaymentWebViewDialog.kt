@@ -510,7 +510,6 @@ class PaymentWebViewDialog : DialogFragment() {
                                                             "MNO" to MNO,
                                                         )
                                                     )
-                                                    requireContext().showToast(statusMessage)
                                                     mPref.isManagePaymentPageReloaded.value = true
                                                     dialog?.dismiss()
                                                 }
@@ -730,7 +729,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                         navigateToStatusDialogPage(args)
                                     }
                                     paymentType == "nagadAddAccount" && statusCode != "200" -> {
-                                        requireContext().showToast(statusMessage)
+                                        if (callBackStatus == "failed"){
+                                            viewModel.isTokenizedAccountInitFailed.value = true
+                                        } else {
+                                            requireContext().showToast(statusMessage)
+                                        }
                                         dialog?.dismiss()
                                     }
                                     else -> {}

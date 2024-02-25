@@ -10,13 +10,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
@@ -35,6 +41,7 @@ import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.gson.Gson
+import timber.log.Timber
 
 class ManagePaymentMethodsFragment : BaseFragment() {
     private val gson = Gson()
@@ -75,18 +82,19 @@ class ManagePaymentMethodsFragment : BaseFragment() {
         })
         val data = viewModel.tokenizedPaymentMethodsResponseCompose.observeAsState()
         val isApiResponded = viewModel.isTokenizedPaymentMethodApiRespond.observeAsState()
-        val isFailedAddingAccount = viewModel.isTokenizedAccountInitFailed.observeAsState()
 
-        isFailedAddingAccount.value?.let {
-            if (it) {
-                SaveAccountFailureDialog {
-                    data.value?.nagadBean?.paymentMethodId.let {id->
-                        paymentMethodId = id
-                        addTokenizedAccountInit(paymentMethodId)
-                    }
-                }
+        SaveAccountFailureDialog (
+            viewModel = viewModel,
+            onTryAgainClick = {
+//                        data.value?.nagadBean?.paymentMethodId.let {id->
+//                            paymentMethodId = id
+//                            addTokenizedAccountInit(paymentMethodId)
+//                        }
+            },
+            onDismissClick = {
+                viewModel.isTokenizedAccountInitFailed.value = false
             }
-        }
+        )
 
         isApiResponded.value?.let {
             Column(
