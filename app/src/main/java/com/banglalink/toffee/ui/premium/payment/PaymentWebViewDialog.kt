@@ -494,6 +494,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                             }
                                             when (statusCode) {
                                                 "200" -> {
+                                                    requireContext().showToast("Payment method added successfully!")
                                                     // Send Log to FirebaseAnalytics
                                                     ToffeeAnalytics.toffeeLogEvent(
                                                         ToffeeEvents.PACK_SUCCESS,

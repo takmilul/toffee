@@ -64,7 +64,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="20dp"
-        android:visibility="gone"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -111,16 +111,16 @@
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
                     android:background="@drawable/otpbackground"
-
                     android:focusedByDefault="true"
                     android:focusable="true"
+
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:nextFocusRight="@id/etCode2"
                     android:textAllCaps="true"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="A" />
 
@@ -135,9 +135,10 @@
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
+                    android:textAllCaps="true"
                     android:nextFocusRight="@id/etCode3"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="Y" />
 
@@ -152,10 +153,10 @@
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:nextFocusRight="@id/etCode4"
                     android:textAllCaps="true"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="7" />
 
@@ -170,10 +171,10 @@
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:nextFocusRight="@id/etCode5"
                     android:textAllCaps="true"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="J" />
 
@@ -188,10 +189,10 @@
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:nextFocusRight="@id/etCode6"
                     android:textAllCaps="true"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="A" />
 
@@ -205,9 +206,9 @@
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:textAllCaps="true"
-                    android:textColor="#F2F2F2"
+                    android:textColor="@color/cardTitleColor"
                     android:textSize="20sp"
                     tools:text="0"/>
             </LinearLayout>

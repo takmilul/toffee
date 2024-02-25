@@ -218,6 +218,7 @@ class DrawerHelper(
                     binding.drawerLayout.closeDrawers()
 
                 }
+                binding.drawerLayout.closeDrawers()
                 return true
             }
 

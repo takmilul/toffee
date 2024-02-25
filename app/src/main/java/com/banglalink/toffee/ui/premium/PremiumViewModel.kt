@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -27,7 +26,6 @@ import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiReque
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
-import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
@@ -133,9 +131,11 @@ class PremiumViewModel @Inject constructor(
     var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
     var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
 
-    val tokenizedPaymentMethodsResponseCompose = SingleLiveEvent<TokenizedPaymentMethodsApiResponse?>()
+    val tokenizedPaymentMethodsResponseCompose = MutableLiveData<TokenizedPaymentMethodsApiResponse?>()
+    val isTokenizedPaymentMethodApiRespond = MutableLiveData<Boolean?>(null)
+    val isTokenizedAccountInitFailed = MutableLiveData<Boolean?>(null)
     val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
-    val removeTokenizeAccountResponse = SingleLiveEvent<RemoveTokenizeAccountApiResponse?>()
+    val removeTokenizeAccountResponse = MutableLiveData<RemoveTokenizeAccountApiResponse?>()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -293,10 +293,12 @@ class PremiumViewModel @Inject constructor(
             val response = resultFromResponse { tokenizedPaymentMethodApiService.execute(body) }
             when (response){
                 is Resource.Success->{
+                    isTokenizedPaymentMethodApiRespond.value = true
                     tokenizedPaymentMethodsResponseCompose.value = response.data
                 }
                 is Resource.Failure ->{
-                    appContext.showToast("Something went wrong. Please try again later.")
+                    isTokenizedPaymentMethodApiRespond.value = false
+                    appContext.showToast(response.error.msg)
                 }
             }
         }
@@ -309,15 +311,22 @@ class PremiumViewModel @Inject constructor(
         }
     }
 
-    fun removeTokenizeAccount(paymentMethodId: Int, body: RemoveTokenizedAccountApiRequest){
+    fun removeTokenizeAccount(
+        paymentMethodId: Int,
+        body: RemoveTokenizedAccountApiRequest,
+        onSuccess: ()->Unit? = {},
+        onFailure: ()->Unit? = {},
+    ){
         viewModelScope.launch {
             val response = resultFromResponse { removeTokenizeAccountApiService.execute(paymentMethodId, body) }
             when (response){
                 is Resource.Success->{
                     removeTokenizeAccountResponse.value = response.data
+                    onSuccess.invoke()
                 }
                 is Resource.Failure ->{
-                    appContext.showToast("Something went wrong. Please try again later.")
+                    onFailure.invoke()
+                    appContext.showToast(response.error.msg)
                 }
             }
         }

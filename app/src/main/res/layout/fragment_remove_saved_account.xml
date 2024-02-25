@@ -55,7 +55,7 @@
                         android:layout_marginHorizontal="36dp"
                         android:layout_marginTop="24dp"
                         android:fontFamily="@font/roboto_medium"
-                        android:text="Remove Saved Account"
+                        android:text="Failed to Save Nagad Account"
                         android:textColor="@color/cardTitleColor"
                         android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +70,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
-                        android:text="Are you sure you want to remove the saved Nagad account 01671109898?"
+                        android:text="Your Nagad account could not be saved due to a technical error. Please try again."
                         android:textColor="@color/cardTitleColor"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -79,61 +79,19 @@
 
 
                     <Button
-                        android:id="@+id/cancelButton"
-                        style="@style/ButtonStyleRingPink"
-                        android:layout_width="0dp"
-                        android:layout_marginTop="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:fontFamily="@font/roboto_bold"
-                        android:text="Cancel"
-                        android:textAllCaps="true"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/centerGuideLine"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dialogDescTextView"
-                        />
-
-                    <Button
-                        android:id="@+id/removeButton"
-                        style="@style/ButtonStyleSolidRemove"
-                        android:layout_width="0dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="32dp"
-                        android:fontFamily="@font/roboto_bold"
-                        android:text="Remove"
-                        android:textAllCaps="true"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/centerGuideLine"
-                        app:layout_constraintTop_toBottomOf="@id/dialogDescTextView" />
-
-                    <Button
-                        android:id="@+id/addNewButton"
+                        android:id="@+id/tryAgainButton"
                         style="@style/ButtonStyleSolidPink"
-                        android:layout_width="0dp"
-                        android:layout_marginStart="8dp"
+                        android:layout_width="wrap_content"
                         android:layout_marginTop="32dp"
                         android:fontFamily="@font/roboto_bold"
-                        android:text="ADD NEW ACCOUNT"
-                        android:maxLines="1"
-                        android:ellipsize="end"
+                        android:text="Try Again"
                         android:textAllCaps="true"
-                        android:visibility="gone"
                         android:textSize="14sp"
+                        app:layout_constraintWidth_min="140dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/centerGuideLine"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/dialogDescTextView" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/centerGuideLine"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.5"/>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </ScrollView>
