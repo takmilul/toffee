@@ -131,8 +131,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                                 callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
                                 paymentMethodId = paymentMethodId!!,
                                 paymentMsisdn = null,
-                                paymentId = if (paymentName == "bkash") transactionIdentifier else null,
-                                transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                                paymentPurpose = "ECOM_TOKEN_GEN",
+                                paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 rawResponse = gson.toJson(it)
                             )
@@ -163,8 +163,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
                             paymentMethodId = paymentMethodId!!,
                             paymentMsisdn = null,
-                            paymentId = if (paymentName == "bkash") transactionIdentifier else null,
-                            transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                            paymentPurpose = "ECOM_TOKEN_GEN",
+                            paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
                             rawResponse = gson.toJson(it.error.msg)
                         )

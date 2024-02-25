@@ -33,6 +33,7 @@ class SavedAccountFragment : BaseFragment() {
     private var transactionIdentifier: String? = null
     private var paymentToken: String? = null
     private var walletNumber: String? = null
+    private var paymentPurpose: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
     private lateinit var binding:FragmentSavedAccountBinding
@@ -59,11 +60,13 @@ class SavedAccountFragment : BaseFragment() {
 
         binding.walletNumberTextView.text = walletNumber
         binding.confirmButton.safeClick({
-            subscriberPaymentInit("ECOM_TOKEN_TXN", paymentToken)
+            paymentPurpose = "ECOM_TOKEN_TXN"
+            subscriberPaymentInit(paymentPurpose, paymentToken)
         })
 
         binding.useAnotherAcButton.safeClick({
-            subscriberPaymentInit("ECOM_TXN", null)
+            paymentPurpose = "ECOM_TXN"
+            subscriberPaymentInit(paymentPurpose, null)
         })
     }
 
@@ -123,8 +126,8 @@ class SavedAccountFragment : BaseFragment() {
                                 dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                 paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                 paymentMsisdn = null,
-                                paymentId =transactionIdentifier,
-                                transactionId = transactionIdentifier,
+                                paymentPurpose = paymentPurpose,
+                                paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 merchantInvoiceNumber = null,
@@ -162,8 +165,8 @@ class SavedAccountFragment : BaseFragment() {
                             dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                             paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                             paymentMsisdn = null,
-                            paymentId =transactionIdentifier,
-                            transactionId = transactionIdentifier,
+                            paymentPurpose = paymentPurpose,
+                            paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = null,
