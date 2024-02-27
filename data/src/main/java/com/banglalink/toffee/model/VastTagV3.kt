@@ -9,4 +9,6 @@ data class VastTagV3(
     val adGroup: String,
     @SerializedName("url")
     val tags: List<String>?,
+    @SerializedName("frequency")
+    val frequency: Int? = 0,
 )
