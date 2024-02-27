@@ -55,6 +55,8 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -136,7 +138,7 @@ class PremiumViewModel @Inject constructor(
     var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
 
     val tokenizedPaymentMethodsResponseCompose = MutableLiveData<TokenizedPaymentMethodsApiResponse?>()
-    val isTokenizedPaymentMethodApiRespond = MutableLiveData<Boolean?>(null)
+    val isTokenizedPaymentMethodApiRespond = MutableStateFlow<Boolean>(false)
     val isTokenizedAccountInitFailed = MutableLiveData<Boolean?>(null)
     val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
     val removeTokenizeAccountResponse = MutableLiveData<RemoveTokenizeAccountApiResponse?>()
@@ -301,7 +303,7 @@ class PremiumViewModel @Inject constructor(
                     tokenizedPaymentMethodsResponseCompose.value = response.data
                 }
                 is Resource.Failure ->{
-                    isTokenizedPaymentMethodApiRespond.value = false
+                    isTokenizedPaymentMethodApiRespond.value = true
                     appContext.showToast(response.error.msg)
                 }
             }
