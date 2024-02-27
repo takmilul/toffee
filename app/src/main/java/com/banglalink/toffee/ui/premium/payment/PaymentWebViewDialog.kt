@@ -207,6 +207,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                         paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                         paymentMsisdn = null,
+                                        paymentRefId = if (paymentType == "nagad") transactionIdentifier else null,
                                         paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                         transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                         transactionStatus = statusCode,
@@ -394,10 +395,6 @@ class PaymentWebViewDialog : DialogFragment() {
                                             }
                                         }
 
-                                        //nagad
-
-
-
                                         "nagad" -> {
                                             when (statusCode) {
                                                 "200" -> {
@@ -489,13 +486,49 @@ class PaymentWebViewDialog : DialogFragment() {
                                         }
 
                                         "nagadAddAccount" -> {
+                                            val MNO = when {
+                                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                                else -> "N/A"
+                                            }
                                             when (statusCode) {
                                                 "200" -> {
-                                                    requireContext().showToast(statusMessage)
+                                                    requireContext().showToast("Payment method added successfully!")
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "nagadAddAccount",
+                                                            "type" to "wallet",
+                                                            "reason" to "N/A",
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     mPref.isManagePaymentPageReloaded.value = true
                                                     dialog?.dismiss()
                                                 }
                                                 else -> {
+                                                    // Send Log to FirebaseAnalytics
+                                                    ToffeeAnalytics.toffeeLogEvent(
+                                                        ToffeeEvents.PACK_SUCCESS,
+                                                        bundleOf(
+                                                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                                            "currency" to "BDT",
+                                                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                                            "provider" to "nagadAddAccount",
+                                                            "type" to "wallet",
+                                                            "reason" to "N/A",
+                                                            "MNO" to MNO,
+                                                        )
+                                                    )
                                                     requireContext().showToast(statusMessage)
                                                     dialog?.dismiss()
                                                 }
@@ -606,7 +639,7 @@ class PaymentWebViewDialog : DialogFragment() {
                             }
 
                             // Handle failure or cancellation callbacks for bKask or SSL
-                            (callBackStatus == "failure" || callBackStatus == "cancel" || callBackStatus == "aborted") -> {
+                            (callBackStatus == "failure" || callBackStatus == "failed" || callBackStatus == "cancel" || callBackStatus == "aborted") -> {
                                 progressDialog.dismiss()
 
                                 //Send Log to the Pub/Sub
@@ -619,6 +652,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                     dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
                                     paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                     paymentMsisdn = null,
+                                    paymentRefId = if (paymentType == "nagad") transactionIdentifier else null,
                                     paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                     transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                     transactionStatus = statusCode,
@@ -627,13 +661,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                     rawResponse = url.toString()
                                 ))
 
-                                if (callBackStatus == "failure"){
+                                if (callBackStatus == "failure" || callBackStatus == "failed"){
                                     val MNO = when {
                                         (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
                                         (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
                                         (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
                                         else -> "N/A"
                                     }
+                                    val provider = if (paymentType == "ssl") "SSL Wireless" else if (paymentType == "nagad") "Nagad" else "bKash"
                                     // Send Log to FirebaseAnalytics
                                     ToffeeAnalytics.toffeeLogEvent(
                                         ToffeeEvents.PACK_ERROR,
@@ -643,7 +678,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                             "currency" to "BDT",
                                             "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                             "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "provider" to provider,
                                             "type" to "wallet",
                                             "reason" to statusMessage,
                                             "MNO" to MNO,
@@ -657,6 +692,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                         (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
                                         else -> "N/A"
                                     }
+                                    val provider = if (paymentType == "ssl") "SSL Wireless" else if (paymentType == "nagad") "Nagad" else "bKash"
                                     // Send Log to FirebaseAnalytics
                                     ToffeeAnalytics.toffeeLogEvent(
                                         ToffeeEvents.PACK_ERROR,
@@ -666,7 +702,7 @@ class PaymentWebViewDialog : DialogFragment() {
                                             "currency" to "BDT",
                                             "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                             "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                                            "provider" to if(paymentType == "ssl") "SSL Wireless" else "bKash",
+                                            "provider" to provider,
                                             "type" to "wallet",
                                             "reason" to "Payment canceled by user",
                                             "MNO" to MNO,
@@ -693,7 +729,11 @@ class PaymentWebViewDialog : DialogFragment() {
                                         navigateToStatusDialogPage(args)
                                     }
                                     paymentType == "nagadAddAccount" && statusCode != "200" -> {
-                                        requireContext().showToast(statusMessage)
+                                        if (callBackStatus == "failed"){
+                                            viewModel.isTokenizedAccountInitFailed.value = true
+                                        } else {
+                                            requireContext().showToast(statusMessage)
+                                        }
                                         dialog?.dismiss()
                                     }
                                     else -> {}

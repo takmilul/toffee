@@ -3,9 +3,7 @@ package com.banglalink.toffee.ui.payment_methods
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.opengl.Visibility
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -15,7 +13,7 @@ import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 
-class RemoveSavedPaymentDialogFragment : DialogFragment() {
+class NagodAccountAddFailedDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = FragmentRemoveSavedAccountBinding.inflate(layoutInflater)
 
@@ -23,23 +21,6 @@ class RemoveSavedPaymentDialogFragment : DialogFragment() {
             runCatching {
                 dismiss()
             }
-        })
-        binding.cancelButton.safeClick({
-            runCatching {
-                dismiss()
-            }
-        })
-        binding.addNewButton.safeClick({
-            runCatching {
-                dismiss()
-            }
-        })
-        binding.removeButton.safeClick({
-            binding.logo.setImageResource(R.drawable.ic_complete_delete)
-            binding.dialogTitleTextView.text = "Account Removed Successfully"
-            binding.dialogDescTextView.hide()
-            binding.addNewButton.show()
-            binding.removeButton.hide()
         })
 
         return AlertDialog
@@ -58,6 +39,6 @@ class RemoveSavedPaymentDialogFragment : DialogFragment() {
     }
 
     companion object{
-        const val TAG = "RemoveSavedPaymentDialog"
+        const val TAG = "FailedToAddNagadAccountDialog"
     }
 }

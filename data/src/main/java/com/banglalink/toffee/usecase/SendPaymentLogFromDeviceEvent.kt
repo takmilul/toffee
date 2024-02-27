@@ -42,6 +42,14 @@ data class PaymentLogFromDeviceData(
     val merchantInvoiceNumber : String? = null,
     @SerializedName("rawResponse")
     val rawResponse : String? = null,
+    @SerializedName("payment_ref_id")
+    val paymentRefId : String? = null,
+    @SerializedName("payment_purpose")
+    val paymentPurpose : String? = null,
+    @SerializedName("cus_wallet_no")
+    val cusWalletNo : String? = null,
+    @SerializedName("payment_cus_id")
+    val paymentCusId : String? = null,
     @SerializedName("statusCode")
     val statusCode : String? = null,
     @SerializedName("statusMessage")

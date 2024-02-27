@@ -27,7 +27,6 @@ import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiReque
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
-import com.banglalink.toffee.data.network.response.KabbikCategory
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
@@ -42,6 +41,7 @@ import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.data.network.response.TokenizedAccountInfoApiResponse
 import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
@@ -51,6 +51,7 @@ import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.usecase.SendPaymentLogFromDeviceEvent
 import com.banglalink.toffee.util.SingleLiveEvent
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -61,6 +62,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val mPref: SessionPreference,
     private val savedState: SavedStateHandle,
     private val premiumPackListService: PremiumPackListService,
     private val premiumPackDetailService: PremiumPackDetailService,
@@ -133,9 +135,11 @@ class PremiumViewModel @Inject constructor(
     var clickableAdInventories = savedState.getLiveData<ClickableAdInventories>("clickableAdInventories")
     var isLoggedInFromPaymentOptions = MutableLiveData<Boolean>()
 
-    val tokenizedPaymentMethodsResponseCompose = SingleLiveEvent<TokenizedPaymentMethodsApiResponse?>()
+    val tokenizedPaymentMethodsResponseCompose = MutableLiveData<TokenizedPaymentMethodsApiResponse?>()
+    val isTokenizedPaymentMethodApiRespond = MutableLiveData<Boolean?>(null)
+    val isTokenizedAccountInitFailed = MutableLiveData<Boolean?>(null)
     val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
-    val removeTokenizeAccountResponse = SingleLiveEvent<RemoveTokenizeAccountApiResponse?>()
+    val removeTokenizeAccountResponse = MutableLiveData<RemoveTokenizeAccountApiResponse?>()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -293,10 +297,12 @@ class PremiumViewModel @Inject constructor(
             val response = resultFromResponse { tokenizedPaymentMethodApiService.execute(body) }
             when (response){
                 is Resource.Success->{
+                    isTokenizedPaymentMethodApiRespond.value = true
                     tokenizedPaymentMethodsResponseCompose.value = response.data
                 }
                 is Resource.Failure ->{
-                    appContext.showToast("Something went wrong. Please try again later.")
+                    isTokenizedPaymentMethodApiRespond.value = false
+                    appContext.showToast(response.error.msg)
                 }
             }
         }
@@ -309,15 +315,41 @@ class PremiumViewModel @Inject constructor(
         }
     }
 
-    fun removeTokenizeAccount(paymentMethodId: Int, body: RemoveTokenizedAccountApiRequest){
+    fun removeTokenizeAccount(
+        paymentMethodId: Int,
+        body: RemoveTokenizedAccountApiRequest,
+        onSuccess: ()->Unit? = {},
+        onFailure: ()->Unit? = {},
+    ){
+        val gson = Gson()
         viewModelScope.launch {
             val response = resultFromResponse { removeTokenizeAccountApiService.execute(paymentMethodId, body) }
             when (response){
                 is Resource.Success->{
                     removeTokenizeAccountResponse.value = response.data
+                    sendPaymentLogFromDeviceData(
+                        PaymentLogFromDeviceData(
+                            id = System.currentTimeMillis() + mPref.customerId,
+                            callingApiName = "removeTokenizedAccountFromAndroid",
+                            cusWalletNo = body.walletNumber,
+                            paymentCusId = body.paymentCusId,
+                            rawResponse = gson.toJson(response)
+                        )
+                    )
+                    onSuccess.invoke()
                 }
                 is Resource.Failure ->{
-                    appContext.showToast("Something went wrong. Please try again later.")
+                    onFailure.invoke()
+                    sendPaymentLogFromDeviceData(
+                        PaymentLogFromDeviceData(
+                            id = System.currentTimeMillis() + mPref.customerId,
+                            callingApiName = "removeTokenizedAccountFromAndroid",
+                            cusWalletNo = body.walletNumber,
+                            paymentCusId = body.paymentCusId,
+                            rawResponse = gson.toJson(response)
+                        )
+                    )
+                    appContext.showToast(response.error.msg)
                 }
             }
         }

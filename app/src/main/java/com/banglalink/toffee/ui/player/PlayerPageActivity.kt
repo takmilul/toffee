@@ -93,7 +93,9 @@ abstract class PlayerPageActivity :
 {
     private var startWindow = 0
     private var maxBitRate: Int = 0
-    private var playCounter: Int = -1
+    private var adPlayCounter: Int = -1
+    private var adFrequency: Int = 0
+    private var prevAdGroup: String? = null
     private var startAutoPlay = false
     private var retryCounter: Int = 0
     private var reloadCounter: Int = 0
@@ -159,7 +161,7 @@ abstract class PlayerPageActivity :
         if (savedInstanceState != null) {
             startWindow = savedInstanceState.getInt(KEY_WINDOW)
             startPosition = savedInstanceState.getLong(KEY_POSITION)
-            playCounter = savedInstanceState.getInt(KEY_PLAY_COUNTER)
+            adPlayCounter = savedInstanceState.getInt(KEY_PLAY_COUNTER)
             startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
             currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
             trackSelectorParameters = savedInstanceState.getBundle(KEY_TRACK_SELECTOR_PARAMETERS)?.let { Parameters.CREATOR.fromBundle(it) }
@@ -260,7 +262,7 @@ abstract class PlayerPageActivity :
         outState.apply {
             putInt(KEY_WINDOW, startWindow)
             putLong(KEY_POSITION, startPosition)
-            putInt(KEY_PLAY_COUNTER, playCounter)
+            putInt(KEY_PLAY_COUNTER, adPlayCounter)
             putBoolean(KEY_AUTO_PLAY, startAutoPlay)
             putString(KEY_VAST_URL, currentlyPlayingVastUrl)
             putBundle(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters?.toBundle())
@@ -861,13 +863,22 @@ abstract class PlayerPageActivity :
         }
         
         isAdRunning = false
-        if (player is ExoPlayer && mPref.vastFrequency > 0) playCounter = ++playCounter % mPref.vastFrequency
+        
+        val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
+        
+        if (prevAdGroup != channelInfo.adGroup) {
+            adPlayCounter = 0
+        } else {
+            ++adPlayCounter
+        }
+        prevAdGroup = channelInfo.adGroup
+        
+        if (player is ExoPlayer && adFrequency > 0) adPlayCounter %= adFrequency
         
         if (mPref.isVastActive && channelInfo.isAdActive) {
-            val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
-            val shouldPlayAd = tag != null && playCounter == 0
+            val shouldPlayAd = tag != null && adPlayCounter == 0
             if (shouldPlayAd) {
-                val vastTag = if (currentlyPlayingVastUrl.isNotBlank()) currentlyPlayingVastUrl else tag
+                val vastTag = currentlyPlayingVastUrl.ifBlank { tag }
                 ConvivaHelper.setVastTagUrl(vastTag)
 //                Log.i("ADs_", "vast tag: $vastTag")
                 mediaItem = mediaItem.buildUpon()
@@ -995,7 +1006,9 @@ abstract class PlayerPageActivity :
     private fun getVastTagListV3(adGroup: String): String? {
         return mPref.vastTagListV3LiveData.value?.filter {
             it.adGroup == adGroup
-        }?.randomOrNull()?.tags?.randomOrNull()?.trim()
+        }?.randomOrNull()?.also { 
+            adFrequency = it.frequency ?: 0
+        }?.tags?.randomOrNull()?.trim()
     }
     
     private fun getGeneratedUrl(url: String?, signCookie: String?): String? {
