@@ -8,14 +8,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -28,11 +32,11 @@ import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.compose_theme.ContentLoader
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.gson.Gson
-import timber.log.Timber
 
 class ManagePaymentMethodsFragment : BaseFragment() {
     private val gson = Gson()
@@ -54,13 +58,19 @@ class ManagePaymentMethodsFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                ManagePaymentMethodsScreen(viewModel)
+                val isApiResponded = viewModel.isTokenizedPaymentMethodApiRespond.collectAsState(false)
+                ManagePaymentMethodsScreen(viewModel, progressDialog, findNavController(), isApiResponded)
             }
         }
     }
 
     @Composable
-    fun ManagePaymentMethodsScreen(viewModel: PremiumViewModel) {
+    fun ManagePaymentMethodsScreen(
+        viewModel: PremiumViewModel,
+        progressDialog: ToffeeProgressDialog,
+        navController: NavController,
+        isApiResponded: State<Boolean?>,
+    ) {
         LaunchedEffect(key1 = true, block = {
             observeAddTokenizedAccountInit()
             observeManagePaymentPageReloaded()
@@ -72,37 +82,73 @@ class ManagePaymentMethodsFragment : BaseFragment() {
             )
         })
         val data = viewModel.tokenizedPaymentMethodsResponseCompose.observeAsState()
-        Timber.tag("tokenizedPaymentMethodsResponse").d(data.value.toString())
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    if (isSystemInDarkTheme()) {
-                        ScreenBackgroundDark
-                    } else {
-                        ScreenBackground
-                    }
-                )
-        ) {
-            data.value?.let {
-                it.nagadBean?.let {nagadBean -> // Tokenized Payment is available for Nagad
+        SaveAccountFailureDialog (
+            viewModel = viewModel,
+            onTryAgainClick = {
+//                        data.value?.nagadBean?.paymentMethodId.let {id->
+//                            paymentMethodId = id
+//                            addTokenizedAccountInit(paymentMethodId)
+//                        }
+            },
+            onDismissClick = {
+                viewModel.isTokenizedAccountInitFailed.value = false
+            }
+        )
 
-                    nagadBean.nagadAccountInfo?.let {nagadAccountInfo-> // Saved account found for Nagad, Showing Account info
-                        SavedPaymentMethods(nagadAccountInfo, viewModel, mPref, requireContext())
+        if(isApiResponded.value == true) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        if (isSystemInDarkTheme()) {
+                            ScreenBackgroundDark
+                        } else {
+                            ScreenBackground
+                        }
+                    )
+            ) {
+                data.value?.let {
+                    it.nagadBean?.let { nagadBean -> // Tokenized Payment is available for Nagad
 
-                    }?: run {// No saved account found, Showing Add account section
-                        AddPaymentMethods {
-                            paymentMethodId = data.value!!.nagadBean?.paymentMethodId
-                            addTokenizedAccountInit(paymentMethodId)
+                        nagadBean.nagadAccountInfo?.let { nagadAccountInfo -> // Saved account found for Nagad, Showing Account info
+                            SavedPaymentMethods(
+                                nagadAccountInfo = nagadAccountInfo,
+                                viewModel = viewModel,
+                                mPref = mPref,
+                                appContext = requireContext(),
+                                progressDialog = progressDialog,
+                                navController = navController,
+                                nagadPaymentInit = {
+                                    paymentMethodId = nagadAccountInfo.paymentMethodId
+                                    addTokenizedAccountInit(paymentMethodId)
+                                }
+                            )
+                        } ?: run {// No saved account found, Showing Add account section
+                            AddPaymentMethods {
+                                paymentMethodId = nagadBean.paymentMethodId
+                                addTokenizedAccountInit(paymentMethodId)
+                            }
                         }
                     }
                 }
             }
+        } else {
+            ContentLoader(
+                Modifier
+                    .fillMaxWidth()
+                    .background(
+                        if (isSystemInDarkTheme()) {
+                            ScreenBackgroundDark
+                        } else {
+                            ScreenBackground
+                        }
+                    )
+            )
         }
     }
 
-    private fun addTokenizedAccountInit(paymentMethodId : Int?) {
+    private fun addTokenizedAccountInit(paymentMethodId: Int?) {
         val request = AddTokenizedAccountInitRequest(
             customerId = mPref.customerId,
             password = mPref.password,
@@ -131,8 +177,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                                 callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
                                 paymentMethodId = paymentMethodId!!,
                                 paymentMsisdn = null,
-                                paymentId = if (paymentName == "bkash") transactionIdentifier else null,
-                                transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                                paymentPurpose = "ECOM_TOKEN_GEN",
+                                paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 rawResponse = gson.toJson(it)
                             )
@@ -143,7 +189,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             return@observe
                         }
                         val args = bundleOf(
-                            "myTitle" to "Pack Details",
+                            "myTitle" to "Manage Payment Methods",
                             "url" to it.webViewUrl,
                             "paymentType" to "nagadAddAccount",
                             "isHideBackIcon" to false,
@@ -163,8 +209,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
                             paymentMethodId = paymentMethodId!!,
                             paymentMsisdn = null,
-                            paymentId = if (paymentName == "bkash") transactionIdentifier else null,
-                            transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                            paymentPurpose = "ECOM_TOKEN_GEN",
+                            paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
                             rawResponse = gson.toJson(it.error.msg)
                         )
@@ -187,5 +233,11 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                 mPref.isManagePaymentPageReloaded.value = false
             }
         }
+    }
+
+    override fun onDestroyView() {
+        viewModel.isTokenizedPaymentMethodApiRespond.value = false
+        viewModel.tokenizedPaymentMethodsResponseCompose.value = null
+        super.onDestroyView()
     }
 }

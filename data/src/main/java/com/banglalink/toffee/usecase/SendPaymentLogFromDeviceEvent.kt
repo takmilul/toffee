@@ -3,12 +3,13 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendPaymentLogFromDeviceEvent @Inject constructor() {
-
+    
     fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
         PubSubMessageUtil.send(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
     }
@@ -44,6 +45,14 @@ data class PaymentLogFromDeviceData(
     val merchantInvoiceNumber : String? = null,
     @SerialName("rawResponse")
     val rawResponse : String? = null,
+    @SerialName("payment_ref_id")
+    val paymentRefId : String? = null,
+    @SerialName("payment_purpose")
+    val paymentPurpose : String? = null,
+    @SerialName("cus_wallet_no")
+    val cusWalletNo : String? = null,
+    @SerialName("payment_cus_id")
+    val paymentCusId : String? = null,
     @SerialName("statusCode")
     val statusCode : String? = null,
     @SerialName("statusMessage")

@@ -823,7 +823,7 @@ class HomeActivity : PlayerPageActivity(),
         
         bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
         
-        val hasBackStack = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails)
+        val hasBackStack = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails, id.menu_manage_payment_methods)
         
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
@@ -3041,6 +3041,7 @@ class HomeActivity : PlayerPageActivity(),
             id.editUploadInfoFragment,
             id.myChannelEditDetailFragment,
             id.myChannelVideosEditFragment,
+            id.menu_manage_payment_methods,
             -> {
                 navController.popBackStack()
                 reloadCurrentPage()
