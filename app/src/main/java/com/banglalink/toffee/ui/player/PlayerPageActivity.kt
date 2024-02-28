@@ -135,7 +135,9 @@ abstract class PlayerPageActivity :
         private const val KEY_POSITION = "position"
         private const val KEY_VAST_URL = "vast_url"
         private const val KEY_AUTO_PLAY = "auto_play"
-        private const val KEY_PLAY_COUNTER = "play_counter"
+        private const val KEY_PLAY_COUNTER = "ad_play_counter"
+        private const val KEY_PREV_AD_GROUP = "prev_ad_group"
+        private const val KEY_AD_FREQUENCY = "ad_frequency"
         private const val KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters"
     }
     
@@ -164,6 +166,8 @@ abstract class PlayerPageActivity :
             startWindow = savedInstanceState.getInt(KEY_WINDOW)
             startPosition = savedInstanceState.getLong(KEY_POSITION)
             adPlayCounter = savedInstanceState.getInt(KEY_PLAY_COUNTER)
+            prevAdGroup = savedInstanceState.getString(KEY_PREV_AD_GROUP)
+            adFrequency = savedInstanceState.getInt(KEY_AD_FREQUENCY)
             startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
             currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
             trackSelectorParameters = savedInstanceState.getBundle(KEY_TRACK_SELECTOR_PARAMETERS)?.let { Parameters.CREATOR.fromBundle(it) }
@@ -265,6 +269,8 @@ abstract class PlayerPageActivity :
             putInt(KEY_WINDOW, startWindow)
             putLong(KEY_POSITION, startPosition)
             putInt(KEY_PLAY_COUNTER, adPlayCounter)
+            putString(KEY_PREV_AD_GROUP, prevAdGroup)
+            putInt(KEY_AD_FREQUENCY, adFrequency)
             putBoolean(KEY_AUTO_PLAY, startAutoPlay)
             putString(KEY_VAST_URL, currentlyPlayingVastUrl)
             putBundle(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters?.toBundle())
