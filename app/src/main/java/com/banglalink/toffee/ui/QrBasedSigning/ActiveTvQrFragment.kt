@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.text.toUpperCase
 import androidx.fragment.app.activityViewModels
@@ -32,6 +33,11 @@ class ActiveTvQrFragment : BaseFragment() {
     var qrCodeNumber: String? = null
     private val viewModel by activityViewModels<ActiveTvQrViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+
+    val editTextList: List<EditText> by lazy {
+        listOf(binding.etCode1, binding.etCode2, binding.etCode3,
+            binding.etCode4, binding.etCode5, binding.etCode6)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,6 +54,8 @@ class ActiveTvQrFragment : BaseFragment() {
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
         qrCodeNumber = arguments?.getString("code")
+
+
 
         /**
          * saving qr code data in session preference so that fragment
@@ -274,8 +282,14 @@ class ActiveTvQrFragment : BaseFragment() {
 
 
 
+        editTextList.forEach { editText ->
+            editText.setOnFocusChangeListener { _, _ ->
+                updateButtonState()
+            }
+        }
 
         binding.pairWithTv.setOnClickListener{
+
 
             val input1 = binding.etCode1.text.toString()
             val input2 = binding.etCode2.text.toString()
@@ -287,7 +301,7 @@ class ActiveTvQrFragment : BaseFragment() {
         if (input1.isEmpty()||input1.isEmpty()||input1.isEmpty()||
             input1.isEmpty()||input1.isEmpty()||input1.isEmpty()){
 
-            binding.wrongCode.visibility=View.VISIBLE
+//            binding.wrongCode.visibility=View.VISIBLE
 
         }else{
             binding.wrongCode.visibility=View.GONE
@@ -313,7 +327,7 @@ class ActiveTvQrFragment : BaseFragment() {
          */
 
         observe(viewModel.qrSignInStatus) { responseCode ->
-            Log.d("TAG", "observeSignInStatus: "+responseCode)
+
             if (responseCode.equals(0)) {
 
                 if (mPref.qrSignInStatus.value=="0"){
@@ -330,17 +344,14 @@ class ActiveTvQrFragment : BaseFragment() {
 
 
             } else if (responseCode.equals(1)) {
-//                    val bundle = Bundle()
-//                    bundle.putString("responseCode", "1")
+
                     progressDialog.dismiss()
                     mPref.qrSignInResponseCode.value="1"
                     findNavController().navigateTo(R.id.Qr_code_res)
 
             } else if (responseCode.equals(2)) {
-//                    val bundle = Bundle()
-//                    bundle.putString("responseCode", "2")
-                if (mPref.qrSignInStatus.value=="0"){
 
+                if (mPref.qrSignInStatus.value=="0"){
                     progressDialog.dismiss()
                     binding.activeWithQrView.visibility = View.GONE
                     binding.enterCodeView.visibility = View.VISIBLE
@@ -353,7 +364,7 @@ class ActiveTvQrFragment : BaseFragment() {
 
 
             } else {
-
+                progressDialog.dismiss()
             }
         }
 
@@ -364,6 +375,11 @@ class ActiveTvQrFragment : BaseFragment() {
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
+    private fun updateButtonState() {
+        // Enable the button only if all EditText fields have non-empty values
+        val allFieldsFilled = editTextList.all { it.text.isNotBlank() }
+        binding.pairWithTv.isEnabled = allFieldsFilled
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

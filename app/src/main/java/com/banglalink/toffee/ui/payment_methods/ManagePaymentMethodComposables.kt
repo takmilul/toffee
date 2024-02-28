@@ -7,6 +7,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -156,11 +158,14 @@ fun SavedPaymentMethods(
                     viewModel.removeTokenizeAccountResponse.value = null
                 }
             },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            )
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth().padding(16.dp),
                 backgroundColor = if (isSystemInDarkTheme()) {
                     CardBgColorDark
                 } else {
@@ -175,7 +180,7 @@ fun SavedPaymentMethods(
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(13.dp)
+                            .size(20.dp)
                             .clickable {
                                 openDialog = false
                                 removeResponse.value?.status?.let {
@@ -188,7 +193,7 @@ fun SavedPaymentMethods(
                                     viewModel.removeTokenizeAccountResponse.value = null
                                 }
                             },
-                        painter = painterResource(id = R.drawable.ic_close),
+                        painter = painterResource(id = R.drawable.ic_close_small),
                         contentDescription = "",
                         tint = if (isSystemInDarkTheme()) {
                             MainTextColorDark
@@ -480,7 +485,7 @@ fun RemoveAccountSuccessfulCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             PinkOutlinedButton(
-                modifier = Modifier.wrapContentWidth(Alignment.Start),
+                modifier = Modifier.weight(1F).padding(end = 16.dp),
                 text = "CANCEL",
                 onClick = {
                     onCancelClick.invoke()
@@ -488,8 +493,7 @@ fun RemoveAccountSuccessfulCard(
             )
             PinkFilledButton(
                 modifier = Modifier
-                    .weight(1F)
-                    .padding(start = 16.dp),
+                    .weight(1F),
                 text = "ADD NEW ACCOUNT",
                 onClick = {
                     onAddAccountClick.invoke()
@@ -551,7 +555,7 @@ fun RemoveAccountFailureCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             PinkFilledButton(
-                modifier = Modifier.padding(start = 16.dp),
+                modifier = Modifier.defaultMinSize(minWidth = 135.dp),
                 text = "TRY AGAIN",
                 onClick = {
                     onTryAgainClick.invoke()
@@ -592,12 +596,15 @@ fun SaveAccountFailureDialog(
             onDismissRequest = {
                 openDialog = false
                 onDismissClick.invoke()
-            }
+            },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            )
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth().padding(16.dp),
                 backgroundColor = if (isSystemInDarkTheme()) {
                     CardBgColorDark
                 } else {
@@ -612,12 +619,12 @@ fun SaveAccountFailureDialog(
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(13.dp)
+                            .size(20.dp)
                             .clickable {
                                 openDialog = false
                                 onDismissClick.invoke()
                             },
-                        painter = painterResource(id = R.drawable.ic_close),
+                        painter = painterResource(id = R.drawable.ic_close_small),
                         contentDescription = "",
                         tint = if (isSystemInDarkTheme()) {
                             MainTextColorDark
@@ -672,7 +679,7 @@ fun SaveAccountFailureDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         PinkFilledButton(
-                            modifier = Modifier.padding(start = 16.dp),
+                            modifier = Modifier.defaultMinSize(minWidth = 135.dp),
                             text = "TRY AGAIN",
                             onClick = {
                                 openDialog = false

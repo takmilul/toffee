@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.compose_theme
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -12,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.banglalink.toffee.ui.compose_theme.ColorAccent2
@@ -33,13 +36,15 @@ fun PinkOutlinedButton(
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             contentColor = ColorAccent2
-        )
+        ),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 9.dp)
     ) {
         Text(
             text = text,
             fontSize = 12.sp,
             fontFamily = Fonts.roboto,
             fontWeight = FontWeight.Bold,
+            letterSpacing = TextUnit(0.25F, TextUnitType.Sp)
         )
     }
 }
@@ -58,7 +63,8 @@ fun RedFilledButton(
         colors = ButtonDefaults.buttonColors(
             backgroundColor = RedButtonColor,
             contentColor = Color.White
-        )
+        ),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 9.dp)
     ) {
         Text(
             text = text,
@@ -66,7 +72,8 @@ fun RedFilledButton(
             fontFamily = Fonts.roboto,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            letterSpacing = TextUnit(0.25F, TextUnitType.Sp)
         )
     }
 }
@@ -85,7 +92,8 @@ fun PinkFilledButton(
         colors = ButtonDefaults.buttonColors(
             backgroundColor = ColorAccent2,
             contentColor = Color.White
-        )
+        ),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 9.dp)
     ) {
         Text(
             text = text,
@@ -93,7 +101,8 @@ fun PinkFilledButton(
             fontFamily = Fonts.roboto,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            letterSpacing = TextUnit(0.25F, TextUnitType.Sp)
         )
     }
 }
