@@ -1,12 +1,14 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RemoveTokenizeAccountApiBaseResponse (
-    @SerializedName("response"    ) var response    : RemoveTokenizeAccountApiResponse? = RemoveTokenizeAccountApiResponse(),
+    @SerialName("response"    ) var response    : RemoveTokenizeAccountApiResponse? = RemoveTokenizeAccountApiResponse(),
 ): BaseResponse()
-
+@Serializable
 data class RemoveTokenizeAccountApiResponse (
-    @SerializedName("status"  ) var status  : Boolean? = null,
-    @SerializedName("message" ) var message : String?  = null
+    @SerialName("status"  ) var status  : Boolean? = null,
+    @SerialName("message" ) var message : String?  = null
 )

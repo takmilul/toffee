@@ -32,7 +32,7 @@ data class PackPaymentMethodBean(
     val Voucher: @RawValue List<PackPaymentMethod>? = null,
     @SerialName("SSL")
     val ssl: SSL? = null,
-    @SerializedName("NAGAD")
+    @SerialName("NAGAD")
     val nagad: NAGAD? = null,
 ) : Parcelable
 

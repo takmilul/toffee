@@ -1,24 +1,28 @@
 package com.banglalink.toffee.data.network.response
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TokenizedPaymentMethodsBaseApiResponse(
-    @SerializedName("response") var response: TokenizedPaymentMethodsApiResponse? = TokenizedPaymentMethodsApiResponse(),
+    @SerialName("response") var response: TokenizedPaymentMethodsApiResponse? = TokenizedPaymentMethodsApiResponse(),
 ) : BaseResponse()
 
+@Serializable
 data class TokenizedPaymentMethodsApiResponse(
-    @SerializedName("NAGAD") var nagadBean: NagadBean? = NagadBean()
+    @SerialName("NAGAD") var nagadBean: NagadBean? = NagadBean()
 )
-
+@Serializable
 data class NagadBean(
-    @SerializedName("payment_method_id") var paymentMethodId: Int? = null,
-    @SerializedName("account") var nagadAccountInfo: NagadAccountInfo? = NagadAccountInfo()
+    @SerialName("payment_method_id") var paymentMethodId: Int? = null,
+    @SerialName("account") var nagadAccountInfo: NagadAccountInfo? = NagadAccountInfo()
 )
-
+@Serializable
 data class NagadAccountInfo(
-    @SerializedName("payment_method_id") var paymentMethodId: Int? = null,
-    @SerializedName("wallet_number") var walletNumber: String? = null,
-    @SerializedName("payment_token") var paymentToken: String? = null,
-    @SerializedName("token_expiry") var tokenExpiry: String? = null,
-    @SerializedName("payment_cus_id") var paymentCusId: String? = null
+    @SerialName("payment_method_id") var paymentMethodId: Int? = null,
+    @SerialName("wallet_number") var walletNumber: String? = null,
+    @SerialName("payment_token") var paymentToken: String? = null,
+    @SerialName("token_expiry") var tokenExpiry: String? = null,
+    @SerialName("payment_cus_id") var paymentCusId: String? = null
 )
