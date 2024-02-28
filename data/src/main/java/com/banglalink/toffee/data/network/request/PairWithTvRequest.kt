@@ -1,13 +1,15 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PairWithTvRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("code")
+    @SerialName("code")
     val code: String
 ) : BaseRequest(ApiNames.PAIR_WITH_TV)
