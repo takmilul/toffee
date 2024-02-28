@@ -10,21 +10,25 @@ import com.banglalink.toffee.util.Utils
 import com.google.android.gms.common.annotation.KeepName
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.*
 
 @KeepName
 @Parcelize
 @Serializable
+@OptIn(ExperimentalSerializationApi::class)
 data class ChannelInfo(
     @SerialName("id")
     var id: String = "0",
     @SerialName("main_table_id")
+    @JsonNames("mainTableId")
     var mainTableId: String? = "0",
     @SerialName("iptv_programs_id")
+    @JsonNames("iptvProgramsId")
     var iptvProgramsId: String? = "0",
     @SerialName("program_name")
     var program_name: String? = null,
@@ -66,17 +70,22 @@ data class ChannelInfo(
     var hlsLinks: List<HlsLinks>? = null,
     
     @SerialName("drm_dash_url_extended")
+    @JsonNames("drmDashUrlExt")
     var drmDashUrlExt: List<DrmHlsLinks>? = null,
     @SerialName("drm_dash_url_extended_sd")
+    @JsonNames("drmDashUrlExtSd")
     var drmDashUrlExtSd: List<DrmHlsLinks>? = null,
     @SerialName("drm_dash_url_sd")
+    @JsonNames("drmDashUrlSd")
     var drmDashUrlSd: String? = null,
     @SerialName("content_expire")
+    @JsonNames("contentExpiryTime")
     var contentExpiryTime: String? = null,
     
     @SerialName("channel_logo")
     var channel_logo: String? = null,
     @SerialName("categoryName")
+    @JsonNames("category")
     var category: String? = null,
     @SerialName("subCategory")
     var subCategory: String? = null,
@@ -106,14 +115,19 @@ data class ChannelInfo(
     @SerialName("serial_name")
     val seriesName: String? = null,
     @SerialName("total_season_no")
+    @JsonNames("totalSeason")
     val totalSeason: Int = 0,
     @SerialName("season_no")
+    @JsonNames("seasonNo")
     val seasonNo: Int = 0,
     @SerialName("serial_summary_id")
+    @JsonNames("seriesSummaryId")
     val seriesSummaryId: Int = 0,
     @SerialName("total_episode_no")
+    @JsonNames("totalEpisode")
     val totalEpisode: Int = 0,
     @SerialName("episode_no")
+    @JsonNames("episodeNo")
     val episodeNo: Int = 0,
     
     @SerialName("is_available")
@@ -125,14 +139,19 @@ data class ChannelInfo(
     @SerialName("shareCount")
     var shareCount: Long = 0L,
     @SerialName("playlist_content_id")
+    @JsonNames("playlistContentId")
     val playlistContentId: Int = 0,
     @SerialName("active_season_list")
+    @JsonNames("activeSeasonList")
     var activeSeasonList: List<Int>? = listOf(1),
     @SerialName("channel_profile_url")
+    @JsonNames("channelProfileUrl")
     val channelProfileUrl: String? = null,
     @SerialName("url_type")
+    @JsonNames("urlType")
     val urlType: Int = 0,
     @SerialName("url_type_extended")
+    @JsonNames("urlTypeExt")
     val urlTypeExt: Int = 0,
     @SerialName("is_approved")
     val is_approved: Int? = null,
@@ -141,8 +160,10 @@ data class ChannelInfo(
     @SerialName("is_horizontal")
     val is_horizontal: Int? = null,
     @SerialName("landscape_feature_1280_720")
+    @JsonNames("ugcFeaturedImage")
     val ugcFeaturedImage: String? = null,
     @SerialName("is_encoded")
+    @JsonNames("isEncoded")
     val isEncoded: Int? = null,
     @SerialName("is_ugc")
     val is_ugc: Int = 0,
@@ -150,41 +171,56 @@ data class ChannelInfo(
     @SerialName("is_drm_active")
     var is_drm_active: Int = 0,
     @SerialName("drm_dash_url")
+    @JsonNames("drmDashUrl")
     val drmDashUrl: String? = null,
     @SerialName("drm_cast_receiver")
+    @JsonNames("drmCastReceiver")
     val drmCastReceiver: String? = null,
     @SerialName("plain_cast_receiver")
+    @JsonNames("plainCastReceiver")
     val plainCastReceiver: String? = null,
     @SerialName("is_ad_active")
     val is_ad_active: Int = 0,
     @SerialName("drm_cid")
+    @JsonNames("drmCid")
     val drmCid: String? = null,
     @SerialName("fcm_event_name")
+    @JsonNames("fcmEventName")
     val fcmEventName: String? = null,
     @SerialName("fcm_event_is_active")
     val fcm_event_is_active: Int = 0,
     @SerialName("data_source")
+    @JsonNames("dataSource")
     val dataSource: String? = "iptv_programs",
     @SerialName("totalCount")
     var totalCount: Int = 0,
     @SerialName("plain_hls_url_for_url_type")
+    @JsonNames("paidPlainHlsUrl")
     var paidPlainHlsUrl: String? = null,
     @SerialName("sign_url_expire")
+    @JsonNames("signedUrlExpiryDate")
     var signedUrlExpiryDate: String? =null,
     @SerialName("cdn_type")
+    @JsonNames("cdnType")
     var cdnType: String? = null,
     @SerialName("ads_group")
+    @JsonNames("adGroup")
     var adGroup: String? = null,
     @SerialName("featured_banner_code")
+    @JsonNames("bannerEventName")
     var bannerEventName: String? = null,
     @SerialName("sign_cookie")
+    @JsonNames("signedCookie")
     var signedCookie: String? = null,
     @SerialName("sign_cookie_expire")
+    @JsonNames("signedCookieExpiryDate")
     var signedCookieExpiryDate: String? =null,
     
     @SerialName("playlist_name")
+    @JsonNames("playlistName")
     var playlistName: String? = null,
     @SerialName("playlist_description")
+    @JsonNames("playlistDescription")
     var playlistDescription: String? = null,
     @SerialName("episodeName")
     var episodeName: String? = null,
