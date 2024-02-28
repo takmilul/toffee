@@ -876,7 +876,7 @@ abstract class PlayerPageActivity :
         if (player is ExoPlayer && adFrequency > 0) adPlayCounter %= adFrequency
         
         if (mPref.isVastActive && channelInfo.isAdActive) {
-            val shouldPlayAd = tag != null && adPlayCounter == 0
+            val shouldPlayAd = tag != null && adPlayCounter == 0 && adFrequency > 0
             if (shouldPlayAd) {
                 val vastTag = currentlyPlayingVastUrl.ifBlank { tag }
                 ConvivaHelper.setVastTagUrl(vastTag)
