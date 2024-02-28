@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.QrBasedSigning
+package com.banglalink.toffee.ui.qrBasedSigning
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,69 +6,47 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentQrCodeReasultBinding
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.banglalink.toffee.util.unsafeLazy
 
-
-class QrCodeReasultFragment : BaseFragment() {
-
-    private var _binding: FragmentQrCodeReasultBinding?= null
-    val binding get() = _binding!!
-
-//    var qrCodeNumber : String?=null
-
-    private val viewModel by activityViewModels<ActiveTvQrViewModel>()
-    private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+class QrCodeResultFragment : BaseFragment() {
+    
+    private val binding get() = _binding!!
+    private var _binding: FragmentQrCodeReasultBinding? = null
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentQrCodeReasultBinding.inflate(layoutInflater)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 //        qrCodeNumber = arguments?.getString("responseCode")
-
         activity?.title = "Sign into TV"
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
-
-        if ( progressDialog.isShowing) progressDialog.dismiss()
-
-        if (mPref.qrSignInResponseCode.value!=null && mPref.qrSignInResponseCode.value.equals("1")){
-
-            binding.qrSignInActivatedView.visibility=View.GONE
-            binding.qrCodeExpiredView.visibility=View.GONE
-
-            binding.qrSignInActivatedView.visibility=View.VISIBLE
-            mPref.qrSignInStatus.value=null
-
-        }
-        else if (mPref.qrSignInResponseCode.value!=null &&  mPref.qrSignInResponseCode.value!!.equals("2")||mPref.qrSignInResponseCode.value!!.equals("0")){
-
-            binding.qrSignInActivatedView.visibility=View.GONE
-            binding.qrCodeExpiredView.visibility=View.VISIBLE
-
-        }
-        else{
-
-
-        }
-
+        
+        if (mPref.qrSignInResponseCode.value != null && mPref.qrSignInResponseCode.value.equals("1")) {
+            binding.qrSignInActivatedView.visibility = View.GONE
+            binding.qrCodeExpiredView.visibility = View.GONE
+            
+            binding.qrSignInActivatedView.visibility = View.VISIBLE
+            mPref.qrSignInStatus.value = null
+        } else if (mPref.qrSignInResponseCode.value != null && (mPref.qrSignInResponseCode.value!!.equals("2") || mPref.qrSignInResponseCode.value!!.equals("0"))) {
+            binding.qrSignInActivatedView.visibility = View.GONE
+            binding.qrCodeExpiredView.visibility = View.VISIBLE
+        } else { }
+        
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
-
 //                    if (mPref.qrSignInResponseCode.value!=null && mPref.qrSignInResponseCode.value.equals("1") ){
 //
 //                        /**
@@ -117,13 +95,12 @@ class QrCodeReasultFragment : BaseFragment() {
                         popUpTo = R.id.menu_active_tv,
                         inclusive = true
                     )
-
+                    
                     isEnabled = false
                     requireActivity().onBackPressed()
                 }
             }
         })
-
 //        toolbar?.setOnClickListener {
 //            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
 //                override fun handleOnBackPressed() {
@@ -140,16 +117,13 @@ class QrCodeReasultFragment : BaseFragment() {
 //                }
 //            })
 //        }
-
         toolbar?.setNavigationOnClickListener {
-
             activity?.onBackPressed()
         }
     }
+    
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
-
 }

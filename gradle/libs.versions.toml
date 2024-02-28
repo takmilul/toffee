@@ -119,7 +119,7 @@ firework-ads-version = "v20.0.0"
 # Miscellaneous
 dahdit-version = "0.9.3"
 shimmer-version = "0.5.0"
-medallia-version = "4.2.0"
+medallia-version = "4.3.1"
 butterknife-version = "10.2.3"
 clarity-version = "1.3.3"
 jlleitschuh-version = "11.3.2"
@@ -271,7 +271,7 @@ google-http-client = { group = "com.google.http-client", name = "google-http-cli
 # Play Services
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth-version" }
 play-services-auth-api-phone = { group = "com.google.android.gms", name = "play-services-auth-api-phone", version.ref = "play-services-auth-api-phone-version" }
-play-core = { group = "com.google.android.play", name = "core", version.ref = "play-core-version" }
+#play-core = { group = "com.google.android.play", name = "core", version.ref = "play-core-version" }
 inapp-update = { group = "com.google.android.play", name = "app-update", version.ref = "in-app-update-version" }
 inapp-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "in-app-update-version" }
 
