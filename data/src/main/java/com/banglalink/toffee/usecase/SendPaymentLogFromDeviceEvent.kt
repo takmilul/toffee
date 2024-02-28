@@ -3,7 +3,6 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import javax.inject.Inject

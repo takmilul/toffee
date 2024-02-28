@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.banglalink.toffee.enums.PlaylistType
 import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

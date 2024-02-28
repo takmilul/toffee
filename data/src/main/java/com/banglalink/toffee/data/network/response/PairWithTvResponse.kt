@@ -1,16 +1,16 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.model.Customer
-import com.banglalink.toffee.model.ProfileBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PairWithTvResponse(
-    @SerializedName("response")
+    @SerialName("response")
     val response: PairStatus
 ) : BaseResponse()
 
-
+@Serializable
 data class PairStatus(
-    @SerializedName("status")
+    @SerialName("status")
     val status: Int // 0 = wrong code, 1 = active, 2 = expired
 )
