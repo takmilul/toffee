@@ -333,6 +333,7 @@ class PremiumViewModel @Inject constructor(
                         PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "removeTokenizedAccountFromAndroid",
+                            paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
                             rawResponse = gson.toJson(response)
@@ -346,6 +347,7 @@ class PremiumViewModel @Inject constructor(
                         PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "removeTokenizedAccountFromAndroid",
+                            paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
                             rawResponse = gson.toJson(response)
