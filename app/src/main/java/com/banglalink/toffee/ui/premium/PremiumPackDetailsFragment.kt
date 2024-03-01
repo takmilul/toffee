@@ -12,13 +12,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.SavedStateHandle
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
+import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.databinding.FragmentPremiumPackDetailsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getBalloon
@@ -32,16 +35,22 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ClickableAdInventories
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.notification.PubSubMessageUtil.coroutineScope
 import com.banglalink.toffee.showAlignBottom
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class PremiumPackDetailsFragment : BaseFragment(){
 
@@ -53,7 +62,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
     private var openPlanDetails : Boolean? = false
     private var paymentMethods: PackPaymentMethodBean? = null
     private var isCheckVerification : Boolean = false
-
+//    var selectedPackInfo = SingleLiveEvent<PremiumPack>()
+    var selectedPackInfo : PremiumPack? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPremiumPackDetailsBinding.inflate(layoutInflater)
         return binding.root
@@ -62,17 +72,19 @@ class PremiumPackDetailsFragment : BaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.load(R.drawable.content_loader)
-        
+
+
+        selectedPackInfo =viewModel.selectedPremiumPack.value
         requireActivity().title = "Pack Details"
 
         observeMnpStatus()
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-//        triggerButtonSheet()
         if (!checkPackPurchased()){
             triggerButtonSheet()
         }
+//        triggerButtonSheet()
 
 
         /*
@@ -150,28 +162,32 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 )
             }
         })
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
 
 
-                if (isEnabled) {
-                    //sends firebase event for users aborting premPack after looking at contents.
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.PACK_ABORT, bundleOf(
-                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
-                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
-                            "reason" to "content",
-                            "action" to "goes back"
-                        )
-                    )
-                    findNavController().popBackStack()
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//
+//
+//                if (isEnabled) {
+//                    //sends firebase event for users aborting premPack after looking at contents.
+//                    ToffeeAnalytics.toffeeLogEvent(
+//                        ToffeeEvents.PACK_ABORT, bundleOf(
+//                            "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+//                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+//                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+//                            "reason" to "content",
+//                            "action" to "goes back"
+//                        )
+//                    )
+////                    findNavController().popBackStack()
+//                    findNavController().navigatePopUpTo(R.id.packDetailsFragment)
+////                    findNavController().navigatePopUpTo(R.id.premiumPackListFragment)
+//                    isEnabled = false
+//                    requireActivity().onBackPressed()
+//                }
+//            }
+//        })
 
-                    isEnabled = false
-                    requireActivity().onBackPressed()
-                }
-            }
-        })
     }
 
     private fun observeAndSelectPremiumPack(packId:Int) {
@@ -184,6 +200,7 @@ class PremiumPackDetailsFragment : BaseFragment(){
                         premiumPacks.forEach { pack->
                             if (pack.id == packId){
                                 isPackFound = true
+
                                 viewModel.selectedPremiumPack.value = pack
                                 checkPackPurchased()
                                 binding.data = pack
@@ -334,7 +351,8 @@ class PremiumPackDetailsFragment : BaseFragment(){
                 viewModel.selectedPremiumPack.value = selectedPack.copy(
                     isPackPurchased = activePack.isActive,
                     expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
-                    packDetail = if (activePack.isTrialPackUsed) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
+                    packDetail = if (activePack.isTrialPackUsed) activePack.packDetail else "You have bought ${activePack.packDetail} pack",
+
                 )
                 binding.isVerifiedUser = mPref.isVerifiedUser
                 binding.data = viewModel.selectedPremiumPack.value
@@ -439,6 +457,18 @@ class PremiumPackDetailsFragment : BaseFragment(){
     }
 
     override fun onDestroyView() {
+
+        //sends firebase event for users aborting premPack after looking at contents.
+        ToffeeAnalytics.toffeeLogEvent(
+            ToffeeEvents.PACK_ABORT, bundleOf(
+                "source" to if ( mPref.packSource.value==true)"content_click " else "premium_pack_menu",
+                "pack_ID" to selectedPackInfo?.id.toString(),
+                "pack_name" to selectedPackInfo?.packTitle,
+                "reason" to "content",
+                "action" to "goes back"
+            )
+        )
+
         super.onDestroyView()
         progressDialog.dismiss()
         _binding = null

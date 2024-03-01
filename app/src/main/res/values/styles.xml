@@ -320,6 +320,7 @@
     </style>
     
     <style name="ButtonStyleSolidPink" parent="ToffeeButtonStyle">
+
         <item name="backgroundTint">@color/button_bgcolor_pink</item>
         <item name="android:textColor">#ffffff</item>
     </style>

@@ -41,7 +41,7 @@
         android:layout_marginTop="4dp"
         android:fontFamily="@font/roboto_light"
         android:text="@string/get_bl_sim"
-        android:textColor="@color/cardTitleColor"
+        android:textColor="@color/cardsubTitleColor"
         android:textSize="16sp"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"

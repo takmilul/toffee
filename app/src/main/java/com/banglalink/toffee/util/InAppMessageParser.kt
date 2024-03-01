@@ -9,6 +9,7 @@ import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import javax.inject.Inject
@@ -16,7 +17,8 @@ import javax.inject.Singleton
 
 @Singleton
 class InAppMessageParser @Inject constructor(
-    private val categoryListApi: GetCategories
+    private val categoryListApi: GetCategories,
+    private var mPref: SessionPreference
 ) {
 
 //    https://toffeelive.com?routing=internal&page=musicvideo&catid=18&catname=Music Video
@@ -183,17 +185,24 @@ class InAppMessageParser @Inject constructor(
                         return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
                     }
                     "tvsignin" -> {
-                        val code = link.getQueryParameter("code")
-                        code?.let {
-                            return RouteV2(
-                                R.id.menu_active_tv,
-                                "Activate Tv",
-                                bundleOf(
-                                    "code" to it,
-                                ),
-                                navOptions
-                            )
+
+                        if (mPref.isQrCodeEnable) {
+                            val code = link.getQueryParameter("code")
+                            code?.let {
+                                return RouteV2(
+                                    R.id.menu_active_tv,
+                                    "Activate Tv",
+                                    bundleOf(
+                                        "code" to it,
+                                    ),
+                                    navOptions
+                                )
+                            }
+                        } else {
+                            null
                         }
+
+
                     }
                     else -> null
                 }
