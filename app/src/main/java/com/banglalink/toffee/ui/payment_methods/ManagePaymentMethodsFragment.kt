@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -52,14 +51,12 @@ class ManagePaymentMethodsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-//        _binding = FragmentManagePaymentMethodsBinding.inflate(inflater, container, false)
-//        return binding.root
+    ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val isApiResponded = viewModel.isTokenizedPaymentMethodApiRespond.collectAsState(false)
-                ManagePaymentMethodsScreen(viewModel, progressDialog, findNavController(), isApiResponded)
+                ManagePaymentMethodsScreen(viewModel, progressDialog, isApiResponded)
             }
         }
     }
@@ -68,7 +65,6 @@ class ManagePaymentMethodsFragment : BaseFragment() {
     fun ManagePaymentMethodsScreen(
         viewModel: PremiumViewModel,
         progressDialog: ToffeeProgressDialog,
-        navController: NavController,
         isApiResponded: State<Boolean?>,
     ) {
         LaunchedEffect(key1 = true, block = {
@@ -116,9 +112,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                                 nagadAccountInfo = nagadAccountInfo,
                                 viewModel = viewModel,
                                 mPref = mPref,
-                                appContext = requireContext(),
+//                                appContext = requireContext(),
                                 progressDialog = progressDialog,
-                                navController = navController,
                                 nagadPaymentInit = {
                                     paymentMethodId = nagadAccountInfo.paymentMethodId
                                     addTokenizedAccountInit(paymentMethodId)
