@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.banglalink.toffee">
     
     <application
         android:icon="@mipmap/ic_launcher">
+        
         <activity
             android:name=".HiltTestActivity"
             android:exported="false" />
+        
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            android:resource="@xml/gma_ad_services_config"
+            tools:replace="android:resource" />
+        
     </application>
-
 </manifest>
