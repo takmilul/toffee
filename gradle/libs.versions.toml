@@ -39,7 +39,7 @@ hilt-android-version = "2.49"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2024.02.01"
+compose-bom = "2024.02.02"
 kotlin-compose-version = "1.5.8"
 lifecycle-version = "2.7.0"
 navigation-version = "2.7.7"
@@ -47,18 +47,18 @@ work-manager-version = "2.9.0"
 pager-indicator-version = "0.30.1"
 
 # Image
-coil-version = "2.5.0"
+coil-version = "2.6.0"
 ucrop-version = "2.2.8"
 lottie-version = "3.4.0"
 coil-transformer-version = "1.0.5"
 exifinterface-version = "1.3.7"
 
 # Player
-media3-version = "1.2.1"
+media3-version = "1.3.0"
 exo-player-version = "2.19.1"
 
 # Cast
-mediarouter-version = "1.7.0-beta01"
+mediarouter-version = "1.7.0-rc01"
 cast-version = "21.4.0"
 
 # ADS
@@ -69,7 +69,7 @@ ads-identifier-version = "1.0.0-alpha05"
 # Security
 crypto-version = "1.1.0-alpha06"
 identity-credential-version = "1.0.0-alpha03"
-app-authenticator-version = "1.0.0-alpha03"
+app-authenticator-version = "1.0.0-beta01"
 
 # Network
 gson-version = "2.10.1"

@@ -214,7 +214,7 @@ data class CustomerInfoLogin(
     @SerialName("bkashApiRetryingDuration")
     val bkashApiRetryingDuration : Long? = 0L,
     @SerialName("is_prepaid")
-    val isPrepaid : Boolean? = false,
+    val isPrepaid : Boolean? = true,
     @SerialName("isMnpCallForSubscription")
     val isMnpCallForSubscription : Boolean? = false,
     @SerialName("faqUrl")

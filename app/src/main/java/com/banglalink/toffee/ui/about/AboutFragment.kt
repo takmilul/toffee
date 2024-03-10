@@ -53,8 +53,7 @@ class AboutFragment : BaseFragment() {
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .padding(16.dp)
-                .padding(bottom = 56.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AboutLogo()

@@ -355,7 +355,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         MyPopupWindow(requireContext(), anchor).apply {
             inflate(R.menu.menu_catchup_item)
-            if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+            if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
                 menu.getItem(0).title = "Add to Favorites"
             } else {
                 menu.getItem(0).title = "Remove from Favorites"
