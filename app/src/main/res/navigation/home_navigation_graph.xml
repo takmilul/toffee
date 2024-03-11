@@ -671,10 +671,10 @@
 
     <fragment
         android:id="@+id/menu_active_tv"
-        android:name="com.banglalink.toffee.ui.QrBasedSigning.ActiveTvQrFragment"
+        android:name="com.banglalink.toffee.ui.qrBasedSigning.ActiveTvQrFragment"
         tools:layout="@layout/fragment_active_tv_qr" />
     <fragment
         android:id="@+id/Qr_code_res"
-        android:name="com.banglalink.toffee.ui.QrBasedSigning.QrCodeReasultFragment"
+        android:name="com.banglalink.toffee.ui.qrBasedSigning.QrCodeResultFragment"
         tools:layout="@layout/fragment_qr_code_reasult" />
 </navigation>

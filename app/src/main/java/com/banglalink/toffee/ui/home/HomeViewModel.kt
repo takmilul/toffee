@@ -66,6 +66,8 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.usecase.SendCategoryChannelShareCountEvent
 import com.banglalink.toffee.usecase.SendContentReportEvent
+import com.banglalink.toffee.usecase.SendLogOutLogEvent
+import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.usecase.SendOTPLogEvent
 import com.banglalink.toffee.usecase.SendShareCountEvent
 import com.banglalink.toffee.usecase.SendSubscribeEvent
@@ -116,7 +118,8 @@ class HomeViewModel @Inject constructor(
     private val getBubbleService: GetBubbleService,
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
-    
+    private val sendLogOutLogEvent: SendLogOutLogEvent,
+
     ) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
@@ -390,6 +393,12 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { logoutService.execute() }
             logoutLiveData.postValue(response)
+        }
+    }
+
+    fun sendLogOutLogData() {
+        viewModelScope.launch {
+            sendLogOutLogEvent.execute()
         }
     }
 

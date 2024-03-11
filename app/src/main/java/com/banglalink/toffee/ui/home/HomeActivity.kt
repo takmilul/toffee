@@ -729,9 +729,11 @@ class HomeActivity : PlayerPageActivity(),
         }
         return super.onOptionsItemSelected(item)
     }
-    
+
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+
+
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -764,7 +766,7 @@ class HomeActivity : PlayerPageActivity(),
             super.onBackPressed()
         }
     }
-    
+
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
@@ -2957,6 +2959,7 @@ class HomeActivity : PlayerPageActivity(),
             when (it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
+                        viewModel.sendLogOutLogData()
                         clearDataOnLogOut()
                         
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
@@ -3042,6 +3045,7 @@ class HomeActivity : PlayerPageActivity(),
             id.myChannelEditDetailFragment,
             id.myChannelVideosEditFragment,
             id.menu_manage_payment_methods,
+            id.menu_active_tv
             -> {
                 navController.popBackStack()
                 reloadCurrentPage()

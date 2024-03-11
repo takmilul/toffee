@@ -147,7 +147,7 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+        if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"

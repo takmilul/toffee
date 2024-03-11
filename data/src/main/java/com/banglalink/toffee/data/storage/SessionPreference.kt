@@ -25,8 +25,7 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 const val PREF_NAME_IP_TV = "IP_TV"
 
@@ -951,7 +950,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
-            isPrepaid = it.isPrepaid ?: true
+//            isPrepaid = it.isPrepaid ?: true
             isQrCodeEnable = it.isQrCodeEnable == 1
 
             isMnpCallForSubscription = it.isMnpCallForSubscription ?: false

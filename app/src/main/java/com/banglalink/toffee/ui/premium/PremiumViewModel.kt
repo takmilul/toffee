@@ -116,6 +116,7 @@ class PremiumViewModel @Inject constructor(
     val voucherPaymentState = _voucherPayment.asSharedFlow()
     
     var selectedPremiumPack = savedState.getLiveData<PremiumPack>("selectedPremiumPack")
+    var selectedPremiumPackTwo =  MutableLiveData<PremiumPack>()
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
     var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
