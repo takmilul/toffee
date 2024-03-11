@@ -147,6 +147,7 @@ class SavedAccountFragment : BaseFragment() {
                             "myTitle" to "Pack Details",
                             "url" to it.webViewUrl,
                             "paymentType" to paymentName,
+                            "paymentPurpose" to paymentPurpose,
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,

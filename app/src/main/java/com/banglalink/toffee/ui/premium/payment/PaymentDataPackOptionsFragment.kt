@@ -784,6 +784,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "myTitle" to "Pack Details",
                             "url" to it.webViewUrl,
                             "paymentType" to paymentName,
+                            "paymentPurpose" to "ECOM_TXN",
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,

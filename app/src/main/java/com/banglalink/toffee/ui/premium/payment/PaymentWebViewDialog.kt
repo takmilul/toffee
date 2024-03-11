@@ -58,6 +58,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var title: String? = null
     private var htmlUrl: String? = null
     private var paymentId: String? = null
+    private var paymentPurpose: String? = null
     private var paymentTypeFromAddAccount: String? = null
     private var paymentType: String? = null
     private var callBackStatus: String? = null
@@ -96,6 +97,7 @@ class PaymentWebViewDialog : DialogFragment() {
         MedalliaDigital.disableIntercept()
 
         paymentId = arguments?.getString("paymentId")
+        paymentPurpose = arguments?.getString("paymentPurpose")
         paymentTypeFromAddAccount = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
         htmlUrl = arguments?.getString("url")
@@ -201,13 +203,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                     viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                         id = System.currentTimeMillis() + mPref.customerId,
                                         callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
-                                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                        packId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedPremiumPack.value?.id ?: 0,
+                                        packTitle = if (paymentType == "nagadAddAccount") null else viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                        dataPackId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                        dataPackDetails = if (paymentType == "nagadAddAccount") null else viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                        paymentMethodId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                         paymentMsisdn = null,
-                                        paymentRefId = if (paymentType == "nagad") transactionIdentifier else null,
+                                        paymentPurpose = if (paymentType == "nagad" || paymentType == "nagadAddAccount") paymentPurpose else null,
+                                        paymentRefId = if (paymentType == "nagad" || paymentType == "nagadAddAccount") transactionIdentifier else null,
                                         paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                         transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                         transactionStatus = statusCode,
@@ -646,13 +649,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                 viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
                                     id = System.currentTimeMillis() + mPref.customerId,
                                     callingApiName = "${paymentType}SubscriberPaymentRedirectFromAndroid",
-                                    packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                                    packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                                    dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                                    dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                    paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                    packId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedPremiumPack.value?.id ?: 0,
+                                    packTitle = if (paymentType == "nagadAddAccount") null else viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                    dataPackId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                    dataPackDetails = if (paymentType == "nagadAddAccount") null else viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                    paymentMethodId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
                                     paymentMsisdn = null,
-                                    paymentRefId = if (paymentType == "nagad") transactionIdentifier else null,
+                                    paymentPurpose = if (paymentType == "nagad" || paymentType == "nagadAddAccount") paymentPurpose else null,
+                                    paymentRefId = if (paymentType == "nagad" || paymentType == "nagadAddAccount") transactionIdentifier else null,
                                     paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                     transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                     transactionStatus = statusCode,
