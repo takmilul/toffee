@@ -132,8 +132,8 @@ class ReactionPopup: Fragment() {
                 )
             )
         }
+        reactionPopupWindow?.dismiss()
         requireActivity().checkVerification(doActionBeforeReload = true) {
-            reactionPopupWindow?.dismiss()
             channelInfo?.let { info ->
                 lifecycleScope.launchWhenStarted {
                     runCatching {
