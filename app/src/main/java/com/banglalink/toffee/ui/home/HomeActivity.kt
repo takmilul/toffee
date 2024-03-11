@@ -2959,6 +2959,7 @@ class HomeActivity : PlayerPageActivity(),
             when (it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
+                        viewModel.sendLogOutLogData()
                         clearDataOnLogOut()
                         
                         if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
