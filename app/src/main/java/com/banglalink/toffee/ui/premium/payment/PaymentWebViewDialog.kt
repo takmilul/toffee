@@ -58,6 +58,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var title: String? = null
     private var htmlUrl: String? = null
     private var paymentId: String? = null
+    private var paymentMethodId: Int? = null
     private var paymentPurpose: String? = null
     private var paymentTypeFromAddAccount: String? = null
     private var paymentType: String? = null
@@ -97,6 +98,7 @@ class PaymentWebViewDialog : DialogFragment() {
         MedalliaDigital.disableIntercept()
 
         paymentId = arguments?.getString("paymentId")
+        paymentMethodId = arguments?.getInt("paymentMethodId")
         paymentPurpose = arguments?.getString("paymentPurpose")
         paymentTypeFromAddAccount = arguments?.getString("paymentType")
         sessionToken = arguments?.getString("token")
@@ -207,14 +209,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                         packTitle = if (paymentType == "nagadAddAccount") null else viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                         dataPackId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                                         dataPackDetails = if (paymentType == "nagadAddAccount") null else viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                        paymentMethodId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                        paymentMethodId = (if (paymentType == "nagadAddAccount") paymentMethodId else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0)!!,
                                         paymentMsisdn = null,
                                         paymentPurpose = if (paymentType == "nagad" || paymentType == "nagadAddAccount") paymentPurpose else null,
                                         paymentRefId = if (paymentType == "nagad" || paymentType == "nagadAddAccount") transactionIdentifier else null,
                                         paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                         transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                         transactionStatus = statusCode,
-                                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
                                         merchantInvoiceNumber = null,
                                         rawResponse = url.toString()
                                     ))
@@ -653,14 +655,14 @@ class PaymentWebViewDialog : DialogFragment() {
                                     packTitle = if (paymentType == "nagadAddAccount") null else viewModel.selectedPremiumPack.value?.packTitle.toString(),
                                     dataPackId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
                                     dataPackDetails = if (paymentType == "nagadAddAccount") null else viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                                    paymentMethodId = if (paymentType == "nagadAddAccount") 0 else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                    paymentMethodId = (if (paymentType == "nagadAddAccount") paymentMethodId else viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0)!!,
                                     paymentMsisdn = null,
                                     paymentPurpose = if (paymentType == "nagad" || paymentType == "nagadAddAccount") paymentPurpose else null,
                                     paymentRefId = if (paymentType == "nagad" || paymentType == "nagadAddAccount") transactionIdentifier else null,
                                     paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                     transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                     transactionStatus = statusCode,
-                                    amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
                                     merchantInvoiceNumber = null,
                                     rawResponse = url.toString()
                                 ))

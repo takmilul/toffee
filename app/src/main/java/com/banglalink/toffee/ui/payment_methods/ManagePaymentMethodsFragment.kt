@@ -192,6 +192,8 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             "myTitle" to "Manage Payment Methods",
                             "url" to it.webViewUrl,
                             "paymentType" to "nagadAddAccount",
+                            "paymentMethodId" to paymentMethodId,
+                            "paymentPurpose" to "ECOM_TOKEN_GEN",
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,
