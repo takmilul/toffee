@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,7 +107,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     mPref.phoneNumber = phoneNumber
                     ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 1))
                     mPref.lastLoginDateTime =  System.currentTimeMillis().toFormattedDate()
-                    viewModel.sendLoginLogData()
+                    viewModel.sendLoginLogData(ApiNames.VERIFY_OTP)
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
 
                     if (mPref.newUser.value.equals("Old User")){

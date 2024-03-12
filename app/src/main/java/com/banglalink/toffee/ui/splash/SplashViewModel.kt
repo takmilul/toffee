@@ -139,10 +139,10 @@ class SplashViewModel @Inject constructor(
         }
     }
     
-    fun sendLoginLogData() {
+    fun sendLoginLogData(apiName: String) {
         appScope.launch {
             try {
-                sendLoginLogEvent.execute()
+                sendLoginLogEvent.execute(apiName)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

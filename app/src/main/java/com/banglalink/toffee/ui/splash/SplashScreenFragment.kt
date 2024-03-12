@@ -35,14 +35,21 @@ import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.onTransitionCompletedListener
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.DecorationConfig
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.usecase.AdvertisingIdLogData
+import com.banglalink.toffee.usecase.DownloadService
+import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.today
@@ -197,7 +204,7 @@ class SplashScreenFragment : BaseFragment() {
         observe(viewModel.appLaunchConfigLiveData) {
             when (it) {
                 is Success -> {
-                    viewModel.sendLoginLogData()
+                    viewModel.sendLoginLogData(ApiNames.API_LOGIN_V2)
                     viewModel.sendDrmUnavailableLogData()
                     forwardToNextScreen()
                 }
