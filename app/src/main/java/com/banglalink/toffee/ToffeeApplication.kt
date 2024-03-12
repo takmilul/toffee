@@ -163,6 +163,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
             try {
                 sessionPreference.bubbleDialogShowCount = 0
+                sessionPreference.isMnpStatusChecked = false
                 coroutineScope.launch(IO) {
                     cacheManager.clearAllCache()
                     commonPreference.versionCode = BuildConfig.VERSION_CODE
