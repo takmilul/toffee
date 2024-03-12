@@ -351,7 +351,6 @@ class PremiumViewModel @Inject constructor(
                             paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
-                            paymentMethodId = paymentMethodId,
                             rawResponse = gson.toJson(response)
                         )
                     )

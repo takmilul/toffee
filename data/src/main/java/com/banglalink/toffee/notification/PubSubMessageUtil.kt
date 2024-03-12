@@ -53,7 +53,7 @@ const val PAYMENT_LOG_FROM_DEVICE = "projects/$PROJECT_ID/topics/payment_log_fro
 const val KABBIK_CURRENT_VIEWER = "projects/$PROJECT_ID/topics/kabbik_current_viewer"
 const val KABBIK_CURRENT_VIEWERS_HEARTBEAT = "projects/$PROJECT_ID/topics/kabbik_current_viewers_heartbeat"
 
-const val LOGOUT_LOG_TOPIC = "projects/$PROJECT_ID/topics/TestLogout"
+const val LOGOUT_LOG_TOPIC = "projects/$PROJECT_ID/topics/toffee_app_logout"
 
 object PubSubMessageUtil {
     lateinit var client: Pubsub
