@@ -604,10 +604,6 @@
         android:label="Login" />
 
     <dialog
-        android:id="@+id/accountAddFailedDialog"
-        android:name="com.banglalink.toffee.ui.payment_methods.NagodAccountAddFailedDialog"/>
-
-    <dialog
         android:id="@+id/myChannelAddToPlaylistFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment"
         android:label="Add To Playlist" />

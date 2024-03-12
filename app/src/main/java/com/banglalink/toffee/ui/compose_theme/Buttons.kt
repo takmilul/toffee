@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -83,6 +84,7 @@ fun PinkFilledButton(
     modifier: Modifier = Modifier,
     text: String,
     cornerRadius: Dp = 25.dp,
+    enabled: Boolean = true,
     onClick: ()-> Unit
 ) {
     Button(
@@ -91,9 +93,12 @@ fun PinkFilledButton(
         shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = ColorAccent2,
-            contentColor = Color.White
+            contentColor = Color.White,
+            disabledBackgroundColor = Color(0xFF495C74),
+            disabledContentColor = Color.White
         ),
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 9.dp)
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 9.dp),
+        enabled = enabled
     ) {
         Text(
             text = text,
@@ -105,4 +110,28 @@ fun PinkFilledButton(
             letterSpacing = TextUnit(0.25F, TextUnitType.Sp)
         )
     }
+}
+
+@Preview
+@Composable
+private fun PinkFilledButtonEnabledPrev() {
+    PinkFilledButton(text = "Pink Filled Button - Enabled") {}
+}
+
+@Preview
+@Composable
+private fun PinkFilledButtonDisabledPrev() {
+    PinkFilledButton(text = "Pink Filled Button - Disabled", enabled = false) {}
+}
+
+@Preview
+@Composable
+private fun PinkOutlinedButtonPrev() {
+    PinkOutlinedButton(text = "Pink Outlined Button") {}
+}
+
+@Preview
+@Composable
+private fun RedFilledButtonPrev() {
+    RedFilledButton(text = "Red Filled Button") {}
 }

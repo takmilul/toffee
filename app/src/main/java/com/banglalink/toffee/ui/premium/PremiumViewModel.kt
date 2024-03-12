@@ -348,6 +348,7 @@ class PremiumViewModel @Inject constructor(
                         PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "removeTokenizedAccountFromAndroid",
+                            paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
                             paymentMethodId = paymentMethodId,
