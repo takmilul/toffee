@@ -21,6 +21,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UserChannelInfo
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -43,31 +44,47 @@ class LocalSync @Inject constructor(
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) {
-//    val gson = Gson()
-    
-    suspend fun syncData(channelInfo: ChannelInfo, syncFlag: Int = SYNC_FLAG_ALL, isFromCache: Boolean = false) {
+    /**
+     * Sync data with local db. Provide [channelInfo] and [isFromCache] to sync data with local db.
+     * If required to sync the contents with local db then provide [syncFlag] with the required flag. If [syncFlag] is not provided 
+     * then it will not sync all the data with local db. You can provide multiple flags using 'or' to sync multiple data with local db.
+     * @param channelInfo [ChannelInfo]: the item which needs to be synced with local db
+     * @param syncFlag [Int]: the flag to sync the data with local db
+     * @param isFromCache [Boolean]: if the data is from cache or not
+     */
+    suspend fun syncData(
+        channelInfo: ChannelInfo,
+        isFromCache: Boolean,
+        syncFlag: Int = SYNC_FLAG_NONE,
+    ) {
         val contentId = channelInfo.getContentId()
         
         if (channelInfo.isVOD) {
+            Log.d("LocalSync", "VIEW_PROGRESS")
             channelInfo.viewProgress = viewProgressRepo.getProgressByContent(contentId.toLong())?.progress ?: 0L
         }
         if(syncFlag and SYNC_FLAG_VIEW_COUNT == SYNC_FLAG_VIEW_COUNT) {
+            Log.d("LocalSync", "SYNC_FLAG_VIEW_COUNT")
             val viewCount = viewCountRepo.getViewCountByChannelId(contentId.toInt())
             channelInfo.view_count = viewCount?.toString() ?: "0"
         }
         if(syncFlag and SYNC_FLAG_SUB_COUNT == SYNC_FLAG_SUB_COUNT) {
+            Log.d("LocalSync", "SYNC_FLAG_SUB_COUNT")
             channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id)
         }
         if(syncFlag and SYNC_FLAG_SHARE_COUNT == SYNC_FLAG_SHARE_COUNT) {
+            Log.d("LocalSync", "SYNC_FLAG_SHARE_COUNT")
             channelInfo.shareCount = shareCountRepository.getShareCountByContentId(contentId.toInt()) ?: 0L
         }
         if(syncFlag and SYNC_FLAG_REACT == SYNC_FLAG_REACT) {
+            Log.d("LocalSync", "SYNC_FLAG_REACT")
             val reactionList = reactionCountRepo.getReactionStatusByChannelId(contentId.toLong())
             if (!reactionList.isNullOrEmpty()) {
                 channelInfo.reaction = getReactionStatus(contentId, reactionList)
             }
         }
         if(syncFlag and SYNC_FLAG_CHANNEL_SUB == SYNC_FLAG_CHANNEL_SUB) {
+            Log.d("LocalSync", "SYNC_FLAG_CHANNEL_SUB")
             if (preference.isVerifiedUser) {
                 channelInfo.isSubscribed =
                     if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(
@@ -84,14 +101,18 @@ class LocalSync @Inject constructor(
                 channelInfo.isSubscribed = 0
             }
         }
-        if(syncFlag and SYNC_FLAG_FAVORITE == SYNC_FLAG_FAVORITE) {
+//        if(syncFlag and SYNC_FLAG_FAVORITE == SYNC_FLAG_FAVORITE) {
+//            Log.d("LocalSync", "SYNC_FLAG_FAVORITE")
+        if (channelInfo.isVOD) {
             val fav = favoriteDao.isFavorite(contentId.toLong())
             if (fav != null) {
                 channelInfo.favorite = fav.toString()
             }
         }
-        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
-            if (channelInfo.isLive) {
+//        }
+//        if (syncFlag and SYNC_FLAG_TV_RECENT == SYNC_FLAG_TV_RECENT) {
+//            Log.d("LocalSync", "SYNC_FLAG_TV_RECENT")
+            if (channelInfo.isLive && !isFromCache) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), if (channelInfo.isStingray ) 1 else 0,if (channelInfo.isFmRadio ) 1 else 0)?.let {
                     val dbRecentPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
                     if (dbRecentPayload?.equals(channelInfo) == false) {
@@ -107,10 +128,10 @@ class LocalSync @Inject constructor(
                     }
                 }
             }
-        }
-
-        if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
-            if (channelInfo.isFmRadio) {
+//        }
+//        if (syncFlag and SYNC_FLAG_FM_RADIO_RECENT == SYNC_FLAG_FM_RADIO_RECENT) {
+//            Log.d("LocalSync", "SYNC_FLAG_FM_RADIO_RECENT")
+            if (channelInfo.isFmRadio && !isFromCache) {
                 tvChannelRepo.getRecentItemById(contentId.toLong(), 0, 1 )?.let {
                     val dbRecentPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
                     if (dbRecentPayload?.equals(channelInfo) == false) {
@@ -126,8 +147,10 @@ class LocalSync @Inject constructor(
                     }
                 }
             }
-        }
-        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
+//        }
+//        if (syncFlag and SYNC_FLAG_USER_ACTIVITY == SYNC_FLAG_USER_ACTIVITY) {
+//            Log.d("LocalSync", "SYNC_FLAG_USER_ACTIVITY")
+        if (!isFromCache) {
             userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "VOD")?.let {
                 val dbUserActivityPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
                 if (dbUserActivityPayload?.equals(channelInfo) == false) {
@@ -139,22 +162,12 @@ class LocalSync @Inject constructor(
                 }
             }
         }
-        
-        if (syncFlag and SYNC_FLAG_FM_ACTIVITY == SYNC_FLAG_FM_ACTIVITY) {
-            if (channelInfo.isFmRadio) {
-                userActivityRepo.getUserActivityById(contentId.toLong(), channelInfo.type ?: "RADIO")?.let {
-                    val dbUserActivityPayload = it.payload?.let { it1 -> json.decodeFromString<ChannelInfo>(it1) }
-                    if (dbUserActivityPayload?.equals(channelInfo) == false) {
-                        userActivityRepo.updateUserActivityPayload(
-                            contentId.toLong(),
-                            channelInfo.type ?: "RADIO",
-                            json.encodeToString(channelInfo)
-                        )
-                    }
-                }
-            }
-        }
-        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
+//        }
+        /**
+         * Sync cookie based content with local db. if the content is expired then update the local db with new content
+         */
+//        if (syncFlag and SYNC_FLAG_CDN_CONTENT == SYNC_FLAG_CDN_CONTENT) {
+//            Log.d("LocalSync", "SYNC_FLAG_CDN_CONTENT")
             if (channelInfo.urlType == PLAY_CDN) {
                 cdnChannelItemRepository.getCdnChannelItemByChannelId(contentId.toLong())?.let {
                     runCatching {
@@ -178,7 +191,7 @@ class LocalSync @Inject constructor(
                         .signedCookieExpiryDate, json.encodeToString(channelInfo)))
                 }
             }
-        }
+//        }
     }
     
     suspend fun syncUserChannel(userChannel: UserChannelInfo){
@@ -259,6 +272,7 @@ class LocalSync @Inject constructor(
     }
 
     companion object {
+        const val SYNC_FLAG_NONE = 0
         const val SYNC_FLAG_ALL = 0x7FFFFFFF
         const val SYNC_FLAG_VIEW_COUNT = 1
         const val SYNC_FLAG_SHARE_COUNT = 2

@@ -5,16 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        
         <import type="android.view.View" />
+        
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
+        
         <variable
             name="position"
             type="java.lang.Integer" />
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.listeners.MyChannelPlaylistItemListener" />
+        
         <variable
             name="selectedItem"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -48,8 +53,8 @@
                 android:layout_marginStart="16dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_poster"
-                android:scaleType="centerCrop"
                 android:foreground="@drawable/ripple_rectangle_shape"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintEnd_toEndOf="@id/guideline13"
@@ -107,13 +112,16 @@
                 android:id="@+id/title"
                 style="@style/programNameTextView"
                 android:layout_width="0dp"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="4dp"
-                android:lines="2"
+                android:maxLines="2"
                 android:text="@{data.program_name}"
+                app:layout_constraintBottom_toTopOf="@id/uploadTime"
                 app:layout_constraintEnd_toStartOf="@+id/options"
                 app:layout_constraintStart_toEndOf="@+id/poster"
                 app:layout_constraintTop_toTopOf="@+id/poster"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_goneMarginEnd="12dp"
                 tools:text="Program Name" />
             
@@ -130,31 +138,19 @@
                 app:srcCompat="@drawable/ic_menu_more" />
             
             <TextView
-                android:id="@+id/viewCount"
-                android:layout_width="wrap_content"
+                android:id="@+id/uploadTime"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:fontFamily="@font/roboto_medium"
-                android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
+                android:layout_marginVertical="6dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@{data.formattedCreateTime()}"
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="@dimen/default_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/title"
                 app:layout_constraintStart_toStartOf="@id/title"
                 app:layout_constraintTop_toBottomOf="@id/title"
-                tools:text="18K views" />
-            
-            <TextView
-                android:id="@+id/uploadTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="@dimen/default_text_size"
-                app:layout_constraintBottom_toBottomOf="@+id/viewCount"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/viewCount"
-                app:layout_constraintTop_toTopOf="@+id/viewCount"
-                tools:text=" &#8226; 14h" />
+                tools:text="14h" />
         
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

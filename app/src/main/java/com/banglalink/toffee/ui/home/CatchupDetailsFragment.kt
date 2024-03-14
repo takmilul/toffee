@@ -92,7 +92,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.progressBar.load(R.drawable.content_loader)
         lifecycleScope.launch {
-            currentItem?.let { localSync.syncData(it) }
+            currentItem?.let { localSync.syncData(it, false, LocalSync.SYNC_FLAG_ALL) }
             _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
             checkIfFragmentAttached {

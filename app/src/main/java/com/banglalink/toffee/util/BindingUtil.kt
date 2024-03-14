@@ -9,11 +9,9 @@ import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ImageView.ScaleType.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
@@ -27,8 +25,20 @@ import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.enums.Reaction.*
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.enums.Reaction.Add
+import com.banglalink.toffee.enums.Reaction.Angry
+import com.banglalink.toffee.enums.Reaction.Delete
+import com.banglalink.toffee.enums.Reaction.HaHa
+import com.banglalink.toffee.enums.Reaction.Like
+import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.enums.Reaction.Sad
+import com.banglalink.toffee.enums.Reaction.Watched
+import com.banglalink.toffee.enums.Reaction.Wow
+import com.banglalink.toffee.extension.initListener
+import com.banglalink.toffee.extension.loadPlaceholder
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.setImageRequestParams
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
@@ -432,17 +442,6 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             it.getDescriptionDecoded()?.let {
                 view.text = it
             }
-        }
-    }
-    
-    @BindingAdapter("setStartConstraint")
-    fun setStartConstraint(view: View, item: Boolean) {
-        val constraintLayout = view.layoutParams as ConstraintLayout.LayoutParams
-        if (item) {
-            constraintLayout.startToEnd = R.id.guideline3
-        } else {
-            constraintLayout.startToEnd = R.id.viewCount
-            constraintLayout.endToStart = R.id.guideline3
         }
     }
     

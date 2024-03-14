@@ -22,7 +22,6 @@ class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
         super.onViewRecycled(holder)
         if(holder.binding is ListItemActivitiesBinding) {
             holder.binding.videoThumb.setImageDrawable(null)
-            holder.binding.ownerThumb.setImageDrawable(null)
         }
     }
 }

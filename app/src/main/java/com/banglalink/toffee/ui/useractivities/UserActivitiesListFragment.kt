@@ -43,9 +43,9 @@ class UserActivitiesListFragment : BaseListFragment<UserActivities>(), ProviderI
     override fun onItemClicked(item: UserActivities) {
         lifecycleScope.launch {
             item.channelInfo?.let {
-                localSync.syncData(it.apply {
-                    it.isFromSportsCategory = it.isVOD && it.categoryId == 16
-                })
+//                localSync.syncData(it.apply {
+//                    it.isFromSportsCategory = it.isVOD && it.categoryId == 16
+//                }, true)
                 homeViewModel.playContentLiveData.postValue(item.channelInfo)
             }
         }
