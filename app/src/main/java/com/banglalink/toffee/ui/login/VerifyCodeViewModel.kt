@@ -37,9 +37,9 @@ class VerifyCodeViewModel @Inject constructor(
         }
     }
     
-    fun sendLoginLogData() {
+    fun sendLoginLogData(apiName: String) {
         viewModelScope.launch {
-            sendLoginLogEvent.execute()
+            sendLoginLogEvent.execute(apiName)
         }
     }
 }

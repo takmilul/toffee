@@ -13,15 +13,17 @@ import javax.inject.Inject
 
 class SendLoginLogEvent @Inject constructor() {
     
-    fun execute(sendToPubSub: Boolean = true) {
+    fun execute(apiName: String, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            PubSubMessageUtil.send(LoginLogData(), LOGIN_LOG_TOPIC)
+            PubSubMessageUtil.send(LoginLogData(apiName), LOGIN_LOG_TOPIC)
         }
     }
 }
 
 @Serializable
 data class LoginLogData(
+    @SerialName("api_name")
+    val apiName: String,
     @SerialName("id")
     val id: Long = System.nanoTime(),
     @SerialName("app_version")
