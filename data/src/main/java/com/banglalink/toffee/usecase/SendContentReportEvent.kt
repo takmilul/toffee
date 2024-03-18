@@ -19,7 +19,7 @@ class SendContentReportEvent @Inject constructor(
     fun execute(reportInfo: ReportInfo) {
         val reportData = ReportInAppropriateVideoData(preference.customerId, reportInfo.contentId, reportInfo.offenseTypeId, reportInfo.offenseId, 
             reportInfo.timeStamp, reportInfo.additionalDetail)
-        PubSubMessageUtil.send(reportData, CONTENT_REPORT_TOPIC)
+        PubSubMessageUtil.sendMessage(reportData, CONTENT_REPORT_TOPIC)
     }
 }
 

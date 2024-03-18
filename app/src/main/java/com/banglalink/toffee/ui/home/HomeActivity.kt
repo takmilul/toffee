@@ -1971,7 +1971,7 @@ class HomeActivity : PlayerPageActivity(),
             }.cancel(notificationId)
             
             if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
-                PubSubMessageUtil.sendNotificationStatus(pubSubId, OPEN)
+                viewModel.sendNotificationStatusLog(pubSubId, OPEN)
             }
         }
         observeAppVersionUpdate(intent)
