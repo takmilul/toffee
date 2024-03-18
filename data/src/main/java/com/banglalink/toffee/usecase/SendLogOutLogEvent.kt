@@ -25,11 +25,11 @@ class SendLogOutLogEvent @Inject constructor() {
 @Serializable
 data class LogOutLogEvent(
 @SerialName("id") val id: Long = System.nanoTime(),
-@SerialName("customer_ip") val customerIp: String=SessionPreference.getInstance().userIp,
+@SerialName("customerIp") val customerIp: String=SessionPreference.getInstance().userIp,
 @SerialName("lat") val lat: String = SessionPreference.getInstance().latitude,
 @SerialName("lon")  val lon: String = SessionPreference.getInstance().longitude,
-@SerialName("geo_city") val geoCity: String = SessionPreference.getInstance().geoCity,
-@SerialName("geo_location") val geoLocation: String = SessionPreference.getInstance().geoLocation,
-@SerialName("is_request_from_backend ") val isRequestFromBackend : Int = 0,
+@SerialName("geoCity") val geoCity: String = SessionPreference.getInstance().geoCity,
+@SerialName("geoLocation") val geoLocation: String = SessionPreference.getInstance().geoLocation,
+@SerialName("isRequestFromBackend ") val isRequestFromBackend : Int = 0,
 
 ): PubSubBaseRequest()
