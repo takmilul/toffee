@@ -1,7 +1,10 @@
 package com.banglalink.toffee.notification
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,13 +28,27 @@ import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.HostUrlOverrideType.*
-import com.banglalink.toffee.enums.NotificationType.*
+import com.banglalink.toffee.enums.HostUrlOverrideType.BASE
+import com.banglalink.toffee.enums.HostUrlOverrideType.DRM
+import com.banglalink.toffee.enums.HostUrlOverrideType.HLS
+import com.banglalink.toffee.enums.HostUrlOverrideType.IMAGE
+import com.banglalink.toffee.enums.HostUrlOverrideType.NCG
+import com.banglalink.toffee.enums.NotificationType.BETA_USER_DETECTION
+import com.banglalink.toffee.enums.NotificationType.BUBBLE_CONFIG
+import com.banglalink.toffee.enums.NotificationType.CHANGE_URL
+import com.banglalink.toffee.enums.NotificationType.CHANGE_URL_EXTENDED
+import com.banglalink.toffee.enums.NotificationType.CLEAR_CACHE
+import com.banglalink.toffee.enums.NotificationType.CONTENT_REFRESH
+import com.banglalink.toffee.enums.NotificationType.DRM_LICENSE_RELEASE
+import com.banglalink.toffee.enums.NotificationType.LARGE
+import com.banglalink.toffee.enums.NotificationType.LOGOUT
+import com.banglalink.toffee.enums.NotificationType.OVERLAY
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.model.BubbleConfig
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.usecase.SendNotificationStatus
 import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -58,6 +75,7 @@ class ToffeeNotificationService : FirebaseMessagingService() {
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
+    @Inject lateinit var sendNotificationStatusEvent: SendNotificationStatus
     
     companion object {
         const val ROW_ID = "id"
@@ -339,7 +357,9 @@ class ToffeeNotificationService : FirebaseMessagingService() {
         
         suspend fun build() {
             getNotificationBuilder()?.let {
-                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.DELIVERED)
+                coroutineScope.launch {
+                    sendNotificationStatusEvent.execute(pubSubId, PUBSUBMessageStatus.DELIVERED)
+                }
                 showNotification(it.build())
             }
         }

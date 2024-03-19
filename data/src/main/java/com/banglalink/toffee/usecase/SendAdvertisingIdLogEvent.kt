@@ -9,7 +9,7 @@ import javax.inject.Inject
 class SendAdvertisingIdLogEvent @Inject constructor() {
     
     fun execute(adIdLogData: AdvertisingIdLogData) {
-        PubSubMessageUtil.send(adIdLogData, ADVERTISING_ID_TOPIC)
+        PubSubMessageUtil.sendMessage(adIdLogData, ADVERTISING_ID_TOPIC)
     }
 }
 

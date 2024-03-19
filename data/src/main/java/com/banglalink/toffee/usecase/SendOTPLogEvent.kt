@@ -11,7 +11,7 @@ class SendOTPLogEvent @Inject constructor() {
     
     fun execute(otpLogData: OTPLogData, phoneNumber: String, sendToPubSub: Boolean = true) {
         otpLogData.phoneNumber = phoneNumber
-        PubSubMessageUtil.send(otpLogData, USER_OTP_TOPIC)
+        PubSubMessageUtil.sendMessage(otpLogData, USER_OTP_TOPIC)
     }
 }
 

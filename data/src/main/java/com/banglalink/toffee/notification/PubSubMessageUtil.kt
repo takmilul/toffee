@@ -3,7 +3,6 @@ package com.banglalink.toffee.notification
 import android.content.Context
 import android.util.Base64
 import com.banglalink.toffee.Constants
-import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.util.Log
@@ -18,7 +17,6 @@ import com.google.api.services.pubsub.PubsubScopes
 import com.google.api.services.pubsub.model.PublishRequest
 import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
-import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
@@ -62,6 +60,17 @@ object PubSubMessageUtil {
     val coroutineScope = CoroutineScope(coroutineContext)
     val json = NetworkModuleLib.providesJsonWithConfig()
     
+    var callback: JsonBatchCallback<PublishResponse?> =
+        object : JsonBatchCallback<PublishResponse?>() {
+            override fun onSuccess(t: PublishResponse?, responseHeaders: HttpHeaders?) {
+                Log.i("PUBSUB", "published ! " + t?.messageIds)
+            }
+            
+            override fun onFailure(e: GoogleJsonError, responseHeaders: HttpHeaders) {
+                Log.e("PUBSUB", "error Message: " + e.message)
+            }
+        }
+    
     fun init(context: Context) {
         val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
@@ -73,30 +82,7 @@ object PubSubMessageUtil {
         client = builder.build()
     }
     
-    fun sendNotificationStatus(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
-        coroutineScope.launch {
-            send(getPubSubMessage(notificationId, messageStatus), NOTIFICATION_TOPIC)
-        }
-    }
-    
-    fun sendMessage(jsonMessage: String, topic: String) {
-        coroutineScope.launch {
-            runCatching {
-                val batch = client.batch()
-                Log.i("PUBSUB - $topic", jsonMessage)
-                val pubsubMessage = PubsubMessage()
-                pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
-                val publishRequest = PublishRequest()
-                publishRequest.messages = listOf(pubsubMessage)
-                client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
-                batch?.execute()
-            }.onFailure {
-                Log.e("PUBSUB - $topic", it.message, it)
-            }
-        }
-    }
-    
-    inline fun <reified T: Any> send(data: T, topic: String) {
+    inline fun <reified T: Any> sendMessage(data: T, topic: String) {
         coroutineScope.launch {
             runCatching {
                 val batch = client.batch()
@@ -112,27 +98,5 @@ object PubSubMessageUtil {
                 Log.e("PUBSUB - $topic", it.message, it)
             }
         }
-    }
-    
-    var callback: JsonBatchCallback<PublishResponse?> =
-        object : JsonBatchCallback<PublishResponse?>() {
-            override fun onSuccess(t: PublishResponse?, responseHeaders: HttpHeaders?) {
-                Log.i("PUBSUB", "published ! " + t?.messageIds)
-            }
-            
-            override fun onFailure(e: GoogleJsonError, responseHeaders: HttpHeaders) {
-                Log.e("PUBSUB", "error Message: " + e.message)
-            }
-        }
-    
-    private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): JsonObject {
-        val jObj = JsonObject().apply {
-            addProperty("notificationId", notificationId)
-            addProperty("userId", SessionPreference.getInstance().customerId)
-            addProperty("messageStatus", messageStatus.ordinal)
-            addProperty("device_id", CommonPreference.getInstance().deviceId)
-        }
-        Log.i(TAG, jObj.toString())
-        return jObj
     }
 }

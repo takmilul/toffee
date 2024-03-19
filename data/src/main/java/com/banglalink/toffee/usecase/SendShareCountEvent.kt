@@ -22,7 +22,7 @@ class SendShareCountEvent @Inject constructor(
         if (sendToPubSub) {
             val contentId = channelInfo.getContentId()
             val shareCount = ShareData(preference.customerId, contentId.toLong())
-            PubSubMessageUtil.send(shareCount, SHARE_COUNT_TOPIC)
+            PubSubMessageUtil.sendMessage(shareCount, SHARE_COUNT_TOPIC)
             mqttService.send(shareCount, SHARE_COUNT_TOPIC)
         } else {
             shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url)

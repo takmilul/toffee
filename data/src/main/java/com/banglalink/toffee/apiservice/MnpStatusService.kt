@@ -31,7 +31,7 @@ class MnpStatusService @Inject constructor(private val preference: SessionPrefer
             callingApiName = "mnpStatus",
             rawResponse = Gson().toJson(response)
         )
-        PubSubMessageUtil.send(mnpStatusData, PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(mnpStatusData, PAYMENT_LOG_FROM_DEVICE)
 
         return response.response
     }

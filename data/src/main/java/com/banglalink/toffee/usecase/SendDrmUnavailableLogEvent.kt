@@ -14,7 +14,7 @@ class SendDrmUnavailableLogEvent @Inject constructor(
 ) {
     
     fun execute(sendToPubSub: Boolean = true) {
-        PubSubMessageUtil.send(
+        PubSubMessageUtil.sendMessage(
             DrmUnavailableLogData().also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             },

@@ -19,7 +19,7 @@ class SendFeaturePartnerEvent @Inject constructor(
             partnerId =partnerId,
             isLoggedIn = if(preference.isVerifiedUser) 1 else 0
         )
-        PubSubMessageUtil.send(reportData, FEATURE_PARTNER_LOG)
+        PubSubMessageUtil.sendMessage(reportData, FEATURE_PARTNER_LOG)
     }
 }
 
