@@ -157,7 +157,8 @@ fun SavedPaymentMethods(
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
-                    .fillMaxWidth().padding(16.dp),
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 backgroundColor = if (isSystemInDarkTheme()) {
                     CardBgColorDark
                 } else {
@@ -418,16 +419,14 @@ fun RemoveAccountCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             PinkOutlinedButton(
-                modifier = Modifier.weight(1F),
+                modifier = Modifier.weight(1F).padding(end = 8.dp),
                 text = "CANCEL",
                 onClick = {
                     onCancelClick.invoke()
                 }
             )
             RedFilledButton(
-                modifier = Modifier
-                    .weight(1F)
-                    .padding(start = 16.dp),
+                modifier = Modifier.weight(1F).padding(start = 8.dp),
                 text = "REMOVE",
                 onClick = {
                     onRemoveClick.invoke()
@@ -596,7 +595,8 @@ fun SaveAccountFailureDialog(
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
-                    .fillMaxWidth().padding(16.dp),
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 backgroundColor = if (isSystemInDarkTheme()) {
                     CardBgColorDark
                 } else {
