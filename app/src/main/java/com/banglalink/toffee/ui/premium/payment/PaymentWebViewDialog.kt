@@ -72,6 +72,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var transactionId: String? = null
     private var customerMsisdn: String? = null
     private var isHideBackIcon: Boolean = true
+    private var isVisibilityHideCloseIcon: Boolean = true
     private var isHideCloseIcon: Boolean = false
     private var isBkashBlRecharge: Boolean = false
     private var purchaseCallAfterRecharge: Boolean = false
@@ -108,12 +109,17 @@ class PaymentWebViewDialog : DialogFragment() {
         shareableUrl = arguments?.getString("shareable_url")
         isHideBackIcon = arguments?.getBoolean("isHideBackIcon", true) ?: true
         isHideCloseIcon = arguments?.getBoolean("isHideCloseIcon", false) ?: false
+        isVisibilityHideCloseIcon = arguments?.getBoolean("isVisibilityHideCloseIcon", false) ?: false
         isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: false
         purchaseCallAfterRecharge = arguments?.getBoolean("isPurchaseCallAfterRecharge", false) ?: true
         
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
-        if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
+//        if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
+        binding.closeIv.visibility = if (isVisibilityHideCloseIcon) View.GONE else View.VISIBLE
+        if (!isVisibilityHideCloseIcon) {
+            if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
+        }
         observeTopBarBackground()
         
         if (htmlUrl == null) {

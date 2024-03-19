@@ -191,6 +191,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             "paymentPurpose" to "ECOM_TOKEN_GEN",
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
+                            "isVisibilityHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,
                         )
                         // Navigate to the payment WebView dialog
