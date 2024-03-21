@@ -10,7 +10,7 @@ import javax.inject.Inject
 class SendPaymentLogFromDeviceEvent @Inject constructor() {
     
     fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
-        PubSubMessageUtil.send(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
     }
 }
 
