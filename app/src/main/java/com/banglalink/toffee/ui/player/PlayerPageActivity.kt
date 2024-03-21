@@ -1047,7 +1047,9 @@ abstract class PlayerPageActivity :
                 }
             }
             startPosition = C.TIME_UNSET
-            if (channelInfo.viewProgress > 0L) {
+            if (!mPref.isVerifiedUser) {
+                startPosition = 0L
+            } else if (channelInfo.viewProgress > 0L) {
                 startPosition = if (channelInfo.viewProgressPercent() >= 990) {
                     C.TIME_UNSET
                 } else {
