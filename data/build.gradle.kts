@@ -2,12 +2,12 @@
 
 plugins {
     with(libs.plugins) {
-        id(android.library.get().pluginId)
-        id(kotlin.android.get().pluginId)
-        id(kotlin.parcelize.get().pluginId)
-        id(kotlin.serialize.get().pluginId) version libs.versions.kotlin.version.get()
-        id(ksp.get().pluginId)
-        id(hilt.android.get().pluginId)
+        alias(ksp)
+        alias(android.library)
+        alias(kotlin.android)
+        alias(kotlin.parcelize)
+        alias(kotlin.serialize)
+        alias(hilt.android)
     }
 }
 
