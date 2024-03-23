@@ -2,7 +2,6 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
-import android.util.Log.VERBOSE
 import coil.disk.DiskCache
 import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
@@ -15,6 +14,7 @@ import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ExternalApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.util.CustomCookieJar
@@ -22,6 +22,7 @@ import com.banglalink.toffee.util.Log
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.orhanobut.logger.Logger.VERBOSE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,15 +31,21 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.TlsVersion.*
+import okhttp3.OkHttpClient
+import okhttp3.TlsVersion.TLS_1_0
+import okhttp3.TlsVersion.TLS_1_1
+import okhttp3.TlsVersion.TLS_1_2
+import okhttp3.TlsVersion.TLS_1_3
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.net.CookieManager
-import java.util.concurrent.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -48,13 +55,31 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, cookieJar: CustomCookieJar, toffeeDns: ToffeeDns, authInterceptor:
-    AuthInterceptor, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+    fun providesEncryptedHttpClient(
+        @DefaultCache cache: Cache,
+        cookieJar: CustomCookieJar,
+        toffeeDns: ToffeeDns,
+        authInterceptor: AuthInterceptor,
+        mPref: SessionPreference,
+        json: Json
+    ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
+//                addInterceptor(
+//                    HttpLoggingInterceptor().also { 
+//                        it.level = BODY
+//                    }
+//                )
+//                addInterceptor(
+//                    HttpLoggingInterceptor(
+//                        ApiLogger(json)
+//                    ).also { 
+//                        it.level = BODY
+//                    }
+//                )
                 addInterceptor(
                     LoggingInterceptor.Builder()
                         .setLevel(Level.BODY)
@@ -74,7 +99,12 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @PlainHttpClient
-    fun providesPlainHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, mPref:com.banglalink.toffee.data.storage.SessionPreference, plainInterceptor: PlainInterceptor): OkHttpClient {
+    fun providesPlainHttpClient(
+        @DefaultCache cache: Cache,
+        toffeeDns: ToffeeDns,
+        mPref: SessionPreference,
+        plainInterceptor: PlainInterceptor,
+    ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
@@ -168,7 +198,7 @@ object NetworkModuleLib {
     fun providesExternalApi(@ExternalApiRetrofit retrofit: Retrofit): ExternalApi {
         return retrofit.create(ExternalApi::class.java)
     }
-
+    
     @Provides
     @Singleton
     fun providesToffeeDns(@SimpleHttpClient httpClient: OkHttpClient): DnsOverHttps {
@@ -177,7 +207,7 @@ object NetworkModuleLib {
             .client(httpClient)
             .build()
     }
-
+    
     @Provides
     @Singleton
     @CustomConnectionSpec
@@ -204,24 +234,31 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @SimpleHttpClient
-    fun providesSimpleHttpClient(@DefaultCache cache: Cache, mPref:com.banglalink.toffee.data.storage.SessionPreference): OkHttpClient {
+    fun providesSimpleHttpClient(
+        @DefaultCache cache: Cache,
+        mPref: SessionPreference,
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(if(mPref.internalTimeOut==0) 10 else mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
-            .readTimeout(if(mPref.internalTimeOut==0) 20 else mPref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
+            .connectTimeout(if (mPref.internalTimeOut == 0) 10 else mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
+            .readTimeout(if (mPref.internalTimeOut == 0) 20 else mPref.internalTimeOut.toLong() * 2, TimeUnit.SECONDS)
             .cache(cache)
             .build()
     }
-
+    
     @Provides
     @Singleton
     @DnsHttpClient
-    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns, cookieJar: CustomCookieJar): OkHttpClient {
+    fun providesDnsHttpClient(
+        @SimpleHttpClient simpleHttpClient: OkHttpClient,
+        toffeeDns: ToffeeDns,
+        cookieJar: CustomCookieJar,
+    ): OkHttpClient {
         return simpleHttpClient.newBuilder()
             .dns(toffeeDns)
 //            .cookieJar(cookieJar)
             .build()
     }
-
+    
     @DbRetrofit
     @Singleton
     @Provides
@@ -231,26 +268,26 @@ object NetworkModuleLib {
             .client(httpClient)
             .build()
     }
-
+    
     @Provides
     @Singleton
     fun providesDbApi(@DbRetrofit dbRetrofit: Retrofit): DbApi {
         return dbRetrofit.create(DbApi::class.java)
     }
-
+    
     @Provides
     @Singleton
     fun providesAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
-
+    
     @ExperimentalCoroutinesApi
     @Singleton
     @Provides
     fun providesConnectionWatcher(app: Application): ConnectionWatcher {
         return ConnectionWatcher(app)
     }
-
+    
     @Provides
     @Singleton
     fun providesGetTracker(): IGetMethodTracker {

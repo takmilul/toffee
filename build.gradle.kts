@@ -1,12 +1,14 @@
 plugins {
     with(libs.plugins) {
-        alias(android.application) apply false
-        alias(android.library) apply false
-        alias(kotlin.android) apply false
-        alias(kotlin.gradle) apply false
         alias(ksp) apply false
         alias(kotlin.kapt) apply false
+        alias(kotlin.gradle) apply false
+        alias(android.library) apply false
+        alias(android.application) apply false
         alias(google.services) apply false
+        alias(kotlin.android) apply false
+        alias(kotlin.parcelize) apply false
+        alias(kotlin.serialize) apply false
         alias(navigation.safeargs) apply false
         alias(hilt.android) apply false
         alias(firebase.crashlytics) apply false
