@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 <!--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<!--    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />-->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
@@ -37,6 +38,10 @@
         <intent>
             <action android:name="android.media.action.VIDEO_CAPTURE" />
         </intent>
+        <!-- For GMS Core/Play service -->
+        <package android:name="com.google.android.gms" />
+        <package android:name="com.android.vending" />
+        <!-- End of GMS Core/Play service-->
     </queries>
     
     <application
@@ -238,5 +243,16 @@
             android:enabled="true"
             android:process="com.banglalink.toffee" />
         
+        <!-- Prompt Google Play services to install the backported photo picker module -->
+        <!--suppress AndroidDomInspection -->
+        <service android:name="com.google.android.gms.metadata.ModuleDependencies"
+            android:enabled="false"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+            </intent-filter>
+            <meta-data android:name="photopicker_activity:0:required" android:value="" />
+        </service>
     </application>
 </manifest>

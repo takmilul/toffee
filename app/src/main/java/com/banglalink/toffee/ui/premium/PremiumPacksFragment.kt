@@ -39,7 +39,7 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var contentId: String? = null
-    private var fromChannelItem: Boolean? = false
+    private var isFromChannelClick: Boolean? = false
 
     companion object {
         @JvmStatic
@@ -59,12 +59,12 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        fromChannelItem = arguments?.getBoolean("clickedFromChannelItem")
+        isFromChannelClick = arguments?.getBoolean("clickedFromChannelItem")
 
-        mPref.packSource.value = fromChannelItem
-        if (fromChannelItem == true) {
+        mPref.packSource.value = isFromChannelClick
+        if (isFromChannelClick == true) {
             binding.packListHeader.setText(R.string.prem_content_bundle_title)
-            mPref.clickedFromChannelItem.value = fromChannelItem
+            mPref.clickedFromChannelItem.value = isFromChannelClick
         } else {
             binding.packListHeader.setText(R.string.premium_pack_list_title)
             mPref.clickedFromChannelItem.value = false
@@ -158,15 +158,17 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
                                     "pack_name" to response.data.get(0).packTitle
                                 )
                             )
-                            findNavController().navigatePopUpTo(R.id.packDetailsFragment,
-                                popUpTo = R.id.premiumPackListFragment)
-//                            findNavController().popBackStack(R.id.packDetailsFragment, true)
-                        }else{
-
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.packDetailsFragment,
+                                args = bundleOf(
+                                    "clickedFromChannelItem" to isFromChannelClick
+                                ),
+                                popUpTo = R.id.premiumPackListFragment
+                            )
+                        } else{
                             binding.packListHeader.show()
                             binding.premiumPackList.show()
                             mAdapter.addAll(it.toList())
-
                         }
                     }
                 }
@@ -179,10 +181,9 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
     }
     
     override fun onItemClicked(item: PremiumPack) {
-
         Log.d("TAG", "onItemClicked: "+item)
         viewModel.selectedPremiumPack.value = item
-
+        
         ToffeeAnalytics.toffeeLogEvent(
             ToffeeEvents.PREMIUM_PACK,
             bundleOf(
@@ -191,7 +192,12 @@ class PremiumPacksFragment : BaseFragment(), BaseListItemCallback<PremiumPack> {
                 "pack_name" to item.packTitle
             )
         )
-        findNavController().navigateTo(R.id.packDetailsFragment)
+        findNavController().navigateTo(
+            resId = R.id.packDetailsFragment,
+            args = bundleOf(
+                "clickedFromChannelItem" to isFromChannelClick
+            )
+        )
     }
     
     override fun onPause() {

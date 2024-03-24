@@ -9,7 +9,7 @@ targetSdkVersion = "34"
 appVersionCode = "133"
 appVersionName = "7.0.0"
 
-gradle-plugin-version = "8.3.0"
+gradle-plugin-version = "8.3.1"
 
 # View
 activity-version = "1.6.1"
@@ -63,7 +63,7 @@ cast-version = "21.4.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
-play-services-ads-version = "22.6.0"
+play-services-ads-version = "23.0.0"
 ads-identifier-version = "1.0.0-alpha05"
 
 # Security

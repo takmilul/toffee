@@ -1,10 +1,10 @@
 package com.banglalink.toffee.ui.splash
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +13,7 @@ import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.di.FirebaseInAppMessage
+import com.github.florent37.runtimepermission.kotlin.askPermission
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +29,6 @@ class SplashScreenActivity : AppCompatActivity() {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
-    private val pushNotificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,9 @@ class SplashScreenActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            askPermission(POST_NOTIFICATIONS) {}.onDeclined {
+                it.askAgain()
+            }
         }
         
         MedalliaDigital.disableIntercept()

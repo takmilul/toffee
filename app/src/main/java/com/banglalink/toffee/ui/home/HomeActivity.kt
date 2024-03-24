@@ -27,10 +27,19 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Xml
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -40,7 +49,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.*
+import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -69,7 +85,9 @@ import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
 import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.*
+import com.banglalink.toffee.R.drawable
+import com.banglalink.toffee.R.id
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -88,8 +106,10 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
-import com.banglalink.toffee.enums.*
-import com.banglalink.toffee.enums.BubbleType.*
+import com.banglalink.toffee.enums.BubbleType.FIFA
+import com.banglalink.toffee.enums.BubbleType.RAMADAN
+import com.banglalink.toffee.enums.CategoryType
+import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
 import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
@@ -97,13 +117,40 @@ import com.banglalink.toffee.enums.PlayingPage.STINGRAY
 import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
 import com.banglalink.toffee.enums.PlaylistType.User_Playlist
-import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.enums.SharingType
+import com.banglalink.toffee.enums.UploadStatus
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.appTheme
+import com.banglalink.toffee.extension.checkContentPurchase
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.currentNavigationFragment
+import com.banglalink.toffee.extension.dp
+import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrBlank
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.isExpiredFrom
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showDebugMessage
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.snack
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.FeaturedPartner
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.SeriesPlaybackInfo
+import com.banglalink.toffee.model.ShareableData
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PUBSUBMessageStatus.OPEN
-import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ACTION_NAME
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.CONTENT_VIEW
 import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.DISMISS
@@ -133,10 +180,22 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
-import com.banglalink.toffee.ui.widget.*
-import com.banglalink.toffee.util.*
+import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilderTypeThree
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.util.AppLinks
+import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.ConvivaHelper
+import com.banglalink.toffee.util.EncryptionUtil
+import com.banglalink.toffee.util.InAppMessageParser
+import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
+import com.banglalink.toffee.util.currentDateTime
+import com.banglalink.toffee.util.unsafeLazy
 import com.conviva.apptracker.ConvivaAppAnalytics
 import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
@@ -161,8 +220,13 @@ import com.microsoft.clarity.ClarityConfig
 import com.microsoft.clarity.models.LogLevel
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
@@ -173,6 +237,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlin.collections.set
 
 @UnstableApi
 @AndroidEntryPoint
@@ -732,8 +797,6 @@ class HomeActivity : PlayerPageActivity(),
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-
-
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -856,7 +919,7 @@ class HomeActivity : PlayerPageActivity(),
             if (mPref.isQrCodeEnable) {
                 val subMenu = findItem(R.id.menu_active_tv)
                 subMenu?.isVisible = true
-            }else{
+            } else{
                 val subMenu = findItem(R.id.menu_active_tv)
                 subMenu?.isVisible = false
             }
