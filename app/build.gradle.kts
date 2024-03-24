@@ -1,5 +1,6 @@
+
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 plugins {
     with(libs.plugins) {
@@ -91,7 +92,6 @@ android {
     }
     
     kotlinOptions {
-//        useIR = true
         jvmTarget = "17"
     }
     
@@ -179,6 +179,7 @@ dependencies {
         implementation(material)
         implementation(cardview)
         implementation(switch.button)
+        coreLibraryDesugaring(desugar)
         implementation(circleimageview)
         implementation(constraint.layout)
         implementation(legacy.support.v4)
@@ -268,7 +269,8 @@ dependencies {
         implementation(butterknife)
         implementation(shimmer)
         implementation(medallia)
-        implementation(libs.clarity)
+        implementation(clarity)
+        implementation(guava)
         
         
         /////// Testing

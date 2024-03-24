@@ -136,6 +136,7 @@ android {
 dependencies {
     with(libs) {
         // Kotlin
+        coreLibraryDesugaring(desugar)
         implementation(kotlin.coroutines)
         implementation(kotlin.json.serialization)
         implementation(kotlin.json.converter.factory)
