@@ -5,14 +5,12 @@ import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class MnpStatusLogEvent @Inject constructor() {
     
     fun execute(mnpStatusData: MnpStatusData) {
-        PubSubMessageUtil.send(mnpStatusData, PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(mnpStatusData, PAYMENT_LOG_FROM_DEVICE)
     }
 }
 @Serializable

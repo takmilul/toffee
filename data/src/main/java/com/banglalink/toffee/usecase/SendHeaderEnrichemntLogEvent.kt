@@ -12,7 +12,7 @@ import javax.inject.Inject
 class SendHeaderEnrichmentLogEvent @Inject constructor() {
     
     fun execute(heLogData: HeaderEnrichmentLogData) {
-        PubSubMessageUtil.send(heLogData, HE_REPORT_TOPIC)
+        PubSubMessageUtil.sendMessage(heLogData, HE_REPORT_TOPIC)
     }
 }
 

@@ -15,7 +15,7 @@ class SendUserInterestEvent @Inject constructor(
     
     suspend fun execute(interestList: Map<String, Int>, sendToPubSub: Boolean = true) {
         val interestData = InterestData(preference.customerId, interestList)
-        PubSubMessageUtil.send(interestData, USER_INTEREST_TOPIC)
+        PubSubMessageUtil.sendMessage(interestData, USER_INTEREST_TOPIC)
     }
 }
 

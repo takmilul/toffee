@@ -14,7 +14,7 @@ class SendDrmFallbackEvent @Inject constructor(
 ) {
     
     fun execute(channelId: Long, reason: String) {
-        PubSubMessageUtil.send(
+        PubSubMessageUtil.sendMessage(
             DrmFallbackData(reason, channelId).also {
                 it.phoneNumber = mPref.phoneNumber.ifBlank { mPref.hePhoneNumber }
             },

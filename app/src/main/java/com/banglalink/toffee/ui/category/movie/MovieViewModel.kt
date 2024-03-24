@@ -55,7 +55,8 @@ class MovieViewModel @Inject constructor(
     val comingSoonContents = comingSoonResponse.toLiveData()
     private var originalCards = MoviesContentVisibilityCards()
     private var continueWatchingFlag: Boolean = false
-    
+    private var isContinueWatchingSection: Boolean = false
+
     fun loadMovieCategoryDetail(categoryId: Int, type: String = "VOD", limit: Int = 0, offset: Int = 0) {
         viewModelScope.launch {
             val response = try {
@@ -63,7 +64,7 @@ class MovieViewModel @Inject constructor(
             } catch (ex: Exception) {
                 null
             }
-            
+
             originalCards = response?.cards ?: MoviesContentVisibilityCards()
             
             moviesContentCardsResponse.value = originalCards.copy(
@@ -235,7 +236,7 @@ class MovieViewModel @Inject constructor(
                 if(item.channelInfo?.isExpired == false) item.channelInfo else null
             }.apply {
                 continueWatchingFlag = isNotEmpty()
-                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
             }

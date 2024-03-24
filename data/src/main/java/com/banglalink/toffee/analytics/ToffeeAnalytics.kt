@@ -59,7 +59,7 @@ object ToffeeAnalytics {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
         }
-        PubSubMessageUtil.send(ApiFailData(apiName, errorMsg), API_ERROR_TRACK_TOPIC)
+        PubSubMessageUtil.sendMessage(ApiFailData(apiName, errorMsg), API_ERROR_TRACK_TOPIC)
     }
     
     /**

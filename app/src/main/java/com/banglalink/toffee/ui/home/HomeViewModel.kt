@@ -61,13 +61,14 @@ import com.banglalink.toffee.model.ReportInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.ShareableData
+import com.banglalink.toffee.notification.PUBSUBMessageStatus
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.usecase.SendCategoryChannelShareCountEvent
 import com.banglalink.toffee.usecase.SendContentReportEvent
 import com.banglalink.toffee.usecase.SendLogOutLogEvent
-import com.banglalink.toffee.usecase.SendLoginLogEvent
+import com.banglalink.toffee.usecase.SendNotificationStatus
 import com.banglalink.toffee.usecase.SendOTPLogEvent
 import com.banglalink.toffee.usecase.SendShareCountEvent
 import com.banglalink.toffee.usecase.SendSubscribeEvent
@@ -119,8 +120,8 @@ class HomeViewModel @Inject constructor(
     private val premiumPackStatusService: PremiumPackStatusService,
     private val mnpStatusService: MnpStatusService,
     private val sendLogOutLogEvent: SendLogOutLogEvent,
-
-    ) : ViewModel() {
+    private val sendNotificationStatusEvent: SendNotificationStatus
+) : ViewModel() {
 
     val postLoginEvent = SingleLiveEvent<Boolean>()
     val fcmToken = MutableLiveData<String>()
@@ -152,8 +153,6 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
-
-
     
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
@@ -474,6 +473,12 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse {  getBubbleService.loadData(0,100) }
             ramadanScheduleLiveData.postValue(response)
+        }
+    }
+    
+    fun sendNotificationStatusLog(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
+        viewModelScope.launch {
+            sendNotificationStatusEvent.execute(notificationId, messageStatus)
         }
     }
 }

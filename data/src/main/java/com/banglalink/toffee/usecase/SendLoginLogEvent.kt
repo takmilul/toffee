@@ -15,7 +15,7 @@ class SendLoginLogEvent @Inject constructor() {
     
     fun execute(apiName: String, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            PubSubMessageUtil.send(LoginLogData(apiName), LOGIN_LOG_TOPIC)
+            PubSubMessageUtil.sendMessage(LoginLogData(apiName), LOGIN_LOG_TOPIC)
         }
     }
 }

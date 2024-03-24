@@ -34,7 +34,7 @@ class SendReactionEvent @Inject constructor(
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
-        PubSubMessageUtil.send(reactionData, REACTION_TOPIC)
+        PubSubMessageUtil.sendMessage(reactionData, REACTION_TOPIC)
         mqttService.send(reactionData, REACTION_TOPIC)
     }
 

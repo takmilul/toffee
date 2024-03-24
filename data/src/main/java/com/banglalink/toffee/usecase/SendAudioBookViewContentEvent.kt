@@ -10,7 +10,7 @@ import javax.inject.Inject
 class SendAudioBookViewContentEvent @Inject constructor() {
     
     fun execute(kabbikAudioBookLogData: KabbikAudioBookLogData) {
-        PubSubMessageUtil.send(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWER)
+        PubSubMessageUtil.sendMessage(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWER)
     }
 }
 

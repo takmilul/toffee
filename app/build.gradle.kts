@@ -4,16 +4,16 @@ import java.util.*
 
 plugins {
     with(libs.plugins) {
-        id(android.application.get().pluginId)
-        id(kotlin.android.get().pluginId)
-        id(ksp.get().pluginId)
-        id(kotlin.kapt.get().pluginId)
-        id(kotlin.parcelize.get().pluginId)
-        id(kotlin.serialize.get().pluginId) version libs.versions.kotlin.version.get()
-        id(google.services.get().pluginId)
-        id(navigation.safeargs.get().pluginId)
-        id(hilt.android.get().pluginId)
-        id(firebase.crashlytics.get().pluginId)
+        alias(ksp)
+        alias(kotlin.kapt)
+        alias(android.application)
+        alias(kotlin.android)
+        alias(kotlin.parcelize)
+        alias(kotlin.serialize)
+        alias(google.services)
+        alias(navigation.safeargs)
+        alias(hilt.android)
+        alias(firebase.crashlytics)
         id(conviva.tracker.plugin.get().pluginId)
     }
 }
