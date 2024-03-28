@@ -1,6 +1,7 @@
 package com.banglalink.toffee.extension
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -16,6 +17,7 @@ import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.forEach
@@ -285,7 +287,13 @@ fun View.validateInput(messageTextView: TextView, messageResource: Int, messageC
 
 fun Context.openUrlToExternalApp(url: String): Boolean {
     return try {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        val newUrl = if (url.substringAfter("//").subSequence(0, 2) != "www") {
+            url.replaceFirst("//", "//www.")
+        } else {
+            url
+        }
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newUrl).normalizeScheme())
+        startActivity(intent)
         return true
     }
     catch (e: Exception) {
@@ -328,7 +336,7 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
 fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
-    if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.isDebugMessageActive) {
+    if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.IS_DEBUG_MESSAGE_ACTIVE) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             showDisplayMessageDialog(this, message)
         } else {
