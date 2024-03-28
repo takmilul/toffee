@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 object NetworkModule {
     
-    const val isDebugMessageActive: Boolean = false
+    const val IS_DEBUG_MESSAGE_ACTIVE: Boolean = false
     
     private val BASE_URL: String = Constants.STAGING_URL
 //    private val BASE_URL: String = Constants.PROD_URL

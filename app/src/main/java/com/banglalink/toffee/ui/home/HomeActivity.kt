@@ -134,6 +134,7 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.openUrlToExternalApp
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showDebugMessage
@@ -262,6 +263,7 @@ class HomeActivity : PlayerPageActivity(),
     private var playlistShareableUrl: String? = null
     private var shareableData: ShareableData? = null
     private var webSeriesShareableUrl: String? = null
+    private var currentFragmentClassName: String? = null
     private lateinit var navController: NavController
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
@@ -284,9 +286,8 @@ class HomeActivity : PlayerPageActivity(),
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
-    var currentFragmentClassName: String ?= null
     private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
-
+    
     companion object {
         const val TAG = "HOME_TAG"
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -1441,7 +1442,7 @@ class HomeActivity : PlayerPageActivity(),
         runCatching {
             it.getHlsLink()?.let { url ->
                 mPref.isDisablePip.value = true
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                openUrlToExternalApp(url)
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }.onFailure {
             showToast(it.message)
@@ -2479,24 +2480,22 @@ class HomeActivity : PlayerPageActivity(),
                     landingPageViewModel.sendFeaturePartnerReportData(
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                    if (packageManager.getInstalledApplications(0).find { it.packageName == "com.google.android.webview" } != null) {
-                        navController.navigateTo(
-                            resId = R.id.htmlPageViewDialog_Home,
-                            args = bundleOf(
-                                "myTitle" to getString(string.back_to_toffee_text),
-                                "url" to url,
-                                "isHideBackIcon" to false,
-                                "isHideCloseIcon" to true
+                    runCatching {
+                        if (packageManager.getInstalledApplications(0).find { it.packageName == "com.google.android.webview" } != null) {
+                            navController.navigateTo(
+                                resId = R.id.htmlPageViewDialog_Home,
+                                args = bundleOf(
+                                    "myTitle" to getString(string.back_to_toffee_text),
+                                    "url" to url,
+                                    "isHideBackIcon" to false,
+                                    "isHideCloseIcon" to true
+                                )
                             )
-                        )
-                    } else {
-                        runCatching {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(intent)
-                        }.onFailure {
-                            showToast("No browser found")
+                        } else {
+                            openUrlToExternalApp(url)
                         }
+                    }.onFailure {
+                        showToast("No browser found")
                     }
                 } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
             }
