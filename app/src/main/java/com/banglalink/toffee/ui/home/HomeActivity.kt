@@ -200,7 +200,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.conviva.apptracker.ConvivaAppAnalytics
 import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
-import com.conviva.sdk.ConvivaSdkConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -2775,17 +2774,17 @@ class HomeActivity : PlayerPageActivity(),
     private fun initConvivaSdk() {
         runCatching {
             if (BuildConfig.DEBUG) {
-                val settings: Map<String, Any> = mutableMapOf(
-                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
-                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
-                )
-                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
-                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
-                    applicationContext,
-                    BuildConfig.CONVIVA_CUSTOMER_KEY_TEST,
-                    "Toffee Android"
-                )
-                tracker?.subject?.userId = mPref.customerId.toString()
+//                val settings: Map<String, Any> = mutableMapOf(
+//                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
+//                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
+//                )
+//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
+//                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+//                    applicationContext,
+//                    BuildConfig.CONVIVA_CUSTOMER_KEY_TEST,
+//                    "Toffee Android"
+//                )
+//                tracker?.subject?.userId = mPref.customerId.toString()
             } else {
                 ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
                 val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
