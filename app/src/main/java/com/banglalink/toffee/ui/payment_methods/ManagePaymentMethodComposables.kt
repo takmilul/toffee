@@ -307,7 +307,8 @@ fun SavedPaymentMethods(
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .height(52.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable { openDialog = true },
                 backgroundColor = if (isSystemInDarkTheme()) {
                     CardBgColorDark
                 } else {
