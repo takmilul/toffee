@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -303,7 +304,7 @@ class ActiveTvQrFragment : BaseFragment() {
     }
     
     private fun observeSignInStatus() {
-//        ( 0 = wrong code, 1 = active, 2 = expired )
+
         observe(viewModel.qrSignInStatus) {
             when(it){
                 is Resource.Success->{
@@ -321,7 +322,8 @@ class ActiveTvQrFragment : BaseFragment() {
                     } else if (responseCode.equals(1)) {
                         mPref.qrSignInResponseCode.value = "1"
                         findNavController().navigateTo(R.id.Qr_code_res)
-                    } else if (responseCode.equals(2)) {
+                    }
+                    else if (responseCode.equals(2)) {
                         if (mPref.qrSignInStatus.value == "0") {
                             binding.activeWithQrView.visibility = View.GONE
                             binding.enterCodeView.visibility = View.VISIBLE
@@ -330,6 +332,10 @@ class ActiveTvQrFragment : BaseFragment() {
                             mPref.qrSignInResponseCode.value = "2"
                             findNavController().navigateTo(R.id.Qr_code_res)
                         }
+                    }
+                    else {
+
+                        requireActivity().showToast(getString(R.string.no_activity_msg))
                     }
                 }
                 is Resource.Failure->{
