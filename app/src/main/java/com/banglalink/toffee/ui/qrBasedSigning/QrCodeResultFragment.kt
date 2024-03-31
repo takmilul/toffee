@@ -28,7 +28,6 @@ class QrCodeResultFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        qrCodeNumber = arguments?.getString("responseCode")
         activity?.title = "Sign into TV"
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_arrow_back)
@@ -47,49 +46,7 @@ class QrCodeResultFragment : BaseFragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
-//                    if (mPref.qrSignInResponseCode.value!=null && mPref.qrSignInResponseCode.value.equals("1") ){
-//
-//                        /**
-//                         * when activation is successful user will be send back
-//                         * to home page when back button is pressed
-//                         */
-//                        mPref.qrSignInResponseCode.value="1"
-//                        findNavController().navigatePopUpTo(
-//                            resId = R.id.Qr_code_res,
-//                            popUpTo = R.id.menu_active_tv,
-//                            inclusive = true
-//                        )
-//                    }
-//                    else if (mPref.qrSignInResponseCode.value!=null && mPref.qrSignInResponseCode.value.equals("2")
-//                        && mPref.qrSignInStatus.value !="0"){
-//
-//                        /**
-//                         * when user enters an EXPIRED CODE using QR SCANNING then
-//                         * user will be send back to HOME PAGE when BACK BUTTON is
-//                         * pressed(mPref.qrSignInStatus.value !="0" means user used QR SCANNING to login)
-//                         */
-//
-//                        mPref.qrSignInResponseCode.value="2"
-//
-//                        findNavController().navigatePopUpTo(
-//                            resId = R.id.Qr_code_res,
-//                            popUpTo = R.id.menu_active_tv,
-//                            inclusive = true
-//                        )
-//
-//                    }
-//                    else{
-//                        /**
-//                         * when user enters an EXPIRED CODE manually user will
-//                         * be send back to qr code entry page when BACK BUTTON is pressed.
-//                         */
-//
-//                        /**
-//                         *  signIn response is saved in preference so that user doesn't automatically naviagtes
-//                         *  to QrCodeResultFragment from ActiveTvQrFragment(Only when code expired)
-//                         */
-//                        mPref.qrSignInResponseCode.value="2"
-//                    }
+
                     findNavController().navigatePopUpTo(
                         resId = R.id.Qr_code_res,
                         popUpTo = R.id.menu_active_tv,
@@ -101,22 +58,7 @@ class QrCodeResultFragment : BaseFragment() {
                 }
             }
         })
-//        toolbar?.setOnClickListener {
-//            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-//                override fun handleOnBackPressed() {
-//                    if (isEnabled) {
-//                        findNavController().navigatePopUpTo(
-//                            resId = R.id.Qr_code_res,
-//                            popUpTo = R.id.menu_active_tv,
-//                            inclusive = true
-//                        )
-//
-//                        isEnabled = false
-//                        requireActivity().onBackPressed()
-//                    }
-//                }
-//            })
-//        }
+
         toolbar?.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
