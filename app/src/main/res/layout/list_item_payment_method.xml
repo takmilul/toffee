@@ -3,18 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelInfo" />
-        
+            type="com.banglalink.toffee.data.network.response.PackPaymentMethodData" />
+
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     
     <androidx.cardview.widget.CardView
+        android:id="@+id/paymentMethodCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -24,20 +25,22 @@
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
             
             <TextView
                 android:id="@+id/passNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:maxLines="2"
                 android:ellipsize="end"
-                tools:text="Premium Pass"
-                android:textColor="@color/cardTitleColor"
                 android:fontFamily="@font/roboto_regular"
+                android:maxLines="2"
+                android:text="@string/pay_by_banglalink"
+                android:textColor="@color/cardTitleColor"
+                android:textFontWeight="700"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,10 +52,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:text="Starting from BDT 20"
-                android:textColor="@color/cardTitleColor"
-                android:textSize="12sp"
                 android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/cardTitleSecondColor"
+                android:textSize="12sp"
+                tools:text="Starts from 4tk"
+                android:visibility="visible"
+                app:layout_goneMarginBottom="8dp"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/passNameTextView"
@@ -63,11 +68,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
                 tools:text="For all users"
                 android:textColor="@color/cardTitleColor"
                 android:textSize="12sp"
                 android:textStyle="italic"
+                android:visibility="gone"
+                app:layout_goneMarginBottom="8dp"
                 android:fontFamily="@font/roboto_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
@@ -76,9 +82,8 @@
             
             <ImageView
                 android:id="@+id/passBrandImageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_width="72dp"
+                android:layout_height="24dp"
                 app:srcCompat="@drawable/ic_bkash_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/passNameTextView"
