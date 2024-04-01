@@ -133,7 +133,8 @@ jobs:
   
   Build-And-Deploy:
 #    needs: [ static-code-analysis ]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
