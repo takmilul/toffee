@@ -40,7 +40,7 @@ hilt-android-version = "2.49"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2024.02.02"
+compose-bom = "2024.03.00"
 kotlin-compose-version = "1.5.8"
 lifecycle-version = "2.7.0"
 navigation-version = "2.7.7"
@@ -59,7 +59,7 @@ media3-version = "1.3.0"
 exo-player-version = "2.19.1"
 
 # Cast
-mediarouter-version = "1.7.0-rc01"
+mediarouter-version = "1.7.0"
 cast-version = "21.4.0"
 
 # ADS
@@ -93,17 +93,17 @@ in-app-update-version = "2.1.0"
 # Firebase
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "23.4.1"
-firebase-analytics-version = "21.5.1"
-firebase-firestore-version = "24.10.3"
-firebase-in-app-message-version = "20.4.0"
-firebase-crashlytics-version = "18.6.2"
+firebase-analytics-version = "21.6.1"
+firebase-firestore-version = "24.11.0"
+firebase-in-app-message-version = "20.4.1"
+firebase-crashlytics-version = "18.6.3"
 firebase-crashlytics-plugin-version = "2.9.9"
 
 # Reporting
 facebook-sdk-version = "16.0.1"
-conviva-sdk-version = "4.0.35"
-conviva-tracker-version = "0.8.1"
-conviva-exo-player-version = "4.1.2"
+conviva-sdk-version = "4.0.36"
+conviva-tracker-version = "0.8.2"
+conviva-exo-player-version = "4.1.3"
 conviva-plugin-version = "0.3.2"
 pub-sub-version = "v1-rev452-1.25.0"
 mqtt-client-version = "1.2.5"
