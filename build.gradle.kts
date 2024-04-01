@@ -12,6 +12,8 @@ plugins {
         alias(navigation.safeargs) apply false
         alias(hilt.android) apply false
         alias(firebase.crashlytics) apply false
+        alias(firebase.appdistribution) apply false
+        alias(play.publisher) apply false
     }
 }
 

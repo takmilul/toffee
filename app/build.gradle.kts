@@ -1,4 +1,3 @@
-
 import java.io.FileInputStream
 import java.util.*
 
@@ -14,6 +13,8 @@ plugins {
         alias(navigation.safeargs)
         alias(hilt.android)
         alias(firebase.crashlytics)
+        alias(firebase.appdistribution)
+        alias(play.publisher)
         id(conviva.tracker.plugin.get().pluginId)
     }
 }
@@ -113,6 +114,12 @@ android {
 //            Specifies the ABI configurations of your native
 //            libraries Gradle should build and package with your app.
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            firebaseAppDistribution {
+                groups = "Testers"
+//                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+//                releaseNotes="Release notes for demo version"  // ignore this if releaseNotesFile is being used
+//                testers="ali@example.com, bri@example.com, cal@example.com"  // ignore this if groups is being used
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
