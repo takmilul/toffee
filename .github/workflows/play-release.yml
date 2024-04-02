@@ -134,7 +134,7 @@ jobs:
   Build-App:
 #    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+#    timeout-minutes: 25
     
     steps:
       - name: Set Swap Space
@@ -180,15 +180,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       
-      - name: Build App
-        run: ./gradlew build
-  
-  Build-And-Deploy-Release-App-In-Play-Store:
-    needs: [ Build-App ]
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    
-    steps:
+#      - name: Build App
+#        run: ./gradlew build
+      
+#  Build-And-Deploy-Release-App-In-Play-Store:
+#    needs: [ Build-App ]
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 25
+      
+#    steps:
       - name: Build Release app
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
