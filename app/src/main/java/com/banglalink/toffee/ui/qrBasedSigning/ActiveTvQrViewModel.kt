@@ -11,21 +11,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class ActiveTvQrViewModel @Inject constructor(
-
-    private val qrSignInService: QrSignInService
-):ViewModel() {
-
+    private val qrSignInService: QrSignInService,
+) : ViewModel() {
     var qrSignInStatus = SingleLiveEvent<Resource<Int>>()
-
-
+    
     fun getSubscriberPaymentInit(code: String) {
         viewModelScope.launch {
-            var response =  resultFromResponse { qrSignInService.execute(code) }
-            Log.d("TAG", "execute121212: "+response)
-            qrSignInStatus.value=response
+            var response = resultFromResponse { qrSignInService.execute(code) }
+            qrSignInStatus.value = response
         }
     }
 }

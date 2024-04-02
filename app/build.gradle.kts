@@ -301,6 +301,6 @@ dependencies {
         androidTestImplementation(hilt.android.test)
         
         debugImplementation(fragment.test)
-//    debugImplementation (leakcanary)
+        debugImplementation (leakcanary)
     }
 }

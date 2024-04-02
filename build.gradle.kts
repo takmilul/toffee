@@ -25,5 +25,10 @@ buildscript {
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(layout.buildDirectory)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.isFork = true
+    options.isIncremental = true
 }
