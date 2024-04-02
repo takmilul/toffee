@@ -181,8 +181,6 @@ jobs:
           ALIAS: ${{ secrets.ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-        with:
-          node-version: '20'
         run: |
           ./gradlew assembleMobileRelease
           ./gradlew bundleMobileRelease
