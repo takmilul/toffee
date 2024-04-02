@@ -134,7 +134,7 @@ jobs:
   Build-App:
 #    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
@@ -142,14 +142,17 @@ jobs:
           swap-size-gb: 10
       
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
+          cache-dependency-path: | # optional
+            sub-project/*.gradle*
+            sub-project/**/gradle-wrapper.properties
       
       - name: Setup node.js 20
         uses: actions/setup-node@v4
@@ -157,7 +160,7 @@ jobs:
           node-version: '20'
       
       - name: Setup Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -185,7 +188,7 @@ jobs:
   Build-And-Deploy-Release-App-In-Firebase:
     needs: [ Build-App ]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     
     steps:
       - name: Build Release app
