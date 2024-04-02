@@ -292,14 +292,16 @@ dependencies {
         
         
         /////// Testing
+        kspTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
+        
         testImplementation(junit.core)
         testImplementation(robolectric)
         testImplementation(mockk.core)
         testImplementation(mockito.kotlin)
         testImplementation(coroutines.test)
+        testImplementation(hilt.android.test)
         testImplementation(okhttp.mock.web.server)
-        
-        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(test.runner)

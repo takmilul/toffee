@@ -35,7 +35,7 @@ kotlin-json-converter-factory-version = "1.0.0"
 
 # Hilt
 hilt-version = "1.2.0"
-hilt-android-version = "2.49"
+hilt-android-version = "2.51.1"
 
 # Jetpack
 room-db-version = "2.6.1"
@@ -367,7 +367,6 @@ leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", v
 [plugins]
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin-version" }
-gradle-tools = { id = "com.android.tools.build.gradle", version.ref = "gradle-plugin-version" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin-version" }
 kotlin-gradle = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin-version" }
