@@ -103,6 +103,17 @@ android {
         viewBinding = true
     }
     
+    signingConfigs {
+        create("release") {
+            if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
+                storeFile = file(project.findProperty("TOFFEE_KEYSTORE_FILE").toString())
+                storePassword = project.findProperty("TOFFEE_KEYSTORE_PASSWORD")?.toString()
+                keyAlias = project.findProperty("TOFFEE_KEY_ALIAS")?.toString()
+                keyPassword = project.findProperty("TOFFEE_KEY_PASSWORD")?.toString()
+            }
+        }
+    }
+    
     buildTypes {
         getByName("release") {
             isDebuggable = false

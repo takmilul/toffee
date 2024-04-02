@@ -150,9 +150,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-          cache-dependency-path: | # optional
-            sub-project/*.gradle*
-            sub-project/**/gradle-wrapper.properties
       
       - name: Setup node.js 20
         uses: actions/setup-node@v4
@@ -199,7 +196,6 @@ jobs:
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
           ./gradlew assembleMobileRelease
-          ./gradlew bundleMobileRelease
           mv app/build/outputs/apk/mobile/release/app-mobile-release-unsigned.apk app/build/outputs/apk/mobile/release/app-release.apk
           ls -al app/build/outputs/apk/mobile/release
           ls -al app/build/outputs/bundle/mobileRelease
@@ -214,19 +210,6 @@ jobs:
         with:
           node-version: '20'
           releaseDirectory: app/build/outputs/apk/mobile/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
-      
-      - name: Sign AAB
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app_bundle
-        with:
-          node-version: '20'
-          releaseDirectory: app/build/outputs/bundle/mobileRelease
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
