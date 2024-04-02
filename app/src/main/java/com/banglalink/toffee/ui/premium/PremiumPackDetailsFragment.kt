@@ -65,18 +65,15 @@ class PremiumPackDetailsFragment : BaseFragment() {
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-        if (!checkPackPurchased()) {
+        openPlanDetails = arguments?.getBoolean("openPlanDetails") ?: false
+        if (!checkPackPurchased() && openPlanDetails == false) {
             triggerButtonSheet()
         }
-//        triggerButtonSheet()
-        
-        /*
+        /**
          checking pack purchase separately,
          when user comes from deeplink, first checking the pack is available or not. If available then checking pack purchase status
          Otherwise checking as normal flow
          */
-        
-        openPlanDetails = arguments?.getBoolean("openPlanDetails")
         if (openPlanDetails == true) {
             openPlanDetails = false
             val packId = arguments?.getInt("packId")
@@ -386,8 +383,8 @@ class PremiumPackDetailsFragment : BaseFragment() {
         ToffeeAnalytics.toffeeLogEvent(
             ToffeeEvents.PACK_ACTIVE, bundleOf(
                 "source" to if (mPref.packSource.value == true) "content_click " else "premium_pack_menu",
-                "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
-                "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
+                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle
             )
         )
         mPref.signingFromPrem.value = true
