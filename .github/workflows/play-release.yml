@@ -214,7 +214,6 @@ jobs:
       - name: Upload AAB to Google Play Store
         uses: r0adkll/upload-google-play@v1
         with:
-          node-version: '20'
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_KEY }}
           packageName: "com.banglalink.toffee"
           releaseFiles: ${{ steps.sign_app_bundle.outputs.signedReleaseFile }}
