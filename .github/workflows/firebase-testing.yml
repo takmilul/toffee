@@ -145,7 +145,6 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          node-version: '20'
           distribution: 'temurin'
           cache: gradle
       
@@ -160,7 +159,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          node-version: '20'
           gradle-version: '8.4'
       
       - name: Setup Cache
