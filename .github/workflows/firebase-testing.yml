@@ -131,8 +131,8 @@ jobs:
 ##        env:
 ##          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
-  Build-And-Deploy:
-#    needs: [ static-code-analysis ]
+  Build-App:
+#    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -174,7 +174,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      
+  
+  Build-And-Deploy-Release-App-In-Firebase:
+    needs: [ Build-App ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
       - name: Build Release app
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}

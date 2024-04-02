@@ -179,7 +179,7 @@ jobs:
       - name: Build app
         run: ./gradlew build
   
-  Build-And-Deploy-Release-App-In-Firebase:
+  Build-And-Deploy-Release-App-In-Play-Store:
     needs: [ Build-App ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -192,7 +192,6 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew assembleMobileRelease
           ./gradlew bundleMobileRelease
           mv app/build/outputs/apk/mobile/release/app-mobile-release-unsigned.apk app/build/outputs/apk/mobile/release/app-release.apk
           ls -al app/build/outputs/apk/mobile/release
@@ -201,19 +200,6 @@ jobs:
 #      - name: List files in the repository
 #        run: |
 #          ls ${{ github.workspace }}
-      
-      - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          node-version: '20'
-          releaseDirectory: app/build/outputs/apk/mobile/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
       
       - name: Sign AAB
         uses: r0adkll/sign-android-release@v1
