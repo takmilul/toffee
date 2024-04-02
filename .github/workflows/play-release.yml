@@ -145,6 +145,19 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
       
+      - name: Setup Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
         with:
@@ -162,24 +175,6 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Setup Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.android/build-cache
-            /usr/local/lib/android/sdk/ndk
-          key: |
-            Linux-ndkcache
-            ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            Linux-ndkcache
-            ${{ runner.os }}-gradle-
-      
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      
 #      - name: Build App
 #        run: ./gradlew build
       
@@ -189,16 +184,14 @@ jobs:
 #    timeout-minutes: 25
       
 #    steps:
-      - name: Build Release app
+      - name: Build Release App
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           ALIAS: ${{ secrets.ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew bundleMobileRelease
-          mv app/build/outputs/apk/mobile/release/app-mobile-release-unsigned.apk app/build/outputs/apk/mobile/release/app-release.apk
-          ls -al app/build/outputs/apk/mobile/release
+          ./gradlew app:bundleMobileRelease
           ls -al app/build/outputs/bundle/mobileRelease
       
 #      - name: List files in the repository
