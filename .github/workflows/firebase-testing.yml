@@ -156,9 +156,6 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Create NDK Directory
-        run: sudo mkdir /usr/local/lib/android/sdk/ndk
-      
       - name: Setup Cache
         uses: actions/cache@v3
         with:
