@@ -156,13 +156,8 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: '8.4'
+      - name: Create NDK Directory
+        run: sudo mkdir /usr/local/lib/android/sdk/ndk
       
       - name: Setup Cache
         uses: actions/cache@v3
@@ -171,9 +166,24 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             ~/.android/build-cache
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+            /usr/local/lib/android/sdk/ndk
+          key: |
+            Linux-ndkcache
+            ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
+            Linux-ndkcache
             ${{ runner.os }}-gradle-
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.4'
+      
+      - name: Build app
+        run: ./gradlew build
   
   Build-And-Deploy-Release-App-In-Firebase:
     needs: [ Build-App ]

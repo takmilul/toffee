@@ -157,6 +157,24 @@ jobs:
         with:
           node-version: '20'
       
+      - name: Create NDK Directory
+        run: sudo mkdir /usr/local/lib/android/sdk/ndk
+
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+            /usr/local/lib/android/sdk/ndk
+          key: |
+            Linux-ndkcache
+            ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            Linux-ndkcache
+            ${{ runner.os }}-gradle-
+      
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       
@@ -165,17 +183,6 @@ jobs:
         with:
           gradle-version: '8.4'
       
-      - name: Setup Cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.android/build-cache
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-            
       - name: Build app
         run: ./gradlew build
   
