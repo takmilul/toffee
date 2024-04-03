@@ -46,10 +46,12 @@ data class PackPaymentMethodData(
     val paymentSubHeadlineOneForBl : String? = null,
     @SerialName("payment_sub_headline_one_for_non_bl")
     val paymentSubHeadlineOneForNonBl : String? = null,
-    @SerialName("payment_sub_headline_one_for_prepaid"  )
-    var paymentSubHeadlineOneForPrepaid  : String?             = null,
-    @SerialName("payment_sub_headline_one_for_postpaid" )
-    var paymentSubHeadlineOneForPostpaid : String?             = null,
+    @SerialName("payment_sub_headline_one_for_prepaid")
+    var paymentSubHeadlineOneForPrepaid : String? = null,
+    @SerialName("payment_sub_headline_one_for_postpaid")
+    var paymentSubHeadlineOneForPostpaid : String? = null,
+    @SerialName("payment_method_logo_mobile" )
+    var paymentMethodLogoMobile : String? = null,
     @SerialName("order_index")
     val orderIndex : Int? = null,
     @SerialName("data")

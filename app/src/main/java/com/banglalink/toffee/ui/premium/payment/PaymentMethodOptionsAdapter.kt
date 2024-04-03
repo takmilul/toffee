@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
+import android.content.res.Configuration
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -9,8 +10,10 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodData
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -18,6 +21,7 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 
 class PackPaymentMethodAdapter(
     val mPref: SessionPreference,
+    val cPref: CommonPreference,
     private val viewModel: PremiumViewModel,
 cb: BaseListItemCallback<PackPaymentMethodData>,
 ) : MyBaseAdapter<PackPaymentMethodData>(cb) {
@@ -40,7 +44,29 @@ cb: BaseListItemCallback<PackPaymentMethodData>,
         when(obj.paymentMethodName) {
             "free" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+
+                if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty() || obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForNonBl ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            obj.paymentSubHeadlineOneForBl
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+                }
                 logo.hide()
                 eligibleUser.hide()
 
@@ -55,40 +81,196 @@ cb: BaseListItemCallback<PackPaymentMethodData>,
 
             "VOUCHER" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
-                logo.setImageResource(R.drawable.ic_gift_voucher)
+
+                if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty() || obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForNonBl ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            obj.paymentSubHeadlineOneForBl
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+                }
+
+                var logoUrl = obj.paymentMethodLogoMobile
+                val isLightMode = cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO
+
+                if (logoUrl?.contains("theme") == true) {
+                    logoUrl = logoUrl.replace("theme", if (isLightMode) "light" else "dark")
+                }
+                logo.load(logoUrl) {
+                    placeholder(R.drawable.placeholder)
+                }
+
                 eligibleUser.hide()
             }
 
             "blPack" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isPrepaid) obj.paymentSubHeadlineOneForPrepaid ?: "" else obj.paymentSubHeadlineOneForPostpaid ?: ""
-                logo.setImageResource(R.drawable.ic_banglalink_logo)
+
+                if (obj.paymentSubHeadlineOneForPrepaid.isNullOrEmpty() || obj.paymentSubHeadlineOneForPostpaid.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForPrepaid.isNullOrEmpty()) {
+                        price.text = (if (mPref.isPrepaid) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForPostpaid ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForPostpaid.isNullOrEmpty()) {
+                        price.text = (if (mPref.isPrepaid) {
+                            obj.paymentSubHeadlineOneForPrepaid ?: ""
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isPrepaid) obj.paymentSubHeadlineOneForPrepaid ?: "" else obj.paymentSubHeadlineOneForPostpaid ?: ""
+                }
+
+                var logoUrl = obj.paymentMethodLogoMobile
+                val isLightMode = cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO
+
+                if (logoUrl?.contains("theme") == true) {
+                    logoUrl = logoUrl.replace("theme", if (isLightMode) "light" else "dark")
+                }
+                logo.load(logoUrl) {
+                    placeholder(R.drawable.placeholder)
+                }
                 eligibleUser.hide()
             }
 
             "bkash" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
-                logo.setImageResource(R.drawable.bkash_logo_new)
+
+                if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty() || obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForNonBl ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            obj.paymentSubHeadlineOneForBl
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+                }
+
+                var logoUrl = obj.paymentMethodLogoMobile
+                val isLightMode = cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO
+
+                if (logoUrl?.contains("theme") == true) {
+                    logoUrl = logoUrl.replace("theme", if (isLightMode) "light" else "dark")
+                }
+                logo.load(logoUrl) {
+                    placeholder(R.drawable.placeholder)
+                }
+
                 eligibleUser.hide()
             }
 
             "ssl" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
-                logo.setImageResource(R.drawable.ic_ssl_icon)
+
+                if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty() || obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForNonBl ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            obj.paymentSubHeadlineOneForBl
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+                }
+
+                var logoUrl = obj.paymentMethodLogoMobile
+                val isLightMode = cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO
+
+                if (logoUrl?.contains("theme") == true) {
+                    logoUrl = logoUrl.replace("theme", if (isLightMode) "light" else "dark")
+                }
+                logo.load(logoUrl) {
+                    placeholder(R.drawable.placeholder)
+                }
                 eligibleUser.hide()
             }
 
             "nagad" -> {
                 passName.text = obj.paymentHeadline
-                price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
-                logo.setImageResource(R.drawable.ic_nagad_logo)
+
+                if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty() || obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            price.hide()
+                            ""
+                        } else {
+                            obj.paymentSubHeadlineOneForNonBl ?: ""
+                        }).toString()
+                    } else if(obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        price.text = (if (mPref.isBanglalinkNumber.toBoolean()) {
+                            obj.paymentSubHeadlineOneForBl
+                        } else {
+                            price.hide()
+                            ""
+                        }).toString()
+                    } else {
+                        price.hide()
+                    }
+                }
+                else{
+                    price.text = if (mPref.isBanglalinkNumber == "true") obj.paymentSubHeadlineOneForBl ?: "" else obj.paymentSubHeadlineOneForNonBl ?: ""
+                }
+
+                var logoUrl = obj.paymentMethodLogoMobile
+                val isLightMode = cPref.appThemeMode == Configuration.UI_MODE_NIGHT_NO
+
+                if (logoUrl?.contains("theme") == true) {
+                    logoUrl = logoUrl.replace("theme", if (isLightMode) "light" else "dark")
+                }
+                logo.load(logoUrl) {
+                    placeholder(R.drawable.placeholder)
+                }
                 eligibleUser.hide()
             }
         }
     }
-
 }
 

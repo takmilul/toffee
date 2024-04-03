@@ -43,7 +43,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(), BaseListItemCallback
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = PackPaymentMethodAdapter(mPref, viewModel, this)
+        mAdapter = PackPaymentMethodAdapter(mPref, cPref, viewModel, this)
         binding.packCardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.packCardRecyclerView.adapter = mAdapter
 
@@ -51,46 +51,58 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(), BaseListItemCallback
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList : MutableList<PackPaymentMethodData> = mutableListOf()
             paymentTypes.free?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "free"
-                    }
-                )
+                if (!it.data.isNullOrEmpty() && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "free"
+                        }
+                    )
+                }
             }
             paymentTypes.voucher?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "VOUCHER"
-                    }
-                )
+                if (!it.data.isNullOrEmpty() && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "free"
+                        }
+                    )
+                }
             }
             paymentTypes.bl?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "blPack"
-                    }
-                )
+                if ((!it.prepaid.isNullOrEmpty() || !it.prepaid.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "blPack"
+                        }
+                    )
+                }
             }
             paymentTypes.bkash?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "bkash"
-                    }
-                )
+                if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "bkash"
+                        }
+                    )
+                }
             }
             paymentTypes.ssl?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "ssl"
-                    }
-                )
+                if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "bkash"
+                        }
+                    )
+                }
             }
             paymentTypes.nagad?.let {
-                packPaymentMethodList.add(
-                    it.also {
-                        it.paymentMethodName = "nagad"
-                    }
-                )
+                if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()){
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "bkash"
+                        }
+                    )
+                }
             }
 
             mAdapter.removeAll()

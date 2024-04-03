@@ -13,21 +13,22 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-    
+
     <androidx.cardview.widget.CardView
         android:id="@+id/paymentMethodCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/payment_option_card_bg"
         android:onClick="@{() -> callback.onItemClicked(data)}"
         app:cardCornerRadius="12dp">
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-            
+
             <TextView
                 android:id="@+id/passNameTextView"
                 android:layout_width="0dp"
@@ -46,7 +47,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/premiumPackPriceTextView"
                 app:layout_constraintVertical_chainStyle="packed"/>
-            
+
             <TextView
                 android:id="@+id/premiumPackPriceTextView"
                 android:layout_width="0dp"
@@ -62,7 +63,7 @@
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/passNameTextView"
                 app:layout_constraintBottom_toTopOf="@id/packEligibleUserTextView"/>
-            
+
             <TextView
                 android:id="@+id/packEligibleUserTextView"
                 android:layout_width="0dp"
@@ -79,16 +80,25 @@
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/premiumPackPriceTextView" />
-            
+
             <ImageView
                 android:id="@+id/passBrandImageView"
                 android:layout_width="72dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/ic_bkash_logo"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/pass_brand_image_view"
+                android:foregroundGravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/passNameTextView"
-                android:contentDescription="@string/pass_brand_image_view" />
-        
+                app:layout_goneMarginBottom="8dp"
+                app:srcCompat="@drawable/ic_bkash_logo" />
+
+<!--            <androidx.constraintlayout.widget.Guideline-->
+<!--                android:id="@+id/guideline12"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                app:layout_constraintGuide_percent="0.80" />-->
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>
