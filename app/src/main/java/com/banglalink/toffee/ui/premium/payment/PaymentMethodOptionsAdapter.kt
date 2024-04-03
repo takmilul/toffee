@@ -74,7 +74,7 @@ cb: BaseListItemCallback<PackPaymentMethodData>,
                     it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
                 }?.let { isTrialPackUsed = true }
 
-                if (isTrialPackUsed || (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null)) {
+                if (isTrialPackUsed || (mPref.isBanglalinkNumber != "true" && obj.data == null)) {
                     paymentMethodCard.alpha = 0.3f
                 }
             }

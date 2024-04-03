@@ -176,9 +176,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 				if (isTrialPackUsed) {
 					requireContext().showToast(getString(string.trial_already_availed_text))
-				} else if (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null) {
+				} else if (mPref.isBanglalinkNumber != "true" && item.data == null) {
 					requireContext().showToast(getString(string.only_for_bl_users))
-				} else if (mPref.isBanglalinkNumber != "false" && blTrialPackMethod == null) {
+				} else if (mPref.isBanglalinkNumber != "false" && item.data == null) {
 					requireContext().showToast(getString(string.only_for_non_bl_users))
 				} else {
 					findNavController().navigateTo(R.id.activateTrialPackFragment)
