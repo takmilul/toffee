@@ -17,6 +17,7 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodData
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
+import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -47,7 +48,86 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(), BaseListItemCallback
         binding.packCardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.packCardRecyclerView.adapter = mAdapter
 
+        viewModel.clickableAdInventories.value?.let {
+            // navigating to destination by paymentMethodId from deep link
+            when (it.paymentMethodId) {
+                PaymentMethod.BKASH.value -> {
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.paymentDataPackOptionsFragment,
+                        args = bundleOf("paymentName" to "bkash")
+                    )
+                }
+                PaymentMethod.NAGAD.value -> {
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.paymentDataPackOptionsFragment,
+                        args = bundleOf("paymentName" to "nagad")
+                    )
+                }
+                PaymentMethod.BL_PACK.value -> {
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.paymentDataPackOptionsFragment,
+                        args = bundleOf("paymentName" to "blPack")
+                    )
 
+                }
+                PaymentMethod.SSL.value -> {
+                    findNavController().navigatePopUpTo(
+                        resId = R.id.paymentDataPackOptionsFragment,
+                        args = bundleOf("paymentName" to "ssl")
+                    )
+                }
+                else -> {
+                    viewModel.clickableAdInventories.value = null
+                    requireActivity().showToast(getString(R.string.payment_method_invalid))
+                    mPref.refreshRequiredForClickableAd.value = true // refreshing pack details page to destroy this flow
+                    this@PaymentMethodOptionsFragment.closeDialog()
+                }
+            }
+        } ?: run {
+            viewModel.paymentMethod.value?.let { paymentTypes ->
+                val packPaymentMethodList : MutableList<PackPaymentMethodData> = mutableListOf()
+                paymentTypes.free?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "free"
+                        }
+                    )
+                }
+                paymentTypes.voucher?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "VOUCHER"
+                        }
+                    )
+                }
+                paymentTypes.bl?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "blPack"
+                        }
+                    )
+                }
+                paymentTypes.bkash?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "bkash"
+                        }
+                    )
+                }
+                paymentTypes.ssl?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "ssl"
+                        }
+                    )
+                }
+                paymentTypes.nagad?.let {
+                    packPaymentMethodList.add(
+                        it.also {
+                            it.paymentMethodName = "nagad"
+                        }
+                    )
+                }
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList : MutableList<PackPaymentMethodData> = mutableListOf()
             paymentTypes.free?.let {
@@ -105,10 +185,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(), BaseListItemCallback
                 }
             }
 
-            mAdapter.removeAll()
-            mAdapter.addAll(packPaymentMethodList.sortedBy { it.orderIndex })
+                mAdapter.removeAll()
+                mAdapter.addAll(packPaymentMethodList.sortedBy { it.orderIndex })
 
-            with(binding) {
+//                with(binding) {
 
 //                /**
 //                 * This code manages the display and selection of trial pack options based on user preferences and availability.
@@ -445,8 +525,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(), BaseListItemCallback
 //                        )
 //                    })
 //                }
+//                }
             }
         }
+
     }
 
     override fun onItemClicked(item: PackPaymentMethodData) {
