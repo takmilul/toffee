@@ -1,4 +1,3 @@
-
 import java.io.FileInputStream
 import java.util.*
 
@@ -14,6 +13,8 @@ plugins {
         alias(navigation.safeargs)
         alias(hilt.android)
         alias(firebase.crashlytics)
+        alias(firebase.appdistribution)
+        alias(play.publisher)
         id(conviva.tracker.plugin.get().pluginId)
     }
 }
@@ -102,6 +103,17 @@ android {
         viewBinding = true
     }
     
+    signingConfigs {
+        create("release") {
+            if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
+                storeFile = file(project.findProperty("TOFFEE_KEYSTORE_FILE").toString())
+                storePassword = project.findProperty("TOFFEE_KEYSTORE_PASSWORD")?.toString()
+                keyAlias = project.findProperty("TOFFEE_KEY_ALIAS")?.toString()
+                keyPassword = project.findProperty("TOFFEE_KEY_PASSWORD")?.toString()
+            }
+        }
+    }
+    
     buildTypes {
         getByName("release") {
             isDebuggable = false
@@ -113,6 +125,13 @@ android {
 //            Specifies the ABI configurations of your native
 //            libraries Gradle should build and package with your app.
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            firebaseAppDistribution {
+                groups = "Testers"
+                artifactPath = "${rootDir}/app/build/outputs/apk/mobile/release/app-release.apk"
+                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+//                releaseNotes="Release notes for demo version"  // ignore this if releaseNotesFile is being used
+//                testers="ali@example.com, bri@example.com, cal@example.com"  // ignore this if groups is being used
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -274,14 +293,16 @@ dependencies {
         
         
         /////// Testing
+        kspTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
+        
         testImplementation(junit.core)
         testImplementation(robolectric)
         testImplementation(mockk.core)
         testImplementation(mockito.kotlin)
         testImplementation(coroutines.test)
+        testImplementation(hilt.android.test)
         testImplementation(okhttp.mock.web.server)
-        
-        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(test.runner)
@@ -294,6 +315,6 @@ dependencies {
         androidTestImplementation(hilt.android.test)
         
         debugImplementation(fragment.test)
-//    debugImplementation (leakcanary)
+        debugImplementation (leakcanary)
     }
 }
