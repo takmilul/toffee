@@ -211,16 +211,16 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
       
-      - name: Upload APK to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-          groups: "Testers"
-          releaseNotesFile: "distribution/whatsnew/whatsnew-en-US"
-          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
-      
 #      - name: Upload APK to Firebase App Distribution
-#        run: ./gradlew appDistributionUploadMobileRelease
-#        env:
-#          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+#        uses: wzieba/Firebase-Distribution-Github-Action@v1
+#        with:
+#          appId: ${{ secrets.FIREBASE_APP_ID }}
+#          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+#          groups: "Testers"
+#          releaseNotesFile: "distribution/whatsnew/whatsnew-en-US"
+#          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+      
+      - name: Upload APK to Firebase App Distribution
+        run: ./gradlew appDistributionUploadMobileRelease
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

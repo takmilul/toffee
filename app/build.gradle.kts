@@ -128,7 +128,7 @@ android {
             }
             firebaseAppDistribution {
                 groups = "Testers"
-//                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
 //                releaseNotes="Release notes for demo version"  // ignore this if releaseNotesFile is being used
 //                testers="ali@example.com, bri@example.com, cal@example.com"  // ignore this if groups is being used
             }
