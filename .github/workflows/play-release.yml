@@ -191,7 +191,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew app:bundleMobileRelease
+          ./gradlew bundleMobileRelease
           ls -al app/build/outputs/bundle/mobileRelease
       
 #      - name: List files in the repository

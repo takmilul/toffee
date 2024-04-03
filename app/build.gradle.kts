@@ -128,6 +128,7 @@ android {
             }
             firebaseAppDistribution {
                 groups = "Testers"
+                artifactPath = "${rootDir}/app/build/outputs/apk/mobile/release/app-release.apk"
                 releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
 //                releaseNotes="Release notes for demo version"  // ignore this if releaseNotesFile is being used
 //                testers="ali@example.com, bri@example.com, cal@example.com"  // ignore this if groups is being used
