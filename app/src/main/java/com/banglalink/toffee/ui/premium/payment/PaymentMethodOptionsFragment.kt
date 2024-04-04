@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -51,7 +52,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 		super.onViewCreated(view, savedInstanceState)
 		
 		viewModel.selectedDataPackOption.value = null
-		mAdapter = PackPaymentMethodAdapter(mPref, cPref.appThemeMode, viewModel, this)
+		mAdapter = PackPaymentMethodAdapter(requireContext(), mPref, cPref.appThemeMode, viewModel, this)
 		binding.packCardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 		binding.packCardRecyclerView.adapter = mAdapter
 		

@@ -76,7 +76,6 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
         binding.termsAndConditionsOne.setText(spannableString, TextView.BufferType.SPANNABLE)
         binding.termsAndConditionsOne.isSelected = true
 
-
         binding.redeemVoucherBtn.safeClick({
             val selectedPremiumPack = viewModel.selectedPremiumPack.value
             val selectedDataPackOption = viewModel.selectedDataPackOption.value
