@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PackPaymentMethodData" />
-
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-
+    
     <androidx.cardview.widget.CardView
         android:id="@+id/paymentMethodCard"
         android:layout_width="match_parent"
@@ -23,17 +23,16 @@
         android:backgroundTint="@color/payment_option_card_bg"
         android:onClick="@{() -> callback.onItemClicked(data)}"
         app:cardCornerRadius="12dp">
-
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-
+            
             <TextView
                 android:id="@+id/passNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto_regular"
@@ -43,12 +42,12 @@
                 android:textFontWeight="700"
                 android:textSize="14sp"
                 app:layout_goneMarginBottom="4dp"
-                app:layout_constraintEnd_toStartOf="@+id/passBrandImageView"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/premiumPackPriceTextView"
                 app:layout_constraintVertical_chainStyle="packed"/>
-
+            
             <TextView
                 android:id="@+id/premiumPackPriceTextView"
                 android:layout_width="0dp"
@@ -59,12 +58,11 @@
                 android:textSize="12sp"
                 tools:text="Starts from 4tk"
                 android:visibility="visible"
-                app:layout_goneMarginBottom="8dp"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/passNameTextView"
                 app:layout_constraintBottom_toTopOf="@id/packEligibleUserTextView"/>
-
+            
             <TextView
                 android:id="@+id/packEligibleUserTextView"
                 android:layout_width="0dp"
@@ -75,33 +73,31 @@
                 android:textSize="12sp"
                 android:textStyle="italic"
                 android:visibility="gone"
-                app:layout_goneMarginBottom="8dp"
                 android:fontFamily="@font/roboto_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
                 app:layout_constraintStart_toStartOf="@id/passNameTextView"
                 app:layout_constraintTop_toBottomOf="@+id/premiumPackPriceTextView" />
-
+            
             <ImageView
                 android:id="@+id/passBrandImageView"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/pass_brand_image_view"
                 android:foregroundGravity="center"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="@id/guideline"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/passNameTextView"
-                app:layout_goneMarginBottom="8dp"
                 app:srcCompat="@drawable/ic_bkash_logo" />
-
-<!--            <androidx.constraintlayout.widget.Guideline-->
-<!--                android:id="@+id/guideline12"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                app:layout_constraintGuide_percent="0.80" />-->
-
+            
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75" />
+            
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>
-
-

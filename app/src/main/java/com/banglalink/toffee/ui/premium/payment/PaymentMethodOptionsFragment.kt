@@ -17,6 +17,7 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodData
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
+import com.banglalink.toffee.enums.PaymentMethodName
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.showToast
@@ -48,11 +49,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 	@SuppressLint("ResourceAsColor", "SetTextI18n")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-
-		mAdapter = PackPaymentMethodAdapter(mPref, cPref, viewModel, this)
+		
+		viewModel.selectedDataPackOption.value = null
+		mAdapter = PackPaymentMethodAdapter(mPref, cPref.appThemeMode, viewModel, this)
 		binding.packCardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 		binding.packCardRecyclerView.adapter = mAdapter
-
+		
 		viewModel.clickableAdInventories.value?.let {
 			// navigating to destination by paymentMethodId from deep link
 			when (it.paymentMethodId) {
@@ -137,7 +139,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
 						packPaymentMethodList.add(
 							it.also {
-								it.paymentMethodName = "bkash"
+								it.paymentMethodName = "ssl"
 							}
 						)
 					}
@@ -146,7 +148,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
 						packPaymentMethodList.add(
 							it.also {
-								it.paymentMethodName = "bkash"
+								it.paymentMethodName = "nagad"
 							}
 						)
 					}
@@ -169,7 +171,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 		}
 
 		when (item.paymentMethodName) {
-			"free" -> {
+			PaymentMethodName.FREE.value -> {
 				mPref.activePremiumPackList.value?.find {
 					it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
 				}?.let { isTrialPackUsed = true }
@@ -185,7 +187,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				}
 			}
 
-			"VOUCHER" -> {
+			PaymentMethodName.VOUCHER.value -> {
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -204,7 +206,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				)
 			}
 
-			"blPack" -> {
+			PaymentMethodName.BL.value -> {
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -223,7 +225,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				)
 			}
 
-			"bkash" -> {
+			PaymentMethodName.BKASH.value -> {
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -242,7 +244,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				)
 			}
 
-			"ssl" -> {
+			PaymentMethodName.SSL.value -> {
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -261,7 +263,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				)
 			}
 
-			"nagad" -> {
+			PaymentMethodName.NAGAD.value -> {
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
