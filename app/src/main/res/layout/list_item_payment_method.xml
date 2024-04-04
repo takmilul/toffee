@@ -41,7 +41,6 @@
                 android:textColor="@color/cardTitleColor"
                 android:textFontWeight="700"
                 android:textSize="14sp"
-                app:layout_goneMarginBottom="4dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
