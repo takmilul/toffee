@@ -219,5 +219,7 @@ jobs:
       
       - name: Upload APK to Firebase App Distribution
         run: ./gradlew appDistributionUploadBlUatRelease
+          --groups="BL-UAT"
+          --artifactPath="app/build/outputs/apk/mobile/release/app-release.apk"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
