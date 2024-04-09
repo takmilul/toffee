@@ -219,7 +219,7 @@ jobs:
       
       - name: Upload APK to Firebase App Distribution
         run: ./gradlew appDistributionUploadNdQaDebug
-              --groups = "ND-QA"
-              --artifactPath = "${rootDir}/app/build/outputs/apk/ndQa/debug/app-debug.apk"
+              --groups="ND-QA"
+              --artifactPath="app/build/outputs/apk/ndQa/debug/app-debug.apk"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
