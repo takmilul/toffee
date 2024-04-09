@@ -104,9 +104,6 @@ android {
         }
         create("mobile") {
             dimension = "lib"
-            firebaseAppDistribution {
-                artifactPath = "${rootDir}/app/build/outputs/apk/mobile/release/app-release.apk"
-            }
         }
     }
     
