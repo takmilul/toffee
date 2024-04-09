@@ -90,6 +90,7 @@ android {
             dimension = "lib"
             versionNameSuffix = "-ND-QA"
             firebaseAppDistribution {
+                groups = "ND-QA"
                 artifactPath = "${rootDir}/app/build/outputs/apk/ndQa/debug/app-debug.apk"
             }
         }
@@ -97,6 +98,7 @@ android {
             dimension = "lib"
             versionNameSuffix = "-BL-UAT"
             firebaseAppDistribution {
+                groups = "ND-QA, BL-UAT"
                 artifactPath = "${rootDir}/app/build/outputs/apk/blUat/release/app-release.apk"
             }
         }
@@ -122,7 +124,7 @@ android {
             }
             firebaseAppDistribution {
                 artifactType = "APK"
-                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+                releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -143,7 +145,7 @@ android {
             }
             firebaseAppDistribution {
                 artifactType = "APK"
-                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+                releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
             }
             if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
                 signingConfig = signingConfigs.getByName("config")
