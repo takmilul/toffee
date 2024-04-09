@@ -2,9 +2,9 @@ name: Testing CI
 
 on:
   push:
-    branches: [ "testing" ]
+    branches: [ "nd-qa" ]
   pull_request:
-    branches: [ "testing" ]
+    branches: [ "nd-qa" ]
   workflow_dispatch:
 
 jobs:
@@ -174,26 +174,26 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       
-      - name: Build Release App
+      - name: Build Debug App
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           ALIAS: ${{ secrets.ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew assembleMobileRelease
-          mv app/build/outputs/apk/mobile/release/app-mobile-release-unsigned.apk app/build/outputs/apk/mobile/release/app-release.apk
-          ls -al app/build/outputs/apk/mobile/release
+          ./gradlew assembleNdQaDebug
+          mv app/build/outputs/apk/ndQa/debug/app-ndQa-debug.apk app/build/outputs/apk/ndQa/debug/app-debug.apk
+          ls -al app/build/outputs/apk/ndQa/debug
       
-#      - name: List files in the repository
-#        run: |
-#          ls ${{ github.workspace }}
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/mobile/release
+          releaseDirectory: app/build/outputs/apk/ndQa/debug
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -205,7 +205,7 @@ jobs:
         uses: actions/upload-artifact@v4.3.1
         with:
           name: signed-app
-          path: app/build/outputs/apk/mobile/release/*
+          path: app/build/outputs/apk/ndQa/debug/*
           if-no-files-found: warn
       
 #      - name: Upload APK to Firebase App Distribution
@@ -218,6 +218,6 @@ jobs:
 #          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
       
       - name: Upload APK to Firebase App Distribution
-        run: ./gradlew appDistributionUploadMobileRelease
+        run: ./gradlew appDistributionUploadNdQaDebug
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

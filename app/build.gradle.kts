@@ -1,5 +1,5 @@
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     with(libs.plugins) {
@@ -28,8 +28,12 @@ android {
     }
     val adsAppId: String = properties.getProperty("adsAppId")
     val facebookAppId: String = properties.getProperty("facebookAppId")
+    val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
     val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
+    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
     val facebookClientToken: String = properties.getProperty("facebookClientToken")
+    val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
+    val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
     
     defaultConfig {
         minSdk = libs.versions.minSdkVersion.get().toInt()
@@ -59,52 +63,17 @@ android {
                 force("androidx.emoji2:emoji2:1.3.0")
             }
         }
-    }
-    
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDir("src/main/libs")
-        }
-    }
-    
-    flavorDimensions += listOf("lib")
-    
-    productFlavors {
-        create("mobile") {
-            dimension = "lib"
-            
-            val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
-            val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
-            val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
-            val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
-            
-            buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
-            buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
-            buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
-            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_TEST", convivaCustomerKeyTest)
-            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_PROD", convivaCustomerKeyProd)
-        }
-    }
-    
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        dataBinding = true
-        viewBinding = true
+        
+        buildConfigField("int", "DEVICE_TYPE", "1")
+        buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
+        buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
+        buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
+        buildConfigField("String", "CONVIVA_CUSTOMER_KEY_TEST", convivaCustomerKeyTest)
+        buildConfigField("String", "CONVIVA_CUSTOMER_KEY_PROD", convivaCustomerKeyProd)
     }
     
     signingConfigs {
-        create("release") {
+        create("config") {
             if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
                 storeFile = file(project.findProperty("TOFFEE_KEYSTORE_FILE").toString())
                 storePassword = project.findProperty("TOFFEE_KEYSTORE_PASSWORD")?.toString()
@@ -114,7 +83,53 @@ android {
         }
     }
     
+    flavorDimensions += listOf("lib")
+    
+    productFlavors {
+        create("ndQa") {
+            dimension = "lib"
+            versionNameSuffix = "-ND-QA"
+            firebaseAppDistribution {
+                artifactPath = "${rootDir}/app/build/outputs/apk/ndQa/debug/app-debug.apk"
+            }
+        }
+        create("blUat") {
+            dimension = "lib"
+            versionNameSuffix = "-BL-UAT"
+            firebaseAppDistribution {
+                artifactPath = "${rootDir}/app/build/outputs/apk/blUat/release/app-release.apk"
+            }
+        }
+        create("mobile") {
+            dimension = "lib"
+            firebaseAppDistribution {
+                artifactPath = "${rootDir}/app/build/outputs/apk/mobile/release/app-release.apk"
+            }
+        }
+    }
+    
     buildTypes {
+        getByName("debug") {
+            isDebuggable = true
+            isJniDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("staging") {
+            initWith(getByName("debug"))
+//            manifestPlaceholders["hostName"] = "internal.example.com"
+        }
         getByName("release") {
             isDebuggable = false
             isJniDebuggable = false
@@ -127,24 +142,11 @@ android {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
             }
             firebaseAppDistribution {
-                groups = "Testers"
-                artifactPath = "${rootDir}/app/build/outputs/apk/mobile/release/app-release.apk"
+                artifactType = "APK"
                 releaseNotesFile="distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
-//                releaseNotes="Release notes for demo version"  // ignore this if releaseNotesFile is being used
-//                testers="ali@example.com, bri@example.com, cal@example.com"  // ignore this if groups is being used
             }
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        getByName("debug") {
-            isDebuggable = true
-            isJniDebuggable = true
-            isMinifyEnabled = false
-            isShrinkResources = false
-            ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
+                signingConfig = signingConfigs.getByName("config")
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -152,7 +154,7 @@ android {
     
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
 //            pickFirsts += listOf(
 //                "lib/*/libnative-lib.so"
 //            )
@@ -173,6 +175,28 @@ android {
                 "META-INF/annotation-experimental_release.kotlin_module"
             )
         }
+    }
+    
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir("src/main/libs")
+        }
+    }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+        dataBinding = true
+        viewBinding = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     
     composeOptions {

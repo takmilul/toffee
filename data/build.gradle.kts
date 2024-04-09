@@ -15,6 +15,9 @@ android {
     namespace = "com.banglalink.toffee.lib"
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
     
+    val appVersionCode: String = libs.versions.appVersionCode.get()
+    val appVersionName: String = libs.versions.appVersionName.get()
+    
     defaultConfig {
         minSdk = libs.versions.minSdkVersion.get().toInt()
         ksp {
@@ -40,47 +43,30 @@ android {
 //            libraries Gradle should build and package with your app.
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
         }
-    }
-    
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
-    }
-    
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDir("src/main/libs")
-        }
+        
+        buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
+        buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
     }
     
     flavorDimensions += listOf("lib")
+    
     productFlavors {
+        create("ndQa") {
+            dimension = "lib"
+            buildConfigField("int", "DEVICE_TYPE", "1")
+        }
+        create("blUat") {
+            dimension = "lib"
+            buildConfigField("int", "DEVICE_TYPE", "1")
+        }
         create("mobile") {
             dimension = "lib"
-            
-            val appVersionCode: String = libs.versions.appVersionCode.get()
-            val appVersionName: String = libs.versions.appVersionName.get()
-            
             buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
-            buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
         }
         create("tv") {
             dimension = "lib"
-            
-            val appVersionCode: String = libs.versions.appVersionCode.get()
-            val appVersionName: String = libs.versions.appVersionName.get()
-            
             buildConfigField("int", "DEVICE_TYPE", "4")
-            buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
-            buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
         }
-    }
-    
-    buildFeatures {
-        buildConfig = true
     }
     
     buildTypes {
@@ -111,7 +97,7 @@ android {
     
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
 //            pickFirsts += listOf(
 //                "lib/*/libnative-lib.so"
 //            )
@@ -123,13 +109,30 @@ android {
         }
     }
     
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+//    externalNativeBuild {
+//        cmake {
+//            path = file("src/main/cpp/CMakeLists.txt")
+//            version = "3.22.1"
+//        }
+//    }
+    
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir("src/main/libs")
+        }
+    }
+    
+    buildFeatures {
+        buildConfig = true
     }
     
     kotlinOptions {
         jvmTarget = "17"
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
