@@ -201,12 +201,12 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
       
-      - name: Artifact Upload
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: signed-app
-          path: app/build/outputs/apk/blUat/release/*
-          if-no-files-found: warn
+#      - name: Artifact Upload
+#        uses: actions/upload-artifact@v4.3.1
+#        with:
+#          name: signed-app
+#          path: app/build/outputs/apk/blUat/release/*
+#          if-no-files-found: warn
       
 #      - name: Upload APK to Firebase App Distribution
 #        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
