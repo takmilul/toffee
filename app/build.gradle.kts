@@ -134,6 +134,7 @@ android {
             }
             firebaseAppDistribution {
                 artifactType = "APK"
+                groups = "ND-QA, BL-UAT"
                 releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
             }
             if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {

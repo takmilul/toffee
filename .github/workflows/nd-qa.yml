@@ -131,7 +131,7 @@ jobs:
 ##        env:
 ##          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
-  Build-App:
+  Build-And-Deploy-App:
 #    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
     
@@ -182,8 +182,8 @@ jobs:
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
           ./gradlew assembleNdQaDebug
-          mv app/build/outputs/apk/ndQa/debug/app-ndQa-debug.apk app/build/outputs/apk/ndQa/debug/app-debug.apk
           ls -al app/build/outputs/apk/ndQa/debug
+          mv app/build/outputs/apk/ndQa/debug/app-ndQa-debug.apk app/build/outputs/apk/ndQa/debug/app-debug.apk
       
 #      - name: List files in the repository
 #        run: |

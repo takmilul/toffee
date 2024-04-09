@@ -131,7 +131,7 @@ jobs:
 ##        env:
 ##          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
-  Build-App:
+  Build-And-Deploy-App:
 #    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
     
