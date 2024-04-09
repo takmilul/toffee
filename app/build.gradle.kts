@@ -89,18 +89,18 @@ android {
         create("ndQa") {
             dimension = "lib"
             versionNameSuffix = "-ND-QA"
-            firebaseAppDistribution {
-                groups = "ND-QA"
-                artifactPath = "${rootDir}/app/build/outputs/apk/ndQa/debug/app-debug.apk"
-            }
+//            firebaseAppDistribution {
+//                groups = "ND-QA"
+//                artifactPath = "${rootDir}/app/build/outputs/apk/ndQa/debug/app-debug.apk"
+//            }
         }
         create("blUat") {
             dimension = "lib"
             versionNameSuffix = "-BL-UAT"
-            firebaseAppDistribution {
-                groups = "ND-QA, BL-UAT"
-                artifactPath = "${rootDir}/app/build/outputs/apk/blUat/release/app-release.apk"
-            }
+//            firebaseAppDistribution {
+//                groups = "ND-QA, BL-UAT"
+//                artifactPath = "${rootDir}/app/build/outputs/apk/blUat/release/app-release.apk"
+//            }
         }
         create("mobile") {
             dimension = "lib"
