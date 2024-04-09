@@ -1,10 +1,10 @@
-name: Testing CI
+name: BL-UAT CI
 
 on:
   push:
-    branches: [ "testing" ]
+    branches: [ "bl-uat" ]
   pull_request:
-    branches: [ "testing" ]
+    branches: [ "bl-uat" ]
   workflow_dispatch:
 
 jobs:
@@ -131,7 +131,7 @@ jobs:
 ##        env:
 ##          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
-  Build-App:
+  Build-And-Deploy-App:
 #    needs: [ Static-Code-Analysis ]
     runs-on: ubuntu-latest
     
@@ -181,9 +181,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew assembleMobileRelease
-          mv app/build/outputs/apk/mobile/release/app-mobile-release-unsigned.apk app/build/outputs/apk/mobile/release/app-release.apk
-          ls -al app/build/outputs/apk/mobile/release
+          ./gradlew assembleBlUatRelease
+          ls -al app/build/outputs/apk/blUat/release
+          mv app/build/outputs/apk/blUat/release/app-blUat-release-unsigned.apk app/build/outputs/apk/blUat/release/app-release.apk
       
 #      - name: List files in the repository
 #        run: |
@@ -193,7 +193,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/mobile/release
+          releaseDirectory: app/build/outputs/apk/blUat/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -201,12 +201,12 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
       
-      - name: Artifact Upload
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: signed-app
-          path: app/build/outputs/apk/mobile/release/*
-          if-no-files-found: warn
+#      - name: Artifact Upload
+#        uses: actions/upload-artifact@v4.3.1
+#        with:
+#          name: signed-app
+#          path: app/build/outputs/apk/blUat/release/*
+#          if-no-files-found: warn
       
 #      - name: Upload APK to Firebase App Distribution
 #        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
@@ -218,6 +218,8 @@ jobs:
 #          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
       
       - name: Upload APK to Firebase App Distribution
-        run: ./gradlew appDistributionUploadMobileRelease
+        run: ./gradlew appDistributionUploadBlUatRelease
+          --groups="BL-UAT"
+          --artifactPath="app/build/outputs/apk/blUat/release/app-release.apk"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
