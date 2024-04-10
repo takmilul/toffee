@@ -204,7 +204,7 @@ jobs:
 #      - name: Artifact Upload
 #        uses: actions/upload-artifact@v4.3.1
 #        with:
-#          name: signed-app
+#          name: Nd-Qa-debug-app
 #          path: app/build/outputs/apk/ndQa/debug/*
 #          if-no-files-found: warn
       
