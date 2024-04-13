@@ -181,9 +181,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew assembleNdQaDebug
-          ls -al app/build/outputs/apk/ndQa/debug
-          mv app/build/outputs/apk/ndQa/debug/app-ndQa-debug.apk app/build/outputs/apk/ndQa/debug/app-debug.apk
+          ./gradlew assembleMobileStagingDebug
+          ls -al app/build/outputs/apk/mobile/stagingDebug
+          mv app/build/outputs/apk/mobile/stagingDebug/app-mobile-stagingDebug.apk app/build/outputs/apk/mobile/stagingDebug/app-debug.apk
       
 #      - name: List files in the repository
 #        run: |
@@ -193,7 +193,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/ndQa/debug
+          releaseDirectory: app/build/outputs/apk/mobile/stagingDebug
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -218,8 +218,8 @@ jobs:
 #          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
       
       - name: Upload APK to Firebase App Distribution
-        run: ./gradlew appDistributionUploadNdQaDebug
+        run: ./gradlew appDistributionUploadMobileStagingDebug
               --groups="ND-QA"
-              --artifactPath="app/build/outputs/apk/ndQa/debug/app-debug.apk"
+              --artifactPath="app/build/outputs/apk/mobile/stagingDebug/app-debug.apk"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

@@ -13,26 +13,44 @@ android {
         minSdk = libs.versions.minSdkVersion.get().toInt()
     }
     
-    buildFeatures {
-        viewBinding = true
-        buildConfig = true
-    }
-    
     buildTypes {
+        getByName("debug") {
+            isJniDebuggable = false
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
         getByName("release") {
             isMinifyEnabled = false
             isJniDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        create("stagingDebug") {
+            initWith(getByName("debug"))
+        }
+        create("stagingRelease") {
+            initWith(getByName("release"))
+        }
+        create("productionDebug") {
+            initWith(getByName("debug"))
+        }
+        create("productionRelease") {
+            initWith(getByName("release"))
+        }
+    }
+    
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
     }
     
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    
-    kotlinOptions {
-        jvmTarget = "17"
     }
     
     lint {

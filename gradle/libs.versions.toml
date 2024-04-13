@@ -9,7 +9,7 @@ targetSdkVersion = "34"
 appVersionCode = "133"
 appVersionName = "7.0.0"
 
-gradle-plugin-version = "8.3.1"
+gradle-plugin-version = "8.3.2"
 
 # View
 activity-version = "1.6.1"
@@ -40,7 +40,7 @@ hilt-android-version = "2.51.1"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2024.03.00"
+compose-bom = "2024.04.00"
 kotlin-compose-version = "1.5.8"
 lifecycle-version = "2.7.0"
 navigation-version = "2.7.7"
@@ -55,7 +55,7 @@ coil-transformer-version = "1.0.5"
 exifinterface-version = "1.3.7"
 
 # Player
-media3-version = "1.3.0"
+media3-version = "1.3.1"
 exo-player-version = "2.19.1"
 
 # Cast
@@ -114,6 +114,7 @@ mqtt-android-service-version = "3.3.8"
 # Logging
 timber-version = "5.0.1"
 orhanobut-version = "2.2.0"
+chucker-version = "4.0.0"
 
 # Firework
 firework-sdk-version = "v5.10.0"
@@ -306,6 +307,8 @@ mqtt-android-service = { group = "com.github.hannesa2", name = "paho.mqtt.androi
 # Logging
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber-version" }
 orhanobut = { group = "com.orhanobut", name = "logger", version.ref = "orhanobut-version" }
+chucker-dev = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker-version" }
+chucker-prod = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker-version" }
 
 # Miscellaneous
 #guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }

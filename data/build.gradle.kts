@@ -43,7 +43,9 @@ android {
 //            libraries Gradle should build and package with your app.
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
         }
-        
+//        These build configs will be user for all productFlavors or buildTypes. You can override them in any specific 
+//        productFlavor or buildType block below.
+        buildConfigField("int", "DEVICE_TYPE", "1")
         buildConfigField("int", "APP_VERSION_CODE", appVersionCode)
         buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
     }
@@ -51,17 +53,8 @@ android {
     flavorDimensions += listOf("lib")
     
     productFlavors {
-        create("ndQa") {
-            dimension = "lib"
-            buildConfigField("int", "DEVICE_TYPE", "1")
-        }
-        create("blUat") {
-            dimension = "lib"
-            buildConfigField("int", "DEVICE_TYPE", "1")
-        }
         create("mobile") {
             dimension = "lib"
-            buildConfigField("int", "DEVICE_TYPE", "1")
         }
         create("tv") {
             dimension = "lib"
@@ -70,17 +63,6 @@ android {
     }
     
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            isJniDebuggable = false
-            ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-            }
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
         getByName("debug") {
             isJniDebuggable = false
             isMinifyEnabled = false
@@ -92,6 +74,29 @@ android {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+            isJniDebuggable = false
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("stagingDebug") {
+            initWith(getByName("debug"))
+        }
+        create("stagingRelease") {
+            initWith(getByName("release"))
+        }
+        create("productionDebug") {
+            initWith(getByName("debug"))
+        }
+        create("productionRelease") {
+            initWith(getByName("release"))
         }
     }
     
@@ -196,6 +201,8 @@ dependencies {
         
         // Logging
         implementation(bundles.logger)
+        debugImplementation(chucker.dev)  // dev
+        releaseImplementation(chucker.prod) // live
         
         
         /////// Testing
