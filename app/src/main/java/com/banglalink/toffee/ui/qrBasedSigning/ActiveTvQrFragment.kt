@@ -62,12 +62,14 @@ class ActiveTvQrFragment : BaseFragment() {
         if (qrCodeNumber != null) mPref.qrSignInStatus.value = qrCodeNumber.toString()
         
         observeSignInStatus()
-        if (mPref.qrSignInStatus.value == "0") {
+        if (mPref.qrSignInStatus.value == "0" || mPref.qrSignInStatus.value==null) {
             /**
              * this section is executed when user comes from right drawer menu
              */
-            binding.enterCodeView.visibility = View.VISIBLE
-            binding.activeWithQrView.visibility = View.GONE
+            requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                binding.enterCodeView.visibility = View.VISIBLE
+                binding.activeWithQrView.visibility = View.GONE
+            }
         } else {
             /**
              * this section is executed when qr code is scanned (deeplink)
