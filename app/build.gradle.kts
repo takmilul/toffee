@@ -1,6 +1,5 @@
-
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     with(libs.plugins) {
@@ -14,6 +13,8 @@ plugins {
         alias(navigation.safeargs)
         alias(hilt.android)
         alias(firebase.crashlytics)
+        alias(firebase.appdistribution)
+        alias(play.publisher)
         id(conviva.tracker.plugin.get().pluginId)
     }
 }
@@ -25,10 +26,16 @@ android {
     val properties = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
     }
+    val prodServerUrl: String = properties.getProperty("prodServerUrl")
+    val stagingServerUrl: String = properties.getProperty("stagingServerUrl")
     val adsAppId: String = properties.getProperty("adsAppId")
     val facebookAppId: String = properties.getProperty("facebookAppId")
+    val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
     val fireworkOAuthId: String = properties.getProperty("fireworkOAuthId")
+    val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
     val facebookClientToken: String = properties.getProperty("facebookClientToken")
+    val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
+    val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
     
     defaultConfig {
         minSdk = libs.versions.minSdkVersion.get().toInt()
@@ -58,11 +65,25 @@ android {
                 force("androidx.emoji2:emoji2:1.3.0")
             }
         }
+//        Use Staging Server by default. For Production build, override BASE_URL BuildConfig in the specific buildTypes block below.
+        buildConfigField("int", "DEVICE_TYPE", "1")
+//        buildConfigField("String", "BASE_URL", prodServerUrl)
+        buildConfigField("String", "BASE_URL", stagingServerUrl)
+        buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
+        buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
+        buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
+        buildConfigField("String", "CONVIVA_CUSTOMER_KEY_TEST", convivaCustomerKeyTest)
+        buildConfigField("String", "CONVIVA_CUSTOMER_KEY_PROD", convivaCustomerKeyProd)
     }
     
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDir("src/main/libs")
+    signingConfigs {
+        create("config") {
+            if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
+                storeFile = file(project.findProperty("TOFFEE_KEYSTORE_FILE").toString())
+                storePassword = project.findProperty("TOFFEE_KEYSTORE_PASSWORD")?.toString()
+                keyAlias = project.findProperty("TOFFEE_KEY_ALIAS")?.toString()
+                keyPassword = project.findProperty("TOFFEE_KEY_PASSWORD")?.toString()
+            }
         }
     }
     
@@ -71,51 +92,10 @@ android {
     productFlavors {
         create("mobile") {
             dimension = "lib"
-            
-            val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
-            val convivaGatewayUrl: String = properties.getProperty("convivaGatewayUrl")
-            val convivaCustomerKeyTest: String = properties.getProperty("convivaCustomerKey-test")
-            val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
-            
-            buildConfigField("int", "DEVICE_TYPE", "1")
-            buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
-            buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
-            buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
-            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_TEST", convivaCustomerKeyTest)
-            buildConfigField("String", "CONVIVA_CUSTOMER_KEY_PROD", convivaCustomerKeyProd)
         }
-    }
-    
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        dataBinding = true
-        viewBinding = true
     }
     
     buildTypes {
-        getByName("release") {
-            isDebuggable = false
-            isJniDebuggable = false
-            isMinifyEnabled = true
-            isShrinkResources = true
-            ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-            }
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
         getByName("debug") {
             isDebuggable = true
             isJniDebuggable = true
@@ -127,13 +107,52 @@ android {
 //            libraries Gradle should build and package with your app.
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
             }
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("release") {
+            isDebuggable = false
+            isJniDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
+            firebaseAppDistribution {
+                artifactType = "APK"
+                groups = "ND-QA, BL-UAT"
+                releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
+            }
+            if (project.hasProperty("TOFFEE_KEYSTORE_FILE")) {
+                signingConfig = signingConfigs.getByName("config")
+            }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("stagingDebug") {
+            initWith(getByName("debug"))
+        }
+        create("stagingRelease") {
+            initWith(getByName("release"))
+        }
+        create("productionDebug") {
+            initWith(getByName("debug"))
+            buildConfigField("String", "BASE_URL", prodServerUrl)
+        }
+        create("productionRelease") {
+            initWith(getByName("release"))
+            buildConfigField("String", "BASE_URL", prodServerUrl)
         }
     }
     
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
 //            pickFirsts += listOf(
 //                "lib/*/libnative-lib.so"
 //            )
@@ -154,6 +173,28 @@ android {
                 "META-INF/annotation-experimental_release.kotlin_module"
             )
         }
+    }
+    
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir("src/main/libs")
+        }
+    }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+        dataBinding = true
+        viewBinding = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     
     composeOptions {
@@ -274,14 +315,16 @@ dependencies {
         
         
         /////// Testing
+        kspTest(hilt.kapt.test)
+        kspAndroidTest(hilt.kapt.test)
+        
         testImplementation(junit.core)
         testImplementation(robolectric)
         testImplementation(mockk.core)
         testImplementation(mockito.kotlin)
         testImplementation(coroutines.test)
+        testImplementation(hilt.android.test)
         testImplementation(okhttp.mock.web.server)
-        
-        kspAndroidTest(hilt.kapt.test)
         
         androidTestImplementation(junit.ktx)
         androidTestImplementation(test.runner)
@@ -294,6 +337,6 @@ dependencies {
         androidTestImplementation(hilt.android.test)
         
         debugImplementation(fragment.test)
-//    debugImplementation (leakcanary)
+//        debugImplementation (leakcanary)
     }
 }

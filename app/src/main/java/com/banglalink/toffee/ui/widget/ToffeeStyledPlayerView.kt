@@ -284,6 +284,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
             }
         }
     }
+    
     private fun setScreenBrightness(value: Float, isTransformedValue: Boolean? = false) {
         /** This method works for value from -1.0F to 1.0F
          * Value 0.0F to 1.0F to increase or decrese brightness
