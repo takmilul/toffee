@@ -111,7 +111,9 @@ class PremiumPackDetailsFragment : BaseFragment() {
             }
             
             payNowButton.safeClick({
-                triggerButtonSheet()
+                runCatching {
+                    triggerButtonSheet()
+                }
             })
         }
         
@@ -386,8 +388,8 @@ class PremiumPackDetailsFragment : BaseFragment() {
         ToffeeAnalytics.toffeeLogEvent(
             ToffeeEvents.PACK_ACTIVE, bundleOf(
                 "source" to if (mPref.packSource.value == true) "content_click " else "premium_pack_menu",
-                "pack_ID" to viewModel.selectedPremiumPack.value!!.id.toString(),
-                "pack_name" to viewModel.selectedPremiumPack.value!!.packTitle
+                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle
             )
         )
         mPref.signingFromPrem.value = true

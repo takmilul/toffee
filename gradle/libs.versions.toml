@@ -94,10 +94,10 @@ play-publisher-version = "3.9.0"
 # Firebase
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "23.4.1"
-firebase-analytics-version = "21.6.1"
-firebase-firestore-version = "24.11.0"
-firebase-in-app-message-version = "20.4.1"
-firebase-crashlytics-version = "18.6.3"
+firebase-analytics-version = "21.6.2"
+firebase-firestore-version = "24.11.1"
+firebase-in-app-message-version = "20.4.2"
+firebase-crashlytics-version = "18.6.4"
 firebase-crashlytics-plugin-version = "2.9.9"
 firebase-appdistribution-plugin-version = "4.2.0"
 
@@ -136,7 +136,7 @@ test-core-version = "1.5.0"
 espresso-version = "3.5.1"
 mockk-version = "1.12.4"
 
-okhttp-mock-web-server-version = "4.9.2"
+okhttp-mock-web-server-version = "4.11.0"
 mockito-kotlin-version = "2.2.0"
 
 test-runner-version = "1.5.2"
