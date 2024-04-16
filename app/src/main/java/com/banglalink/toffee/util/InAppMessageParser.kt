@@ -2,6 +2,7 @@ package com.banglalink.toffee.util
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
@@ -188,16 +189,32 @@ class InAppMessageParser @Inject constructor(
 
                         if (mPref.isQrCodeEnable) {
                             val code = link.getQueryParameter("code")
-                            code?.let {
+
+                            // when deep link is without QR code data (staging-web.toffeelive.com/tvsignin)
+                            if (code.isNullOrEmpty()){
+
                                 return RouteV2(
                                     R.id.menu_active_tv,
                                     "Activate Tv",
                                     bundleOf(
-                                        "code" to it,
+                                        "code" to null,
                                     ),
                                     navOptions
                                 )
+                            }else{
+                                // when deep link is with QR code data (staging-web.toffeelive.com/tvsignin?code=ERMIUM)
+                                code?.let {
+                                    return RouteV2(
+                                        R.id.menu_active_tv,
+                                        "Activate Tv",
+                                        bundleOf(
+                                            "code" to it,
+                                        ),
+                                        navOptions
+                                    )
+                                }
                             }
+
                         } else {
                             null
                         }
