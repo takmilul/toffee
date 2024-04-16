@@ -2,7 +2,6 @@ package com.banglalink.toffee.util
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
@@ -186,40 +185,19 @@ class InAppMessageParser @Inject constructor(
                         return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
                     }
                     "tvsignin" -> {
-
                         if (mPref.isQrCodeEnable) {
                             val code = link.getQueryParameter("code")
-
-                            // when deep link is without QR code data (staging-web.toffeelive.com/tvsignin)
-                            if (code.isNullOrEmpty()){
-
-                                return RouteV2(
-                                    R.id.menu_active_tv,
-                                    "Activate Tv",
-                                    bundleOf(
-                                        "code" to null,
-                                    ),
-                                    navOptions
-                                )
-                            }else{
-                                // when deep link is with QR code data (staging-web.toffeelive.com/tvsignin?code=ERMIUM)
-                                code?.let {
-                                    return RouteV2(
-                                        R.id.menu_active_tv,
-                                        "Activate Tv",
-                                        bundleOf(
-                                            "code" to it,
-                                        ),
-                                        navOptions
-                                    )
-                                }
-                            }
-
+                            return RouteV2(
+                                R.id.menu_active_tv,
+                                "Activate Tv",
+                                bundleOf(
+                                    "code" to code?.ifBlank { null },
+                                ),
+                                navOptions
+                            )
                         } else {
                             null
                         }
-
-
                     }
                     else -> null
                 }
