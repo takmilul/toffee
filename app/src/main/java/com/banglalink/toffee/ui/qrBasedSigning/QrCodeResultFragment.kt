@@ -38,7 +38,7 @@ class QrCodeResultFragment : BaseFragment() {
             
             binding.qrSignInActivatedView.visibility = View.VISIBLE
             mPref.qrSignInStatus.value = null
-        } else if (mPref.qrSignInResponseCode.value != null && (mPref.qrSignInResponseCode.value!!.equals("2") || mPref.qrSignInResponseCode.value!!.equals("0"))) {
+        } else if (mPref.qrSignInResponseCode.value != null && (mPref.qrSignInResponseCode.value.equals("2") || mPref.qrSignInResponseCode.value.equals("0"))) {
             binding.qrSignInActivatedView.visibility = View.GONE
             binding.qrCodeExpiredView.visibility = View.VISIBLE
         } else { }
