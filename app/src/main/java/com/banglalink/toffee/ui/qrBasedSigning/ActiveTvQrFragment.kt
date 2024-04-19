@@ -62,12 +62,14 @@ class ActiveTvQrFragment : BaseFragment() {
         if (qrCodeNumber != null) mPref.qrSignInStatus.value = qrCodeNumber.toString()
         
         observeSignInStatus()
-        if (mPref.qrSignInStatus.value == "0") {
+        if (mPref.qrSignInStatus.value == "0" || mPref.qrSignInStatus.value==null) {
             /**
              * this section is executed when user comes from right drawer menu
              */
-            binding.enterCodeView.visibility = View.VISIBLE
-            binding.activeWithQrView.visibility = View.GONE
+            requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                binding.enterCodeView.visibility = View.VISIBLE
+                binding.activeWithQrView.visibility = View.GONE
+            }
         } else {
             /**
              * this section is executed when qr code is scanned (deeplink)
@@ -281,21 +283,23 @@ class ActiveTvQrFragment : BaseFragment() {
         }
         
         binding.pairWithTv.setOnClickListener {
-            val input1 = binding.etCode1.text.toString()
-            val input2 = binding.etCode2.text.toString()
-            val input3 = binding.etCode3.text.toString()
-            val input4 = binding.etCode4.text.toString()
-            val input5 = binding.etCode5.text.toString()
-            val input6 = binding.etCode6.text.toString()
-            
-            if (input1.isNotEmpty() && input2.isNotEmpty() && input3.isNotEmpty() && input4.isNotEmpty() && input5.isNotEmpty() && input6.isNotEmpty()) {
-                binding.wrongCode.visibility = View.GONE
-                qrCodeNumber = "$input1$input2$input3$input4$input5$input6"
-                
-                viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
-                observeSignInStatus()
+            requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                val input1 = binding.etCode1.text.toString()
+                val input2 = binding.etCode2.text.toString()
+                val input3 = binding.etCode3.text.toString()
+                val input4 = binding.etCode4.text.toString()
+                val input5 = binding.etCode5.text.toString()
+                val input6 = binding.etCode6.text.toString()
+
+                if (input1.isNotEmpty() && input2.isNotEmpty() && input3.isNotEmpty() && input4.isNotEmpty() && input5.isNotEmpty() && input6.isNotEmpty()) {
+                    binding.wrongCode.visibility = View.GONE
+                    qrCodeNumber = "$input1$input2$input3$input4$input5$input6"
+
+                    viewModel.getSubscriberPaymentInit(qrCodeNumber!!)
+                    observeSignInStatus()
+                }
+                binding.pairWithTv.hideKeyboard()
             }
-            binding.pairWithTv.hideKeyboard()
         }
 //        observeSignInStatus()
         toolbar?.setNavigationOnClickListener {

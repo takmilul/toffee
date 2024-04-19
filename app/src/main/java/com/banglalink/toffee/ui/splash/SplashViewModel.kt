@@ -14,7 +14,6 @@ import com.banglalink.toffee.apiservice.ApiLoginService
 import com.banglalink.toffee.apiservice.CheckForUpdateService
 import com.banglalink.toffee.apiservice.CredentialService
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
-import com.banglalink.toffee.apiservice.ReportAppLaunch
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -29,6 +28,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.usecase.SendAdvertisingIdLogEvent
+import com.banglalink.toffee.usecase.SendAppLaunchLogEvent
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
 import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
@@ -69,8 +69,8 @@ class SplashViewModel @Inject constructor(
     val appLaunchConfigLiveData = SingleLiveEvent<Resource<Any>>()
     val headerEnrichmentLiveData = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
     
-    private val reportAppLaunch by lazy {
-        ReportAppLaunch()
+    private val sendAppLaunchLogEvent by lazy {
+        SendAppLaunchLogEvent()
     }
     
     fun getCredential() {
@@ -118,7 +118,7 @@ class SplashViewModel @Inject constructor(
     fun reportAppLaunch() {
         appScope.launch {
             try {
-                reportAppLaunch.execute()
+                sendAppLaunchLogEvent.execute()
                 ToffeeAnalytics.logEvent(ToffeeEvents.APP_LAUNCH)
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")

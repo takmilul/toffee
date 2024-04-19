@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.media3.common.util.Util
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -20,7 +21,7 @@ object NetworkModule {
     
     const val IS_DEBUG_MESSAGE_ACTIVE: Boolean = false
     
-    private val BASE_URL: String = Constants.STAGING_URL
+//    private val BASE_URL: String = Constants.STAGING_URL
 //    private val BASE_URL: String = Constants.PROD_URL
     
 //    init {
@@ -34,7 +35,7 @@ object NetworkModule {
     fun providesConfig(): Config {
         return Config(
 //            url = getUrl()
-            url = BASE_URL
+            url = BuildConfig.BASE_URL
         )
     }
     
@@ -42,10 +43,10 @@ object NetworkModule {
     @ToffeeHeader
     fun providesToffeeHeader(@ApplicationContext context: Context, mPref: SessionPreference, cPref: CommonPreference): String {
         return Util.getUserAgent(context, "Toffee") +
-                "/" +
-                mPref.customerId +
-                "/" +
-                cPref.deviceId
+            "/" +
+            mPref.customerId +
+            "/" +
+            cPref.deviceId
     }
     
     @Provides

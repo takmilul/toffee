@@ -22,7 +22,6 @@ import com.banglalink.toffee.util.Log
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.orhanobut.logger.Logger.VERBOSE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +41,6 @@ import okhttp3.TlsVersion.TLS_1_1
 import okhttp3.TlsVersion.TLS_1_2
 import okhttp3.TlsVersion.TLS_1_3
 import okhttp3.dnsoverhttps.DnsOverHttps
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.net.CookieManager
 import java.util.concurrent.TimeUnit
@@ -54,14 +52,25 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
+    fun providesHttpLoggingInterceptor(): LoggingInterceptor {
+        return LoggingInterceptor.Builder()
+            .setLevel(Level.BODY)
+            .log(android.util.Log.VERBOSE)
+            .tag("API_LOG")
+            .build()
+    }
+    
+    @Provides
+    @Singleton
     @EncryptedHttpClient
     fun providesEncryptedHttpClient(
+        json: Json,
+        toffeeDns: ToffeeDns,
+        mPref: SessionPreference,
         @DefaultCache cache: Cache,
         cookieJar: CustomCookieJar,
-        toffeeDns: ToffeeDns,
         authInterceptor: AuthInterceptor,
-        mPref: SessionPreference,
-        json: Json
+        loggingInterceptor: LoggingInterceptor,
     ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
@@ -80,13 +89,7 @@ object NetworkModuleLib {
 //                        it.level = BODY
 //                    }
 //                )
-                addInterceptor(
-                    LoggingInterceptor.Builder()
-                        .setLevel(Level.BODY)
-                        .log(VERBOSE)
-                        .tag("API_LOG")
-                        .build()
-                )
+                addInterceptor(loggingInterceptor)
             }
             addInterceptor(authInterceptor)
             dns(toffeeDns)
@@ -100,19 +103,23 @@ object NetworkModuleLib {
     @Singleton
     @PlainHttpClient
     fun providesPlainHttpClient(
-        @DefaultCache cache: Cache,
         toffeeDns: ToffeeDns,
         mPref: SessionPreference,
+        @DefaultCache cache: Cache,
         plainInterceptor: PlainInterceptor,
+        loggingInterceptor: LoggingInterceptor,
     ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             readTimeout(mPref.internalTimeOut.toLong(), TimeUnit.SECONDS)
             retryOnConnectionFailure(true)
             if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
-                addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BODY
-                })
+//                addInterceptor(
+//                    HttpLoggingInterceptor().also {
+//                        it.level = BODY
+//                    }
+//                )
+                addInterceptor(loggingInterceptor)
             }
             addInterceptor(plainInterceptor)
             dns(toffeeDns)

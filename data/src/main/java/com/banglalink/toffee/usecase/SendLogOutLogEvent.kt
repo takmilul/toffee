@@ -31,6 +31,6 @@ data class LogOutLogEvent(
     val geoCity: String = SessionPreference.getInstance().geoCity,
     @SerialName("geoLocation")
     val geoLocation: String = SessionPreference.getInstance().geoLocation,
-    @SerialName("isRequestFromBackend ")
+    @SerialName("is_request_from_backend")
     val isRequestFromBackend : Int = 0,
 ): PubSubBaseRequest()

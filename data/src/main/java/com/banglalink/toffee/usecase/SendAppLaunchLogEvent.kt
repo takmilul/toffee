@@ -1,11 +1,11 @@
-package com.banglalink.toffee.apiservice
+package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.APP_LAUNCH_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 
-class ReportAppLaunch {
+class SendAppLaunchLogEvent {
     
     fun execute(){
         try {

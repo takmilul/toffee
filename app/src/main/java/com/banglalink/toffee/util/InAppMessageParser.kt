@@ -185,24 +185,19 @@ class InAppMessageParser @Inject constructor(
                         return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
                     }
                     "tvsignin" -> {
-
                         if (mPref.isQrCodeEnable) {
                             val code = link.getQueryParameter("code")
-                            code?.let {
-                                return RouteV2(
-                                    R.id.menu_active_tv,
-                                    "Activate Tv",
-                                    bundleOf(
-                                        "code" to it,
-                                    ),
-                                    navOptions
-                                )
-                            }
+                            return RouteV2(
+                                R.id.menu_active_tv,
+                                "Activate Tv",
+                                bundleOf(
+                                    "code" to code?.ifBlank { null },
+                                ),
+                                navOptions
+                            )
                         } else {
                             null
                         }
-
-
                     }
                     else -> null
                 }

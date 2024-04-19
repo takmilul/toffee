@@ -181,9 +181,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: |
-          ./gradlew assembleBlUatRelease
-          ls -al app/build/outputs/apk/blUat/release
-          mv app/build/outputs/apk/blUat/release/app-blUat-release-unsigned.apk app/build/outputs/apk/blUat/release/app-release.apk
+          ./gradlew assembleMobileStagingRelease
+          ls -al app/build/outputs/apk/mobile/stagingRelease
+          mv app/build/outputs/apk/mobile/stagingRelease/app-mobile-stagingRelease-unsigned.apk app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease.apk
         
 #      - name: List files in the repository
 #        run: |
@@ -193,7 +193,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/blUat/release
+          releaseDirectory: app/build/outputs/apk/mobile/stagingRelease
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -203,8 +203,8 @@ jobs:
       
       - name: Remove Un-necessary APK's
         run: |
-          rm app/build/outputs/apk/blUat/release/app-release.apk
-          rm app/build/outputs/apk/blUat/release/app-release-aligned.apk
+          rm app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease.apk
+          rm app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease-aligned.apk
       
 #      - name: Artifact Upload
 #        uses: actions/upload-artifact@v4.3.1
@@ -223,8 +223,8 @@ jobs:
 #          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
       
       - name: Upload APK to Firebase App Distribution
-        run: ./gradlew appDistributionUploadBlUatRelease
+        run: ./gradlew appDistributionUploadMobileStagingRelease
           --groups="BL-UAT"
-          --artifactPath="app/build/outputs/apk/blUat/release/app-release-signed.apk"
+          --artifactPath="app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease-signed.apk"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
