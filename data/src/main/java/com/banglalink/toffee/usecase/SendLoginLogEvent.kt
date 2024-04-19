@@ -24,6 +24,8 @@ class SendLoginLogEvent @Inject constructor() {
 data class LoginLogData(
     @SerialName("api_name")
     val apiName: String,
+    @SerialName("is_request_from_backend")
+    val isRequestFromBackend: Int = 0,
     @SerialName("id")
     val id: Long = System.nanoTime(),
     @SerialName("app_version")
