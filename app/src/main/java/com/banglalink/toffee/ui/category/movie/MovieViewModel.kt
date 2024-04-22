@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.category.movie
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -239,6 +240,7 @@ class MovieViewModel @Inject constructor(
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
+                Log.i("CONTD_", "getContinueWatchingFlow: $this")
             }
         }
     }

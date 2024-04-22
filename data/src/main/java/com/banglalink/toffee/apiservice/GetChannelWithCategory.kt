@@ -9,7 +9,6 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
-import com.google.gson.Gson
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -22,7 +21,6 @@ class GetChannelWithCategory @Inject constructor(
     private val tvChannelRepo: TVChannelRepository,
     private val userActivityRepo: UserActivitiesRepository,
 ) {
-    val gson = Gson()
     
     suspend fun loadData(subcategoryId: Int) {
         val response = tryIO {

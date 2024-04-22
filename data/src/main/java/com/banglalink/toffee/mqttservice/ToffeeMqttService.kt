@@ -30,6 +30,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions
 import org.eclipse.paho.client.mqttv3.IMqttActionListener
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
@@ -44,13 +45,14 @@ import kotlin.system.measureTimeMillis
 
 @Singleton
 class ToffeeMqttService @Inject constructor(
+    private val json: Json,
     private val mPref: SessionPreference,
     @ApplicationContext private val context: Context,
     private val shareCountRepository: ShareCountRepository,
     private val reactionCountRepository: ReactionCountRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) : MqttCallback, IMqttActionListener {
-    private var gson: Gson? = null
+    
     private val shareListMutex = Mutex()
     private var schedulerJob: Job? = null
     private val reactionListMutex = Mutex()
@@ -186,7 +188,6 @@ class ToffeeMqttService @Inject constructor(
                 client?.setBufferOpts(disconnectedBufferOptions)
                 client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2, 2, 2), null, this@ToffeeMqttService)
             } else {
-                gson = gson ?: Gson()
 //                Log.i("MQ_", "onSuccess - subscribed: ${token?.topics}")
             }
         } catch (e: Exception) {
@@ -202,7 +203,7 @@ class ToffeeMqttService @Inject constructor(
             try {
                 when(topic) {
                     REACTION_TOPIC -> {
-                        val data = gson!!.fromJson(jsonString, ReactionData::class.java)
+                        val data = json.decodeFromString<ReactionData>(jsonString)
                         if (data != null && data.customerId != mPref.customerId) {
                             coroutineScope.launch {
                                 reactionListMutex.withLock {
@@ -212,7 +213,7 @@ class ToffeeMqttService @Inject constructor(
                         }
                     }
                     SHARE_COUNT_TOPIC -> {
-                        val data = gson!!.fromJson(jsonString, ShareData::class.java)
+                        val data = json.decodeFromString<ShareData>(jsonString)
                         if (data != null) {
                             coroutineScope.launch {
                                 shareListMutex.withLock {
@@ -222,7 +223,7 @@ class ToffeeMqttService @Inject constructor(
                         }
                     }
                     SUBSCRIPTION_TOPIC -> {
-                        val data = gson!!.fromJson(jsonString, SubscriptionCountData::class.java)
+                        val data = json.decodeFromString<SubscriptionCountData>(jsonString)
                         if (data != null && data.subscriberId != mPref.customerId){
                             coroutineScope.launch {
                                 subscribeListMutex.withLock {

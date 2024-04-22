@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,7 +29,6 @@ import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequ
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
-import com.banglalink.toffee.data.network.response.PackPaymentMethodData
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.network.response.PremiumPackDetailBean
 import com.banglalink.toffee.data.network.response.PremiumPackStatusBean
@@ -39,7 +37,6 @@ import com.banglalink.toffee.data.network.response.RemoveTokenizeAccountApiRespo
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
 import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
-import com.banglalink.toffee.data.network.response.TokenizedAccountInfoApiResponse
 import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -52,19 +49,20 @@ import com.banglalink.toffee.model.VoucherPaymentBean
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.usecase.SendPaymentLogFromDeviceEvent
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val json: Json,
     private val mPref: SessionPreference,
     private val savedState: SavedStateHandle,
     private val premiumPackListService: PremiumPackListService,
@@ -325,7 +323,6 @@ class PremiumViewModel @Inject constructor(
         onSuccess: ()->Unit? = {},
         onFailure: ()->Unit? = {},
     ){
-        val gson = Gson()
         viewModelScope.launch {
             val response = resultFromResponse { removeTokenizeAccountApiService.execute(paymentMethodId, body) }
             when (response){
@@ -338,7 +335,7 @@ class PremiumViewModel @Inject constructor(
                             paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
-                            rawResponse = gson.toJson(response)
+                            rawResponse = json.encodeToString(response)
                         )
                     )
                     onSuccess.invoke()
@@ -352,7 +349,7 @@ class PremiumViewModel @Inject constructor(
                             paymentMethodId = paymentMethodId,
                             cusWalletNo = body.walletNumber,
                             paymentCusId = body.paymentCusId,
-                            rawResponse = gson.toJson(response)
+                            rawResponse = json.encodeToString(response)
                         )
                     )
                     appContext.showToast(response.error.msg)

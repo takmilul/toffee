@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.category.movie
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -71,6 +72,7 @@ class MoviesContinueWatchingFragment : MovieBaseFragment<ChannelInfo>() {
     override fun loadContent() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getContinueWatchingFlow(1).collectLatest {
+                Log.i("CONTD_", "loadContent: $it")
                 adapter.removeAll()
                 adapter.addAll(it)
                 if (mPref.isVerifiedUser) showCard(it.isNotEmpty())
