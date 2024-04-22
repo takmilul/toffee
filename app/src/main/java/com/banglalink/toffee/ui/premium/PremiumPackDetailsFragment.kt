@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -368,14 +367,12 @@ class PremiumPackDetailsFragment : BaseFragment() {
                         viewModel.setLinearContentState(it.toList())
                     }
                     response.data?.vodChannelList?.ifNotNullOrEmpty {
-                        Log.d("TAG", "observePremiumPackDetail: Four")
                         binding.premiumContentGroup.show()
                         binding.emptyView.hide()
                         viewModel.setVodContentState(it.toList())
                     }
                 }
                 is Failure -> {
-                    Log.d("TAG", "observePremiumPackDetail: Five")
                     binding.progressBar.hide()
                     requireActivity().showToast(response.error.msg)
                 }
@@ -389,7 +386,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             ToffeeEvents.PACK_ACTIVE, bundleOf(
                 "source" to if (mPref.packSource.value == true) "content_click " else "premium_pack_menu",
                 "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle
+                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString()
             )
         )
         mPref.signingFromPrem.value = true
@@ -427,7 +424,7 @@ class PremiumPackDetailsFragment : BaseFragment() {
             ToffeeEvents.PACK_ABORT, bundleOf(
                 "source" to if (mPref.packSource.value == true) "content_click " else "premium_pack_menu",
                 "pack_ID" to selectedPackInfo?.id.toString(),
-                "pack_name" to selectedPackInfo?.packTitle,
+                "pack_name" to selectedPackInfo?.packTitle.toString(),
                 "reason" to "content",
                 "action" to "goes back"
             )

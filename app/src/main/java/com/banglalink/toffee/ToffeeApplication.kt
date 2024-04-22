@@ -223,9 +223,9 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
                 }
                 
                 override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-//                    if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
+                    if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
                         Logger.log(priority, tag, message, t)
-//                    }
+                    }
                 }
             })
         }

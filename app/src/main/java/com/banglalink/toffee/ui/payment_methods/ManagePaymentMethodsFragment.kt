@@ -35,10 +35,12 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ManagePaymentMethodsFragment : BaseFragment() {
     @Inject lateinit var json: Json
     private var paymentName: String = "nagad"
