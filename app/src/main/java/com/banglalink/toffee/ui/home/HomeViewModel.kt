@@ -77,18 +77,20 @@ import com.banglalink.toffee.usecase.SendViewContentEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val json: Json,
     private val profileApi: GetProfile,
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
@@ -272,7 +274,7 @@ class HomeViewModel @Inject constructor(
                     it.type ?: "LIVE",
                     0,
                     "Recent",
-                    Gson().toJson(it),
+                    json.encodeToString(it),
                     it.view_count?.toLong() ?: 0L,
                     it.isStingray,
                     it.isFmRadio

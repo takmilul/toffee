@@ -8,14 +8,16 @@ import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.SendReactionEvent
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class ReactionViewModel @Inject constructor(
+    private val json: Json,
     private val reactionDao: ReactionDao, 
     private val activitiesRepo: UserActivitiesRepository,
     private val sendReactionEvent: SendReactionEvent,
@@ -56,7 +58,7 @@ class ReactionViewModel @Inject constructor(
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",
-                Gson().toJson(channelInfo),
+                json.encodeToString(channelInfo),
                 reactStatus,
                 reaction
             )

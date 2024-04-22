@@ -23,14 +23,16 @@ import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistVideosViewModel @Inject constructor(
+    private val json: Json,
     private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
@@ -90,7 +92,7 @@ class PlaylistVideosViewModel @Inject constructor(
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",
-                Gson().toJson(channelInfo),
+                json.encodeToString(channelInfo),
                 PLAYLIST.value,
                 activitySubType
             )

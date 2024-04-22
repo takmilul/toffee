@@ -20,25 +20,27 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
-import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.compose_theme.ScreenBackground
-import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
-import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.compose_theme.ContentLoader
+import com.banglalink.toffee.ui.compose_theme.ScreenBackground
+import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
+import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 class ManagePaymentMethodsFragment : BaseFragment() {
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     private var paymentName: String = "nagad"
     private var paymentMethodId: Int? = null
     private var transactionIdentifier: String? = null
@@ -175,7 +177,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                                 paymentPurpose = "ECOM_TOKEN_GEN",
                                 paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
-                                rawResponse = gson.toJson(it)
+                                rawResponse = json.encodeToString(it)
                             )
                         )
 
@@ -210,7 +212,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             paymentPurpose = "ECOM_TOKEN_GEN",
                             paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
-                            rawResponse = gson.toJson(it.error.msg)
+                            rawResponse = json.encodeToString(it.error.msg)
                         )
                     )
                     requireContext().showToast(it.error.msg)

@@ -74,6 +74,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -1095,7 +1096,7 @@ abstract class PlayerPageActivity :
                             channelInfo.id.toLong(),
                             channelInfo.type ?: "VOD",
                             channelInfo.categoryId,
-                            Gson().toJson(channelInfo),
+                            json.encodeToString(channelInfo),
                             progress
                         )
                     )
