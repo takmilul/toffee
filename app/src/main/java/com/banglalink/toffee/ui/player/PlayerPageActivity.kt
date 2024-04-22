@@ -1233,7 +1233,6 @@ abstract class PlayerPageActivity :
                                 channelInfo.type ?: "VOD",
                                 channelInfo.categoryId,
                                 json.encodeToString(channelInfo),
-//                                Gson().toJson(channelInfo),
                                 progress
                             )
                         )

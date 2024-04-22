@@ -15,7 +15,8 @@ import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.common.images.WebImage
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.json.JSONException
 import org.json.JSONObject
 import java.net.MalformedURLException
@@ -113,7 +114,7 @@ class ToffeeMediaItemConverter(
 
     private fun channelInfoToJson(info: ChannelInfo): JSONObject {
         return JSONObject().apply {
-            put("channel_info", Gson().toJson(info))
+            put("channel_info", Json.encodeToString(info))
         }
     }
 
@@ -194,7 +195,7 @@ class ToffeeMediaItemConverter(
             if (playerConfigJson != null) {
                 json.put(KEY_PLAYER_CONFIG, playerConfigJson)
             }
-            json.put(KEY_CHANNEL_INFO, Gson().toJson(channelInfo))
+            json.put(KEY_CHANNEL_INFO, Json.encodeToString(channelInfo))
         } catch (e: JSONException) {
             throw RuntimeException(e)
         }
