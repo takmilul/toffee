@@ -254,7 +254,6 @@ class AudioBookLandingFragment<T : Any> : BaseFragment(), ProviderIconCallback<T
                 contentScale = ContentScale.Crop,
                 painter = CoilUtils.getAsyncImagePainter(
                     model = kabbikItem.thumbPath ?: drawable.placeholder,
-                    placeholder = drawable.placeholder
                 ),
                 contentDescription = "image_"
             )
