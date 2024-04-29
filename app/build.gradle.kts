@@ -1,5 +1,5 @@
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 plugins {
     with(libs.plugins) {
@@ -26,6 +26,8 @@ android {
     val properties = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "secret.properties")))
     }
+    val prodServerUrl: String = properties.getProperty("prodServerUrl")
+    val stagingServerUrl: String = properties.getProperty("stagingServerUrl")
     val adsAppId: String = properties.getProperty("adsAppId")
     val facebookAppId: String = properties.getProperty("facebookAppId")
     val medalliaApiKey: String = properties.getProperty("medalliaApiKey")
@@ -63,8 +65,10 @@ android {
                 force("androidx.emoji2:emoji2:1.3.0")
             }
         }
-        
+//        Use Staging Server by default. For Production build, override BASE_URL BuildConfig in the specific buildTypes block below.
         buildConfigField("int", "DEVICE_TYPE", "1")
+//        buildConfigField("String", "BASE_URL", prodServerUrl)
+        buildConfigField("String", "BASE_URL", stagingServerUrl)
         buildConfigField("String", "MEDALLIA_API_KEY", medalliaApiKey)
         buildConfigField("String", "FIREWORK_OAUTH_ID", fireworkOAuthId)
         buildConfigField("String", "CONVIVA_GATEWAY_URL", convivaGatewayUrl)
@@ -86,14 +90,6 @@ android {
     flavorDimensions += listOf("lib")
     
     productFlavors {
-        create("ndQa") {
-            dimension = "lib"
-            versionNameSuffix = "-QA"
-        }
-        create("blUat") {
-            dimension = "lib"
-            versionNameSuffix = "-UAT"
-        }
         create("mobile") {
             dimension = "lib"
         }
@@ -117,10 +113,6 @@ android {
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        create("staging") {
-            initWith(getByName("debug"))
-//            manifestPlaceholders["hostName"] = "internal.example.com"
-        }
         getByName("release") {
             isDebuggable = false
             isJniDebuggable = false
@@ -141,6 +133,20 @@ android {
                 signingConfig = signingConfigs.getByName("config")
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("stagingDebug") {
+            initWith(getByName("debug"))
+        }
+        create("stagingRelease") {
+            initWith(getByName("release"))
+        }
+        create("productionDebug") {
+            initWith(getByName("debug"))
+            buildConfigField("String", "BASE_URL", prodServerUrl)
+        }
+        create("productionRelease") {
+            initWith(getByName("release"))
+            buildConfigField("String", "BASE_URL", prodServerUrl)
         }
     }
     

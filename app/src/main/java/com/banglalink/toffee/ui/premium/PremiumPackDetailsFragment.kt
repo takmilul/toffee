@@ -108,7 +108,9 @@ class PremiumPackDetailsFragment : BaseFragment() {
             }
             
             payNowButton.safeClick({
-                triggerButtonSheet()
+                runCatching {
+                    triggerButtonSheet()
+                }
             })
         }
         

@@ -18,7 +18,7 @@ data class RechargeByBkashBean(
     val status: String? = null,
     @Contextual
     @SerialName("message")
-    val message: Any? = null,
+    val message: String? = null,
     @SerialName("data")
     val data: RechargeByBkashData? = null
 )
