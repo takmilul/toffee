@@ -406,14 +406,12 @@ fun List<ActivePack>?.isContentPurchased(contentId: String?, systemDate: Date): 
 
 fun NavController.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
     this.navigate(resId, args, navOptions ?: navOptions {
-        restoreState = true
         launchSingleTop = true
     })
 }
 
 fun NavController.navigateTo(deepLink: Uri, navOptions: NavOptions? = null) {
     this.navigate(deepLink, navOptions ?: navOptions {
-        restoreState = true 
         launchSingleTop = true
     })
 }
@@ -426,11 +424,9 @@ fun NavController.navigatePopUpTo(
     navOptions: NavOptions? = null
 ) {
     this.navigate(resId, args, navOptions ?: navOptions {
-        restoreState = true
         launchSingleTop = true
         popUpTo(popUpTo ?: resId) {
             inclusive?.let {
-                saveState = true
                 this.inclusive = inclusive
             }
         }
