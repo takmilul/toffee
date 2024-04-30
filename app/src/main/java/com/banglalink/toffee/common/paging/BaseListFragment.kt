@@ -144,7 +144,7 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
                     )
                 }.map {
                     if (it is ChannelInfo) {
-                        localSync.syncData(it as ChannelInfo)
+//                        localSync.syncData(it, false)
                         if(it.totalCount > 1) {
                             setResultView("${it.totalCount} results found")
                         }

@@ -64,18 +64,15 @@ class PremiumPackDetailsFragment : BaseFragment() {
         observePaymentMethodList()
         observePackStatus()
         observePremiumPackDetail()
-        if (!checkPackPurchased()) {
+        openPlanDetails = arguments?.getBoolean("openPlanDetails") ?: false
+        if (!checkPackPurchased() && openPlanDetails == false) {
             triggerButtonSheet()
         }
-//        triggerButtonSheet()
-        
-        /*
+        /**
          checking pack purchase separately,
          when user comes from deeplink, first checking the pack is available or not. If available then checking pack purchase status
          Otherwise checking as normal flow
          */
-        
-        openPlanDetails = arguments?.getBoolean("openPlanDetails")
         if (openPlanDetails == true) {
             openPlanDetails = false
             val packId = arguments?.getInt("packId")

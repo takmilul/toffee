@@ -22,53 +22,48 @@ data class PackPaymentMethodResponse(
 @Serializable
 data class PackPaymentMethodBean(
     @SerialName("BKASH")
-    val bkash: Bkash? = null,
+    val bkash: PackPaymentMethodData? = null,
     @SerialName("BL")
-    val bl: @RawValue Bl? = null,
+    val bl: @RawValue PackPaymentMethodData? = null,
     @SerialName("FREE")
-    val free: @RawValue List<PackPaymentMethod>? = null,
+    val free: @RawValue PackPaymentMethodData? = null,
     @SerialName("VOUCHER")
-    val Voucher: @RawValue List<PackPaymentMethod>? = null,
+    val voucher: @RawValue PackPaymentMethodData? = null,
     @SerialName("SSL")
-    val ssl: SSL? = null,
+    val ssl: PackPaymentMethodData? = null,
     @SerialName("NAGAD")
-    val nagad: NAGAD? = null,
+    val nagad: PackPaymentMethodData? = null,
 ) : Parcelable
 
 @Parcelize
 @Serializable
-data class Bkash(
-    @SerialName("minimum_price")
-    val minimumPrice: Int,
+data class PackPaymentMethodData(
+    @SerialName("payment_method_name")
+    var paymentMethodName: String? = null,
+    @SerialName("payment_headline")
+    val paymentHeadline : String? = null,
+    @SerialName("payment_headline_for_bl")
+    val paymentHeadlineForBl: String? = null,
+    @SerialName("payment_headline_for_non_bl")
+    val paymentHeadlineForNonBl: String? = null,
+    @SerialName("payment_sub_headline_one_for_bl")
+    val paymentSubHeadlineOneForBl : String? = null,
+    @SerialName("payment_sub_headline_one_for_non_bl")
+    val paymentSubHeadlineOneForNonBl : String? = null,
+    @SerialName("payment_sub_headline_one_for_prepaid")
+    var paymentSubHeadlineOneForPrepaid : String? = null,
+    @SerialName("payment_sub_headline_one_for_postpaid")
+    var paymentSubHeadlineOneForPostpaid : String? = null,
+    @SerialName("payment_method_logo_mobile" )
+    var paymentMethodLogoMobile : String? = null,
+    @SerialName("order_index")
+    val orderIndex : Int? = null,
+    @SerialName("data")
+    val data : List<PackPaymentMethod>? = null,
     @SerialName("BL")
     val blPacks: List<PackPaymentMethod>? = null,
     @SerialName("NON_BL")
     val nonBlPacks: List<PackPaymentMethod>? = null,
-) : Parcelable
-
-@Parcelize
-@Serializable
-data class SSL(
-    @SerialName("BL")
-    val blPacks: List<PackPaymentMethod>? = null,
-    @SerialName("NON_BL")
-    val nonBlPacks: List<PackPaymentMethod>? = null,
-) : Parcelable
-
-@Parcelize
-@Serializable
-data class NAGAD(
-    @SerialName("BL")
-    val blPacks: List<PackPaymentMethod>? = null,
-    @SerialName("NON_BL")
-    val nonBlPacks: List<PackPaymentMethod>? = null,
-) : Parcelable
-
-@Parcelize
-@Serializable
-data class Bl(
-    @SerialName("minimum_price")
-    val minimumPrice: Int = 0,
     @SerialName("POSTPAID")
     val postpaid: List<PackPaymentMethod>? = null,
     @SerialName("PREPAID")
@@ -106,4 +101,6 @@ data class PackPaymentMethod(
     val campaignsId: Int? = null,
     @SerialName("data_pack_cta_button")
     val dataPackCtaButton: Int? = null,
+    @SerialName("is_allow_from_outside" )
+    val isAllowFromOutside : Int? = null,
 ) : Parcelable

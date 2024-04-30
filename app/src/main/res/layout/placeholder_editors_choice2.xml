@@ -15,58 +15,59 @@
             android:id="@+id/poster"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="fitXY"
             android:adjustViewBounds="true"
             android:contentDescription="@string/txt_poster"
-            app:srcCompat="@drawable/placeholder"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder" />
         
         <View
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_2_line_text_height"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/placeholder_text_bg"
+            app:layout_constraintBottom_toTopOf="@id/owner"
             app:layout_constraintEnd_toStartOf="@+id/poster"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-        <View
-            android:id="@+id/ownerPicture"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
         
         <View
             android:id="@+id/owner"
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_small_text_height"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
-            app:layout_constraintEnd_toEndOf="@+id/name"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@+id/ownerPicture" />
+            app:layout_constraintBottom_toTopOf="@+id/uploadTime"
+            app:layout_constraintEnd_toStartOf="@+id/poster"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintWidth_percent="0.3" />
         
         <View
-            android:id="@+id/viewCount"
+            android:id="@+id/uploadTime"
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_small_text_height"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginVertical="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintEnd_toEndOf="@+id/name"
-            app:layout_constraintStart_toStartOf="@id/ownerPicture"
-            app:layout_constraintTop_toBottomOf="@id/ownerPicture" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/poster"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/owner"
+            app:layout_constraintWidth_percent="0.2" />
         
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

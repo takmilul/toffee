@@ -92,7 +92,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         }
     }
     
-    fun getPlaylistId(): Long = playlistInfo.getPlaylistIdLong()
+    private fun getPlaylistId(): Long = playlistInfo.getPlaylistIdLong()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -197,7 +197,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                localSync.syncData(it)
+//                localSync.syncData(it)
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -207,7 +207,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getUserPlaylistVideos(playlistInfo).collectLatest {
                 playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
-                    localSync.syncData(channel)
+//                    localSync.syncData(channel)
                     channel
                 })
             }
