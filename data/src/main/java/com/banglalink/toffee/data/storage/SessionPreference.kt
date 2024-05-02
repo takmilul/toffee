@@ -81,6 +81,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var qrSignInStatus = MutableLiveData<String>()
     var qrSignInResponseCode = MutableLiveData<String>()
 
+    var paymentDiscountPercentage= MutableLiveData<String>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
