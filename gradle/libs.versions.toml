@@ -6,7 +6,7 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "134"
+appVersionCode = "137"
 appVersionName = "7.1.0"
 
 gradle-plugin-version = "8.3.2"
@@ -27,7 +27,7 @@ circular-progressbar-version = "3.1.0"
 
 # Kotlin
 kotlin-version = "1.9.22"
-kotlin-ktx-version = "1.12.0"
+kotlin-ktx-version = "1.13.0"
 kotlin-coroutine-version = "1.7.3"
 ksp-plugin-version = "1.9.22-1.0.16"
 kotlin-serialization-json-version = "1.6.2"
@@ -40,7 +40,7 @@ hilt-android-version = "2.51.1"
 # Jetpack
 room-db-version = "2.6.1"
 paging-version = "3.2.1"
-compose-bom = "2024.04.00"
+compose-bom = "2024.04.01"
 kotlin-compose-version = "1.5.8"
 lifecycle-version = "2.7.0"
 navigation-version = "2.7.7"

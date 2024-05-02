@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -41,7 +40,14 @@ class PackPaymentMethodAdapter(
         val logoImageView = holder.itemView.findViewById<ImageView>(R.id.passBrandImageView)
         val eligibleUserTextView = holder.itemView.findViewById<TextView>(R.id.packEligibleUserTextView)
         
-        passNameTextView.text = obj.paymentHeadline
+        passNameTextView.text = if (obj.paymentMethodName == PaymentMethodName.FREE.value) {
+            if (isBanglalinkNumber)
+                obj.paymentHeadlineForBl
+            else
+                obj.paymentHeadlineForNonBl
+        } else {
+            obj.paymentHeadline
+        }
         
         when (obj.paymentMethodName) {
             PaymentMethodName.FREE.value -> {
@@ -69,10 +75,10 @@ class PackPaymentMethodAdapter(
                 } else {
                     if (obj.data != null) {
                         viewModel.selectedDataPackOption.value = nonBlTrialPackMethod
-                        priceTextView.setTextColor(ContextCompat.getColor(context, R.color.trial_extra_text_color))
+//                        priceTextView.setTextColor(ContextCompat.getColor(context, R.color.trial_extra_text_color))
                     } else {
                         paymentMethodCardView.alpha = 0.3f
-                        priceTextView.setTextColor(ContextCompat.getColor(context, R.color.trial_extra_text_color))
+//                        priceTextView.setTextColor(ContextCompat.getColor(context, R.color.trial_extra_text_color))
                     }
                 }
 

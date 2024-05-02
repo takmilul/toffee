@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
-import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.databinding.FragmentSavedAccountBinding
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
@@ -24,11 +20,14 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SavedAccountFragment : BaseFragment() {
-    private val gson = Gson()
-
+    @Inject lateinit var json: Json
     private var paymentName: String? = null
     private var transactionIdentifier: String? = null
     private var paymentToken: String? = null
@@ -134,7 +133,7 @@ class SavedAccountFragment : BaseFragment() {
                                 transactionStatus = statusCode,
                                 amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 merchantInvoiceNumber = null,
-                                rawResponse = gson.toJson(it)
+                                rawResponse = json.encodeToString(it)
                             )
                         )
 
@@ -174,7 +173,7 @@ class SavedAccountFragment : BaseFragment() {
                             transactionStatus = statusCode,
                             amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = gson.toJson(it.error.msg)
+                            rawResponse = json.encodeToString(it.error.msg)
                         )
                     )
                     requireContext().showToast(it.error.msg)

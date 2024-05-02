@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -97,11 +96,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				}
 			}
 		} ?: run {
-
 			viewModel.paymentMethod.value?.let { paymentTypes ->
 				val packPaymentMethodList: MutableList<PackPaymentMethodData> = mutableListOf()
 				paymentTypes.free?.let {
-					if (!it.data.isNullOrEmpty() && !it.paymentHeadline.isNullOrEmpty()) {
+					if (!it.data.isNullOrEmpty() && ((mPref.isBanglalinkNumber == "true" && !it.paymentHeadlineForBl.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !it.paymentHeadlineForNonBl.isNullOrEmpty()))) {
 						packPaymentMethodList.add(
 							it.also {
 								it.paymentMethodName = "free"

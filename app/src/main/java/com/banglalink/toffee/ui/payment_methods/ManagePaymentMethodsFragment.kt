@@ -20,34 +20,37 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
-import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.compose_theme.ScreenBackground
-import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
-import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
+import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.compose_theme.ContentLoader
+import com.banglalink.toffee.ui.compose_theme.ScreenBackground
+import com.banglalink.toffee.ui.compose_theme.ScreenBackgroundDark
+import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ManagePaymentMethodsFragment : BaseFragment() {
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     private var paymentName: String = "nagad"
-    private var paymentMethodId: Int? = null
+    private var paymentMethodId: Int = 0
     private var transactionIdentifier: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -106,7 +109,6 @@ class ManagePaymentMethodsFragment : BaseFragment() {
             ) {
                 data.value?.let {
                     it.nagadBean?.let { nagadBean -> // Tokenized Payment is available for Nagad
-
                         nagadBean.nagadAccountInfo?.let { nagadAccountInfo -> // Saved account found for Nagad, Showing Account info
                             SavedPaymentMethods(
                                 nagadAccountInfo = nagadAccountInfo,
@@ -115,13 +117,13 @@ class ManagePaymentMethodsFragment : BaseFragment() {
 //                                appContext = requireContext(),
                                 progressDialog = progressDialog,
                                 nagadPaymentInit = {
-                                    paymentMethodId = nagadAccountInfo.paymentMethodId
+                                    paymentMethodId = nagadAccountInfo.paymentMethodId ?: 0
                                     addTokenizedAccountInit(paymentMethodId)
                                 }
                             )
                         } ?: run {// No saved account found, Showing Add account section
                             AddPaymentMethods {
-                                paymentMethodId = nagadBean.paymentMethodId
+                                paymentMethodId = nagadBean.paymentMethodId ?: 0
                                 addTokenizedAccountInit(paymentMethodId)
                             }
                         }
@@ -143,7 +145,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
         }
     }
 
-    private fun addTokenizedAccountInit(paymentMethodId: Int?) {
+    private fun addTokenizedAccountInit(paymentMethodId: Int) {
         val request = AddTokenizedAccountInitRequest(
             customerId = mPref.customerId,
             password = mPref.password,
@@ -170,12 +172,12 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             PaymentLogFromDeviceData(
                                 id = System.currentTimeMillis() + mPref.customerId,
                                 callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
-                                paymentMethodId = paymentMethodId!!,
+                                paymentMethodId = paymentMethodId,
                                 paymentMsisdn = null,
                                 paymentPurpose = "ECOM_TOKEN_GEN",
                                 paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
-                                rawResponse = gson.toJson(it)
+                                rawResponse = json.encodeToString(it)
                             )
                         )
 
@@ -205,12 +207,12 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                         PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
-                            paymentMethodId = paymentMethodId!!,
+                            paymentMethodId = paymentMethodId,
                             paymentMsisdn = null,
                             paymentPurpose = "ECOM_TOKEN_GEN",
                             paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
-                            rawResponse = gson.toJson(it.error.msg)
+                            rawResponse = json.encodeToString(it.error.msg)
                         )
                     )
                     requireContext().showToast(it.error.msg)

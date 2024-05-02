@@ -42,6 +42,10 @@ data class PackPaymentMethodData(
     var paymentMethodName: String? = null,
     @SerialName("payment_headline")
     val paymentHeadline : String? = null,
+    @SerialName("payment_headline_for_bl")
+    val paymentHeadlineForBl: String? = null,
+    @SerialName("payment_headline_for_non_bl")
+    val paymentHeadlineForNonBl: String? = null,
     @SerialName("payment_sub_headline_one_for_bl")
     val paymentSubHeadlineOneForBl : String? = null,
     @SerialName("payment_sub_headline_one_for_non_bl")
