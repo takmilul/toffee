@@ -2987,7 +2987,8 @@ class HomeActivity : PlayerPageActivity(),
             initMqtt()
         }
     }
-
+    
+    @SuppressLint("RestrictedApi")
     private fun handleRefreshPageOnLogin() {
         mPref.preLoginDestinationId.value?.let {
             if (it == id.menu_channel) {
@@ -2995,8 +2996,14 @@ class HomeActivity : PlayerPageActivity(),
                 val isMyChannel = channelOwnerId == mPref.customerId
                 navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
             } else {
+                val bundle = if ((navController.currentBackStack.value.size - 2) >= 0 ) {
+                    navController.currentBackStack.value.get(navController.currentBackStack.value.size-2).arguments
+                } else {
+                    null
+                }
+                
                 navController.popBackStack(it, true)
-                navController.navigateTo(it)
+                navController.navigateTo(resId = it, args = bundle)
             }
         }
     }
@@ -3084,11 +3091,13 @@ class HomeActivity : PlayerPageActivity(),
         mPref.profileImageUrlLiveData.postValue(drawable.ic_menu_profile)
     }
     
+    @SuppressLint("RestrictedApi")
     private fun handleReloadPageOnLogout() {
+        val bundle = navController.currentBackStack.value.last().arguments
         when (navController.currentDestination?.id) {
             id.menu_channel -> {
                 if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
-                    reloadCurrentPage()
+                    reloadCurrentPage(bundle)
                 } else {
                     navController.popBackStack()
                     val isMyChannel = channelOwnerId == mPref.customerId
@@ -3109,7 +3118,7 @@ class HomeActivity : PlayerPageActivity(),
             id.menu_active_tv
             -> {
                 navController.popBackStack()
-                reloadCurrentPage()
+                reloadCurrentPage(bundle)
             }
             
             id.editProfileFragment,
@@ -3117,19 +3126,19 @@ class HomeActivity : PlayerPageActivity(),
             -> {
                 navController.popBackStack()
                 navController.popBackStack()
-                reloadCurrentPage()
+                reloadCurrentPage(bundle)
             }
             
             else -> {
-                reloadCurrentPage()
+                reloadCurrentPage(bundle)
             }
         }
     }
     
-    private fun reloadCurrentPage() {
-        navController.currentDestination?.id?.let {
-            navController.popBackStack()
-            navController.navigateTo(it)
+    private fun reloadCurrentPage(bundle: Bundle?) {
+        navController.currentDestination?.let {
+            navController.navigateUp()
+            navController.navigateTo(resId = it.id, args = bundle)
         }
     }
 }

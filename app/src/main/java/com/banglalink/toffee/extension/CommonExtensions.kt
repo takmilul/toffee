@@ -1,7 +1,6 @@
 package com.banglalink.toffee.extension
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -17,7 +16,6 @@ import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.forEach
@@ -407,13 +405,13 @@ fun List<ActivePack>?.isContentPurchased(contentId: String?, systemDate: Date): 
 }
 
 fun NavController.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
-    this.navigate(resId, args, navOptions ?: navOptions { 
+    this.navigate(resId, args, navOptions ?: navOptions {
         launchSingleTop = true
     })
 }
 
 fun NavController.navigateTo(deepLink: Uri, navOptions: NavOptions? = null) {
-    this.navigate(deepLink, navOptions ?: navOptions { 
+    this.navigate(deepLink, navOptions ?: navOptions {
         launchSingleTop = true
     })
 }
@@ -425,7 +423,7 @@ fun NavController.navigatePopUpTo(
     @IdRes popUpTo: Int? = null,
     navOptions: NavOptions? = null
 ) {
-    this.navigate(resId, args, navOptions ?: navOptions { 
+    this.navigate(resId, args, navOptions ?: navOptions {
         launchSingleTop = true
         popUpTo(popUpTo ?: resId) {
             inclusive?.let {

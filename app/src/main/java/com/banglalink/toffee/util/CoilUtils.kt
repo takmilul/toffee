@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
@@ -28,18 +27,18 @@ object CoilUtils {
         ToffeeAnalytics.logException(ex)
         null
     }
-
+    
     @Composable
     fun getAsyncImagePainter(
         model: Any,
         @DrawableRes placeholder: Int = R.drawable.placeholder,
-        filterQuality: FilterQuality = FilterQuality.Low
+        filterQuality: FilterQuality = FilterQuality.Low,
     ): AsyncImagePainter {
         return rememberAsyncImagePainter(
             model = model,
-            error = painterResource(id = placeholder),
-            fallback = painterResource(id = placeholder),
-            placeholder = painterResource(id = placeholder),
+            error = rememberAsyncImagePainter(placeholder),
+            fallback = rememberAsyncImagePainter(placeholder),
+            placeholder = rememberAsyncImagePainter(placeholder),
             filterQuality = filterQuality
         )
     }
