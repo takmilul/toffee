@@ -54,7 +54,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                 putInt("sub_category_id", subCategoryID)
                 putString("sub_category", subCategory)
                 putString("category", category)
-                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "TV Channels")
+                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "Live")
                 putBoolean("show_selected", showSelected)
                 putBoolean("is_stingray", isStingray)
                 putBoolean("is_fmRadio", isFmRadio)
