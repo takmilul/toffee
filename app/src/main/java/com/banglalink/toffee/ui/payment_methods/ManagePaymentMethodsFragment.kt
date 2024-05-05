@@ -44,14 +44,13 @@ import javax.inject.Inject
 class ManagePaymentMethodsFragment : BaseFragment() {
     @Inject lateinit var json: Json
     private var paymentName: String = "nagad"
-    private var paymentMethodId: Int? = null
+    private var paymentMethodId: Int = 0
     private var transactionIdentifier: String? = null
     private var statusCode: String? = null
     private var statusMessage: String? = null
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -110,7 +109,6 @@ class ManagePaymentMethodsFragment : BaseFragment() {
             ) {
                 data.value?.let {
                     it.nagadBean?.let { nagadBean -> // Tokenized Payment is available for Nagad
-
                         nagadBean.nagadAccountInfo?.let { nagadAccountInfo -> // Saved account found for Nagad, Showing Account info
                             SavedPaymentMethods(
                                 nagadAccountInfo = nagadAccountInfo,
@@ -119,13 +117,13 @@ class ManagePaymentMethodsFragment : BaseFragment() {
 //                                appContext = requireContext(),
                                 progressDialog = progressDialog,
                                 nagadPaymentInit = {
-                                    paymentMethodId = nagadAccountInfo.paymentMethodId
+                                    paymentMethodId = nagadAccountInfo.paymentMethodId ?: 0
                                     addTokenizedAccountInit(paymentMethodId)
                                 }
                             )
                         } ?: run {// No saved account found, Showing Add account section
                             AddPaymentMethods {
-                                paymentMethodId = nagadBean.paymentMethodId
+                                paymentMethodId = nagadBean.paymentMethodId ?: 0
                                 addTokenizedAccountInit(paymentMethodId)
                             }
                         }
@@ -147,7 +145,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
         }
     }
 
-    private fun addTokenizedAccountInit(paymentMethodId: Int?) {
+    private fun addTokenizedAccountInit(paymentMethodId: Int) {
         val request = AddTokenizedAccountInitRequest(
             customerId = mPref.customerId,
             password = mPref.password,
@@ -174,7 +172,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                             PaymentLogFromDeviceData(
                                 id = System.currentTimeMillis() + mPref.customerId,
                                 callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
-                                paymentMethodId = paymentMethodId!!,
+                                paymentMethodId = paymentMethodId,
                                 paymentMsisdn = null,
                                 paymentPurpose = "ECOM_TOKEN_GEN",
                                 paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
@@ -209,7 +207,7 @@ class ManagePaymentMethodsFragment : BaseFragment() {
                         PaymentLogFromDeviceData(
                             id = System.currentTimeMillis() + mPref.customerId,
                             callingApiName = "${paymentName}AddTokenizedAccountInitFromAndroid",
-                            paymentMethodId = paymentMethodId!!,
+                            paymentMethodId = paymentMethodId,
                             paymentMsisdn = null,
                             paymentPurpose = "ECOM_TOKEN_GEN",
                             paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,

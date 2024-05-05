@@ -14,8 +14,11 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.response.DiscountApplyOnPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
+import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethodData
+import com.banglalink.toffee.data.network.response.SystemDiscount
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.enums.PaymentMethodName
 import com.banglalink.toffee.extension.navigatePopUpTo
@@ -36,6 +39,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 	private val binding get() = _binding!!
 	private val viewModel by activityViewModels<PremiumViewModel>()
+
+	var systemDiscount:SystemDiscount?=null
+	var discountApplyOnPaymentMethod: DiscountApplyOnPaymentMethod?=null
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -97,69 +103,133 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 		} ?: run {
 			viewModel.paymentMethod.value?.let { paymentTypes ->
-				val packPaymentMethodList: MutableList<PackPaymentMethodData> = mutableListOf()
-				paymentTypes.free?.let {
-					if (!it.data.isNullOrEmpty() && ((mPref.isBanglalinkNumber == "true" && !it.paymentHeadlineForBl.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !it.paymentHeadlineForNonBl.isNullOrEmpty()))) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "free"
+
+				systemDiscount=paymentTypes.systemDiscount
+				var paymentMethodList = listOf<PackPaymentMethodData>()
+				systemDiscount?.let {
+					if (mPref.isBanglalinkNumber=="true"){
+						systemDiscount?.BL?.let {
+							paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
+							discountApplyOnPaymentMethod = systemDiscount?.BL?.discountApplyOnPaymentMethod
+						} ?: {
+							systemDiscount?.BOTH?.let {
+								paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
+								discountApplyOnPaymentMethod = systemDiscount?.BOTH?.discountApplyOnPaymentMethod
 							}
-						)
+						}
 					}
-				}
-				paymentTypes.voucher?.let {
-					if (!it.data.isNullOrEmpty() && !it.paymentHeadline.isNullOrEmpty()) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "VOUCHER"
+					else {
+						systemDiscount?.NONBL?.let {
+							paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
+							discountApplyOnPaymentMethod = systemDiscount?.NONBL?.discountApplyOnPaymentMethod
+						} ?: {
+							systemDiscount?.BOTH?.let {
+								paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
+								discountApplyOnPaymentMethod = systemDiscount?.BOTH?.discountApplyOnPaymentMethod
 							}
-						)
+						}
 					}
-				}
-				paymentTypes.bl?.let {
-					if ((!it.prepaid.isNullOrEmpty() || !it.prepaid.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "blPack"
-							}
-						)
-					}
-				}
-				paymentTypes.bkash?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "bkash"
-							}
-						)
-					}
-				}
-				paymentTypes.ssl?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "ssl"
-							}
-						)
-					}
-				}
-				paymentTypes.nagad?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
-						packPaymentMethodList.add(
-							it.also {
-								it.paymentMethodName = "nagad"
-							}
-						)
-					}
+
+					mAdapter.removeAll()
+					mAdapter.addAll(paymentMethodList)
+				}?:run {
+					var paymentMethodList = listOf<PackPaymentMethodData>()
+					var whichPaymentMethodDisplay: ArrayList<String> = arrayListOf()
+					paymentTypes.free?.let { whichPaymentMethodDisplay.add(PaymentMethodString.FREE.value) }
+					paymentTypes.voucher?.let { whichPaymentMethodDisplay.add(PaymentMethodString.VOUCHER.value) }
+					paymentTypes.bl?.let { whichPaymentMethodDisplay.add(PaymentMethodString.BL.value) }
+					paymentTypes.bkash?.let { whichPaymentMethodDisplay.add(PaymentMethodString.BKASH.value) }
+					paymentTypes.ssl?.let { whichPaymentMethodDisplay.add(PaymentMethodString.SSL.value) }
+					paymentTypes.nagad?.let { whichPaymentMethodDisplay.add(PaymentMethodString.NAGAD.value) }
+
+					paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, whichPaymentMethodDisplay)
+					mAdapter.removeAll()
+					mAdapter.addAll(paymentMethodList)
 				}
 
-				mAdapter.removeAll()
-				mAdapter.addAll(packPaymentMethodList.sortedBy { it.orderIndex })
+
+
+
 			}
 		}
 
 	}
 
+	private fun addPaymentMethodsToDisplay(paymentTypes: PackPaymentMethodBean, whichPaymentMethodDisplay: ArrayList<String>?): List<PackPaymentMethodData> {
+		val packPaymentMethodList: MutableList<PackPaymentMethodData> = mutableListOf()
+		whichPaymentMethodDisplay?.forEach {
+			when(it){
+				PaymentMethodString.FREE.value->{
+					paymentTypes.free?.let {
+						if (!it.data.isNullOrEmpty() && ((mPref.isBanglalinkNumber == "true" && !it.paymentHeadlineForBl.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !it.paymentHeadlineForNonBl.isNullOrEmpty()))) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "free"
+								}
+							)
+						}
+					}
+				}
+				PaymentMethodString.VOUCHER.value->{
+					paymentTypes.voucher?.let {
+						if (!it.data.isNullOrEmpty() && !it.paymentHeadline.isNullOrEmpty()) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "VOUCHER"
+
+								}
+							)
+						}
+					}
+				}
+				PaymentMethodString.BL.value->{
+					paymentTypes.bl?.let {
+						if ((!it.prepaid.isNullOrEmpty() || !it.prepaid.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "blPack"
+								}
+							)
+						}
+					}
+				}
+				PaymentMethodString.BKASH.value->{
+					paymentTypes.bkash?.let {
+						if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "bkash"
+								}
+							)
+						}
+					}
+				}
+				PaymentMethodString.SSL.value->{
+					paymentTypes.ssl?.let {
+						if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "ssl"
+								}
+							)
+						}
+					}
+				}
+				PaymentMethodString.NAGAD.value->{
+					paymentTypes.nagad?.let {
+						if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+							packPaymentMethodList.add(
+								it.also {
+									it.paymentMethodName = "nagad"
+								}
+							)
+						}
+					}
+				}
+			}
+		}
+		return packPaymentMethodList.sortedBy { it.orderIndex }
+	}
 	override fun onItemClicked(item: PackPaymentMethodData) {
 		super.onItemClicked(item)
 		subType = when {
@@ -218,9 +288,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 						"subtype" to subType,
 					)
 				)
+				mPref.paymentDiscountPercentage.value=discountApplyOnPaymentMethod?.DCB
+
 				findNavController().navigateTo(
 					R.id.paymentDataPackOptionsFragment,
-					bundleOf("paymentName" to item.paymentMethodName)
+					bundleOf("paymentName" to item.paymentMethodName,
+						"discount" to discountApplyOnPaymentMethod?.DCB)
 				)
 			}
 
@@ -237,9 +310,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 						"subtype" to subType,
 					)
 				)
+				mPref.paymentDiscountPercentage.value=discountApplyOnPaymentMethod?.BKASH
 				findNavController().navigateTo(
 					R.id.paymentDataPackOptionsFragment,
-					bundleOf("paymentName" to item.paymentMethodName)
+					bundleOf("paymentName" to item.paymentMethodName,
+						"discount" to discountApplyOnPaymentMethod?.BKASH)
 				)
 			}
 
@@ -256,9 +331,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 						"subtype" to subType,
 					)
 				)
+				mPref.paymentDiscountPercentage.value=discountApplyOnPaymentMethod?.SSL
 				findNavController().navigateTo(
 					R.id.paymentDataPackOptionsFragment,
-					bundleOf("paymentName" to item.paymentMethodName)
+					bundleOf("paymentName" to item.paymentMethodName,
+						"discount" to discountApplyOnPaymentMethod?.SSL)
 				)
 			}
 
@@ -275,10 +352,14 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 						"subtype" to subType,
 					)
 				)
+				mPref.paymentDiscountPercentage.value=discountApplyOnPaymentMethod?.NAGAD
 				findNavController().navigateTo(
 					R.id.paymentDataPackOptionsFragment,
-					bundleOf("paymentName" to item.paymentMethodName)
+					bundleOf("paymentName" to item.paymentMethodName,
+						"discount" to discountApplyOnPaymentMethod?.NAGAD)
 				)
+
+
 			}
 		}
 	}

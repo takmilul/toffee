@@ -13,7 +13,6 @@ import kotlinx.serialization.Serializable
 //) : BaseRequest(ApiNames.PREMIUM_PACK_SUBSCRIPTION_HISTORY)
 
 @Serializable
-data class PremiumPackSubHistoryRequest(
-    val customerId: Int? =null,
+data class PremiumPackSubHistoryRequest(val customerId: Int? =null,
     var password:String?=null
 ):BaseRequest(ApiNames.PREMIUM_PACK_SUBSCRIPTION_HISTORY)

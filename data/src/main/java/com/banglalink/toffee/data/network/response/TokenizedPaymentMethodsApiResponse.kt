@@ -12,14 +12,16 @@ data class TokenizedPaymentMethodsBaseApiResponse(
 data class TokenizedPaymentMethodsApiResponse(
     @SerialName("NAGAD") var nagadBean: NagadBean? = NagadBean()
 )
+
 @Serializable
 data class NagadBean(
-    @SerialName("payment_method_id") var paymentMethodId: Int? = null,
+    @SerialName("payment_method_id") var paymentMethodId: Int? = 0,
     @SerialName("account") var nagadAccountInfo: NagadAccountInfo? = NagadAccountInfo()
 )
+
 @Serializable
 data class NagadAccountInfo(
-    @SerialName("payment_method_id") var paymentMethodId: Int? = null,
+    @SerialName("payment_method_id") var paymentMethodId: Int? = 0,
     @SerialName("wallet_number") var walletNumber: String? = null,
     @SerialName("payment_token") var paymentToken: String? = null,
     @SerialName("token_expiry") var tokenExpiry: String? = null,

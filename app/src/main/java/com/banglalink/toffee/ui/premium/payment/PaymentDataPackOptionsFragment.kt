@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     @Inject lateinit var json: Json
     private var paymentName: String? = null
+    private var paymentDiscount: String? = null
     private var pressedButtonName = ""
     private var transactionIdentifier: String? = null
     private var paymentToken: String? = null
@@ -76,6 +78,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         pressedButtonName = ""
         
         paymentName = arguments?.getString("paymentName", "") ?: ""
+        paymentDiscount = arguments?.getString("discount", "") ?: ""
+
+
+        Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
         prepareDataPackOptions()
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
