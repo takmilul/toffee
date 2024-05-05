@@ -18,6 +18,7 @@ import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
+import com.banglalink.toffee.data.network.response.DiscountInfo
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
 import com.banglalink.toffee.extension.checkVerification
@@ -66,6 +67,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+    private var discountInfo:DiscountInfo?=null
+    private var packPriceToPay:Int?=null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPaymentDataPackOptionsBinding.inflate(inflater, container, false)
@@ -82,6 +85,33 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
 
         Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
+
+        if (mPref.isBanglalinkNumber=="true"){
+            viewModel.selectedPackSystemDiscount.value?.BL?.let {
+
+                discountInfo=it
+                Log.d("discountInfoData", "bl"+discountInfo)
+            } ?: {
+                viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
+                    discountInfo=it
+                Log.d("discountInfoData", "blBoth"+discountInfo)
+                }
+            }
+        }
+        else {
+            viewModel.selectedPackSystemDiscount.value?.NONBL?.let {
+                discountInfo=it
+                Log.d("discountInfoData", "nonbl"+discountInfo)
+            } ?: {
+                viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
+                    discountInfo=it
+                Log.d("discountInfoData", "nonblBoth"+discountInfo)
+                }
+            }
+        }
+
+
+
         prepareDataPackOptions()
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
@@ -718,6 +748,12 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val selectedPremiumPack = viewModel.selectedPremiumPack.value
             val selectedDataPackOption = viewModel.selectedDataPackOption.value
 
+            if (viewModel.selectedPackSystemDiscount.value==null){
+                packPriceToPay=selectedDataPackOption?.packPrice ?: 0
+            }
+            else{
+                packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice!!.toDouble(),mPref.paymentDiscountPercentage.value!!).toInt()
+            }
             // Prepare a payment initiation request
             val request = SubscriberPaymentInitRequest(
                 customerId = mPref.customerId,
@@ -730,15 +766,30 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
                 packCode = selectedDataPackOption?.packCode,
                 packDetails = selectedDataPackOption?.packDetails,
-                packPrice = selectedDataPackOption?.packPrice ?: 0,
+                packPrice = packPriceToPay?:0,
                 packDuration = selectedDataPackOption?.packDuration ?: 0,
                 clientType = "MOBILE_APP",
                 paymentPurpose = "ECOM_TXN",
                 paymentToken = null,
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
-                cusEmail = mPref.customerEmail
+                cusEmail = mPref.customerEmail,
+
+                voucher = discountInfo?.voucher,
+                campaign_type = discountInfo?.campaignType,
+                partner_name = discountInfo?.partnerName,
+                partner_id = discountInfo?.partnerId,
+                campaign_name = discountInfo?.campaignName,
+                campaign_id = discountInfo?.campaignId,
+                campaign_type_id = discountInfo?.campaignTypeId,
+                campaign_expire_date = discountInfo?.campaignExpireDate,
+                voucher_generated_type = discountInfo?.voucherGeneratedType,
+                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                original_price = selectedDataPackOption?.packPrice ?: 0
+
+
             )
+            Log.d("TAG", "subscriberPaymentInitData "+request)
             // Trigger the payment initiation request, but only if both selectedPremiumPack and selectedDataPackOption are not null
             if (selectedPremiumPack != null && selectedDataPackOption != null) {
                 progressDialog.show()
@@ -1047,6 +1098,23 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             resId = R.id.htmlPageViewDialog,
             args = args
         )
+    }
+
+    fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
+        val discountPercentage = discountPercent.toDouble()
+        val discountAmount = originalPrice * (discountPercentage / 100)
+        val discountedPrice = originalPrice - discountAmount
+
+        val integerPart = discountedPrice.toInt()
+        val decimalPart = discountedPrice - integerPart
+
+        if (decimalPart > 0) {
+            return  integerPart + 1.0
+        } else {
+            return  discountedPrice
+        }
+
+
     }
     
     override fun onDestroyView() {

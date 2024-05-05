@@ -253,6 +253,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			(!(mPref.isBanglalinkNumber).toBoolean()) -> "N/A"
 			else -> null
 		}
+			if (systemDiscount!=null){
+
+				viewModel.selectedPackSystemDiscount.value=systemDiscount
+			}
 
 		when (item.paymentMethodName) {
 			PaymentMethodName.FREE.value -> {
@@ -371,7 +375,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				findNavController().navigateTo(
 					R.id.paymentDataPackOptionsFragment,
 					bundleOf("paymentName" to item.paymentMethodName,
-						"discount" to discountApplyOnPaymentMethod?.NAGAD)
+						"discount" to discountApplyOnPaymentMethod?.NAGAD,)
 				)
 
 
