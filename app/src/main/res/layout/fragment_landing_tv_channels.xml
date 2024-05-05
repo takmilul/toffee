@@ -19,7 +19,7 @@
             android:id="@+id/channel_tv"
             style="@style/SectionTitleTextStyle"
             android:layout_marginTop="17dp"
-            android:text="@string/channel"
+            android:text="@string/live"
             app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

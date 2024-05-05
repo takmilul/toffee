@@ -207,7 +207,7 @@
         android:label="{title}">
         <argument
             android:name="title"
-            android:defaultValue="Tv Channels"
+            android:defaultValue="Live"
             app:argType="string" />
         <argument
             android:name="category"
