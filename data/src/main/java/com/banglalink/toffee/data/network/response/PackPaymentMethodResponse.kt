@@ -35,6 +35,8 @@ data class PackPaymentMethodBean(
     val nagad: PackPaymentMethodData? = null,
     @SerialName("SYSTEMDISCOUNT")
     val systemDiscount: SystemDiscount? = null,
+    @SerialName("DISPLAYMESSAGE")
+    val displayMessage: DisplayMessage? = null,
 ) : Parcelable
 
 @Parcelize
@@ -106,6 +108,15 @@ data class PackPaymentMethod(
     @SerialName("is_allow_from_outside" )
     val isAllowFromOutside : Int? = null
 ) : Parcelable
+
+@Parcelize
+@Serializable
+data class DisplayMessage(
+    @SerialName("top_promotion_msg_bl")
+    var top_promotion_msg_bl: String? = null,
+    @SerialName("top_promotion_msg_nonbl" )
+    var top_promotion_msg_nonbl : String? = null
+):Parcelable
 
 @Parcelize
 @Serializable

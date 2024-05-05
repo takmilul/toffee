@@ -104,9 +104,19 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 		} ?: run {
 			viewModel.paymentMethod.value?.let { paymentTypes ->
 
+
+
 				systemDiscount=paymentTypes.systemDiscount
 				var paymentMethodList = listOf<PackPaymentMethodData>()
 				systemDiscount?.let {
+					binding.packSubTitle.visibility=View.VISIBLE
+					if (mPref.isBanglalinkNumber=="true"){
+
+						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
+					}else{
+						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
+					}
+
 					if (mPref.isBanglalinkNumber=="true"){
 						systemDiscount?.BL?.let {
 							paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
@@ -133,6 +143,9 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					mAdapter.removeAll()
 					mAdapter.addAll(paymentMethodList)
 				}?:run {
+
+					binding.packSubTitle.visibility=View.GONE
+
 					var paymentMethodList = listOf<PackPaymentMethodData>()
 					var whichPaymentMethodDisplay: ArrayList<String> = arrayListOf()
 					paymentTypes.free?.let { whichPaymentMethodDisplay.add(PaymentMethodString.FREE.value) }
@@ -152,6 +165,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 			}
 		}
+
+
 
 	}
 
