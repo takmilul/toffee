@@ -41,6 +41,11 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 	private val viewModel by activityViewModels<PremiumViewModel>()
 
 	var systemDiscount:SystemDiscount?=null
+
+	/**
+	 * discountApplyOnPaymentMethod will have the payment method's discount info which was clicked by the user. this data is send
+	 * using bundle to next fragment.
+	 */
 	var discountApplyOnPaymentMethod: DiscountApplyOnPaymentMethod?=null
 
 	override fun onCreateView(
@@ -108,6 +113,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 				systemDiscount=paymentTypes.systemDiscount
 				var paymentMethodList = listOf<PackPaymentMethodData>()
+				/**
+				 * When systemDiscount is not nullOrEmpty this means that this pack will have discounted payment.
+				 */
+
 				systemDiscount?.let {
 					binding.packSubTitle.visibility=View.VISIBLE
 					if (mPref.isBanglalinkNumber=="true"){
@@ -116,6 +125,10 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					}else{
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
 					}
+					/**
+					 * discountApplyOnPaymentMethod will have the payment method's discount info which was clicked by the user. This data is send
+					 * using bundle to next fragment.
+					 */
 
 					if (mPref.isBanglalinkNumber=="true"){
 						systemDiscount?.BL?.let {
@@ -144,9 +157,18 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					mAdapter.addAll(paymentMethodList)
 				}?:run {
 
+					/**
+					 * When systemDiscount is nullOrEmpty this means that this pack will not have any discounted payments.
+					 */
 					binding.packSubTitle.visibility=View.GONE
 
 					var paymentMethodList = listOf<PackPaymentMethodData>()
+
+					/**
+					 * whichPaymentMethodDisplay this array list have all the payment method names that will be displayed. For
+					 * discounted payments we get the array list inside SystemDiscount class. But in non discounted payments
+					 * this list is not provided. We make the ArrayList from our end.
+					 */
 					var whichPaymentMethodDisplay: ArrayList<String> = arrayListOf()
 					paymentTypes.free?.let { whichPaymentMethodDisplay.add(PaymentMethodString.FREE.value) }
 					paymentTypes.voucher?.let { whichPaymentMethodDisplay.add(PaymentMethodString.VOUCHER.value) }
