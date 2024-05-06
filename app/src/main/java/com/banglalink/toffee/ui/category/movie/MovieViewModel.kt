@@ -142,7 +142,7 @@ class MovieViewModel @Inject constructor(
         }
     }
     
-    val loadMoviePreviews by lazy{
+    fun loadMoviePreviews() {
         viewModelScope.launch {
             moviePreviewsResponse.value = try {
                 moviePreviewsService.loadData("VOD", 0, 0, 10, 0).filter { !it.isExpired }.map {
@@ -164,7 +164,7 @@ class MovieViewModel @Inject constructor(
         }
     }
     
-    val loadTrendingNowMovies by lazy {
+    fun loadTrendingNowMovies() {
         viewModelScope.launch {
             trendingNowMoviesResponse.value = try {
                 val response = trendingNowService.create(LandingUserChannelsRequestParam("VOD", 1, 0, false)).loadData(0, 10)
@@ -188,7 +188,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    val loadTelefilms by lazy {
+    fun loadTelefilms() {
         viewModelScope.launch {
             telefilmsResponse.value =  try{
                 getContentAssistedFactory.create(
@@ -212,7 +212,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    val loadComingSoonContents by lazy{
+    fun loadComingSoonContents() {
         viewModelScope.launch {
             comingSoonResponse.value = try{
                 comingSoonApiService.loadData("VOD", 1, 0, 10, 0).run { 

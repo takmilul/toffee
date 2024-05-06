@@ -15,11 +15,13 @@ class MoviesTrendingNowFragment: MovieBaseFragment<ChannelInfo>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadTrendingNowMovies
+        viewModel.loadTrendingNowMovies()
+
     }
     
     override fun loadContent() {
         observe(viewModel.trendingNowMovies){
+            adapter.removeAll()
             adapter.addAll(it)
             showCard(it.isNotEmpty())
         }
