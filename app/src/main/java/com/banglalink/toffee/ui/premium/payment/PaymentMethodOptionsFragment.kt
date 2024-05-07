@@ -117,7 +117,20 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					}
 				}
 				paymentTypes.bl?.let {
-					if ((!it.prepaid.isNullOrEmpty() || !it.prepaid.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+					if (
+						(
+							(mPref.isBanglalinkNumber == "true" &&
+								(
+									(mPref.isPrepaid && !it.prepaid.isNullOrEmpty()) ||
+									(!mPref.isPrepaid && !it.postpaid.isNullOrEmpty())
+								)
+							) ||
+							(mPref.isBanglalinkNumber == "false" &&
+								(!it.prepaid.isNullOrEmpty() || !it.postpaid.isNullOrEmpty())
+							)
+						) &&
+						!it.paymentHeadline.isNullOrEmpty()
+					) {
 						packPaymentMethodList.add(
 							it.also {
 								it.paymentMethodName = "blPack"
@@ -126,7 +139,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					}
 				}
 				paymentTypes.bkash?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+					if (
+						(
+							(mPref.isBanglalinkNumber == "true" && !it.blPacks.isNullOrEmpty()) ||
+							(mPref.isBanglalinkNumber == "false" && !it.nonBlPacks.isNullOrEmpty())
+						) &&
+						!it.paymentHeadline.isNullOrEmpty()
+					) {
 						packPaymentMethodList.add(
 							it.also {
 								it.paymentMethodName = "bkash"
@@ -135,7 +154,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					}
 				}
 				paymentTypes.ssl?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+					if (
+						(
+							(mPref.isBanglalinkNumber == "true" && !it.blPacks.isNullOrEmpty()) ||
+							(mPref.isBanglalinkNumber == "false" && !it.nonBlPacks.isNullOrEmpty())
+						) &&
+						!it.paymentHeadline.isNullOrEmpty()
+					){
 						packPaymentMethodList.add(
 							it.also {
 								it.paymentMethodName = "ssl"
@@ -144,7 +169,13 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					}
 				}
 				paymentTypes.nagad?.let {
-					if ((!it.blPacks.isNullOrEmpty() || !it.nonBlPacks.isNullOrEmpty()) && !it.paymentHeadline.isNullOrEmpty()) {
+					if (
+						(
+							(mPref.isBanglalinkNumber == "true" && !it.blPacks.isNullOrEmpty()) ||
+							(mPref.isBanglalinkNumber == "false" && !it.nonBlPacks.isNullOrEmpty())
+						) &&
+						!it.paymentHeadline.isNullOrEmpty()
+					) {
 						packPaymentMethodList.add(
 							it.also {
 								it.paymentMethodName = "nagad"
