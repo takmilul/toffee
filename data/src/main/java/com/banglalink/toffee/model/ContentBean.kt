@@ -2,10 +2,11 @@ package com.banglalink.toffee.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class ContentBean(
-    @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
+    @JsonNames("channels", "channelInfo")
     val channels: List<ChannelInfo>? = null,
     @SerialName("count")
     val count: Int = 0,
