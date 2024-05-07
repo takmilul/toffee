@@ -221,7 +221,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                localSync.syncData(it)
+//                localSync.syncData(it)
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -231,7 +231,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelPlaylistVideos(playlistInfo).collectLatest {
                 playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel->
-                    localSync.syncData(channel)
+//                    localSync.syncData(channel)
                     channel
                 })
             }

@@ -20,11 +20,11 @@
             android:contentDescription="@string/txt_poster"
             android:minHeight="200dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/placeholder"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder" />
         
         <View
             android:id="@+id/overlayView"
@@ -60,26 +60,17 @@
             app:layout_constraintTop_toBottomOf="@id/icon" />
         
         <View
-            android:id="@+id/ownerPicture"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster" />
-        
-        <View
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_2_line_text_height"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="36dp"
             android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintBottom_toBottomOf="@id/ownerPicture"
+            app:layout_constraintBottom_toTopOf="@id/owner"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@id/ownerPicture" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/poster" />
         
         <View
             android:id="@+id/owner"

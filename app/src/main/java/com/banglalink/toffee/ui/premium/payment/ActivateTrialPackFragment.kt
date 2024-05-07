@@ -54,7 +54,7 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
                     var blTrialPackMethod: PackPaymentMethod? = null
                     var nonBlTrialPackMethod: PackPaymentMethod? = null
 
-                    paymentTypes.free?.forEach {
+                    paymentTypes.free?.data?.forEach {
 
                         if (it.isNonBlFree == 1) {
                             nonBlTrialPackMethod = it

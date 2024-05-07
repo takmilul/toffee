@@ -111,9 +111,9 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
-            currentItem?.let {
-                localSync.syncData(it)
-            }
+//            currentItem?.let {
+//                localSync.syncData(it)
+//            }
             detailsAdapter?.notifyDataSetChanged()
         }
     }

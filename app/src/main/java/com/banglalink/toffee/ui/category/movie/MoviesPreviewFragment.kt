@@ -39,7 +39,7 @@ class MoviesPreviewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Movie Previews"
         observeMoviePreviews()
-        viewModel.loadMoviePreviews
+        viewModel.loadMoviePreviews()
     }
 
     private fun observeMoviePreviews() {

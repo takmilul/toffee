@@ -20,33 +20,22 @@
             android:contentDescription="@string/txt_placeholder"
             android:minHeight="200dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/placeholder"
             app:layout_constraintBottom_toTopOf="@id/name"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-        <View
-            android:id="@+id/ownerPicture"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder" />
         
         <View
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_2_line_text_height"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/placeholder_text_bg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ownerPicture"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster" />
         
         <View
@@ -54,95 +43,13 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/placeholder_small_text_height"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/name" />
-        
-        <View
-            android:id="@+id/thirdIcon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintStart_toStartOf="@id/secondIcon"
-            app:layout_constraintTop_toTopOf="@id/reactionCount" />
-        
-        <View
-            android:id="@+id/secondIcon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintStart_toStartOf="@id/firstIcon"
-            app:layout_constraintTop_toTopOf="@id/reactionCount" />
-        
-        <View
-            android:id="@+id/firstIcon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="@id/reactionCount" />
-        
-        <View
-            android:id="@+id/reactionCount"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/placeholder_small_text_height"
-            android:layout_marginStart="2dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintBottom_toBottomOf="@+id/owner"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/thirdIcon"
-            app:layout_constraintTop_toTopOf="@id/owner" />
-        
-        <View
-            android:id="@+id/viewCount"
-            android:layout_width="56dp"
-            android:layout_height="@dimen/placeholder_small_text_height"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="14dp"
-            android:paddingVertical="4dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/placeholder_text_bg"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/owner" />
-        
-        <View
-            android:id="@+id/shareCount"
-            android:layout_width="56dp"
-            android:layout_height="@dimen/placeholder_small_text_height"
-            android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintBottom_toBottomOf="@id/viewCount"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toEndOf="@id/viewCount"
-            app:layout_constraintTop_toTopOf="@id/viewCount" />
-        
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.75" />
-        
-        <View
-            android:id="@+id/reactionButton"
-            android:layout_width="56dp"
-            android:layout_height="@dimen/placeholder_small_text_height"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/placeholder_text_bg"
-            app:layout_constraintBottom_toBottomOf="@id/viewCount"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="@id/viewCount" />
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintWidth_percent=".4" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.facebook.shimmer.ShimmerFrameLayout>

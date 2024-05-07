@@ -15,10 +15,11 @@ class MoviesComingSoonFragment : MovieBaseFragment<ComingSoonContent>() {
 
     override fun loadContent() {
         observe(viewModel.comingSoonContents){
+            adapter.removeAll()
             adapter.addAll(it)
             showCard(it.isNotEmpty())
         }
-        viewModel.loadComingSoonContents
+        viewModel.loadComingSoonContents()
     }
 
     override fun onStop() {

@@ -41,16 +41,16 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_placeholder"
-                android:minHeight="200dp"
                 android:foreground="@drawable/ripple_rectangle_shape"
+                android:minHeight="200dp"
                 app:layout_constraintBottom_toTopOf="@id/name"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:onSafeClick="@{()->callback.onItemClicked(data)}"
-                tools:src="@drawable/placeholder"
-                tools:ignore="UnusedAttribute" />
+                tools:ignore="UnusedAttribute"
+                tools:src="@drawable/placeholder" />
             
             <TextView
                 android:id="@+id/duration"
@@ -78,32 +78,19 @@
                 app:layout_constraintEnd_toEndOf="@id/duration"
                 app:layout_constraintStart_toStartOf="parent" />
             
-            <ImageView
-                android:id="@+id/ownerPicture"
-                loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/txt_profile_image"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/poster"
-                app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
-                tools:src="@drawable/ic_menu_profile" />
-            
             <TextView
                 android:id="@+id/name"
                 style="@style/programNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
                 android:gravity="center_vertical"
                 android:maxLines="2"
                 android:text="@{data.program_name}"
                 app:layout_constraintEnd_toStartOf="@id/options"
-                app:layout_constraintStart_toEndOf="@id/ownerPicture"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/poster"
                 app:onSafeClick="@{()->callback.onItemClicked(data)}"
                 tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
@@ -111,13 +98,13 @@
             <ImageView
                 android:id="@+id/options"
                 style="@style/OptionMenuStyle"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
                 android:contentDescription="@string/txt_options"
-                android:paddingVertical="8dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="14dp"
-                app:layout_constraintBottom_toBottomOf="@id/name"
+                android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/name"
+                app:layout_constraintStart_toEndOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/poster"
                 app:onSafeClick="@{(v)->callback.onOpenMenu(v, data)}"
                 app:srcCompat="@drawable/ic_menu_more" />
             
@@ -126,6 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto_regular"
                 android:maxLines="1"
@@ -133,6 +121,7 @@
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="@dimen/default_text_size"
                 app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/uploadDuration"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -151,134 +140,11 @@
                 android:textColor="@color/fixed_second_text_color"
                 android:textSize="@dimen/default_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/owner"
-                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintEnd_toEndOf="@id/name"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/owner"
                 app:layout_constraintTop_toTopOf="@id/owner"
                 tools:text="14h" />
-            
-            <ImageView
-                android:id="@+id/thirdIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="12dp"
-                android:contentDescription="@string/tv_wow"
-                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-                app:layout_constraintStart_toStartOf="@id/secondIcon"
-                app:layout_constraintTop_toTopOf="@id/reactionCount"
-                app:srcCompat="@drawable/ic_reaction_wow_no_shadow"
-                bind:emoIcon="@{data}"
-                bind:iconPosition="@{3}" />
-            
-            <ImageView
-                android:id="@+id/secondIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="12dp"
-                android:contentDescription="@string/txt_love"
-                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-                app:layout_constraintStart_toStartOf="@id/firstIcon"
-                app:layout_constraintTop_toTopOf="@id/reactionCount"
-                app:srcCompat="@drawable/ic_reaction_love_no_shadow"
-                bind:emoIcon="@{data}"
-                bind:iconPosition="@{2}" />
-            
-            <ImageView
-                android:id="@+id/firstIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:contentDescription="@string/txt_like"
-                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-                app:layout_constraintStart_toStartOf="@id/guideline3"
-                app:layout_constraintTop_toTopOf="@id/reactionCount"
-                app:srcCompat="@drawable/ic_reaction_like_no_shadow"
-                bind:emoIcon="@{data}"
-                bind:iconPosition="@{1}" />
-            
-            <TextView
-                android:id="@+id/reactionCount"
-                bindEmoCount="@{data}"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="@dimen/default_text_size"
-                app:layout_constraintBottom_toBottomOf="@id/owner"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/thirdIcon"
-                app:layout_constraintTop_toTopOf="@id/owner"
-                tools:text="904.5k" />
-            
-            <TextView
-                android:id="@+id/viewCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/roboto_medium"
-                android:paddingVertical="4dp"
-                android:text="@{(data.isApproved == 1 ? data.formattedViewCount() : `0`) + ` Views`}"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="@dimen/default_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="@id/name"
-                app:layout_constraintTop_toBottomOf="@id/owner"
-                tools:text="10K" />
-            
-            <TextView
-                android:id="@+id/shareCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:drawablePadding="8dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center_vertical"
-                android:paddingVertical="4dp"
-                android:text="@{data.isApproved == 1 ? data.formattedShareCount : `0`}"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="@dimen/default_text_size"
-                app:drawableStartCompat="@drawable/ic_share"
-                app:layout_constraintBottom_toBottomOf="@id/viewCount"
-                app:layout_constraintEnd_toStartOf="@id/guideline3"
-                app:layout_constraintStart_toEndOf="@id/viewCount"
-                app:layout_constraintTop_toTopOf="@id/viewCount"
-                app:onSafeClick="@{(v) -> callback.onShareClicked(v, data, false)}"
-                tools:text="21K" />
-            
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75" />
-            
-            <TextView
-                android:id="@+id/reactionButton"
-                loadReactionEmo="@{data.myReaction}"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center_vertical"
-                android:paddingVertical="4dp"
-                android:text="React"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="@dimen/default_text_size"
-                app:drawableStartCompat="@drawable/ic_reaction_love_empty"
-                app:layout_constraintBottom_toBottomOf="@id/viewCount"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/guideline3"
-                app:layout_constraintTop_toTopOf="@id/viewCount"
-                app:onSafeClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
-                tools:text="React" />
         
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

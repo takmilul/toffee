@@ -76,8 +76,8 @@ class CategoryWiseLinearChannelFragment : BaseFragment() {
             viewModel.loadCategoryWiseContent(mPref.categoryId.value ?: 0).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     binding.root.show()
-                    mPref.isCatWiseLinChannelAvailable.value=true
-                    localSync.syncData(channel)
+                    mPref.isCatWiseLinChannelAvailable.value = true
+//                    localSync.syncData(channel)
                     channel
                 })
             }

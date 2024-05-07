@@ -96,7 +96,7 @@ class CategoryInfoFragment : HomeBaseFragment() {
                 
                 mAdapter.submitData(
                     it.map { channel ->
-                        localSync.syncData(channel)
+//                        localSync.syncData(channel)
                         
                         binding.placeholder.hide()
                         binding.channelList.show()

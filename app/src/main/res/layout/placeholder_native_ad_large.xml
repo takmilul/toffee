@@ -19,12 +19,12 @@
             android:contentDescription="@string/txt_placeholder"
             android:minHeight="200dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/placeholder"
             app:layout_constraintBottom_toTopOf="@id/name"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder" />
         
         <TextView
             android:id="@+id/adTag"
@@ -35,48 +35,43 @@
             app:layout_constraintTop_toTopOf="@id/poster" />
         
         <View
-            android:id="@+id/ownerPicture"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/placeholder_image_bg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster" />
-        
-        <View
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="20dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/placeholder_text_bg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster" />
         
         <View
             android:id="@+id/owner"
             android:layout_width="0dp"
             android:layout_height="14dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/placeholder_text_bg"
+            app:layout_constraintBottom_toTopOf="@id/ctaButton"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/name" />
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintWidth_percent=".6" />
         
         <View
-            android:id="@+id/viewCount"
+            android:id="@+id/ctaButton"
             android:layout_width="0dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="22dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/placeholder_text_bg"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/owner"
-            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/owner" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>

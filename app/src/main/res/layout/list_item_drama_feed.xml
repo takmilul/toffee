@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        
         <import type="android.view.View" />
-        <import type="com.banglalink.toffee.util.Utils"/>
+        
+        <import type="com.banglalink.toffee.util.Utils" />
         
         <variable
             name="data"
@@ -29,66 +32,66 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:minHeight="200dp"
             android:contentDescription="@string/txt_poster"
-            android:scaleType="centerCrop"
             android:foreground="@drawable/ripple_rectangle_shape"
+            android:minHeight="200dp"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/placeholder"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="UnusedAttribute"
+            tools:src="@drawable/placeholder" />
         
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:paddingVertical="4dp"
+            android:background="@drawable/new_tag_bg"
             android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
             android:text=""
-            tools:text="New Season"
-            android:visibility="gone"
             android:textColor="@android:color/white"
             android:textSize="@dimen/default_text_size"
-            android:background="@drawable/new_tag_bg"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="New Season" />
         
         <View
             android:id="@+id/overlayView"
             android:layout_width="104dp"
             android:layout_height="0dp"
-            android:background="@color/overlay_dark_color"
             android:alpha="0.75"
-            app:layout_constraintTop_toTopOf="@id/poster"
+            android:background="@color/overlay_dark_color"
+            app:layout_constraintBottom_toBottomOf="@id/poster"
             app:layout_constraintEnd_toEndOf="@id/poster"
-            app:layout_constraintBottom_toBottomOf="@id/poster"/>
+            app:layout_constraintTop_toTopOf="@id/poster" />
         
         <TextView
             android:id="@+id/videoCountTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{data.totalEpisode + ` Episodes`}"
-            tools:text="15 Episodes"
-            android:textColor="@android:color/white"
-            android:gravity="center_horizontal"
             android:drawablePadding="6dp"
             android:fontFamily="@font/roboto_medium"
+            android:gravity="center_horizontal"
+            android:text="@{data.totalEpisode + ` Episodes`}"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/default_text_size"
             app:drawableTopCompat="@drawable/ic_playlist"
+            app:layout_constraintBottom_toBottomOf="@id/overlayView"
+            app:layout_constraintEnd_toEndOf="@id/overlayView"
             app:layout_constraintStart_toStartOf="@id/overlayView"
             app:layout_constraintTop_toTopOf="@id/overlayView"
-            app:layout_constraintEnd_toEndOf="@id/overlayView"
-            app:layout_constraintBottom_toBottomOf="@id/overlayView"/>
+            tools:text="15 Episodes" />
         
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#88000000"
-            android:paddingVertical="@dimen/duration_vertical_padding"
             android:paddingHorizontal="@dimen/duration_horizontal_padding"
+            android:paddingVertical="@dimen/duration_vertical_padding"
             android:text="@{data.formattedDuration}"
             android:textColor="@android:color/white"
             android:textSize="@dimen/duration_text_size"
@@ -109,44 +112,31 @@
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
         
-        <ImageView
-            android:id="@+id/ownerPicture"
-            loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:contentDescription="@string/txt_profile_image"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-            tools:src="@drawable/ic_menu_profile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster" />
-        
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
             android:text="@{data.program_name}"
+            app:layout_constraintBottom_toTopOf="@id/owner"
             app:layout_constraintEnd_toStartOf="@+id/options"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@id/ownerPicture"
-            app:layout_constraintBottom_toBottomOf="@id/ownerPicture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/poster"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
         
         <ImageView
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
+            android:contentDescription="@string/txt_options"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             android:paddingVertical="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="14dp"
-            android:contentDescription="@string/txt_options"
-            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            app:layout_constraintBottom_toBottomOf="@id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/name"
-            app:layout_constraintBottom_toBottomOf="@id/name"
             app:srcCompat="@drawable/ic_menu_more" />
         
         <androidx.constraintlayout.widget.Guideline
@@ -160,37 +150,38 @@
             android:id="@+id/owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constrainedWidth="true"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="12dp"
-            android:maxLines="1"
             android:ellipsize="end"
             android:fontFamily="@font/roboto_regular"
-            android:textSize="@dimen/default_text_size"
+            android:maxLines="1"
             android:text="@{data.content_provider_name}"
             android:textColor="@color/fixed_second_text_color"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintTop_toBottomOf="@+id/name"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintEnd_toStartOf="@id/uploadDuration"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="Banglalink" />
         
         <TextView
             android:id="@+id/uploadDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/roboto_regular"
-            android:textSize="@dimen/default_text_size"
+            android:maxLines="1"
             android:text="@{` \u2022 ` + data.formattedCreateTime}"
             android:textColor="@color/fixed_second_text_color"
-            app:layout_constraintStart_toEndOf="@id/owner"
-            app:layout_constraintEnd_toStartOf="@id/options"
-            app:layout_constraintTop_toTopOf="@id/owner"
+            android:textSize="@dimen/default_text_size"
             app:layout_constraintBottom_toBottomOf="@id/owner"
+            app:layout_constraintEnd_toStartOf="@id/options"
+            app:layout_constraintStart_toEndOf="@id/owner"
+            app:layout_constraintTop_toTopOf="@id/owner"
             tools:text=" &#8226; 14h" />
-
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
