@@ -66,11 +66,18 @@ class PaymentDataPackOptionAdapter(
                     priceBeforeDiscount.visibility= View.GONE
                     priceTv.text=" BDT "+obj.packPrice.toString()
                 }else{
-                    priceBeforeDiscount.visibility= View.VISIBLE
-                    var discountedPrice = calculateDiscountedPrice(obj.packPrice!!.toDouble(),mPref.paymentDiscountPercentage.value!!)
-                    priceTv.text="BDT "+discountedPrice.toInt()
-                    priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
-                    priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
+                    try {
+                        priceBeforeDiscount.visibility= View.VISIBLE
+                        var discountedPrice = calculateDiscountedPrice(obj.packPrice!!.toDouble(),mPref.paymentDiscountPercentage.value!!)
+                        priceTv.text="BDT "+discountedPrice.toInt()
+                        priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
+                        priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    }catch (e: Exception) {
+
+                        Log.i("calculateDiscount", "onPackSelectEventChanged: ${e.message}")
+                    }
+
 
                 }
             }

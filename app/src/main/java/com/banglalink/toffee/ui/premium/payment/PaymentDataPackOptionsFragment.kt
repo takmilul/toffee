@@ -555,21 +555,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun purchaseBlDataPack() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
-            val selectedDataPack = viewModel.selectedDataPackOption.value!!
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPack = viewModel.selectedDataPackOption.value
             
             val dataPackPurchaseRequest = DataPackPurchaseRequest(
                 customerId = mPref.customerId,
                 password = mPref.password,
                 isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
-                packId = selectedPremiumPack.id,
-                paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
-                packTitle = selectedPremiumPack.packTitle,
-                contentList = selectedPremiumPack.contentId,
-                packCode = selectedDataPack.packCode,
-                packDetails = selectedDataPack.packDetails,
-                packPrice = selectedDataPack.packPrice,
-                packDuration = selectedDataPack.packDuration,
+                packId = selectedPremiumPack?.id ?: 0,
+                paymentMethodId = selectedDataPack?.paymentMethodId ?: 0,
+                packTitle = selectedPremiumPack?.packTitle,
+                contentList = selectedPremiumPack?.contentId,
+                packCode = selectedDataPack?.packCode,
+                packDetails = selectedDataPack?.packDetails,
+                packPrice = selectedDataPack?.packPrice,
+                packDuration = selectedDataPack?.packDuration,
                 isPrepaid = if (mPref.isPrepaid) 1 else 0
             )
             viewModel.purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest)
@@ -752,7 +752,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 packPriceToPay=selectedDataPackOption?.packPrice ?: 0
             }
             else{
-                packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice!!.toDouble(),mPref.paymentDiscountPercentage.value!!).toInt()
+                try {
+                    packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice!!.toDouble(),
+                        mPref.paymentDiscountPercentage.value!!).toInt()
+                }catch (e: Exception){
+                    Log.i("calculateDiscount", "onPackSelectEventChanged: ${e.message}")
+                }
+
             }
             // Prepare a payment initiation request
             val request = SubscriberPaymentInitRequest(
@@ -1025,7 +1031,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             "blPack" -> {
                 if (mPref.isBanglalinkNumber == "true") {
-                    ctaButtonValue= item.dataPackCtaButton!!
+                    ctaButtonValue= item.dataPackCtaButton?: 0
                     binding.buyNowButton.isVisible = item.dataPackCtaButton == 1 || item.dataPackCtaButton == 3
                     binding.buyWithRechargeButton.isVisible = item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3
                 } else {

@@ -78,35 +78,35 @@ data class PackPaymentMethodData(
 @Serializable
 data class PackPaymentMethod(
     @SerialName("data_pack_id")
-    val dataPackId: Int? = null,
+    val dataPackId: Int? = 0,
     @SerialName("payment_method_id")
-    val paymentMethodId: Int? = null,
+    val paymentMethodId: Int? = 0,
     @SerialName("is_non_bl_free")
-    val isNonBlFree: Int? = null,
+    val isNonBlFree: Int? = 0,
     @SerialName("pack_code")
     val packCode: String? = null,
     @SerialName("pack_details")
     val packDetails: String? = null,
     @SerialName("pack_price")
-    val packPrice: Int? = null,
+    val packPrice: Int? = 0,
     @SerialName("pack_duration")
-    val packDuration: Int? = null,
+    val packDuration: Int? = 0,
     @SerialName("sort_by_code")
-    val sortByCode: Int? = null,
+    val sortByCode: Int? = 0,
     @SerialName("is_prepaid")
-    val isPrepaid: Int? = null,
+    val isPrepaid: Int? = 0,
     @SerialName("listTitle")
     val listTitle: String? = null,
     @SerialName("is_auto_renew")
-    val isAutoRenew: Int? = null,
+    val isAutoRenew: Int? = 0,
     @SerialName("partner_id")
-    val partnerId: Int? = null,
+    val partnerId: Int? = 0,
     @SerialName("campaigns_id")
-    val campaignsId: Int? = null,
+    val campaignsId: Int? = 0,
     @SerialName("data_pack_cta_button")
-    val dataPackCtaButton: Int? = null,
+    val dataPackCtaButton: Int? = 0,
     @SerialName("is_allow_from_outside" )
-    val isAllowFromOutside : Int? = null
+    val isAllowFromOutside : Int? = 0
 ) : Parcelable
 
 @Parcelize
@@ -134,12 +134,12 @@ data class DiscountInfo (
     @SerialName("voucher"                          ) var voucher                      : String?                       = null,
     @SerialName("campaign_type"                    ) var campaignType                 : String?                       = null,
     @SerialName("partner_name"                     ) var partnerName                  : String?                       = null,
-    @SerialName("partner_id"                       ) var partnerId                    : Int?                          = null,
+    @SerialName("partner_id"                       ) var partnerId                    : Int?                          = 0,
     @SerialName("campaign_name"                    ) var campaignName                 : String?                       = null,
-    @SerialName("campaign_id"                      ) var campaignId                   : Int?                          = null,
-    @SerialName("campaign_type_id"                 ) var campaignTypeId               : Int?                          = null,
+    @SerialName("campaign_id"                      ) var campaignId                   : Int?                          = 0,
+    @SerialName("campaign_type_id"                 ) var campaignTypeId               : Int?                          = 0,
     @SerialName("campaign_expire_date"             ) var campaignExpireDate           : String?                       = null,
-    @SerialName("voucher_generated_type"           ) var voucherGeneratedType         : Int?                          = null
+    @SerialName("voucher_generated_type"           ) var voucherGeneratedType         : Int?                          = 0
 ) : Parcelable
 
 @Parcelize
