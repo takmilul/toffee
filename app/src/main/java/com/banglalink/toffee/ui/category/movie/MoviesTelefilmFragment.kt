@@ -14,11 +14,12 @@ class MoviesTelefilmFragment: MovieBaseFragment<ChannelInfo>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadTelefilms
+        viewModel.loadTelefilms()
     }
     
     override fun loadContent() {
         observe(viewModel.telefilms){
+            adapter.removeAll()
             adapter.addAll(it)
             showCard(it.isNotEmpty())
         }

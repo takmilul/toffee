@@ -1023,12 +1023,12 @@ abstract class PlayerPageActivity :
         }
 
         player?.let {
-            val oldChannelInfo = getCurrentChannelInfo()
-            oldChannelInfo?.let { oldInfo ->
-                if (oldInfo.id != channelInfo.id && it.playbackState != Player.STATE_ENDED) {
-                    insertContentViewProgress(oldInfo, it.currentPosition)
-                }
-            }
+//            val oldChannelInfo = getCurrentChannelInfo()
+//            oldChannelInfo?.let { oldInfo ->
+//                if (oldInfo.id != channelInfo.id && it.playbackState != Player.STATE_ENDED) {
+//                    insertContentViewProgress(oldInfo, it.currentPosition)
+//                }
+//            }
             if (!channelInfo.fcmEventName.isNullOrBlank()) {
                 if (channelInfo.isFcmEventActive) {
                     for (event in channelInfo.fcmEventName!!.split(",")) {
