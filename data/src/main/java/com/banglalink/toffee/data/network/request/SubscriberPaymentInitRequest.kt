@@ -41,5 +41,30 @@ data class SubscriberPaymentInitRequest(
     @SerialName("geo_location")
     val geoLocation: String? = null,
     @SerialName("cus_email")
-    val cusEmail: String? = null
+    val cusEmail: String? = null,
+
+
+    @SerialName("voucher")
+    val voucher: String? = null,
+    @SerialName("campaign_type")
+    val campaign_type: String? = null,
+    @SerialName("partner_name")
+    val partner_name: String? = null,
+    @SerialName("partner_id")
+    val partner_id: Int? = 0,
+    @SerialName("campaign_name")
+    val campaign_name: String? = null,
+    @SerialName("campaign_id")
+    val campaign_id: Int? = 0,
+    @SerialName("campaign_type_id")
+    val campaign_type_id: Int? = 0,
+    @SerialName("campaign_expire_date")
+    val campaign_expire_date: String? = null,
+    @SerialName("voucher_generated_type")
+    val voucher_generated_type: Int? = 0,
+    @SerialName("discount")
+    val discount: Int? = 0,
+    @SerialName("original_price")
+    val original_price: Int? = 0
+
 ) : BaseRequest(ApiNames.SUBSCRIBER_PAYMENT_INIT)

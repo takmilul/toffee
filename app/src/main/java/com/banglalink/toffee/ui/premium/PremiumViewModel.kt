@@ -36,6 +36,7 @@ import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.response.RemoveTokenizeAccountApiResponse
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
+import com.banglalink.toffee.data.network.response.SystemDiscount
 import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -119,6 +120,7 @@ class PremiumViewModel @Inject constructor(
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
     var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
+    var selectedPackSystemDiscount = savedState.getLiveData<SystemDiscount>("systemDiscount")
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()

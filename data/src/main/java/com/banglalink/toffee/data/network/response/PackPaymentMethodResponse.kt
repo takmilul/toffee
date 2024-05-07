@@ -33,6 +33,10 @@ data class PackPaymentMethodBean(
     val ssl: PackPaymentMethodData? = null,
     @SerialName("NAGAD")
     val nagad: PackPaymentMethodData? = null,
+    @SerialName("SYSTEMDISCOUNT")
+    val systemDiscount: SystemDiscount? = null,
+    @SerialName("DISPLAYMESSAGE")
+    val displayMessage: DisplayMessage? = null,
 ) : Parcelable
 
 @Parcelize
@@ -102,5 +106,47 @@ data class PackPaymentMethod(
     @SerialName("data_pack_cta_button")
     val dataPackCtaButton: Int? = null,
     @SerialName("is_allow_from_outside" )
-    val isAllowFromOutside : Int? = null,
+    val isAllowFromOutside : Int? = null
+) : Parcelable
+
+@Parcelize
+@Serializable
+data class DisplayMessage(
+    @SerialName("top_promotion_msg_bl")
+    var top_promotion_msg_bl: String? = null,
+    @SerialName("top_promotion_msg_nonbl" )
+    var top_promotion_msg_nonbl : String? = null
+):Parcelable
+
+@Parcelize
+@Serializable
+data class SystemDiscount(
+    @SerialName("BL"    ) var BL    : DiscountInfo? = null,
+    @SerialName("NONBL" ) var NONBL : DiscountInfo? = null,
+    @SerialName("BOTH"  ) var BOTH  : DiscountInfo? = null
+):Parcelable
+
+@Parcelize
+@Serializable
+data class DiscountInfo (
+    @SerialName("discount_apply_on_payment_method" ) var discountApplyOnPaymentMethod : DiscountApplyOnPaymentMethod? = DiscountApplyOnPaymentMethod(),
+    @SerialName("which_payment_method_display"     ) var whichPaymentMethodDisplay    : ArrayList<String>             = arrayListOf(),
+    @SerialName("voucher"                          ) var voucher                      : String?                       = null,
+    @SerialName("campaign_type"                    ) var campaignType                 : String?                       = null,
+    @SerialName("partner_name"                     ) var partnerName                  : String?                       = null,
+    @SerialName("partner_id"                       ) var partnerId                    : Int?                          = null,
+    @SerialName("campaign_name"                    ) var campaignName                 : String?                       = null,
+    @SerialName("campaign_id"                      ) var campaignId                   : Int?                          = null,
+    @SerialName("campaign_type_id"                 ) var campaignTypeId               : Int?                          = null,
+    @SerialName("campaign_expire_date"             ) var campaignExpireDate           : String?                       = null,
+    @SerialName("voucher_generated_type"           ) var voucherGeneratedType         : Int?                          = null
+) : Parcelable
+
+@Parcelize
+@Serializable
+data class DiscountApplyOnPaymentMethod (
+    @SerialName("DCB"   ) var DCB   : String? = null,
+    @SerialName("BKASH" ) var BKASH : String? = null,
+    @SerialName("SSL"   ) var SSL   : String? = null,
+    @SerialName("NAGAD" ) var NAGAD : String? = null
 ) : Parcelable

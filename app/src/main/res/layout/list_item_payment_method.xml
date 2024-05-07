@@ -8,6 +8,9 @@
         <variable
             name="data"
             type="com.banglalink.toffee.data.network.response.PackPaymentMethodData" />
+        <variable
+            name="dataExtra"
+            type="com.banglalink.toffee.data.network.response.SystemDiscount" />
         
         <variable
             name="callback"

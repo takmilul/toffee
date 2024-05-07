@@ -43,7 +43,7 @@
     <string name="edit_profile_button">EDIT</string>
 
     //Landing Screen Category Titles
-    <string name="channel">Popular TV Channels</string>
+    <string name="channel">Live</string>
     <string name="recent_channels">Recently Viewed</string>
     <string name="most_popular">Most Popular</string>
     <string name="most_popular_playlists">Most Popular Playlists</string>
@@ -117,7 +117,7 @@
     <string name="referral_code">Referral Code</string>
     <string name="have_referral_code">Have Referral Code?</string>
     <string name="tab_feed_label">Home</string>
-    <string name="tab_tv_label">TV</string>
+    <string name="tab_live_label">Live</string>
     <string name="tab_upload_label">Upload</string>
     <string name="tab_explore_label">Explore</string>
     <string name="tab_mychannel_label">My Channel</string>
