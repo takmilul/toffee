@@ -832,9 +832,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                                 transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                                 transactionStatus = statusCode,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
-                                rawResponse = json.encodeToString(it)
+                                rawResponse = json.encodeToString(it),
+
+                                voucher = discountInfo?.voucher ,
+                                campaignType = discountInfo?.campaignType ,
+                                partnerName = discountInfo?.partnerName,
+                                partnerId = discountInfo?.partnerId ?:0,
+                                campaignName = discountInfo?.campaignName,
+                                campaignId = discountInfo?.campaignId?:0,
+                                campaignExpireDate = discountInfo?.campaignExpireDate,
+                                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                             )
                         )
                         
@@ -851,6 +861,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,
+
+                            "payableAmount" to packPriceToPay.toString(),
+                            "voucher" to discountInfo?.voucher,
+                            "campaignType" to discountInfo?.campaignType,
+                            "partnerName" to discountInfo?.partnerName,
+                            "partnerId" to discountInfo?.partnerId,
+                            "campaignName" to discountInfo?.campaignName,
+                            "campaignId" to discountInfo?.campaignId,
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate
                         )
                         // Navigate to the payment WebView dialog
                         findNavController().navigateTo(R.id.paymentWebViewDialog, args)
@@ -874,9 +893,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                             transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                             transactionStatus = statusCode,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = json.encodeToString(it.error.msg)
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     requireContext().showToast(it.error.msg)
@@ -924,9 +953,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = null,
                             transactionId = null,
                             transactionStatus = null,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = json.encodeToString(it.data)
+                            amount = packPriceToPay.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     it.data?.let {
@@ -940,6 +979,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to true,
+
+                            "payableAmount" to packPriceToPay.toString(),
+                            "voucher" to discountInfo?.voucher,
+                            "campaignType" to discountInfo?.campaignType,
+                            "partnerName" to discountInfo?.partnerName,
+                            "partnerId" to discountInfo?.partnerId,
+                            "campaignName" to discountInfo?.campaignName,
+                            "campaignId" to discountInfo?.campaignId,
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate
                         )
                         findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                     } ?: requireContext().showToast(getString(string.try_again_message))
@@ -959,9 +1007,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = null,
                             transactionId = null,
                             transactionStatus = null,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = json.encodeToString(it.error.msg)
+                            amount = packPriceToPay.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     requireContext().showToast(it.error.msg)
