@@ -187,8 +187,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 	private fun addPaymentMethodsToDisplay(paymentTypes: PackPaymentMethodBean, whichPaymentMethodDisplay: ArrayList<String>?): List<PackPaymentMethodData> {
 		val packPaymentMethodList: MutableList<PackPaymentMethodData> = mutableListOf()
-		whichPaymentMethodDisplay?.forEach {
-			when(it){
+		whichPaymentMethodDisplay?.forEach {methods->
+			when(methods){
 				PaymentMethodString.FREE.value->{
 					paymentTypes.free?.let {
 						if (!it.data.isNullOrEmpty() && ((mPref.isBanglalinkNumber == "true" && !it.paymentHeadlineForBl.isNullOrEmpty()) || (mPref.isBanglalinkNumber == "false" && !it.paymentHeadlineForNonBl.isNullOrEmpty()))) {
@@ -219,11 +219,12 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
                                 (mPref.isBanglalinkNumber == "true" &&
                                     (
                                         (mPref.isPrepaid && !it.prepaid.isNullOrEmpty()) ||
-                                        (!mPref.isPrepaid && !it.postpaid.isNullOrEmpty())
+                                        (!mPref.isPrepaid && !it.postpaid.isNullOrEmpty()) ||
+										!it.dcb.isNullOrEmpty()
                                     )
                                 ) ||
                                 (mPref.isBanglalinkNumber == "false" &&
-                                    (!it.prepaid.isNullOrEmpty() || !it.postpaid.isNullOrEmpty())
+                                    (!it.prepaid.isNullOrEmpty() || !it.postpaid.isNullOrEmpty() || !it.dcb.isNullOrEmpty())
                                 )
                             ) &&
                             !it.paymentHeadline.isNullOrEmpty()
@@ -258,7 +259,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
                         if (
                             (
                                 (mPref.isBanglalinkNumber == "true" && !it.blPacks.isNullOrEmpty()) ||
-                                        (mPref.isBanglalinkNumber == "false" && !it.nonBlPacks.isNullOrEmpty())
+								(mPref.isBanglalinkNumber == "false" && !it.nonBlPacks.isNullOrEmpty())
                             ) &&
                             !it.paymentHeadline.isNullOrEmpty()
                         ){

@@ -153,37 +153,40 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 )
             }
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
-                val MNO = when {
-                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
-                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
-                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
-                    else -> "N/A"
-                }
-                // Send Log to FirebaseAnalytics
-                ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.BEGIN_PURCHASE,
-                    bundleOf(
-                        "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
-                        "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
-                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        "currency" to "BDT",
-                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
-                        "provider" to provider,
-                        "type" to type,
-                        "subtype" to if(paymentName == "blPack") "balance" else null,
-                        "MNO" to MNO,
-                        "discount" to null,
-                    )
-                )
-                
-                progressDialog.show()
-                
-                /* if user was logged in before pressing the buy button then call initiatePurchase function otherwise call mnp, check pack status and reload the page if already the pack is purchase */
-                if (isLoggedInUser) {
-                    initiatePurchase()
+                if (viewModel.selectedDataPackOption.value?.isDob == 1){
+                    findNavController().navigateTo(R.id.dcbEnterOtpFragment)
                 } else {
-                    viewModel.getMnpStatus()
+                    val MNO = when {
+                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                        else -> "N/A"
+                    }
+                    // Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.BEGIN_PURCHASE,
+                        bundleOf(
+                            "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            "currency" to "BDT",
+                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                            "provider" to provider,
+                            "type" to type,
+                            "subtype" to if(paymentName == "blPack") "balance" else null,
+                            "MNO" to MNO,
+                            "discount" to null,
+                        )
+                    )
+                    progressDialog.show()
+
+                    /* if user was logged in before pressing the buy button then call initiatePurchase function otherwise call mnp, check pack status and reload the page if already the pack is purchase */
+                    if (isLoggedInUser) {
+                        initiatePurchase()
+                    } else {
+                        viewModel.getMnpStatus()
+                    }
                 }
             }
         })
@@ -437,6 +440,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.prepaid
             val postPaid = paymentTypes.bl?.postpaid
+            val dcb = paymentTypes.bl?.dcb
             val bKashBlPacks = paymentTypes.bkash?.blPacks
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
@@ -505,25 +509,46 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
-                if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty() && dcb.isNullOrEmpty()){ handleInvalidPaymentMethod() }
                 else {
                     if (mPref.isBanglalinkNumber == "true") {
+                        var isPlanFound = false
+
+                        //both prepaid and postpaid BL user sees DCB
+                        if (!dcb.isNullOrEmpty()){
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
+                            packPaymentMethodList.addAll(dcb)
+                            isPlanFound = true
+                        }
+
                         if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(prePaid)
+                            isPlanFound = true
                         } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(postPaid)
-                        } else {
+                            isPlanFound = true
+                        }
+
+                        if (!isPlanFound) {
                             showEmptyView(String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid"))
                         }
+
                     } else {
+                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid user
+                        if (!dcb.isNullOrEmpty()){
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
+                            packPaymentMethodList.addAll(dcb)
+                        }
                         if (!prePaid.isNullOrEmpty()) {
-                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(prePaid)
                         }
-                        if (!postPaid.isNullOrEmpty()) {
-                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                            packPaymentMethodList.addAll(postPaid)
-                        }
+//                        if (!postPaid.isNullOrEmpty()) {
+//                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
+//                            packPaymentMethodList.addAll(postPaid)
+//                        }
                     }
                 }
             }
@@ -1032,16 +1057,17 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             "blPack" -> {
                 if (mPref.isBanglalinkNumber == "true") {
                     ctaButtonValue= item.dataPackCtaButton?: 0
-                    binding.buyNowButton.isVisible = item.dataPackCtaButton == 1 || item.dataPackCtaButton == 3
-                    binding.buyWithRechargeButton.isVisible = item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3
+                    binding.buyNowButton.isVisible = item.dataPackCtaButton == 1 || item.dataPackCtaButton == 3 || item.isDob == 1
+                    binding.buyWithRechargeButton.isVisible = (item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3) && item.isDob != 1
                 } else {
                     binding.buyNowButton.hide()
                     binding.buyWithRechargeButton.hide()
                 }
-                
+
                 binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.termsAndConditionsGroup.isVisible = mPref.isBanglalinkNumber == "true"
+                binding.needToEnterOtpText.isVisible = item.isDob == 1 && mPref.isBanglalinkNumber == "true"
             }
         }
     }
@@ -1106,7 +1132,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         )
     }
 
-    fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
+    private fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
         val discountPercentage = discountPercent.toDouble()
         val discountAmount = originalPrice * (discountPercentage / 100)
         val discountedPrice = originalPrice - discountAmount

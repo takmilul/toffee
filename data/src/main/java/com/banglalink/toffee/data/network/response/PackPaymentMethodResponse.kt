@@ -72,6 +72,8 @@ data class PackPaymentMethodData(
     val postpaid: List<PackPaymentMethod>? = null,
     @SerialName("PREPAID")
     val prepaid: List<PackPaymentMethod>? = null,
+    @SerialName("DCB")
+    val dcb: List<PackPaymentMethod>? = null,
 ) : Parcelable
 
 @Parcelize
@@ -106,7 +108,13 @@ data class PackPaymentMethod(
     @SerialName("data_pack_cta_button")
     val dataPackCtaButton: Int? = 0,
     @SerialName("is_allow_from_outside" )
-    val isAllowFromOutside : Int? = 0
+    val isAllowFromOutside : Int? = 0,
+
+    //for DCB only
+    @SerialName("is_dob"                ) var isDob              : Int?    = null,
+    @SerialName("dob_price"             ) var dobPrice           : String? = null,
+    @SerialName("dob_cp_id"             ) var dobCpId            : String? = null,
+    @SerialName("dob_subs_offer_id"     ) var dobSubsOfferId     : String? = null,
 ) : Parcelable
 
 @Parcelize
