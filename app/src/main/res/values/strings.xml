@@ -503,6 +503,7 @@
     <string name="activate_tv_text">Activate TV</string>
     <string name="pair_tv">Pair with TV</string>
     <string name="premium_tv_channels_title">Premium TV channels</string>
+    <string name="premium_live_content_title">Premium Live content</string>
     <string name="premium_video_contents_title">Premium video contents</string>
     <string name="pack_status_icon">pack status icon</string>
     //

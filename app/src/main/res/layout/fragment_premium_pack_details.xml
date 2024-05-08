@@ -101,7 +101,7 @@
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
-                    android:text="@string/premium_tv_channels_title"
+                    android:text="@string/premium_live_content_title"
                     android:textColor="@color/categoryNameColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
