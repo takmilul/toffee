@@ -2851,8 +2851,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(this,
-            title = getString(R.string.missing_overlay_permission_dialog_title),
-            text = getString(R.string.missing_overlay_permission_dialog_message),
+            title = mPref.bubblePermissionDialogTitle,
+            text = mPref.bubblePermissionDialogBody,
             icon = R.drawable.ic_not_verified,
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
