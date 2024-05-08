@@ -2349,14 +2349,15 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun observeShareableContent(hash: String, type: String? = null) {
-        observe(viewModel.getShareableContent(hash, type)) { channelResource ->
+        observe(viewModel.shareableContentResponseLiveData) { channelResource ->
             if (channelResource is Success) {
                 channelResource.data?.let {
                     onDetailsFragmentLoad(it)
                 }
-                mPref.shareableHashLiveData.value = null
             }
+            mPref.shareableHashLiveData.value = null
         }
+        viewModel.getShareableContent(hash, type)
     }
     
     private fun handlePackageSubscribe() {

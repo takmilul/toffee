@@ -3,10 +3,11 @@ package com.banglalink.toffee.model
 import com.banglalink.toffee.enums.PageType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class FeatureContentBean(
-    @SerialName(value = "channels"/*, alternate = ["channelInfo"]*/)
+    @JsonNames("channels", "channelInfo")
     val channels: List<ChannelInfo>? = null,
     @SerialName("subcategory")
     val subcategories: List<SubCategory>? = null,
@@ -25,7 +26,7 @@ data class FeatureContentBean(
     @SerialName("featureType")
     val featureType: Int? = null
 ) {
-//    @get:SerializedName("pageType")
+    
     val pageType: PageType
         get() {
             return when(featureType) {

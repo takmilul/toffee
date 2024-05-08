@@ -24,11 +24,9 @@ import java.util.*
 data class ChannelInfo(
     @SerialName("id")
     var id: String = "0",
-    @SerialName("main_table_id")
-    @JsonNames("mainTableId")
+    @JsonNames("mainTableId", "main_table_id")
     var mainTableId: String? = "0",
-    @SerialName("iptv_programs_id")
-    @JsonNames("iptvProgramsId")
+    @JsonNames("iptvProgramsId", "iptv_programs_id")
     var iptvProgramsId: String? = "0",
     @SerialName("program_name")
     var program_name: String? = null,
@@ -69,17 +67,13 @@ data class ChannelInfo(
     @SerialName("hlsLinks")
     var hlsLinks: List<HlsLinks>? = null,
     
-    @SerialName("drm_dash_url_extended")
-    @JsonNames("drmDashUrlExt")
+    @JsonNames("drmDashUrlExt", "drm_dash_url_extended")
     var drmDashUrlExt: List<DrmHlsLinks>? = null,
-    @SerialName("drm_dash_url_extended_sd")
-    @JsonNames("drmDashUrlExtSd")
+    @JsonNames("drmDashUrlExtSd", "drm_dash_url_extended_sd")
     var drmDashUrlExtSd: List<DrmHlsLinks>? = null,
-    @SerialName("drm_dash_url_sd")
-    @JsonNames("drmDashUrlSd")
+    @JsonNames("drmDashUrlSd", "drm_dash_url_sd")
     var drmDashUrlSd: String? = null,
-    @SerialName("content_expire")
-    @JsonNames("contentExpiryTime")
+    @JsonNames("contentExpiryTime", "content_expire")
     var contentExpiryTime: String? = null,
     
     @SerialName("channel_logo")
@@ -114,20 +108,15 @@ data class ChannelInfo(
     
     @SerialName("serial_name")
     val seriesName: String? = null,
-    @SerialName("total_season_no")
-    @JsonNames("totalSeason")
+    @JsonNames("totalSeason", "total_season_no")
     val totalSeason: Int = 0,
-    @SerialName("season_no")
-    @JsonNames("seasonNo")
+    @JsonNames("seasonNo", "season_no")
     val seasonNo: Int = 0,
-    @SerialName("serial_summary_id")
-    @JsonNames("seriesSummaryId")
+    @JsonNames("seriesSummaryId", "serial_summary_id")
     val seriesSummaryId: Int = 0,
-    @SerialName("total_episode_no")
-    @JsonNames("totalEpisode")
+    @JsonNames("totalEpisode", "total_episode_no")
     val totalEpisode: Int = 0,
-    @SerialName("episode_no")
-    @JsonNames("episodeNo")
+    @JsonNames("episodeNo", "episode_no")
     val episodeNo: Int = 0,
     
     @SerialName("is_available")
@@ -138,20 +127,16 @@ data class ChannelInfo(
     var myReaction: Int = Reaction.None.value, //enum value (Reaction.Like.value) etc...
     @SerialName("shareCount")
     var shareCount: Long = 0L,
-    @SerialName("playlist_content_id")
-    @JsonNames("playlistContentId")
+    @JsonNames("playlistContentId", "playlist_content_id")
     val playlistContentId: Int = 0,
-    @SerialName("active_season_list")
-    @JsonNames("activeSeasonList")
+    @JsonNames("activeSeasonList", "active_season_list")
     var activeSeasonList: List<Int>? = listOf(1),
-    @SerialName("channel_profile_url")
-    @JsonNames("channelProfileUrl")
+    @JsonNames("channelProfileUrl", "channel_profile_url")
     val channelProfileUrl: String? = null,
     @SerialName("url_type")
     @JsonNames("urlType")
     val urlType: Int = 0,
-    @SerialName("url_type_extended")
-    @JsonNames("urlTypeExt")
+    @JsonNames("urlTypeExt", "url_type_extended")
     val urlTypeExt: Int = 0,
     @SerialName("is_approved")
     val is_approved: Int? = null,
@@ -159,11 +144,9 @@ data class ChannelInfo(
     val created_at: String? = null,
     @SerialName("is_horizontal")
     val is_horizontal: Int? = null,
-    @SerialName("landscape_feature_1280_720")
-    @JsonNames("ugcFeaturedImage")
+    @JsonNames("ugcFeaturedImage", "landscape_feature_1280_720")
     val ugcFeaturedImage: String? = null,
-    @SerialName("is_encoded")
-    @JsonNames("isEncoded")
+    @JsonNames("isEncoded", "is_encoded")
     val isEncoded: Int? = null,
     @SerialName("is_ugc")
     val is_ugc: Int = 0,
@@ -173,19 +156,16 @@ data class ChannelInfo(
     @SerialName("drm_dash_url")
     @JsonNames("drmDashUrl")
     val drmDashUrl: String? = null,
-    @SerialName("drm_cast_receiver")
-    @JsonNames("drmCastReceiver")
+    @JsonNames("drmCastReceiver", "drm_cast_receiver")
     val drmCastReceiver: String? = null,
-    @SerialName("plain_cast_receiver")
-    @JsonNames("plainCastReceiver")
+    @JsonNames("plainCastReceiver", "plain_cast_receiver")
     val plainCastReceiver: String? = null,
     @SerialName("is_ad_active")
     val is_ad_active: Int = 0,
     @SerialName("drm_cid")
     @JsonNames("drmCid")
     val drmCid: String? = null,
-    @SerialName("fcm_event_name")
-    @JsonNames("fcmEventName")
+    @JsonNames("fcmEventName", "fcm_event_name")
     val fcmEventName: String? = null,
     @SerialName("fcm_event_is_active")
     val fcm_event_is_active: Int = 0,
@@ -194,11 +174,9 @@ data class ChannelInfo(
     val dataSource: String? = "iptv_programs",
     @SerialName("totalCount")
     var totalCount: Int = 0,
-    @SerialName("plain_hls_url_for_url_type")
-    @JsonNames("paidPlainHlsUrl")
+    @JsonNames("paidPlainHlsUrl", "plain_hls_url_for_url_type")
     var paidPlainHlsUrl: String? = null,
-    @SerialName("sign_url_expire")
-    @JsonNames("signedUrlExpiryDate")
+    @JsonNames("signedUrlExpiryDate", "sign_url_expire")
     var signedUrlExpiryDate: String? =null,
     @SerialName("cdn_type")
     @JsonNames("cdnType")
@@ -206,21 +184,17 @@ data class ChannelInfo(
     @SerialName("ads_group")
     @JsonNames("adGroup")
     var adGroup: String? = null,
-    @SerialName("featured_banner_code")
-    @JsonNames("bannerEventName")
+    @JsonNames("bannerEventName", "featured_banner_code")
     var bannerEventName: String? = null,
     @SerialName("sign_cookie")
     @JsonNames("signedCookie")
     var signedCookie: String? = null,
-    @SerialName("sign_cookie_expire")
-    @JsonNames("signedCookieExpiryDate")
+    @JsonNames("signedCookieExpiryDate", "sign_cookie_expire")
     var signedCookieExpiryDate: String? =null,
     
-    @SerialName("playlist_name")
-    @JsonNames("playlistName")
+    @JsonNames("playlistName", "playlist_name")
     var playlistName: String? = null,
-    @SerialName("playlist_description")
-    @JsonNames("playlistDescription")
+    @JsonNames("playlistDescription", "playlist_description")
     var playlistDescription: String? = null,
     @SerialName("episodeName")
     var episodeName: String? = null,

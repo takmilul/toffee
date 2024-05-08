@@ -53,7 +53,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
-    val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
+    val shareableHashLiveData = SingleLiveEvent<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
     val categoryId = MutableLiveData<Int>()
     val categoryName = MutableLiveData<String>()

@@ -3,7 +3,6 @@ package com.banglalink.toffee.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
@@ -11,8 +10,7 @@ import kotlinx.serialization.json.JsonNames
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 data class HlsLinks (
-    @SerialName("hls_url_mobile")
-    @JsonNames("hlsUrlMobile")
+    @JsonNames("hlsUrlMobile", "hls_url_mobile")
     var hlsUrlMobile: String? = null
 ) : Parcelable
 
@@ -20,8 +18,7 @@ data class HlsLinks (
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 class DrmHlsLinks(
-    @SerialName("drm_hls_url")
-    @JsonNames("drmHlsUrl")
+    @JsonNames("drmHlsUrl", "drm_hls_url")
     private val drmHlsUrl: String? = null
 ) : Parcelable {
     
