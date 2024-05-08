@@ -47,7 +47,7 @@
             android:clipToPadding="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
+            app:layout_constraintBottom_toTopOf="@id/needToEnterOtpText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_default="wrap"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,22 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="terms_and_conditions_one,terms_and_conditions_two"
             tools:visibility="visible" />
-        
+        <TextView
+            android:id="@+id/needToEnterOtpText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:checked="true"
+            android:gravity="center_vertical"
+            android:text="@string/payment_need_to_enter_otp_text"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/terms_and_conditions_one"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
         <TextView
             android:id="@+id/terms_and_conditions_one"
             android:layout_width="wrap_content"

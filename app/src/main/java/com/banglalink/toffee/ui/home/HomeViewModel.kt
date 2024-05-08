@@ -155,6 +155,7 @@ class HomeViewModel @Inject constructor(
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
+    val shareableContentResponseLiveData = SingleLiveEvent<Resource<ChannelInfo?>>()
     
     init {
         if (mPref.customerName.isBlank() || mPref.userImageUrl.isNullOrBlank()) {
@@ -248,9 +249,10 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun getShareableContent(shareUrl: String, type: String? = null): LiveData<Resource<ChannelInfo?>> {
-        return resultLiveData {
-            contentFromShareableUrl.execute(shareUrl, type)
+    fun getShareableContent(shareUrl: String, type: String? = null) {
+        viewModelScope.launch { 
+            val response = resultFromResponse { contentFromShareableUrl.execute(shareUrl, type) }
+            shareableContentResponseLiveData.value = response
         }
     }
     

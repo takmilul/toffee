@@ -35,6 +35,7 @@ class SettingsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Settings"
         binding.bubbleSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == FIFA.value
+        binding.bubbleText.text = mPref.bubbleMenuText
         binding.bubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == FIFA.value
         binding.bubbleRamadanSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == RAMADAN.value
         binding.ramadanBubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == RAMADAN.value

@@ -58,12 +58,23 @@ class PackPaymentMethodAdapter(
                         blTrialPackMethod = it
                     }
                 }
-                setPriceText(
-                    obj.paymentSubHeadlineOneForBl,
-                    obj.paymentSubHeadlineOneForNonBl,
-                    isBanglalinkNumber,
-                    priceTextView
-                )
+//                setPriceText(
+//                    obj.paymentSubHeadlineOneForBl,
+//                    obj.paymentSubHeadlineOneForNonBl,
+//                    isBanglalinkNumber,
+//                    priceTextView
+//                )
+                if (isBanglalinkNumber){
+                    priceTextView.text = obj.paymentSubHeadlineOneForBl ?: ""
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                } else {
+                    priceTextView.text = obj.paymentSubHeadlineOneForNonBl ?: ""
+                    if (obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                }
                 logoImageView.hide()
 
                 if (isBanglalinkNumber) {
@@ -88,34 +99,77 @@ class PackPaymentMethodAdapter(
             }
             
             PaymentMethodName.VOUCHER.value -> {
-                setPriceText(
-                    obj.paymentSubHeadlineOneForBl,
-                    obj.paymentSubHeadlineOneForNonBl,
-                    isBanglalinkNumber,
-                    priceTextView
-                )
+//                setPriceText(
+//                    obj.paymentSubHeadlineOneForBl,
+//                    obj.paymentSubHeadlineOneForNonBl,
+//                    isBanglalinkNumber,
+//                    priceTextView
+//                )
+                if (isBanglalinkNumber){
+                    priceTextView.text = obj.paymentSubHeadlineOneForBl ?: ""
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                } else {
+                    priceTextView.text = obj.paymentSubHeadlineOneForNonBl ?: ""
+                    if (obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                }
                 loadLogo(obj.paymentMethodLogoMobile, logoImageView)
             }
             
             PaymentMethodName.BL.value -> {
-                setPriceText(
-                    obj.paymentSubHeadlineOneForPrepaid,
-                    obj.paymentSubHeadlineOneForPostpaid,
-                    mPref.isPrepaid,
-                    priceTextView
-                )
+//                setPriceText(
+//                    obj.paymentSubHeadlineOneForPrepaid,
+//                    obj.paymentSubHeadlineOneForPostpaid,
+//                    mPref.isPrepaid,
+//                    priceTextView
+//                )
+                if (isBanglalinkNumber){
+                    if (mPref.isPrepaid) {
+                        priceTextView.text = obj.paymentSubHeadlineOneForPrepaid ?: ""
+                        if (obj.paymentSubHeadlineOneForPrepaid.isNullOrEmpty()) {
+                            priceTextView.hide()
+                        }
+                    } else {
+                        priceTextView.text = obj.paymentSubHeadlineOneForPostpaid ?: ""
+                        if (obj.paymentSubHeadlineOneForPostpaid.isNullOrEmpty()) {
+                            priceTextView.hide()
+                        }
+                    }
+                } else {
+                    if (!obj.paymentSubHeadlineOneForPrepaid.isNullOrEmpty()) {
+                        priceTextView.text = obj.paymentSubHeadlineOneForPrepaid ?: ""
+                    } else if(!obj.paymentSubHeadlineOneForPostpaid.isNullOrEmpty()) {
+                        priceTextView.text = obj.paymentSubHeadlineOneForPostpaid ?: ""
+                    }else {
+                        priceTextView.hide()
+                    }
+                }
                 loadLogo(obj.paymentMethodLogoMobile, logoImageView)
             }
             
             PaymentMethodName.BKASH.value,
             PaymentMethodName.NAGAD.value,
             PaymentMethodName.SSL.value -> {
-                setPriceText(
-                    obj.paymentSubHeadlineOneForBl,
-                    obj.paymentSubHeadlineOneForNonBl,
-                    isBanglalinkNumber,
-                    priceTextView
-                )
+//                setPriceText(
+//                    obj.paymentSubHeadlineOneForBl,
+//                    obj.paymentSubHeadlineOneForNonBl,
+//                    isBanglalinkNumber,
+//                    priceTextView
+//                )
+                if (isBanglalinkNumber){
+                    priceTextView.text = obj.paymentSubHeadlineOneForBl ?: ""
+                    if (obj.paymentSubHeadlineOneForBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                } else {
+                    priceTextView.text = obj.paymentSubHeadlineOneForNonBl ?: ""
+                    if (obj.paymentSubHeadlineOneForNonBl.isNullOrEmpty()) {
+                        priceTextView.hide()
+                    }
+                }
                 loadLogo(obj.paymentMethodLogoMobile, logoImageView)
             }
         }

@@ -2349,14 +2349,15 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun observeShareableContent(hash: String, type: String? = null) {
-        observe(viewModel.getShareableContent(hash, type)) { channelResource ->
+        observe(viewModel.shareableContentResponseLiveData) { channelResource ->
             if (channelResource is Success) {
                 channelResource.data?.let {
                     onDetailsFragmentLoad(it)
                 }
-                mPref.shareableHashLiveData.value = null
             }
+            mPref.shareableHashLiveData.value = null
         }
+        viewModel.getShareableContent(hash, type)
     }
     
     private fun handlePackageSubscribe() {
@@ -2850,8 +2851,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(this,
-            title = getString(R.string.missing_overlay_permission_dialog_title),
-            text = getString(R.string.missing_overlay_permission_dialog_message),
+            title = mPref.bubblePermissionDialogTitle,
+            text = mPref.bubblePermissionDialogBody,
             icon = R.drawable.ic_not_verified,
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
