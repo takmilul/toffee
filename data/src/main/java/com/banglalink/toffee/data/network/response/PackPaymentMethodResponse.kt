@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class PackPaymentMethodResponse(
@@ -62,6 +63,20 @@ data class PackPaymentMethodData(
     var paymentMethodLogoMobile : String? = null,
     @SerialName("order_index")
     val orderIndex : Int? = null,
+
+    @JsonNames("top_promotion_msg_for_non_bl" ,"topPromotionMsgForNonBl")
+    val topPromotionMsgForNonBl : String? = null,
+    @JsonNames("top_promotion_msg_for_bl" ,"topPromotionMsgForBl")
+    val topPromotionMsgForBl : String? = null,
+
+    @SerialName("top_promotion_msg_for_plan_bl_prepaid" )           //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_bl_prepaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_bl_postpaid" )          //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_bl_postpaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_nonbl_prepaid" )        //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_nonbl_prepaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_nonbl_postpaid" )       //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_nonbl_postpaid : String? = null,
     @SerialName("data")
     val data : List<PackPaymentMethod>? = null,
     @SerialName("BL")

@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -157,7 +158,14 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					/**
 					 * When systemDiscount is nullOrEmpty this means that this pack will not have any discounted payments.
 					 */
-					binding.packSubTitle.visibility=View.GONE
+					binding.packSubTitle.visibility=View.VISIBLE
+
+					if (mPref.isBanglalinkNumber=="true"){
+
+						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
+					}else{
+						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
+					}
 
 					var paymentMethodList = listOf<PackPaymentMethodData>()
 
@@ -308,6 +316,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 		when (item.paymentMethodName) {
 			PaymentMethodName.FREE.value -> {
+				mPref.selectedPaymentType.value = PaymentMethodName.FREE.value
 				mPref.activePremiumPackList.value?.find {
 					it.packId == viewModel.selectedPremiumPack.value?.id && it.isTrialPackUsed
 				}?.let { isTrialPackUsed = true }
@@ -324,6 +333,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 
 			PaymentMethodName.VOUCHER.value -> {
+				mPref.selectedPaymentType.value = PaymentMethodName.VOUCHER.value
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -344,6 +354,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 			PaymentMethodName.BL.value -> {
 				//Send Log to FirebaseAnalytics
+				mPref.selectedPaymentType.value = PaymentMethodName.BL.value
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
 					bundleOf(
@@ -365,6 +376,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 
 			PaymentMethodName.BKASH.value -> {
+				mPref.selectedPaymentType.value = PaymentMethodName.BKASH.value
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -386,6 +398,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 
 			PaymentMethodName.SSL.value -> {
+				mPref.selectedPaymentType.value = PaymentMethodName.SSL.value
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -407,6 +420,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 
 			PaymentMethodName.NAGAD.value -> {
+
+				mPref.selectedPaymentType.value = PaymentMethodName.NAGAD.value
 				//Send Log to FirebaseAnalytics
 				ToffeeAnalytics.toffeeLogEvent(
 					ToffeeEvents.PAYMENT_SELECTED,
@@ -430,6 +445,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 			}
 		}
 	}
+
+
 
 	override fun onDestroyView() {
 		super.onDestroyView()

@@ -21,6 +21,7 @@ import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequ
 import com.banglalink.toffee.data.network.response.DiscountInfo
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
+import com.banglalink.toffee.enums.PaymentMethodName
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getPurchasedPack
 import com.banglalink.toffee.extension.hide
@@ -85,6 +86,60 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
 
         Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
+
+        if (mPref.isBanglalinkNumber=="true"){
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                    if (mPref.isPrepaid){
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
+
+                    }else{
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
+                    }
+
+                }
+                PaymentMethodName.NAGAD.value->{
+                    binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
+                }
+                PaymentMethodName.BKASH.value->{
+                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
+                }
+                PaymentMethodName.SSL.value->{
+                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
+                }
+
+
+            }
+
+        }else{
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
+
+
+                }
+                PaymentMethodName.NAGAD.value->{
+                    binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl
+                }
+                PaymentMethodName.BKASH.value->{
+                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl
+                }
+                PaymentMethodName.SSL.value->{
+                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl
+                }
+
+
+            }
+        }
+
+
+
 
         if (mPref.isBanglalinkNumber=="true"){
             viewModel.selectedPackSystemDiscount.value?.BL?.let {
