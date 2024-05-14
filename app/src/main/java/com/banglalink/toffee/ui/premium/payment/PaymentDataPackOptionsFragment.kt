@@ -93,22 +93,47 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                 PaymentMethodName.BL.value->{
 
-                    if (mPref.isPrepaid){
+                    if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
                         binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
 
-                    }else{
+                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
+                        binding.planSubTitle.show()
                         binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
+                    }else{
+                        binding.planSubTitle.hide()
                     }
 
                 }
                 PaymentMethodName.NAGAD.value->{
-                    binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
+
+                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
                 }
                 PaymentMethodName.BKASH.value->{
-                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
+
+                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
                 }
                 PaymentMethodName.SSL.value->{
-                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
+
+                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
                 }
 
 
@@ -120,18 +145,38 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                 PaymentMethodName.BL.value->{
 
-                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
-
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
 
                 }
                 PaymentMethodName.NAGAD.value->{
-                    binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl
+                    if (!viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
                 }
                 PaymentMethodName.BKASH.value->{
-                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl
+                    if (!viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
                 }
                 PaymentMethodName.SSL.value->{
-                    binding.planSubTitle.text =  viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl
+                    if (!viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
                 }
 
 
@@ -833,9 +878,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             else{
                 try {
-                    packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice!!.toDouble(),
-                        mPref.paymentDiscountPercentage.value!!).toInt()
+                    packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice?.toDouble()?:0.0,
+                        mPref.paymentDiscountPercentage.value?:"").toInt()
                 }catch (e: Exception){
+                    requireContext().showToast(getString(R.string.try_again_message))
                     Log.i("calculateDiscount", "onPackSelectEventChanged: ${e.message}")
                 }
 
@@ -1246,18 +1292,24 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     }
 
     private fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
-        val discountPercentage = discountPercent.toDouble()
-        val discountAmount = originalPrice * (discountPercentage / 100)
-        val discountedPrice = originalPrice - discountAmount
+        try {
+            val discountPercentage = discountPercent.toDouble()
+            val discountAmount = originalPrice * (discountPercentage / 100)
+            val discountedPrice = originalPrice - discountAmount
 
-        val integerPart = discountedPrice.toInt()
-        val decimalPart = discountedPrice - integerPart
+            val integerPart = discountedPrice.toInt()
+            val decimalPart = discountedPrice - integerPart
 
-        if (decimalPart > 0) {
-            return  integerPart + 1.0
-        } else {
-            return  discountedPrice
+            if (decimalPart > 0) {
+                return  integerPart + 1.0
+            } else {
+                return  discountedPrice
+            }
+
+        }catch (e: Exception){
+            return 0.0
         }
+
 
 
     }

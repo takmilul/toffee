@@ -22,8 +22,10 @@ import com.banglalink.toffee.data.network.response.PackPaymentMethodData
 import com.banglalink.toffee.data.network.response.SystemDiscount
 import com.banglalink.toffee.databinding.FragmentPaymentMethodOptionsBinding
 import com.banglalink.toffee.enums.PaymentMethodName
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.navigatePopUpTo
 import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -116,35 +118,47 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				 */
 
 				systemDiscount?.let {
-					binding.packSubTitle.visibility=View.VISIBLE
-					if (mPref.isBanglalinkNumber=="true"){
+					binding.packSubTitle.show()
+					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else{
+					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
+					}else{
+						binding.packSubTitle.hide()
 					}
+
 					/**
 					 * discountApplyOnPaymentMethod will have the payment method's discount info which was clicked by the user. This data is send
 					 * using bundle to next fragment.
 					 */
 
 					if (mPref.isBanglalinkNumber=="true"){
+
 						systemDiscount?.BL?.let {
+
 							paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
 							discountApplyOnPaymentMethod = systemDiscount?.BL?.discountApplyOnPaymentMethod
-						} ?: {
+						} ?: run {
+
 							systemDiscount?.BOTH?.let {
+
 								paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
 								discountApplyOnPaymentMethod = systemDiscount?.BOTH?.discountApplyOnPaymentMethod
 							}
 						}
+
 					}
 					else {
+
 						systemDiscount?.NONBL?.let {
+
 							paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
 							discountApplyOnPaymentMethod = systemDiscount?.NONBL?.discountApplyOnPaymentMethod
-						} ?: {
+						} ?: run {
+
 							systemDiscount?.BOTH?.let {
+
 								paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, it.whichPaymentMethodDisplay)
 								discountApplyOnPaymentMethod = systemDiscount?.BOTH?.discountApplyOnPaymentMethod
 							}
@@ -158,13 +172,15 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					/**
 					 * When systemDiscount is nullOrEmpty this means that this pack will not have any discounted payments.
 					 */
-					binding.packSubTitle.visibility=View.VISIBLE
 
-					if (mPref.isBanglalinkNumber=="true"){
+					binding.packSubTitle.show()
+					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else{
+					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
+					}else{
+						binding.packSubTitle.hide()
 					}
 
 					var paymentMethodList = listOf<PackPaymentMethodData>()
