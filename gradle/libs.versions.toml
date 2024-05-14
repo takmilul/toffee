@@ -315,8 +315,8 @@ chucker-prod = { group = "com.github.chuckerteam.chucker", name = "library-no-op
 dahdit = { group = "com.xfinity", name = "dahdit", version.ref = "dahdit-version" }
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer-version" }
 butterknife = { group = "com.jakewharton", name = "butterknife", version.ref = "butterknife-version" }
-medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", version.ref = "medallia-version" }
-clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity-version" }
+#medallia = { group = "com.medallia.digital.mobilesdk", name = "android-sdk", version.ref = "medallia-version" }
+#clarity = { group = "com.microsoft.clarity", name = "clarity", version.ref = "clarity-version" }
 org-jlleitschuh = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle:11.3.2", version.ref = "jlleitschuh-version" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
 
