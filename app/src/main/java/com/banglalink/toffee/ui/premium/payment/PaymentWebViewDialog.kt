@@ -37,7 +37,6 @@ import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -96,7 +95,7 @@ class PaymentWebViewDialog : DialogFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
 
         paymentId = arguments?.getString("paymentId")
         paymentMethodId = arguments?.getInt("paymentMethodId")
@@ -1031,7 +1030,7 @@ class PaymentWebViewDialog : DialogFragment() {
     }
     
     override fun onDestroyView() {
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         binding.webview.run {
             clearCache(false)
             stopLoading()

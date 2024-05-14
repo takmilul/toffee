@@ -52,7 +52,6 @@ import com.banglalink.toffee.util.ConvivaHelper
 import com.banglalink.toffee.util.Utils
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.slider.Slider
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -725,7 +724,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(
     }
     
     override fun onPlayerDestroy() {
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         if (player !is CastPlayer) {
             player?.stop()
         }

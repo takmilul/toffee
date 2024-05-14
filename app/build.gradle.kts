@@ -309,8 +309,8 @@ dependencies {
         // Miscellaneous
         implementation(butterknife)
         implementation(shimmer)
-        implementation(medallia)
-        implementation(clarity)
+//        implementation(medallia)
+//        implementation(clarity)
         implementation(guava)
         
         
