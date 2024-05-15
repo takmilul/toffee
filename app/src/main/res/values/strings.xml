@@ -251,7 +251,7 @@
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="i_agree_with_text">&#160;&#160;I agree to the&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
-    <string name="enter_six_digit_otp_text">Enter 6 digit OTP</string>
+    <string name="enter_six_digit_otp_text">Enter 5 digit OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_logged_in_text">Successfully Logged In!</string>
     <string name="select_at_least_3_of_your_interests_text">Please select \nat least 3 of your interests</string>

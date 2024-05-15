@@ -2,8 +2,10 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -88,6 +90,26 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
 
         binding.resendButton.safeClick({
             subscriberPaymentInit()
+        })
+
+
+
+        binding.otpCode.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                if (binding.otpCode.text.length>=5){
+                    binding.confirmBtn.isEnabled=true
+                }else{
+                    binding.confirmBtn.isEnabled=false
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
         })
 
         binding.confirmBtn.safeClick({
