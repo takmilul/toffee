@@ -45,9 +45,6 @@ import com.loopnow.fireworklibrary.SdkStatus.InitializationFailed
 import com.loopnow.fireworklibrary.SdkStatus.Initialized
 import com.loopnow.fireworklibrary.SdkStatus.RefreshTokenFailed
 import com.loopnow.fireworklibrary.VideoPlayerProperties
-import com.medallia.digital.mobilesdk.MDExternalError
-import com.medallia.digital.mobilesdk.MDResultCallback
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
@@ -197,7 +194,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
 
         initFireworkSdk()
-        initMedalliaSdk()
+//        initMedalliaSdk()
         mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
     }
@@ -280,21 +277,21 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      * To initialize [MedalliaDigital] SDK, we need to pass applicationContext, ApiKey provided by Medallia and [MDResultCallback] to detect 
       the success and error state
      */
-    private fun initMedalliaSdk() {
-        try {
-            MedalliaDigital.init(this, BuildConfig.MEDALLIA_API_KEY, object : MDResultCallback {
-                override fun onSuccess() {
-                    Log.i("MED_", "onSuccess: Medallia initialized")
-                }
-                
-                override fun onError(error: MDExternalError?) {
-                    Log.e("MED_", "onError: ${error?.message}")
-                }
-            })
-        } catch (e: Exception) {
-            Log.e("MED_", "onInitialize: ${e.message}")
-        }
-    }
+//    private fun initMedalliaSdk() {
+//        try {
+//            MedalliaDigital.init(this, BuildConfig.MEDALLIA_API_KEY, object : MDResultCallback {
+//                override fun onSuccess() {
+//                    Log.i("MED_", "onSuccess: Medallia initialized")
+//                }
+//                
+//                override fun onError(error: MDExternalError?) {
+//                    Log.e("MED_", "onError: ${error?.message}")
+//                }
+//            })
+//        } catch (e: Exception) {
+//            Log.e("MED_", "onInitialize: ${e.message}")
+//        }
+//    }
     
     /**
      * [<b>This code configures settings for kotlin's `coil` image loader library</b>]

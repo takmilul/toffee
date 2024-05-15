@@ -34,7 +34,6 @@ import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +69,7 @@ class HtmlPageViewDialog : DialogFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         
         htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
@@ -247,7 +246,7 @@ class HtmlPageViewDialog : DialogFragment() {
     }
     
     override fun onDestroyView() {
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         binding.webview.run {
             clearCache(false)
 // loadUrl("about:blank")
