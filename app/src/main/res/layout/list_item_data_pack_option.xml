@@ -46,20 +46,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="4dp"
                     android:layout_marginStart="12dp"
-                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLength="50"
-                    android:textSize="14sp"
-                    android:textFontWeight="400"
                     android:maxLines="2"
+                    android:paddingRight="10dp"
                     android:text="@{` `+data.packDetails}"
                     android:textColor="@color/cardTitleColor"
-                    tools:text="30 days"
+                    android:textFontWeight="400"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/dataPackOptionAmountTextView"
+                    app:layout_constraintEnd_toStartOf="@+id/dataPackPriceBeforeDiscountTv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:onSafeClick="@{(view)-> callback.onItemClicked(view, data, position)}" />
+                    app:onSafeClick="@{(view)-> callback.onItemClicked(view, data, position)}"
+                    tools:text="30 days" />
 
                 <TextView
                     android:id="@+id/dataPackPriceBeforeDiscountTv"
@@ -75,6 +75,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/dataPackOptionAmountTextView"
                     app:layout_constraintTop_toTopOf="@+id/dataPackOptionAmountTextView"
                     tools:text="BDT 120 " />
+
                 <TextView
                     android:id="@+id/dataPackOptionAmountTextView"
                     android:layout_width="wrap_content"
@@ -83,13 +84,12 @@
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="2"
                     android:textColor="@color/cardTitleColor"
-                    tools:text="BDT 120"
-                    android:textSize="14sp"
                     android:textFontWeight="400"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/dataPackOptionRadioButton"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="BDT 120" />
             
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

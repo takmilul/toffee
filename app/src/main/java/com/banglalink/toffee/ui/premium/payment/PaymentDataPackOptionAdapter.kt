@@ -69,7 +69,7 @@ class PaymentDataPackOptionAdapter(
 
                     try {
                         priceBeforeDiscount.visibility= View.VISIBLE
-                        var discountedPrice = calculateDiscountedPrice(obj.packPrice!!.toDouble(),mPref.paymentDiscountPercentage.value!!)
+                        var discountedPrice = calculateDiscountedPrice(obj.packPrice?.toDouble()?:0.0,mPref.paymentDiscountPercentage.value?:"")
                         priceTv.text="BDT "+discountedPrice.toInt()
                         priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
                         priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -90,19 +90,25 @@ class PaymentDataPackOptionAdapter(
         notifyDataSetChanged()
     }
 
-    fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
-        val discountPercentage = discountPercent.toDouble()
-        val discountAmount = originalPrice * (discountPercentage / 100)
-        val discountedPrice = originalPrice - discountAmount
+    private fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
+        try {
+            val discountPercentage = discountPercent.toDouble()
+            val discountAmount = originalPrice * (discountPercentage / 100)
+            val discountedPrice = originalPrice - discountAmount
 
-        val integerPart = discountedPrice.toInt()
-        val decimalPart = discountedPrice - integerPart
+            val integerPart = discountedPrice.toInt()
+            val decimalPart = discountedPrice - integerPart
 
-         if (decimalPart > 0) {
-          return  integerPart + 1.0
-        } else {
-          return  discountedPrice
+            if (decimalPart > 0) {
+                return  integerPart + 1.0
+            } else {
+                return  discountedPrice
+            }
+
+        }catch (e: Exception){
+            return 0.0
         }
+
 
 
     }

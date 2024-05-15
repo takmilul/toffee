@@ -83,6 +83,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 
     var paymentDiscountPercentage= MutableLiveData<String>()
 
+    var selectedPaymentType= MutableLiveData<String>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
