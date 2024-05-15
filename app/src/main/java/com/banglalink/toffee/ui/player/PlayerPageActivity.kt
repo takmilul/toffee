@@ -34,6 +34,7 @@ import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.DrmSession.DrmSessionException
 import androidx.media3.exoplayer.drm.DrmSessionEventListener
 import androidx.media3.exoplayer.drm.DrmSessionManager
+import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.OfflineLicenseHelper
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -52,7 +53,7 @@ import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.DrmTokenService
+import com.banglalink.toffee.apiservice.DrmLicenseService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
@@ -149,7 +150,7 @@ abstract class PlayerPageActivity :
     protected var castContext: CastContext? = null
     protected var playerErrorMessage: String? = null
     private var currentlyPlayingVastUrl: String = ""
-    @Inject lateinit var drmTokenApi: DrmTokenService
+    @Inject lateinit var drmLicenseService: DrmLicenseService
     private var mediaSession: MediaSessionCompat? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
@@ -162,7 +163,6 @@ abstract class PlayerPageActivity :
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
-    private var httpLicenseFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
@@ -355,18 +355,6 @@ abstract class PlayerPageActivity :
 //                    }
                 }
             )
-            httpLicenseFactory = OkHttpDataSource.Factory(
-                dnsHttpClient.apply {
-//                    if (BuildConfig.DEBUG) {
-                        newBuilder()
-                            .addInterceptor(DrmInterceptor())
-                            .addNetworkInterceptor(
-                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-                            )
-                            .build()
-//                    }
-                }
-            )
 //            val cacheFolder = File(this.cacheDir, "/toffee_media")
 //            val cacheEvictor = LeastRecentlyUsedCacheEvictor(5 * 1024 * 1024) // cache size = 5MB
 //            val databaseProvider = StandaloneDatabaseProvider(this)
@@ -505,15 +493,16 @@ abstract class PlayerPageActivity :
             val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
             
-            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpLicenseFactory != null) {
+            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
                 DefaultDrmSessionManager
                     .Builder()
+                    .setUuidAndExoMediaDrmProvider(C.WIDEVINE_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
                     .setMultiSession(false)
                     .build(
-                        ToffeeMediaDrmCallback(
+                        CustomMediaDrmCallback(
                             "https://dev-services.toffeelive.com/widevine/v1/license",
-                            httpLicenseFactory!!,
-                            drmTokenApi,
+                            httpDataSourceFactory!!,
+                            drmLicenseService,
                             drmCid ?: ""
                         )
                     )
@@ -822,7 +811,7 @@ abstract class PlayerPageActivity :
                 DrmSessionEventListener.EventDispatcher()
             )
             
-            val dataSource = httpLicenseFactory!!.createDataSource()
+            val dataSource = httpDataSourceFactory!!.createDataSource()
             val dashManifest = DashUtil.loadManifest(
                 dataSource,
                 Uri.parse("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
@@ -855,7 +844,7 @@ abstract class PlayerPageActivity :
             return newDrmLicense.license
         } catch (ex: Exception) {
             ex.printStackTrace()
-            android.util.Log.i("DRM_T", "downloadLicense: ${ex.message}")
+            Log.i("DRM_T", "downloadLicense: ${ex.message}")
             offlineLicenseHelper?.release()
             return null
         }
@@ -870,16 +859,18 @@ abstract class PlayerPageActivity :
                 setDrmConfiguration(MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID).build())
             }.build()
         }
-        val license = /* ("CAUSxQUKvwIIAxIQdyQMtMNwS/5jB19DM1gWAxiUs6axBiKOAjCCAQoCggEBAJpBaquGrpQ8kdvLG/yi/eqh8fEm0MLGS7Tku0kaG6dIGQugGAVgJ+X+8SihHYuX31hCD7rKAOG8pcakUAUs7j5WEjcml7MppfDIh84mSf7YX/s9R2Risj2i75772FaF9I+YZSvTdKcB03EDM8DivFJ2QT7mRVKs022M8so1HBQJuk+XnOeZcQ23diL3h/EaYRvJgnmLUWjtEw932EsWVE8gEwdgNBcQloFVvmX+LhCgmdhxMB0XdIaAgg2IF4Vh4rpypcIs9u0pi80yeelsWsxFIxnWuD3rBnfajo/PDZ0q8ZmZzKLo34rkOpm3XSS7ZP0iZ9J2X7XYBF4PbuQ4kJkCAwEAAToOYmFuZ2xhbGluay5uZXRAAkgBEoADexNtQnTUAnuJj5sVdEaIhBzXVAWlrKtKpm1vtx6x/ClA7C4vD3laP5fKp+lr1yIQjciYXbdLayLNL1d7eJVpbmijmmRyFRqEPjJH7mEaL62xbLc2/ZPuoP1BBpg8TKnhhySG/VhIeWemEuwB1wuE/gu4d+6dVWl8kSBUs53nT13ypH7pHKLK7npyJT4ft56YEP2Ab7mQGrcDbm1hJ0mF6bp8gX8Ghy3vaDLcRmfIHrEino9zaQ4HUpCER4z+O1v644dk+4NsQMWhbIRUdkImIaN29xHxJSebeM/eGgRrcYQhUZgL2WkfTSykU2BcFs96NhtToMAAnE11XOFuD6L9mwH6S3TCG2BwiSZVK6dVIWnbyKuTXH0NnszDbaghtRBfDqvV7nnbba1Iy+Tjg9Uj7EXr0qOIzw01/UAkTYWg6hQxkmZPqLxNhiuKywINeA1vt4nQVavaouEJvJ5511vk2zIPWJMUJX1ydAJ973J6H1d037UM57s3/IlBranqMKQl").toByteArray() */ getLicense(channelInfo)
+        val license =  ("CAUSxQUKvwIIAxIQdyQMtMNwS/5jB19DM1gWAxiUs6axBiKOAjCCAQoCggEBAJpBaquGrpQ8kdvLG/yi" +
+            "/eqh8fEm0MLGS7Tku0kaG6dIGQugGAVgJ+X+8SihHYuX31hCD7rKAOG8pcakUAUs7j5WEjcml7MppfDIh84mSf7YX/s9R2Risj2i75772FaF9I" +
+            "+YZSvTdKcB03EDM8DivFJ2QT7mRVKs022M8so1HBQJuk+XnOeZcQ23diL3h/EaYRvJgnmLUWjtEw932EsWVE8gEwdgNBcQloFVvmX+LhCgmdhxMB0XdIaAgg2IF4Vh4rpypcIs9u0pi80yeelsWsxFIxnWuD3rBnfajo/PDZ0q8ZmZzKLo34rkOpm3XSS7ZP0iZ9J2X7XYBF4PbuQ4kJkCAwEAAToOYmFuZ2xhbGluay5uZXRAAkgBEoADexNtQnTUAnuJj5sVdEaIhBzXVAWlrKtKpm1vtx6x/ClA7C4vD3laP5fKp+lr1yIQjciYXbdLayLNL1d7eJVpbmijmmRyFRqEPjJH7mEaL62xbLc2/ZPuoP1BBpg8TKnhhySG/VhIeWemEuwB1wuE/gu4d+6dVWl8kSBUs53nT13ypH7pHKLK7npyJT4ft56YEP2Ab7mQGrcDbm1hJ0mF6bp8gX8Ghy3vaDLcRmfIHrEino9zaQ4HUpCER4z+O1v644dk+4NsQMWhbIRUdkImIaN29xHxJSebeM/eGgRrcYQhUZgL2WkfTSykU2BcFs96NhtToMAAnE11XOFuD6L9mwH6S3TCG2BwiSZVK6dVIWnbyKuTXH0NnszDbaghtRBfDqvV7nnbba1Iy+Tjg9Uj7EXr0qOIzw01/UAkTYWg6hQxkmZPqLxNhiuKywINeA1vt4nQVavaouEJvJ5511vk2zIPWJMUJX1ydAJ973J6H1d037UM57s3/IlBranqMKQl").toByteArray()  //getLicense(channelInfo)
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection)?.let {
             if (mPref.shouldOverrideDrmHostUrl) it.overrideUrl(mPref.overrideDrmHostUrl) else it
         } ?: return null
         return MediaItem.Builder().apply {
             showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
-            if (!channelInfo.isStingray) {
+//            if (!channelInfo.isStingray) {
 //                httpDataSourceFactory?.setUserAgent(toffeeHeader)
-            }
+//            }
             setMimeType(MimeTypes.APPLICATION_MPD)
             setUri("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
             setTag(channelInfo)
@@ -887,7 +878,8 @@ abstract class PlayerPageActivity :
                 MediaItem
                     .DrmConfiguration
                     .Builder(C.WIDEVINE_UUID)
-                    .setKeySetId(license)
+                    .setLicenseUri("https://dev-services.toffeelive.com/widevine/v1/license")
+//                    .setKeySetId(license)
                     .build()
             )
         }.build()
@@ -1062,11 +1054,11 @@ abstract class PlayerPageActivity :
 //                        player.prepare(mediaSource, false, false)
                     } else if (it is CastPlayer) {
                         val newMediaItem = if (isDrmActive) {
-                            val drmToken = try {
-                                drmTokenApi.execute(channelInfo.drmCid!!)
-                            } catch (ex: Exception) {
-                                null
-                            } ?: return@launch
+//                            val drmToken = try {
+//                                drmLicenseService.execute(channelInfo.drmCid!!)
+//                            } catch (ex: Exception) {
+//                                null
+//                            } ?: return@launch
                             mediaItem.buildUpon()
                                 .setDrmConfiguration(
                                     mediaItem
@@ -1077,7 +1069,7 @@ abstract class PlayerPageActivity :
                                             setLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                             setMultiSession(false)
                                             setForceDefaultLicenseUri(false)
-                                            setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+//                                            setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
                                         }
                                         ?.build()
                                 ).build()
@@ -1108,11 +1100,11 @@ abstract class PlayerPageActivity :
                 it.prepare()
             } else if (it is CastPlayer) {
                 val newMediaItem = if (isDrmActive) {
-                    val drmToken = try {
-                        drmTokenApi.execute(channelInfo.drmCid!!)
-                    } catch (ex: Exception) {
-                        null
-                    } ?: return@launch
+//                    val drmToken = try {
+//                        drmLicenseService.execute(channelInfo.drmCid!!)
+//                    } catch (ex: Exception) {
+//                        null
+//                    } ?: return@launch
                     mediaItem.buildUpon()
                         .setDrmConfiguration(
                             mediaItem
@@ -1123,7 +1115,7 @@ abstract class PlayerPageActivity :
                                     setLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                     setMultiSession(false)
                                     setForceDefaultLicenseUri(false)
-                                    setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+//                                    setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
                                 }
                                 ?.build()
                         ).build()
