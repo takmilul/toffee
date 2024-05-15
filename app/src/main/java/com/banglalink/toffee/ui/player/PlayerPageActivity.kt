@@ -11,7 +11,6 @@ import android.support.v4.media.session.MediaSessionCompat.Callback
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.State
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
@@ -51,15 +50,13 @@ import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.Constants.PLAY_CDN
 import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
+import com.banglalink.toffee.data.network.interceptor.DrmInterceptor
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
@@ -86,7 +83,6 @@ import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.PingData
 import com.banglalink.toffee.util.PingTool
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.getError
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventType.AD_BUFFERING
@@ -166,6 +162,7 @@ abstract class PlayerPageActivity :
     @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
+    private var httpLicenseFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
@@ -348,13 +345,26 @@ abstract class PlayerPageActivity :
             playerAnalyticsListener = PlayerAnalyticsListener()
             httpDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient.apply {
-                    if (BuildConfig.DEBUG) {
+//                    if (BuildConfig.DEBUG) {
+//                        newBuilder()
+//                            .addInterceptor(DrmInterceptor())
+//                            .addNetworkInterceptor(
+//                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+//                            )
+//                            .build()
+//                    }
+                }
+            )
+            httpLicenseFactory = OkHttpDataSource.Factory(
+                dnsHttpClient.apply {
+//                    if (BuildConfig.DEBUG) {
                         newBuilder()
+                            .addInterceptor(DrmInterceptor())
                             .addNetworkInterceptor(
-                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
                             )
                             .build()
-                    }
+//                    }
                 }
             )
 //            val cacheFolder = File(this.cacheDir, "/toffee_media")
@@ -367,7 +377,7 @@ abstract class PlayerPageActivity :
 //                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
-//                .setDrmSessionManagerProvider(this::getDrmSessionManager)
+                .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setLocalAdInsertionComponents({ adsLoader }, getPlayerView())
 //                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
@@ -495,14 +505,14 @@ abstract class PlayerPageActivity :
             val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
             
-            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
+            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpLicenseFactory != null) {
                 DefaultDrmSessionManager
                     .Builder()
                     .setMultiSession(false)
                     .build(
                         ToffeeMediaDrmCallback(
-                            mPref.drmWidevineLicenseUrl!!,
-                            httpDataSourceFactory!!,
+                            "https://dev-services.toffeelive.com/widevine/v1/license",
+                            httpLicenseFactory!!,
                             drmTokenApi,
                             drmCid ?: ""
                         )
@@ -767,44 +777,55 @@ abstract class PlayerPageActivity :
         var offlineLicenseHelper: OfflineLicenseHelper? = null
         try {
             val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
-            val token = try {
-                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/)
-            } catch (e: Exception) {
-                val error = getError(e)
-                ToffeeAnalytics.logEvent(
-                    ToffeeEvents.EXCEPTION, bundleOf(
-                        "api_name" to ApiNames.GET_DRM_TOKEN,
-                        FirebaseParams.BROWSER_SCREEN to "Player Page",
-                        "error_code" to error.code,
-                        "error_description" to error.msg
-                    )
-                )
-                null
-            } ?: return null
+//            val token = try {
+//                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/)
+//            } catch (e: Exception) {
+//                val error = getError(e)
+//                ToffeeAnalytics.logEvent(
+//                    ToffeeEvents.EXCEPTION, bundleOf(
+//                        "api_name" to ApiNames.GET_DRM_TOKEN,
+//                        FirebaseParams.BROWSER_SCREEN to "Player Page",
+//                        "error_code" to error.code,
+//                        "error_description" to error.msg
+//                    )
+//                )
+//                null
+//            } ?: return null
             Log.i("DRM_T", "Downloading offline license")
 //            showDebugMessage("Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
-//                    .newBuilder()
-//                    .addNetworkInterceptor(
-//                        HttpLoggingInterceptor()
-//                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
-//                    )
-//                    .build()
+                    .newBuilder()
+                    .addInterceptor(DrmInterceptor())
+                    .addNetworkInterceptor(
+                        HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                    )
+                    .build()
             )
-            offlineDataSourceFactory.setDefaultRequestProperties(mapOf("pallycon-customdata-v2" to token))
+//            offlineDataSourceFactory.setDefaultRequestProperties(mapOf("pallycon-customdata-v2" to token))
+            offlineDataSourceFactory.setDefaultRequestProperties(
+                mapOf(
+                    "payload" to "CAQ=",
+                    "drmType" to "WV",
+                    "contentId" to "1",
+                    "providerId" to "toffee",
+                    "packageId" to "1",
+                    "token" to "dummy"
+                )
+            )
             
             offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
-                mPref.drmWidevineLicenseUrl!!,
+                "https://dev-services.toffeelive.com/widevine/v1/license",
                 false,
                 offlineDataSourceFactory,
                 DrmSessionEventListener.EventDispatcher()
             )
             
-            val dataSource = httpDataSourceFactory!!.createDataSource()
+            val dataSource = httpLicenseFactory!!.createDataSource()
             val dashManifest = DashUtil.loadManifest(
                 dataSource,
-                Uri.parse(channelInfo.getDrmUrl(connectionWatcher.isOverCellular))
+                Uri.parse("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
             )
             val drmInitData =
                 DashUtil.loadFormatWithDrmInitData(dataSource, dashManifest.getPeriod(0)) ?: run {
@@ -833,6 +854,8 @@ abstract class PlayerPageActivity :
             offlineLicenseHelper.release()
             return newDrmLicense.license
         } catch (ex: Exception) {
+            ex.printStackTrace()
+            android.util.Log.i("DRM_T", "downloadLicense: ${ex.message}")
             offlineLicenseHelper?.release()
             return null
         }
@@ -847,7 +870,7 @@ abstract class PlayerPageActivity :
                 setDrmConfiguration(MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID).build())
             }.build()
         }
-        val license = ("CAUSxQUKvwIIAxIQdyQMtMNwS/5jB19DM1gWAxiUs6axBiKOAjCCAQoCggEBAJpBaquGrpQ8kdvLG/yi/eqh8fEm0MLGS7Tku0kaG6dIGQugGAVgJ+X+8SihHYuX31hCD7rKAOG8pcakUAUs7j5WEjcml7MppfDIh84mSf7YX/s9R2Risj2i75772FaF9I+YZSvTdKcB03EDM8DivFJ2QT7mRVKs022M8so1HBQJuk+XnOeZcQ23diL3h/EaYRvJgnmLUWjtEw932EsWVE8gEwdgNBcQloFVvmX+LhCgmdhxMB0XdIaAgg2IF4Vh4rpypcIs9u0pi80yeelsWsxFIxnWuD3rBnfajo/PDZ0q8ZmZzKLo34rkOpm3XSS7ZP0iZ9J2X7XYBF4PbuQ4kJkCAwEAAToOYmFuZ2xhbGluay5uZXRAAkgBEoADexNtQnTUAnuJj5sVdEaIhBzXVAWlrKtKpm1vtx6x/ClA7C4vD3laP5fKp+lr1yIQjciYXbdLayLNL1d7eJVpbmijmmRyFRqEPjJH7mEaL62xbLc2/ZPuoP1BBpg8TKnhhySG/VhIeWemEuwB1wuE/gu4d+6dVWl8kSBUs53nT13ypH7pHKLK7npyJT4ft56YEP2Ab7mQGrcDbm1hJ0mF6bp8gX8Ghy3vaDLcRmfIHrEino9zaQ4HUpCER4z+O1v644dk+4NsQMWhbIRUdkImIaN29xHxJSebeM/eGgRrcYQhUZgL2WkfTSykU2BcFs96NhtToMAAnE11XOFuD6L9mwH6S3TCG2BwiSZVK6dVIWnbyKuTXH0NnszDbaghtRBfDqvV7nnbba1Iy+Tjg9Uj7EXr0qOIzw01/UAkTYWg6hQxkmZPqLxNhiuKywINeA1vt4nQVavaouEJvJ5511vk2zIPWJMUJX1ydAJ973J6H1d037UM57s3/IlBranqMKQl").toByteArray() //getLicense(channelInfo)
+        val license = /* ("CAUSxQUKvwIIAxIQdyQMtMNwS/5jB19DM1gWAxiUs6axBiKOAjCCAQoCggEBAJpBaquGrpQ8kdvLG/yi/eqh8fEm0MLGS7Tku0kaG6dIGQugGAVgJ+X+8SihHYuX31hCD7rKAOG8pcakUAUs7j5WEjcml7MppfDIh84mSf7YX/s9R2Risj2i75772FaF9I+YZSvTdKcB03EDM8DivFJ2QT7mRVKs022M8so1HBQJuk+XnOeZcQ23diL3h/EaYRvJgnmLUWjtEw932EsWVE8gEwdgNBcQloFVvmX+LhCgmdhxMB0XdIaAgg2IF4Vh4rpypcIs9u0pi80yeelsWsxFIxnWuD3rBnfajo/PDZ0q8ZmZzKLo34rkOpm3XSS7ZP0iZ9J2X7XYBF4PbuQ4kJkCAwEAAToOYmFuZ2xhbGluay5uZXRAAkgBEoADexNtQnTUAnuJj5sVdEaIhBzXVAWlrKtKpm1vtx6x/ClA7C4vD3laP5fKp+lr1yIQjciYXbdLayLNL1d7eJVpbmijmmRyFRqEPjJH7mEaL62xbLc2/ZPuoP1BBpg8TKnhhySG/VhIeWemEuwB1wuE/gu4d+6dVWl8kSBUs53nT13ypH7pHKLK7npyJT4ft56YEP2Ab7mQGrcDbm1hJ0mF6bp8gX8Ghy3vaDLcRmfIHrEino9zaQ4HUpCER4z+O1v644dk+4NsQMWhbIRUdkImIaN29xHxJSebeM/eGgRrcYQhUZgL2WkfTSykU2BcFs96NhtToMAAnE11XOFuD6L9mwH6S3TCG2BwiSZVK6dVIWnbyKuTXH0NnszDbaghtRBfDqvV7nnbba1Iy+Tjg9Uj7EXr0qOIzw01/UAkTYWg6hQxkmZPqLxNhiuKywINeA1vt4nQVavaouEJvJ5511vk2zIPWJMUJX1ydAJ973J6H1d037UM57s3/IlBranqMKQl").toByteArray() */ getLicense(channelInfo)
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection)?.let {
             if (mPref.shouldOverrideDrmHostUrl) it.overrideUrl(mPref.overrideDrmHostUrl) else it

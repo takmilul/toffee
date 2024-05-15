@@ -12,8 +12,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.util.Log
 import com.google.common.collect.ImmutableMap
-import kotlinx.coroutines.runBlocking
-import java.util.UUID
+import java.util.*
 
 class ToffeeMediaDrmException(msg: String) : Exception(msg)
 
@@ -48,21 +47,21 @@ class ToffeeMediaDrmCallback(
     }
     
     override fun executeKeyRequest(uuid: UUID, request: ExoMediaDrm.KeyRequest): ByteArray {
-        val token = runBlocking {
-            try {
-                drmTokenApi.execute(contentId)
-            } catch (ex: Exception) {
-                null
-            }
-        } ?: throw MediaDrmCallbackException(
-            DataSpec.Builder().setUri(Uri.EMPTY).build(),
-            Uri.EMPTY,  /* responseHeaders= */
-            ImmutableMap.of(),  /* bytesLoaded= */
-            0,  /* cause= */
-            ToffeeMediaDrmException("Drm token request failed")
-        )
-        
-        httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)
+//        val token = runBlocking {
+//            try {
+//                drmTokenApi.execute(contentId)
+//            } catch (ex: Exception) {
+//                null
+//            }
+//        } ?: throw MediaDrmCallbackException(
+//            DataSpec.Builder().setUri(Uri.EMPTY).build(),
+//            Uri.EMPTY,  /* responseHeaders= */
+//            ImmutableMap.of(),  /* bytesLoaded= */
+//            0,  /* cause= */
+//            ToffeeMediaDrmException("Drm token request failed")
+//        )
+//        
+//        httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)
         return httpMediaDrmCallback.executeKeyRequest(uuid, request)
     }
 }
