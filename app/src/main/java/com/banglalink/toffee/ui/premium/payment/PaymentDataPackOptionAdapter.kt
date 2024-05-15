@@ -16,6 +16,8 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
+import com.banglalink.toffee.util.calculateDiscountedPrice
+import timber.log.Timber
 
 class PaymentDataPackOptionAdapter(
     val context: Context,
@@ -61,24 +63,31 @@ class PaymentDataPackOptionAdapter(
                     notifyDataSetChanged()
                 }
 
-                Log.d("TAG", "paymentDiscountPercentage: "+mPref.paymentDiscountPercentage.value.toString())
                 if (mPref.paymentDiscountPercentage.value.isNullOrEmpty()){
                     priceBeforeDiscount.visibility= View.GONE
                     priceTv.text=" BDT "+obj.packPrice.toString()
                 }else{
-
                     try {
-                        priceBeforeDiscount.visibility= View.VISIBLE
-                        var discountedPrice = calculateDiscountedPrice(obj.packPrice?.toDouble()?:0.0,mPref.paymentDiscountPercentage.value?:"")
-                        priceTv.text="BDT "+discountedPrice.toInt()
-                        priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
-                        priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        /** isDob = 0 is only for bl prepaid and postpaid plan, otherwise it will be 1 (DCB) or null (Others)
+                         * we dont want to show discount price for bl prepaid and postpaid
+                         * */
+                        if (obj.isDob != 0 ){
+                            priceBeforeDiscount.visibility= View.VISIBLE
+                            val discountedPrice = calculateDiscountedPrice(
+                                obj.packPrice?.toDouble()?:0.0,
+                                mPref.paymentDiscountPercentage.value?.toDouble()?:0.0
+                            )
+                            priceTv.text="BDT "+discountedPrice.toInt()
+                            priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
+                            priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        } else {
+                            priceBeforeDiscount.visibility= View.GONE
+                            priceTv.text=" BDT "+obj.packPrice.toString()
+                        }
+
                     }catch (e: Exception) {
-
-                        Log.i("calculateDiscount", "onPackSelectEventChanged: ${e.message}")
+                        Timber.tag("calculateDiscount").i("onPackSelectEventChanged: %s", e.message)
                     }
-
-
                 }
             }
         }
@@ -88,28 +97,5 @@ class PaymentDataPackOptionAdapter(
     fun setSelectedItem(item: PackPaymentMethod?) {
         selectedItem = item
         notifyDataSetChanged()
-    }
-
-    private fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
-        try {
-            val discountPercentage = discountPercent.toDouble()
-            val discountAmount = originalPrice * (discountPercentage / 100)
-            val discountedPrice = originalPrice - discountAmount
-
-            val integerPart = discountedPrice.toInt()
-            val decimalPart = discountedPrice - integerPart
-
-            if (decimalPart > 0) {
-                return  integerPart + 1.0
-            } else {
-                return  discountedPrice
-            }
-
-        }catch (e: Exception){
-            return 0.0
-        }
-
-
-
     }
 }
