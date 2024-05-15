@@ -29,6 +29,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.login.ResendCodeTimer
 import com.banglalink.toffee.ui.premium.PremiumViewModel
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.SUBSCRIBER_PAYMENT_FAILED
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.UN_SUCCESS
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Utils
@@ -132,7 +134,8 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                             requireContext().showToast(it.message.toString())
                         } else {
                             val args = bundleOf(
-                                PaymentStatusDialog.ARG_STATUS_CODE to -2,
+                                PaymentStatusDialog.ARG_STATUS_CODE to UN_SUCCESS,
+                                PaymentStatusDialog.ARG_STATUS_TITLE to "Data Plan Activation Failed!",
                                 PaymentStatusDialog.ARG_STATUS_MESSAGE to it.message
                             )
                             findNavController().navigatePopUpTo(
@@ -315,9 +318,9 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                         )
 
                         if (it.statusCode != 200) {
-                            if (it.responseFromWhere == 2){ // show cta button to call banglalink helpline
+                            if (it.responseFromWhere == 2){ // show unsuccess popup
                                 val args = bundleOf(
-                                    PaymentStatusDialog.ARG_STATUS_CODE to -2,
+                                    PaymentStatusDialog.ARG_STATUS_CODE to SUBSCRIBER_PAYMENT_FAILED,
                                     PaymentStatusDialog.ARG_STATUS_MESSAGE to it.message
                                 )
                                 findNavController().navigatePopUpTo(

@@ -2811,7 +2811,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                bubbleFifaIntent?.let { stopService(it) }
+                bubbleFifaIntent?.let { startService(it) }
             }
         }
     }
