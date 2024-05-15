@@ -54,7 +54,7 @@
             app:layout_constraintBottom_toTopOf="@id/otpCode"
             app:layout_goneMarginTop="32dp"
             android:layout_marginTop="32dp"
-            android:text="We have sent OTP to 01971035458. Please enter the OTP to confirm the purchase."
+            tools:text="We have sent OTP to 01971035458. Please enter the OTP to confirm the purchase."
             tools:visibility="visible" />
 
         <EditText

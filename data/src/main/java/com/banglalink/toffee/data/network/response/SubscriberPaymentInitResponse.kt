@@ -25,5 +25,6 @@ data class SubscriberPaymentInitBean(
     val failureCallbackUrl: String? = null,
     @SerialName("cancelled_callback_url")
     val cancelledCallbackUrl: String? = null,
-    @SerialName("message") val message: String? = null
+    @SerialName("message") val message: String? = null,
+    @SerialName("response_from_where") val responseFromWhere: Int? = 0
 )

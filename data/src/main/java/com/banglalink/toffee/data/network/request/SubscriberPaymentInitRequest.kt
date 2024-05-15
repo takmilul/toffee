@@ -65,6 +65,15 @@ data class SubscriberPaymentInitRequest(
     @SerialName("discount")
     val discount: Int? = 0,
     @SerialName("original_price")
-    val original_price: Int? = 0
+    val original_price: Int? = 0,
+
+    @SerialName("dob_price")
+    val dobPrice: String? = null,
+    @SerialName("dob_cp_id")
+    val dobCpId: String? = null,
+    @SerialName("dob_subs_offer_id")
+    val dobSubsOfferId: String? = null,
+    @SerialName("is_auto_renew")
+    val isAutoRenew: Int? = 0,
 
 ) : BaseRequest(ApiNames.SUBSCRIBER_PAYMENT_INIT)

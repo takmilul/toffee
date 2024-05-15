@@ -93,4 +93,5 @@ object ApiNames {
     const val TOKENIZED_PAYMENT_METHODS = "getTokenizedPaymentManageMethods"
     const val TOKENIZED_ACCOUNT_INFO = "getTokenizedAccountInfo"
     const val REMOVE_TOKENIZE_ACCOUNT = "removeTokenizedAccount"
+    const val DOB_VALIDATE_OTP = "dobValidateOtp"
 }
