@@ -40,7 +40,7 @@
             android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
             app:layout_goneMarginStart="6dp"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/roboto_medium"
             android:maxLines="1"
             android:textColor="#111F31"
             android:textSize="10sp"
@@ -103,10 +103,9 @@
         android:background="@drawable/rounded_corner_shape"
         android:paddingVertical="2dp"
         android:paddingHorizontal="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/bubbleIconView"
-        app:layout_constraintStart_toStartOf="@+id/bubbleIconView"
-        app:layout_constraintTop_toBottomOf="@id/bubbleIconView">
+        app:layout_constraintStart_toStartOf="@+id/bubbleIconView">
 
         <TextView
             android:id="@+id/poweredByText"
