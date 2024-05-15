@@ -7,13 +7,18 @@ import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Resource
 import kotlinx.coroutines.Job
 
-fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit = {}): Job {
-    return launchWithLifecycle { lifecycleOwner ->
-        liveData.observe(lifecycleOwner) {
-            it?.let { t ->
-                body(t)
+fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit = {}): Job? {
+    return try {
+        launchWithLifecycle { lifecycleOwner ->
+            liveData.observe(lifecycleOwner) {
+                it?.let { t ->
+                    body(t)
+                }
             }
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
