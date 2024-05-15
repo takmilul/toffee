@@ -32,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
-import java.util.Scanner
+import java.util.*
 
 fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if(!message.isNullOrBlank()) {
@@ -148,12 +148,17 @@ suspend fun Context.vpnConnectivityStatus(): Pair<Boolean, String>? = withContex
     }
 }
 
-fun LifecycleOwner.launchWithLifecycle(observe: suspend (LifecycleOwner) -> Unit): Job {
-    val lifecycleOwner = if(this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this
-    
-    return lifecycleOwner.lifecycleScope.launch {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            observe(lifecycleOwner)
+fun LifecycleOwner.launchWithLifecycle(observe: suspend (LifecycleOwner) -> Unit): Job? {
+    return try {
+        val lifecycleOwner = if (this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this
+        
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                observe(lifecycleOwner)
+            }
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
