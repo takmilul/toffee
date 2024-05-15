@@ -20,7 +20,6 @@ import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.widget.Html5WebViewClient
 import com.banglalink.toffee.util.Log
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,7 +32,7 @@ class HtmlPageViewFragment : BaseFragment() {
     private var _binding: FragmentHtmlPageViewBinding ? = null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -137,7 +136,7 @@ class HtmlPageViewFragment : BaseFragment() {
 //            destroyDrawingCache()
             destroy()
         }
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         super.onDestroyView()
         _binding = null
     }

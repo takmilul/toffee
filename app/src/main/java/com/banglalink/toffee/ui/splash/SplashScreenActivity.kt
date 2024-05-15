@@ -15,7 +15,6 @@ import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.di.FirebaseInAppMessage
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +42,7 @@ class SplashScreenActivity : AppCompatActivity() {
             }
         }
         
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
 //        intent.getStringExtra("resourceUrl")?.let {
 //            saveNotification(intent)
 //            mPref.homeIntent.value = intent.setData(Uri.parse(it))
