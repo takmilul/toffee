@@ -40,6 +40,7 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.calculateDiscountedPrice
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
@@ -880,8 +881,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             else{
                 try {
-                    packPriceToPay=calculateDiscountedPrice(selectedDataPackOption?.packPrice?.toDouble()?:0.0,
-                        mPref.paymentDiscountPercentage.value?:"").toInt()
+                    packPriceToPay = calculateDiscountedPrice(
+                        originalPrice = selectedDataPackOption?.packPrice?.toDouble()?:0.0,
+                        discountPercentage = mPref.paymentDiscountPercentage.value?.toDouble()?: 0.0
+                    ).toInt()
                 }catch (e: Exception){
                     // discount is not applicable in this plan
                     packPriceToPay=selectedDataPackOption?.packPrice ?: 0
@@ -1326,26 +1329,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             resId = R.id.htmlPageViewDialog,
             args = args
         )
-    }
-
-    private fun calculateDiscountedPrice(originalPrice: Double, discountPercent: String): Double {
-        try {
-            val discountPercentage = discountPercent.toDouble()
-            val discountAmount = originalPrice * (discountPercentage / 100)
-            val discountedPrice = originalPrice - discountAmount
-
-            val integerPart = discountedPrice.toInt()
-            val decimalPart = discountedPrice - integerPart
-
-            if (decimalPart > 0) {
-                return  integerPart + 1.0
-            } else {
-                return  discountedPrice
-            }
-
-        }catch (e: Exception){
-            return 0.0
-        }
     }
     
     override fun onDestroyView() {

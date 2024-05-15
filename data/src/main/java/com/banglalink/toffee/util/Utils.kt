@@ -681,3 +681,22 @@ fun compareDates(fromDate: String, toDate: String): DateComparisonResult {
         else -> DateComparisonResult.SAME // fromDate is same as toDate
     }
 }
+
+fun calculateDiscountedPrice(originalPrice: Double, discountPercentage: Double): Double {
+    try {
+        val discountAmount = originalPrice * (discountPercentage / 100)
+        val discountedPrice = originalPrice - discountAmount
+
+        val integerPart = discountedPrice.toInt()
+        val decimalPart = discountedPrice - integerPart
+
+        if (decimalPart > 0) {
+            return  integerPart + 1.0
+        } else {
+            return  discountedPrice
+        }
+
+    }catch (e: Exception){
+        return 0.0
+    }
+}

@@ -62,7 +62,7 @@ data class PackPaymentMethodData(
     @SerialName("payment_method_logo_mobile" )
     var paymentMethodLogoMobile : String? = null,
     @SerialName("order_index")
-    val orderIndex : Int? = null,
+    val orderIndex : Int? = 0,
 
     @JsonNames("top_promotion_msg_for_non_bl" ,"topPromotionMsgForNonBl")
     val topPromotionMsgForNonBl : String? = null,
@@ -126,7 +126,7 @@ data class PackPaymentMethod(
     val isAllowFromOutside : Int? = 0,
 
     //for DCB only
-    @SerialName("is_dob"                ) var isDob              : Int?    = null,
+    @SerialName("is_dob"                ) var isDob              : Int?    = null, // don't set the default value to 0
     @SerialName("dob_price"             ) var dobPrice           : String? = null,
     @SerialName("dob_cp_id"             ) var dobCpId            : String? = null,
     @SerialName("dob_subs_offer_id"     ) var dobSubsOfferId     : String? = null,
