@@ -876,11 +876,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                                 transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                                requestId = if(paymentName == PaymentMethodString.BLDCB.value) transactionIdentifier else null,
                                 transactionStatus = statusCode,
                                 amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
                                 rawResponse = json.encodeToString(it),
-
                                 voucher = discountInfo?.voucher ,
                                 campaignType = discountInfo?.campaignType ,
                                 partnerName = discountInfo?.partnerName,
@@ -889,7 +889,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 campaignId = discountInfo?.campaignId?:0,
                                 campaignExpireDate = discountInfo?.campaignExpireDate,
                                 discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                                dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                                dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                                dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
                             )
                         )
 
@@ -969,11 +972,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                             transactionId = if (paymentName == "ssl") transactionIdentifier else null,
+                            requestId = if(paymentName == PaymentMethodString.BLDCB.value) transactionIdentifier else null,
                             transactionStatus = statusCode,
                             amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
                             rawResponse = json.encodeToString(it),
-
                             voucher = discountInfo?.voucher ,
                             campaignType = discountInfo?.campaignType ,
                             partnerName = discountInfo?.partnerName,
@@ -982,7 +985,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
                             discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                            dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                            dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                            dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
                         )
                     )
                     requireContext().showToast(it.error.msg)
