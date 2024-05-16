@@ -72,6 +72,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     private var discountInfo:DiscountInfo?=null
     private var packPriceToPay:Int?=null
+
+    var isPlanFound:Boolean?=false
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPaymentDataPackOptionsBinding.inflate(inflater, container, false)
@@ -398,6 +400,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             binding.buySimButton.hide()
                             
                             if (mAdapter.selectedPosition > -1 && mPref.isVerifiedUser && mPref.isBanglalinkNumber == "true") {
+                                Log.d("TAG", "observePackStatus: "+viewModel.selectedDataPackOption.value)
+
+                                binding.needToEnterOtpText.isVisible =viewModel.selectedDataPackOption.value?.isDob == 1 && mPref.isBanglalinkNumber == "true"
+                                binding.termsAndConditionsGroup.isVisible =
+                                    viewModel.selectedDataPackOption.value?.dataPackCtaButton == 1 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 2 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 3
                                 binding.buyNowButton.isVisible =
                                     viewModel.selectedDataPackOption.value?.dataPackCtaButton == 1 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 3
                                 binding.buyWithRechargeButton.isVisible =
@@ -464,7 +471,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
             val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
 
-            setPlanSubTittle(prePaid.isNullOrEmpty(), postPaid.isNullOrEmpty())
+
 
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
@@ -528,7 +535,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty() && dcb.isNullOrEmpty()){ handleInvalidPaymentMethod() }
                 else {
                     if (mPref.isBanglalinkNumber == "true") {
-                        var isPlanFound = false
+                         isPlanFound = false
 
                         //both prepaid and postpaid BL user sees DCB
                         if (!dcb.isNullOrEmpty()){
@@ -547,7 +554,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             isPlanFound = true
                         }
 
-                        if (!isPlanFound) {
+                        if (!isPlanFound!!) {
                             showEmptyView(String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid"))
                         }
 
@@ -577,6 +584,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 mAdapter.addAll(it.toList())
                 mAdapter.notifyDataSetChanged()
             }
+            setPlanSubTittle(prePaid.isNullOrEmpty(), postPaid.isNullOrEmpty())
         }
     }
     private fun showEmptyView(message: String){
@@ -1257,8 +1265,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 PaymentMethodName.BL.value->{
 
                     if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
+
+                        if (!isPlanFound!!) {
+                            binding.planSubTitle.hide()
+                        }else{
+                            binding.planSubTitle.show()
+                            binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
+                        }
+
 
                     }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
                         binding.planSubTitle.show()
@@ -1306,11 +1320,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                 PaymentMethodName.BL.value->{
 
-                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty() && !prepaid ){
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty() && !prepaid  ){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
                     }
-                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()&& !postpaid){
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()&& !postpaid ){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
                     }
