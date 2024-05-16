@@ -645,7 +645,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
 
                     } else {
-                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid user
+                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid or postpaid(if prepaid == null)
                         if (!dcb.isNullOrEmpty()){
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
                             packPaymentMethodList.addAll(dcb)
@@ -653,11 +653,10 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         if (!prePaid.isNullOrEmpty()) {
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(prePaid)
+                        } else if (!postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
+                            packPaymentMethodList.addAll(postPaid)
                         }
-//                        if (!postPaid.isNullOrEmpty()) {
-//                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
-//                            packPaymentMethodList.addAll(postPaid)
-//                        }
                     }
                 }
             }
