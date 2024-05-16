@@ -164,7 +164,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         }
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
         val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullOrBlank { it } ?: "0"
-        binding.scoreCard.text = if (mPref.bubbleType == FOOTBALL.value) "$homeTeamScore - $awayTeamScore" else bubbleConfig?.bubbleTextAction
+        binding.scoreCard.text = if (mPref.bubbleType == FOOTBALL.value) "$homeTeamScore - $awayTeamScore" else bubbleConfig?.bubbleTextAction.toString()
         binding.bubbleTitle.text = "LIVE"
     }
     

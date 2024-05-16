@@ -95,7 +95,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
 
 
-        setPlanSubTittle()
+
 
 
         if (mPref.isBanglalinkNumber=="true"){
@@ -449,7 +449,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
      * selected if the value is true.
      */
     private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
-        setPlanSubTittle()
+
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.prepaid
@@ -463,7 +463,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val nagadNonBlPacks = paymentTypes.nagad?.nonBlPacks
             //show bl pack for bkash and ssl forcefully when user comes from ad and user is not logged in
             val showBlPacks = viewModel.clickableAdInventories.value?.showBlPacks ?: false
-            
+
+            setPlanSubTittle(prePaid.isNullOrEmpty(), postPaid.isNullOrEmpty())
+
             if (paymentName == "bkash") {
                 packPaymentMethodList.clear()
                 if (bKashBlPacks.isNullOrEmpty() && bKashNonBlPacks.isNullOrEmpty()){ handleInvalidPaymentMethod() }
@@ -537,11 +539,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                         if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
-                            packPaymentMethodList.addAll(prePaid)
+                            packPaymentMethodList.addAll(prePaid!!)
                             isPlanFound = true
                         } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
-                            packPaymentMethodList.addAll(postPaid)
+                            packPaymentMethodList.addAll(postPaid!!)
                             isPlanFound = true
                         }
 
@@ -550,7 +552,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
 
                     } else {
-                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid or postpaid(if prepaid == null)
+                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid user
                         if (!dcb.isNullOrEmpty()){
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
                             packPaymentMethodList.addAll(dcb)
@@ -1247,9 +1249,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         )
     }
 
-    fun setPlanSubTittle(){
-        Log.d("TAG", "setPlanSubTittle: 1")
-        Log.d("TAG", "setPlanSubTittle: 2"+ mPref.selectedPaymentType.value)
+    fun setPlanSubTittle(prepaid: Boolean, postpaid: Boolean){
         if (mPref.isBanglalinkNumber=="true"){
 
             when(mPref.selectedPaymentType.value){
@@ -1306,11 +1306,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                 PaymentMethodName.BL.value->{
 
-                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty() && !prepaid ){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
                     }
-                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()){
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()&& !postpaid){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
                     }
