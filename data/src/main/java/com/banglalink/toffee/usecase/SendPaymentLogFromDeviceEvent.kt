@@ -36,6 +36,8 @@ data class PaymentLogFromDeviceData(
     val paymentId : String? = null,
     @SerialName("trxId")
     val transactionId : String? = null,
+    @SerialName("request_id")
+    val requestId : String? = null,
     @SerialName("transactionStatus")
     val transactionStatus : String? = null,
     @SerialName("amount")
@@ -74,4 +76,10 @@ data class PaymentLogFromDeviceData(
     val discount : Int? = 0,
     @SerialName("original_price")
     val originalPrice : Int? = 0,
+    @SerialName("dob_price")
+    val dobPrice: String? = null,
+    @SerialName("dob_cp_id")
+    val dobCpId: String? = null,
+    @SerialName("dob_subs_offer_id")
+    val dobSubsOfferId: String? = null,
 ) : PubSubBaseRequest()
