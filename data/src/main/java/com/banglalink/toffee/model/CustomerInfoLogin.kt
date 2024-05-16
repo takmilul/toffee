@@ -1,6 +1,7 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -243,6 +244,9 @@ data class BubbleConfig(
     val adIconUrl : String? = null,
     @SerialName("bubbleText")
     val bubbleText : String? = null,
+    @SerialName("bubbleTextAction")
+    @ColumnInfo(defaultValue = "")
+    val bubbleTextAction : String? = null,
     @SerialName("adForwardUrl")
     val adForwardUrl : String? = null,
     @SerialName("isGlobalCountDownActive")
