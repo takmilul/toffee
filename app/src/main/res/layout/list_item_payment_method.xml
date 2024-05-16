@@ -58,6 +58,8 @@
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/cardTitleSecondColor"
                 android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="Starts from 4tk"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="@+id/passNameTextView"
