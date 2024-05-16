@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class DrmLicenseRequest(
-    val payload: String = "CAQ=",
+    val payload: String,
     val drmType: String = "WV",
     val contentId: String = "1",
     val providerId: String = "toffee",
