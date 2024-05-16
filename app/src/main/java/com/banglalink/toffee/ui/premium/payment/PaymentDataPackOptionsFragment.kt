@@ -83,115 +83,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         hidePaymentOption()
         pressedButtonName = ""
         
-        paymentName = arguments?.getString("paymentName", "") ?: ""
+        paymentName = mPref.selectedPaymentType.value
         paymentDiscount = arguments?.getString("discount", "") ?: ""
 
 
         Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
+        Log.d("paymentDiscount", "onViewCreated: "+mPref.paymentDiscountPercentage.value)
 
-        if (mPref.isBanglalinkNumber=="true"){
-
-            when(mPref.selectedPaymentType.value){
-
-                PaymentMethodName.BL.value->{
-
-                    if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
-
-                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-
-                }
-                PaymentMethodName.NAGAD.value->{
-
-                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-
-                }
-                PaymentMethodName.BKASH.value->{
-
-                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-
-                }
-                PaymentMethodName.SSL.value->{
-
-                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-
-                }
+        Log.d("paymentName", "onViewCreated: "+paymentName)
+        Log.d("paymentName", "onViewCreated: "+mPref.selectedPaymentType.value)
 
 
-            }
 
-        }else{
-
-            when(mPref.selectedPaymentType.value){
-
-                PaymentMethodName.BL.value->{
-
-                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
-                    }
-                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
-                    }
-                    else{
-
-                        binding.planSubTitle.hide()
-                    }
-
-                }
-                PaymentMethodName.NAGAD.value->{
-                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-
-                }
-                PaymentMethodName.BKASH.value->{
-                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-                }
-                PaymentMethodName.SSL.value->{
-                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl.isNullOrEmpty()){
-                        binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl
-                    }else{
-                        binding.planSubTitle.hide()
-                    }
-                }
-
-
-            }
-        }
-
-
+        setPlanSubTittle()
 
 
         if (mPref.isBanglalinkNumber=="true"){
@@ -545,6 +449,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
      * selected if the value is true.
      */
     private fun prepareDataPackOptions(isRestoreSelection: Boolean = false) {
+        setPlanSubTittle()
         viewModel.paymentMethod.value?.let { paymentTypes ->
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.prepaid
@@ -1341,7 +1246,110 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             args = args
         )
     }
-    
+
+    fun setPlanSubTittle(){
+        Log.d("TAG", "setPlanSubTittle: 1")
+        Log.d("TAG", "setPlanSubTittle: 2"+ mPref.selectedPaymentType.value)
+        if (mPref.isBanglalinkNumber=="true"){
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                    if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
+
+                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.NAGAD.value->{
+
+                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.BKASH.value->{
+
+                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.SSL.value->{
+
+                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+            }
+
+        }else{
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
+                    }
+                    else{
+
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.NAGAD.value->{
+                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.BKASH.value->{
+                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+                }
+                PaymentMethodName.SSL.value->{
+                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+                }
+
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         progressDialog.dismiss()
