@@ -11,8 +11,6 @@ import android.os.Build.VERSION.SDK_INT
 import androidx.databinding.DataBindingUtil
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.WorkManager
-import androidx.work.impl.WorkManagerImpl
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
@@ -234,29 +232,32 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      * [androidx.work.WorkManager] configured in the application level to use in the full application.
      */
     override val workManagerConfiguration: Configuration
-        get() {
-            val config = Configuration.Builder()
-                .setMinimumLoggingLevel(android.util.Log.INFO)
-                .setWorkerFactory(workerFactory)
-                .build()
-            
-            runCatching {
-                config.initializationExceptionHandler.let {
-                    this.deleteDatabase(WorkManagerImpl::class.java.simpleName)
-                    this.getSharedPreferences(WorkManagerImpl::class.java.simpleName, Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
-                    this.let {
-                        WorkManager.initialize(
-                            it,
-                            Configuration.Builder()
-                                .setMinimumLoggingLevel(android.util.Log.INFO)
-                                .setWorkerFactory(workerFactory)
-                                .build()
-                        )
-                    }
-                }
-            }
-            return config
-        }
+        get() = Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
+    
+//    override val workManagerConfiguration: Configuration
+//        get() {
+//            val config = Configuration.Builder()
+//                .setMinimumLoggingLevel(android.util.Log.INFO)
+//                .setWorkerFactory(workerFactory)
+//                .build()
+//            
+//            runCatching {
+//                config.initializationExceptionHandler.let {
+//                    this.deleteDatabase(WorkManagerImpl::class.java.simpleName)
+//                    this.getSharedPreferences(WorkManagerImpl::class.java.simpleName, Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
+//                    this.let {
+//                        WorkManager.initialize(
+//                            it,
+//                            Configuration.Builder()
+//                                .setMinimumLoggingLevel(android.util.Log.INFO)
+//                                .setWorkerFactory(workerFactory)
+//                                .build()
+//                        )
+//                    }
+//                }
+//            }
+//            return config
+//        }
     
     /**
      * [<b>This SDK shows Shorts Video Reels</b>]
