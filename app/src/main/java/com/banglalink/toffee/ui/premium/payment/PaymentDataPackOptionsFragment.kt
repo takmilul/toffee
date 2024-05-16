@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,10 @@ import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
+import com.banglalink.toffee.data.network.response.DiscountInfo
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
+import com.banglalink.toffee.enums.PaymentMethodName
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.getPurchasedPack
 import com.banglalink.toffee.extension.hide
@@ -37,10 +40,12 @@ import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.calculateDiscountedPrice
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -48,6 +53,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     @Inject lateinit var json: Json
     private var paymentName: String? = null
+    private var paymentDiscount: String? = null
     private var pressedButtonName = ""
     private var transactionIdentifier: String? = null
     private var paymentToken: String? = null
@@ -64,6 +70,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
+    private var discountInfo:DiscountInfo?=null
+    private var packPriceToPay:Int?=null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPaymentDataPackOptionsBinding.inflate(inflater, container, false)
@@ -76,6 +84,142 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         pressedButtonName = ""
         
         paymentName = arguments?.getString("paymentName", "") ?: ""
+        paymentDiscount = arguments?.getString("discount", "") ?: ""
+
+
+        Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
+
+        if (mPref.isBanglalinkNumber=="true"){
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                    if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
+
+                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.NAGAD.value->{
+
+                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.BKASH.value->{
+
+                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.SSL.value->{
+
+                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForBl
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+
+
+            }
+
+        }else{
+
+            when(mPref.selectedPaymentType.value){
+
+                PaymentMethodName.BL.value->{
+
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
+                    }
+                    else{
+
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.NAGAD.value->{
+                    if (!viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+
+                }
+                PaymentMethodName.BKASH.value->{
+                    if (!viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+                }
+                PaymentMethodName.SSL.value->{
+                    if (!viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                        binding.planSubTitle.show()
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid
+                    }else{
+                        binding.planSubTitle.hide()
+                    }
+                }
+
+
+            }
+        }
+
+
+
+
+        if (mPref.isBanglalinkNumber=="true"){
+            viewModel.selectedPackSystemDiscount.value?.BL?.let {
+
+                discountInfo=it
+                Log.d("discountInfoData", "bl"+discountInfo)
+            } ?: {
+                viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
+                    discountInfo=it
+                Log.d("discountInfoData", "blBoth"+discountInfo)
+                }
+            }
+        }
+        else {
+            viewModel.selectedPackSystemDiscount.value?.NONBL?.let {
+                discountInfo=it
+                Log.d("discountInfoData", "nonbl"+discountInfo)
+            } ?: {
+                viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
+                    discountInfo=it
+                Log.d("discountInfoData", "nonblBoth"+discountInfo)
+                }
+            }
+        }
+
+
+
         prepareDataPackOptions()
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
@@ -117,6 +261,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 )
             }
             requireActivity().checkVerification(shouldReloadAfterLogin = false) {
+                if (viewModel.selectedDataPackOption.value?.isDob == 1){
+                    paymentName = PaymentMethodString.BLDCB.value
+                }
                 val MNO = when {
                     (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
                     (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
@@ -140,9 +287,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         "discount" to null,
                     )
                 )
-                
                 progressDialog.show()
-                
                 /* if user was logged in before pressing the buy button then call initiatePurchase function otherwise call mnp, check pack status and reload the page if already the pack is purchase */
                 if (isLoggedInUser) {
                     initiatePurchase()
@@ -279,6 +424,9 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 // Purchase a Banglalink data pack
                 purchaseBlDataPack()
             }
+            PaymentMethodString.BLDCB.value->{
+                subscriberPaymentInit()
+            }
         }
     }
     
@@ -401,6 +549,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val packPaymentMethodList = mutableListOf<PackPaymentMethod>()
             val prePaid = paymentTypes.bl?.prepaid
             val postPaid = paymentTypes.bl?.postpaid
+            val dcb = paymentTypes.bl?.dcb
             val bKashBlPacks = paymentTypes.bkash?.blPacks
             val bKashNonBlPacks = paymentTypes.bkash?.nonBlPacks
             val sslBlPacks = paymentTypes.ssl?.blPacks
@@ -469,25 +618,46 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             }
             else if (paymentName == "blPack") {
                 packPaymentMethodList.clear()
-                if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty()){ handleInvalidPaymentMethod() }
+                if (prePaid.isNullOrEmpty() && postPaid.isNullOrEmpty() && dcb.isNullOrEmpty()){ handleInvalidPaymentMethod() }
                 else {
                     if (mPref.isBanglalinkNumber == "true") {
+                        var isPlanFound = false
+
+                        //both prepaid and postpaid BL user sees DCB
+                        if (!dcb.isNullOrEmpty()){
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
+                            packPaymentMethodList.addAll(dcb)
+                            isPlanFound = true
+                        }
+
                         if (mPref.isPrepaid && !prePaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(prePaid)
+                            isPlanFound = true
                         } else if (!mPref.isPrepaid && !postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(postPaid)
-                        } else {
+                            isPlanFound = true
+                        }
+
+                        if (!isPlanFound) {
                             showEmptyView(String.format(getString(R.string.no_pack_option_msg), if (mPref.isPrepaid) "prepaid" else "postpaid"))
                         }
+
                     } else {
+                        // TOF-1181: Non BL users sees DCB and data plans for BL prepaid user
+                        if (!dcb.isNullOrEmpty()){
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access only"))
+                            packPaymentMethodList.addAll(dcb)
+                        }
                         if (!prePaid.isNullOrEmpty()) {
-                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Prepaid User"))
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
                             packPaymentMethodList.addAll(prePaid)
                         }
-                        if (!postPaid.isNullOrEmpty()) {
-                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Banglalink Postpaid User"))
-                            packPaymentMethodList.addAll(postPaid)
-                        }
+//                        if (!postPaid.isNullOrEmpty()) {
+//                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
+//                            packPaymentMethodList.addAll(postPaid)
+//                        }
                     }
                 }
             }
@@ -519,21 +689,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
     
     private fun purchaseBlDataPack() {
         if (viewModel.selectedPremiumPack.value != null && viewModel.selectedDataPackOption.value != null) {
-            val selectedPremiumPack = viewModel.selectedPremiumPack.value!!
-            val selectedDataPack = viewModel.selectedDataPackOption.value!!
+            val selectedPremiumPack = viewModel.selectedPremiumPack.value
+            val selectedDataPack = viewModel.selectedDataPackOption.value
             
             val dataPackPurchaseRequest = DataPackPurchaseRequest(
                 customerId = mPref.customerId,
                 password = mPref.password,
                 isBanglalinkNumber = (mPref.isBanglalinkNumber == "true").toInt(),
-                packId = selectedPremiumPack.id,
-                paymentMethodId = selectedDataPack.paymentMethodId ?: 0,
-                packTitle = selectedPremiumPack.packTitle,
-                contentList = selectedPremiumPack.contentId,
-                packCode = selectedDataPack.packCode,
-                packDetails = selectedDataPack.packDetails,
-                packPrice = selectedDataPack.packPrice,
-                packDuration = selectedDataPack.packDuration,
+                packId = selectedPremiumPack?.id ?: 0,
+                paymentMethodId = selectedDataPack?.paymentMethodId ?: 0,
+                packTitle = selectedPremiumPack?.packTitle,
+                contentList = selectedPremiumPack?.contentId,
+                packCode = selectedDataPack?.packCode,
+                packDetails = selectedDataPack?.packDetails,
+                packPrice = selectedDataPack?.packPrice,
+                packDuration = selectedDataPack?.packDuration,
                 isPrepaid = if (mPref.isPrepaid) 1 else 0
             )
             viewModel.purchaseDataPackBlDataPackOptions(dataPackPurchaseRequest)
@@ -712,6 +882,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             val selectedPremiumPack = viewModel.selectedPremiumPack.value
             val selectedDataPackOption = viewModel.selectedDataPackOption.value
 
+            if (viewModel.selectedPackSystemDiscount.value==null){
+                packPriceToPay=selectedDataPackOption?.packPrice ?: 0
+            }
+            else{
+                try {
+                    packPriceToPay = calculateDiscountedPrice(
+                        originalPrice = selectedDataPackOption?.packPrice?.toDouble()?:0.0,
+                        discountPercentage = mPref.paymentDiscountPercentage.value?.toDouble()?: 0.0
+                    ).toInt()
+                }catch (e: Exception){
+                    // discount is not applicable in this plan
+                    packPriceToPay=selectedDataPackOption?.packPrice ?: 0
+                }
+
+            }
             // Prepare a payment initiation request
             val request = SubscriberPaymentInitRequest(
                 customerId = mPref.customerId,
@@ -724,15 +909,33 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
                 packCode = selectedDataPackOption?.packCode,
                 packDetails = selectedDataPackOption?.packDetails,
-                packPrice = selectedDataPackOption?.packPrice ?: 0,
+                packPrice = packPriceToPay?:0, // the amount user is paying after discount or else
                 packDuration = selectedDataPackOption?.packDuration ?: 0,
                 clientType = "MOBILE_APP",
                 paymentPurpose = "ECOM_TXN",
                 paymentToken = null,
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
-                cusEmail = mPref.customerEmail
+                cusEmail = mPref.customerEmail,
+
+                voucher = discountInfo?.voucher,
+                campaign_type = discountInfo?.campaignType,
+                partner_name = discountInfo?.partnerName,
+                partner_id = discountInfo?.partnerId,
+                campaign_name = discountInfo?.campaignName,
+                campaign_id = discountInfo?.campaignId,
+                campaign_type_id = discountInfo?.campaignTypeId,
+                campaign_expire_date = discountInfo?.campaignExpireDate,
+                voucher_generated_type = discountInfo?.voucherGeneratedType,
+                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0, // the percentage of discount applied
+                original_price = selectedDataPackOption?.packPrice ?: 0, // actual pack price without discount or else
+
+                dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
+                isAutoRenew = viewModel.selectedDataPackOption.value?.isAutoRenew
             )
+            Timber.tag("TAG").d("subscriberPaymentInitData $request")
             // Trigger the payment initiation request, but only if both selectedPremiumPack and selectedDataPackOption are not null
             if (selectedPremiumPack != null && selectedDataPackOption != null) {
                 progressDialog.show()
@@ -769,28 +972,79 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                                 transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                                 transactionStatus = statusCode,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
-                                rawResponse = json.encodeToString(it)
+                                rawResponse = json.encodeToString(it),
+
+                                voucher = discountInfo?.voucher ,
+                                campaignType = discountInfo?.campaignType ,
+                                partnerName = discountInfo?.partnerName,
+                                partnerId = discountInfo?.partnerId ?:0,
+                                campaignName = discountInfo?.campaignName,
+                                campaignId = discountInfo?.campaignId?:0,
+                                campaignExpireDate = discountInfo?.campaignExpireDate,
+                                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                             )
                         )
-                        
+
                         if (it.statusCode != 200) {
-                            requireContext().showToast(it.message.toString())
-                            return@observe
+                            if (it.responseFromWhere == 2){ // show cta button to call banglalink helpline
+                                val args = bundleOf(
+                                    PaymentStatusDialog.ARG_STATUS_CODE to -2,
+                                    PaymentStatusDialog.ARG_STATUS_MESSAGE to it.message
+                                )
+                                findNavController().navigateTo(
+                                    resId = R.id.paymentStatusDialog,
+                                    args
+                                )
+                            }else {
+                                requireContext().showToast(it.message.toString())
+                                return@observe
+                            }
+                        } else {
+                            if (paymentName == PaymentMethodString.BLDCB.value){
+                                // navigating to otp fragment
+                                findNavController().navigateTo(
+                                    R.id.dcbEnterOtpFragment,
+                                    bundleOf(
+                                        "requestId" to transactionIdentifier,
+                                        "packPriceToPay" to packPriceToPay,
+                                        "voucher" to discountInfo?.voucher,
+                                        "campaignType" to discountInfo?.campaignType,
+                                        "partnerName" to discountInfo?.partnerName,
+                                        "partnerId" to discountInfo?.partnerId,
+                                        "campaignName" to discountInfo?.campaignName,
+                                        "campaignId" to discountInfo?.campaignId,
+                                        "campaignTypeId" to discountInfo?.campaignTypeId,
+                                        "campaignExpireDate" to discountInfo?.campaignExpireDate,
+                                        "voucherGeneratedType" to discountInfo?.voucherGeneratedType
+                                    )
+                                )
+                            } else {
+                                // Prepare navigation arguments for payment WebView
+                                val args = bundleOf(
+                                    "myTitle" to "Pack Details",
+                                    "url" to it.webViewUrl,
+                                    "paymentType" to paymentName,
+                                    "paymentPurpose" to "ECOM_TXN",
+                                    "isHideBackIcon" to false,
+                                    "isHideCloseIcon" to true,
+                                    "isBkashBlRecharge" to false,
+
+                                    "payableAmount" to packPriceToPay.toString(),
+                                    "voucher" to discountInfo?.voucher,
+                                    "campaignType" to discountInfo?.campaignType,
+                                    "partnerName" to discountInfo?.partnerName,
+                                    "partnerId" to discountInfo?.partnerId,
+                                    "campaignName" to discountInfo?.campaignName,
+                                    "campaignId" to discountInfo?.campaignId,
+                                    "campaignExpireDate" to discountInfo?.campaignExpireDate
+                                )
+                                // Navigate to the payment WebView dialog
+                                findNavController().navigateTo(R.id.paymentWebViewDialog, args)
+                            }
                         }
-                        // Prepare navigation arguments for payment WebView
-                        val args = bundleOf(
-                            "myTitle" to "Pack Details",
-                            "url" to it.webViewUrl,
-                            "paymentType" to paymentName,
-                            "paymentPurpose" to "ECOM_TXN",
-                            "isHideBackIcon" to false,
-                            "isHideCloseIcon" to true,
-                            "isBkashBlRecharge" to false,
-                        )
-                        // Navigate to the payment WebView dialog
-                        findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                     } ?: requireContext().showToast(getString(string.try_again_message))
                 }
                 
@@ -811,9 +1065,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = if (paymentName == "bkash") transactionIdentifier else null,
                             transactionId = if (paymentName == "ssl") transactionIdentifier else null,
                             transactionStatus = statusCode,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = json.encodeToString(it.error.msg)
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     requireContext().showToast(it.error.msg)
@@ -861,9 +1125,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = null,
                             transactionId = null,
                             transactionStatus = null,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = json.encodeToString(it.data)
+                            amount = packPriceToPay.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     it.data?.let {
@@ -877,6 +1151,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to true,
+
+                            "payableAmount" to packPriceToPay.toString(),
+                            "voucher" to discountInfo?.voucher,
+                            "campaignType" to discountInfo?.campaignType,
+                            "partnerName" to discountInfo?.partnerName,
+                            "partnerId" to discountInfo?.partnerId,
+                            "campaignName" to discountInfo?.campaignName,
+                            "campaignId" to discountInfo?.campaignId,
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate
                         )
                         findNavController().navigateTo(R.id.paymentWebViewDialog, args)
                     } ?: requireContext().showToast(getString(string.try_again_message))
@@ -896,9 +1179,19 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             paymentId = null,
                             transactionId = null,
                             transactionStatus = null,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                            merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                            rawResponse = json.encodeToString(it.error.msg)
+                            amount = packPriceToPay.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = json.encodeToString(it),
+
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                         )
                     )
                     requireContext().showToast(it.error.msg)
@@ -966,19 +1259,20 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 binding.buyNowButton.text = getString(R.string.buy_now_ssl)
                 binding.buyNowButton.show()
             }
-            "blPack" -> {
+            "blPack", PaymentMethodString.BLDCB.value -> {
                 if (mPref.isBanglalinkNumber == "true") {
-                    ctaButtonValue= item.dataPackCtaButton!!
+                    ctaButtonValue= item.dataPackCtaButton?: 0
                     binding.buyNowButton.isVisible = item.dataPackCtaButton == 1 || item.dataPackCtaButton == 3
-                    binding.buyWithRechargeButton.isVisible = item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3
+                    binding.buyWithRechargeButton.isVisible = (item.dataPackCtaButton == 2 || item.dataPackCtaButton == 3)
                 } else {
                     binding.buyNowButton.hide()
                     binding.buyWithRechargeButton.hide()
                 }
-                
+
                 binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.termsAndConditionsGroup.isVisible = mPref.isBanglalinkNumber == "true"
+                binding.needToEnterOtpText.isVisible = item.isDob == 1 && mPref.isBanglalinkNumber == "true"
             }
         }
     }

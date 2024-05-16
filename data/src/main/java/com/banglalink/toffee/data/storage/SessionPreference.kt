@@ -81,6 +81,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var qrSignInStatus = MutableLiveData<String>()
     var qrSignInResponseCode = MutableLiveData<String>()
 
+    var paymentDiscountPercentage= MutableLiveData<String>()
+
+    var selectedPaymentType= MutableLiveData<String>()
+
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
@@ -834,6 +838,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_KABBIK_TOKEN_EXPIRY_TIME, "") ?: ""
         set(value) = pref.edit { putString(PREF_KABBIK_TOKEN_EXPIRY_TIME, value) }
 
+    var bubblePermissionDialogTitle: String
+        get() = pref.getString( PREF_BUBBLE_PERMISSION_DIALOG_TITLE, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_PERMISSION_DIALOG_TITLE, value) }
+
+    var bubblePermissionDialogBody: String
+        get() = pref.getString(PREF_BUBBLE_PERMISSION_DIALOG_BODY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_PERMISSION_DIALOG_BODY, value) }
+
+    var bubbleMenuText: String
+        get() = pref.getString(PREF_BUBBLE_MENU_TEXT, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_MENU_TEXT, value) }
+
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -955,7 +971,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 
             isMnpCallForSubscription = it.isMnpCallForSubscription ?: false
             faqUrl = it.faqUrl ?: ""
-
+            bubblePermissionDialogTitle = it.bubblePermissionDialogTitle ?: ""
+            bubblePermissionDialogBody = it.bubblePermissionDialogBody ?: ""
+            bubbleMenuText = it.bubbleMenuText ?: ""
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -1122,6 +1140,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYER_SCREEN_BRIGHTNESS = "player-screen-brightness"
         private const val PREF_KABBIK_ACCESS_TOKEN = "pref_kabbik_access_token"
         private const val PREF_KABBIK_TOKEN_EXPIRY_TIME = "pref_kabbik_token_expiry_time"
+        private const val PREF_BUBBLE_PERMISSION_DIALOG_TITLE = "pref_bubble_permission_dialog_title"
+        private const val PREF_BUBBLE_PERMISSION_DIALOG_BODY = "pref_bubble_permission_dialog_body"
+        private const val PREF_BUBBLE_MENU_TEXT = "pref_bubble_menu_text"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

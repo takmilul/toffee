@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class PackPaymentMethodResponse(
@@ -33,6 +34,10 @@ data class PackPaymentMethodBean(
     val ssl: PackPaymentMethodData? = null,
     @SerialName("NAGAD")
     val nagad: PackPaymentMethodData? = null,
+    @SerialName("SYSTEMDISCOUNT")
+    val systemDiscount: SystemDiscount? = null,
+    @SerialName("DISPLAYMESSAGE")
+    val displayMessage: DisplayMessage? = null,
 ) : Parcelable
 
 @Parcelize
@@ -57,7 +62,21 @@ data class PackPaymentMethodData(
     @SerialName("payment_method_logo_mobile" )
     var paymentMethodLogoMobile : String? = null,
     @SerialName("order_index")
-    val orderIndex : Int? = null,
+    val orderIndex : Int? = 0,
+
+    @JsonNames("top_promotion_msg_for_non_bl" ,"topPromotionMsgForNonBl")
+    val topPromotionMsgForNonBl : String? = null,
+    @JsonNames("top_promotion_msg_for_bl" ,"topPromotionMsgForBl")
+    val topPromotionMsgForBl : String? = null,
+
+    @SerialName("top_promotion_msg_for_plan_bl_prepaid" )           //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_bl_prepaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_bl_postpaid" )          //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_bl_postpaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_nonbl_prepaid" )        //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_nonbl_prepaid : String? = null,
+    @SerialName("top_promotion_msg_for_plan_nonbl_postpaid" )       //this sub tittle is only used when BL payment is used
+    val top_promotion_msg_for_plan_nonbl_postpaid : String? = null,
     @SerialName("data")
     val data : List<PackPaymentMethod>? = null,
     @SerialName("BL")
@@ -68,39 +87,89 @@ data class PackPaymentMethodData(
     val postpaid: List<PackPaymentMethod>? = null,
     @SerialName("PREPAID")
     val prepaid: List<PackPaymentMethod>? = null,
+    @SerialName("DCB")
+    val dcb: List<PackPaymentMethod>? = null,
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class PackPaymentMethod(
     @SerialName("data_pack_id")
-    val dataPackId: Int? = null,
+    val dataPackId: Int? = 0,
     @SerialName("payment_method_id")
-    val paymentMethodId: Int? = null,
+    val paymentMethodId: Int? = 0,
     @SerialName("is_non_bl_free")
-    val isNonBlFree: Int? = null,
+    val isNonBlFree: Int? = 0,
     @SerialName("pack_code")
     val packCode: String? = null,
     @SerialName("pack_details")
     val packDetails: String? = null,
     @SerialName("pack_price")
-    val packPrice: Int? = null,
+    val packPrice: Int? = 0,
     @SerialName("pack_duration")
-    val packDuration: Int? = null,
+    val packDuration: Int? = 0,
     @SerialName("sort_by_code")
-    val sortByCode: Int? = null,
+    val sortByCode: Int? = 0,
     @SerialName("is_prepaid")
-    val isPrepaid: Int? = null,
+    val isPrepaid: Int? = 0,
     @SerialName("listTitle")
     val listTitle: String? = null,
     @SerialName("is_auto_renew")
-    val isAutoRenew: Int? = null,
+    val isAutoRenew: Int? = 0,
     @SerialName("partner_id")
-    val partnerId: Int? = null,
+    val partnerId: Int? = 0,
     @SerialName("campaigns_id")
-    val campaignsId: Int? = null,
+    val campaignsId: Int? = 0,
     @SerialName("data_pack_cta_button")
-    val dataPackCtaButton: Int? = null,
+    val dataPackCtaButton: Int? = 0,
     @SerialName("is_allow_from_outside" )
-    val isAllowFromOutside : Int? = null,
+    val isAllowFromOutside : Int? = 0,
+
+    //for DCB only
+    @SerialName("is_dob"                ) var isDob              : Int?    = null, // don't set the default value to 0
+    @SerialName("dob_price"             ) var dobPrice           : String? = null,
+    @SerialName("dob_cp_id"             ) var dobCpId            : String? = null,
+    @SerialName("dob_subs_offer_id"     ) var dobSubsOfferId     : String? = null,
+) : Parcelable
+
+@Parcelize
+@Serializable
+data class DisplayMessage(
+    @SerialName("top_promotion_msg_bl")
+    var top_promotion_msg_bl: String? = null,
+    @SerialName("top_promotion_msg_nonbl" )
+    var top_promotion_msg_nonbl : String? = null
+):Parcelable
+
+@Parcelize
+@Serializable
+data class SystemDiscount(
+    @SerialName("BL"    ) var BL    : DiscountInfo? = null,
+    @SerialName("NONBL" ) var NONBL : DiscountInfo? = null,
+    @SerialName("BOTH"  ) var BOTH  : DiscountInfo? = null
+):Parcelable
+
+@Parcelize
+@Serializable
+data class DiscountInfo (
+    @SerialName("discount_apply_on_payment_method" ) var discountApplyOnPaymentMethod : DiscountApplyOnPaymentMethod? = DiscountApplyOnPaymentMethod(),
+    @SerialName("which_payment_method_display"     ) var whichPaymentMethodDisplay    : ArrayList<String>             = arrayListOf(),
+    @SerialName("voucher"                          ) var voucher                      : String?                       = null,
+    @SerialName("campaign_type"                    ) var campaignType                 : String?                       = null,
+    @SerialName("partner_name"                     ) var partnerName                  : String?                       = null,
+    @SerialName("partner_id"                       ) var partnerId                    : Int?                          = 0,
+    @SerialName("campaign_name"                    ) var campaignName                 : String?                       = null,
+    @SerialName("campaign_id"                      ) var campaignId                   : Int?                          = 0,
+    @SerialName("campaign_type_id"                 ) var campaignTypeId               : Int?                          = 0,
+    @SerialName("campaign_expire_date"             ) var campaignExpireDate           : String?                       = null,
+    @SerialName("voucher_generated_type"           ) var voucherGeneratedType         : Int?                          = 0
+) : Parcelable
+
+@Parcelize
+@Serializable
+data class DiscountApplyOnPaymentMethod (
+    @SerialName("DCB"   ) var DCB   : String? = null,
+    @SerialName("BKASH" ) var BKASH : String? = null,
+    @SerialName("SSL"   ) var SSL   : String? = null,
+    @SerialName("NAGAD" ) var NAGAD : String? = null
 ) : Parcelable

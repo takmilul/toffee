@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.AddTokenizedAccountInitService
 import com.banglalink.toffee.apiservice.DataPackPurchaseService
+import com.banglalink.toffee.apiservice.DobValidateOtpApiService
 import com.banglalink.toffee.apiservice.MnpStatusService
 import com.banglalink.toffee.apiservice.PackPaymentMethodService
 import com.banglalink.toffee.apiservice.PremiumPackDetailService
@@ -21,11 +22,13 @@ import com.banglalink.toffee.apiservice.TokenizedPaymentMethodApiService
 import com.banglalink.toffee.apiservice.VoucherService
 import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
+import com.banglalink.toffee.data.network.request.DobValidateOtpRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.RemoveTokenizedAccountApiRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
 import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
+import com.banglalink.toffee.data.network.response.DobValidateOtpResponseBean
 import com.banglalink.toffee.data.network.response.MnpStatusBean
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PackPaymentMethodBean
@@ -36,6 +39,7 @@ import com.banglalink.toffee.data.network.response.RechargeByBkashBean
 import com.banglalink.toffee.data.network.response.RemoveTokenizeAccountApiResponse
 import com.banglalink.toffee.data.network.response.SubHistoryResponseBean
 import com.banglalink.toffee.data.network.response.SubscriberPaymentInitBean
+import com.banglalink.toffee.data.network.response.SystemDiscount
 import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.data.network.response.TokenizedPaymentMethodsApiResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -80,6 +84,7 @@ class PremiumViewModel @Inject constructor(
     private val tokenizedPaymentMethodApiService: TokenizedPaymentMethodApiService,
     private val tokenizedAccountInfoApiService: TokenizedAccountInfoApiService,
     private val removeTokenizeAccountApiService: RemoveTokenizeAccountApiService,
+    private val dobValidateOtpApiService: DobValidateOtpApiService,
 ) : ViewModel() {
     
     private var _packListState = MutableSharedFlow<Resource<List<PremiumPack>>>()
@@ -119,6 +124,7 @@ class PremiumViewModel @Inject constructor(
     var paymentMethod = savedState.getLiveData<PackPaymentMethodBean>("paymentMethod")
     
     var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
+    var selectedPackSystemDiscount = savedState.getLiveData<SystemDiscount>("systemDiscount")
     
     var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
     var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
@@ -142,6 +148,7 @@ class PremiumViewModel @Inject constructor(
     val isTokenizedAccountInitFailed = MutableLiveData<Boolean?>(null)
     val tokenizedAccountInfoResponse = SingleLiveEvent<Resource<List<TokenizedAccountInfo>?>>()
     val removeTokenizeAccountResponse = MutableLiveData<RemoveTokenizeAccountApiResponse?>()
+    val dobValidateOtpResponse = SingleLiveEvent<Resource<DobValidateOtpResponseBean?>>()
 
     fun getPremiumPackList(contentId: String = "0") {
         viewModelScope.launch {
@@ -355,6 +362,13 @@ class PremiumViewModel @Inject constructor(
                     appContext.showToast(response.error.msg)
                 }
             }
+        }
+    }
+
+    fun dobValidateOtp(body: DobValidateOtpRequest){
+        viewModelScope.launch {
+            val response = resultFromResponse { dobValidateOtpApiService.execute(body) }
+            dobValidateOtpResponse.value = response
         }
     }
 }

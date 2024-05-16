@@ -2811,7 +2811,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                bubbleFifaIntent?.let { stopService(it) }
+                bubbleFifaIntent?.let { startService(it) }
             }
         }
     }
@@ -2847,8 +2847,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(this,
-            title = getString(R.string.missing_overlay_permission_dialog_title),
-            text = getString(R.string.missing_overlay_permission_dialog_message),
+            title = mPref.bubblePermissionDialogTitle,
+            text = mPref.bubblePermissionDialogBody,
             icon = R.drawable.ic_not_verified,
             positiveButtonTitle = "Allow",
             positiveButtonListener = {

@@ -2,7 +2,11 @@ package com.banglalink.toffee.ui.premium.payment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
+import android.util.Log
+import android.view.View
 import android.widget.RadioButton
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
@@ -12,6 +16,8 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.listeners.DataPackOptionCallback
 import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.common.MyViewHolder
+import com.banglalink.toffee.util.calculateDiscountedPrice
+import timber.log.Timber
 
 class PaymentDataPackOptionAdapter(
     val context: Context,
@@ -43,6 +49,8 @@ class PaymentDataPackOptionAdapter(
             obj.let {
                 val radioButton = holder.itemView.findViewById<RadioButton>(R.id.dataPackOptionRadioButton)
                 val packOptionContainer = holder.itemView.findViewById<ConstraintLayout>(R.id.packOptionContainerOne)
+                val priceTv = holder.itemView.findViewById<TextView>(R.id.dataPackOptionAmountTextView)
+                val priceBeforeDiscount = holder.itemView.findViewById<TextView>(R.id.dataPackPriceBeforeDiscountTv)
 //                radioButton.isChecked = obj.dataPackId==selectedItem?.dataPackId
                 radioButton.setOnCheckedChangeListener(null)
 
@@ -53,6 +61,33 @@ class PaymentDataPackOptionAdapter(
                     selectedPosition = position
 
                     notifyDataSetChanged()
+                }
+
+                if (mPref.paymentDiscountPercentage.value.isNullOrEmpty()){
+                    priceBeforeDiscount.visibility= View.GONE
+                    priceTv.text=" BDT "+obj.packPrice.toString()
+                }else{
+                    try {
+                        /** isDob = 0 is only for bl prepaid and postpaid plan, otherwise it will be 1 (DCB) or null (Others)
+                         * we dont want to show discount price for bl prepaid and postpaid
+                         * */
+                        if (obj.isDob != 0 ){
+                            priceBeforeDiscount.visibility= View.VISIBLE
+                            val discountedPrice = calculateDiscountedPrice(
+                                obj.packPrice?.toDouble()?:0.0,
+                                mPref.paymentDiscountPercentage.value?.toDouble()?:0.0
+                            )
+                            priceTv.text="BDT "+discountedPrice.toInt()
+                            priceBeforeDiscount.text="BDT "+obj.packPrice.toString()
+                            priceBeforeDiscount.paintFlags = priceBeforeDiscount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        } else {
+                            priceBeforeDiscount.visibility= View.GONE
+                            priceTv.text=" BDT "+obj.packPrice.toString()
+                        }
+
+                    }catch (e: Exception) {
+                        Timber.tag("calculateDiscount").i("onPackSelectEventChanged: %s", e.message)
+                    }
                 }
             }
         }

@@ -89,5 +89,9 @@
         android:name="com.banglalink.toffee.ui.premium.payment.SavedAccountFragment"
         android:label="fragment_saved_account"
         tools:layout="@layout/fragment_saved_account" />
+    <fragment
+        android:id="@+id/dcbEnterOtpFragment"
+        android:name="com.banglalink.toffee.ui.premium.payment.DcbEnterOtpFragment"
+        tools:layout="@layout/fragment_dcb_enter_otp" />
 
 </navigation>

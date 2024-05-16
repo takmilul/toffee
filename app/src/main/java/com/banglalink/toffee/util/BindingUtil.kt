@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -22,6 +23,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.data.network.response.PremiumPack
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
@@ -503,4 +505,5 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             }
         }
     }
+
 }

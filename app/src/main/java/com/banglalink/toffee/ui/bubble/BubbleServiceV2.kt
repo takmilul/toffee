@@ -69,8 +69,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                         it.adIconUrl.ifNotNullOrBlank {
                             binding.homeTeamFlag.load(it)
                         }
-                        binding.fifaTitleOne.text = it.bubbleText
-                        binding.fifaTitleOne.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
+                        binding.bubbleTitle.text = it.bubbleText
+                        binding.bubbleTitle.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
                             HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
                         
@@ -163,7 +163,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
         val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullOrBlank { it } ?: "0"
         binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
-        binding.fifaTitleOne.text = "LIVE"
+        binding.bubbleTitle.text = "LIVE"
     }
     
     private fun matchUpcomingState() {
@@ -182,7 +182,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             
             val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
             val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
-            binding.fifaTitleOne.text = finalDay?.uppercase(Locale.getDefault())
+            binding.bubbleTitle.text = finalDay?.uppercase(Locale.getDefault())
             
             val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
             val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }

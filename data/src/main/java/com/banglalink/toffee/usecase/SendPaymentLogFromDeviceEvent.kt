@@ -56,4 +56,22 @@ data class PaymentLogFromDeviceData(
     val statusCode : String? = null,
     @SerialName("statusMessage")
     val statusMessage : String? = null,
+    @SerialName("voucher")
+    val voucher : String? = null,
+    @SerialName("campaign_type")
+    val campaignType : String? = null,
+    @SerialName("partner_name")
+    val partnerName : String? = null,
+    @SerialName("partner_id")
+    val partnerId : Int? = 0,
+    @SerialName("campaign_name")
+    val campaignName : String? = null,
+    @SerialName("campaign_id")
+    val campaignId : Int? = 0,
+    @SerialName("campaign_expire_date")
+    val campaignExpireDate : String? = null,
+    @SerialName("discount")
+    val discount : Int? = 0,
+    @SerialName("original_price")
+    val originalPrice : Int? = 0,
 ) : PubSubBaseRequest()

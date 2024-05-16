@@ -221,6 +221,12 @@ data class CustomerInfoLogin(
     val faqUrl : String? = null,
     @SerialName("isQrCodeEnable")
     val isQrCodeEnable: Int = 0,
+    @SerialName("bubblePermissionDialogTitle")
+    val bubblePermissionDialogTitle: String? = null,
+    @SerialName("bubblePermissionDialogBody")
+    val bubblePermissionDialogBody: String? = null,
+    @SerialName("bubbleMenuText")
+    val bubbleMenuText: String? = null,
 ) : BodyResponse(), Parcelable
 
 @Entity

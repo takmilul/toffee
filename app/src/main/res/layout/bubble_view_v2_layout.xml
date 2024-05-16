@@ -27,13 +27,13 @@
             android:layout_marginStart="6dp"
             android:visibility="gone"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintEnd_toStartOf="@id/fifaTitleOne"
-            app:layout_constraintBottom_toBottomOf="@id/fifaTitleOne"
+            app:layout_constraintEnd_toStartOf="@id/bubbleTitle"
+            app:layout_constraintBottom_toBottomOf="@id/bubbleTitle"
             app:layout_constraintStart_toEndOf="@+id/homeTeamFlag"
-            app:layout_constraintTop_toTopOf="@id/fifaTitleOne" />
-        
+            app:layout_constraintTop_toTopOf="@id/bubbleTitle" />
+
         <TextView
-            android:id="@+id/fifaTitleOne"
+            android:id="@+id/bubbleTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toStartOf="@+id/awayTeamFlag"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/homeTeamFlag"
-            app:layout_constraintTop_toBottomOf="@+id/fifaTitleOne"
+            app:layout_constraintTop_toBottomOf="@+id/bubbleTitle"
             tools:text="Starts in 23 days" />
         
         <ImageView
@@ -101,21 +101,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/rounded_corner_shape"
-        android:padding="2dp"
-        android:layout_marginBottom="-4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/bubbleIconView"
+        android:paddingVertical="2dp"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/bubbleIconView"
         app:layout_constraintStart_toStartOf="@+id/bubbleIconView">
-        
+
         <TextView
             android:id="@+id/poweredByText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginEnd="4dp"
             android:fontFamily="@font/roboto_medium"
             android:textColor="#111F31"
-            android:textSize="8sp"
+            android:textSize="9sp"
             android:text="Powered by"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/poweredByImage"
@@ -125,9 +124,8 @@
         
         <ImageView
             android:id="@+id/poweredByImage"
-            android:layout_width="7dp"
-            android:layout_height="9dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="8dp"
+            android:layout_height="10dp"
             app:srcCompat="@drawable/ic_splash_logo_gif"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

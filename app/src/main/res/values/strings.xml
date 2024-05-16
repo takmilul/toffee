@@ -251,6 +251,7 @@
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="i_agree_with_text">&#160;&#160;I agree to the&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
+    <string name="enter_six_digit_otp_text">Enter 5 digit OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_logged_in_text">Successfully Logged In!</string>
     <string name="select_at_least_3_of_your_interests_text">Please select \nat least 3 of your interests</string>
@@ -548,7 +549,8 @@
     <string name="starting_price_ssl">From BDT %s, Access Only</string>
     <string name="buy_now">BUY NOW</string>
     <string name="buy_bkash">BUY WITH BKASH</string>
-    <string name="payment_consent_text">By clicking below button you are agreeing to</string>
+    <string name="payment_consent_text">By proceeding, you agree to the</string>
+    <string name="payment_need_to_enter_otp_text">On the following screen, you will be prompted to enter an OTP.</string>
     <string name="buy_with_mobile_balance">BUY WITH MOBILE BALANCE</string>
     <string name="buy_with_recharge">BUY WITH RECHARGE</string>
     <string name="choose_a_plan">Choose a Plan</string>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/backImg"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@null"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pack_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/enter_code"
+            android:textAlignment="center"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/backImg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/backImg" />
+
+        <TextView
+            android:id="@+id/sentOtpInfoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:background="@null"
+            android:checked="true"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textColor="@color/main_text_color"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/pack_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/otpCode"
+            app:layout_goneMarginTop="32dp"
+            android:layout_marginTop="32dp"
+            tools:text="We have sent OTP to 01971035458. Please enter the OTP to confirm the purchase."
+            tools:visibility="visible" />
+
+        <EditText
+            android:id="@+id/otpCode"
+            style="@style/LeadingIconSingleLineInputFieldStyle"
+            android:layout_marginTop="32dp"
+            android:hint="@string/enter_six_digit_otp_text"
+            android:maxLength="5"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/error_solved_single_line_input_text_bg"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/countdownTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sentOtpInfoTitle"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/countdownTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/resend_otp_in_59s_text"
+            android:textColor="@color/main_text_color"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/confirmBtn"
+            app:layout_constraintEnd_toEndOf="@+id/otpCode"
+            app:layout_constraintStart_toStartOf="@+id/otpCode"
+            app:layout_constraintTop_toBottomOf="@+id/otpCode"/>
+        <TextView
+            android:id="@+id/resendButton"
+            style="@style/ViewAllTextView"
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="0dp"
+            android:visibility="gone"
+            android:text="@string/resend_text"
+            android:textAllCaps="true"
+            app:drawableEndCompat="@drawable/ic_right_arrow"
+            app:layout_constraintBottom_toTopOf="@id/confirmBtn"
+            app:layout_constraintEnd_toEndOf="@+id/otpCode"
+            app:layout_constraintStart_toStartOf="@+id/otpCode"
+            app:layout_constraintTop_toBottomOf="@+id/otpCode" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirmBtn"
+            style="@style/ButtonStyleSolidPink"
+            android:layout_width="216dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="48dp"
+            android:text="@string/confirm"
+            android:textAllCaps="true"
+            android:enabled="false"
+            android:textColor="@color/text_color_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/countdownTextView"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

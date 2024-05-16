@@ -8,3 +8,12 @@ enum class PaymentMethod(val value: Int) {
     SSL(13),
     NAGAD(9),
 }
+enum class PaymentMethodString(val value: String) {
+    BKASH ("BKASH"),
+    BL ("BL"),
+    BLDCB ("bldcb"),
+    VOUCHER ("VOUCHER"),
+    FREE ("FREE"),
+    SSL ("SSL"),
+    NAGAD("NAGAD"),
+}

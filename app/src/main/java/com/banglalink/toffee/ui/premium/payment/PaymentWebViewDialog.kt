@@ -75,6 +75,16 @@ class PaymentWebViewDialog : DialogFragment() {
     private var isHideCloseIcon: Boolean = false
     private var isBkashBlRecharge: Boolean = false
     private var purchaseCallAfterRecharge: Boolean = false
+
+    private var payableAmount: String? = null
+    private var voucher: String? = null
+    private var campaignType: String? = null
+    private var partnerName: String? = null
+    private var partnerId: String? = null
+    private var campaignName: String? = null
+    private var campaignId: String? = null
+    private var campaignExpireDate: String? = null
+
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
     private var _binding: DialogHtmlPageViewBinding? = null
@@ -111,7 +121,17 @@ class PaymentWebViewDialog : DialogFragment() {
         isVisibilityHideCloseIcon = arguments?.getBoolean("isVisibilityHideCloseIcon", false) ?: false
         isBkashBlRecharge = arguments?.getBoolean("isBkashBlRecharge", false) ?: false
         purchaseCallAfterRecharge = arguments?.getBoolean("isPurchaseCallAfterRecharge", false) ?: true
-        
+
+
+        payableAmount = arguments?.getString("paymentId")
+        voucher = arguments?.getString("voucher")
+        campaignType = arguments?.getString("campaignType")
+        partnerName = arguments?.getString("partnerName")
+        partnerId = arguments?.getString("partnerId")
+        campaignName = arguments?.getString("campaignName")
+        campaignId = arguments?.getString("campaignId")
+        campaignExpireDate = arguments?.getString("campaignExpireDate")
+
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
 //        if (isHideCloseIcon) binding.closeIv.setImageResource(R.drawable.ic_toffee) else binding.closeIv.setImageResource(R.drawable.ic_close)
@@ -223,7 +243,17 @@ class PaymentWebViewDialog : DialogFragment() {
                                         transactionStatus = statusCode,
                                         amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
                                         merchantInvoiceNumber = null,
-                                        rawResponse = url.toString()
+                                        rawResponse = url.toString(),
+
+                                        voucher = voucher ,
+                                        campaignType = campaignType ,
+                                        partnerName = partnerName,
+                                        partnerId = partnerId?.toInt()?:0,
+                                        campaignName = campaignName,
+                                        campaignId = campaignId?.toInt()?:0,
+                                        campaignExpireDate = campaignExpireDate,
+                                        discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                                     ))
 
                                     // Navigate or perform actions based on payment type and status code
@@ -669,7 +699,17 @@ class PaymentWebViewDialog : DialogFragment() {
                                     transactionStatus = statusCode,
                                     amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
                                     merchantInvoiceNumber = null,
-                                    rawResponse = url.toString()
+                                    rawResponse = url.toString(),
+
+                                    voucher = voucher ,
+                                    campaignType = campaignType ,
+                                    partnerName = partnerName,
+                                    partnerId = partnerId?.toInt()?:0,
+                                    campaignName = campaignName,
+                                    campaignId = campaignId?.toInt()?:0,
+                                    campaignExpireDate = campaignExpireDate,
+                                    discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
                                 ))
 
                                 if (callBackStatus == "failure" || callBackStatus == "failed"){

@@ -571,4 +571,9 @@ interface ToffeeApi {
         @Body body: RemoveTokenizedAccountApiRequest
     ) : RemoveTokenizeAccountApiBaseResponse
 
+    @POST("dob-validate-otp")
+    suspend fun dobValidateOtp(
+        @Body dobValidateOtpRequest: DobValidateOtpRequest
+    ): DobValidateOtpBaseResponse
+
 }
