@@ -32,6 +32,7 @@ import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.login.ResendCodeTimer
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.SUBSCRIBER_PAYMENT_FAILED
+import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.SUCCESS
 import com.banglalink.toffee.ui.premium.payment.PaymentStatusDialog.Companion.UN_SUCCESS
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
@@ -142,15 +143,52 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                     progressDialog.dismiss()
 
                     it.data?.let {
+                        viewModel.sendPaymentLogFromDeviceData(
+                            PaymentLogFromDeviceData(
+                                id = System.currentTimeMillis() + mPref.customerId,
+                                callingApiName = "${paymentName}ValidateOtp",
+                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                paymentMsisdn = null,
+                                paymentPurpose = "ECOM_TXN",
+                                paymentRefId = if (paymentName == "nagad") requestId else null,
+                                paymentId = if (paymentName == "bkash") requestId else null,
+                                transactionId = if (paymentName == "ssl") requestId else null,
+                                requestId = if(paymentName == PaymentMethodString.BLDCB.value) requestId else null,
+                                transactionStatus = statusCode,
+                                amount = packPriceToPay.toString(),
+                                merchantInvoiceNumber = null,
+                                rawResponse = json.encodeToString(it),
+                                voucher = discountInfo?.voucher ,
+                                campaignType = discountInfo?.campaignType ,
+                                partnerName = discountInfo?.partnerName,
+                                partnerId = discountInfo?.partnerId ?:0,
+                                campaignName = discountInfo?.campaignName,
+                                campaignId = discountInfo?.campaignId?:0,
+                                campaignExpireDate = discountInfo?.campaignExpireDate,
+                                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                                dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                                dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                                dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
+                            )
+                        )
                         if (it.status == true){
                             mPref.activePremiumPackList.value = it.loginRelatedSubsHistory
-                            val isPurchased = checkPackPurchased()
-                            if (isPurchased) {
-                                mPref.packDetailsPageRefreshRequired.value = true
-                            } else {
-                                requireContext().showToast(getString(R.string.try_again_message))
-                                closeDialog()
-                            }
+
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to SUCCESS
+                            )
+                            findNavController().navigatePopUpTo(
+                                resId = R.id.paymentStatusDialog,
+                                popUpTo = R.id.paymentDataPackOptionsFragment,
+                                inclusive = false,
+                                args = args
+                            )
+
                         }
                         else if(it.status == false && it.responseFromWhere == 1){ // invalid otp
                             requireContext().showToast(it.message.toString())
@@ -167,39 +205,49 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                                 args = args
                             )
                         }
-                    }
+                    } ?: requireContext().showToast(getString(R.string.try_again_message))
                 }
                 is Resource.Failure -> {
                     progressDialog.dismiss()
                     requireContext().showToast(it.error.msg)
+
+                    viewModel.sendPaymentLogFromDeviceData(
+                        PaymentLogFromDeviceData(
+                            id = System.currentTimeMillis() + mPref.customerId,
+                            callingApiName = "${paymentName}ValidateOtp",
+                            packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                            packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                            dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                            paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                            paymentMsisdn = null,
+                            paymentPurpose = "ECOM_TXN",
+                            paymentRefId = if (paymentName == "nagad") requestId else null,
+                            paymentId = if (paymentName == "bkash") requestId else null,
+                            transactionId = if (paymentName == "ssl") requestId else null,
+                            requestId = if(paymentName == PaymentMethodString.BLDCB.value) requestId else null,
+                            transactionStatus = statusCode,
+                            amount = packPriceToPay.toString(),
+                            merchantInvoiceNumber = null,
+                            rawResponse = json.encodeToString(it),
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                            dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                            dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                            dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
+                        )
+                    )
                 }
             }
         }
     }
-    /**
-     * Check if the selected premium pack is purchase or not
-     */
-    private fun checkPackPurchased(): Boolean {
-        return viewModel.selectedPremiumPack.value?.let { selectedPack ->
-            mPref.activePremiumPackList.value?.getPurchasedPack(
-                viewModel.selectedPremiumPack.value?.id,
-                mPref.isVerifiedUser,
-                mPref.getSystemTime()
-            )?.let { activePack ->
-                viewModel.selectedPremiumPack.value = selectedPack.copy(
-                    isPackPurchased = activePack.isActive,
-                    expiryDate = "Expires on ${Utils.formatPackExpiryDate(activePack.expiryDate)}",
-                    packDetail = if (activePack.isTrialPackUsed) activePack.packDetail else "You have bought ${activePack.packDetail} pack"
-                )
-                true
-            } ?: run {
-                viewModel.selectedPremiumPack.value = selectedPack.copy(isPackPurchased = false)
-                false
-            }
-        } ?: false
-    }
-
-
     private fun handleResendButton(){
         binding.resendButton.hide()
         startCountDown()
@@ -268,7 +316,6 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
                 cusEmail = mPref.customerEmail,
-
                 voucher = discountInfo?.voucher,
                 campaign_type = discountInfo?.campaignType,
                 partner_name = discountInfo?.partnerName,
@@ -280,7 +327,6 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                 voucher_generated_type = discountInfo?.voucherGeneratedType,
                 discount = mPref.paymentDiscountPercentage.value?.toInt()?:0, // the percentage of discount applied
                 original_price = selectedDataPackOption?.packPrice ?: 0, // actual pack price without discount or else
-
                 dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                 dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                 dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -322,11 +368,11 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                                 paymentRefId = if (paymentName == "nagad") requestId else null,
                                 paymentId = if (paymentName == "bkash") requestId else null,
                                 transactionId = if (paymentName == "ssl") requestId else null,
+                                requestId = if(paymentName == PaymentMethodString.BLDCB.value) requestId else null,
                                 transactionStatus = statusCode,
                                 amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
                                 rawResponse = json.encodeToString(it),
-
                                 voucher = discountInfo?.voucher ,
                                 campaignType = discountInfo?.campaignType ,
                                 partnerName = discountInfo?.partnerName,
@@ -335,7 +381,10 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                                 campaignId = discountInfo?.campaignId?:0,
                                 campaignExpireDate = discountInfo?.campaignExpireDate,
                                 discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                                dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                                dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                                dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
                             )
                         )
 
@@ -376,11 +425,11 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                             paymentRefId = if (paymentName == "nagad") requestId else null,
                             paymentId = if (paymentName == "bkash") requestId else null,
                             transactionId = if (paymentName == "ssl") requestId else null,
+                            requestId = if(paymentName == PaymentMethodString.BLDCB.value) requestId else null,
                             transactionStatus = statusCode,
                             amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
                             rawResponse = json.encodeToString(it),
-
                             voucher = discountInfo?.voucher ,
                             campaignType = discountInfo?.campaignType ,
                             partnerName = discountInfo?.partnerName,
@@ -389,7 +438,10 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
                             discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                            dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                            dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                            dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
                         )
                     )
                     requireContext().showToast(it.error.msg)
