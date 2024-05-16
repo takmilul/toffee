@@ -106,7 +106,8 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
-import com.banglalink.toffee.enums.BubbleType.FIFA
+import com.banglalink.toffee.enums.BubbleType.FOOTBALL
+import com.banglalink.toffee.enums.BubbleType.CRICKET
 import com.banglalink.toffee.enums.BubbleType.RAMADAN
 import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.enums.CdnType
@@ -457,7 +458,7 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.startBubbleService) {
             if (it) {
                 startBubbleService()
-            } else if(mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+            } else if((mPref.bubbleType == FOOTBALL.value || mPref.bubbleType == CRICKET.value) && mPref.isFifaBubbleActive) {
                 bubbleFifaIntent?.let { stopService(it) }
             }
             else if(mPref.bubbleType == RAMADAN.value && mPref.isBubbleActive) {
@@ -2797,7 +2798,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun startBubbleService() {
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-            if (mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+            if ((mPref.bubbleType == FOOTBALL.value || mPref.bubbleType == CRICKET.value) && mPref.isFifaBubbleActive) {
                 startFifaBubbleService()
             } else if (mPref.bubbleType == RAMADAN.value) {
                 startRamadanBubbleService()

@@ -10,8 +10,6 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.FragmentSettingsBinding
-import com.banglalink.toffee.enums.BubbleType.FIFA
-import com.banglalink.toffee.enums.BubbleType.RAMADAN
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
@@ -34,9 +32,9 @@ class SettingsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Settings"
-        binding.bubbleSwitch.isVisible = mPref.isBubbleActive && mPref.bubbleType == FIFA.value
+        binding.bubbleSwitch.isVisible = mPref.isBubbleActive
         binding.bubbleText.text = mPref.bubbleMenuText
-        binding.bubbleDivider.isVisible = mPref.isBubbleActive && mPref.bubbleType == FIFA.value
+        binding.bubbleDivider.isVisible = mPref.isBubbleActive
         binding.prefClearWatch.isVisible = mPref.isVerifiedUser
         binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }

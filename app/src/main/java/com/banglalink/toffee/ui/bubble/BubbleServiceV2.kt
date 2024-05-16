@@ -12,6 +12,8 @@ import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
+import com.banglalink.toffee.enums.BubbleType.FOOTBALL
+import com.banglalink.toffee.enums.BubbleType.CRICKET
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -162,7 +164,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         }
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
         val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullOrBlank { it } ?: "0"
-        binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
+        binding.scoreCard.text = if (mPref.bubbleType == FOOTBALL.value) "$homeTeamScore - $awayTeamScore" else bubbleConfig?.bubbleTextAction.toString()
         binding.bubbleTitle.text = "LIVE"
     }
     
