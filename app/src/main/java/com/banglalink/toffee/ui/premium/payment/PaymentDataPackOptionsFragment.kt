@@ -125,7 +125,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
 
         prepareDataPackOptions()
-
         observe(viewModel.selectedDataPackOption) {
             if (it.listTitle == null) {
                 mAdapter.setSelectedItem(it)
@@ -560,12 +559,11 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         }
                         if (!prePaid.isNullOrEmpty()) {
                             packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
-                            packPaymentMethodList.addAll(prePaid!!)
+                            packPaymentMethodList.addAll(prePaid)
+                        } else if (!postPaid.isNullOrEmpty()) {
+                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
+                            packPaymentMethodList.addAll(postPaid)
                         }
-//                        if (!postPaid.isNullOrEmpty()) {
-//                            packPaymentMethodList.add(PackPaymentMethod(listTitle = "Access + Data"))
-//                            packPaymentMethodList.addAll(postPaid)
-//                        }
                     }
                 }
             }
