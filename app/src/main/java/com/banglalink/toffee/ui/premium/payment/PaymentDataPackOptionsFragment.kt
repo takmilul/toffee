@@ -162,26 +162,26 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
 
                 }
                 PaymentMethodName.NAGAD.value->{
-                    if (!viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                    if (!viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl.isNullOrEmpty()){
                         binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.top_promotion_msg_for_plan_nonbl_prepaid
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.nagad?.topPromotionMsgForNonBl
                     }else{
                         binding.planSubTitle.hide()
                     }
 
                 }
                 PaymentMethodName.BKASH.value->{
-                    if (!viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                    if (!viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl.isNullOrEmpty()){
                         binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.top_promotion_msg_for_plan_nonbl_prepaid
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.bkash?.topPromotionMsgForNonBl
                     }else{
                         binding.planSubTitle.hide()
                     }
                 }
                 PaymentMethodName.SSL.value->{
-                    if (!viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
+                    if (!viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl.isNullOrEmpty()){
                         binding.planSubTitle.show()
-                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.top_promotion_msg_for_plan_nonbl_prepaid
+                        binding.planSubTitle.text = viewModel.paymentMethod.value?.ssl?.topPromotionMsgForNonBl
                     }else{
                         binding.planSubTitle.hide()
                     }

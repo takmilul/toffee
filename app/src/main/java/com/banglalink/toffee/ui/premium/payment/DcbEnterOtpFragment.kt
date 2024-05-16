@@ -262,7 +262,7 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                 val remainingSecs = it / 1000
                 val minutes = (remainingSecs / 60).toInt()
                 val seconds = (remainingSecs % 60).toInt()
-                val timeText = (String.format("%02d", minutes) + ":" + String.format("%02d", seconds))
+                val timeText =  String.format("%02d", seconds)
                 val countDownText = String.format(getString(R.string.sign_in_countdown_text), timeText)
                 val str = SpannableString(countDownText)
                 str.setSpan(
