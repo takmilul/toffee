@@ -28,6 +28,7 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
+import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
 import androidx.media3.exoplayer.dash.DashUtil
@@ -56,6 +57,7 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.DrmLicenseService
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
@@ -116,24 +118,25 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
 
-@UnstableApi @AndroidEntryPoint
+@UnstableApi
+@AndroidEntryPoint
 abstract class PlayerPageActivity :
     PlaylistListener,
     AnalyticsListener,
     BaseAppCompatActivity(),
     SessionAvailabilityListener,
-    OnPlayerControllerChangedListener {
+    OnPlayerControllerChangedListener
+{
+        
     private var startWindow = 0
     private var maxBitRate: Int = 0
-    @Inject
-    lateinit var json: Json
+    @Inject lateinit var json: Json
     private var adPlayCounter: Int = -1
     private var adFrequency: Int = 0
     private var prevAdGroup: String? = null
@@ -144,8 +147,7 @@ abstract class PlayerPageActivity :
     private var fallbackCounter: Int = 0
     protected var player: Player? = null
     private var isAppBackgrounded = false
-    @Inject
-    lateinit var pingTool: PingTool
+    @Inject lateinit var pingTool: PingTool
     private var isAdRunning: Boolean = false
     private var adsLoader: AdsLoader? = null
     private var exoPlayer: ExoPlayer? = null
@@ -153,34 +155,24 @@ abstract class PlayerPageActivity :
     protected var castContext: CastContext? = null
     protected var playerErrorMessage: String? = null
     private var currentlyPlayingVastUrl: String = ""
-    @Inject
-    lateinit var drmTokenApi: DrmTokenService
+    @Inject lateinit var drmTokenApi: DrmTokenService
+    @Inject lateinit var drmLicenseService: DrmLicenseService
     private var mediaSession: MediaSessionCompat? = null
-    @Inject
-    lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
-    @ToffeeHeader
-    @Inject
-    lateinit var toffeeHeader: String
-    @Inject
-    lateinit var connectionWatcher: ConnectionWatcher
-    @Inject
-    lateinit var drmLicenseRepo: DrmLicenseRepository
+    @ToffeeHeader @Inject lateinit var toffeeHeader: String
+    @Inject lateinit var connectionWatcher: ConnectionWatcher
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     private val playerViewModel by viewModels<PlayerViewModel>()
     private var defaultTrackSelector: DefaultTrackSelector? = null
-    @DnsHttpClient
-    @Inject
-    lateinit var dnsHttpClient: OkHttpClient
-    @Inject
-    lateinit var playerEventHelper: ToffeePlayerEventHelper
-    @Inject
-    lateinit var contentViewRepo: ContentViewPorgressRepsitory
+    @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
+    @Inject lateinit var playerEventHelper: ToffeePlayerEventHelper
+    @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
-    @Inject
-    lateinit var continueWatchingRepo: ContinueWatchingRepository
+    @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
-
+    
     companion object {
         private const val KEY_WINDOW = "window"
         private const val KEY_POSITION = "position"
@@ -191,7 +183,7 @@ abstract class PlayerPageActivity :
         private const val KEY_AD_FREQUENCY = "ad_frequency"
         private const val KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters"
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observe(mPref.isWebViewDialogOpened) {
@@ -212,7 +204,7 @@ abstract class PlayerPageActivity :
                 null
             }
         }
-
+        
         if (savedInstanceState != null) {
             startWindow = savedInstanceState.getInt(KEY_WINDOW)
             startPosition = savedInstanceState.getLong(KEY_POSITION)
@@ -238,21 +230,21 @@ abstract class PlayerPageActivity :
                 playerAnalyticsListener?.resetData()
             }
         }
-
+        
         adsLoader = ImaAdsLoader.Builder(this).setAdEventListener {
             onAdEventListener(it)
         }.setAdErrorListener {
             onAdErrorListener(it)
         }.build()
     }
-
+    
     abstract val playlistManager: PlaylistManager
     abstract fun getPlayerView(): PlayerView
-
+    
     protected open fun onContentExpired() {
         //hook for subclass
     }
-
+    
     public override fun onStart() {
         super.onStart()
         val channelInfo = getCurrentChannelInfo()
@@ -263,7 +255,7 @@ abstract class PlayerPageActivity :
         }
         mediaSession?.isActive = true
     }
-
+    
     public override fun onResume() {
         super.onResume()
         val channelInfo = getCurrentChannelInfo()
@@ -273,7 +265,7 @@ abstract class PlayerPageActivity :
             }
         }
     }
-
+    
     public override fun onPause() {
         super.onPause()
         val channelInfo = getCurrentChannelInfo()
@@ -284,7 +276,7 @@ abstract class PlayerPageActivity :
             isAppBackgrounded = true
         }
     }
-
+    
     public override fun onStop() {
         super.onStop()
         val channelInfo = getCurrentChannelInfo()
@@ -295,7 +287,7 @@ abstract class PlayerPageActivity :
             isAppBackgrounded = true
         }
     }
-
+    
     override fun onDestroy() {
         super.onDestroy()
         val channelInfo = getCurrentChannelInfo()
@@ -308,7 +300,6 @@ abstract class PlayerPageActivity :
 //        mOfflineLicenseHelper?.release()
 //        mOfflineLicenseHelper = null
     }
-
     @SuppressLint("MissingSuperCall")
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -328,7 +319,7 @@ abstract class PlayerPageActivity :
             putBundle(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters?.toBundle())
         }
     }
-
+    
     fun initializePlayer() {
         retryCounter = 0
         reloadCounter = 0
@@ -336,7 +327,7 @@ abstract class PlayerPageActivity :
         initializeLocalPlayer()
         initializeRemotePlayer()
         player = if (castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
-
+        
         player?.let { pl ->
             if (pl is CastPlayer && playlistManager.getCurrentChannel() == null) {
                 val ci = pl.currentMediaItem?.getChannelMetadata(pl)
@@ -344,14 +335,13 @@ abstract class PlayerPageActivity :
                 if (ci != null) playlistManager.setPlaylist(ci)
             }
         }
-
         //we are checking whether there is already channelInfo exist. If not null then play it
         if (playlistManager.getCurrentChannel() != null && player != castPlayer) {
             player?.playWhenReady = true
             playChannel(true)
         }
     }
-
+    
     private fun initializeLocalPlayer() {
         if (exoPlayer == null) {
             val adaptiveTrackSelectionFactory =
@@ -361,13 +351,14 @@ abstract class PlayerPageActivity :
             playerAnalyticsListener = PlayerAnalyticsListener()
             httpDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient.apply {
-                    if (BuildConfig.DEBUG) {
-                        newBuilder()
-                            .addNetworkInterceptor(
-                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
-                            )
-                            .build()
-                    }
+//                    if (BuildConfig.DEBUG) {
+//                        newBuilder()
+//                            .addInterceptor(DrmInterceptor())
+//                            .addNetworkInterceptor(
+//                                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+//                            )
+//                            .build()
+//                    }
                 }
             )
 //            val cacheFolder = File(this.cacheDir, "/toffee_media")
@@ -378,13 +369,13 @@ abstract class PlayerPageActivity :
 //                .setCache(cache)
 //                .setUpstreamDataSourceFactory(httpDataSourceFactory)
 //                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-
+            
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setLocalAdInsertionComponents({ adsLoader }, getPlayerView())
 //                .setCmcdConfigurationFactory(CmcdConfiguration.Factory.DEFAULT)
 //                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(Int.MAX_VALUE))
-
+            
             exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
@@ -408,33 +399,33 @@ abstract class PlayerPageActivity :
             observeNetworkChange()
         }
     }
-
+    
     inner class MediaSessionCallback : Callback() {
         override fun onPlay() {
             super.onPlay()
             player?.play()
             updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
         }
-
+        
         override fun onPause() {
             super.onPause()
             player?.pause()
             updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
         }
-
+        
         override fun onSkipToNext() {
             super.onSkipToNext()
             playNext()
             updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
         }
-
+        
         override fun onSkipToPrevious() {
             super.onSkipToPrevious()
             playPrevious()
             updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
         }
     }
-
+    
     private fun getAction(): Long {
         val mediaActionPlayPause =
             (PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE)
@@ -444,7 +435,7 @@ abstract class PlayerPageActivity :
             (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
         val mediaActionAll: Long =
             (mediaActionPlayPause or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-
+        
         return if (!hasNext() && !hasPrevious()) {
             mediaActionPlayPause
         } else if (hasNext() && !hasPrevious()) {
@@ -455,7 +446,7 @@ abstract class PlayerPageActivity :
             mediaActionAll
         }
     }
-
+    
     private fun updatePlaybackState(@State state: Int) {
         val position = player?.currentPosition?.toInt() ?: 0
         val mediaId = player?.currentMediaItem?.getChannelMetadata(player)?.id?.toLong() ?: 0
@@ -464,7 +455,7 @@ abstract class PlayerPageActivity :
                 .setState(state, position.toLong(), 1.0f)
         mediaSession?.setPlaybackState(builder.build())
     }
-
+    
     private fun observeNetworkChange() {
         observe(heartBeatManager.networkChangeEventLiveData) {
             if (it && isPlayerVisible()) {
@@ -483,41 +474,48 @@ abstract class PlayerPageActivity :
             }
         }
     }
-
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
+    
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
         cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
-                && mPref.isDrmActive && channelInfo.isDrmActive
-                && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
-            ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
-            ?.urlList()?.randomOrNull().isNullOrEmpty())
-                && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
-    //&& !channelInfo.drmCid.isNullOrBlank()
-    // && player is SimpleExoPlayer
-
+        && mPref.isDrmActive && channelInfo.isDrmActive
+        && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty())
+        && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+        && !channelInfo.drmCid.isNullOrBlank()
+        && player is SimpleExoPlayer
+    
     private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
         return try {
             ToffeeAnalytics.logBreadCrumb("isMediaItemNull: ${mediaItem == null}")
-            val channelInfo =
-                mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
+            val channelInfo = mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
             val isDrmActive = isDrmActiveForChannel(channelInfo)
             ToffeeAnalytics.logBreadCrumb("isDrmActive: $isDrmActive")
-
+            
             if (!isDrmActive) {
                 return DrmSessionManager.DRM_UNSUPPORTED
             }
             val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
-
+            
             return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
                 DefaultDrmSessionManager
                     .Builder()
+//                    .setUuidAndExoMediaDrmProvider(C.WIDEVINE_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
                     .setMultiSession(false)
                     .build(
-                        ToffeeMediaDrmCallback(
-                            mPref.drmWidevineLicenseUrl!!,
-                            httpDataSourceFactory!!,
-                            drmTokenApi,
-                            drmCid ?: ""
+//                        ToffeeMediaDrmCallback(
+//                            mPref.drmWidevineLicenseUrl!!,
+//                            httpDataSourceFactory!!,
+//                            drmTokenApi,
+//                            drmCid ?: ""
+//                        )
+                        CustomMediaDrmCallback(
+                            licenseUri = mPref.drmWidevineLicenseUrl ?: "https://dev-services.toffeelive.com/widevine/v1/license",
+                            dataSourceFactory = httpDataSourceFactory!!,
+                            drmLicenseService = drmLicenseService,
+                            contentId = drmCid,
+                            packageId = channelInfo.packageId
                         )
                     )
                     .apply {
@@ -535,30 +533,30 @@ abstract class PlayerPageActivity :
             DrmSessionManager.DRM_UNSUPPORTED
         }
     }
-
+    
     private val castSessionListener = object : SessionManagerListener<CastSession> {
         override fun onSessionStarting(p0: CastSession) {
             p0.castDevice?.friendlyName?.let {
                 showToast("Connecting to $it")
             }
         }
-
+        
         override fun onSessionStarted(p0: CastSession, p1: String) {
             p0.castDevice?.friendlyName?.let {
                 showToast("Connected to $it")
             }
         }
-
+        
         override fun onSessionStartFailed(castSession: CastSession, p1: Int) {
             castSession.castDevice?.friendlyName?.let {
                 showToast("Failed to connect to $it")
             }
         }
-
+        
         override fun onSessionEnding(p0: CastSession) {}
         override fun onSessionEnded(p0: CastSession, p1: Int) {}
         override fun onSessionResuming(p0: CastSession, p1: String) {}
-
+        
         override fun onSessionResumed(castSession: CastSession, p1: Boolean) {
             castSession.let {
                 val cInfo = try {
@@ -574,20 +572,20 @@ abstract class PlayerPageActivity :
                 }
             }
         }
-
+        
         override fun onSessionResumeFailed(p0: CastSession, p1: Int) {}
         override fun onSessionSuspended(p0: CastSession, p1: Int) {}
     }
-
+    
     protected open fun resumeCastSession(info: ChannelInfo) {}
-
+    
     private fun initializeRemotePlayer() {
         castContext?.let {
             it.sessionManager.addSessionManagerListener(
                 castSessionListener,
                 CastSession::class.java
             )
-
+            
 //            Log.i("CAST_T", "CastPlayer init")
             castPlayer = CastPlayer(
                 it,
@@ -599,7 +597,7 @@ abstract class PlayerPageActivity :
             }
         }
     }
-
+    
     fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
@@ -612,7 +610,7 @@ abstract class PlayerPageActivity :
         reloadCounter = 0
         fallbackCounter = 0
     }
-
+    
     private fun releaseLocalPlayer() {
         exoPlayer?.let {
             it.removeListener(playerEventListener)
@@ -628,7 +626,7 @@ abstract class PlayerPageActivity :
         adsLoader?.setPlayer(null)
         exoPlayer = null
     }
-
+    
     private fun releaseRemotePlayer() {
         castPlayer?.removeListener(playerEventListener)
         castPlayer?.setSessionAvailabilityListener(null)
@@ -636,7 +634,6 @@ abstract class PlayerPageActivity :
             castPlayer?.let {
                 val field = it::class.java.getDeclaredField("statusListener")
                 field.isAccessible = true
-
                 val obj = field.get(it)
                 if (obj is SessionManagerListener<*>) {
                     castContext?.sessionManager?.removeSessionManagerListener(
@@ -656,13 +653,13 @@ abstract class PlayerPageActivity :
 //        }
         castPlayer = null
     }
-
+    
     private fun updateTrackSelectorParameters() {
         if (defaultTrackSelector != null) {
             trackSelectorParameters = defaultTrackSelector?.parameters
         }
     }
-
+    
     protected fun updateStartPosition() {
         player?.let {
             startAutoPlay = it.playWhenReady
@@ -670,42 +667,42 @@ abstract class PlayerPageActivity :
             startPosition = max(0, it.contentPosition)
         }
     }
-
+    
     private fun clearStartPosition() {
         startAutoPlay = true
         startWindow = C.INDEX_UNSET
         startPosition = C.TIME_UNSET
     }
-
+    
     protected fun setPlayList(data: AddToPlaylistData) {
         playlistManager.setPlayList(data)
         val playbackState =
             if (player?.isPlaying == true) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
         updatePlaybackState(playbackState)
     }
-
+    
     override fun hasPrevious(): Boolean {
         return playlistManager.hasPrevious()
     }
-
+    
     override operator fun hasNext(): Boolean {
         return playlistManager.hasNext()
     }
-
+    
     protected open fun playIndex(index: Int) {
         playlistManager.setIndex(index)
         playChannel(false)
     }
-
+    
     protected open fun playChannelId(channelId: Int) {
         playlistManager.setChannelId(channelId)
         playChannel(false)
     }
-
+    
     override fun isAutoplayEnabled(): Boolean {
         return mPref.isAutoplayForRecommendedVideos
     }
-
+    
     override fun playNext(): Boolean {
         val isNextChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(
             playlistManager.getNextChannel()?.id,
@@ -720,7 +717,7 @@ abstract class PlayerPageActivity :
         }
         return isNextChannelPremium
     }
-
+    
     override fun playPrevious(): Boolean {
         val isPreviousChannelPurchased = mPref.activePremiumPackList.value.isContentPurchased(
             playlistManager.getPreviousChannel()?.id,
@@ -734,7 +731,7 @@ abstract class PlayerPageActivity :
         }
         return isPreviousChannelPremium
     }
-
+    
     protected fun addChannelToPlayList(info: ChannelInfo) {
         val cInfo = playlistManager.getCurrentChannel()
         var isReload = false
@@ -745,19 +742,18 @@ abstract class PlayerPageActivity :
         }
         playChannel(isReload)
     }
-
+    
     private val LICENSE_EXPIRE_BEFORE = /*95_000L */ 604_800_000L // 7 days
-
+    
     private fun isLicenseAlmostExpired(exp: Long): Boolean {
         return exp - LICENSE_EXPIRE_BEFORE < System.currentTimeMillis()
     }
-
+    
     private fun isLicenseExpired(exp: Long) =
         exp - /*80_000L*/ 21_600_000L < System.currentTimeMillis() // 6 hours
-
+    
     private suspend fun getLicense(channelInfo: ChannelInfo): ByteArray? {
         val channelId = if (mPref.isGlobalCidActive) -1 else channelInfo.id.toLong()
-
         val existingLicense = drmLicenseRepo.getByChannelId(channelId)
         Log.i("DRM_T", "Existing -> $existingLicense")
         if (existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
@@ -777,7 +773,7 @@ abstract class PlayerPageActivity :
         }
         return null
     }
-
+    
     private suspend fun downloadLicense(channelInfo: ChannelInfo): ByteArray? {
         var offlineLicenseHelper: OfflineLicenseHelper? = null
         try {
@@ -808,14 +804,14 @@ abstract class PlayerPageActivity :
 //                    .build()
             )
             offlineDataSourceFactory.setDefaultRequestProperties(mapOf("pallycon-customdata-v2" to token))
-
+            
             offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
                 mPref.drmWidevineLicenseUrl!!,
                 false,
                 offlineDataSourceFactory,
                 DrmSessionEventListener.EventDispatcher()
             )
-
+            
             val dataSource = httpDataSourceFactory!!.createDataSource()
             val dashManifest = DashUtil.loadManifest(
                 dataSource,
@@ -836,7 +832,7 @@ abstract class PlayerPageActivity :
             } else {
                 System.currentTimeMillis() + (remainingTime * 1000)
             }
-
+            
             Log.i("DRM_T", "Saving offline license")
             val newDrmLicense = DrmLicenseEntity(
                 if (mPref.isGlobalCidActive) -1 else channelInfo.id.toLong(),
@@ -848,11 +844,13 @@ abstract class PlayerPageActivity :
             offlineLicenseHelper.release()
             return newDrmLicense.license
         } catch (ex: Exception) {
+            ex.printStackTrace()
+            Log.i("DRM_T", "downloadLicense: ${ex.message}")
             offlineLicenseHelper?.release()
             return null
         }
     }
-
+    
     private suspend fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
         if (player is CastPlayer) {
             return MediaItem.Builder().apply {
@@ -863,7 +861,6 @@ abstract class PlayerPageActivity :
             }.build()
         }
         val license = getLicense(channelInfo)
-
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection)?.let {
             if (mPref.shouldOverrideDrmHostUrl) it.overrideUrl(mPref.overrideDrmHostUrl) else it
@@ -875,17 +872,19 @@ abstract class PlayerPageActivity :
             }
             setMimeType(MimeTypes.APPLICATION_MPD)
             setUri(drmUrl)
+//            setUri("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
             setTag(channelInfo)
             setDrmConfiguration(
                 MediaItem
                     .DrmConfiguration
                     .Builder(C.WIDEVINE_UUID)
-                    .setKeySetId(license)
+//                    .setKeySetId(license)
+//                    .setLicenseUri(mPref.drmWidevineLicenseUrl)
                     .build()
             )
         }.build()
     }
-
+    
     private fun getHlsMediaItem(channelInfo: ChannelInfo): MediaItem? {
         val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM) {
             channelInfo.paidPlainHlsUrl
@@ -895,7 +894,7 @@ abstract class PlayerPageActivity :
             null
         }
         hlsUrl ?: return null
-
+        
         val uri =
             if (channelInfo.isBucketUrl || channelInfo.isStingray || channelInfo.isAudioBook || channelInfo.urlType == PLAY_CDN) {
                 hlsUrl
@@ -913,11 +912,11 @@ abstract class PlayerPageActivity :
             setTag(channelInfo)
         }.build()
     }
-
+    
     abstract fun isPlayerVisible(): Boolean
     abstract fun maximizePlayer()
     private var playChannelJob: Job? = null
-
+    
     private fun playChannel(isReload: Boolean) {
         if (!isReload) {
             retryCounter = 0
@@ -928,7 +927,7 @@ abstract class PlayerPageActivity :
         Log.i("DRM_T", "New play request")
         playChannelJob = playChannelImpl(isReload)
     }
-
+    
     private fun playChannelImpl(isReload: Boolean) = lifecycleScope.launch {
         maximizePlayer()
         val isWifiConnected = connectionWatcher.isOverWifi
@@ -966,10 +965,9 @@ abstract class PlayerPageActivity :
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
-
+        
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
-        val contentSourceText =
-            if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
         Log.i("PLAYING_URL", "playingUrl: $contentUrl")
         showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
@@ -984,20 +982,20 @@ abstract class PlayerPageActivity :
                 )
             }
         }
-
+        
         isAdRunning = false
-
+        
         val tag = channelInfo.adGroup?.let { getVastTagListV3(it) }
-
+        
         if (prevAdGroup != channelInfo.adGroup) {
             adPlayCounter = 0
         } else {
             ++adPlayCounter
         }
         prevAdGroup = channelInfo.adGroup
-
+        
         if (player is ExoPlayer && adFrequency > 0) adPlayCounter %= adFrequency
-
+        
         if (mPref.isVastActive && channelInfo.isAdActive) {
             val shouldPlayAd = tag != null && adPlayCounter == 0 && adFrequency > 0
             if (shouldPlayAd) {
@@ -1014,14 +1012,14 @@ abstract class PlayerPageActivity :
                 currentlyPlayingVastUrl = vastTag!!
             }
         }
-
+        
         maxBitRate = if (isWifiConnected) mPref.maxBitRateWifi else mPref.maxBitRateCellular
         if (maxBitRate > 0) {
             val param =
                 defaultTrackSelector?.buildUponParameters()?.setMaxVideoBitrate(maxBitRate)?.build()
             param?.let { defaultTrackSelector?.parameters = it }
         }
-
+        
         player?.let {
 //            val oldChannelInfo = getCurrentChannelInfo()
 //            oldChannelInfo?.let { oldInfo ->
@@ -1038,7 +1036,7 @@ abstract class PlayerPageActivity :
             }
             triggerHeartBeatEventStart(channelInfo)
             it.playWhenReady = !isReload || it.playWhenReady
-
+            
             if (isReload) { //We need to start where we left off for VODs
                 if (channelInfo.viewProgress > 0L) {
                     startPosition = if (channelInfo.viewProgressPercent() >= 990) {
@@ -1055,11 +1053,11 @@ abstract class PlayerPageActivity :
 //                        player.prepare(mediaSource, false, false)
                     } else if (it is CastPlayer) {
                         val newMediaItem = if (isDrmActive) {
-                            val drmToken = try {
-                                drmTokenApi.execute(channelInfo.drmCid!!)
-                            } catch (ex: Exception) {
-                                null
-                            } ?: return@launch
+//                            val drmToken = try {
+//                                drmLicenseService.execute(channelInfo.drmCid!!)
+//                            } catch (ex: Exception) {
+//                                null
+//                            } ?: return@launch
                             mediaItem.buildUpon()
                                 .setDrmConfiguration(
                                     mediaItem
@@ -1070,7 +1068,7 @@ abstract class PlayerPageActivity :
                                             setLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                             setMultiSession(false)
                                             setForceDefaultLicenseUri(false)
-                                            setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+//                                            setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
                                         }
                                         ?.build()
                                 ).build()
@@ -1130,7 +1128,7 @@ abstract class PlayerPageActivity :
 //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
     }
-
+    
     private fun getVastTagListV3(adGroup: String): String? {
         return mPref.vastTagListV3LiveData.value?.filter {
             it.adGroup == adGroup
@@ -1138,14 +1136,14 @@ abstract class PlayerPageActivity :
             adFrequency = it.frequency ?: 0
         }?.tags?.randomOrNull()?.trim()
     }
-
+    
     private fun getGeneratedUrl(url: String?, signCookie: String?): String? {
         return if (playlistManager.getCurrentChannel()?.isStingray == true) {
             val userAgentString =
                 "Mozilla/5.0 (Linux; Android 4.2.1; SMART-TV; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko; googleweblight) Chrome/38.0.1025.166 Mobile Safari/535.19"
             val encodedUserAgent = URLEncoder.encode(userAgentString, "UTF-8")
             val cacheBuster = mPref.customerId.toString() + Random.nextInt() + System.nanoTime()
-
+            
             url?.replace("[APP_BUNDLE]", BuildConfig.VERSION_NAME)
                 ?.replace("[DID]", cPref.deviceId)
                 ?.replace("[CACHEBUSTER]", cacheBuster)
@@ -1159,7 +1157,7 @@ abstract class PlayerPageActivity :
             url
         }
     }
-
+    
     private suspend fun getPingData(mediaItem: MediaItem?): PingData? {
         val uri = mediaItem?.localConfiguration?.uri
         var pingData: PingData? = null
@@ -1168,7 +1166,7 @@ abstract class PlayerPageActivity :
         }
         return pingData
     }
-
+    
     private fun showPlayerErrorImage(errorMessage: String, showMessage: Boolean = false) {
         lifecycleScope.launch {
             playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
@@ -1188,11 +1186,11 @@ abstract class PlayerPageActivity :
         maximizePlayer()
         heartBeatManager.triggerEventViewingContentStop()
     }
-
+    
     protected open fun showPlayerCustomErrorMessage(errorMessage: String? = null) {
         //subclass will hook into it
     }
-
+    
     //This will be called due to session token change while playing content or after init of player
     protected fun reloadChannel() {
         val channelInfo = playlistManager.getCurrentChannel()
@@ -1200,7 +1198,7 @@ abstract class PlayerPageActivity :
             playChannel(true)
         }
     }
-
+    
     private fun insertContentViewProgress(channelInfo: ChannelInfo, progress: Long) {
         lifecycleScope.launch {
             Log.i("PLAYBACK_STATE", "Saving state - ${channelInfo.id} -> $progress")
@@ -1209,10 +1207,10 @@ abstract class PlayerPageActivity :
                 val actualLength = Utils.getLongDuration(channelInfo.duration) / 1000 // Convert to seconds
                 val currentProgress = progress / 1000 // Convert to seconds
                 Log.i("VideoProgress", "Progress: $currentProgress seconds, Actual Length: $actualLength seconds")
-
+                
                 // Calculate view progress percentage
                 val viewProgressPercent = channelInfo.viewProgressPercent()
-
+                
                 // Insert ContentViewProgress if progress is less than 98%
                 if (viewProgressPercent < 980) {
                     // Insert ContentViewProgress
@@ -1239,19 +1237,18 @@ abstract class PlayerPageActivity :
                     }
                     Log.i("ContentViewProgress", "Inserting ContentViewProgress entry for content ID: ${channelInfo.id}")
                 }
-
+                
                 // Check if progress is at least 98% of the actual length
                 if (viewProgressPercent >= 980) {
                     // Delete ContentViewProgress and ContinueWatchingItem
                     contentViewRepo.deleteByContentId(mPref.customerId, channelInfo.id.toLong())
                     continueWatchingRepo.deleteByContentId(mPref.customerId, channelInfo.id.toLong())
                     Log.i("ContentViewProgress", "Deleting ContentViewProgress entry for content ID: ${channelInfo.id}")
-
                 }
             }
         }
     }
-
+    
     protected open fun channelCannotBePlayedDueToSettings() {
         //subclass will hook into it
     }
@@ -1369,7 +1366,7 @@ abstract class PlayerPageActivity :
     }
     
     fun isCurrentContentDrm(): Boolean {
-        playlistManager.getCurrentChannel()?.let { 
+        playlistManager.getCurrentChannel()?.let {
             return isDrmActiveForChannel(it)
         }
         return false
@@ -1406,7 +1403,7 @@ abstract class PlayerPageActivity :
                     lifecycleScope.launch {
                         ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
                         if (mPref.isDrmActive && mPref.isGlobalCidActive) {
-                             drmLicenseRepo.deleteByChannelId(-1L)
+                            drmLicenseRepo.deleteByChannelId(-1L)
                         } else {
                             playlistManager.getCurrentChannel()?.id?.let {
                                 drmLicenseRepo.deleteByChannelId(it.toLong())
@@ -1446,16 +1443,19 @@ abstract class PlayerPageActivity :
                     fallbackCounter++
                     showDebugMessage("fallback... $fallbackCounter")
                     if (channelInfo?.isDrmActive == true) {
-                        val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM) {
-                            channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo.urlTypeExt == NON_PREMIUM) {
-                            channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
-                        } else null
+                        val hlsUrl = when (channelInfo.urlTypeExt) {
+                            PREMIUM -> {
+                                channelInfo.paidPlainHlsUrl
+                            }
+                            NON_PREMIUM -> {
+                                channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
+                            }
+                            else -> null
+                        }
                         hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
                     }
                     reloadOnFailOver()
-                }
-                else {
+                } else {
                     retryCounter = 0
                     reloadCounter = 0
                     fallbackCounter = 0
@@ -1494,7 +1494,11 @@ abstract class PlayerPageActivity :
             }
             if (isPlaying) {
                 if (reloadCounter > 1 || retryCounter > 1 || fallbackCounter > 1) {
-                    ToffeeAnalytics.playerError(playlistManager.getCurrentChannel()?.program_name ?: "", playerErrorMessage ?: "", true)
+                    ToffeeAnalytics.playerError(
+                        playlistManager.getCurrentChannel()?.program_name ?: "",
+                        playerErrorMessage ?: "",
+                        true
+                    )
                 }
                 retryCounter = 0
                 reloadCounter = 0
@@ -1567,7 +1571,7 @@ abstract class PlayerPageActivity :
         }
         
         override fun onPlaybackStateChanged(eventTime: EventTime, state: Int) {
-            when(state) {
+            when (state) {
                 PlaybackState.STATE_BUFFERING -> playerEventHelper.setPlayerEvent("buffering")
                 PlaybackState.STATE_CONNECTING -> playerEventHelper.setPlayerEvent("connecting")
                 PlaybackState.STATE_PLAYING -> playerEventHelper.setPlayerEvent("playing")
@@ -1599,7 +1603,13 @@ abstract class PlayerPageActivity :
 //            }
 //        }
         
-        override fun onLoadError(eventTime: EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData, error: IOException, wasCanceled: Boolean) {
+        override fun onLoadError(
+            eventTime: EventTime,
+            loadEventInfo: LoadEventInfo,
+            mediaLoadData: MediaLoadData,
+            error: IOException,
+            wasCanceled: Boolean
+        ) {
             super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
             lifecycleScope.launch {
                 playerEventHelper.setPingData(getPingData(player?.currentMediaItem))
@@ -1626,7 +1636,10 @@ abstract class PlayerPageActivity :
                 val mimeType = it.containerMimeType
                 val codec = it.codecs
                 val profileTitle = if (it.width == -1 || it.height == -1) "audio" else "video"
-                Log.i(PLAYER_EVENT_TAG, "onDownstreamFormatChanged: ${profileTitle}_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
+                Log.i(
+                    PLAYER_EVENT_TAG,
+                    "onDownstreamFormatChanged: ${profileTitle}_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec"
+                )
                 playerEventHelper.setPlayerEvent("${profileTitle}_profile: $profile, bitrate: $bitrate, mime_type: $mimeType, coded: $codec")
             }
         }
@@ -1650,27 +1663,32 @@ abstract class PlayerPageActivity :
                 playerEventHelper.setPlayerEvent("DRM keys restored")
             }
         }
-    
+        
         override fun onDrmKeysRemoved(eventTime: EventTime) {
             super.onDrmKeysRemoved(eventTime)
             if (isCurrentContentDrm()) {
                 playerEventHelper.setPlayerEvent("DRM key removed")
             }
         }
-    
+        
         override fun onDrmSessionReleased(eventTime: EventTime) {
             super.onDrmSessionReleased(eventTime)
             if (isCurrentContentDrm()) {
                 playerEventHelper.setPlayerEvent("DRM session released")
             }
         }
-    
+        
         override fun onPlayerReleased(eventTime: EventTime) {
             super.onPlayerReleased(eventTime)
 //            playerEventHelper.setPlayerEvent("player released")
         }
         
-        override fun onPositionDiscontinuity(eventTime: EventTime, oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {
+        override fun onPositionDiscontinuity(
+            eventTime: EventTime,
+            oldPosition: PositionInfo,
+            newPosition: PositionInfo,
+            reason: Int,
+        ) {
             super.onPositionDiscontinuity(eventTime, oldPosition, newPosition, reason)
             if (reason == Player.DISCONTINUITY_REASON_SEEK) {
                 playerEventHelper.setPlayerEvent("seek started")
