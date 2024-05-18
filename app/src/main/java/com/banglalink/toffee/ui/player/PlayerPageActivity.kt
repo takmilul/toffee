@@ -515,7 +515,7 @@ abstract class PlayerPageActivity :
                             dataSourceFactory = httpDataSourceFactory!!,
                             drmLicenseService = drmLicenseService,
                             contentId = drmCid,
-                            packageId = channelInfo.packageId
+                            packageId = channelInfo.drmPackageId
                         )
                     )
                     .apply {
