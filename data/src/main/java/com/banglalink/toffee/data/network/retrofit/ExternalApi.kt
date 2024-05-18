@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.CreatePaymentRequest
+import com.banglalink.toffee.data.network.request.DrmLicenseRequest
 import com.banglalink.toffee.data.network.request.ExecutePaymentRequest
 import com.banglalink.toffee.data.network.request.GrantTokenRequest
 import com.banglalink.toffee.data.network.request.KabbikLoginApiRequest
@@ -8,6 +9,7 @@ import com.banglalink.toffee.data.network.request.QueryPaymentRequest
 import com.banglalink.toffee.data.network.response.AudioBookEpisodeResponse
 import com.banglalink.toffee.data.network.response.AudioBookSeeMoreResponse
 import com.banglalink.toffee.data.network.response.CreatePaymentResponse
+import com.banglalink.toffee.data.network.response.DrmLicenseResponse
 import com.banglalink.toffee.data.network.response.ExecutePaymentResponse
 import com.banglalink.toffee.data.network.response.GrantTokenResponse
 import com.banglalink.toffee.data.network.response.KabbikHomeApiResponse
@@ -90,4 +92,10 @@ interface ExternalApi {
         @Header("Authorization") authorizationToken: String?,
         @Header("Referrer") referrer: String?,
     ): AudioBookEpisodeResponse
+    
+    @POST
+    suspend fun getLicense(
+        @Url url: String?,
+        @Body request: DrmLicenseRequest
+    ): DrmLicenseResponse
 }
