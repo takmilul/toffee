@@ -897,8 +897,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 campaignName = discountInfo?.campaignName,
                                 campaignId = discountInfo?.campaignId?:0,
                                 campaignExpireDate = discountInfo?.campaignExpireDate,
-                                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                                discount = mPref.paymentDiscountPercentage.value.toString(),
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                                 dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                                 dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -993,8 +993,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                             dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                             dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -1056,8 +1056,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         )
                     )
                     it.data?.let {
@@ -1110,8 +1110,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         )
                     )
                     requireContext().showToast(it.error.msg)

@@ -116,6 +116,8 @@ class SendHeartBeat @Inject constructor(
         val id: Long = System.nanoTime(),
         @SerialName("customer_id")
         val customerId: Int = 0,
+        @SerialName("msisdn")
+        val msisdn :String = SessionPreference.getInstance().phoneNumber.toString(),
         @SerialName("device_type")
         val deviceType: Int = Constants.DEVICE_TYPE,
         @SerialName("content_id")
