@@ -28,6 +28,7 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
+import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
 import androidx.media3.exoplayer.dash.DashUtil
@@ -64,6 +65,7 @@ import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
@@ -473,21 +475,20 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = true
-//        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
-//            && mPref.isDrmActive && channelInfo.isDrmActive
-//            && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
-//            ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
-//            ?.urlList()?.randomOrNull().isNullOrEmpty())
-//            && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
-    //&& !channelInfo.drmCid.isNullOrBlank()
-    // && player is SimpleExoPlayer
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
+        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
+        && mPref.isDrmActive && channelInfo.isDrmActive
+        && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty())
+        && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+        && !channelInfo.drmCid.isNullOrBlank()
+        && player is SimpleExoPlayer
     
     private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
         return try {
             ToffeeAnalytics.logBreadCrumb("isMediaItemNull: ${mediaItem == null}")
-            val channelInfo =
-                mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
+            val channelInfo = mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
             val isDrmActive = isDrmActiveForChannel(channelInfo)
             ToffeeAnalytics.logBreadCrumb("isDrmActive: $isDrmActive")
             
@@ -510,10 +511,11 @@ abstract class PlayerPageActivity :
 //                            drmCid ?: ""
 //                        )
                         CustomMediaDrmCallback(
-                            "https://dev-services.toffeelive.com/widevine/v1/license",
-                            httpDataSourceFactory!!,
-                            drmLicenseService,
-                            drmCid ?: ""
+                            licenseUri = mPref.drmWidevineLicenseUrl ?: "https://dev-services.toffeelive.com/widevine/v1/license",
+                            dataSourceFactory = httpDataSourceFactory!!,
+                            drmLicenseService = drmLicenseService,
+                            contentId = drmCid,
+                            packageId = channelInfo.packageId
                         )
                     )
                     .apply {
@@ -869,9 +871,8 @@ abstract class PlayerPageActivity :
                 httpDataSourceFactory?.setUserAgent(toffeeHeader)
             }
             setMimeType(MimeTypes.APPLICATION_MPD)
-//            setUri(drmUrl)
-            setUri("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
-//            setUri("https://playready-media-d6662.web.app/media/bento/master.m3u8")
+            setUri(drmUrl)
+//            setUri("https://storage.googleapis.com/transcoder-api-video-test/output/555/202405081646-testjob223/manifest_dash.mpd")
             setTag(channelInfo)
             setDrmConfiguration(
                 MediaItem
@@ -954,7 +955,7 @@ abstract class PlayerPageActivity :
         if (BuildConfig.APPLICATION_ID != "com.banglalink.toffee") {
             return@launch
         }
-        val isDrmActive = true //isDrmActiveForChannel(channelInfo)
+        val isDrmActive = isDrmActiveForChannel(channelInfo)
         var mediaItem = if (isDrmActive) {
             getDrmMediaItem(channelInfo)
         } else {
@@ -966,8 +967,7 @@ abstract class PlayerPageActivity :
         }
         
         val contentUrl = mediaItem.localConfiguration?.uri?.toString()
-        val contentSourceText =
-            if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
+        val contentSourceText = if (isDrmActive) "Type: DRM Content\n" else "Type: Non-DRM Content\n"
         Log.i("PLAYING_URL", "playingUrl: $contentUrl")
         showDebugMessage(contentSourceText + "Url: " + contentUrl)
         ConvivaHelper.updateStreamUrl(contentUrl)
@@ -1099,11 +1099,11 @@ abstract class PlayerPageActivity :
                 it.prepare()
             } else if (it is CastPlayer) {
                 val newMediaItem = if (isDrmActive) {
-//                    val drmToken = try {
-//                        drmLicenseService.execute(channelInfo.drmCid!!)
-//                    } catch (ex: Exception) {
-//                        null
-//                    } ?: return@launch
+                    val drmToken = try {
+                        drmTokenApi.execute(channelInfo.drmCid!!)
+                    } catch (ex: Exception) {
+                        null
+                    } ?: return@launch
                     mediaItem.buildUpon()
                         .setDrmConfiguration(
                             mediaItem
@@ -1114,7 +1114,7 @@ abstract class PlayerPageActivity :
                                     setLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                     setMultiSession(false)
                                     setForceDefaultLicenseUri(false)
-//                                    setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+                                    setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
                                 }
                                 ?.build()
                         ).build()
@@ -1443,11 +1443,15 @@ abstract class PlayerPageActivity :
                     fallbackCounter++
                     showDebugMessage("fallback... $fallbackCounter")
                     if (channelInfo?.isDrmActive == true) {
-                        val hlsUrl = if (channelInfo.urlTypeExt == PREMIUM) {
-                            channelInfo.paidPlainHlsUrl
-                        } else if (channelInfo.urlTypeExt == NON_PREMIUM) {
-                            channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
-                        } else null
+                        val hlsUrl = when (channelInfo.urlTypeExt) {
+                            PREMIUM -> {
+                                channelInfo.paidPlainHlsUrl
+                            }
+                            NON_PREMIUM -> {
+                                channelInfo.hlsLinks?.get(0)?.hlsUrlMobile
+                            }
+                            else -> null
+                        }
                         hlsUrl?.let { playlistManager.getCurrentChannel()?.is_drm_active = 0 }
                     }
                     reloadOnFailOver()

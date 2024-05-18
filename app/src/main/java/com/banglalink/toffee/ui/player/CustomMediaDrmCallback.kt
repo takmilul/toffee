@@ -4,7 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
-import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource.Factory
 import androidx.media3.exoplayer.drm.ExoMediaDrm
 import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
 import androidx.media3.exoplayer.drm.MediaDrmCallback
@@ -19,9 +19,10 @@ import java.util.*
 @UnstableApi
 class CustomMediaDrmCallback(
     private val licenseUri: String,
-    private val dataSourceFactory: OkHttpDataSource.Factory,
+    dataSourceFactory: Factory,
     private val drmLicenseService: DrmLicenseService,
-    private val contentId: String
+    private val contentId: String? = "1",
+    private val packageId: String? = "1"
 ) : MediaDrmCallback {
     
     private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, true, dataSourceFactory)
@@ -53,7 +54,9 @@ class CustomMediaDrmCallback(
             try {
                 drmLicenseService.execute(
                     licenseServerUrl = licenseUri,
-                    payload = Base64.encodeToString(request.data, Base64.NO_WRAP)
+                    payload = Base64.encodeToString(request.data, Base64.NO_WRAP),
+                    contentId = contentId ?: "1",
+                    packageId = packageId ?: "1"
                 )
             } catch (ex: Exception) {
                 null
