@@ -28,7 +28,6 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
-import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
 import androidx.media3.exoplayer.dash.DashUtil
@@ -483,7 +482,7 @@ abstract class PlayerPageActivity :
         ?.urlList()?.randomOrNull().isNullOrEmpty())
         && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
         && !channelInfo.drmCid.isNullOrBlank()
-        && player is SimpleExoPlayer
+//        && player is SimpleExoPlayer
     
     private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
         return try {
