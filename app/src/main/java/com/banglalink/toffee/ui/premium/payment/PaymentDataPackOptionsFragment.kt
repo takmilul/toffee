@@ -89,37 +89,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         paymentDiscount = arguments?.getString("discount", "") ?: ""
 
 
-        Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
-        Log.d("paymentDiscount", "onViewCreated: "+mPref.paymentDiscountPercentage.value)
-
-        Log.d("paymentName", "onViewCreated: "+paymentName)
-        Log.d("paymentName", "onViewCreated: "+mPref.selectedPaymentType.value)
-
-
-
-
-
-
         if (mPref.isBanglalinkNumber=="true"){
             viewModel.selectedPackSystemDiscount.value?.BL?.let {
-
                 discountInfo=it
-                Log.d("discountInfoData", "bl"+discountInfo)
-            } ?: {
+            } ?: run {
                 viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
                     discountInfo=it
-                Log.d("discountInfoData", "blBoth"+discountInfo)
                 }
             }
         }
         else {
             viewModel.selectedPackSystemDiscount.value?.NONBL?.let {
                 discountInfo=it
-                Log.d("discountInfoData", "nonbl"+discountInfo)
-            } ?: {
+            } ?: run {
                 viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
                     discountInfo=it
-                Log.d("discountInfoData", "nonblBoth"+discountInfo)
                 }
             }
         }
@@ -360,7 +344,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 is Success -> {
                     viewModel.selectedPremiumPack.value?.let {
                         viewModel.getPackStatusForDataPackOptions(packId = it.id)
-                    } ?: {
+                    } ?: run {
                         progressDialog.dismiss()
                         requireContext().showToast(getString(R.string.try_again_message))
                     }
@@ -400,8 +384,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             binding.buySimButton.hide()
                             
                             if (mAdapter.selectedPosition > -1 && mPref.isVerifiedUser && mPref.isBanglalinkNumber == "true") {
-                                Log.d("TAG", "observePackStatus: "+viewModel.selectedDataPackOption.value)
-
                                 binding.needToEnterOtpText.isVisible =viewModel.selectedDataPackOption.value?.isDob == 1 && mPref.isBanglalinkNumber == "true"
                                 binding.termsAndConditionsGroup.isVisible =
                                     viewModel.selectedDataPackOption.value?.dataPackCtaButton == 1 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 2 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 3
@@ -909,6 +891,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             if (it.responseFromWhere == 2){ // show cta button to call banglalink helpline
                                 val args = bundleOf(
                                     PaymentStatusDialog.ARG_STATUS_CODE to -2,
+                                    PaymentStatusDialog.ARG_STATUS_TITLE to "Data Plan Activation Failed!",
                                     PaymentStatusDialog.ARG_STATUS_MESSAGE to it.message
                                 )
                                 findNavController().navigateTo(
