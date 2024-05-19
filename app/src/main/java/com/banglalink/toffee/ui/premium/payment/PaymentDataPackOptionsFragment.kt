@@ -566,7 +566,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 mAdapter.addAll(it.toList())
                 mAdapter.notifyDataSetChanged()
             }
-            setPlanSubTittle(prePaid.isNullOrEmpty(), postPaid.isNullOrEmpty())
+            setPlanSubTittle()
         }
     }
     private fun showEmptyView(message: String){
@@ -1240,7 +1240,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         )
     }
 
-    fun setPlanSubTittle(prepaid: Boolean, postpaid: Boolean){
+    private fun setPlanSubTittle(){
         if (mPref.isBanglalinkNumber=="true"){
 
             when(mPref.selectedPaymentType.value){
@@ -1248,16 +1248,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 PaymentMethodName.BL.value->{
 
                     if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
-
                         if (!isPlanFound!!) {
                             binding.planSubTitle.hide()
                         }else{
                             binding.planSubTitle.show()
                             binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
                         }
-
-
-                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
+                    }else if (!mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
                         binding.planSubTitle.show()
                         binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
                     }else{
@@ -1302,17 +1299,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             when(mPref.selectedPaymentType.value){
 
                 PaymentMethodName.BL.value->{
-
-                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty() && !prepaid  ){
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
                     }
-                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()&& !postpaid ){
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty() ){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
                     }
                     else{
-
                         binding.planSubTitle.hide()
                     }
 
