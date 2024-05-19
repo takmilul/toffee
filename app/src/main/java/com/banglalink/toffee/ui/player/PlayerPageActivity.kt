@@ -859,7 +859,7 @@ abstract class PlayerPageActivity :
                 setDrmConfiguration(MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID).build())
             }.build()
         }
-        val license = getLicense(channelInfo)
+//        val license = getLicense(channelInfo)
         val isDataConnection = connectionWatcher.isOverCellular
         val drmUrl = channelInfo.getDrmUrl(isDataConnection)?.let {
             if (mPref.shouldOverrideDrmHostUrl) it.overrideUrl(mPref.overrideDrmHostUrl) else it
