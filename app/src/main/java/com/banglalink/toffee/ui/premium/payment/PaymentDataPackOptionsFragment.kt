@@ -89,37 +89,21 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         paymentDiscount = arguments?.getString("discount", "") ?: ""
 
 
-        Log.d("paymentDiscount", "onViewCreated: "+paymentDiscount)
-        Log.d("paymentDiscount", "onViewCreated: "+mPref.paymentDiscountPercentage.value)
-
-        Log.d("paymentName", "onViewCreated: "+paymentName)
-        Log.d("paymentName", "onViewCreated: "+mPref.selectedPaymentType.value)
-
-
-
-
-
-
         if (mPref.isBanglalinkNumber=="true"){
             viewModel.selectedPackSystemDiscount.value?.BL?.let {
-
                 discountInfo=it
-                Log.d("discountInfoData", "bl"+discountInfo)
-            } ?: {
+            } ?: run {
                 viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
                     discountInfo=it
-                Log.d("discountInfoData", "blBoth"+discountInfo)
                 }
             }
         }
         else {
             viewModel.selectedPackSystemDiscount.value?.NONBL?.let {
                 discountInfo=it
-                Log.d("discountInfoData", "nonbl"+discountInfo)
-            } ?: {
+            } ?: run {
                 viewModel.selectedPackSystemDiscount.value?.BOTH?.let {
                     discountInfo=it
-                Log.d("discountInfoData", "nonblBoth"+discountInfo)
                 }
             }
         }
@@ -360,7 +344,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 is Success -> {
                     viewModel.selectedPremiumPack.value?.let {
                         viewModel.getPackStatusForDataPackOptions(packId = it.id)
-                    } ?: {
+                    } ?: run {
                         progressDialog.dismiss()
                         requireContext().showToast(getString(R.string.try_again_message))
                     }
@@ -400,8 +384,6 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             binding.buySimButton.hide()
                             
                             if (mAdapter.selectedPosition > -1 && mPref.isVerifiedUser && mPref.isBanglalinkNumber == "true") {
-                                Log.d("TAG", "observePackStatus: "+viewModel.selectedDataPackOption.value)
-
                                 binding.needToEnterOtpText.isVisible =viewModel.selectedDataPackOption.value?.isDob == 1 && mPref.isBanglalinkNumber == "true"
                                 binding.termsAndConditionsGroup.isVisible =
                                     viewModel.selectedDataPackOption.value?.dataPackCtaButton == 1 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 2 || viewModel.selectedDataPackOption.value?.dataPackCtaButton == 3
@@ -584,7 +566,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 mAdapter.addAll(it.toList())
                 mAdapter.notifyDataSetChanged()
             }
-            setPlanSubTittle(prePaid.isNullOrEmpty(), postPaid.isNullOrEmpty())
+            setPlanSubTittle()
         }
     }
     private fun showEmptyView(message: String){
@@ -897,8 +879,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                                 campaignName = discountInfo?.campaignName,
                                 campaignId = discountInfo?.campaignId?:0,
                                 campaignExpireDate = discountInfo?.campaignExpireDate,
-                                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                                discount = mPref.paymentDiscountPercentage.value.toString(),
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                                 dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                                 dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -909,6 +891,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             if (it.responseFromWhere == 2){ // show cta button to call banglalink helpline
                                 val args = bundleOf(
                                     PaymentStatusDialog.ARG_STATUS_CODE to -2,
+                                    PaymentStatusDialog.ARG_STATUS_TITLE to "Data Plan Activation Failed!",
                                     PaymentStatusDialog.ARG_STATUS_MESSAGE to it.message
                                 )
                                 findNavController().navigateTo(
@@ -993,8 +976,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0,
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                             dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                             dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -1056,8 +1039,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         )
                     )
                     it.data?.let {
@@ -1110,8 +1093,8 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                             campaignName = discountInfo?.campaignName,
                             campaignId = discountInfo?.campaignId?:0,
                             campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         )
                     )
                     requireContext().showToast(it.error.msg)
@@ -1257,7 +1240,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
         )
     }
 
-    fun setPlanSubTittle(prepaid: Boolean, postpaid: Boolean){
+    private fun setPlanSubTittle(){
         if (mPref.isBanglalinkNumber=="true"){
 
             when(mPref.selectedPaymentType.value){
@@ -1265,16 +1248,13 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 PaymentMethodName.BL.value->{
 
                     if (mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid.isNullOrEmpty()){
-
                         if (!isPlanFound!!) {
                             binding.planSubTitle.hide()
                         }else{
                             binding.planSubTitle.show()
                             binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_prepaid
                         }
-
-
-                    }else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
+                    }else if (!mPref.isPrepaid && !viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid.isNullOrEmpty()) {
                         binding.planSubTitle.show()
                         binding.planSubTitle.text=viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_bl_postpaid
                     }else{
@@ -1319,17 +1299,15 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
             when(mPref.selectedPaymentType.value){
 
                 PaymentMethodName.BL.value->{
-
-                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty() && !prepaid  ){
+                    if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid.isNullOrEmpty()){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_prepaid
                     }
-                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty()&& !postpaid ){
+                    else if (!viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid.isNullOrEmpty() ){
                         binding.planSubTitle.show()
                         binding.planSubTitle.text = viewModel.paymentMethod.value?.bl?.top_promotion_msg_for_plan_nonbl_postpaid
                     }
                     else{
-
                         binding.planSubTitle.hide()
                     }
 

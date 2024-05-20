@@ -56,6 +56,8 @@ data class LoginLogData(
     val sessionToken: String = SessionPreference.getInstance().sessionToken,
     @SerialName("user_id")
     val customerId:Long = SessionPreference.getInstance().customerId.toLong(),
+    @SerialName("msisdn")
+    val msisdn :String = SessionPreference.getInstance().phoneNumber.toString(),
     @SerialName("date_time")
     val dateTime: String = currentDateTime,
     @SerialName("reportingTime")

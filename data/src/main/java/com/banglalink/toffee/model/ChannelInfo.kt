@@ -204,6 +204,8 @@ data class ChannelInfo(
     var bookName: String? = null,
     @SerialName("isSelected")
     var isSelected: Boolean? = false,
+    @JsonNames("drmPackageId", "drm_package_id")
+    val drmPackageId: String = "1",
 ) :Parcelable {
     
     @SerialName("isApproved")

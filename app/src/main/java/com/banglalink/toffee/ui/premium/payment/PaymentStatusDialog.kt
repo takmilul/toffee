@@ -223,7 +223,7 @@ class PaymentStatusDialog : DialogFragment() {
             }
             SUBSCRIBER_PAYMENT_FAILED -> {
                 binding.statusImageView.setImageResource(R.drawable.ic_purchase_failed)
-                binding.titleMsg.text = getString(R.string.subscriber_payment_activation_failed)
+                binding.titleMsg.text = statusTitle ?: getString(R.string.subscriber_payment_activation_failed)
                 binding.subTitleMsg.text = statusMessage ?: getString(R.string.subscriber_payment_helpline)
                 binding.tryAgainBtn.hide()
                 binding.callBtn.show()

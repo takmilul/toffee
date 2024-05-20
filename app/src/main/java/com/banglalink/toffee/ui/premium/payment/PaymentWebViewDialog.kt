@@ -252,8 +252,8 @@ class PaymentWebViewDialog : DialogFragment() {
                                         campaignName = campaignName,
                                         campaignId = campaignId?.toInt()?:0,
                                         campaignExpireDate = campaignExpireDate,
-                                        discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                        discount = mPref.paymentDiscountPercentage.value.toString(),
+                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                     ))
 
                                     // Navigate or perform actions based on payment type and status code
@@ -708,8 +708,8 @@ class PaymentWebViewDialog : DialogFragment() {
                                     campaignName = campaignName,
                                     campaignId = campaignId?.toInt()?:0,
                                     campaignExpireDate = campaignExpireDate,
-                                    discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                    discount = mPref.paymentDiscountPercentage.value.toString(),
+                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 ))
 
                                 if (callBackStatus == "failure" || callBackStatus == "failed"){

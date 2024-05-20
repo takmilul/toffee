@@ -36,8 +36,8 @@ data class PaymentLogFromDeviceData(
     val paymentId : String? = null,
     @SerialName("trxId")
     val transactionId : String? = null,
-    @SerialName("request_id")
-    val requestId : String? = null,
+    @SerialName("requestId")
+    val requestId : String? = null, //dcb only
     @SerialName("transactionStatus")
     val transactionStatus : String? = null,
     @SerialName("amount")
@@ -60,26 +60,27 @@ data class PaymentLogFromDeviceData(
     val statusMessage : String? = null,
     @SerialName("voucher")
     val voucher : String? = null,
-    @SerialName("campaign_type")
+    @SerialName("campaignType")
     val campaignType : String? = null,
-    @SerialName("partner_name")
+    @SerialName("partnerName")
     val partnerName : String? = null,
-    @SerialName("partner_id")
+    @SerialName("partnerId")
     val partnerId : Int? = 0,
-    @SerialName("campaign_name")
+    @SerialName("campaignName")
     val campaignName : String? = null,
-    @SerialName("campaign_id")
+    @SerialName("campaignId")
     val campaignId : Int? = 0,
-    @SerialName("campaign_expire_date")
+    @SerialName("campaignExpireDate")
     val campaignExpireDate : String? = null,
     @SerialName("discount")
-    val discount : Int? = 0,
-    @SerialName("original_price")
-    val originalPrice : Int? = 0,
-    @SerialName("dob_price")
+    val discount : String? = null,
+    @SerialName("originalPrice")
+    val originalPrice : String? = null,
+    //dcb only
+    @SerialName("dobPrice")
     val dobPrice: String? = null,
-    @SerialName("dob_cp_id")
+    @SerialName("dobCpId")
     val dobCpId: String? = null,
-    @SerialName("dob_subs_offer_id")
+    @SerialName("dobSubsOfferId")
     val dobSubsOfferId: String? = null,
 ) : PubSubBaseRequest()
