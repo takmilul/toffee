@@ -625,4 +625,7 @@
     <string name="add_payment_methods">Add Payment Methods</string>
     <string name="saved_account_fragment_title">Purchase Confirmation</string>
     <string name="use_another_account">Use another account</string>
+
+    <string name="coupon_txt">Apply coupon code</string>
+    <string name="coupon_applied_txt">Want to apply a different coupon code?</string>
 </resources>

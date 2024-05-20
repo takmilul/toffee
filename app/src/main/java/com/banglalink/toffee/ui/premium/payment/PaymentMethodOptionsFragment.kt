@@ -63,7 +63,6 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 	@SuppressLint("ResourceAsColor", "SetTextI18n")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
 		viewModel.selectedDataPackOption.value = null
 		mAdapter = PackPaymentMethodAdapter(requireContext(), mPref, cPref.appThemeMode, viewModel, this)
 		binding.packCardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -119,6 +118,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 				systemDiscount?.let {
 					binding.packSubTitle.show()
+
 					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
@@ -197,6 +197,8 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					paymentTypes.bkash?.let { whichPaymentMethodDisplay.add(PaymentMethodString.BKASH.value) }
 					paymentTypes.ssl?.let { whichPaymentMethodDisplay.add(PaymentMethodString.SSL.value) }
 					paymentTypes.nagad?.let { whichPaymentMethodDisplay.add(PaymentMethodString.NAGAD.value) }
+
+					Log.d("TAG", "onViewCreatedqwer: "+paymentTypes)
 
 					paymentMethodList = addPaymentMethodsToDisplay(paymentTypes, whichPaymentMethodDisplay)
 					mAdapter.removeAll()
