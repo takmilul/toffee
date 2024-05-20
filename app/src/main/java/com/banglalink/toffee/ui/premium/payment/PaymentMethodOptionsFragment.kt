@@ -127,7 +127,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
+					}else if (mPref.isBanglalinkNumber!="true" && !paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
 					}else{
 						binding.packSubTitle.hide()
@@ -182,7 +182,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
+					}else if (mPref.isBanglalinkNumber!="true" && !paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
 					}else{
 						binding.packSubTitle.hide()
