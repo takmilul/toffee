@@ -1122,7 +1122,14 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                         val args = bundleOf(
                             "paymentName" to paymentName,
                             "paymentToken" to paymentToken,
-                            "walletNumber" to walletNumber
+                            "walletNumber" to walletNumber,
+                            "voucher" to discountInfo?.voucher,
+                            "campaignType" to discountInfo?.campaignType,
+                            "partnerName" to discountInfo?.partnerName,
+                            "partnerId" to discountInfo?.partnerId,
+                            "campaignName" to discountInfo?.campaignName,
+                            "campaignId" to discountInfo?.campaignId,
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate,
                         )
                         findNavController().navigateTo(R.id.savedAccountFragment, args)
                     } ?: subscriberPaymentInit()
