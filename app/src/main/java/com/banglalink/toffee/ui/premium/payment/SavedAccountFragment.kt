@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
+import com.banglalink.toffee.data.network.response.DiscountInfo
 import com.banglalink.toffee.databinding.FragmentSavedAccountBinding
 import com.banglalink.toffee.extension.navigateTo
 import com.banglalink.toffee.extension.observe
@@ -19,6 +20,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.premium.PremiumViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.usecase.PaymentLogFromDeviceData
+import com.banglalink.toffee.util.calculateDiscountedPrice
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
@@ -38,7 +40,8 @@ class SavedAccountFragment : BaseFragment() {
     private lateinit var binding:FragmentSavedAccountBinding
     private val viewModel by activityViewModels<PremiumViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
-
+    private var packPriceToPay:Int?=null
+    private var discountInfo: DiscountInfo?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +57,17 @@ class SavedAccountFragment : BaseFragment() {
         paymentName = arguments?.getString("paymentName", "") ?: ""
         paymentToken = arguments?.getString("paymentToken", "") ?: ""
         walletNumber = arguments?.getString("walletNumber", "") ?: ""
-
+        discountInfo = DiscountInfo(
+            voucher = arguments?.getString("voucher"),
+            campaignType = arguments?.getString("campaignType"),
+            partnerName = arguments?.getString("partnerName"),
+            partnerId = arguments?.getInt("partnerId"),
+            campaignName = arguments?.getString("campaignName"),
+            campaignId = arguments?.getInt("campaignId"),
+            campaignTypeId = arguments?.getInt("campaignTypeId"),
+            campaignExpireDate = arguments?.getString("campaignExpireDate"),
+            voucherGeneratedType = arguments?.getInt("voucherGeneratedType")
+        )
         observeSubscriberPaymentInit()
 
         binding.walletNumberTextView.text = walletNumber
@@ -79,6 +92,22 @@ class SavedAccountFragment : BaseFragment() {
             val selectedPremiumPack = viewModel.selectedPremiumPack.value
             val selectedDataPackOption = viewModel.selectedDataPackOption.value
 
+            if (viewModel.selectedPackSystemDiscount.value==null){
+                packPriceToPay=selectedDataPackOption?.packPrice ?: 0
+            }
+            else{
+                try {
+                    packPriceToPay = calculateDiscountedPrice(
+                        originalPrice = selectedDataPackOption?.packPrice?.toDouble()?:0.0,
+                        discountPercentage = mPref.paymentDiscountPercentage.value?.toDouble()?: 0.0
+                    ).toInt()
+                }catch (e: Exception){
+                    // discount is not applicable in this plan
+                    packPriceToPay=selectedDataPackOption?.packPrice ?: 0
+                }
+
+            }
+
             // Prepare a payment initiation request
             val request = SubscriberPaymentInitRequest(
                 customerId = mPref.customerId,
@@ -91,11 +120,29 @@ class SavedAccountFragment : BaseFragment() {
                 paymentMethodId = selectedDataPackOption?.paymentMethodId ?: 0,
                 packCode = selectedDataPackOption?.packCode,
                 packDetails = selectedDataPackOption?.packDetails,
-                packPrice = selectedDataPackOption?.packPrice ?: 0,
+                packPrice = packPriceToPay?:0, // the amount user is paying after discount or else
                 packDuration = selectedDataPackOption?.packDuration ?: 0,
                 clientType = "MOBILE_APP",
                 paymentPurpose = paymentPurpose,
                 paymentToken = paymentToken,
+                geoCity = mPref.geoCity,
+                geoLocation = mPref.geoLocation,
+                cusEmail = mPref.customerEmail,
+                voucher = discountInfo?.voucher,
+                campaign_type = discountInfo?.campaignType,
+                partner_name = discountInfo?.partnerName,
+                partner_id = discountInfo?.partnerId,
+                campaign_name = discountInfo?.campaignName,
+                campaign_id = discountInfo?.campaignId,
+                campaign_type_id = discountInfo?.campaignTypeId,
+                campaign_expire_date = discountInfo?.campaignExpireDate,
+                voucher_generated_type = discountInfo?.voucherGeneratedType,
+                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0, // the percentage of discount applied
+                original_price = selectedDataPackOption?.packPrice ?: 0, // actual pack price without discount or else
+                dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
+                dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
+                dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
+                isAutoRenew = viewModel.selectedDataPackOption.value?.isAutoRenew
             )
             // Trigger the payment initiation request, but only if both selectedPremiumPack and selectedDataPackOption are not null
             if (selectedPremiumPack != null && selectedDataPackOption != null) {
@@ -131,9 +178,18 @@ class SavedAccountFragment : BaseFragment() {
                                 paymentPurpose = paymentPurpose,
                                 paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                                 transactionStatus = statusCode,
-                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
-                                rawResponse = json.encodeToString(it)
+                                rawResponse = json.encodeToString(it),
+                                voucher = discountInfo?.voucher ,
+                                campaignType = discountInfo?.campaignType ,
+                                partnerName = discountInfo?.partnerName,
+                                partnerId = discountInfo?.partnerId ?:0,
+                                campaignName = discountInfo?.campaignName,
+                                campaignId = discountInfo?.campaignId?:0,
+                                campaignExpireDate = discountInfo?.campaignExpireDate,
+                                discount = mPref.paymentDiscountPercentage.value.toString(),
+                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                             )
                         )
 
@@ -150,6 +206,13 @@ class SavedAccountFragment : BaseFragment() {
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,
+                            "voucher" to discountInfo?.voucher,
+                            "campaignType" to discountInfo?.campaignType,
+                            "partnerName" to discountInfo?.partnerName,
+                            "partnerId" to discountInfo?.partnerId,
+                            "campaignName" to discountInfo?.campaignName,
+                            "campaignId" to discountInfo?.campaignId,
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate
                         )
                         // Navigate to the payment WebView dialog
                         findNavController().navigateTo(R.id.paymentWebViewDialog, args)
@@ -171,9 +234,18 @@ class SavedAccountFragment : BaseFragment() {
                             paymentPurpose = paymentPurpose,
                             paymentRefId = if (paymentName == "nagad") transactionIdentifier else null,
                             transactionStatus = statusCode,
-                            amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
-                            rawResponse = json.encodeToString(it.error.msg)
+                            rawResponse = json.encodeToString(it),
+                            voucher = discountInfo?.voucher ,
+                            campaignType = discountInfo?.campaignType ,
+                            partnerName = discountInfo?.partnerName,
+                            partnerId = discountInfo?.partnerId ?:0,
+                            campaignName = discountInfo?.campaignName,
+                            campaignId = discountInfo?.campaignId?:0,
+                            campaignExpireDate = discountInfo?.campaignExpireDate,
+                            discount = mPref.paymentDiscountPercentage.value.toString(),
+                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                         )
                     )
                     requireContext().showToast(it.error.msg)

@@ -117,12 +117,17 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 				 * When systemDiscount is not nullOrEmpty this means that this pack will have discounted payment.
 				 */
 
-				systemDiscount?.let {
+				val isSystemDiscountApplicable = (
+					(mPref.isBanglalinkNumber == "true" && (systemDiscount?.BL != null || systemDiscount?.BOTH != null)) ||
+					(mPref.isBanglalinkNumber == "false" && (systemDiscount?.NONBL != null || systemDiscount?.BOTH != null))
+				)
+
+				if (isSystemDiscountApplicable) {
 					binding.packSubTitle.show()
 					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
+					}else if (mPref.isBanglalinkNumber!="true" && !paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
 					}else{
 						binding.packSubTitle.hide()
@@ -167,7 +172,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 
 					mAdapter.removeAll()
 					mAdapter.addAll(paymentMethodList)
-				}?:run {
+				} else {
 
 					/**
 					 * When systemDiscount is nullOrEmpty this means that this pack will not have any discounted payments.
@@ -177,7 +182,7 @@ class PaymentMethodOptionsFragment : ChildDialogFragment(),
 					if (mPref.isBanglalinkNumber=="true" && !paymentTypes.displayMessage?.top_promotion_msg_bl.isNullOrEmpty()){
 
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_bl
-					}else if (!paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
+					}else if (mPref.isBanglalinkNumber!="true" && !paymentTypes.displayMessage?.top_promotion_msg_nonbl.isNullOrEmpty()){
 						binding.packSubTitle.text= paymentTypes.displayMessage?.top_promotion_msg_nonbl
 					}else{
 						binding.packSubTitle.hide()

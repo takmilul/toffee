@@ -80,9 +80,9 @@ class PaymentWebViewDialog : DialogFragment() {
     private var voucher: String? = null
     private var campaignType: String? = null
     private var partnerName: String? = null
-    private var partnerId: String? = null
+    private var partnerId: Int? = null
     private var campaignName: String? = null
-    private var campaignId: String? = null
+    private var campaignId: Int? = null
     private var campaignExpireDate: String? = null
 
     @Inject lateinit var cPref: CommonPreference
@@ -123,13 +123,13 @@ class PaymentWebViewDialog : DialogFragment() {
         purchaseCallAfterRecharge = arguments?.getBoolean("isPurchaseCallAfterRecharge", false) ?: true
 
 
-        payableAmount = arguments?.getString("paymentId")
+        payableAmount = arguments?.getString("payableAmount")
         voucher = arguments?.getString("voucher")
         campaignType = arguments?.getString("campaignType")
         partnerName = arguments?.getString("partnerName")
-        partnerId = arguments?.getString("partnerId")
+        partnerId = arguments?.getInt("partnerId")
         campaignName = arguments?.getString("campaignName")
-        campaignId = arguments?.getString("campaignId")
+        campaignId = arguments?.getInt("campaignId")
         campaignExpireDate = arguments?.getString("campaignExpireDate")
 
         binding.titleTv.text = title
@@ -241,19 +241,19 @@ class PaymentWebViewDialog : DialogFragment() {
                                         paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                         transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                         transactionStatus = statusCode,
-                                        amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
+                                        amount = if (paymentType == "nagadAddAccount") "0" else payableAmount.toString(),
                                         merchantInvoiceNumber = null,
                                         rawResponse = url.toString(),
 
                                         voucher = voucher ,
                                         campaignType = campaignType ,
                                         partnerName = partnerName,
-                                        partnerId = partnerId?.toInt()?:0,
+                                        partnerId = partnerId?:0,
                                         campaignName = campaignName,
-                                        campaignId = campaignId?.toInt()?:0,
+                                        campaignId = campaignId?:0,
                                         campaignExpireDate = campaignExpireDate,
-                                        discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                        discount = mPref.paymentDiscountPercentage.value.toString(),
+                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                     ))
 
                                     // Navigate or perform actions based on payment type and status code
@@ -697,19 +697,19 @@ class PaymentWebViewDialog : DialogFragment() {
                                     paymentId = if (paymentType == "bkash") transactionIdentifier else null,
                                     transactionId = if (paymentType == "ssl") transactionIdentifier else null,
                                     transactionStatus = statusCode,
-                                    amount = if (paymentType == "nagadAddAccount") "0" else viewModel.selectedDataPackOption.value?.packPrice.toString() ?: "0",
+                                    amount = if (paymentType == "nagadAddAccount") "0" else payableAmount.toString(),
                                     merchantInvoiceNumber = null,
                                     rawResponse = url.toString(),
 
                                     voucher = voucher ,
                                     campaignType = campaignType ,
                                     partnerName = partnerName,
-                                    partnerId = partnerId?.toInt()?:0,
+                                    partnerId = partnerId?:0,
                                     campaignName = campaignName,
-                                    campaignId = campaignId?.toInt()?:0,
+                                    campaignId = campaignId?:0,
                                     campaignExpireDate = campaignExpireDate,
-                                    discount = mPref.paymentDiscountPercentage.value?.toInt()?:0,
-                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice ?: 0
+                                    discount = mPref.paymentDiscountPercentage.value.toString(),
+                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
                                 ))
 
                                 if (callBackStatus == "failure" || callBackStatus == "failed"){
