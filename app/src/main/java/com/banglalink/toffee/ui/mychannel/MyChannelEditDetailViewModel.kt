@@ -27,7 +27,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     @Assisted var myChannelDetail: MyChannelDetail?,
 ) : ViewModel() {
     
-    private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelEditBean>>()
     val editDetailLiveData = _data.toLiveData()
     var categoryList = MutableLiveData<List<Category>>()
     var selectedCategory: Category? = null

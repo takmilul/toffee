@@ -13,7 +13,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VideoOnly
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -74,13 +78,17 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
-                if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_IMAGES).isAccepted) {
-                    galleryResultLauncher.launch(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                if (PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
+                    newGalleryResultLauncher.launch(PickVisualMediaRequest(ImageOnly))
+                } else {
+                    if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_IMAGES).isAccepted) {
+                        galleryResultLauncher.launch(
+                            Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            )
                         )
-                    )
+                    }
                 }
             } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
@@ -203,6 +211,14 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             } catch (e: Exception) {
                 ToffeeAnalytics.logBreadCrumb("Failed to crop image")
             }
+        }
+    }
+    
+    private val newGalleryResultLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
+        if (uri != null) {
+            startCrop(uri)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
         }
     }
     
