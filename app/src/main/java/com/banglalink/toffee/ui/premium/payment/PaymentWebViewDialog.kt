@@ -84,6 +84,7 @@ class PaymentWebViewDialog : DialogFragment() {
     private var campaignName: String? = null
     private var campaignId: Int? = null
     private var campaignExpireDate: String? = null
+    private var isDiscountAvailable: Boolean = false
 
     @Inject lateinit var cPref: CommonPreference
     @Inject lateinit var mPref: SessionPreference
@@ -131,6 +132,8 @@ class PaymentWebViewDialog : DialogFragment() {
         campaignName = arguments?.getString("campaignName")
         campaignId = arguments?.getInt("campaignId")
         campaignExpireDate = arguments?.getString("campaignExpireDate")
+
+        isDiscountAvailable = arguments?.getBoolean("isDiscountAvailable") ?: false
 
         binding.titleTv.text = title
         if (isHideBackIcon) binding.backIcon.hide() else binding.backIcon.show()
@@ -245,15 +248,15 @@ class PaymentWebViewDialog : DialogFragment() {
                                         merchantInvoiceNumber = null,
                                         rawResponse = url.toString(),
 
-                                        voucher = voucher ,
-                                        campaignType = campaignType ,
-                                        partnerName = partnerName,
-                                        partnerId = partnerId?:0,
-                                        campaignName = campaignName,
-                                        campaignId = campaignId?:0,
-                                        campaignExpireDate = campaignExpireDate,
-                                        discount = mPref.paymentDiscountPercentage.value.toString(),
-                                        originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        voucher = if (isDiscountAvailable) voucher else null,
+                                        campaignType = if (isDiscountAvailable) campaignType else null,
+                                        partnerName = if (isDiscountAvailable) partnerName else null,
+                                        partnerId = if (isDiscountAvailable) partnerId else null,
+                                        campaignName = if (isDiscountAvailable) campaignName else null,
+                                        campaignId = if (isDiscountAvailable) campaignId else null,
+                                        campaignExpireDate = if (isDiscountAvailable) campaignExpireDate else null,
+                                        discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value else null,
+                                        originalPrice = if (isDiscountAvailable) viewModel.selectedDataPackOption.value?.packPrice.toString() else null,
                                     ))
 
                                     // Navigate or perform actions based on payment type and status code
@@ -701,15 +704,15 @@ class PaymentWebViewDialog : DialogFragment() {
                                     merchantInvoiceNumber = null,
                                     rawResponse = url.toString(),
 
-                                    voucher = voucher ,
-                                    campaignType = campaignType ,
-                                    partnerName = partnerName,
-                                    partnerId = partnerId?:0,
-                                    campaignName = campaignName,
-                                    campaignId = campaignId?:0,
-                                    campaignExpireDate = campaignExpireDate,
-                                    discount = mPref.paymentDiscountPercentage.value.toString(),
-                                    originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    voucher = if (isDiscountAvailable) voucher else null,
+                                    campaignType = if (isDiscountAvailable) campaignType else null,
+                                    partnerName = if (isDiscountAvailable) partnerName else null,
+                                    partnerId = if (isDiscountAvailable) partnerId else null,
+                                    campaignName = if (isDiscountAvailable) campaignName else null,
+                                    campaignId = if (isDiscountAvailable) campaignId else null,
+                                    campaignExpireDate = if (isDiscountAvailable) campaignExpireDate else null,
+                                    discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value else null,
+                                    originalPrice = if (isDiscountAvailable) viewModel.selectedDataPackOption.value?.packPrice.toString() else null,
                                 ))
 
                                 if (callBackStatus == "failure" || callBackStatus == "failed"){
