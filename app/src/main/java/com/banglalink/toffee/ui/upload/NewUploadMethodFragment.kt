@@ -13,7 +13,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VideoOnly
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -79,13 +82,17 @@ class NewUploadMethodFragment : DialogFragment() {
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
-                if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_VIDEO).isAccepted) {
-                    galleryResultLauncher.launch(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        ).setTypeAndNormalize("video/mp4")
-                    )
+                if (PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
+                    newGalleryResultLauncher.launch(PickVisualMediaRequest(VideoOnly))
+                } else {
+                    if (askPermission(if (Build.VERSION.SDK_INT < 33) Manifest.permission.READ_EXTERNAL_STORAGE else Manifest.permission.READ_MEDIA_VIDEO).isAccepted) {
+                        galleryResultLauncher.launch(
+                            Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                            ).setTypeAndNormalize("video/mp4")
+                        )
+                    }
                 }
             } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
@@ -166,7 +173,15 @@ class NewUploadMethodFragment : DialogFragment() {
         }
         return File.createTempFile(videoFileName, ".mp4", storageDir)
     }
-
+    
+    private val newGalleryResultLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
+        if (uri != null) {
+            checkAndOpenUpload(uri)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
+        }
+    }
+    
     private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
             checkAndOpenUpload(it.data!!.data!!)

@@ -42,6 +42,7 @@ class SavedAccountFragment : BaseFragment() {
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
     private var packPriceToPay:Int?=null
     private var discountInfo: DiscountInfo?=null
+    private var isDiscountAvailable: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,6 +69,8 @@ class SavedAccountFragment : BaseFragment() {
             campaignExpireDate = arguments?.getString("campaignExpireDate"),
             voucherGeneratedType = arguments?.getInt("voucherGeneratedType")
         )
+        isDiscountAvailable = arguments?.getBoolean("isDiscountAvailable") ?: false
+
         observeSubscriberPaymentInit()
 
         binding.walletNumberTextView.text = walletNumber
@@ -128,17 +131,18 @@ class SavedAccountFragment : BaseFragment() {
                 geoCity = mPref.geoCity,
                 geoLocation = mPref.geoLocation,
                 cusEmail = mPref.customerEmail,
-                voucher = discountInfo?.voucher,
-                campaign_type = discountInfo?.campaignType,
-                partner_name = discountInfo?.partnerName,
-                partner_id = discountInfo?.partnerId,
-                campaign_name = discountInfo?.campaignName,
-                campaign_id = discountInfo?.campaignId,
-                campaign_type_id = discountInfo?.campaignTypeId,
-                campaign_expire_date = discountInfo?.campaignExpireDate,
-                voucher_generated_type = discountInfo?.voucherGeneratedType,
-                discount = mPref.paymentDiscountPercentage.value?.toInt()?:0, // the percentage of discount applied
-                original_price = selectedDataPackOption?.packPrice ?: 0, // actual pack price without discount or else
+                voucher = if (isDiscountAvailable) discountInfo?.voucher else null,
+                campaign_type = if (isDiscountAvailable) discountInfo?.campaignType else null,
+                partner_name = if (isDiscountAvailable) discountInfo?.partnerName else null,
+                partner_id = if (isDiscountAvailable) discountInfo?.partnerId else null,
+                campaign_name = if (isDiscountAvailable) discountInfo?.campaignName else null,
+                campaign_id = if (isDiscountAvailable) discountInfo?.campaignId else null,
+                campaign_type_id = if (isDiscountAvailable) discountInfo?.campaignTypeId else null,
+                campaign_expire_date = if (isDiscountAvailable) discountInfo?.campaignExpireDate else null,
+                voucher_generated_type = if (isDiscountAvailable) discountInfo?.voucherGeneratedType else null,
+                discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value?.toInt()?:0 else null, // the percentage of discount applied
+                original_price = if (isDiscountAvailable) selectedDataPackOption?.packPrice ?: 0 else null, // actual pack price without discount or else
+
                 dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
                 dobCpId = viewModel.selectedDataPackOption.value?.dobCpId,
                 dobSubsOfferId = viewModel.selectedDataPackOption.value?.dobSubsOfferId,
@@ -181,15 +185,15 @@ class SavedAccountFragment : BaseFragment() {
                                 amount = packPriceToPay.toString(),
                                 merchantInvoiceNumber = null,
                                 rawResponse = json.encodeToString(it),
-                                voucher = discountInfo?.voucher ,
-                                campaignType = discountInfo?.campaignType ,
-                                partnerName = discountInfo?.partnerName,
-                                partnerId = discountInfo?.partnerId ?:0,
-                                campaignName = discountInfo?.campaignName,
-                                campaignId = discountInfo?.campaignId?:0,
-                                campaignExpireDate = discountInfo?.campaignExpireDate,
-                                discount = mPref.paymentDiscountPercentage.value.toString(),
-                                originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                voucher = if (isDiscountAvailable) discountInfo?.voucher else null,
+                                campaignType = if (isDiscountAvailable) discountInfo?.campaignType else null,
+                                partnerName = if (isDiscountAvailable) discountInfo?.partnerName else null,
+                                partnerId = if (isDiscountAvailable) discountInfo?.partnerId else null,
+                                campaignName = if (isDiscountAvailable) discountInfo?.campaignName else null,
+                                campaignId = if (isDiscountAvailable) discountInfo?.campaignId else null,
+                                campaignExpireDate = if (isDiscountAvailable) discountInfo?.campaignExpireDate else null,
+                                discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value else null,
+                                originalPrice = if (isDiscountAvailable) viewModel.selectedDataPackOption.value?.packPrice.toString() else null,
                             )
                         )
 
@@ -206,13 +210,15 @@ class SavedAccountFragment : BaseFragment() {
                             "isHideBackIcon" to false,
                             "isHideCloseIcon" to true,
                             "isBkashBlRecharge" to false,
+                            "payableAmount" to packPriceToPay.toString(),
                             "voucher" to discountInfo?.voucher,
                             "campaignType" to discountInfo?.campaignType,
                             "partnerName" to discountInfo?.partnerName,
                             "partnerId" to discountInfo?.partnerId,
                             "campaignName" to discountInfo?.campaignName,
                             "campaignId" to discountInfo?.campaignId,
-                            "campaignExpireDate" to discountInfo?.campaignExpireDate
+                            "campaignExpireDate" to discountInfo?.campaignExpireDate,
+                            "isDiscountAvailable" to isDiscountAvailable
                         )
                         // Navigate to the payment WebView dialog
                         findNavController().navigateTo(R.id.paymentWebViewDialog, args)
@@ -237,15 +243,15 @@ class SavedAccountFragment : BaseFragment() {
                             amount = packPriceToPay.toString(),
                             merchantInvoiceNumber = null,
                             rawResponse = json.encodeToString(it),
-                            voucher = discountInfo?.voucher ,
-                            campaignType = discountInfo?.campaignType ,
-                            partnerName = discountInfo?.partnerName,
-                            partnerId = discountInfo?.partnerId ?:0,
-                            campaignName = discountInfo?.campaignName,
-                            campaignId = discountInfo?.campaignId?:0,
-                            campaignExpireDate = discountInfo?.campaignExpireDate,
-                            discount = mPref.paymentDiscountPercentage.value.toString(),
-                            originalPrice = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            voucher = if (isDiscountAvailable) discountInfo?.voucher else null,
+                            campaignType = if (isDiscountAvailable) discountInfo?.campaignType else null,
+                            partnerName = if (isDiscountAvailable) discountInfo?.partnerName else null,
+                            partnerId = if (isDiscountAvailable) discountInfo?.partnerId else null,
+                            campaignName = if (isDiscountAvailable) discountInfo?.campaignName else null,
+                            campaignId = if (isDiscountAvailable) discountInfo?.campaignId else null,
+                            campaignExpireDate = if (isDiscountAvailable) discountInfo?.campaignExpireDate else null,
+                            discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value else null,
+                            originalPrice = if (isDiscountAvailable) viewModel.selectedDataPackOption.value?.packPrice.toString() else null,
                         )
                     )
                     requireContext().showToast(it.error.msg)
