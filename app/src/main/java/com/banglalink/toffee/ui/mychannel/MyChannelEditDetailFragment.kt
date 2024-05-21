@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -30,7 +32,14 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.isValid
+import com.banglalink.toffee.extension.loadBase64
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.validateInput
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Payment
@@ -151,6 +160,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     }
                     binding.viewModel = viewModel
                     viewModel.myChannelDetail = myChannelDetail
+                    bindingUtil.bindImageFromUrl(binding.bannerImageView, myChannelDetail?.bannerUrl)
+                    bindingUtil.bindRoundImage(binding.profileImageView, myChannelDetail?.profileUrl)
                     progressDialog.dismiss()
                 }
                 is Failure -> {
@@ -260,11 +271,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun loadImage() {
-        newBannerUrl?.let {
-            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
-        }
-        newProfileImageUrl?.let {
-            bindingUtil.bindRoundImage(binding.profileImageView, it)
+        runCatching {
+            newBannerUrl?.let {
+                bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
+            }
+            newProfileImageUrl?.let {
+                bindingUtil.bindRoundImage(binding.profileImageView, it)
+            }
         }
     }
     
