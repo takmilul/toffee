@@ -106,8 +106,8 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
-import com.banglalink.toffee.enums.BubbleType.FOOTBALL
 import com.banglalink.toffee.enums.BubbleType.CRICKET
+import com.banglalink.toffee.enums.BubbleType.FOOTBALL
 import com.banglalink.toffee.enums.BubbleType.RAMADAN
 import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.enums.CdnType
@@ -2478,21 +2478,21 @@ class HomeActivity : PlayerPageActivity(),
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
                     runCatching {
-                        if (packageManager.getInstalledApplications(0).find { it.packageName == "com.google.android.webview" } != null) {
-                            navController.navigateTo(
-                                resId = R.id.htmlPageViewDialog_Home,
-                                args = bundleOf(
-                                    "myTitle" to getString(string.back_to_toffee_text),
-                                    "url" to url,
-                                    "isHideBackIcon" to false,
-                                    "isHideCloseIcon" to true
-                                )
+                        navController.navigateTo(
+                            resId = R.id.htmlPageViewDialog_Home,
+                            args = bundleOf(
+                                "myTitle" to getString(string.back_to_toffee_text),
+                                "url" to url,
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true
                             )
-                        } else {
-                            openUrlToExternalApp(url)
-                        }
+                        )
                     }.onFailure {
-                        showToast("No browser found")
+                        runCatching {
+                            openUrlToExternalApp(url)
+                        }.onFailure {
+                            showToast("No browser found")
+                        }
                     }
                 } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
             }
