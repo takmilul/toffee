@@ -547,7 +547,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             { _, year, monthOfYear, dayOfMonth ->
                 val calendarTwo = Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-                binding.dateOfBirthTv.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                _binding?.dateOfBirthTv?.let { 
+                    it.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                }
                 validateDOB()
             },
             calendar[Calendar.YEAR],

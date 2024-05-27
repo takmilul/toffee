@@ -77,6 +77,10 @@ import com.banglalink.toffee.model.BubbleConfig
 ////            spec = ToffeeDatabase.ToffeeMigrationSpec::class //This spec only needs in case of RenameColumn, RenameTable, DeleteColumn and DeleteTable. Otherwise room will automatically migrate database, no need to add specs here.
 //        ),
         AutoMigration(
+            from = 19,
+            to = 20
+        ),
+        AutoMigration(
             from = 20,
             to = 21
         )

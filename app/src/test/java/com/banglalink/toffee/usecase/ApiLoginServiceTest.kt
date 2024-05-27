@@ -4,6 +4,7 @@ import com.banglalink.toffee.apiservice.ApiLoginService
 import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
+import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.check
@@ -18,8 +19,8 @@ import org.mockito.Mockito
 
 class ApiLoginServiceTest :BaseUseCaseTest(){
 
-    @Mock
-    var mockAuthApi:AuthApi = mock()
+    @Mock var mockAuthApi:AuthApi = mock()
+    @Mock var bubbleConfigRepository: BubbleConfigRepository = mock()
 
     @Test
     fun api_login_success(){
@@ -27,7 +28,7 @@ class ApiLoginServiceTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLoginService = ApiLoginService(SessionPreference.getInstance(), mockAuthApi)
+            val apiLoginService = ApiLoginService(mockAuthApi, SessionPreference.getInstance(), bubbleConfigRepository)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
 //                Response.success(ApiLoginResponse(
 //                    CustomerInfoLogin().apply {
@@ -66,7 +67,7 @@ class ApiLoginServiceTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLoginService = ApiLoginService(SessionPreference.getInstance(), mockAuthApi)
+            val apiLoginService = ApiLoginService(mockAuthApi, SessionPreference.getInstance(), bubbleConfigRepository)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
 //                Response.success(ApiLoginResponse(
 //                   null

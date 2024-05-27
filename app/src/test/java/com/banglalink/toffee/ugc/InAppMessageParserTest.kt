@@ -3,6 +3,7 @@ package com.banglalink.toffee.ugc
 import android.net.Uri
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.util.InAppMessageParser
 import io.mockk.coEvery
@@ -18,12 +19,14 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class InAppMessageParserTest {
+    private lateinit var mPref: SessionPreference
     private lateinit var categoryApi: GetCategories
     private lateinit var inAppMessageParser: InAppMessageParser
 
     @Before
     fun setup() {
         categoryApi = mockk()
+        mPref = SessionPreference.getInstance()
         coEvery {
             categoryApi.loadData(0, 0)
         } returns listOf(
@@ -31,7 +34,7 @@ class InAppMessageParserTest {
             Category(id = 9L, categoryName = "Drama Series"),
             Category(id = 2L, categoryName = "Music Videos"),
         )
-        inAppMessageParser = InAppMessageParser(categoryApi)
+        inAppMessageParser = InAppMessageParser(categoryApi, mPref)
 
         mockkObject(ToffeeAnalytics)
         every { ToffeeAnalytics.logBreadCrumb(any()) } returns mockk()

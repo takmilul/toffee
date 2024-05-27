@@ -285,12 +285,7 @@ fun View.validateInput(messageTextView: TextView, messageResource: Int, messageC
 
 fun Context.openUrlToExternalApp(url: String): Boolean {
     return try {
-        val newUrl = if (url.substringAfter("//").subSequence(0, 2) != "www") {
-            url.replaceFirst("//", "//www.")
-        } else {
-            url
-        }
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newUrl).normalizeScheme())
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url).normalizeScheme())
         startActivity(intent)
         return true
     }

@@ -45,7 +45,7 @@ class FavoriteViewModelTest {
         assertThat(true, Is.`is`(viewmodel.enableToolbar))
         val apiResp = mockFavoriteApi.loadData(0, 10)
         assertThat(apiResp.size, IsEqual.equalTo(10))
-        val repoList = viewmodel.getListData.first()
+        val repoList = viewmodel.getListData().first()
         assertThat(repoList, AllOf.allOf(Is.`is`(IsInstanceOf.instanceOf(PagingData::class.java))))
     }
 }
