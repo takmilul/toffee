@@ -47,7 +47,7 @@ import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -245,6 +245,10 @@ class EditUploadInfoFragment : BaseFragment() {
         if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
             ToffeeAnalytics.logEvent(ToffeeEvents.UGC_CHANNEL_FORM_SUBMIT)
             val uri = it.data!!.data!!
+            runCatching {
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(uri, flag)
+            }
             checkFileValidity(uri)
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")

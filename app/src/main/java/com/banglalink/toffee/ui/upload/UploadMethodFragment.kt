@@ -181,8 +181,6 @@ class UploadMethodFragment : DialogFragment() {
     
     private val newGalleryResultLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
-            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            requireContext().contentResolver.takePersistableUriPermission(uri, flag)
             checkAndOpenUpload(uri)
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")

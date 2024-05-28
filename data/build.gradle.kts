@@ -26,23 +26,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
-//            cmake {
-//                // Passes optional arguments to CMake.
-//                arguments += listOf("-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang")
-//                // Sets a flag to enable format macro constants for the C compiler.
-//                cFlags += listOf("-D__STDC_FORMAT_MACROS")
-//                // Sets optional flags for the C++ compiler.
-//                cppFlags += listOf("-fexceptions", "-frtti")
-//            }
+            cmake {
+                // Passes optional arguments to CMake.
+                arguments += listOf("-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang")
+                // Sets a flag to enable format macro constants for the C compiler.
+                cFlags += listOf("-D__STDC_FORMAT_MACROS")
+                // Sets optional flags for the C++ compiler.
+                cppFlags += listOf("-fexceptions", "-frtti")
+            }
         }
 //        Similar to other properties in the defaultConfig block,
 //        you can configure the ndk block for each product flavor
 //        in your build configuration.
-//        ndk {
-////            Specifies the ABI configurations of your native
-////            libraries Gradle should build and package with your app.
-//            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-//        }
+        ndk {
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+        }
 //        These build configs will be user for all productFlavors or buildTypes. You can override them in any specific 
 //        productFlavor or buildType block below.
         buildConfigField("int", "DEVICE_TYPE", "1")
@@ -67,23 +67,23 @@ android {
             isJniDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
-//            ndk {
-////            debugSymbolLevel = "FULL"
-////            Specifies the ABI configurations of your native
-////            libraries Gradle should build and package with your app.
-//                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-//            }
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("release") {
             isMinifyEnabled = false
             isJniDebuggable = false
-//            ndk {
-////            debugSymbolLevel = "FULL"
-////            Specifies the ABI configurations of your native
-////            libraries Gradle should build and package with your app.
-//                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-//            }
+            ndk {
+//            debugSymbolLevel = "FULL"
+//            Specifies the ABI configurations of your native
+//            libraries Gradle should build and package with your app.
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         create("stagingDebug") {
@@ -114,12 +114,14 @@ android {
         }
     }
     
-//    externalNativeBuild {
-//        cmake {
-//            path = file("src/main/cpp/CMakeLists.txt")
-//            version = "3.22.1"
-//        }
-//    }
+    ndkVersion = "26.2.11394342"
+    
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
     
     sourceSets {
         getByName("main") {
