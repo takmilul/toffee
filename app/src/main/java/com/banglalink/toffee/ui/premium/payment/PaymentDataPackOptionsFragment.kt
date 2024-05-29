@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.premium.payment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.network.request.RechargeByBkashRequest
 import com.banglalink.toffee.data.network.request.SubscriberPaymentInitRequest
 import com.banglalink.toffee.data.network.request.TokenizedAccountInfoApiRequest
-import com.banglalink.toffee.data.network.request.TokenizedPaymentMethodsApiRequest
 import com.banglalink.toffee.data.network.response.DiscountInfo
 import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentPaymentDataPackOptionsBinding
@@ -1193,7 +1191,7 @@ class PaymentDataPackOptionsFragment : ChildDialogFragment(), DataPackOptionCall
                 }
 
                 binding.signInButton.isVisible = mPref.isBanglalinkNumber == "false"
-                binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
+//                binding.buySimButton.isVisible = mPref.isBanglalinkNumber == "false"
                 binding.termsAndConditionsGroup.isVisible = mPref.isBanglalinkNumber == "true"
                 binding.needToEnterOtpText.isVisible = item.isDob == 1 && mPref.isBanglalinkNumber == "true"
             }
