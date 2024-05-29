@@ -78,8 +78,7 @@ data class ChannelInfo(
     
     @SerialName("channel_logo")
     var channel_logo: String? = null,
-    @SerialName("categoryName")
-    @JsonNames("category")
+    @JsonNames("category", "categoryName")
     var category: String? = null,
     @SerialName("subCategory")
     var subCategory: String? = null,
@@ -133,8 +132,7 @@ data class ChannelInfo(
     var activeSeasonList: List<Int>? = listOf(1),
     @JsonNames("channelProfileUrl", "channel_profile_url")
     val channelProfileUrl: String? = null,
-    @SerialName("url_type")
-    @JsonNames("urlType")
+    @JsonNames("urlType", "url_type")
     val urlType: Int = 0,
     @JsonNames("urlTypeExt", "url_type_extended")
     val urlTypeExt: Int = 0,
@@ -153,8 +151,7 @@ data class ChannelInfo(
     
     @SerialName("is_drm_active")
     var is_drm_active: Int = 0,
-    @SerialName("drm_dash_url")
-    @JsonNames("drmDashUrl")
+    @JsonNames("drmDashUrl", "drm_dash_url")
     val drmDashUrl: String? = null,
     @JsonNames("drmCastReceiver", "drm_cast_receiver")
     val drmCastReceiver: String? = null,
@@ -162,15 +159,13 @@ data class ChannelInfo(
     val plainCastReceiver: String? = null,
     @SerialName("is_ad_active")
     val is_ad_active: Int = 0,
-    @SerialName("drm_cid")
-    @JsonNames("drmCid")
+    @JsonNames("drmCid", "drm_cid")
     val drmCid: String? = null,
     @JsonNames("fcmEventName", "fcm_event_name")
     val fcmEventName: String? = null,
     @SerialName("fcm_event_is_active")
     val fcm_event_is_active: Int = 0,
-    @SerialName("data_source")
-    @JsonNames("dataSource")
+    @JsonNames("dataSource", "data_source")
     val dataSource: String? = "iptv_programs",
     @SerialName("totalCount")
     var totalCount: Int = 0,
@@ -178,11 +173,9 @@ data class ChannelInfo(
     var paidPlainHlsUrl: String? = null,
     @JsonNames("signedUrlExpiryDate", "sign_url_expire")
     var signedUrlExpiryDate: String? =null,
-    @SerialName("cdn_type")
-    @JsonNames("cdnType")
+    @JsonNames("cdnType", "cdn_type")
     var cdnType: String? = null,
-    @SerialName("ads_group")
-    @JsonNames("adGroup")
+    @JsonNames("adGroup", "ads_group")
     var adGroup: String? = null,
     @JsonNames("bannerEventName", "featured_banner_code")
     var bannerEventName: String? = null,
