@@ -474,65 +474,6 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = 
-        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
-        && mPref.isDrmActive && channelInfo.isDrmActive
-        && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
-        ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
-        ?.urlList()?.randomOrNull().isNullOrEmpty())
-        && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
-        && !channelInfo.drmCid.isNullOrBlank()
-//        && player is SimpleExoPlayer
-    
-    private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
-        return try {
-            ToffeeAnalytics.logBreadCrumb("isMediaItemNull: ${mediaItem == null}")
-            val channelInfo = mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
-            val isDrmActive = isDrmActiveForChannel(channelInfo)
-            ToffeeAnalytics.logBreadCrumb("isDrmActive: $isDrmActive")
-            
-            if (!isDrmActive) {
-                return DrmSessionManager.DRM_UNSUPPORTED
-            }
-            val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
-            ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
-            
-            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
-                DefaultDrmSessionManager
-                    .Builder()
-//                    .setUuidAndExoMediaDrmProvider(C.WIDEVINE_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
-                    .setMultiSession(false)
-                    .build(
-//                        ToffeeMediaDrmCallback(
-//                            mPref.drmWidevineLicenseUrl!!,
-//                            httpDataSourceFactory!!,
-//                            drmTokenApi,
-//                            drmCid ?: ""
-//                        )
-                        CustomMediaDrmCallback(
-                            licenseUri = mPref.drmWidevineLicenseUrl ?: "https://dev-services.toffeelive.com/widevine/v1/license",
-                            dataSourceFactory = httpDataSourceFactory!!,
-                            drmLicenseService = drmLicenseService,
-                            contentId = drmCid,
-                            packageId = channelInfo.drmPackageId
-                        )
-                    )
-                    .apply {
-                        mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
-                            Log.i("DRM_T", "Using offline key")
-                            ToffeeAnalytics.logBreadCrumb("Using offline key")
-                            setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
-                        }
-                    }
-            } else {
-                DrmSessionManager.DRM_UNSUPPORTED
-            }
-        } catch (e: Exception) {
-            ToffeeAnalytics.logBreadCrumb("DefaultDrmSessionManager build error: ${e.message}")
-            DrmSessionManager.DRM_UNSUPPORTED
-        }
-    }
-    
     private val castSessionListener = object : SessionManagerListener<CastSession> {
         override fun onSessionStarting(p0: CastSession) {
             p0.castDevice?.friendlyName?.let {
@@ -850,7 +791,65 @@ abstract class PlayerPageActivity :
         }
     }
     
-    private suspend fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
+        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE
+        && mPref.isDrmActive && channelInfo.isDrmActive
+        && (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)
+        ?.urlList()?.randomOrNull().isNullOrEmpty())
+        && !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+        && !channelInfo.drmCid.isNullOrBlank()
+    
+    private fun getDrmSessionManager(mediaItem: MediaItem?): DrmSessionManager {
+        return try {
+            ToffeeAnalytics.logBreadCrumb("isMediaItemNull: ${mediaItem == null}")
+            val channelInfo = mediaItem?.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
+            val isDrmActive = isDrmActiveForChannel(channelInfo)
+            ToffeeAnalytics.logBreadCrumb("isDrmActive: $isDrmActive")
+            
+            if (!isDrmActive) {
+                return DrmSessionManager.DRM_UNSUPPORTED
+            }
+            val drmCid = if (mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
+            ToffeeAnalytics.logBreadCrumb("isDrmWidevineLicenseUrlNull: ${mPref.drmWidevineLicenseUrl.isNullOrBlank()}, \nisHttpDataSourceFactoryNull: ${httpDataSourceFactory == null}, \nisDrmCidNull: ${drmCid.isNullOrBlank()}")
+            
+            return if (!mPref.drmWidevineLicenseUrl.isNullOrBlank() && httpDataSourceFactory != null) {
+                DefaultDrmSessionManager
+                    .Builder()
+//                    .setUuidAndExoMediaDrmProvider(C.WIDEVINE_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                    .setMultiSession(false)
+                    .build(
+//                        ToffeeMediaDrmCallback(
+//                            mPref.drmWidevineLicenseUrl!!,
+//                            httpDataSourceFactory!!,
+//                            drmTokenApi,
+//                            drmCid ?: ""
+//                        )
+                        CustomMediaDrmCallback(
+                            licenseUri = mPref.drmWidevineLicenseUrl ?: "https://dev-services.toffeelive.com/widevine/v1/license",
+                            dataSourceFactory = httpDataSourceFactory!!,
+                            drmLicenseService = drmLicenseService,
+                            contentId = drmCid,
+                            packageId = channelInfo.drmPackageId
+                        )
+                    )
+                    .apply {
+                        mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
+                            Log.i("DRM_T", "Using offline key")
+                            ToffeeAnalytics.logBreadCrumb("Using offline key")
+                            setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
+                        }
+                    }
+            } else {
+                DrmSessionManager.DRM_UNSUPPORTED
+            }
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("DefaultDrmSessionManager build error: ${e.message}")
+            DrmSessionManager.DRM_UNSUPPORTED
+        }
+    }
+    
+    private fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
         if (player is CastPlayer) {
             return MediaItem.Builder().apply {
                 setMimeType(MimeTypes.APPLICATION_MPD)
