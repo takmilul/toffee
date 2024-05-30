@@ -333,7 +333,7 @@ class DcbEnterOtpFragment : ChildDialogFragment() {
                 campaign_type_id = if (isDiscountAvailable) discountInfo?.campaignTypeId else null,
                 campaign_expire_date = if (isDiscountAvailable) discountInfo?.campaignExpireDate else null,
                 voucher_generated_type = if (isDiscountAvailable) discountInfo?.voucherGeneratedType else null,
-                discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value?.toInt()?:0 else null, // the percentage of discount applied
+                discount = if (isDiscountAvailable) mPref.paymentDiscountPercentage.value else null, // the percentage of discount applied
                 original_price = if (isDiscountAvailable) selectedDataPackOption?.packPrice ?: 0 else null, // actual pack price without discount or else
 
                 dobPrice = viewModel.selectedDataPackOption.value?.dobPrice,
