@@ -63,7 +63,7 @@ data class SubscriberPaymentInitRequest(
     @SerialName("voucher_generated_type")
     val voucher_generated_type: Int? = 0,
     @SerialName("discount")
-    val discount: Int? = 0,
+    val discount: String? = null,
     @SerialName("original_price")
     val original_price: Int? = 0,
 
