@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
@@ -13,7 +14,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
 import com.banglalink.toffee.enums.BubbleType.FOOTBALL
-import com.banglalink.toffee.enums.BubbleType.CRICKET
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -32,11 +32,8 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit.DAYS
-import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.*
+import java.util.concurrent.TimeUnit.*
 
 class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventListener, IBubbleInteractionListener {
     
@@ -155,7 +152,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     private fun matchRunningState() {
         binding.awayTeamFlag.show()
         binding.liveGif.show()
-        binding.liveGif.load(getDrawable(R.drawable.bubble_live_gif))
+        binding.liveGif.load(ContextCompat.getDrawable(this, R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotNullOrBlank {
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }

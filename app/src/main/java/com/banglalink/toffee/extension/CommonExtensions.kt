@@ -52,7 +52,7 @@ import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 import java.math.BigInteger
-import java.util.Date
+import java.util.*
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]{1,256}+@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}+\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25}+(?:\\.[a-zA-Z]{1,4})?$"
@@ -136,7 +136,10 @@ fun Activity.checkVerification(
     shouldReloadAfterLogin: Boolean = true, 
     block: (()-> Unit)? = null
 ) {
-    if (this is HomeActivity && !mPref.isVerifiedUser && this.getNavController().currentDestination?.id != R.id.loginDialog) {
+    if (this is HomeActivity && this.getNavController().currentDestination?.id == R.id.loginDialog) {
+        this.getNavController().popBackStack()
+    }
+    if (this is HomeActivity && !mPref.isVerifiedUser) {
         mPref.doActionBeforeReload.value = doActionBeforeReload
         mPref.shouldReloadAfterLogin.value = shouldReloadAfterLogin
         mPref.preLoginDestinationId.value = currentDestinationId ?: this.getNavController().currentDestination?.id
