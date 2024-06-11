@@ -32,7 +32,7 @@ class PartnersListService @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.map {
+        return response.response?.channels?.map {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {

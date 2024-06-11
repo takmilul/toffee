@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.qrBasedSigning
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.QrSignInService
@@ -19,7 +18,7 @@ class ActiveTvQrViewModel @Inject constructor(
     
     fun getSubscriberPaymentInit(code: String) {
         viewModelScope.launch {
-            var response = resultFromResponse { qrSignInService.execute(code) }
+            val response = resultFromResponse { qrSignInService.execute(code) }
             qrSignInStatus.value = response
         }
     }

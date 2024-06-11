@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UploadSignedUrlResponse(
     @SerialName("response")
-    val response: UploadSignedUrl
+    val response: UploadSignedUrl? = null
 ) : BaseResponse()

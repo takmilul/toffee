@@ -193,10 +193,14 @@ class EditProfileFragment : BaseFragment() {
                 progressDialog.dismiss()
                 when (it) {
                     is Success -> {
-                        it.data.userPhoto?.let { url ->
-                            bindingUtil.bindRoundImage(binding.profileIv, url)
+                        if (it.data == null) {
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        } else {
+                            it.data?.userPhoto?.let { url ->
+                                bindingUtil.bindRoundImage(binding.profileIv, url)
+                            }
+                            requireContext().showToast(getString(R.string.photo_update_success))
                         }
-                        requireContext().showToast(getString(R.string.photo_update_success))
                     }
                     is Failure -> {
                         ToffeeAnalytics.logEvent(

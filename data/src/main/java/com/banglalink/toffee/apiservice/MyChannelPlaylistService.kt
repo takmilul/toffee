@@ -28,7 +28,7 @@ class MyChannelPlaylistService @AssistedInject constructor(
                 MyChannelPlaylistRequest(preference.customerId, preference.password)
             )
         }
-        return response.response.channelPlaylist ?: emptyList()
+        return response.response?.channelPlaylist ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VoucherPaymentMethodResponse(
     @SerialName("response")
-    val response: VoucherPaymentBean
+    val response: VoucherPaymentBean? = null
 ) : BaseResponse()

@@ -263,9 +263,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadViewModel.reloadVideos.value = true
-                    reloadViewModel.reloadPlaylist.value = true
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let {
+                        reloadViewModel.reloadVideos.value = true
+                        reloadViewModel.reloadPlaylist.value = true
+                    }
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -308,11 +310,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Success -> {
-                    currentItem?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        currentItem?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        detailsAdapter.notifyDataSetChanged()
                     }
-                    detailsAdapter.notifyDataSetChanged()
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)

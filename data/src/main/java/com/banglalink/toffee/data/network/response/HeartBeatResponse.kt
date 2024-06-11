@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HeartBeatResponse(
     @SerialName("response")
-    val response: HeartBeatBean
+    val response: HeartBeatBean? = null
 ) : BaseResponse()

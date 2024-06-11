@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetCategories
-import com.banglalink.toffee.apiservice.GetPaymentMethodList
+import com.banglalink.toffee.apiservice.GetCategoriesService
+import com.banglalink.toffee.apiservice.GetPaymentMethodListService
 import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -22,12 +22,12 @@ import kotlinx.coroutines.launch
 
 class MyChannelEditDetailViewModel @AssistedInject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
-    private val categoryApiService: GetCategories,
-    private val paymentMethodService: GetPaymentMethodList,
+    private val categoryApiService: GetCategoriesService,
+    private val paymentMethodService: GetPaymentMethodListService,
     @Assisted var myChannelDetail: MyChannelDetail?,
 ) : ViewModel() {
     
-    private val _data = SingleLiveEvent<Resource<MyChannelEditBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelEditBean?>>()
     val editDetailLiveData = _data.toLiveData()
     var categoryList = MutableLiveData<List<Category>>()
     var selectedCategory: Category? = null

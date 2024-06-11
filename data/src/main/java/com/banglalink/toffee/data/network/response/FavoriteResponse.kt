@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FavoriteResponse(
     @SerialName("response")
-    val response: FavoriteBean
+    val response: FavoriteBean? = null
 ) : BaseResponse()

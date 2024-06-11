@@ -15,7 +15,7 @@ class UploadConfirmation @Inject constructor(
         contentId: Long,
         isConfirm: Boolean,
         isCopyrightConfirm: Boolean
-    ): ResponseBean {
+    ): ResponseBean? {
         val response = tryIO {
             toffeeApi.uploadConfirmation(
                 UploadConfirmationRequest(

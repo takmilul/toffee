@@ -194,8 +194,7 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-
-                    if (it.data.status == PaymentStatusDialog.SUCCESS) {
+                    if (it.data?.status == PaymentStatusDialog.SUCCESS) {
                         val selectedPremiumPack = viewModel.selectedPremiumPack.value
                         val selectedDataPackOption = viewModel.selectedDataPackOption.value
                         val MNO = when {
@@ -218,15 +217,15 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                                 "MNO" to MNO,
                             )
                         )
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
+                        mPref.activePremiumPackList.value = it.data?.loginRelatedSubsHistory
                         val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 200),
+                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data?.status ?: 200),
                             PaymentStatusDialog.ARG_STATUS_TITLE to "Access Coupon Redemption is Successful",
                             PaymentStatusDialog.ARG_STATUS_MESSAGE to "Please wait while we redirect you"
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
                     }
-                    else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
+                    else if (it.data?.status == PaymentStatusDialog.UN_SUCCESS) {
                         val selectedPremiumPack = viewModel.selectedPremiumPack.value
                         val selectedDataPackOption = viewModel.selectedDataPackOption.value
                         val MNO = when {
@@ -255,6 +254,8 @@ class RedeemVoucherCodeFragment : ChildDialogFragment() {
                             PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the Coupon activation failed. Please retry"
                         )
                         findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                    } else {
+                        requireContext().showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Resource.Failure -> {

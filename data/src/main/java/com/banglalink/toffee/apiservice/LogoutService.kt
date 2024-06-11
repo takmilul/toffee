@@ -12,7 +12,7 @@ class LogoutService @Inject constructor(
     private val preference: SessionPreference,
 ) {
 
-    suspend fun execute(): LogoutBean {
+    suspend fun execute(): LogoutBean? {
         val response = tryIO {
             toffeeApi.unVerifyUser(
                 LogoutRequest(

@@ -14,7 +14,7 @@ class RedeemCodeViewModel @Inject constructor(
     private val redeemReferralCode: RedeemReferralCode,
 ) : ViewModel() {
 
-    fun redeemReferralCode(referralCode: String): LiveData<Resource<RedeemReferralCodeBean>> {
+    fun redeemReferralCode(referralCode: String): LiveData<Resource<RedeemReferralCodeBean?>> {
         return resultLiveData {
             redeemReferralCode.execute(referralCode)
         }

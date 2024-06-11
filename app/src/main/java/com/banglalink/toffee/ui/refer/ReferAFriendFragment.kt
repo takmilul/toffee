@@ -61,20 +61,24 @@ class ReferAFriendFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     progressDialog.dismiss()
-                    binding.data = it.data
-                    if (!it.data.promotionMessage.isNullOrBlank()) {
-                        binding.policyText.setTextColor(Color.parseColor(it.data.fontColor))
-                        binding.policyText.textSize = it.data.fontSize.toFloat()
-                        binding.policyText.visibility = View.VISIBLE
-                        it.data.promotionMessage?.let { setSpannableString(it) }
+                    if (it.data == null) {
+                        requireContext().getString(R.string.try_again_message)
                     } else {
-                        binding.policyText.visibility = View.GONE
+                        binding.data = it.data
+                        if (!it.data?.promotionMessage.isNullOrBlank()) {
+                            binding.policyText.setTextColor(Color.parseColor(it.data?.fontColor ?: "#000000"))
+                            binding.policyText.textSize = it.data?.fontSize?.toFloat() ?: 12F
+                            binding.policyText.visibility = View.VISIBLE
+                            it.data?.promotionMessage?.let { setSpannableString(it) }
+                        } else {
+                            binding.policyText.visibility = View.GONE
+                        }
+                        binding.shareBtn.isEnabled = true
+                        binding.copyBtn.isEnabled = true
+                        
+                        setCopyBtnClick(it.data?.referralCode ?: "")
+                        setShareBtnClick(it.data?.shareableString ?: "")
                     }
-                    binding.shareBtn.isEnabled = true
-                    binding.copyBtn.isEnabled = true
-
-                    setCopyBtnClick(it.data.referralCode ?: "")
-                    setShareBtnClick(it.data.shareableString ?: "")
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(

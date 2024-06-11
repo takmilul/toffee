@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.Payment
 import javax.inject.Inject
 
-class GetPaymentMethodList @Inject constructor(
+class GetPaymentMethodListService @Inject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi
 ): BaseApiService<Payment> {
@@ -21,6 +21,6 @@ class GetPaymentMethodList @Inject constructor(
                 PaymentMethodRequest(preference.customerId,preference.password)
             )
         }
-        return response.response.paymentList ?: emptyList()
+        return response.response?.paymentList ?: emptyList()
     }
 }

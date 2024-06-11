@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FmRadioContentResponse (
     @SerialName("response")
-    val response: FmRadioContentBean
+    val response: FmRadioContentBean? = null
 ) : BaseResponse()

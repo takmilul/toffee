@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BubbleResponse(
     @SerialName("response")
-    val response: RamadanScheduledResponse,
+    val response: RamadanScheduledResponse? = null,
 ) : BaseResponse()

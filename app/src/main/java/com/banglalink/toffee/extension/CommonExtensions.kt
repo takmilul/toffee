@@ -16,12 +16,14 @@ import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
@@ -129,12 +131,12 @@ val Float.px: Float get() {
 
 fun Boolean.toInt() = if (this) 1 else 0
 
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@OptIn(androidx.media3.common.util.UnstableApi::class)
 fun Activity.checkVerification(
     currentDestinationId: Int? = null,
     doActionBeforeReload: Boolean = false,
-    shouldReloadAfterLogin: Boolean = true, 
-    block: (()-> Unit)? = null
+    shouldReloadAfterLogin: Boolean = true,
+    block: (() -> Unit)? = null,
 ) {
     if (this is HomeActivity && this.getNavController().currentDestination?.id == R.id.loginDialog) {
         this.getNavController().popBackStack()
@@ -149,7 +151,7 @@ fun Activity.checkVerification(
         block?.invoke()
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleReport(item: ChannelInfo) {
     if (this is HomeActivity){
         if (!mPref.isVerifiedUser)
@@ -174,7 +176,7 @@ fun Activity.handleReport(item: ChannelInfo) {
         fragment?.show((this as FragmentActivity).supportFragmentManager, "report_video")
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
     if (this is HomeActivity){
         if (!mPref.isVerifiedUser)
@@ -199,20 +201,20 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
         }
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleShare(item: ChannelInfo) {
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleUrlShare(url: String) {
     ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareUrlLiveData.postValue(url)
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     if (this is HomeActivity){
         if (!mPref.isVerifiedUser)
@@ -232,24 +234,29 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
             getHomeViewModel().updateFavorite(item).observe(this) {
                 when (it) {
                     is Resource.Success -> {
-                        val isFavorite = it.data.isFavorite
-                        item.favorite = if (isFavorite == 1) "1" else "0"
-                        lifecycleScope.launch {
-                            favoriteDao.insert(
-                                FavoriteItem(
-                                    channelId = item.id.toLong(),
-                                    isFavorite = isFavorite
+                        if (it.data == null) {
+                            showToast(getString(R.string.try_again_message))
+                        } else {
+                            val isFavorite = it.data?.isFavorite ?: 0
+                            item.favorite = if (isFavorite == 1) "1" else "0"
+                            lifecycleScope.launch {
+                                favoriteDao.insert(
+                                    FavoriteItem(
+                                        channelId = item.id.toLong(),
+                                        isFavorite = isFavorite
+                                    )
                                 )
-                            )
-                        }
-                        when (isFavorite) {
-                            0 -> {
-                                onRemoved?.invoke()
-                                showToast("Content successfully removed from favorite list")
                             }
-                            1 -> {
-                                onAdded?.invoke()
-                                showToast("Content successfully added to favorite list")
+                            when (isFavorite) {
+                                0 -> {
+                                    onRemoved?.invoke()
+                                    showToast("Content successfully removed from favorite list")
+                                }
+                                
+                                1 -> {
+                                    onAdded?.invoke()
+                                    showToast("Content successfully added to favorite list")
+                                }
                             }
                         }
                     }
@@ -331,6 +338,7 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
+@OptIn(UnstableApi::class)
 fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
     if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.IS_DEBUG_MESSAGE_ACTIVE) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -419,7 +427,7 @@ fun NavController.navigatePopUpTo(
     args: Bundle? = null,
     inclusive: Boolean? = true,
     @IdRes popUpTo: Int? = null,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     this.navigate(resId, args, navOptions ?: navOptions {
         launchSingleTop = true

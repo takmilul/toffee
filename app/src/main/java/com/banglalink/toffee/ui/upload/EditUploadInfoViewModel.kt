@@ -11,8 +11,8 @@ import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.ContentUpload
-import com.banglalink.toffee.apiservice.GetContentCategories
+import com.banglalink.toffee.apiservice.ContentUploadService
+import com.banglalink.toffee.apiservice.GetContentCategoriesService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -38,9 +38,9 @@ import kotlin.math.round
 class EditUploadInfoViewModel @AssistedInject constructor(
     @ApplicationContext private val appContext: Context,
     private val uploadRepo: UploadInfoRepository,
-    private val contentUploadApi: ContentUpload,
+    private val contentUploadServiceApi: ContentUploadService,
     private val preference: SessionPreference,
-    private val categoryApi: GetContentCategories,
+    private val categoryApi: GetContentCategoriesService,
     @Assisted private val uploadFileUri: String
 ) : ViewModel() {
 
@@ -244,7 +244,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         val copyrightFileName = "${System.currentTimeMillis()}.${copyrightDocExt}"
 
         try {
-            val resp = contentUploadApi(
+            val resp = contentUploadServiceApi(
                 fileName,
                 title.value,
                 description.value,
@@ -258,9 +258,13 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
             Log.i("RESP", resp.toString())
-            if ((resp.contentId ?: 0) > 0L && resp.uploadVODSignedUrl != null) {
-                val uploadId = startUpload(resp.contentId!!, resp.uploadVODSignedUrl!!, resp.uploadCopyrightSignedUrl, 
-                    isUploadCopyrightFile)
+            if (resp != null && (resp.contentId ?: 0) > 0L && resp.uploadVODSignedUrl != null) {
+                val uploadId = startUpload(
+                    resp.contentId!!,
+                    resp.uploadVODSignedUrl!!,
+                    resp.uploadCopyrightSignedUrl, 
+                    isUploadCopyrightFile
+                )
                 Log.i("uploadId", uploadId)
                 resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId!!))
                 progressDialog.value = false

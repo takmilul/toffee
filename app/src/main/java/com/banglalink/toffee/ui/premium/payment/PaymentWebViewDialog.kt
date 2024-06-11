@@ -10,7 +10,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -21,11 +26,16 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.data.network.request.*
+import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toInt
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.premium.PremiumViewModel
@@ -43,8 +53,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.*
-import java.util.ResourceBundle.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -905,78 +913,85 @@ class PaymentWebViewDialog : DialogFragment() {
                 is Success -> {
                     Log.i("Retry_BlDataPackPurchase", "Success BlDataPackPurchase")
                     progressDialog.dismiss()
-                    viewModel.sendPaymentLogFromDeviceData(PaymentLogFromDeviceData(
-                        id = System.currentTimeMillis() + mPref.customerId,
-                        callingApiName = "dataPackPurchase",
-                        packId = viewModel.selectedPremiumPack.value?.id ?: 0,
-                        packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
-                        dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
-                        dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
-                        paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
-                        paymentMsisdn = null,
-                        paymentId = paymentId,
-                        transactionId = null,
-                        transactionStatus = null,
-                        amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                        merchantInvoiceNumber = mPref.merchantInvoiceNumber,
-                        rawResponse = json.encodeToString(it.data)
-                    ))
-                    when (it.data.status) {
-                        PaymentStatusDialog.SUCCESS -> {
-                            mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
-                            val MNO = when {
-                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
-                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
-                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
-                                else -> "N/A"
-                            }
-                            // Send Log to FirebaseAnalytics
-                            ToffeeAnalytics.toffeeLogEvent(
-                                ToffeeEvents.PACK_SUCCESS,
-                                bundleOf(
-                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
-                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
-                                    "currency" to "BDT",
-                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
-                                    "provider" to "Banglalink",
-                                    "type" to "recharge",
-                                    "reason" to "N/A",
-                                    "MNO" to MNO,
+                    if (it.data != null) {
+                        viewModel.sendPaymentLogFromDeviceData(
+                            PaymentLogFromDeviceData(
+                                id = System.currentTimeMillis() + mPref.customerId,
+                                callingApiName = "dataPackPurchase",
+                                packId = viewModel.selectedPremiumPack.value?.id ?: 0,
+                                packTitle = viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                dataPackId = viewModel.selectedDataPackOption.value?.dataPackId ?: 0,
+                                dataPackDetails = viewModel.selectedDataPackOption.value?.packDetails.toString(),
+                                paymentMethodId = viewModel.selectedDataPackOption.value?.paymentMethodId ?: 0,
+                                paymentMsisdn = null,
+                                paymentId = paymentId,
+                                transactionId = null,
+                                transactionStatus = null,
+                                amount = viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                merchantInvoiceNumber = mPref.merchantInvoiceNumber,
+                                rawResponse = json.encodeToString(it.data)
+                            )
+                        )
+                        when (it.data?.status) {
+                            PaymentStatusDialog.SUCCESS -> {
+                                mPref.activePremiumPackList.value = it.data?.loginRelatedSubsHistory
+                                val MNO = when {
+                                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                    else -> "N/A"
+                                }
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_SUCCESS,
+                                    bundleOf(
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                                        "currency" to "BDT",
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
+                                        "provider" to "Banglalink",
+                                        "type" to "recharge",
+                                        "reason" to "N/A",
+                                        "MNO" to MNO,
+                                    )
                                 )
-                            )
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to (it.data.status ?: 200)
-                            )
-                            navigateToStatusDialogPage(args)
-                        }
-                        else -> {
-                            val MNO = when {
-                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
-                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
-                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
-                                else -> "N/A"
-                            }
-                            // Send Log to FirebaseAnalytics
-                            ToffeeAnalytics.toffeeLogEvent(
-                                ToffeeEvents.PACK_ERROR,
-                                bundleOf(
-                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id,
-                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
-                                    "currency" to "BDT",
-                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
-                                    "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
-                                    "provider" to "Banglalink",
-                                    "type" to "recharge",
-                                    "reason" to R.string.due_some_technical_issue,
-                                    "MNO" to MNO,
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to (it.data?.status ?: 200)
                                 )
-                            )
-                            val args = bundleOf(
-                                ARG_STATUS_CODE to (it.data.status ?: 0)
-                            )
-                            navigateToStatusDialogPage(args)
+                                navigateToStatusDialogPage(args)
+                            }
+                            
+                            else -> {
+                                val MNO = when {
+                                    (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                    (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                    (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                    else -> "N/A"
+                                }
+                                // Send Log to FirebaseAnalytics
+                                ToffeeAnalytics.toffeeLogEvent(
+                                    ToffeeEvents.PACK_ERROR,
+                                    bundleOf(
+                                        "pack_ID" to viewModel.selectedPremiumPack.value?.id,
+                                        "pack_name" to viewModel.selectedPremiumPack.value?.packTitle,
+                                        "currency" to "BDT",
+                                        "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                        "validity" to viewModel.selectedPremiumPack.value?.expiryDate,
+                                        "provider" to "Banglalink",
+                                        "type" to "recharge",
+                                        "reason" to R.string.due_some_technical_issue,
+                                        "MNO" to MNO,
+                                    )
+                                )
+                                val args = bundleOf(
+                                    ARG_STATUS_CODE to (it.data?.status ?: 0)
+                                )
+                                navigateToStatusDialogPage(args)
+                            }
                         }
+                    } else {
+                        requireContext().showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {

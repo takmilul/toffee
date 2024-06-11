@@ -1,9 +1,6 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
-import com.banglalink.toffee.data.network.request.LoginByPhoneRequest
 import com.banglalink.toffee.data.network.request.PairWithTvRequest
-import com.banglalink.toffee.data.network.response.PairWithTvResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -23,10 +20,7 @@ class QrSignInService @Inject constructor(private val preference: SessionPrefere
                 )
             )
         }
-
-
-
-        Log.d("TAG", "execute121212: "+response.response.status)
-        return response.response.status
+        
+        return response.response?.status ?: -1
     }
 }

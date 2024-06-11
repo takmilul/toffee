@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class RedeemReferralCodeResponse(
     @SerialName("response")
-    val response: RedeemReferralCodeBean
+    val response: RedeemReferralCodeBean? = null
 ) : BaseResponse()

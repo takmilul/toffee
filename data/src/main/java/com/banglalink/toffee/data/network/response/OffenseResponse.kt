@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OffenseResponse(
     @SerialName("response")
-    val response: OffenseBean
+    val response: OffenseBean? = null
 ) : BaseResponse()

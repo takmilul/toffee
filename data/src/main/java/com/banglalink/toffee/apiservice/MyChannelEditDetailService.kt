@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class MyChannelEditDetailService @Inject constructor(private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(myChannelEditRequest: MyChannelEditRequest): MyChannelEditBean {
+    suspend fun execute(myChannelEditRequest: MyChannelEditRequest): MyChannelEditBean? {
 
         val response = tryIO {
             toffeeApi.editMyChannelDetail(myChannelEditRequest)

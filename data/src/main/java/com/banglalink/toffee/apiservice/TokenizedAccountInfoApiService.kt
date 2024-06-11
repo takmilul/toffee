@@ -11,7 +11,7 @@ class TokenizedAccountInfoApiService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val mPref: SessionPreference
 ) {
-    suspend fun execute(paymentMethodId: Int, body: TokenizedAccountInfoApiRequest): List<TokenizedAccountInfo> {
+    suspend fun execute(paymentMethodId: Int, body: TokenizedAccountInfoApiRequest): List<TokenizedAccountInfo>? {
         val mainResponse = tryIO { toffeeApi.getTokenizedAccountInfo(paymentMethodId, body) }
         mPref.tokenizedAccountInfoList.value = mainResponse.response
         return mainResponse.response

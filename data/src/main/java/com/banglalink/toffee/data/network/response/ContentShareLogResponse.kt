@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ContentShareLogResponse(
     @SerialName("response")
-    val response: ContentShareLogBean
+    val response: ContentShareLogBean? = null
 ) : BaseResponse()

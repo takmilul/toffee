@@ -16,9 +16,9 @@ import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.CheckForUpdateService
 import com.banglalink.toffee.apiservice.CredentialService
 import com.banglalink.toffee.apiservice.GetBubbleService
-import com.banglalink.toffee.apiservice.GetContentFromShareableUrl
-import com.banglalink.toffee.apiservice.GetProfile
-import com.banglalink.toffee.apiservice.GetShareableDramaEpisodesBySeason
+import com.banglalink.toffee.apiservice.GetContentFromShareableUrlService
+import com.banglalink.toffee.apiservice.GetProfileService
+import com.banglalink.toffee.apiservice.GetShareableDramaEpisodesBySeasonService
 import com.banglalink.toffee.apiservice.LogoutService
 import com.banglalink.toffee.apiservice.MediaCdnSignUrlService
 import com.banglalink.toffee.apiservice.MnpStatusService
@@ -28,7 +28,7 @@ import com.banglalink.toffee.apiservice.PlaylistShareableService
 import com.banglalink.toffee.apiservice.PremiumPackStatusService
 import com.banglalink.toffee.apiservice.SetFcmToken
 import com.banglalink.toffee.apiservice.SubscribeChannelService
-import com.banglalink.toffee.apiservice.UpdateFavorite
+import com.banglalink.toffee.apiservice.UpdateFavoriteService
 import com.banglalink.toffee.apiservice.VastTagServiceV3
 import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -91,7 +91,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val json: Json,
-    private val profileApi: GetProfile,
+    private val profileApi: GetProfileService,
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
     private val cacheManager: CacheManager,
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
     private val logoutService: LogoutService,
     private val accountDeleteService: AccountDeleteService,
     private val vastTagServiceV3: VastTagServiceV3,
-    private val updateFavorite: UpdateFavorite,
+    private val updateFavoriteService: UpdateFavoriteService,
     private val sendOtpLogEvent: SendOTPLogEvent,
     private val credentialService: CredentialService,
     private val tvChannelRepo: TVChannelRepository,
@@ -111,10 +111,10 @@ class HomeViewModel @Inject constructor(
     private val mqttCredentialService: MqttCredentialService,
     private val sendUserInterestEvent: SendUserInterestEvent,
     private val sendContentReportEvent: SendContentReportEvent,
-    private val contentFromShareableUrl: GetContentFromShareableUrl,
+    private val contentFromShareableUrl: GetContentFromShareableUrlService,
     private val subscribeChannelApiService: SubscribeChannelService,
     private val myChannelDetailApiService: MyChannelGetDetailService,
-    private val episodeListApi: GetShareableDramaEpisodesBySeason.AssistedFactory,
+    private val episodeListApi: GetShareableDramaEpisodesBySeasonService.AssistedFactory,
     private val playlistShareableApiService: PlaylistShareableService.AssistedFactory,
     private val sendCategoryChannelShareCountEvent: SendCategoryChannelShareCountEvent,
     private val mediaCdnSignUrlService: MediaCdnSignUrlService,
@@ -138,20 +138,20 @@ class HomeViewModel @Inject constructor(
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val updateStatusLiveData = SingleLiveEvent<Resource<Any?>>()
-    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
+    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean?>>()
     val isLogoutCompleted = SingleLiveEvent<Boolean>()
-    val accountDeleteLiveData = SingleLiveEvent<Resource<AccountDeleteBean>>()
+    val accountDeleteLiveData = SingleLiveEvent<Resource<AccountDeleteBean?>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
-    val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
-    val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean>>()
+    val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean?>>()
+    val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean?>>()
     val mediaCdnSignUrlData = SingleLiveEvent<Resource<MediaCdnSignUrl?>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
-    val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean>>()
+    val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean?>>()
     val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
-    val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean>>()
+    val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean?>>()
     val isBottomChannelScrolling = SingleLiveEvent<Boolean>().apply { value = false }
     val ramadanScheduleLiveData = SingleLiveEvent<Resource<List<RamadanSchedule>>>()
     val mnpStatusBeanLiveData = SingleLiveEvent<Resource<MnpStatusBean?>>()
@@ -290,7 +290,7 @@ class HomeViewModel @Inject constructor(
             val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
             
             if (result is Success) {
-                val myChannelDetail = result.data.myChannelDetail
+                val myChannelDetail = result.data?.myChannelDetail
                 myChannelDetail?.let {
                     _channelDetail.value = it
                     mPref.isChannelDetailChecked = true
@@ -359,10 +359,10 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean>> {
+    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean?>> {
         return resultLiveData {
             val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
-            updateFavorite.execute(channelInfo, favorite)
+            updateFavoriteService.execute(channelInfo, favorite)
         }
     }
     

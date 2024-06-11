@@ -38,7 +38,7 @@ class MyChannelVideosViewModel @Inject constructor(
     private val myChannelVideoDeleteApiService: MyChannelVideoDeleteService,
 ) : ViewModel() {
 
-    private val _data = MutableLiveData<Resource<MyChannelDeleteVideoBean>>()
+    private val _data = MutableLiveData<Resource<MyChannelDeleteVideoBean?>>()
     val deleteVideoLiveData = _data.toLiveData()
 
     fun getMyChannelVideos(channelOwnerId: Int): Flow<PagingData<ChannelInfo>> {

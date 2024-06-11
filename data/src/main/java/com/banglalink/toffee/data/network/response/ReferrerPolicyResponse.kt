@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReferrerPolicyResponse(
     @SerialName("response")
-    val referrerPolicyBean: ReferrerPolicyBean
+    val referrerPolicyBean: ReferrerPolicyBean? = null
 ) : BaseResponse()

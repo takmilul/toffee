@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginByPhoneResponse(
     @SerialName("response")
-    val response: LoginByPhoneBean?=null
+    val response: LoginByPhoneBean? = null
 ) : BaseResponse()

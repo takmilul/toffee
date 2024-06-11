@@ -1,6 +1,6 @@
 package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.apiservice.UpdateFavorite
+import com.banglalink.toffee.apiservice.UpdateFavoriteService
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.nhaarman.mockitokotlin2.check
@@ -10,7 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
 
-class UpdateFavoriteTest :BaseUseCaseTest(){
+class UpdateFavoriteServiceTest :BaseUseCaseTest(){
 
     @Test
     fun get_contents_success_when_favorite_null(){
@@ -19,7 +19,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
+            val updateFavoriteService = UpdateFavoriteService(SessionPreference.getInstance(),mockToffeeApi)
 //            Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
 //                Response.success(FavoriteResponse(
 //                )).body())
@@ -34,7 +34,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
-            val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
+            val resultChannelInfo = updateFavoriteService.execute(channelInfo,favorite)
             //verify it
 //            assertEquals(resultChannelInfo.program_name,"Hello BD")
 //            assertEquals(resultChannelInfo.content_provider_name,"GSeries")
@@ -53,7 +53,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
+            val updateFavoriteService = UpdateFavoriteService(SessionPreference.getInstance(),mockToffeeApi)
 //            Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
 //                Response.success(FavoriteResponse(
 //                )).body())
@@ -69,7 +69,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
-            val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
+            val resultChannelInfo = updateFavoriteService.execute(channelInfo,favorite)
             //verify it
 //            assertEquals(resultChannelInfo.program_name,"Hello BD")
 //            assertEquals(resultChannelInfo.content_provider_name,"GSeries")
@@ -88,7 +88,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
+            val updateFavoriteService = UpdateFavoriteService(SessionPreference.getInstance(),mockToffeeApi)
 //            Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
 //                Response.success(FavoriteResponse(
 //                )).body())
@@ -104,7 +104,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
-            val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
+            val resultChannelInfo = updateFavoriteService.execute(channelInfo,favorite)
             //verify it
 //            assertEquals(resultChannelInfo.program_name,"Hello BD")
 //            assertEquals(resultChannelInfo.content_provider_name,"GSeries")

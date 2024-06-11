@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PairWithTvResponse(
     @SerialName("response")
-    val response: PairStatus
+    val response: PairStatus? = null
 ) : BaseResponse()
 
 @Serializable

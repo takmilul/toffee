@@ -7,9 +7,12 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ReferrerPolicyBean
 import javax.inject.Inject
 
-class GetReferrerPolicy @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
-
-    suspend fun execute(): ReferrerPolicyBean {
+class GetReferrerPolicyService @Inject constructor(
+    private val preference: SessionPreference,
+    private val toffeeApi: ToffeeApi
+) {
+    
+    suspend fun execute(): ReferrerPolicyBean? {
         val response = tryIO {
             toffeeApi.getReferrerPolicy(
                 ReferrerPolicyRequest(

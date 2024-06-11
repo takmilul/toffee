@@ -30,7 +30,7 @@ class AllUserChannelsService @Inject constructor(
             )
         }
 
-        return if (response.response.channels != null) {
+        return if (response.response?.channels != null) {
             response.response.channels.map { 
                 localSync.syncUserChannel(it)
                 it

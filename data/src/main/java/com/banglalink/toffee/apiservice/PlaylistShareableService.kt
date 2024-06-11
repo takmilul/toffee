@@ -16,7 +16,7 @@ class PlaylistShareableService @AssistedInject constructor(
     @Assisted private val requestParams: ShareableData,
 ) {
     
-    suspend fun loadData(offset: Int, limit: Int): MyChannelPlaylistVideosBean {
+    suspend fun loadData(offset: Int, limit: Int): MyChannelPlaylistVideosBean? {
         val response = tryIO {
             toffeeApi.getPlaylistShareable(
                 requestParams.isUserPlaylist ?: 0,
@@ -32,7 +32,7 @@ class PlaylistShareableService @AssistedInject constructor(
             )
         }
         
-        return response.response.apply {
+        return response.response?.apply {
             channels?.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())

@@ -13,7 +13,7 @@ class UpdateProfile @Inject constructor(
     private val toffeeApi: ToffeeApi,
 ) {
 
-    suspend fun execute(editProfileForm: EditProfileForm): ProfileResponseBean {
+    suspend fun execute(editProfileForm: EditProfileForm): ProfileResponseBean? {
         val response = tryIO {
             toffeeApi.updateProfile(
                 UpdateProfileRequest(

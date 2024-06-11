@@ -11,14 +11,14 @@ import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-class GetShareableDramaEpisodesBySeason @AssistedInject constructor(
+class GetShareableDramaEpisodesBySeasonService @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     @Assisted private val requestParams: ShareableData,
 ) {
     
-    suspend fun loadData(offset: Int, limit: Int): DramaSeriesContentBean {
+    suspend fun loadData(offset: Int, limit: Int): DramaSeriesContentBean? {
         val response = tryIO {
             toffeeApi.getDramaEpisodsBySeason(
                 requestParams.contentType,
@@ -34,7 +34,7 @@ class GetShareableDramaEpisodesBySeason @AssistedInject constructor(
             )
         }
         
-        return response.response.apply {
+        return response.response?.apply {
             channels?.filter {
                 it.activeSeasonList = requestParams.activeSeason
                 it.isExpired = try {
@@ -50,6 +50,6 @@ class GetShareableDramaEpisodesBySeason @AssistedInject constructor(
     
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(shareableData: ShareableData): GetShareableDramaEpisodesBySeason
+        fun create(shareableData: ShareableData): GetShareableDramaEpisodesBySeasonService
     }
 }

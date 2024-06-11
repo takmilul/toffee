@@ -38,8 +38,7 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -196,23 +195,27 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         observe(profileViewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
-                    mPref.isChannelDetailChecked = true
-                    mPref.channelLogo = it.data.profileImage ?: oldChannelLogoUrl.orEmpty()
-                    mPref.channelName = channelName
-                    mPref.customerName = userName
-                    mPref.customerEmail = userEmail
-                    mPref.customerAddress = userAddress
-                    mPref.customerDOB = userDOB!!
-                    mPref.customerNID = userNID
-                    progressDialog.dismiss()
-                    requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
-                    myChannelHomeViewModel.getChannelDetail(mPref.customerId)
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
-                    parentFragment?.parentFragment?.let {
-                        if (it is BottomSheetDialogFragment) {
-                            it.findNavController().popBackStack().let { _ ->
-                                it.findNavController().navigate(R.id.newUploadMethodFragment)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        mPref.isChannelDetailChecked = true
+                        mPref.channelLogo = it.data?.profileImage ?: oldChannelLogoUrl.orEmpty()
+                        mPref.channelName = channelName
+                        mPref.customerName = userName
+                        mPref.customerEmail = userEmail
+                        mPref.customerAddress = userAddress
+                        mPref.customerDOB = userDOB!!
+                        mPref.customerNID = userNID
+                        progressDialog.dismiss()
+                        requireContext().showToast(it.data?.message)
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                        myChannelHomeViewModel.getChannelDetail(mPref.customerId)
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                        parentFragment?.parentFragment?.let {
+                            if (it is BottomSheetDialogFragment) {
+                                it.findNavController().popBackStack().let { _ ->
+                                    it.findNavController().navigate(R.id.newUploadMethodFragment)
+                                }
                             }
                         }
                     }

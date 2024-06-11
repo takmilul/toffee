@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetContentService
-import com.banglalink.toffee.apiservice.GetMostPopularContents
+import com.banglalink.toffee.apiservice.GetMostPopularContentsService
 import com.banglalink.toffee.apiservice.LandingUserChannelsRequestParam
 import com.banglalink.toffee.apiservice.MovieCategoryDetailService
 import com.banglalink.toffee.apiservice.MoviesComingSoonService
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MovieViewModel @Inject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
-    private val trendingNowService: GetMostPopularContents.AssistedFactory,
+    private val trendingNowService: GetMostPopularContentsService.AssistedFactory,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val continueWatchingRepo: ContinueWatchingRepository,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AllChannelResponse(
     @SerialName("response")
-    val response: ChannelCategoryBean
+    val response: ChannelCategoryBean? = null
 ) : BaseResponse()

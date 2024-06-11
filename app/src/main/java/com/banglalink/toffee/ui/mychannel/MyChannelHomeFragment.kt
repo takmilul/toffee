@@ -379,10 +379,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Success -> {
-                    viewModel.isSubscribed = response.data.isSubscribed
-                    viewModel.subscriberCount = response.data.subscriberCount
-                    binding.isSubscribed = viewModel.isSubscribed
-                    binding.subscriberCount = viewModel.subscriberCount
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        viewModel.isSubscribed = response.data?.isSubscribed ?: 0
+                        viewModel.subscriberCount = response.data?.subscriberCount ?: 0
+                        binding.isSubscribed = viewModel.isSubscribed
+                        binding.subscriberCount = viewModel.subscriberCount
+                    }
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -396,11 +400,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(viewModel.ratingLiveData) {
             when (it) {
                 is Success -> {
-                    binding.myRating = viewModel.myRating
-                    Timber.tag("Rating_").i("getting myRating: ${viewModel.myRating}")
-                    bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, viewModel.myRating > 0)
-                    binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        binding.myRating = viewModel.myRating
+                        Timber.tag("Rating_").i("getting myRating: ${viewModel.myRating}")
+                        bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, viewModel.myRating > 0)
+                        binding.channelDetailView.ratingCountTextView.text = (it.data?.ratingCount ?: 0).toString()
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                    }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -421,8 +429,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    playlistReloadViewModel.reloadPlaylist.value = true
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        requireContext().showToast(it.data?.message)
+                        playlistReloadViewModel.reloadPlaylist.value = true
+                    }
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CategoryResponse(
     @SerialName("response")
-    val response: CategoryBean
+    val response: CategoryBean? = null
 ) : BaseResponse()

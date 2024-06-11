@@ -2,7 +2,7 @@ package com.banglalink.toffee.ugc.viewmodels
 
 import androidx.paging.PagingData
 import com.banglalink.toffee.MainCoroutineRule
-import com.banglalink.toffee.apiservice.GetFavoriteContents
+import com.banglalink.toffee.apiservice.GetFavoriteContentsService
 import com.banglalink.toffee.getDummyChannelList
 import com.banglalink.toffee.ui.favorite.FavoriteViewModel
 import io.mockk.coEvery
@@ -24,7 +24,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class FavoriteViewModelTest {
     private lateinit var viewmodel: FavoriteViewModel
-    private lateinit var mockFavoriteApi: GetFavoriteContents
+    private lateinit var mockFavoriteApi: GetFavoriteContentsService
     private val channelList = getDummyChannelList()
 
     @ExperimentalCoroutinesApi

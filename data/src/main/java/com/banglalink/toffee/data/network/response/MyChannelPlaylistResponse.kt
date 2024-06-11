@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelPlaylistResponse(
     @SerialName("response")
-    val response: MyChannelPlaylistBean,
+    val response: MyChannelPlaylistBean? = null,
     @SerialName("isOwner")
     val isOwner: Int = 0,
     @SerialName("channelId")

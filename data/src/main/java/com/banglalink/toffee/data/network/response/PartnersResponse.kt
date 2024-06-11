@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PartnersResponse(
     @SerialName("response")
-    val response: PartnersBean
+    val response: PartnersBean? = null
 ) : BaseResponse()

@@ -34,7 +34,7 @@ class SearchContentService @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.filter {
+        return response.response?.channels?.filter {
             it.isExpired = try {
                 Log.i("SEAR_", "map: ${it.program_name}, isExpired: ${it.isExpired}")
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())

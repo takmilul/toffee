@@ -9,11 +9,11 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.getDate
 import javax.inject.Inject
 
-class GetMostPopularPlaylists @Inject constructor(
+class GetMostPopularPlaylistsService @Inject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi
 ): BaseApiService<MyChannelPlaylist> {
-
+    
     override suspend fun loadData(offset: Int, limit: Int): List<MyChannelPlaylist> {
         
         val response = tryIO {
@@ -25,8 +25,8 @@ class GetMostPopularPlaylists @Inject constructor(
                 )
             )
         }
-
-        if (response.response.channelPlaylist != null) {
+        
+        if (response.response?.channelPlaylist != null) {
             response.response.channelPlaylist.map { 
                 it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(getDate(it.created_at).time).replace(" ", "")
             }

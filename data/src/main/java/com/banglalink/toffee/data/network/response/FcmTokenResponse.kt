@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FcmTokenResponse(
     @SerialName("response")
-    val response: FcmTokenBean
+    val response: FcmTokenBean? = null
 ) : BaseResponse()

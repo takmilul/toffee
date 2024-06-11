@@ -148,11 +148,15 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    channelInfo?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data != null) {
+                        channelInfo?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        mAdapter.notifyItemChanged(subscribedItemPosition, channelInfo)
+                    } else {
+                        requireContext().showToast(getString(R.string.try_again_message))
                     }
-                    mAdapter.notifyItemChanged(subscribedItemPosition, channelInfo)
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

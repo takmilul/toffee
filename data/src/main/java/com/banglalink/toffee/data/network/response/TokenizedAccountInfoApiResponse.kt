@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TokenizedAccountInfoApiResponse(
-    @SerialName("response"    ) var response    : List<TokenizedAccountInfo> = listOf(),
+    @SerialName("response"    ) var response    : List<TokenizedAccountInfo>? = listOf(),
     ) : BaseResponse()
 @Serializable
 data class TokenizedAccountInfo (

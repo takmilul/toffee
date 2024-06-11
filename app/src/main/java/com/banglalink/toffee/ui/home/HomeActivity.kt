@@ -2262,12 +2262,12 @@ class HomeActivity : PlayerPageActivity(),
             when (response) {
                 is Success -> {
                     if (shareableData != null) {
-                        response.data.channels?.let {
+                        response.data?.channels?.let {
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
                                 shareableData?.channelOwnerId ?: 0,
-                                shareableData?.name ?: response.data.name ?: "",
-                                response.data.totalCount,
+                                shareableData?.name ?: response.data?.name ?: "",
+                                response.data?.totalCount ?: 0,
                                 playlistShareableUrl,
                                 1,
                                 if (shareableData?.isUserPlaylist == 1) User_Playlist else My_Channel_Playlist,
@@ -2287,7 +2287,7 @@ class HomeActivity : PlayerPageActivity(),
                             viewModel.playContentLiveData.postValue(playlistInfo)
                         } ?: showToast("This playlist does not have any video")
                     } else {
-                        showToast("Something went wrong")
+                        showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {
@@ -2310,7 +2310,7 @@ class HomeActivity : PlayerPageActivity(),
             when (response) {
                 is Success -> {
                     if (shareableData != null) {
-                        response.data.channels?.let {
+                        response.data?.channels?.let {
                             val seriesInfo = SeriesPlaybackInfo(
                                 shareableData?.serialSummaryId ?: 0,
                                 shareableData?.name ?: "",
@@ -2437,7 +2437,7 @@ class HomeActivity : PlayerPageActivity(),
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
             observe(profileViewModel.loadCustomerProfile()) {
-                if (it is Success) {
+                if (it is Success && it.data != null) {
                     profileViewModel.profileForm.value = it.data
                 }
             }
@@ -3024,7 +3024,7 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.logoutLiveData) {
             when (it) {
                 is Success -> {
-                    if (!it.data.verifyStatus) {
+                    if (it.data != null && it.data?.verifyStatus == false) {
                         viewModel.sendLogOutLogData()
                         clearDataOnLogOut()
                         
@@ -3040,6 +3040,8 @@ class HomeActivity : PlayerPageActivity(),
 //                        navController.popBackStack(R.id.menu_feed, false).let {
 //                            recreate()
 //                        }
+                    } else {
+                        showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {

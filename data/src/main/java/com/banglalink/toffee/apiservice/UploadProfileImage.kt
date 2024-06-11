@@ -20,7 +20,7 @@ class UploadProfileImage @Inject constructor(
     private val toffeeApi: ToffeeApi,
 ) {
 
-    suspend fun execute(photoUri: Uri, context: Context): SubscriberPhotoBean {
+    suspend fun execute(photoUri: Uri, context: Context): SubscriberPhotoBean? {
         return withContext(Dispatchers.Default) {
             val imageBitmap = decodeSampledBitmap(context, photoUri)
             val bao = ByteArrayOutputStream()
@@ -37,7 +37,7 @@ class UploadProfileImage @Inject constructor(
                     )
                 )
             }
-            response.response.userPhoto?.let {
+            response.response?.userPhoto?.let {
                 preference.userImageUrl = it
             }
             response.response

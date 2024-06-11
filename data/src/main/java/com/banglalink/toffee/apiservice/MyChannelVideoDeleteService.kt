@@ -11,7 +11,7 @@ class MyChannelVideoDeleteService @Inject constructor(
     private val mPref: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {
-    suspend operator fun invoke(contentId: Int): MyChannelDeleteVideoBean {
+    suspend operator fun invoke(contentId: Int): MyChannelDeleteVideoBean? {
         val response = tryIO {
             toffeeApi.deleteMyChannelVideo(
                 MyChannelVideoDeleteRequest(

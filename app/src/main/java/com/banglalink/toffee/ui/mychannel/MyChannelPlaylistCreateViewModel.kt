@@ -21,9 +21,9 @@ class MyChannelPlaylistCreateViewModel @Inject constructor(
 ) : ViewModel() {
     
     var playlistName: String? = null
-    private val _createPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistCreateBean>>()
+    private val _createPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistCreateBean?>>()
     val createPlaylistLiveData = _createPlaylistData.toLiveData()
-    private val _editPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistEditBean>>()
+    private val _editPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistEditBean?>>()
     val editPlaylistLiveData = _editPlaylistData.toLiveData()
     
     fun createPlaylist(channelOwnerId: Int,isUserPlaylist:Int = 0) {

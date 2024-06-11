@@ -2,7 +2,7 @@ package com.banglalink.toffee.ugc
 
 import android.net.Uri
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetCategoriesService
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.util.InAppMessageParser
@@ -20,7 +20,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class InAppMessageParserTest {
     private lateinit var mPref: SessionPreference
-    private lateinit var categoryApi: GetCategories
+    private lateinit var categoryApi: GetCategoriesService
     private lateinit var inAppMessageParser: InAppMessageParser
 
     @Before

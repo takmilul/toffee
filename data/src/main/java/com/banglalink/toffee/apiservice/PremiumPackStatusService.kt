@@ -23,6 +23,6 @@ class PremiumPackStatusService @Inject constructor(
                 isBlNumber, contentId, preference.getDBVersionByApiName(ApiNames.PREMIUM_DATA_PACK_STATUS), request
             )
         }
-        return response.response.loginRelatedSubsHistory ?: emptyList()
+        return response.response?.loginRelatedSubsHistory ?: emptyList()
     }
 }

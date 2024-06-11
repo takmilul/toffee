@@ -66,43 +66,47 @@ class RedeemCodeFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     val response = it.data
-                    if (response.isBullterPointMessage!!) {
-                        val bulletMessage = response.bulletMessage?.map {
-                            val text = it.replace("\n", " ")
-                            text
-                        }
-                        showRedeemDisplayMessageDialog(
-                            requireContext(),
-                            response.title,
-                            response.message,
-                            bulletMessage
-                        )
-                    } else {
-                        if (!response.isRedeemSuccess!!) {
-                            ToffeeAlertDialogBuilder(
+                    if (response != null) {
+                        if (response.isBullterPointMessage!!) {
+                            val bulletMessage = response.bulletMessage?.map {
+                                val text = it.replace("\n", " ")
+                                text
+                            }
+                            showRedeemDisplayMessageDialog(
                                 requireContext(),
-                                hideCloseButton = true,
-                                icon = R.drawable.ic_error,
-                            ).apply {
-                                response.title?.let { it1 -> setTitle(it1) }
-                                response.message?.let { it1 -> setText(it1) }
-                                setNegativeButtonListener(getString(R.string.okay_text)) {
-                                    it?.dismiss()
-                                }
-                            }.create().show()
+                                response.title,
+                                response.message,
+                                bulletMessage
+                            )
                         } else {
-                            ToffeeAlertDialogBuilder(
-                                requireContext(),
-                                hideCloseButton = true,
-                                icon = R.drawable.ic_check_magenta
-                            ).apply {
-                                response.title?.let { it1 -> setTitle(it1) }
-                                response.message?.let { it1 -> setText(it1) }
-                                setNegativeButtonListener(getString(R.string.okay_text)) {
-                                    it?.dismiss()
-                                }
-                            }.create().show()
+                            if (!response.isRedeemSuccess!!) {
+                                ToffeeAlertDialogBuilder(
+                                    requireContext(),
+                                    hideCloseButton = true,
+                                    icon = R.drawable.ic_error,
+                                ).apply {
+                                    response.title?.let { it1 -> setTitle(it1) }
+                                    response.message?.let { it1 -> setText(it1) }
+                                    setNegativeButtonListener(getString(R.string.okay_text)) {
+                                        it?.dismiss()
+                                    }
+                                }.create().show()
+                            } else {
+                                ToffeeAlertDialogBuilder(
+                                    requireContext(),
+                                    hideCloseButton = true,
+                                    icon = R.drawable.ic_check_magenta
+                                ).apply {
+                                    response.title?.let { it1 -> setTitle(it1) }
+                                    response.message?.let { it1 -> setText(it1) }
+                                    setNegativeButtonListener(getString(R.string.okay_text)) {
+                                        it?.dismiss()
+                                    }
+                                }.create().show()
+                            }
                         }
+                    } else {
+                        context?.showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Resource.Failure -> {
