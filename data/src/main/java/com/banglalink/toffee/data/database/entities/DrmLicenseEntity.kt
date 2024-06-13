@@ -3,19 +3,23 @@ package com.banglalink.toffee.data.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["channelId"], unique = true)])
 data class DrmLicenseEntity(
-    @SerializedName("channelId")
-    val channelId: Long,
-    @SerializedName("contentId")
-    val contentId: String,
-    @SerializedName("license")
+    @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
+    val channelId: Long = 0,
+    @SerialName("contentId")
+    val contentId: String? = null,
+    @SerialName("license")
     @ColumnInfo(name = "data", typeAffinity = ColumnInfo.BLOB)
-    val license: ByteArray,
-    @SerializedName("expiryTime")
-    val expiryTime: Long
+    val license: ByteArray? = null,
+    @SerialName("expiryTime")
+    @ColumnInfo(defaultValue = "0")
+    val expiryTime: Long = 0
 ) : BaseEntity() {
     
     override fun equals(other: Any?): Boolean {

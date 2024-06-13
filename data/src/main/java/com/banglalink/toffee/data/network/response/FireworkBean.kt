@@ -1,14 +1,16 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FireworkBean(
-    @SerializedName(value = "fireworks")
-    val fireworkModels: List<FireworkModel>?,
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("totalCount")
+    @SerialName(value = "fireworks")
+    val fireworkModels: List<FireworkModel>? = null,
+    @SerialName("count")
+    val count: Int = 0,
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null
 )

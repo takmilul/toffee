@@ -1,19 +1,21 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class NavCategory(
-    @SerializedName("id")
-    val id:Int,
-    @SerializedName("category_name")
+    @SerialName("id")
+    val id:Int = 0,
+    @SerialName("category_name")
     val categoryName:String,
-    @SerializedName("sub_categorie")
-    val subCategoryList: List<NavSubcategory>?,
-    @SerializedName("bgColor")
-    val bgColor: String,
-    @SerializedName("icon")
-    val icon: Int
+    @SerialName("sub_categorie")
+    val subCategoryList: List<NavSubcategory>? = null,
+    @SerialName("bgColor")
+    val bgColor: String? = null,
+    @SerialName("icon")
+    val icon: Int = 0
 ): Parcelable

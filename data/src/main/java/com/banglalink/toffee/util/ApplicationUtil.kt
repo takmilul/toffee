@@ -1,11 +1,18 @@
 package com.banglalink.toffee.util
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.exception.*
+import com.banglalink.toffee.data.exception.ApiException
+import com.banglalink.toffee.data.exception.AppDeprecatedError
+import com.banglalink.toffee.data.exception.CustomerNotFoundError
+import com.banglalink.toffee.data.exception.CustomerNotFoundException
+import com.banglalink.toffee.data.exception.Error
+import com.banglalink.toffee.data.exception.JobCanceledError
+import com.banglalink.toffee.data.exception.ReferralException
+import com.banglalink.toffee.data.exception.UpdateRequiredException
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
-import java.util.concurrent.*
+import java.util.concurrent.CancellationException
 
 //this will use non synchronized lazy method
 fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{

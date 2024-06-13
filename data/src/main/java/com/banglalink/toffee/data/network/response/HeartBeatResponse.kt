@@ -1,8 +1,10 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class HeartBeatResponse(
-    @SerializedName("response")
-    val response: HeartBeatBean
+@Serializable
+data class HeartBeatResponse(
+    @SerialName("response")
+    val response: HeartBeatBean? = null
 ) : BaseResponse()

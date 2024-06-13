@@ -1,18 +1,20 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelSubscribeBean(
-    @SerializedName("channelId")
-    val channelId: Int,
-    @SerializedName("isSubscribed")
-    val isSubscribed: Int,
-    @SerializedName("subscriberCount")
-    var subscriberCount: Long,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageType")
-    val messageType: String,
-    @SerializedName("systemTime")
-    val systemTime: String
+    @SerialName("channelId")
+    val channelId: Int = 0,
+    @SerialName("isSubscribed")
+    val isSubscribed: Int = 0,
+    @SerialName("subscriberCount")
+    var subscriberCount: Long = 0,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null,
+    @SerialName("systemTime")
+    val systemTime: String? = null
 )

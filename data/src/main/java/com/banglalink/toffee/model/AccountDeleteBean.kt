@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AccountDeleteBean(
-    @SerializedName("status")
-    val status: Boolean?,
-    @SerializedName("user_id")
-    val user_id: Long?,
-    @SerializedName("message")
-    val message:String?
+    @SerialName("status")
+    val status: Boolean? = false,
+    @SerialName("user_id")
+    val user_id: Long? = 0,
+    @SerialName("message")
+    val message:String? = null
 )

@@ -2,45 +2,47 @@ package com.banglalink.toffee.model
 
 import android.os.Parcelable
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @KeepName
 @Parcelize
+@Serializable
 data class MyChannelDetail(
-    @SerializedName("id")
-    val id: Long,
-    @SerializedName("channel_name")
+    @SerialName("id")
+    val id: Long = 0,
+    @SerialName("channel_name")
     val channelName: String? = null,
-    @SerializedName("channel_desc")
+    @SerialName("channel_desc")
     val description: String? = null,
-    @SerializedName("profile_url")
+    @SerialName("profile_url")
     val profileUrl: String? = null,
-    @SerializedName("banner_url")
+    @SerialName("banner_url")
     val bannerUrl: String? = null,
-    @SerializedName("category_id")
+    @SerialName("category_id")
     val categoryId: Long = 0,
-    @SerializedName("name")
+    @SerialName("name")
     var name: String? = null,
-    @SerializedName("email")
+    @SerialName("email")
     var email: String? = null,
-    @SerializedName("address")
+    @SerialName("address")
     var address: String? = null,
-    @SerializedName("date_of_birth")
+    @SerialName("date_of_birth")
     val dateOfBirth: String? = null,
-    @SerializedName("national_id_no")
+    @SerialName("national_id_no")
     val nationalIdNo: String? = null,
-    @SerializedName("payment_phone_no")
+    @SerialName("payment_phone_no")
     var paymentPhoneNo: String? = null,
-    @SerializedName("payment_method_id")
+    @SerialName("payment_method_id")
     val paymentMethodId: Long = 0,
-    @SerializedName("is_email_verified")
+    @SerialName("is_email_verified")
     val is_email_verified: Int = 0,
-    @SerializedName("is_nid_verified")
+    @SerialName("is_nid_verified")
     val is_nid_verified: Int = 0,
-    @SerializedName("is_approved")
+    @SerialName("is_approved")
     val isApproved: Boolean = false,
-    @SerializedName("channel_share_url")
+    @SerialName("channel_share_url")
     val channelShareUrl: String? = null,
 ) : Parcelable {
     fun isEmailVerified() = is_email_verified == 1

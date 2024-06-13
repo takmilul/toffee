@@ -1,23 +1,25 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RelativeContentRequest(
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: String = "0",
-    @SerializedName("videoTag")
+    @SerialName("videoTag")
     val videoTag: String,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int,
-    @SerializedName("subCategoryId")
+    @SerialName("subCategoryId")
     val subCategoryId: Int,
-    @SerializedName("offset")
+    @SerialName("offset")
     val offset: Int,
-    @SerializedName("limit")
+    @SerialName("limit")
     val limit: Int = 30
 ) : BaseRequest(ApiNames.GET_RELATIVE_CONTENTS)

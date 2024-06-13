@@ -5,15 +5,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 fun <T> LifecycleOwner.observe(
     flow: Flow<T>,
-    execute: (T) -> Unit,
-) {
+    execute: suspend (T) -> Unit,
+): Job {
     val lifecycleOwner = if(this is Fragment && this !is DialogFragment) this.viewLifecycleOwner else this
-    lifecycleOwner.lifecycleScope.launchWhenStarted {
+    
+    return lifecycleOwner.lifecycleScope.launch {
         flow.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collectLatest {
                 execute(it)

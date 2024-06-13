@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TrendingChannelBean(
-    @SerializedName("channels")
-    val channels: List<UserChannelInfo>?,
-    @SerializedName("code")
+    @SerialName("channels")
+    val channels: List<UserChannelInfo>? = null,
+    @SerialName("code")
     var code: Int = 0,
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("totalCount")
+    @SerialName("count")
+    val count: Int = 0,
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null
 )

@@ -1,17 +1,14 @@
 package com.banglalink.toffee.ui.fragments
 
-import androidx.test.espresso.Espresso.*
-import androidx.test.espresso.assertion.ViewAssertions.*
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchFragmentInHiltContainer
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.landing.PopularTVChannelsFragment
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.hamcrest.core.AllOf
-import org.hamcrest.core.Is
-import org.hamcrest.core.IsInstanceOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

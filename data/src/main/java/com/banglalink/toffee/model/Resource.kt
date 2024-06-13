@@ -1,17 +1,19 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.data.exception.Error
-import com.google.gson.annotations.SerializedName
-
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 sealed class Resource<out T> {
+    @Serializable
     data class Success<out T>(
-        @SerializedName("data")
+        @SerialName("data")
         val data: T
     ) : Resource<T>()
     
+    @Serializable
     data class Failure<out T>(
-        @SerializedName("error")
+        @SerialName("error")
         val error: Error
     ) : Resource<T>()
 }

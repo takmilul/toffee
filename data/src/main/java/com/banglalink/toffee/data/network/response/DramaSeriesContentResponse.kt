@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.DramaSeriesContentBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DramaSeriesContentResponse(
-    @SerializedName("response")
-    val response: DramaSeriesContentBean
+    @SerialName("response")
+    val response: DramaSeriesContentBean? = null
 ) : BaseResponse()

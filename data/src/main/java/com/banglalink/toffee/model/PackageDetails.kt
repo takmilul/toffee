@@ -1,14 +1,16 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PackageDetails(
-    @SerializedName("id")
-    val id: Int,
-    @SerializedName("package_name")
+    @SerialName("id")
+    val id: Int = 0,
+    @SerialName("package_name")
     val packageName: String,
-    @SerializedName("price")
-    val price: Int,
-    @SerializedName("programs")
-    val programs: List<ChannelInfo>
+    @SerialName("price")
+    val price: Int = 0,
+    @SerialName("programs")
+    val programs: List<ChannelInfo>? = null
 )

@@ -2,12 +2,9 @@ package com.banglalink.toffee
 
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.lifecycleScope
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.banglalink.toffee.ui.home.HomeActivity
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -44,7 +44,7 @@ object Utils {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
     fun isCopyrightUploadId(id: String) = id.contains("_copyright")
     fun stringToUploadId(uploadId: String) = uploadId.filter { it.isDigit() }.toLong()
-
+    
     fun resizeBitmap(image: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap? {
         return if (maxHeight > 0 && maxWidth > 0) {
             val width = image.width
@@ -102,73 +102,71 @@ object Utils {
                 )
                 resultBitmap.recycle()
                 resultBitmap = scaledBitmap
-            }
-            else {
+            } else {
                 resultBitmap = BitmapFactory.decodeStream(inputStream)
             }
             inputStream?.close()
             Log.i(TAG, "bitmap size - width: ${resultBitmap!!.width}, height: ${resultBitmap.height}")
             resultBitmap
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             Log.e(TAG, e.message, e)
             null
         }
     }
     
     fun getInputStream(ctx: Context, uri: String): InputStream? {
-        if(uri.startsWith("content://")) {
+        if (uri.startsWith("content://")) {
             return ctx.contentResolver.openInputStream(Uri.parse(uri))
         }
         return FileInputStream(File(uri.substringAfter("file:")))
     }
     
-    fun imagePathToBase64(ctx: Context, imagePath: String, requiredImageByteSize: Int = IMAGE_MAX_SIZE): String{
+    fun imagePathToBase64(ctx: Context, imagePath: String, requiredImageByteSize: Int = IMAGE_MAX_SIZE): String {
         val bitmap = getBitmap(ctx, imagePath, requiredImageByteSize)
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap?.compress(JPEG, 70, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
-
+    
     suspend fun contentTypeFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
         val type = context.contentResolver.getType(uri)
-
+        
         if (type.isNullOrBlank()) {
             "application/octet-stream"
-        }
-        else {
+        } else {
             type
         }
     }
-
+    
     suspend fun fileNameFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
-        context.contentResolver.query(uri, null, null, null, null)?.use {
-            if (it.moveToFirst()) {
-                it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME).takeIf { it >=0 } ?: 0)
-            }
-            else {
-                null
-            }
-        } ?: uri.toString().split(File.separator).last()
-    }
-
-    suspend fun fileSizeFromContentUri(context: Context, uri: Uri): Long = withContext(Dispatchers.IO + Job()) {
-        if(uri.scheme != "content") {
-            File(uri.toString()).length()
-        }
-        else {
+        return@withContext try {
             context.contentResolver.query(uri, null, null, null, null)?.use {
-                if(it.moveToFirst()) {
-                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE).takeIf { it >= 0 } ?: 0)
+                if (it.moveToFirst()) {
+                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME).takeIf { it >= 0 } ?: 0)
+                } else {
+                    null
                 }
-                else {
+            } ?: uri.toString().split(File.separator).last()
+        } catch (e: Exception) {
+            uri.toString().split(File.separator).last()
+        }
+    }
+    
+    suspend fun fileSizeFromContentUri(context: Context, uri: Uri): Long = withContext(Dispatchers.IO + Job()) {
+        if (uri.scheme != "content") {
+            File(uri.toString()).length()
+        } else {
+            context.contentResolver.query(uri, null, null, null, null)?.use {
+                if (it.moveToFirst()) {
+                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE).takeIf { it >= 0 } ?: 0)
+                } else {
                     0L
                 }
             } ?: 0L
         }
     }
-
+    
     fun hideSoftKeyboard(activity: Activity) {
         val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(
@@ -176,20 +174,18 @@ object Utils {
             0
         )
     }
-
-
+    
     fun generateThumbnail(context: Context, filePath: String): Pair<String?, Int>? {
         return try {
             val mmr = MediaMetadataRetriever()
-            if(filePath.startsWith("content://")) {
+            if (filePath.startsWith("content://")) {
                 mmr.setDataSource(context, Uri.parse(filePath))
             } else {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
-            if(bmp != null) {
+            if (bmp != null) {
                 val isHorizontal = if (bmp.width > bmp.height) 1 else 0
-
                 val scaledBmp = resizeBitmap(bmp, 1280, 720)
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
@@ -203,11 +199,11 @@ object Utils {
             null
         }
     }
-
+    
     suspend fun getVideoDuration(context: Context, filePath: String): Long = withContext(Dispatchers.IO + Job()) {
-        try{
+        try {
             val mmr = MediaMetadataRetriever()
-            if(filePath.startsWith("content://")) {
+            if (filePath.startsWith("content://")) {
                 mmr.setDataSource(context, Uri.parse(filePath))
             } else {
                 mmr.setDataSource(filePath)
@@ -222,7 +218,7 @@ object Utils {
             0L
         }
     }
-
+    
     fun getDurationLongToString(timeMs: Long): String {
         val totalSeconds = round(timeMs / 1000F)
         val seconds = (totalSeconds % 60).toInt()
@@ -230,46 +226,45 @@ object Utils {
         val hours = (totalSeconds / 3600).toInt()
         return if (hours > 0) {
             String.format("%d:%02d:%02d", hours, minutes, seconds)
-        }
-        else {
+        } else {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
+    
     fun getUploadDuration(timeSecond: Long): String {
-       // val totalSeconds = round(timeMs / 1000F)
+        // val totalSeconds = round(timeMs / 1000F)
         val seconds = (timeSecond % 60).toInt()
         val minutes = (timeSecond / 60 % 60).toInt()
         val hours = (timeSecond / 3600).toInt()
         return if (hours > 0) {
-            String.format(if(hours==1)"%d hour" else "%d hours", hours)
-        }
-        else if (minutes > 0) {
+            String.format(if (hours == 1) "%d hour" else "%d hours", hours)
+        } else if (minutes > 0) {
             String.format("%02d minutes", minutes)
-        }else{
+        } else {
             String.format("%d seconds", seconds)
         }
     }
     
-    fun getVideoUploadLimit(timeMs: Long,minLength:Int,maxLength:Int): Boolean {
+    fun getVideoUploadLimit(timeMs: Long, minLength: Int, maxLength: Int): Boolean {
         return (minLength > round(timeMs / 1000F) || round(timeMs / 1000F) > maxLength)
     }
-
+    
     fun getLongDuration(str: String?): Long {
-        if(str.isNullOrBlank()) return 0L
+        if (str.isNullOrBlank()) return 0L
         val splist = str.split(":").reversed()
         var ret = 0L
-        if(splist.isNotEmpty()) {
+        if (splist.isNotEmpty()) {
             ret += splist[0].toLong()
         }
-        if(splist.size > 1) {
+        if (splist.size > 1) {
             ret += splist[1].toLong() * 60L
         }
-        if(splist.size > 2) {
+        if (splist.size > 2) {
             ret += splist[2].toLong() * 3600L
         }
         return ret * 1000L
     }
-
+    
     fun getScreenWidth(): Int = Resources.getSystem().displayMetrics.widthPixels
     fun getScreenHeight(): Int = Resources.getSystem().displayMetrics.heightPixels
     fun getRealScreenSize(ctx: Context): Point {
@@ -291,35 +286,34 @@ object Utils {
     }
     
     private fun getDisplay(context: Activity): Display? {
-        return if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             context.display
         } else {
             @Suppress("DEPRECATION")
             context.windowManager.defaultDisplay
         }
     }
-
+    
     private var ramSize: Long = -1
     fun getRamSize(ctx: Context): Long {
-        if(ramSize > 0) return ramSize
+        if (ramSize > 0) return ramSize
         val memInfo = ActivityManager.MemoryInfo()
         (ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(memInfo)
         ramSize = memInfo.totalMem
         return ramSize
     }
-
+    
     fun getImageSize(ctx: Context, expectedWidth: Int): Point {
         var maxWidth = expectedWidth//(expectedWidth * Resources.getSystem().displayMetrics.density).toInt()//getScreenWidth()
 //        if(expectedWidth > getScreenWidth()) maxWidth = getScreenWidth()
         val ram = getRamSize(ctx)
-        if(ram <= 1_500_000_000) maxWidth = maxWidth * 2 / 3
+        if (ram <= 1_500_000_000) maxWidth = maxWidth * 2 / 3
         val maxHeight = maxWidth * 9 / 16
         return Point(maxWidth, maxHeight)
     }
-
-    fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver,
-        Settings.System.ACCELEROMETER_ROTATION, 0) == 1
-
+    
+    fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
+    
     fun strToDate(dateTime: String?, dateFormat: String = "yyyy-MM-d HH:mm:ss"):Date? {
         val df: DateFormat = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         try {
@@ -331,9 +325,8 @@ object Utils {
         }
         return null
     }
-
-
-    fun dateToStr(dateTime: Date?, dateFormat: String = "dd/MM/yyyy"):String? {
+    
+    fun dateToStr(dateTime: Date?, dateFormat: String = "dd/MM/yyyy"): String? {
         val formatter: DateFormat = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         try {
             if (dateTime != null) {
@@ -344,14 +337,14 @@ object Utils {
         }
         return null
     }
-
+    
     @Throws(IOException::class)
     fun readFileToBytes(file: File): ByteArray {
         val bytes = ByteArray(file.length().toInt())
         FileInputStream(file).use { fis -> fis.read(bytes) }
         return bytes
     }
-
+    
     fun getVersionInfo(context: Context): Pair<String, Long>? {
         try {
             val pInfo: PackageInfo =
@@ -394,11 +387,11 @@ object Utils {
         return date?.let { currentFormatter.format(it) }
     }
     
-    fun formatPackExpiryDate(dateTime: String?): String? {
+    fun formatPackExpiryDate(dateTime: String?, pattern: String? = "yyyy-MM-dd HH:mm:ss"): String? {
         if (TextUtils.isEmpty(dateTime)) {
             return ""
         }
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH) //2016-10-20 06:45:29
+        val currentFormatter = SimpleDateFormat(pattern, Locale.ENGLISH) //2016-10-20 06:45:29
         val dateObj: Date?
         return try {
             dateObj = dateTime?.let { currentFormatter.parse(it) }
@@ -410,8 +403,8 @@ object Utils {
         }
     }
     
-    fun getDate(dateTime: String?): Date {
-        val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    fun getDate(dateTime: String?, dateFormat: String? = "yyyy-MM-dd HH:mm:ss"): Date {
+        val currentFormatter = SimpleDateFormat(dateFormat, Locale.ENGLISH)
         return try {
             dateTime?.let { currentFormatter.parse(it) } ?: Date()
         } catch (e: ParseException) {
@@ -429,7 +422,7 @@ object Utils {
             val dateGMT = cal.time
             val sdf = SimpleDateFormat("mm:ss", Locale.ENGLISH)
             sdf.format(dateGMT)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             time.toString()
         }
     }
@@ -442,7 +435,7 @@ object Utils {
             val dateGMT = cal.time
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
             sdf.format(dateGMT)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             val date = Calendar.getInstance().time
             "${date.year}-${date.month}-${date.day}"
         }
@@ -461,7 +454,7 @@ object Utils {
             else -> "Just Now!"
         }
     }
-
+    
 //    fun getDateDiffInDayOrHourOrMinute(time: Long): String {
 //        val second  = 1
 //        val minute  = 60 * second
@@ -497,9 +490,9 @@ object Utils {
     
     fun checkWifiOnAndConnected(context: Context): String {
         return try {
-            when(ConnectionWatcher(context as Application).netType) {
+            when (ConnectionWatcher(context as Application).netType) {
                 "WiFi" -> "WIFI"
-                "2G","3G","4G","5G" -> "CELLULAR"
+                "2G", "3G", "4G", "5G" -> "CELLULAR"
                 else -> ""
             }
         } catch (e: Exception) {
@@ -608,7 +601,7 @@ object Utils {
 //                d.toInt() * 10 / 10 else d.toString() // (int) d * 10 / 10 drops the decimal
 //                ).toString() + c[iteration] else viewCountFormat(d, iteration + 1)
 //    }
-
+    
     private fun viewCountFormat(count: Long): String {
         if (count < 1000) return "" + count
         var exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
@@ -625,7 +618,7 @@ object Utils {
         return DecimalFormat("#,##0.##").format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
     
-    fun hasDefaultOverlayPermission():Boolean {
+    fun hasDefaultOverlayPermission(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
     }
 }
@@ -658,8 +651,45 @@ val currentDateTime: String
         return sdf.format(bdTime()) ?: sdf.format(Date())
     }
 
+val currentDate: String
+    get() {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        return sdf.format(bdTime()) ?: sdf.format(Date())
+    }
+
 val currentDateTimeMillis: String
     get() {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
         return sdf.format(bdTime()) ?: sdf.format(Date())
     }
+
+enum class DateComparisonResult {
+    EARLIER, LATER, SAME
+}
+
+fun compareDates(fromDate: String, toDate: String): DateComparisonResult {
+    val result = fromDate.compareTo(toDate)
+    
+    return when {
+        result < 0 -> DateComparisonResult.EARLIER // if negative value -> fromDate is earlier than toDate
+        result > 0 -> DateComparisonResult.LATER // if positive value -> fromDate is later than toDate
+        else -> DateComparisonResult.SAME // fromDate is same as toDate
+    }
+}
+
+fun calculateDiscountedPrice(originalPrice: Double, discountPercentage: Double): Double {
+    return try {
+        val discountAmount = originalPrice * (discountPercentage / 100)
+        val discountedPrice = originalPrice - discountAmount
+        val integerPart = discountedPrice.toInt()
+        val decimalPart = discountedPrice - integerPart
+        
+        if (decimalPart > 0) {
+            integerPart + 1.0
+        } else {
+            discountedPrice
+        }
+    } catch (e: Exception) {
+        0.0
+    }
+}

@@ -1,34 +1,36 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ShareableData(
-    @SerializedName("type")
+    @SerialName("type")
     val type: String? = null,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int? = null,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     val channelId: Int? = null,
-    @SerializedName("stingrayShareUrl")
+    @SerialName("stingrayShareUrl")
     val stingrayShareUrl: String? = null,
-    @SerializedName("isUserPlaylist")
+    @SerialName("isUserPlaylist")
     val isUserPlaylist: Int? = null,
-    @SerializedName("isOwner")
+    @SerialName("isOwner")
     val isOwner: Int? = null,
-    @SerializedName("channelOwnerUserId")
+    @SerialName("channelOwnerUserId")
     val channelOwnerId: Int? = null,
-    @SerializedName("playlistId")
+    @SerialName("playlistId")
     val playlistId: Int? = null,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String? = null,
-    @SerializedName("seasonNo")
+    @SerialName("seasonNo")
     var seasonNo: Int? = null,
-    @SerializedName("serialSummaryId")
+    @SerialName("serialSummaryId")
     val serialSummaryId: Int? = null,
-    @SerializedName("activeSeason")
+    @SerialName("activeSeason")
     val activeSeason: List<Int>? = null,
-    @SerializedName("contentType")
+    @SerialName("contentType")
     val contentType: String = "VOD",
-    @SerializedName("fmRadioShareUrl")
+    @SerialName("fmRadioShareUrl")
     val fmRadioShareUrl: String? = null,
 )

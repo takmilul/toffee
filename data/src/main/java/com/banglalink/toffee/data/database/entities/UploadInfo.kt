@@ -1,58 +1,62 @@
 package com.banglalink.toffee.data.database.entities
 
 import android.util.Base64
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.util.Utils
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 data class UploadInfo(
-    @SerializedName("uploadId")
+    @SerialName("uploadId")
     @PrimaryKey(autoGenerate = true)
     val uploadId: Long? = null,
     
-    @SerializedName("fileUri")
-    val fileUri: String,
-    @SerializedName("fileName")
-    var fileName: String,
+    @SerialName("fileUri")
+    val fileUri: String? = null,
+    @SerialName("fileName")
+    var fileName: String? = null,
     
-    @SerializedName("tusUploadUri")
+    @SerialName("tusUploadUri")
     var tusUploadUri: String? = null,
-    @SerializedName("thumbUri")
+    @SerialName("thumbUri")
     var thumbUri: String? = null,
-    @SerializedName("status")
+    @SerialName("status")
     var status: Int = UploadStatus.ADDED.value,
-    @SerializedName("fileSize")
+    @SerialName("fileSize")
     var fileSize: Long = 0L,
-    @SerializedName("completedSize")
+    @SerialName("completedSize")
     var completedSize: Long = 0L,
-    @SerializedName("completedPercent")
+    @SerialName("completedPercent")
     var completedPercent: Int = 0,
-    @SerializedName("statusMessage")
+    @SerialName("statusMessage")
     var statusMessage: String? = null,
     
-    @SerializedName("title")
+    @SerialName("title")
     var title: String? = null,
-    @SerializedName("description")
+    @SerialName("description")
     var description: String? = null,
-    @SerializedName("tags")
+    @SerialName("tags")
     var tags: String? = null,
-    @SerializedName("category")
+    @SerialName("category")
     var category: String? = null,
-    @SerializedName("categoryIndex")
+    @SerialName("categoryIndex")
     var categoryIndex: Int = 0,
-    @SerializedName("ageGroup")
+    @SerialName("ageGroup")
     var ageGroup: String? = null,
-    @SerializedName("ageGroupIndex")
+    @SerialName("ageGroupIndex")
     var ageGroupIndex: Int = 0,
-    @SerializedName("submitToChallenge")
+    @SerialName("submitToChallenge")
     var submitToChallenge: String? = null,
-    @SerializedName("submitToChallengeIndex")
+    @SerialName("submitToChallengeIndex")
     var submitToChallengeIndex: Int = 0,
-    @SerializedName("serverContentId")
-    val serverContentId: Long,
+    @SerialName("serverContentId")
+    @ColumnInfo(defaultValue = "0")
+    val serverContentId: Long = 0,
 ) {
     fun getFingerprint(): String? {
         if (uploadId != null && uploadId >= 0L) {
@@ -74,5 +78,5 @@ data class UploadInfo(
         } else null
     }
     
-    fun getFileNameMetadata() = "filename " + Base64.encodeToString(fileName.toByteArray(), Base64.NO_WRAP)
+    fun getFileNameMetadata() = "filename " + Base64.encodeToString(fileName?.toByteArray(), Base64.NO_WRAP)
 }

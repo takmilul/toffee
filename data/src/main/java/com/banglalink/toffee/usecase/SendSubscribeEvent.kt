@@ -6,8 +6,8 @@ import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqttService) {
@@ -19,22 +19,23 @@ class SendSubscribeEvent @Inject constructor(private val mqttService: ToffeeMqtt
             status = status,
             date_time=subscriptionInfo.getDate()
         )
-        PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
-        mqttService.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
+        PubSubMessageUtil.sendMessage(subscriptionCountData, SUBSCRIPTION_TOPIC)
+        mqttService.send(subscriptionCountData, SUBSCRIPTION_TOPIC)
     }
 }
 
+@Serializable
 data class SubscriptionCountData(
-    @SerializedName("channel_id")
-    val channelId: Int,
-    @SerializedName("subscriber_id")
-    val subscriberId: Int,
-    @SerializedName("status")
-    val status: Int,
-    @SerializedName("device_id")
+    @SerialName("channel_id")
+    val channelId: Int = 0,
+    @SerialName("subscriber_id")
+    val subscriberId: Int = 0,
+    @SerialName("status")
+    val status: Int = 0,
+    @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
-    @SerializedName("date_time")
-    val date_time: String,
-    @SerializedName("reportingTime")
+    @SerialName("date_time")
+    val date_time: String? = null,
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

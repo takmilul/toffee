@@ -1,13 +1,15 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FireworkRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password:String,
-    @SerializedName("type")
+    @SerialName("type")
     val type:String="Live"
 ) : BaseRequest(ApiNames.GET_FIREWORK_LIST)

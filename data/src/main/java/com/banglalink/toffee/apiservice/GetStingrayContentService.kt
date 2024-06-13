@@ -9,17 +9,17 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class GetStingrayContentService @Inject constructor(
+    private val json: Json,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
     private val preference: SessionPreference,
     private val tvChannelRepo: TVChannelRepository
 ): BaseApiService<ChannelInfo> {
-
-    val gson = Gson()
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO {
@@ -40,7 +40,7 @@ class GetStingrayContentService @Inject constructor(
         }
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
-        response.response.channels?.filter {
+        response.response?.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
@@ -55,7 +55,7 @@ class GetStingrayContentService @Inject constructor(
                         it.type ?: "Stingray",
                         1,
                         "Music Playlist",
-                        gson.toJson(it),
+                        json.encodeToString(it),
                         it.view_count?.toLong() ?: 0L,
                         it.isStingray
                     ).apply {
@@ -66,6 +66,6 @@ class GetStingrayContentService @Inject constructor(
             !it.isExpired
         }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())
-        return response.response.channels ?: emptyList()
+        return response.response?.channels ?: emptyList()
     }
 }

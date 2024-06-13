@@ -1,14 +1,16 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NativeAdSettings(
-    @SerializedName("area")
+    @SerialName("area")
     val area: Int = 0,
-    @SerializedName("isActive")
+    @SerialName("isActive")
     val isActive: Boolean = false,
-    @SerializedName("adUnitId")
+    @SerialName("adUnitId")
     val adUnitId: String? = null,
-    @SerializedName("adInterval")
+    @SerialName("adInterval")
     val adInterval: Int = 4,
 )

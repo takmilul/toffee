@@ -1,40 +1,43 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PlayerOverlayData(
-    @SerializedName("id")
-    val id: Long,
-    @SerializedName("function")
-    val function: String,
-    @SerializedName("content_id")
-    val contentId: String,
-    @SerializedName("timestamp")
-    val timeStamp: String,
-    @SerializedName("parameters")
-    val params: OverlayParams
+    @SerialName("id")
+    val id: Long = 0,
+    @SerialName("function")
+    val function: String? = null,
+    @SerialName("content_id")
+    val contentId: String? = null,
+    @SerialName("timestamp")
+    val timeStamp: String? = null,
+    @SerialName("parameters")
+    val params: OverlayParams? = null
 )
 
+@Serializable
 data class OverlayParams(
-    @SerializedName("show")
-    val displayParams: List<String>,
-    @SerializedName("custom_text")
-    val customText: String,
-    @SerializedName("bg_color_code")
-    val bgColorCode: String,
-    @SerializedName("font_color_code")
-    val fontColorCode: String,
-    @SerializedName("font_size")
-    val fontSize: String,
-    @SerializedName("opacity")
-    val opacity: String,
-    @SerializedName("position")
-    val position: String, // constant/floating
-    @SerializedName("duration")
-    val duration: Long,
-    @SerializedName("from_position")
+    @SerialName("show")
+    val displayParams: List<String>? = null,
+    @SerialName("custom_text")
+    val customText: String? = null,
+    @SerialName("bg_color_code")
+    val bgColorCode: String? = null,
+    @SerialName("font_color_code")
+    val fontColorCode: String? = null,
+    @SerialName("font_size")
+    val fontSize: String? = null,
+    @SerialName("opacity")
+    val opacity: String? = null,
+    @SerialName("position")
+    val position: String? = null, // constant/floating
+    @SerialName("duration")
+    val duration: Long = 0,
+    @SerialName("from_position")
     val fromPosition: List<Float>? = listOf(0.0F, 0.0F),
-    @SerializedName("to_position")
+    @SerialName("to_position")
     val toPosition: List<Float>? = listOf(1.0F, 0.0F),
 )
 

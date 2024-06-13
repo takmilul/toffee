@@ -2,12 +2,14 @@ package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.model.PlayerSessionDetails
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class PlayerSessionDetailsRequest(
-    @SerializedName("playerSessionList")
+    @SerialName("playerSessionList")
     val playerSessionList: List<PlayerSessionDetails>
 ) : PubSubBaseRequest() {
-    @SerializedName("initialTime")
+    @SerialName("initialTime")
     var initialTime = currentDateTime
 }

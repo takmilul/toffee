@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.CategoryBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CategoryResponse(
-    @SerializedName("response")
-    val response: CategoryBean
+    @SerialName("response")
+    val response: CategoryBean? = null
 ) : BaseResponse()

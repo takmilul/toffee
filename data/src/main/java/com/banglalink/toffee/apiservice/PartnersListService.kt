@@ -17,7 +17,7 @@ class PartnersListService @AssistedInject constructor(
     private val preference: SessionPreference,
     @Assisted private val requestParams: ChannelRequestParams,
 ) : BaseApiService<ChannelInfo> {
-
+    
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO {
             toffeeApi.getPartnersList(
@@ -31,18 +31,18 @@ class PartnersListService @AssistedInject constructor(
                 )
             )
         }
-
-        return response.response.channels?.map {
+        
+        return response.response?.channels?.map {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
                 false
             }
-            localSync.syncData(it, LocalSync.SYNC_FLAG_USER_ACTIVITY, isFromCache = response.isFromCache)
+            localSync.syncData(it, isFromCache = response.isFromCache)
             it
         } ?: emptyList()
     }
-
+    
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(requestParams: ChannelRequestParams): PartnersListService

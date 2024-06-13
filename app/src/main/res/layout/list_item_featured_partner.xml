@@ -35,11 +35,13 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/featured_partner_banner"
                 loadPartnerImageFromUrl="@{data.bannerUrl}"
+                android:foreground="@drawable/ripple_rounded_rectangle_shape"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/placeholder" />
+                tools:src="@drawable/placeholder"
+                tools:ignore="UnusedAttribute" />
             
             <ImageView
                 android:id="@+id/icon"

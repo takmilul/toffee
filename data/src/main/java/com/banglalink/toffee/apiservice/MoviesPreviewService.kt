@@ -14,7 +14,13 @@ class MoviesPreviewService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
 ) {
-    suspend fun loadData(type: String, categoryId: Int, subCategoryId: Int, limit: Int = 0, offset: Int = 0): List<ChannelInfo> {
+    suspend fun loadData(
+        type: String,
+        categoryId: Int,
+        subCategoryId: Int,
+        limit: Int = 0,
+        offset: Int = 0
+    ): List<ChannelInfo> {
 
         val request = MoviesPreviewRequest(
             preference.customerId,
@@ -33,7 +39,7 @@ class MoviesPreviewService @Inject constructor(
             )
         }
 
-        return if (response.response.channels != null) {
+        return if (response.response?.channels != null) {
             response.response.channels.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())

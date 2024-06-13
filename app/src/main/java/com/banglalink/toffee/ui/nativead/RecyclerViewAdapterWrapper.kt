@@ -2,7 +2,9 @@ package com.banglalink.toffee.ui.nativead
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.*
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
 open class RecyclerViewAdapterWrapper(private val wrappedAdapter: Adapter<ViewHolder>) : Adapter<ViewHolder>() {
     init {

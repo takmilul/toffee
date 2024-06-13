@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,30 +28,30 @@ object Samples {
     val YOUTUBE_DASH_MP4 = arrayOf(
         Sample(
             "Google Glass (MP4,H264)",
-            "http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?" + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7." + "8506521BFC350652163895D4C26DEE124209AA9E&key=ik0",
+            "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?" + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7." + "8506521BFC350652163895D4C26DEE124209AA9E&key=ik0",
             TYPE_DASH
         ), Sample(
             "Google Play (MP4,H264)",
-            "http://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?" + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=A2716F75795F5D2AF0E88962FFCD10DB79384F29." + "84308FF04844498CE6FBCE4731507882B8307798&key=ik0",
+            "https://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?" + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=A2716F75795F5D2AF0E88962FFCD10DB79384F29." + "84308FF04844498CE6FBCE4731507882B8307798&key=ik0",
             TYPE_DASH
         )
     )
     val YOUTUBE_DASH_WEBM = arrayOf(
         Sample(
             "Google Glass (WebM,VP9)",
-            "http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?" + "as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=249B04F79E984D7F86B4D8DB48AE6FAF41C17AB3." + "7B9F0EC0505E1566E59B8E488E9419F253DDF413&key=ik0",
+            "https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?" + "as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=249B04F79E984D7F86B4D8DB48AE6FAF41C17AB3." + "7B9F0EC0505E1566E59B8E488E9419F253DDF413&key=ik0",
             TYPE_DASH
         ), Sample(
             "Google Play (WebM,VP9)",
-            "http://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?" + "as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=B1C2A74783AC1CC4865EB312D7DD2D48230CC9FD." + "BD153B9882175F1F94BFE5141A5482313EA38E8D&key=ik0",
+            "https://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?" + "as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&" + "ipbits=0&expire=19000000000&signature=B1C2A74783AC1CC4865EB312D7DD2D48230CC9FD." + "BD153B9882175F1F94BFE5141A5482313EA38E8D&key=ik0",
             TYPE_DASH
         )
     )
     val SMOOTHSTREAMING = arrayOf(
         Sample(
-            "Super speed", "http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism", TYPE_SS
+            "Super speed", "https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism", TYPE_SS
         ), Sample(
-            "Super speed (PlayReady)", "http://playready.directtaps.net/smoothstreaming/SSWSS720H264PR/SuperSpeedway_720.ism", TYPE_SS
+            "Super speed (PlayReady)", "https://playready.directtaps.net/smoothstreaming/SSWSS720H264PR/SuperSpeedway_720.ism", TYPE_SS
         )
     )
     private const val WIDEVINE_GTS_MPD = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd"
@@ -176,31 +176,31 @@ object Samples {
             "Apple AAC media playlist", "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear0/" + "prog_index.m3u8", TYPE_HLS
         ), Sample(
             "Apple ID3 metadata",
-            "http://27.131.14.202:1935/live/smil:Test_Stream.smil/playlist.m3u8",  // "http://27.131.14.202:1935/live/myStream/playlist.m3u8",//"http://118.179.35.11/hls/Desh_TVYCjrz/index.m3u8", //"http://devimages.apple.com/samplecode/adDemo/ad.m3u8",
+            "https://27.131.14.202:1935/live/smil:Test_Stream.smil/playlist.m3u8",  // "https://27.131.14.202:1935/live/myStream/playlist.m3u8",//"https://118.179.35.11/hls/Desh_TVYCjrz/index.m3u8", //"https://devimages.apple.com/samplecode/adDemo/ad.m3u8",
             TYPE_HLS
         )
     )
     val MISC = arrayOf(
-        Sample("Dizzy", "http://html5demos.com/assets/dizzy.mp4", TYPE_OTHER), Sample(
+        Sample("Dizzy", "https://html5demos.com/assets/dizzy.mp4", TYPE_OTHER), Sample(
             "Apple AAC 10s", "https://devimages.apple.com.edgekey.net/" + "streaming/examples/bipbop_4x3/gear0/fileSequence0.aac", TYPE_OTHER
         ), Sample(
             "Apple TS 10s", "https://devimages.apple.com.edgekey.net/streaming/examples/" + "bipbop_4x3/gear1/fileSequence0.ts", TYPE_OTHER
         ), Sample(
             "Android screens (Matroska)",
-            "http://storage.googleapis.com/exoplayer-test-media-1/" + "mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv",
+            "https://storage.googleapis.com/exoplayer-test-media-1/" + "mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv",
             TYPE_OTHER
         ), Sample(
             "Big Buck Bunny (MP4 Video)",
-            "http://redirector.c.youtube.com/videoplayback?id=604ed5ce52eda7ee&itag=22&source=youtube&" + "sparams=ip,ipbits,expire,source,id&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=" + "513F28C7FDCBEC60A66C86C9A393556C99DC47FB.04C88036EEE12565A1ED864A875A58F15D8B5300" + "&key=ik0",
+            "https://redirector.c.youtube.com/videoplayback?id=604ed5ce52eda7ee&itag=22&source=youtube&" + "sparams=ip,ipbits,expire,source,id&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=" + "513F28C7FDCBEC60A66C86C9A393556C99DC47FB.04C88036EEE12565A1ED864A875A58F15D8B5300" + "&key=ik0",
             TYPE_OTHER
         ), Sample(
-            "Google Play (MP3 Audio)", "http://storage.googleapis.com/exoplayer-test-media-0/play.mp3", TYPE_OTHER
+            "Google Play (MP3 Audio)", "https://storage.googleapis.com/exoplayer-test-media-0/play.mp3", TYPE_OTHER
         ), Sample(
             "Google Play (Ogg/Vorbis Audio)", "https://storage.googleapis.com/exoplayer-test-media-1/ogg/play.ogg", TYPE_OTHER
         ), Sample(
-            "Google Glass (WebM Video with Vorbis Audio)", "http://demos.webmproject.org/exoplayer/glass_vp9_vorbis.webm", TYPE_OTHER
+            "Google Glass (WebM Video with Vorbis Audio)", "https://demos.webmproject.org/exoplayer/glass_vp9_vorbis.webm", TYPE_OTHER
         ), Sample(
-            "Big Buck Bunny (FLV Video)", "http://vod.leasewebcdn.com/bbb.flv?ri=1024&rs=150&start=0", TYPE_OTHER
+            "Big Buck Bunny (FLV Video)", "https://vod.leasewebcdn.com/bbb.flv?ri=1024&rs=150&start=0", TYPE_OTHER
         )
     )
     

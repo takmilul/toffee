@@ -13,15 +13,15 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
     </data>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"
-        android:background="?selectableItemBackground"
+        android:background="@null"
         android:onClick="@{()->callback.onItemClicked(data)}">
-
+        
         <FrameLayout
             android:id="@+id/poster_container"
             android:layout_width="0dp"
@@ -32,15 +32,17 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+            
             <com.banglalink.toffee.ui.widget.CustomImageView
                 android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
+                android:foreground="@drawable/ripple_rectangle_shape"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                tools:src="@drawable/placeholder" />
+                tools:src="@drawable/placeholder"
+                tools:ignore="UnusedAttribute" />
 
         </FrameLayout>
         
@@ -55,61 +57,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="@+id/poster_container" />
-
-        <ImageView
-            android:contentDescription="@string/txt_options"
-            android:id="@+id/options"
-            style="@style/OptionMenuStyle"
-            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/name"
-            app:srcCompat="@drawable/ic_menu_more" />
-
-        <TextView
-            android:id="@+id/name"
-            style="@style/programNameTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:ellipsize="end"
-            android:minLines="2"
-            android:maxLines="2"
-            android:text="@{data.program_name}"
-            app:layout_constraintEnd_toStartOf="@+id/options"
-            app:layout_constraintStart_toEndOf="@+id/poster_container"
-            app:layout_constraintTop_toTopOf="@+id/poster_container"
-            tools:text="Title" />
-
-        <ImageView
-            android:id="@+id/ownerPicture"
-            loadSmallImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            tools:src="@drawable/ic_menu_profile"/>
-
-        <TextView
-            android:id="@+id/provider_name"
-            style="@style/TitleBoldTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:fontFamily="@font/roboto_medium"
-            android:textSize="@dimen/default_text_size"
-            android:text='@{data.content_provider_name}'
-            app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@+id/ownerPicture"
-            tools:text="Content Provider" />
-
+        
         <TextView
             android:id="@+id/duration"
             bindDuration="@{data}"
@@ -123,36 +71,64 @@
             app:layout_constraintBottom_toTopOf="@id/progress"
             app:layout_constraintEnd_toEndOf="@+id/poster_container"
             tools:text="00:00" />
-
+        
+        <ImageView
+            android:contentDescription="@string/txt_options"
+            android:id="@+id/options"
+            style="@style/OptionMenuStyle"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            app:srcCompat="@drawable/ic_menu_more" />
+        
         <TextView
-            android:id="@+id/number_of_views"
-            android:layout_width="wrap_content"
+            android:id="@+id/name"
+            style="@style/programNameTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
+            android:layout_marginStart="12dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="@{data.program_name}"
+            app:layout_constraintEnd_toStartOf="@+id/options"
+            app:layout_constraintStart_toEndOf="@+id/poster_container"
+            app:layout_constraintTop_toTopOf="@+id/poster_container"
+            app:layout_constraintBottom_toTopOf="@id/provider_name"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Title" />
+        
+        <TextView
+            android:id="@+id/provider_name"
+            style="@style/TitleBoldTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{(data.isApproved == 1 ? data.formattedViewCount : `0`) + ` Views`}"
-            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            android:text='@{data.content_provider_name}'
+            app:layout_constraintBottom_toTopOf="@id/uploadTimeTextView"
+            app:layout_constraintEnd_toEndOf="@id/name"
             app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/ownerPicture"
-            tools:text="18K views" />
-
+            app:layout_constraintTop_toBottomOf="@id/name"
+            tools:text="Content Provider" />
+        
         <TextView
             android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
-            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
+            android:text="@{data.formattedCreateTime()}"
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            tools:text=" &#8226; 14h"
-            app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/number_of_views"
-            app:layout_constraintTop_toTopOf="@+id/number_of_views" />
-
+            tools:text="14h"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/provider_name"
+            app:layout_constraintEnd_toEndOf="@id/name"/>
+        
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
             android:layout_width="wrap_content"

@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:background="?selectableItemBackground"
+        android:background="@null"
         android:onClick="@{()-> callback.onItemClicked(data)}">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
@@ -32,12 +32,14 @@
             android:scaleType="fitXY"
             android:contentDescription="@string/txt_poster"
             app:srcCompat="@drawable/placeholder"
+            android:foreground="@drawable/ripple_rectangle_shape"
             loadImageFromUrl="@{data.landscape_ratio_1280_720}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintWidth_percent="0.45" />
+            app:layout_constraintWidth_percent="0.45"
+            tools:ignore="UnusedAttribute" />
         
         <View
             android:id="@+id/overlayView"

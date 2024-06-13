@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FollowCategoryBean(
-    @SerializedName("categoryId")
-    val categoryId: Int,
-    @SerializedName("isFollowed")
-    val isFollowed: Int,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageType")
-    val messageType: String,
-    @SerializedName("systemTime")
-    val systemTime: String
+    @SerialName("categoryId")
+    val categoryId: Int = 0,
+    @SerialName("isFollowed")
+    val isFollowed: Int = 0,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null,
+    @SerialName("systemTime")
+    val systemTime: String? = null
 )

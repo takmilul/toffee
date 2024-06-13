@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class RedeemReferralCode @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(referralCode: String): RedeemReferralCodeBean {
+    suspend fun execute(referralCode: String): RedeemReferralCodeBean? {
         val response = tryIO {
             toffeeApi.redeemReferralCode(RedeemReferralCodeRequest(referralCode, preference.customerId, preference.password))
         }

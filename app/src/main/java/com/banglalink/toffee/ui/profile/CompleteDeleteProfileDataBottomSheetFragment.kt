@@ -1,35 +1,38 @@
 package com.banglalink.toffee.ui.profile
 
-import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import com.banglalink.toffee.R
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.databinding.BottomSheetDeteleCompleteProfileDataBinding
 import com.banglalink.toffee.extension.safeClick
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 
-class CompleteDeleteProfileDataBottomSheetFragment : BottomSheetDialogFragment(){
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        val dialogBinding = BottomSheetDeteleCompleteProfileDataBinding.inflate(layoutInflater)
-
-        dialog.setContentView(dialogBinding.root)
-        dialog.setCancelable(false)
-        dialog.setCanceledOnTouchOutside(false)
-        val parent = dialogBinding.root.parent as View
-        val bottomSheetBehavior = BottomSheetBehavior.from(parent)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        with(dialogBinding){
-            okayButton.safeClick({
-                dialog.dismiss()
-            })
-        }
-        return dialog
+class CompleteDeleteProfileDataBottomSheetFragment : ChildDialogFragment(){
+    
+    private var _binding: BottomSheetDeteleCompleteProfileDataBinding? = null
+    private val binding get() = _binding!!
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = BottomSheetDeteleCompleteProfileDataBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
-    override fun getTheme(): Int = R.style.SheetDialog
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.okayButton.safeClick({
+            homeViewModel.logoutUser()
+            homeViewModel.getCredential()
+            mPref.deleteDialogLiveData.value = null
+            closeDialog()
+        })
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

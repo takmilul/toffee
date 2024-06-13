@@ -1,8 +1,10 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MediaCdnSignUrlResponse(
-    @SerializedName("response")
-    val response: MediaCdnSignUrl?
+    @SerialName("response")
+    val response: MediaCdnSignUrl? = null
 ) : BaseResponse()

@@ -1,45 +1,47 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelEditRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     var customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     var password: String,
-    @SerializedName("channelId")
+    @SerialName("channelId")
     var channelId: Int,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Long,
-    @SerializedName("channelName")
+    @SerialName("channelName")
     val channelName: String,
-    @SerializedName("channelDesc")
+    @SerialName("channelDesc")
     val channelDesc: String? = null,
-    @SerializedName("oldBannerImageUrl")
+    @SerialName("oldBannerImageUrl")
     val oldBannerImageUrl: String? = "NULL",
-    @SerializedName("bannerImage")
+    @SerialName("bannerImage")
     val bannerImage: String? = "NULL",
-    @SerializedName("oldProfileImageUrl")
+    @SerialName("oldProfileImageUrl")
     val oldProfileImageUrl: String? = "NULL",
-    @SerializedName("profileImage")
+    @SerialName("profileImage")
     val profileImage: String? = "NULL",
-    @SerializedName("name")
+    @SerialName("name")
     val name: String = "",
-    @SerializedName("email")
+    @SerialName("email")
     val email: String = "",
-    @SerializedName("address")
+    @SerialName("address")
     val address: String = "",
-    @SerializedName("dateOfBirth")
+    @SerialName("dateOfBirth")
     val dateOfBirth: String = "",
-    @SerializedName("nationalIdNo")
+    @SerialName("nationalIdNo")
     val nationalIdNo: String = "",
-    @SerializedName("paymentPhoneNo")
+    @SerialName("paymentPhoneNo")
     val paymentPhoneNo: String = "",
-    @SerializedName("paymentMethodId")
+    @SerialName("paymentMethodId")
     val paymentMethodId: Int = 0,
-    @SerializedName("isBillingInfoUpdated")
+    @SerialName("isBillingInfoUpdated")
     val isBillingInfoUpdated: Boolean = false,
-    @SerializedName("isChannelInfoUpdate")
+    @SerialName("isChannelInfoUpdate")
     val isChannelInfoUpdate: Boolean = false
 ) : BaseRequest(ApiNames.EDIT_MY_CHANNEL)

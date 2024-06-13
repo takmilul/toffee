@@ -1,33 +1,40 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.apiservice.VerifyCodeService
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.response.VerifyCodeResponse
+import com.banglalink.toffee.data.repository.BubbleConfigRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoLogin
-import com.banglalink.toffee.apiservice.VerifyCodeService
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.check
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito
 import retrofit2.Response
 
-
 class VerifyCodeServiceTest :BaseUseCaseTest(){
-
+    
+    @Mock var bubbleConfigRepository: BubbleConfigRepository = mock()
+    
     @Test
     fun verify_code_success(){
 
         runBlocking {
             //set up test
             setupPref()
-            val verifyCodeService = VerifyCodeService(SessionPreference.getInstance(), mockToffeeApi)
+            val verifyCodeService = VerifyCodeService(mockToffeeApi, SessionPreference.getInstance(), bubbleConfigRepository)
             Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                 Response.success(VerifyCodeResponse(
                     CustomerInfoLogin().apply {
-                        customerId = 1729
-                        customerName = null
+//                        customerId = 1729
+//                        customerName = null
 
                     }
                 )).body())
@@ -52,7 +59,7 @@ class VerifyCodeServiceTest :BaseUseCaseTest(){
             try{
                 //set up test
                 setupPref()
-                val verifyCodeService = VerifyCodeService(SessionPreference.getInstance(), mockToffeeApi)
+                val verifyCodeService = VerifyCodeService(mockToffeeApi, SessionPreference.getInstance(), bubbleConfigRepository)
                 Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                     Response.success(VerifyCodeResponse(
                         CustomerInfoLogin()

@@ -17,9 +17,12 @@ import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.HeaderEnrichmentService
+import com.banglalink.toffee.apiservice.KeepAliveService
+import com.banglalink.toffee.data.network.request.KeepAliveRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.player.PlayerEventWorker
@@ -55,7 +58,8 @@ class HeartBeatManager @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
-    private val headerEnrichmentService: HeaderEnrichmentService
+    private val headerEnrichmentService: HeaderEnrichmentService,
+    private val keepAliveService: KeepAliveService,
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
     
     private var ownerId = 0
@@ -64,8 +68,11 @@ class HeartBeatManager @Inject constructor(
     private var contentType = "0"
     private var isFirstLaunch = true
     private var isAppForeGround = false
-    private lateinit var coroutineScope :CoroutineScope
-    private lateinit var coroutineScope3 :CoroutineScope
+    private var isContentPlaying = false
+    private var channelInfo: ChannelInfo? = null
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var coroutineScope3: CoroutineScope
+    private lateinit var coroutineScope4: CoroutineScope
     private val coroutineScope2 = CoroutineScope(Main)
     private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
     val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
@@ -95,6 +102,7 @@ class HeartBeatManager @Inject constructor(
         isAppForeGround = false
         coroutineScope.cancel()
         coroutineScope3.cancel()
+        coroutineScope4.cancel()
         
         try {
             val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
@@ -130,18 +138,18 @@ class HeartBeatManager @Inject constructor(
             if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
                 coroutineScope.launch {
                     val response = resultFromResponse { headerEnrichmentService.execute() }
-                    when(response) {
+                    when (response) {
                         is Resource.Success -> {
                             val data = response.data
                             mPref.heUpdateDate = today
                             try {
-                                if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                                if (data.isBanglalinkNumber && !data.phoneNumber.isNullOrBlank()) {
                                     mPref.latitude = data.lat ?: ""
                                     mPref.longitude = data.lon ?: ""
                                     mPref.userIp = data.userIp ?: ""
                                     mPref.geoCity = data.geoCity ?: ""
                                     mPref.geoLocation = data.geoLocation ?: ""
-                                    mPref.hePhoneNumber = data.phoneNumber
+                                    mPref.hePhoneNumber = data.phoneNumber!!
                                     mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
                                     sendHeLogEvent.execute(HeaderEnrichmentLogData().also {
                                         it.phoneNumber = mPref.hePhoneNumber
@@ -152,17 +160,18 @@ class HeartBeatManager @Inject constructor(
                                 e.printStackTrace()
                             }
                         }
+                        
                         is Resource.Failure -> {
-
                             ToffeeAnalytics.logEvent(
                                 ToffeeEvents.EXCEPTION,
                                 bundleOf(
                                     "api_name" to "Header Enrichment",
                                     FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                                     "error_code" to response.error.code,
-                                    "error_description" to response.error.msg)
+                                    "error_description" to response.error.msg
+                                )
                             )
-
+                            
                             mPref.hePhoneNumber = ""
                             mPref.isHeBanglalinkNumber = false
                         }
@@ -174,23 +183,27 @@ class HeartBeatManager @Inject constructor(
         }
     }
     
-    private suspend fun execute(){
+    private suspend fun execute() {
         delay(INITIAL_DELAY)
-        if(isAppForeGround)
+        if (isAppForeGround)
             sendHeartBeat()
-        while(true){
+        while (true) {
             delay(TIMER_PERIOD.toLong())
-            if(isAppForeGround)
+            if (isAppForeGround)
                 sendHeartBeat()
         }
     }
     
-    private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
-        if(mPref.customerId != 0 && mPref.password.isNotBlank()){
-            try{
-                sendHeartBeat.execute(contentId, contentType, dataSource, ownerId, isNetworkSwitch, sendToPubSub)
+    private suspend fun sendHeartBeat(isNetworkSwitch: Boolean = false, sendToPubSub: Boolean = true) {
+        if (mPref.customerId != 0 && mPref.password.isNotBlank()) {
+            try {
+                if (channelInfo != null && channelInfo!!.isAudioBook) {
+                    sendHeartBeat.executeKabbik(channelInfo!!)
+                } else {
+                    sendHeartBeat.execute(contentId, contentType, dataSource, ownerId, isNetworkSwitch, sendToPubSub)
+                }
                 _heartBeatEventLiveData.postValue(true)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 val error = getError(e)
                 
@@ -200,18 +213,30 @@ class HeartBeatManager @Inject constructor(
                         "api_name" to ApiNames.SEND_HEART_BEAT,
                         FirebaseParams.BROWSER_SCREEN to "Splash Screen",
                         "error_code" to error.code,
-                        "error_description" to error.msg)
+                        "error_description" to error.msg
+                    )
                 )
             }
         }
     }
     
-    fun triggerEventViewingContentStart(playingContentId: Int, playingContentType: String, contentDataSource: String, channelOwnerId: 
-    Int) {
+    fun triggerEventViewingContentStart(
+        playingContentId: Int,
+        playingContentType: String,
+        contentDataSource: String,
+        channelOwnerId: Int,
+        isContentPremium: Boolean
+    ) {
         contentId = playingContentId
         contentType = playingContentType
         dataSource = contentDataSource
         ownerId = channelOwnerId
+        if (isContentPremium) {
+            isContentPlaying = true
+            startCheckingKeepAlive()
+        } else {
+            coroutineScope4.cancel()
+        }
     }
     
     fun triggerEventViewingContentStop() {
@@ -219,10 +244,74 @@ class HeartBeatManager @Inject constructor(
         ownerId = 0
         contentType = "0"
         dataSource = ""
+        isContentPlaying = false
+        triggerEventViewingKabbikStop()
+    }
+    
+    fun triggerEventViewingKabbikStart(channelInfo: ChannelInfo) {
+        this.channelInfo = channelInfo
+    }
+    
+    private fun triggerEventViewingKabbikStop() {
+        channelInfo = null
+    }
+    
+    private fun startCheckingKeepAlive() {
+        if (
+            mPref.customerId != 0 &&
+            mPref.password.isNotBlank() &&
+            mPref.isKeepAliveApiActive &&
+            mPref.keepAliveApiEndPoint.isNotBlank()
+        ) {
+            if (this::coroutineScope4.isInitialized && coroutineScope4.isActive) {
+                coroutineScope4.cancel()
+            }
+            coroutineScope4 = CoroutineScope(IO + Job())
+            coroutineScope4.launch {
+                while (true) {
+                    if (!isContentPlaying) {
+                        return@launch
+                    }
+                    
+                    try {
+                        Log.i("KEEP_", "startCheckingKeepAlive: ")
+                        keepAliveService.execute(
+                            KeepAliveRequest(
+                                customerId = mPref.customerId,
+                                password = mPref.password,
+                                contentId = contentId,
+                                contentType = contentType,
+                                dataSource = dataSource,
+                                ownerId = ownerId,
+                                lat = mPref.latitude,
+                                lon = mPref.longitude,
+                                isNetworkSwitch = false,
+                                type = if(isAppForeGround) "FOREGROUND" else "BACKGROUND"
+                            )
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        val error = getError(e)
+                        
+                        ToffeeAnalytics.logEvent(
+                            ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.SEND_HEART_BEAT,
+                                FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                                "error_code" to error.code,
+                                "error_description" to error.msg
+                            )
+                        )
+                    }
+                    
+                    delay(mPref.keepAliveApiCallingFrequency * 1000L)
+                }
+            }
+        }
     }
     
     override fun onAvailable(network: Network) {
-        if(!coroutineScope2.isActive)
+        if (!coroutineScope2.isActive)
             return
         _networkChangeEventLiveData.postValue(true)
         coroutineScope2.launch {

@@ -1,8 +1,10 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContentUploadResponse(
-    @SerializedName("response")
-    val response: ContentUploadResponseBean
+    @SerialName("response")
+    val response: ContentUploadResponseBean? = null
 ) : BaseResponse()

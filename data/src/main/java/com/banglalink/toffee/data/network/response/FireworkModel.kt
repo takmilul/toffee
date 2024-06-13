@@ -1,16 +1,19 @@
 package com.banglalink.toffee.data.network.response
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class FireworkModel(
-    @SerializedName("playlist_name")
-    val playlistName: String?,
-    @SerializedName("channel_id")
-    val channelId: String?,
-    @SerializedName("playlist_id")
-    val playlistId: String?,
-    @SerializedName("is_active")
+    @SerialName("playlist_name")
+    val playlistName: String? = null,
+    @SerialName("channel_id")
+    val channelId: String? = null,
+    @SerialName("playlist_id")
+    val playlistId: String? = null,
+    @SerialName("is_active")
     val isEnabled: Int = 0
 ) {
-    @get:SerializedName("isActive")
+//    @get:SerializedName("isActive")
     val isActive: Boolean
-        get() = isEnabled ==1
+        get() = isEnabled == 1
 }

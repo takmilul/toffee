@@ -166,9 +166,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    playlistId = it.data.playlistNameId
-                    if(isUserPlaylist==1) cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
-                    addToPlaylist(true)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(string.try_again_message))
+                    } else {
+                        playlistId = it.data?.playlistNameId ?: 0
+                        if (isUserPlaylist == 1) cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
+                        addToPlaylist(true)
+                    }
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -210,17 +214,19 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     alertDialog.dismiss()
-                    requireContext().showToast(it.data.message)
-                    if(isUserPlaylist==1)
-                    {
-                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
-                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(string.try_again_message))
+                    } else {
+                        requireContext().showToast(it.data?.message)
+                        if (isUserPlaylist == 1) {
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                        } else {
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                        }
+                        playlistReloadViewModel.reloadPlaylist.value = true
                     }
-                    else {
-                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
-                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
-                    }
-                    playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(

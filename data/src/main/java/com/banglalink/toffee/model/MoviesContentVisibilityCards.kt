@@ -1,36 +1,38 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MoviesContentVisibilityCards (
-    @SerializedName("featuredContent")
+    @SerialName("featuredContent")
     var featuredContent: Int = 0,
-    @SerializedName("continueWatching")
+    @SerialName("continueWatching")
     var continueWatching: Int = 0,
-    @SerializedName("editorsChoice")
+    @SerialName("editorsChoice")
     var editorsChoice: Int = 0,
-    @SerializedName("moviePreviews")
+    @SerialName("moviePreviews")
     var moviePreviews: Int = 0,
-    @SerializedName("trendingNow")
+    @SerialName("trendingNow")
     var trendingNow: Int = 0,
-    @SerializedName("thriller")
+    @SerialName("thriller")
     var thriller: Int = 0,
-    @SerializedName("action")
+    @SerialName("action")
     var action: Int = 0,
-    @SerializedName("romantic")
+    @SerialName("romantic")
     var romantic: Int = 0,
-    @SerializedName("bangla")
+    @SerialName("bangla")
     var bangla: Int = 0,
-    @SerializedName("english")
+    @SerialName("english")
     var english: Int = 0,
-    @SerializedName("comingSoon")
+    @SerialName("comingSoon")
     var comingSoon: Int = 0,
-    @SerializedName("telefilm")
+    @SerialName("telefilm")
     var telefilm: Int = 0,
-    @SerializedName("topMovieChannels")
+    @SerialName("topMovieChannels")
     var topMovieChannels: Int = 0,
-    @SerializedName("subCategory")
+    @SerialName("subCategory")
     var subCategory: Int = 0,
-    @SerializedName("feed")
+    @SerialName("feed")
     var feed: Int = 0,
 )

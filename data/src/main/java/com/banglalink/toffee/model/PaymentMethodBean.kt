@@ -1,7 +1,9 @@
 package com.banglalink.toffee.model
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PaymentMethodBean(
-    @SerializedName("payment")
-    val paymentList: List<Payment>?
+    @SerialName("payment")
+    val paymentList: List<Payment>? = null
 )

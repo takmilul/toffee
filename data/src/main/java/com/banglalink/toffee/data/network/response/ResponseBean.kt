@@ -1,12 +1,14 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ResponseBean(
-    @SerializedName("systemTime")
-    val systemTime: String,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageType")
-    val messageType: String
+    @SerialName("systemTime")
+    val systemTime: String? = null,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null
 )

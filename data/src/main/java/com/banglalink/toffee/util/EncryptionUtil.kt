@@ -12,10 +12,14 @@ object EncryptionUtil {
     private val headerEnrichmentKeySpec = SecretKeySpec(HE_KEY.toByteArray(), "AES")
 
     fun encryptRequest(jsonRequest: String): String {
-        val cipher = encrypt(jsonRequest.toByteArray())
-        return Base64.encodeToString(cipher, Base64.NO_WRAP)
+        return try {
+            val cipher = encrypt(jsonRequest.toByteArray())
+            Base64.encodeToString(cipher, Base64.NO_WRAP)
+        } catch (e: Exception) {
+            ""
+        }
     }
-
+    
     fun decryptResponse(response: String): String {
         return try {
             String(decrypt(Base64.decode(response, Base64.DEFAULT)))
@@ -23,7 +27,7 @@ object EncryptionUtil {
             String(decryptHeaderEnrichment(Base64.decode(response, Base64.DEFAULT)))
         }
     }
-
+    
     private fun decryptHeaderEnrichment(data: ByteArray): ByteArray {
         val cipherInstance = Cipher.getInstance(TRANSFORMATION)
         cipherInstance.init(Cipher.DECRYPT_MODE, headerEnrichmentKeySpec)

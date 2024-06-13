@@ -42,13 +42,15 @@ class LandingPageFragment : HomeBaseFragment() {
         _binding = FragmentLandingPageBinding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isEnabled) {
-                    if (appbarOffset != 0) {
-                        binding.latestVideoScroller.smoothScrollTo(0, 0, 0)
-                        binding.landingAppbar.setExpanded(true, true)
-                    } else {
-                        isEnabled = false
-                        requireActivity().onBackPressed()
+                runCatching {
+                    if (isEnabled) {
+                        if (appbarOffset != 0) {
+                            binding.latestVideoScroller.smoothScrollTo(0, 0, 0)
+                            binding.landingAppbar.setExpanded(true, true)
+                        } else {
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                        }
                     }
                 }
             }

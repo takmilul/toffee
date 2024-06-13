@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class TermsConditionService @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(): TermsAndCondition {
+    suspend fun execute(): TermsAndCondition? {
         val response = tryIO {
             toffeeApi.getVideoTermsAndCondition(preference.getDBVersionByApiName(ApiNames.GET_TERMS_AND_CONDITIONS),
                 TermsConditionRequest(preference.customerId,preference.password)

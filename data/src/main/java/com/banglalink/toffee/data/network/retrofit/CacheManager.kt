@@ -16,7 +16,6 @@ class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: 
             while (urlIterator.hasNext()) {
                 if (urlIterator.next().contains(apiUrl.trim())) {
                     urlIterator.remove()
-                    break
                 }
             }
         }

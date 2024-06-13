@@ -12,7 +12,7 @@ class AccountDeleteService @Inject constructor(
     private val preference: SessionPreference,
 ) {
     
-    suspend fun execute(): AccountDeleteBean {
+    suspend fun execute(): AccountDeleteBean? {
         val response = tryIO {
             toffeeApi.accountDelete(
                 AccountDeleteRequest(

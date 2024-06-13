@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
-import com.banglalink.toffee.apiservice.GetChannelWithCategory
-import com.banglalink.toffee.apiservice.GetChannelWithCategoryPaging
+import com.banglalink.toffee.apiservice.GetChannelWithCategoryService
+import com.banglalink.toffee.apiservice.GetChannelWithCategoryPagingService
 import com.banglalink.toffee.apiservice.GetContentService
 import com.banglalink.toffee.apiservice.GetFmRadioContentService
 import com.banglalink.toffee.apiservice.GetStingrayContentService
@@ -25,8 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AllChannelsViewModel @Inject constructor(
     private val tvChannelsRepo: TVChannelRepository,
-    private val allChannelService: GetChannelWithCategory,
-    private val allTvChannelServicePaging: GetChannelWithCategoryPaging.AssistedFactory,
+    private val allChannelService: GetChannelWithCategoryService,
+    private val allTvChannelServicePaging: GetChannelWithCategoryPagingService.AssistedFactory,
     private val getStingrayContentService: GetStingrayContentService,
     private val getFmRadioContentService: GetFmRadioContentService,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,
@@ -46,7 +46,6 @@ class AllChannelsViewModel @Inject constructor(
                 } else {
                     allChannelService.loadData(subcategoryId)
                 }
-                allChannelService.loadData(subcategoryId)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

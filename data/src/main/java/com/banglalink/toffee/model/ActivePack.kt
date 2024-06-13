@@ -1,19 +1,21 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 //@Entity
+@Serializable
 data class ActivePack(
-    @SerializedName("packId")
+    @SerialName("packId")
     val packId: Int = 0,
-    @SerializedName("contents")
+    @SerialName("contents")
     val contents: List<Int>? = null,
-    @SerializedName("isSubscriptionActive")
+    @SerialName("isSubscriptionActive")
     var isActive: Boolean = false,
-    @SerializedName("expiryDate")
+    @SerialName("expiryDate")
     val expiryDate: String? = null,
-    @SerializedName("dataPackDetails")
+    @SerialName("dataPackDetails")
     val packDetail: String? = null,
-    @SerializedName("isFreeUsed")
+    @SerialName("isFreeUsed")
     val isTrialPackUsed: Boolean = false
 )

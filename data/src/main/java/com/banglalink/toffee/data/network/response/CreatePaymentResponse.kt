@@ -1,36 +1,36 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CreatePaymentResponse (
-	@SerializedName("statusCode")
-	val statusCode : String? = null,
-	@SerializedName("statusMessage")
+	@SerialName("statusMessage")
 	val statusMessage : String? = null,
-	@SerializedName("paymentID")
+	@SerialName("paymentID")
 	val paymentId : String? = null,
-	@SerializedName("bkashURL")
+	@SerialName("bkashURL")
 	val bKashUrl : String? = null,
-	@SerializedName("callbackURL")
+	@SerialName("callbackURL")
 	val callbackURL : String? = null,
-	@SerializedName("successCallbackURL")
+	@SerialName("successCallbackURL")
 	val successCallbackURL : String? = null,
-	@SerializedName("failureCallbackURL")
+	@SerialName("failureCallbackURL")
 	val failureCallbackURL : String? = null,
-	@SerializedName("cancelledCallbackURL")
+	@SerialName("cancelledCallbackURL")
 	val cancelledCallbackURL : String? = null,
-	@SerializedName("amount")
+	@SerialName("amount")
 	val amount : String? = null,
-	@SerializedName("intent")
+	@SerialName("intent")
 	val intent : String? = null,
-	@SerializedName("currency")
+	@SerialName("currency")
 	val currency : String? = null,
-	@SerializedName("paymentCreateTime")
+	@SerialName("paymentCreateTime")
 	val paymentCreateTime : String? = null,
-	@SerializedName("transactionStatus")
+	@SerialName("transactionStatus")
 	val transactionStatus : String? = null,
-	@SerializedName("merchantInvoiceNumber")
+	@SerialName("merchantInvoiceNumber")
 	val merchantInvoiceNumber : String? = null,
-	@SerializedName("message")
+	@SerialName("message")
 	val message : String? = null
 ): ExternalBaseResponse()

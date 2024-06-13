@@ -1,32 +1,33 @@
 package com.banglalink.toffee.ui.splash
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.di.FirebaseInAppMessage
-import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.github.florent37.runtimepermission.kotlin.askPermission
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
-class SplashScreenActivity : BaseAppCompatActivity() {
+class SplashScreenActivity : AppCompatActivity() {
     
     private var _binding: ActivitySplashScreenBinding? = null
     private val binding get() = _binding!!
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
-    private val pushNotificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +37,12 @@ class SplashScreenActivity : BaseAppCompatActivity() {
         setContentView(binding.root)
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            askPermission(POST_NOTIFICATIONS) {}.onDeclined {
+                it.askAgain()
+            }
         }
         
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
 //        intent.getStringExtra("resourceUrl")?.let {
 //            saveNotification(intent)
 //            mPref.homeIntent.value = intent.setData(Uri.parse(it))

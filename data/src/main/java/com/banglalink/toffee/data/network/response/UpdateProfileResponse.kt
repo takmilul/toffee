@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.ProfileResponseBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UpdateProfileResponse(
-    @SerializedName("response")
-    val response: ProfileResponseBean
+    @SerialName("response")
+    val response: ProfileResponseBean? = null
 ):BaseResponse()

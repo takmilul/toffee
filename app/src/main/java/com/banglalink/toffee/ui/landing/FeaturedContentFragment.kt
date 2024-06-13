@@ -37,13 +37,6 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
          return binding.root
     }
     
-    override fun onDestroyView() {
-        slideJob?.cancel()
-        binding.featuredViewpager.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
-    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.featuredJob?.cancel()
@@ -97,5 +90,12 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
                 }
             }
         }
+    }
+    
+    override fun onDestroyView() {
+        slideJob?.cancel()
+        binding.featuredViewpager.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

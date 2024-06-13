@@ -1,14 +1,17 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
+@Serializable
 data class ContentBean(
-    @SerializedName(value = "channels", alternate = ["channelInfo"])
-    val channels: List<ChannelInfo>?,
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("totalCount")
+    @JsonNames("channels", "channelInfo")
+    val channels: List<ChannelInfo>? = null,
+    @SerialName("count")
+    val count: Int = 0,
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null
 )

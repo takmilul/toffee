@@ -9,11 +9,26 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class PlayerPreference private constructor(val context: Context) {
-    private val pref: SharedPreferences =
-        context.getSharedPreferences("PLAYER_PREF_V3", Context.MODE_PRIVATE)
-
-
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    
+    private val pref: SharedPreferences = context.getSharedPreferences("PLAYER_PREF_V3", Context.MODE_PRIVATE)
+    private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    
+    companion object {
+        private var instance: PlayerPreference? = null
+        
+        fun init(context: Context) {
+            if (instance == null) {
+                instance = PlayerPreference(context.applicationContext)
+            }
+        }
+        
+        fun getInstance(): PlayerPreference {
+            if (instance == null) {
+                throw InstantiationException("Instance is null...call init() first")
+            }
+            return instance as PlayerPreference
+        }
+    }
 
     fun savePlayerSessionBandWidth(durationInMillis: Long, bandWidthInMB: Double) {
         pref.edit().putString(UUID.randomUUID().toString(), "$durationInMillis,$bandWidthInMB")
@@ -31,50 +46,35 @@ class PlayerPreference private constructor(val context: Context) {
 
     fun getInitialTime():String{
         val timeString = pref.getString("initial_Time", currentDateTime) ?: currentDateTime
-        pref.edit().remove("initial_Time").commit()
+        pref.edit().remove("initial_Time").apply()
         return timeString
     }
 
     fun getPlayerSessionDetails(): List<PlayerSessionDetails> {
-        val keys: Map<String, *> = pref.all
-
-        val sessionList = ArrayList<PlayerSessionDetails>()
-        for ((key, value) in keys) {
-            val durationBandWidthString = value.toString()
-            val list = durationBandWidthString.split(",")
-
-            if(list.size != 2){
-                continue
+        return try {
+            val keys: Map<String, *> = pref.all
+            val sessionList = ArrayList<PlayerSessionDetails>()
+            for ((key, value) in keys) {
+                val durationBandWidthString = value.toString()
+                val list = durationBandWidthString.split(",")
+                
+                if (list.size != 2) {
+                    continue
+                }
+                val durationInSec = list[0].toLong()
+                val totalBandWidthInMB = list[1].toDouble()
+                
+                if (durationInSec == 0L)
+                    continue
+                
+                sessionList.add(PlayerSessionDetails(durationInSec, totalBandWidthInMB))
+                Log.i("map values", "$key: ${value.toString()}")
             }
-
-            val durationInSec = list[0].toLong()
-            val totalBandWidthInMB = list[1].toDouble()
-
-            if(durationInSec == 0L)
-                continue
-
-            sessionList.add(PlayerSessionDetails(durationInSec,totalBandWidthInMB))
-            Log.i("map values", "$key: ${value.toString()}")
-        }
-        pref.edit().clear().apply()
-        return sessionList
-    }
-
-
-    companion object {
-        private var instance: PlayerPreference? = null
-
-        fun init(context: Context) {
-            if (instance == null) {
-                instance = PlayerPreference(context.applicationContext)
-            }
-        }
-
-        fun getInstance(): PlayerPreference {
-            if (instance == null) {
-                throw InstantiationException("Instance is null...call init() first")
-            }
-            return instance as PlayerPreference
+            pref.edit().clear().apply()
+            sessionList
+        } catch (e: Exception) {
+            Log.e("Exception", e.message ?: "")
+            emptyList()
         }
     }
 }

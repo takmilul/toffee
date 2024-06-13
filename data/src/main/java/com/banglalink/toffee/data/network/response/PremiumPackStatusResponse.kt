@@ -1,22 +1,25 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.ActivePack
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PremiumPackStatusResponse(
-    @SerializedName("apiLanguage")
-    val apiLanguage: String,
-    @SerializedName("debugCode")
-    val debugCode: Int,
-    @SerializedName("debugMsg")
-    val debugMsg: String,
-    @SerializedName("response")
-    val response: PremiumPackStatusBean,
+    @SerialName("apiLanguage")
+    val apiLanguage: String? = null,
+    @SerialName("debugCode")
+    val debugCode: Int = 0,
+    @SerialName("debugMsg")
+    val debugMsg: String? = null,
+    @SerialName("response")
+    val response: PremiumPackStatusBean? = null,
 ) : BaseResponse()
 
+@Serializable
 data class PremiumPackStatusBean(
-    @SerializedName("status")
-    var status: Int?,
-    @SerializedName("login_related_subs_history")
-    val loginRelatedSubsHistory: List<ActivePack>?
+    @SerialName("status")
+    var status: Int? = 0,
+    @SerialName("login_related_subs_history")
+    val loginRelatedSubsHistory: List<ActivePack>? = null
 )

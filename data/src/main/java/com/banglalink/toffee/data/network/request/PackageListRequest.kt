@@ -1,15 +1,17 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PackageListRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("offset")
+    @SerialName("offset")
     val offset: Int = 0,
-    @SerializedName("limit")
+    @SerialName("limit")
     val limit: Int = 100
 ) : BaseRequest(ApiNames.GET_PACKAGE_WITH_SUBSCRIPTION)

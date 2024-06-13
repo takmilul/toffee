@@ -23,14 +23,14 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 abstract class BaseListFragment<T : Any> : BaseFragment() {
     
-    private val gson = Gson()
+    @Inject lateinit var json: Json
     protected abstract val mAdapter: BasePagingDataAdapter<T>
     protected abstract val mViewModel: BasePagingViewModel<T>
     private var _binding: FragmentBaseSingleListBinding? = null
@@ -138,10 +138,13 @@ abstract class BaseListFragment<T : Any> : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getListData().collectLatest {
                 mAdapter.submitData(it.filter {
-                    (!(it is ChannelInfo && it.isExpired) && !(it is UserActivities && gson.fromJson(it.payload, ChannelInfo::class.java).isExpired))
+                    (
+                        !(it is ChannelInfo && it.isExpired) && 
+                        !(it is UserActivities && it.payload != null && json.decodeFromString<ChannelInfo>(it.payload!!).isExpired)
+                    )
                 }.map {
                     if (it is ChannelInfo) {
-                        localSync.syncData(it as ChannelInfo)
+//                        localSync.syncData(it, false)
                         if(it.totalCount > 1) {
                             setResultView("${it.totalCount} results found")
                         }

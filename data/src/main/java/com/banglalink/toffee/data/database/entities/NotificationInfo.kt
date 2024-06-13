@@ -1,49 +1,55 @@
 package com.banglalink.toffee.data.database.entities
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
 @KeepName
 @Parcelize
+@Serializable
 data class NotificationInfo(
-    @SerializedName("id")
+    @SerialName("id")
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
-    @SerializedName("userId")
+    @SerialName("userId")
+    @ColumnInfo(defaultValue = "0")
     val userId: Int = 0,
-    @SerializedName("notificationType")
-    val notificationType: String?,
-    @SerializedName("notificationId")
-    val notificationId: String?,
-    @SerializedName("topic")
-    val topic: Int,
-    @SerializedName("sender")
-    val sender: Int,
-    @SerializedName("title")
-    val title: String?,
-    @SerializedName("content")
+    @SerialName("notificationType")
+    val notificationType: String? = null,
+    @SerialName("notificationId")
+    val notificationId: String? = null,
+    @SerialName("topic")
+    @ColumnInfo(defaultValue = "0")
+    val topic: Int = 0,
+    @SerialName("sender")
+    @ColumnInfo(defaultValue = "0")
+    val sender: Int = 0,
+    @SerialName("title")
+    val title: String? = null,
+    @SerialName("content")
     val content: String? = null,
-    @SerializedName("description")
+    @SerialName("description")
     val description: String? = null,
-    @SerializedName("thumbnailUrl")
+    @SerialName("thumbnailUrl")
     val thumbnailUrl: String? = null,
-    @SerializedName("imageUrl")
+    @SerialName("imageUrl")
     val imageUrl: String? = null,
-    @SerializedName("resourceUrl")
+    @SerialName("resourceUrl")
     val resourceUrl: String? = null,
-    @SerializedName("playNowUrl")
+    @SerialName("playNowUrl")
     val playNowUrl: String? = null,
-    @SerializedName("watchLaterUrl")
+    @SerialName("watchLaterUrl")
     val watchLaterUrl: String? = null,
-    @SerializedName("receiveTime")
+    @SerialName("receiveTime")
     val receiveTime: Long = System.currentTimeMillis(),
-    @SerializedName("seenTime")
+    @SerialName("seenTime")
     var seenTime: Long? = null,
-    @SerializedName("isSeen")
+    @SerialName("isSeen")
     var isSeen: Boolean = false
 ) : Parcelable

@@ -2,12 +2,14 @@ package com.banglalink.toffee.util
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetCategoriesService
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import javax.inject.Inject
@@ -15,7 +17,8 @@ import javax.inject.Singleton
 
 @Singleton
 class InAppMessageParser @Inject constructor(
-    private val categoryListApi: GetCategories
+    private val categoryListApi: GetCategoriesService,
+    private var mPref: SessionPreference
 ) {
 
 //    https://toffeelive.com?routing=internal&page=musicvideo&catid=18&catname=Music Video
@@ -28,6 +31,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
 //    https://toffeelive.com?routing=internal&page=login
+//    https://toffeelive.com?routing=internal&page=fm-radio
 //    https://toffeelive.com?routing=internal&page=search&keyword=natok
 //    https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=6417560
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
@@ -36,11 +40,13 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=featured_partner&id=5
 //    https://toffeelive.com?routing=internal&page=playlist&listid=99&ownerid=594383
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
+//    https://toffeelive.com?routing=internal&page=pack_from_ad&packId=6&paymentMethodId=10&showBlPacks=true
 
     suspend fun parseUrlV2(url: String): RouteV2? {
         try {
             val link = Uri.parse(url)
             val navOptions = navOptions { launchSingleTop = true }
+            val path = link.lastPathSegment
             val page = link.getQueryParameter("page")
             page?.let { name ->
                 when(name) {
@@ -138,6 +144,60 @@ class InAppMessageParser @Inject constructor(
                     "featured_partner" -> {
                         val partnerId = link.getQueryParameter("id")?.toIntOrNull() ?: 0
                         return RouteV2(partnerId, "Featured Partner", null, navOptions)
+                    }
+                    "pack_from_ad" ->{
+                        val packId = link.getQueryParameter("packId")?.toIntOrNull()
+                        val paymentMethodId = link.getQueryParameter("paymentMethodId")?.toIntOrNull() ?: -1
+                        val showBlPacks = link.getQueryParameter("showBlPacks").toBoolean()
+
+                        if (packId == null){
+                            return RouteV2(R.id.menu_feed, "Home", null, navOptions)
+                        } else {
+                            return RouteV2(
+                                R.id.packDetailsFragment,
+                                "Pack Details",
+                                bundleOf(
+                                    "openPlanDetails" to true,
+                                    "packId" to packId,
+                                    "paymentMethodId" to paymentMethodId,
+                                    "showBlPacks" to showBlPacks
+                                ),
+                                navOptions
+                            )
+                        }
+                    }
+                    "fm-radio" -> {
+                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
+                    }
+                    "kabbik" -> {
+                        return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
+                    }
+                    else -> null
+                }
+            }
+            
+            path?.let {
+                when (it) {
+                    "fm-radio" -> {
+                        return RouteV2(R.id.fmRadioFragment, "FM Radio", null, navOptions)
+                    }
+                    "kabbik" -> {
+                        return RouteV2(R.id.audioBookLandingFragment, "Kabbik", null, navOptions)
+                    }
+                    "tvsignin" -> {
+                        if (mPref.isQrCodeEnable) {
+                            val code = link.getQueryParameter("code")
+                            return RouteV2(
+                                R.id.menu_active_tv,
+                                "Activate Tv",
+                                bundleOf(
+                                    "code" to code?.ifBlank { null },
+                                ),
+                                navOptions
+                            )
+                        } else {
+                            null
+                        }
                     }
                     else -> null
                 }

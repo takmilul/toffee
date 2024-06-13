@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProfileResponseBean(
-    @SerializedName("code")
-    val code: Int,
-    @SerializedName("message")
-    val message: String?
+    @SerialName("code")
+    val code: Int = 0,
+    @SerialName("message")
+    val message: String? = null
 )

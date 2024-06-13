@@ -1,11 +1,13 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.data.network.response.BodyResponse
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class ReferralCodeStatusBean(
-    @SerializedName("referralStatus")
-    val referralStatus: String,
-    @SerializedName("referralStatusMessage")
-    val referralStatusMessage: String
+    @SerialName("referralStatus")
+    val referralStatus: String? = null,
+    @SerialName("referralStatusMessage")
+    val referralStatusMessage: String? = null
 ) : BodyResponse()

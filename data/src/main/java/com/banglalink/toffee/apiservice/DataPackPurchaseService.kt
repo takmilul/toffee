@@ -10,7 +10,7 @@ class DataPackPurchaseService @Inject constructor(
     private val toffeeApi: ToffeeApi,
 ) {
     
-    suspend fun loadData(request: DataPackPurchaseRequest) : PremiumPackStatusBean {
+    suspend fun loadData(request: DataPackPurchaseRequest) : PremiumPackStatusBean? {
         val response = tryIO {
             toffeeApi.purchaseDataPack(request)
         }

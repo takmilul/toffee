@@ -30,6 +30,6 @@ class MoviesComingSoonService @Inject constructor(
             )
         }
 
-        return response.response.channels ?: emptyList()
+        return response.response?.channels ?: emptyList()
     }
 }

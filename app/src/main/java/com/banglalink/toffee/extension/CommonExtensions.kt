@@ -3,11 +3,11 @@ package com.banglalink.toffee.extension
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,11 +16,14 @@ import android.widget.ImageView.ScaleType.FIT_CENTER
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
@@ -31,6 +34,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.di.NetworkModule
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.ADDRESS
@@ -45,6 +49,7 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.util.Log
 import com.banglalink.toffee.util.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
@@ -66,6 +71,9 @@ fun String.isValid(type: InputType): Boolean{
         PHONE -> this.isNotBlank() and PHONE_PATTERN.toRegex().matches(this)
     }
 }
+
+val CommonPreference.appTheme: String
+    get() = if (this.appThemeMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
 
 fun View.show(){
     this.visibility = View.VISIBLE
@@ -123,9 +131,19 @@ val Float.px: Float get() {
 
 fun Boolean.toInt() = if (this) 1 else 0
 
-fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBeforeReload: Boolean = false, block: (()-> Unit)? = null) {
-    if (this is HomeActivity && !mPref.isVerifiedUser && this.getNavController().currentDestination?.id != R.id.loginDialog) {
+@OptIn(androidx.media3.common.util.UnstableApi::class)
+fun Activity.checkVerification(
+    currentDestinationId: Int? = null,
+    doActionBeforeReload: Boolean = false,
+    shouldReloadAfterLogin: Boolean = true,
+    block: (() -> Unit)? = null,
+) {
+    if (this is HomeActivity && this.getNavController().currentDestination?.id == R.id.loginDialog) {
+        this.getNavController().popBackStack()
+    }
+    if (this is HomeActivity && !mPref.isVerifiedUser) {
         mPref.doActionBeforeReload.value = doActionBeforeReload
+        mPref.shouldReloadAfterLogin.value = shouldReloadAfterLogin
         mPref.preLoginDestinationId.value = currentDestinationId ?: this.getNavController().currentDestination?.id
         this.getNavController().navigate(R.id.loginDialog)
         mPref.postLoginEventAction.value = block
@@ -133,8 +151,20 @@ fun Activity.checkVerification(currentDestinationId: Int? = null, doActionBefore
         block?.invoke()
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleReport(item: ChannelInfo) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "report_content",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         val fragment =
             item.duration?.let { durations ->
@@ -146,8 +176,20 @@ fun Activity.handleReport(item: ChannelInfo) {
         fragment?.show((this as FragmentActivity).supportFragmentManager, "report_video")
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "add_to_playlist",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         if (this is HomeActivity) {
             val args = Bundle().also {
@@ -159,45 +201,62 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo, isUserPlaylist: Int = 1) {
         }
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleShare(item: ChannelInfo) {
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleUrlShare(url: String) {
     ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareUrlLiveData.postValue(url)
     }
 }
-
+@OptIn(UnstableApi::class)
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
+    if (this is HomeActivity){
+        if (!mPref.isVerifiedUser)
+        {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "add_to_favorites",
+                    "method" to "mobile"
+                )
+            )
+        }
+    }
     checkVerification {
         ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this) {
                 when (it) {
                     is Resource.Success -> {
-                        val isFavorite = it.data.isFavorite
-                        item.favorite = if (isFavorite == 1) "1" else "0"
-                        lifecycleScope.launch {
-                            favoriteDao.insert(
-                                FavoriteItem(
-                                    channelId = item.id.toLong(),
-                                    isFavorite = isFavorite
+                        if (it.data == null) {
+                            showToast(getString(R.string.try_again_message))
+                        } else {
+                            val isFavorite = it.data?.isFavorite ?: 0
+                            item.favorite = if (isFavorite == 1) "1" else "0"
+                            lifecycleScope.launch {
+                                favoriteDao.insert(
+                                    FavoriteItem(
+                                        channelId = item.id.toLong(),
+                                        isFavorite = isFavorite
+                                    )
                                 )
-                            )
-                        }
-                        when (isFavorite) {
-                            0 -> {
-                                onRemoved?.invoke()
-                                showToast("Content successfully removed from favorite list")
                             }
-                            1 -> {
-                                onAdded?.invoke()
-                                showToast("Content successfully added to favorite list")
+                            when (isFavorite) {
+                                0 -> {
+                                    onRemoved?.invoke()
+                                    showToast("Content successfully removed from favorite list")
+                                }
+                                
+                                1 -> {
+                                    onAdded?.invoke()
+                                    showToast("Content successfully added to favorite list")
+                                }
                             }
                         }
                     }
@@ -236,7 +295,8 @@ fun View.validateInput(messageTextView: TextView, messageResource: Int, messageC
 
 fun Context.openUrlToExternalApp(url: String): Boolean {
     return try {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url).normalizeScheme())
+        startActivity(intent)
         return true
     }
     catch (e: Exception) {
@@ -278,8 +338,9 @@ fun ImageRequest.Builder.setImageRequestParams(isCircular: Boolean = false) {
 
 fun String.isTestEnvironment(): Boolean = !this.contains("https://mapi.toffeelive.com/")
 
+@OptIn(UnstableApi::class)
 fun Activity.showDebugMessage(message: String, length: Int = Toast.LENGTH_SHORT) {
-    if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.isDebugMessageActive) {
+    if (this is HomeActivity && BuildConfig.DEBUG && NetworkModule.IS_DEBUG_MESSAGE_ACTIVE) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             showDisplayMessageDialog(this, message)
         } else {
@@ -303,7 +364,21 @@ fun String.hexToResourceName(resources: Resources): String {
     return resourceName
 }
 
-inline fun List<ActivePack>?.checkPackPurchased(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
+fun List<ActivePack>?.getPurchasedPack(selectedPackId: Int?, isVerifiedUser: Boolean, systemDate: Date): ActivePack? {
+    return if (isVerifiedUser) {
+        selectedPackId?.let { packId ->
+            this?.find {
+                try {
+                    it.packId == packId && it.isActive && systemDate.before(Utils.getDate(it.expiryDate))
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        }
+    } else null
+}
+
+inline fun List<ActivePack>?.checkContentPurchase(contentId: String, systemDate: Date, onSuccess: () -> Unit, onFailure: () -> Unit) {
     if (!this.isNullOrEmpty()) {
         this.find {
             try {
@@ -336,13 +411,13 @@ fun List<ActivePack>?.isContentPurchased(contentId: String?, systemDate: Date): 
 }
 
 fun NavController.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
-    this.navigate(resId, args, navOptions ?: navOptions { 
+    this.navigate(resId, args, navOptions ?: navOptions {
         launchSingleTop = true
     })
 }
 
 fun NavController.navigateTo(deepLink: Uri, navOptions: NavOptions? = null) {
-    this.navigate(deepLink, navOptions ?: navOptions { 
+    this.navigate(deepLink, navOptions ?: navOptions {
         launchSingleTop = true
     })
 }
@@ -352,9 +427,9 @@ fun NavController.navigatePopUpTo(
     args: Bundle? = null,
     inclusive: Boolean? = true,
     @IdRes popUpTo: Int? = null,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
-    this.navigate(resId, args, navOptions ?: navOptions { 
+    this.navigate(resId, args, navOptions ?: navOptions {
         launchSingleTop = true
         popUpTo(popUpTo ?: resId) {
             inclusive?.let {

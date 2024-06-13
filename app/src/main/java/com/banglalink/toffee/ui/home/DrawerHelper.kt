@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -87,13 +88,23 @@ class DrawerHelper(
         val profileImageView = header.findViewById(R.id.profile_picture) as ImageView
         if (mPref.isVerifiedUser) {
             activity.observe(mPref.profileImageUrlLiveData) {
-                bindingUtil.bindRoundImage(profileImageView, it)
+                when (it) {
+                    is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                    is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                }
             }
             if (!mPref.userImageUrl.isNullOrBlank()) mPref.profileImageUrlLiveData.postValue(mPref.userImageUrl)
         }
         header.findViewById<LinearLayout>(R.id.menu_account).setOnClickListener {
             activity.getNavController().let {
                 if (it.currentDestination?.id != R.id.accountFragment) {
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.MENU_SELECTED,
+                        bundleOf(
+                            "menu" to "Account",
+                            "screen" to activity.title
+                        )
+                    )
                     it.navigateTo(R.id.accountFragment)
                 }
             }
@@ -105,7 +116,14 @@ class DrawerHelper(
 
         val header = binding.sideNavigation.getHeaderView(0)
         header.findViewById<LinearLayout>(R.id.menu_toffee_premium).setOnClickListener {
-            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to "Toffee Premium"))
+            ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.toffee_premium)))
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_SELECTED,
+                bundleOf(
+                    "menu" to activity.getString(R.string.toffee_premium),
+                    "screen" to activity.title
+                )
+            )
             activity.getNavController().navigateTo(R.id.premiumPackListFragment)
             binding.drawerLayout.closeDrawers()
         }
@@ -140,10 +158,33 @@ class DrawerHelper(
                 binding.drawerLayout.closeDrawers()
                 return true
             }
+            R.id.menu_policies -> {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.MENU_CLICK,
+                    bundleOf("selected_menu" to activity.getString(R.string.menu_policies))
+                )
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_policies),
+                        "screen" to activity.title
+                    )
+                )
+                activity.getNavController().navigateTo(R.id.menu_policies)
+                binding.drawerLayout.closeDrawers()
+                return true
+            }
             R.id.menu_faq -> {
                 ToffeeAnalytics.logEvent(
                     ToffeeEvents.MENU_CLICK,
                     bundleOf("selected_menu" to activity.getString(R.string.menu_faq))
+                )
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_faq),
+                        "screen" to activity.title
+                    )
                 )
                 activity.getNavController().navigateTo(
                     resId = R.id.menu_faq,
@@ -156,21 +197,74 @@ class DrawerHelper(
             }
             R.id.menu_settings -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_settings)))
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_settings),
+                        "screen" to activity.title
+                    )
+                )
             }
+
+            R.id.menu_active_tv -> {
+
+                activity.checkVerification {
+
+                    val bundle = Bundle()
+                    bundle.putString("code", "0")
+
+                    activity.getNavController().navigateTo(R.id.menu_active_tv,bundle)
+                    binding.drawerLayout.closeDrawers()
+
+                }
+                binding.drawerLayout.closeDrawers()
+                return true
+            }
+
             R.id.menu_logout -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_log_out)))
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_sign_out),
+                        "screen" to activity.title
+                    )
+                )
                 binding.drawerLayout.closeDrawers()
                 activity.handleExitApp()
                 return true
             }
             R.id.menu_login -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_sign_in)))
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_sign_in),
+                        "screen" to activity.title
+                    )
+                )
                 binding.drawerLayout.closeDrawers()
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN_SOURCE,
+                        bundleOf(
+                            "source" to "menu",
+                            "method" to "mobile"
+                        )
+                    )
+                }
                 activity.checkVerification()
                 return true
             }
             R.id.menu_change_theme -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.menu_dark_mode)))
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.menu_dark_mode),
+                        "screen" to activity.title
+                    )
+                )
                 when (val switch = item.actionView) {
                     is SwitchButton -> {
                         switch.isChecked = !switch.isChecked
@@ -186,7 +280,24 @@ class DrawerHelper(
                     ToffeeEvents.MENU_CLICK,
                     bundleOf("selected_menu" to activity.getString(R.string.refer_a_friend_txt))
                 )
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.refer_a_friend_txt),
+                        "screen" to activity.title
+                    )
+                )
+
                 if (!mPref.isVerifiedUser) {
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "referral",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
@@ -194,9 +305,24 @@ class DrawerHelper(
             }
             R.id.menu_redeem -> {
                 ToffeeAnalytics.logEvent(ToffeeEvents.MENU_CLICK, bundleOf("selected_menu" to activity.getString(R.string.redeem_code_txt)))
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.MENU_SELECTED,
+                    bundleOf(
+                        "menu" to activity.getString(R.string.redeem_code_txt),
+                        "screen" to activity.title
+                    )
+                )
                 ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 if (!mPref.isVerifiedUser) {
-                    activity.checkVerification()
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN_SOURCE,
+                        bundleOf(
+                            "source" to "referral",
+                            "method" to "mobile"
+                        )
+                    )
+                    activity.checkVerification{
+                    }
                     binding.drawerLayout.closeDrawers()
                     return true
                 }

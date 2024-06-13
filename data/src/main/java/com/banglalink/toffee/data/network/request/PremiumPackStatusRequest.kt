@@ -1,15 +1,17 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PremiumPackStatusRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("pack_id")
+    @SerialName("pack_id")
     val packId: Int,
-    @SerializedName("is_prepaid")
+    @SerialName("is_prepaid")
     val isPrepaid: Int
 ) : BaseRequest(ApiNames.PREMIUM_DATA_PACK_STATUS)

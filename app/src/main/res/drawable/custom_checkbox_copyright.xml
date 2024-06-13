@@ -3,5 +3,5 @@
     <item android:state_checked="false"
         android:drawable="@drawable/ic_unchecked_copyright" />
     <item android:state_checked="true"
-        android:drawable="@drawable/ic_checked" />
+        android:drawable="@drawable/ic_checked_copyright" />
 </selector>

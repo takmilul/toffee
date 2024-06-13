@@ -3,25 +3,28 @@ package com.banglalink.toffee.model
 import android.net.Uri
 import android.os.Bundle
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class Channel(
-    @SerializedName("name")
+    @SerialName("name")
     private val name: String?,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     private val contentId: String? = name?.lowercase()?.replace("\\s".toRegex(), ""),
-    @SerializedName("provider")
+    @SerialName("provider")
     private val provider: String? = "",
-    @SerializedName("uri")
+    @SerialName("uri")
     private var uri: String? = null,
-    @SerializedName("type")
+    @SerialName("type")
     private val type: Int = Samples.TYPE_HLS,
-    @SerializedName("imageUrl")
+    @SerialName("imageUrl")
     private var imageUrl: String? = null
-) : Serializable {
+) {
     
-    @SerializedName("bundle") 
+    @Contextual
+//    @SerialName("bundle")
     val bundle: Bundle = Bundle().apply {
         putString("name", name)
         putString("contentid", contentId)

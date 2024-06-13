@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -14,13 +15,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.databinding.PlaceholderUserChannelsBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.showLoadingAnimation
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -141,11 +148,15 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    channelInfo?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data != null) {
+                        channelInfo?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        mAdapter.notifyItemChanged(subscribedItemPosition, channelInfo)
+                    } else {
+                        requireContext().showToast(getString(R.string.try_again_message))
                     }
-                    mAdapter.notifyItemChanged(subscribedItemPosition, channelInfo)
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -159,6 +170,15 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "follow_channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             channelInfo = info
             subscribedItemPosition = position

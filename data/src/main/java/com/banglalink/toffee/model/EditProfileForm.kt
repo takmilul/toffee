@@ -2,20 +2,22 @@ package com.banglalink.toffee.model
 
 import android.os.Parcelable
 import com.google.android.gms.common.annotation.KeepName
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @KeepName
 @Parcelize
+@Serializable
 data class EditProfileForm(
-    @SerializedName("fullName")
+    @SerialName("fullName")
     var fullName:String = "",
-    @SerializedName("email")
+    @SerialName("email")
     var email:String = "",
-    @SerializedName("phoneNo")
+    @SerialName("phoneNo")
     var phoneNo:String = "",
-    @SerializedName("address")
+    @SerialName("address")
     var address:String = "",
-    @SerializedName("photoUrl")
+    @SerialName("photoUrl")
     var photoUrl:String = ""
 ) : Parcelable

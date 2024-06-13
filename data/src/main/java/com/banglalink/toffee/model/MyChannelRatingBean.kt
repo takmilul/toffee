@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelRatingBean (
-    @SerializedName("isRated")
-    val isRated: Int,
-    @SerializedName("ratingCount")
-    val ratingCount: Float,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageType")
-    val messageType: String,
-    @SerializedName("systemTime")
-    val systemTime: String
+    @SerialName("isRated")
+    val isRated: Int = 0,
+    @SerialName("ratingCount")
+    val ratingCount: Float = 0f,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null,
+    @SerialName("systemTime")
+    val systemTime: String? = null
 )

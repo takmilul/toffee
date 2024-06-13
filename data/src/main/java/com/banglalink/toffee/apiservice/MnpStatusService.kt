@@ -8,10 +8,15 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.usecase.MnpStatusData
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class MnpStatusService @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
+class MnpStatusService @Inject constructor(
+    private val json: Json,
+    private val preference: SessionPreference,
+    private val toffeeApi: ToffeeApi
+) {
     
     suspend fun execute(): MnpStatusBean? {
         val response = tryIO {
@@ -29,9 +34,9 @@ class MnpStatusService @Inject constructor(private val preference: SessionPrefer
 
         val mnpStatusData = MnpStatusData(
             callingApiName = "mnpStatus",
-            rawResponse = Gson().toJson(response)
+            rawResponse = json.encodeToString(response)
         )
-        PubSubMessageUtil.sendMessage(Gson().toJson(mnpStatusData), PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(mnpStatusData, PAYMENT_LOG_FROM_DEVICE)
 
         return response.response
     }

@@ -1,8 +1,10 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class AutoRenewResponse(
-    @SerializedName("response")
-    val response: BodyResponse
+    @SerialName("response")
+    val response: BodyResponse? = null
 ) : BaseResponse()

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
-    android:background="?selectableItemBackgroundBorderless">
+    android:background="@null">
     
     <ImageView
         android:id="@+id/icon"
@@ -15,10 +15,13 @@
         android:layout_gravity="center"
         android:padding="1dp"
         android:background="@drawable/circular_white_bg"
+        android:foreground="@drawable/ripple_circle_shape"
         tools:src="@drawable/ic_profile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UnusedAttribute"
+        android:contentDescription="@null" />
     
 </androidx.constraintlayout.widget.ConstraintLayout>

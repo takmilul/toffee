@@ -120,6 +120,15 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             if (isOwner) {
                 emptyViewLabel.text = getString(string.empty_playlist_msg_owner)
                 createPlaylistButton.setOnClickListener {
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "create_new_creators_playlist",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
                     requireActivity().checkVerification {
                         if (mPref.channelId > 0) {
                             if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
@@ -158,7 +167,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         super.onItemClicked(item)
         if (findNavController().currentDestination?.id != R.id.myChannelPlaylistVideosFragment && findNavController().currentDestination?.id == R.id.myChannelPlaylistsFragment) {
             findNavController().navigate(R.id.action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment, Bundle().apply {
-                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, item.name, item.totalContent, item.playlistShareUrl, item.isApproved))
+                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, item.name ?: "", item.totalContent, item
+                    .playlistShareUrl, item.isApproved))
             })
         }
     }
@@ -172,7 +182,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                     setOnMenuItemClickListener {
                         when (it.itemId) {
                             R.id.menu_edit_playlist -> {
-                                showEditPlaylistDialog(item.id, item.name)
+                                item.name?.let { it1 -> showEditPlaylistDialog(item.id, it1) }
                             }
                             R.id.menu_delete_playlist -> {
                                 showDeletePlaylistDialog(item.id)
@@ -204,8 +214,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let { reloadPlaylist() }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -262,8 +272,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let { reloadPlaylist() }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)

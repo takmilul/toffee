@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.banglalink.toffee.HiltTestActivity
+import com.banglalink.toffee.R
+
 
 /**
  * launchFragmentInContainer from the androidx.fragment:fragment-testing library
@@ -37,7 +39,7 @@ import com.banglalink.toffee.HiltTestActivity
  */
 inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     fragmentArgs: Bundle? = null,
-    @StyleRes themeResId: Int = androidx.fragment.testing.R.style.FragmentScenarioEmptyFragmentActivityTheme,
+    @StyleRes themeResId: Int = R.style.Theme_App_Starting,
     crossinline action: Fragment.() -> Unit = {}
 ) {
     val startActivityIntent = Intent.makeMainActivity(

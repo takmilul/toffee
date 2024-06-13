@@ -1,27 +1,29 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class HeartBeatRequest(
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Int,
-    @SerializedName("contentType")
+    @SerialName("contentType")
     val contentType: String,
-    @SerializedName("data_source")
+    @SerialName("data_source")
     val dataSource: String? = "iptv_programs",
-    @SerializedName("channel_owner_id")
+    @SerialName("channel_owner_id")
     val ownerId: Int = 0,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String,
-    @SerializedName("isNetworkSwitch")
+    @SerialName("isNetworkSwitch")
     val isNetworkSwitch: Boolean = false,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String = "FOREGROUND"
 ) : BaseRequest(ApiNames.SEND_HEART_BEAT)

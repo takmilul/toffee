@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -28,10 +30,10 @@ import com.banglalink.toffee.enums.WebActionType.HOME_SCREEN
 import com.banglalink.toffee.enums.WebActionType.LOGIN_DIALOG
 import com.banglalink.toffee.enums.WebActionType.MESSAGE_DIALOG
 import com.banglalink.toffee.enums.WebActionType.PLAY_CONTENT
+import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.util.Utils
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,7 +69,7 @@ class HtmlPageViewDialog : DialogFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         
         htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
@@ -83,6 +85,31 @@ class HtmlPageViewDialog : DialogFragment() {
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
+            }
+            
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                request?.let {
+                    if (it.url.toString().contains("intent:") || it.url.toString().contains("deeplink") || it.url.toString().contains("routing=internal")) {
+                        val intent = Intent(Intent.ACTION_VIEW, it.url).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            setPackage("com.banglalink.toffee")
+                        }
+                        runCatching {
+                            requireContext().startActivity(intent)
+                        }.onFailure {
+                            runCatching {
+                                intent.setPackage("com.android.chrome")
+                                requireContext().startActivity(intent)
+                            }.onFailure {
+                                ToffeeAnalytics.logException(it)
+                            }
+                        }.onFailure {
+                            ToffeeAnalytics.logException(it)
+                        }
+                        return true
+                    }
+                }
+                return false
             }
         }
         
@@ -126,12 +153,13 @@ class HtmlPageViewDialog : DialogFragment() {
         binding.webview.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
         
         htmlUrl?.let {
+            val urlWithTheme = it.replace("toffee_theme=", "toffee_theme=${cPref.appTheme}")
             if (header.isNullOrEmpty()) {
-                binding.webview.loadUrl(it)
+                binding.webview.loadUrl(urlWithTheme)
             } else {
                 val headerMap: MutableMap<String, String> = HashMap()
                 headerMap["MSISDN"] = header!!
-                binding.webview.loadUrl(it, headerMap)
+                binding.webview.loadUrl(urlWithTheme, headerMap)
             }
         }
         
@@ -218,7 +246,7 @@ class HtmlPageViewDialog : DialogFragment() {
     }
     
     override fun onDestroyView() {
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         binding.webview.run {
             clearCache(false)
 // loadUrl("about:blank")

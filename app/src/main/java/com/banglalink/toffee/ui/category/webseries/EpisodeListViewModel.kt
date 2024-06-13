@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
-import com.banglalink.toffee.apiservice.GetDramaEpisodesBySeason
+import com.banglalink.toffee.apiservice.GetDramaEpisodesBySeasonService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.ChannelInfo
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EpisodeListViewModel @Inject constructor(
-    private val episodeListApi: GetDramaEpisodesBySeason.AssistedFactory,
+    private val episodeListApi: GetDramaEpisodesBySeasonService.AssistedFactory,
 ) : ViewModel() {
     var seasonList = MutableLiveData<List<String>>()
     var selectedSeason = MutableLiveData<Int>()

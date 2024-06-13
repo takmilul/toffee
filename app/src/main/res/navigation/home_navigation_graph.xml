@@ -30,6 +30,10 @@
         android:id="@+id/menu_playlist"
         android:name="com.banglalink.toffee.ui.userplaylist.UserPlaylistFragment"
         android:label="Playlists" />
+    <fragment
+        android:id="@+id/menu_manage_payment_methods"
+        android:name="com.banglalink.toffee.ui.payment_methods.ManagePaymentMethodsFragment"
+        android:label="@string/menu_manage_payment_methods" />
     
     <fragment
         android:id="@+id/userPlaylistVideos"
@@ -52,6 +56,18 @@
         android:name="com.banglalink.toffee.ui.home.BackToffeeBottomSheetFragment"
         android:label="backToffeeBottomSheetFragment"
         tools:layout="@layout/bottom_sheet_back_toffee">
+    </dialog>
+
+    <dialog
+        android:id="@+id/paymentWebViewDialog"
+        android:name="com.banglalink.toffee.ui.premium.payment.PaymentWebViewDialog"
+        tools:layout="@layout/dialog_html_page_view">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
     </dialog>
     
     <fragment
@@ -102,21 +118,21 @@
     <fragment
         android:id="@+id/menu_creators_policy"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}">
+        android:label="Creator's Policy">
         <argument
             android:name="myTitle"
-            android:defaultValue="Creators Policy"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="url"
-            android:defaultValue=""
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment
         android:id="@+id/menu_faq"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}">
+        android:label="FAQ">
         <argument
             android:name="myTitle"
             android:defaultValue="FAQ"
@@ -130,7 +146,7 @@
     <fragment
         android:id="@+id/menu_policies"
         android:name="com.banglalink.toffee.ui.policies.PoliciesFragment"
-        android:label="{myTitle}">
+        android:label="Policies">
         <argument
             android:name="myTitle"
             android:defaultValue="Policies"
@@ -178,15 +194,20 @@
         <action
             android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
             app:destination="@id/musicDetailsFragmant" />
+
+        <action
+            android:id="@+id/action_menu_feed_to_qr_signIn_tv"
+            app:destination="@id/menu_active_tv"
+            />
     </fragment>
     
     <fragment
         android:id="@+id/menu_tv"
         android:name="com.banglalink.toffee.ui.channels.ChannelFragmentNew"
-        android:label="{title}">
+        android:label="Live">
         <argument
             android:name="title"
-            android:defaultValue="Tv Channels"
+            android:defaultValue="Live"
             app:argType="string" />
         <argument
             android:name="category"
@@ -203,33 +224,37 @@
     <fragment
         android:id="@+id/htmlPageViewFragment"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}">
+        android:label="">
         <argument
             android:name="myTitle"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="url"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="header"
-            android:defaultValue=""
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}">
+        android:label="Privacy Policy">
         <argument
             android:name="myTitle"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="url"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="header"
-            android:defaultValue=""
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -242,8 +267,7 @@
         android:id="@+id/premiumPackListFragment"
         android:name="com.banglalink.toffee.ui.premium.PremiumFragment"
         android:label="Premium Packs">
-
-
+        
         <argument
             android:name="contentId"
             app:argType="string"
@@ -256,17 +280,18 @@
         android:label="Profile">
         <action
             android:id="@+id/action_profileFragment_to_EditProfileFragment"
-            app:destination="@id/EditProfileFragment" />
+            app:destination="@id/editProfileFragment" />
     </fragment>
     
     <fragment
-        android:id="@+id/EditProfileFragment"
+        android:id="@+id/editProfileFragment"
         android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
         android:label="Edit-Profile">
         <argument
             android:name="data"
             app:argType="com.banglalink.toffee.model.EditProfileForm"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
@@ -276,17 +301,19 @@
     <fragment
         android:id="@+id/termsAndConditionFragment"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}">
+        android:label="Terms &amp; Conditions">
         <argument
             android:name="myTitle"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="url"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="header"
-            android:defaultValue=""
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     
     <fragment
@@ -508,7 +535,7 @@
     <fragment
         android:id="@+id/notificationDetailFragment"
         android:name="com.banglalink.toffee.ui.notification.NotificationDetailFragment"
-        android:label="{title}"
+        android:label="Notification"
         tools:layout="@layout/fragment_notification_detail">
         <argument
             android:name="title"
@@ -575,12 +602,12 @@
             app:argType="string" />
         <deepLink app:uri="app.toffee://search/{keyword}" />
     </fragment>
-    
+
     <dialog
         android:id="@+id/loginDialog"
         android:name="com.banglalink.toffee.ui.login.LoginFragment"
         android:label="Login" />
-    
+
     <dialog
         android:id="@+id/myChannelAddToPlaylistFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment"
@@ -621,14 +648,34 @@
         android:name="com.banglalink.toffee.ui.premium.StartWatchingTopBarDialog"
         android:label="DeleteAccountFragment"
         tools:layout="@layout/dialog_start_watching_top_bar" />
-
-
-
+    
     <fragment
-        android:id="@+id/FmRadioFrag"
+        android:id="@+id/fmRadioFragment"
         android:name="com.banglalink.toffee.ui.fmradio.FmChannelBaseFragment"
         android:label="FM Radio"
         tools:layout="@layout/fragment_fm_channels_base" />
+    <fragment
+        android:id="@+id/audioBookLandingFragment"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookLandingFragment"
+        android:label="Kabbik - Audio Book" />
 
 
+    <fragment
+        android:id="@+id/audioBookCategoryDetails"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookCategoryDetailsFragment"
+        tools:layout="@layout/fragment_audiobook_category" />
+
+    <fragment
+        android:id="@+id/audioBookEpisodeList"
+        android:name="com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment"
+        tools:layout="@layout/fragment_audiobook_playlist" />
+
+    <fragment
+        android:id="@+id/menu_active_tv"
+        android:name="com.banglalink.toffee.ui.qrBasedSigning.ActiveTvQrFragment"
+        tools:layout="@layout/fragment_active_tv_qr" />
+    <fragment
+        android:id="@+id/Qr_code_res"
+        android:name="com.banglalink.toffee.ui.qrBasedSigning.QrCodeResultFragment"
+        tools:layout="@layout/fragment_qr_code_reasult" />
 </navigation>

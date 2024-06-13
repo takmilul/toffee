@@ -12,6 +12,7 @@ class MoviesEnglishFragment: MovieBaseFragment<ChannelInfo>() {
 
     override fun loadContent() {
         observe(viewModel.englishMovies){
+            adapter.removeAll()
             adapter.addAll(it)
             showCard(it.isNotEmpty())
         }

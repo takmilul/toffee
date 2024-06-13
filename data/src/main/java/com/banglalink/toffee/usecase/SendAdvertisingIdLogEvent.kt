@@ -2,20 +2,20 @@ package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.notification.ADVERTISING_ID_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendAdvertisingIdLogEvent @Inject constructor() {
-    private val gson = Gson()
     
     fun execute(adIdLogData: AdvertisingIdLogData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(adIdLogData), ADVERTISING_ID_TOPIC)
+        PubSubMessageUtil.sendMessage(adIdLogData, ADVERTISING_ID_TOPIC)
     }
 }
 
+@Serializable
 data class AdvertisingIdLogData(
-    @SerializedName("advertising_id")
+    @SerialName("advertising_id")
     val advertisingId: String? = null
 ): HeaderEnrichmentLogData(){
     override var phoneNumber: String

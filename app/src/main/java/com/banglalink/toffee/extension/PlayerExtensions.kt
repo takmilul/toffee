@@ -3,13 +3,13 @@ package com.banglalink.toffee.extension
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.gms.cast.MediaQueueItem
-import com.google.gson.Gson
 
 fun MediaQueueItem.getChannelMetadata(): ChannelInfo? {
     return try {
-        Gson().fromJson(customData!!.getString("channel_info"), ChannelInfo::class.java)
+        NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(customData!!.getString("channel_info"))
     } catch (ex: Exception) {
         null
     }

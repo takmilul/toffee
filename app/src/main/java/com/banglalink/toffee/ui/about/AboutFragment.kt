@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.extension.isTestEnvironment
 import com.banglalink.toffee.ui.common.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +32,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AboutFragment : BaseFragment() {
     
-    @Inject lateinit var toffeeConfig: ToffeeConfig
+    @Inject lateinit var config: Config
 //    private var _binding: FragmentAboutBinding? = null
 //    private val binding get() = _binding!!
     
@@ -53,8 +53,7 @@ class AboutFragment : BaseFragment() {
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .padding(16.dp)
-                .padding(bottom = 56.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AboutLogo()
@@ -113,7 +112,7 @@ class AboutFragment : BaseFragment() {
     private fun getVersionText(): String =
         try {
             val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            "Version ${pInfo.versionName}" + if (toffeeConfig.toffeeBaseUrl.isTestEnvironment()) " (Test Environment)" else ""
+            "Version ${pInfo.versionName}" + if (config.url.isTestEnvironment()) " (Test Environment)" else ""
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             ""

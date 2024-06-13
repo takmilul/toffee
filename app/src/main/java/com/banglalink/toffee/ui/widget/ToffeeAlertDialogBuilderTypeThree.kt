@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
-import com.banglalink.toffee.databinding.VelboxDialogLayoutBinding
 import com.banglalink.toffee.databinding.VelboxDialogLayoutTypeThreeBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show

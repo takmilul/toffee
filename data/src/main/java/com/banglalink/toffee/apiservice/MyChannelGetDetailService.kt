@@ -17,7 +17,7 @@ class MyChannelGetDetailService @Inject constructor(
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) {
 
-    suspend fun execute(channelOwnerId: Int): MyChannelDetailBean {
+    suspend fun execute(channelOwnerId: Int): MyChannelDetailBean? {
         val isOwner = if (preference.customerId == channelOwnerId) 1 else 0
         
         val response = tryIO {
@@ -34,7 +34,7 @@ class MyChannelGetDetailService @Inject constructor(
             )
         }
     
-        return response.response.apply {
+        return response.response?.apply {
             formattedSubscriberCount = Utils.getFormattedViewsText(subscriberCount.toString())
             subscriberCount = subscriptionCountRepository.getSubscriberCount(channelOwnerId)
             isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelOwnerId, preference.customerId) != null) 1 else 0

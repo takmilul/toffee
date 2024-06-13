@@ -72,9 +72,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
-import com.banglalink.toffee.balloon.R
-import com.banglalink.toffee.balloon.databinding.BalloonLayoutBodyBinding
-import com.banglalink.toffee.balloon.databinding.BalloonLayoutOverlayBinding
 import com.banglalink.toffee.ArrowOrientation.Companion.getRTLSupportOrientation
 import com.banglalink.toffee.BalloonAlign.Companion.getRTLSupportAlign
 import com.banglalink.toffee.BalloonCenterAlign.Companion.getRTLSupportAlign
@@ -82,6 +79,9 @@ import com.banglalink.toffee.animations.BalloonRotateAnimation
 import com.banglalink.toffee.animations.InternalBalloonApi
 import com.banglalink.toffee.annotations.Dp
 import com.banglalink.toffee.annotations.Sp
+import com.banglalink.toffee.balloon.R
+import com.banglalink.toffee.balloon.databinding.BalloonLayoutBodyBinding
+import com.banglalink.toffee.balloon.databinding.BalloonLayoutOverlayBinding
 import com.banglalink.toffee.extensions.Empty
 import com.banglalink.toffee.extensions.applyIconForm
 import com.banglalink.toffee.extensions.applyTextForm

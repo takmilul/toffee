@@ -2,7 +2,9 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.media3.common.util.Util
-import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.Constants
+import com.banglalink.toffee.data.Config
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import dagger.Module
@@ -17,16 +19,23 @@ import javax.inject.Singleton
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 object NetworkModule {
     
-    const val isDebugMessageActive: Boolean = false
+    const val IS_DEBUG_MESSAGE_ACTIVE: Boolean = false
     
-    private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"          // production server
-//    private const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"  // staging server
+//    private val BASE_URL: String = Constants.STAGING_URL
+//    private val BASE_URL: String = Constants.PROD_URL
+    
+//    init {
+//        System.loadLibrary("native-lib")
+//    }
+    
+//    private external fun getUrl(): String
     
     @Provides
     @Singleton
-    fun providesToffeeConfig(): ToffeeConfig {
-        return ToffeeConfig(
-            toffeeBaseUrl = TOFFEE_BASE_URL
+    fun providesConfig(): Config {
+        return Config(
+//            url = getUrl()
+            url = BuildConfig.BASE_URL
         )
     }
     
@@ -34,10 +43,10 @@ object NetworkModule {
     @ToffeeHeader
     fun providesToffeeHeader(@ApplicationContext context: Context, mPref: SessionPreference, cPref: CommonPreference): String {
         return Util.getUserAgent(context, "Toffee") +
-                "/" +
-                mPref.customerId +
-                "/" +
-                cPref.deviceId
+            "/" +
+            mPref.customerId +
+            "/" +
+            cPref.deviceId
     }
     
     @Provides

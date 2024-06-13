@@ -10,6 +10,7 @@
     <color name="fab_icon_bg">#111F31</color>
     <color name="editTextBg">#29466B</color>
     <color name="title_color">#FFFFFF</color>
+    <color name="otp_text_clr">#F2F2F2</color>
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
     <color name="bottom_navbar_disabled_color">#829AB8</color>
@@ -18,6 +19,7 @@
     <color name="tab_background_color">#111F31</color>
     <color name="tab_premium_background_color">#000000</color>
     <color name="window_background">#000000</color>
+    <color name="inactiveColor">#495c74</color>
     <color name="searchview_input_text_color">#FFFFFF</color>
     <color name="searchview_hint_text_color">#6781A1</color>
     <color name="home_screen_curve_bg_color">#111F31</color>

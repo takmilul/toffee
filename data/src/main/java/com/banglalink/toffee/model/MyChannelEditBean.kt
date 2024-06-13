@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelEditBean (
-    @SerializedName("profileImage")
-    val profileImage: String?,
-    @SerializedName("bannerImage")
-    val bannerImage: String?,
-    @SerializedName("systemTime")
-    val systemTime: String?,
-    @SerializedName("message")
-    val message: String?,
-    @SerializedName("messageType")
-    val messageType: String?
+    @SerialName("profileImage")
+    val profileImage: String? = null,
+    @SerialName("bannerImage")
+    val bannerImage: String? = null,
+    @SerialName("systemTime")
+    val systemTime: String? = null,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null
 )

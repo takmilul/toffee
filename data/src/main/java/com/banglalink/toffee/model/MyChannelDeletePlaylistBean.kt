@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelDeletePlaylistBean(
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageType")
-    val messageType: String,
-    @SerializedName("systemTime")
-    val systemTime: String
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageType")
+    val messageType: String? = null,
+    @SerialName("systemTime")
+    val systemTime: String? = null
 )

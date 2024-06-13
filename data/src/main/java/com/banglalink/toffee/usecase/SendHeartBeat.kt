@@ -10,29 +10,50 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
+import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWERS_HEARTBEAT
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendHeartBeat @Inject constructor(
-    private val preference: SessionPreference, private val toffeeApi: ToffeeApi
+    private val toffeeApi: ToffeeApi,
+    private val preference: SessionPreference,
 ) {
     
-    private val gson = Gson()
-    
-    suspend fun execute(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: Boolean = false, 
-                        sendToPubSub: Boolean = true) {
+    suspend fun execute(
+        contentId: Int,
+        contentType: String,
+        dataSource: String,
+        ownerId: Int,
+        isNetworkSwitch: Boolean = false,
+        sendToPubSub: Boolean = true
+    ) {
         withContext(Dispatchers.IO) {
-            if (sendToPubSub) {
-                sendToPubSub(contentId, contentType, dataSource, ownerId)
-            } else {
+            if (!sendToPubSub && preference.customerId > 0) {
                 sendToToffeeServer(contentId, contentType, dataSource, ownerId, isNetworkSwitch)
+            } else {
+                sendToPubSub(contentId, contentType, dataSource, ownerId)
             }
+        }
+    }
+    
+    suspend fun executeKabbik(channelInfo: ChannelInfo) {
+        withContext(Dispatchers.IO) {
+            val kabbikAudioBookLogData = KabbikAudioBookLogData(
+                contentId = channelInfo.getContentId(),
+                bookName = channelInfo.bookName,
+                bookCategory = channelInfo.category,
+                bookType = if(channelInfo.isPremium) "paid" else "free",
+                lat = preference.latitude,
+                lon = preference.longitude,
+            )
+            PubSubMessageUtil.sendMessage(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWERS_HEARTBEAT)
         }
     }
     
@@ -49,7 +70,7 @@ class SendHeartBeat @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken() ?: ""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), HEARTBEAT_TOPIC)
+        PubSubMessageUtil.sendMessage(heartBeatData, HEARTBEAT_TOPIC)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: Int, isNetworkSwitch: 
@@ -74,55 +95,60 @@ class SendHeartBeat @Inject constructor(
                 )
             )
         }
-        preference.mqttIsActive = response.response.mqttIsActive == 1
-        response.response.dbVersionList?.ifNotNullOrEmpty {
-            preference.setDBVersion(it.toList())
-        }
-        response.response.sessionToken?.ifNotNullOrBlank {
-            preference.sessionToken = it
-        }
-        response.response.headerSessionToken?.ifNotNullOrBlank {
-            preference.setHeaderSessionToken(it)
-        }
-        response.response.systemTime?.ifNotNullOrBlank {
-            preference.setSystemTime(it)
+        response.response?.let { heartBeatBean ->
+            preference.mqttIsActive = heartBeatBean.mqttIsActive == 1
+            heartBeatBean.dbVersionList?.ifNotNullOrEmpty {
+                preference.setDBVersion(it.toList())
+            }
+            heartBeatBean.sessionToken?.ifNotNullOrBlank {
+                preference.sessionToken = it
+            }
+            heartBeatBean.headerSessionToken?.ifNotNullOrBlank {
+                preference.setHeaderSessionToken(it)
+            }
+            heartBeatBean.systemTime?.ifNotNullOrBlank {
+                preference.setSystemTime(it)
+            }
         }
     }
     
+    @Serializable
     private data class HeartBeatData(
-        @SerializedName("id")
+        @SerialName("id")
         val id: Long = System.nanoTime(),
-        @SerializedName("customer_id")
-        val customerId: Int,
-        @SerializedName("device_type")
+        @SerialName("customer_id")
+        val customerId: Int = 0,
+        @SerialName("msisdn")
+        val msisdn :String = SessionPreference.getInstance().phoneNumber.toString(),
+        @SerialName("device_type")
         val deviceType: Int = Constants.DEVICE_TYPE,
-        @SerializedName("content_id")
-        val contentId: Int,
-        @SerializedName("content_type")
-        val contentType: String,
-        @SerializedName("data_source")
+        @SerialName("content_id")
+        val contentId: Int = 0,
+        @SerialName("content_type")
+        val contentType: String? = null,
+        @SerialName("data_source")
         val dataSource: String? = "iptv_programs",
-        @SerializedName("channel_owner_id")
+        @SerialName("channel_owner_id")
         val ownerId: Int = 0,
-        @SerializedName("lat")
-        val latitude: String,
-        @SerializedName("lon")
-        val longitude: String,
-        @SerializedName("os_name")
+        @SerialName("lat")
+        val latitude: String? = null,
+        @SerialName("lon")
+        val longitude: String? = null,
+        @SerialName("os_name")
         val os: String = "android " + Build.VERSION.RELEASE,
-        @SerializedName("app_version")
+        @SerialName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
-        @SerializedName("is_bl_number")
-        val isBlNumber: Int,
-        @SerializedName("net_type")
-        val netType: String,
-        @SerializedName("session_token")
-        val sessionToken: String,
-        @SerializedName("device_id")
+        @SerialName("is_bl_number")
+        val isBlNumber: Int = 0,
+        @SerialName("net_type")
+        val netType: String? = null,
+        @SerialName("session_token")
+        val sessionToken: String? = null,
+        @SerialName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
-        @SerializedName("date_time")
+        @SerialName("date_time")
         val dateTime: String = currentDateTime,
-        @SerializedName("reportingTime")
+        @SerialName("reportingTime")
         val reportingTime: String = currentDateTime
     )
 }

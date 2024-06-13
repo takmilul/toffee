@@ -46,23 +46,26 @@ class FmChannelsFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo>
         var isInitialized = false
         mAdapter = FmChannelsAdapter(this)
         
-        with(binding.fmChannelListview) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.fmChannelListview.isVisible = isEmpty
-                    binding.fmChannelListview.isVisible = !isEmpty
-                    binding.fmChannelListview.showLoadingAnimation(isLoading)
-                    isInitialized = true
+        _binding?.let { fragmentBinding ->
+            with(fragmentBinding.fmChannelListview) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    mAdapter.loadStateFlow.collectLatest {
+                        val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                        val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                        fragmentBinding.fmChannelListview.isVisible = isEmpty
+                        fragmentBinding.fmChannelListview.isVisible = !isEmpty
+                        fragmentBinding.fmChannelListview.showLoadingAnimation(isLoading)
+                        isInitialized = true
+                    }
                 }
-            }
-            adapter = mAdapter
-            itemAnimator = null
-            setHasFixedSize(true)
+                adapter = mAdapter
+                itemAnimator = null
+                setHasFixedSize(true)
 //            addItemDecoration(GridSpacingItemDecoration(3, 24.px, false))
-            layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
+                layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
+            }
         }
+        
         observeList()
     }
     

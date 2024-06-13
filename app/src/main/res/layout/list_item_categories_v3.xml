@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
         <variable
             name="data"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_margin="8dp">
-    
+        
         <androidx.cardview.widget.CardView
             android:id="@+id/categoryCardView"
             android:layout_width="156dp"
@@ -26,13 +26,13 @@
             app:cardElevation="0dp"
             app:cardCornerRadius="16dp"
             app:cardUseCompatPadding="false">
-    
+            
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@null"
                 android:onClick="@{()->callback.onItemClicked(data)}">
-    
+                
                 <ImageView
                     android:id="@+id/category_background"
                     android:layout_width="0dp"
@@ -40,13 +40,15 @@
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     loadCategoryBackground="@{data}"
+                    android:foreground="@drawable/ripple_rounded_rectangle_shape"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:src="@drawable/placeholder"
-                    android:contentDescription="@string/txt_category" />
-    
+                    android:contentDescription="@string/txt_category"
+                    tools:ignore="UnusedAttribute" />
+                
                 <View
                     android:id="@+id/categoryGradient"
                     android:layout_width="0dp"
@@ -56,7 +58,7 @@
                     app:layout_constraintStart_toStartOf="@+id/category_background"
                     app:layout_constraintTop_toTopOf="@+id/category_background"
                     app:layout_constraintBottom_toBottomOf="@+id/category_background"/>
-    
+                
                 <ImageView
                     android:id="@+id/icon"
                     loadCategoryIcon="@{data}"
@@ -73,7 +75,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/guideline16"
                     app:layout_constraintStart_toStartOf="@+id/category_background"
                     android:contentDescription="@string/category_icon_text" />
-    
+                
                 <TextView
                     android:id="@+id/text"
                     android:layout_width="0dp"
@@ -94,14 +96,14 @@
                     app:layout_constraintTop_toTopOf="@+id/icon"
                     app:layout_constraintVertical_bias="1.0"
                     tools:text="Music Videos" />
-    
+                
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.3" />
-    
+                
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

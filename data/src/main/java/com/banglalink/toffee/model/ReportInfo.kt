@@ -1,16 +1,18 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ReportInfo(
-    @SerializedName("content_id")
-    val contentId: Long,
-    @SerializedName("offense_type_id")
-    val offenseTypeId: Int,
-    @SerializedName("time_stamp")
-    val timeStamp: String,
-    @SerializedName("additional_detail")
+    @SerialName("content_id")
+    val contentId: Long = 0,
+    @SerialName("offense_type_id")
+    val offenseTypeId: Int = 0,
+    @SerialName("time_stamp")
+    val timeStamp: String? = null,
+    @SerialName("additional_detail")
     val additionalDetail: String? = null,
-    @SerializedName("offense_id")
+    @SerialName("offense_id")
     val offenseId: Int = 0,
 )

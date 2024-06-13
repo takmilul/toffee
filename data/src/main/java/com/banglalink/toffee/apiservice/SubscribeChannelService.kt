@@ -15,7 +15,7 @@ class SubscribeChannelService@Inject constructor(
     private val mPref: SessionPreference,
 ) {
     
-    suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int): MyChannelSubscribeBean {
+    suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int): MyChannelSubscribeBean? {
         val response = tryIO {
             toffeeApi.subscribeOnMyChannel(
                 MyChannelSubscribeRequest(
@@ -27,7 +27,7 @@ class SubscribeChannelService@Inject constructor(
                 )
             )
         }
-        return response.response.also { 
+        return response.response?.also { 
             localSync.updateOnSubscribeChannel(it)
         }
     }

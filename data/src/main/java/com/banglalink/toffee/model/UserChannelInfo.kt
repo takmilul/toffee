@@ -1,32 +1,34 @@
 package com.banglalink.toffee.model
 
 import com.banglalink.toffee.util.Utils
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UserChannelInfo(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Long = 0L,
-    @SerializedName("category_id")
+    @SerialName("category_id")
     val categoryId: Long = 0L,
-    @SerializedName("subscriber_count")
+    @SerialName("subscriber_count")
     var subscriberCount: Long = 0L,
-    @SerializedName("is_active")
+    @SerialName("is_active")
     val isActive: Int = 0,
-    @SerializedName("content_provider_name")
+    @SerialName("content_provider_name")
     val contentProviderName: String = "",
-    @SerializedName("content_provider_id")
+    @SerialName("content_provider_id")
     val contentProviderId: Long = 0L,
-    @SerializedName("channel_owner_id")
+    @SerialName("channel_owner_id")
     val channelOwnerId: Int = 0,
-    @SerializedName("profile_url")
+    @SerialName("profile_url")
     val profileUrl: String? = null,
-    @SerializedName("banner_url")
+    @SerialName("banner_url")
     val bannerUrl: String? = null,
-    @SerializedName("isSubscribed")
+    @SerialName("isSubscribed")
     var isSubscribed: Int = 0,
-    @SerializedName("created_at")
+    @SerialName("created_at")
     val created_at: String? = null,
-    @SerializedName("user_id")
+    @SerialName("user_id")
     val userId: Int = 0,
 ) {
     fun formattedSubscriberCount(): String = Utils.getFormattedViewsText(subscriberCount.toString())

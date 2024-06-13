@@ -1,12 +1,17 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
+@Serializable
+@OptIn(ExperimentalSerializationApi::class)
 data class MoviesSubCategoryWiseContent(
-    @SerializedName("order_id")
+    @SerialName("order_id")
     val orderId: Int = 0,
-    @SerializedName("sub_category_name")
+    @SerialName("sub_category_name")
     val subCategoryName: String? = null,
-    @SerializedName(value = "channels", alternate = ["channelInfo"])
+    @JsonNames("channelInfo")
     val channels: List<ChannelInfo>?,
 )

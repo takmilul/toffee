@@ -6,16 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.widget.Html5WebViewClient
 import com.banglalink.toffee.util.Log
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,12 +27,12 @@ class HtmlPageViewFragment : BaseFragment() {
     
     private var title: String? = ""
     private var header: String? = ""
-    private lateinit var htmlUrl: String
+    private var htmlUrl: String? = null
     private val binding get() = _binding!!
     private var _binding: FragmentHtmlPageViewBinding ? = null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,7 +41,7 @@ class HtmlPageViewFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         title = arguments?.getString("myTitle")
-        htmlUrl = arguments?.getString("url")!!
+        htmlUrl = arguments?.getString("url")
         header = arguments?.getString("header")
         requireActivity().title = title
         
@@ -85,12 +89,17 @@ class HtmlPageViewFragment : BaseFragment() {
             mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
-        if (header.isNullOrEmpty()) {
-            binding.webview.loadUrl(htmlUrl)
+        
+        if (htmlUrl.isNullOrEmpty()) {
+            requireContext().showToast("URL not found")
         } else {
-            val headerMap: MutableMap<String, String> = HashMap()
-            headerMap["MSISDN"] = header!!
-            binding.webview.loadUrl(htmlUrl,headerMap)
+            if (header.isNullOrEmpty()) {
+                binding.webview.loadUrl(htmlUrl!!)
+            } else {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["MSISDN"] = header!!
+                binding.webview.loadUrl(htmlUrl!!, headerMap)
+            }
         }
         ToffeeAnalytics.logEvent(
             ToffeeEvents.SCREEN_VIEW,
@@ -127,7 +136,7 @@ class HtmlPageViewFragment : BaseFragment() {
 //            destroyDrawingCache()
             destroy()
         }
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         super.onDestroyView()
         _binding = null
     }

@@ -30,24 +30,24 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Favorites"
     }
-
+    
     override fun onItemClicked(item: ChannelInfo) {
         lifecycleScope.launch {
-            localSync.syncData(item)
+//            localSync.syncData(item)
             homeViewModel.playContentLiveData.postValue(item)
         }
     }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         openMenu(view, item)
@@ -56,27 +56,30 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
-
+        
         if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
-        popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
+        popupMenu.menu.findItem(R.id.menu_fav).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        popupMenu.menu.findItem(R.id.menu_report).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
+        
+        popupMenu.setOnMenuItemClickListener {
+            when (it?.itemId) {
+                R.id.menu_share -> {
                     requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_fav->{
+                R.id.menu_fav -> {
                     requireActivity().handleFavorite(channelInfo, favoriteDao, onRemoved = {
                         mAdapter.refresh()
                     })
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_add_to_playlist->{
+                R.id.menu_add_to_playlist -> {
                     requireActivity().handleAddToPlaylist(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
@@ -84,7 +87,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                else->{
+                else -> {
                     return@setOnMenuItemClickListener false
                 }
             }

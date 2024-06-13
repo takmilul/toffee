@@ -1,14 +1,16 @@
 package com.banglalink.toffee.data.database.entities
 
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 abstract class BaseEntity {
-    @SerializedName("id")
+    @SerialName("id")
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-    @SerializedName("createTime")
+    @SerialName("createTime")
     var createTime: Long = System.currentTimeMillis()
-    @SerializedName("updateTime")
+    @SerialName("updateTime")
     var updateTime: Long = System.currentTimeMillis()
 }

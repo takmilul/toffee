@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.CheckUpdateBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CheckUpdateResponse(
-    @SerializedName("response")
-    val response: CheckUpdateBean
+    @SerialName("response")
+    val response: CheckUpdateBean? = null
 ) : BaseResponse()

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -91,11 +92,15 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    subscribedChannelInfo?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        subscribedChannelInfo?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        observeList()
                     }
-                    observeList()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -110,6 +115,15 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo, position: Int) {
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             subscribedChannelInfo = info
             

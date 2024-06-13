@@ -43,15 +43,23 @@ import com.firework.sdk.FireworkSdkConfig
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.medallia.digital.mobilesdk.MDExternalError
-import com.medallia.digital.mobilesdk.MDResultCallback
-import com.medallia.digital.mobilesdk.MedalliaDigital
+import com.loopnow.fireworklibrary.FwSDK
+import com.loopnow.fireworklibrary.SdkStatus
+import com.loopnow.fireworklibrary.SdkStatus.InitializationFailed
+import com.loopnow.fireworklibrary.SdkStatus.Initialized
+import com.loopnow.fireworklibrary.SdkStatus.RefreshTokenFailed
+import com.loopnow.fireworklibrary.VideoPlayerProperties
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.FormatStrategy
+import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import timber.log.Timber
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
@@ -111,6 +119,8 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     override fun onCreate() {
         super.onCreate()
         
+        initLogger()
+        
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
         if (CookieHandler.getDefault() !== defaultCookieManager) {
             CookieHandler.setDefault(defaultCookieManager)
@@ -154,6 +164,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
             try {
                 sessionPreference.bubbleDialogShowCount = 0
+                sessionPreference.isMnpStatusChecked = false
                 coroutineScope.launch(IO) {
                     cacheManager.clearAllCache()
                     commonPreference.versionCode = BuildConfig.VERSION_CODE
@@ -187,17 +198,70 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
         
         initFireworkSdk()
-        initMedalliaSdk()
+//        initMedalliaSdk()
         mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
+    }
+    
+    private fun initLogger() {
+        runCatching {
+            val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
+                .methodCount(0)
+                .methodOffset(5)
+                .showThreadInfo(false)
+                .build()
+            
+            Logger.addLogAdapter(AndroidLogAdapter(formatStrategy))
+            
+            Timber.plant(object : Timber.DebugTree() {
+                override fun createStackElementTag(element: StackTraceElement): String {
+                    return String.format(
+                        "Class:%s: Line: %s, Method: %s",
+                        super.createStackElementTag(element),
+                        element.lineNumber,
+                        element.methodName
+                    )
+                }
+                
+                override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+                    if (BuildConfig.DEBUG && Log.SHOULD_LOG) {
+                        Logger.log(priority, tag, message, t)
+                    }
+                }
+            })
+        }
     }
     
     /**
      * [androidx.work.WorkManager] configured in the application level to use in the full application.
      */
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
-    }
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().setMinimumLoggingLevel(android.util.Log.INFO).setWorkerFactory(workerFactory).build()
+    
+//    override val workManagerConfiguration: Configuration
+//        get() {
+//            val config = Configuration.Builder()
+//                .setMinimumLoggingLevel(android.util.Log.INFO)
+//                .setWorkerFactory(workerFactory)
+//                .build()
+//            
+//            runCatching {
+//                config.initializationExceptionHandler.let {
+//                    this.deleteDatabase(WorkManagerImpl::class.java.simpleName)
+//                    this.getSharedPreferences(WorkManagerImpl::class.java.simpleName, Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
+//                    this.let {
+//                        WorkManager.initialize(
+//                            it,
+//                            Configuration.Builder()
+//                                .setMinimumLoggingLevel(android.util.Log.INFO)
+//                                .setWorkerFactory(workerFactory)
+//                                .build()
+//                        )
+//                    }
+//                }
+//            }
+//            return config
+//        }
     
     /**
      * [<b>This SDK shows Shorts Video Reels</b>]
@@ -273,21 +337,21 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
      * To initialize [MedalliaDigital] SDK, we need to pass applicationContext, ApiKey provided by Medallia and [MDResultCallback] to detect 
       the success and error state
      */
-    private fun initMedalliaSdk() {
-        try {
-            MedalliaDigital.init(this, BuildConfig.MEDALLIA_API_KEY, object : MDResultCallback {
-                override fun onSuccess() {
-                    Log.i("MED_", "onSuccess: Medallia initialized")
-                }
-                
-                override fun onError(error: MDExternalError?) {
-                    Log.e("MED_", "onError: ${error?.message}")
-                }
-            })
-        } catch (e: Exception) {
-            Log.e("MED_", "onInitialize: ${e.message}")
-        }
-    }
+//    private fun initMedalliaSdk() {
+//        try {
+//            MedalliaDigital.init(this, BuildConfig.MEDALLIA_API_KEY, object : MDResultCallback {
+//                override fun onSuccess() {
+//                    Log.i("MED_", "onSuccess: Medallia initialized")
+//                }
+//                
+//                override fun onError(error: MDExternalError?) {
+//                    Log.e("MED_", "onError: ${error?.message}")
+//                }
+//            })
+//        } catch (e: Exception) {
+//            Log.e("MED_", "onInitialize: ${e.message}")
+//        }
+//    }
     
     /**
      * [<b>This code configures settings for kotlin's `coil` image loader library</b>]

@@ -1,3 +1,13 @@
 package com.banglalink.toffee.ui.refer
 
-data class ReferralForm(val referralCode:String,val shareableString:String,val promotionMessage:String,val readMoreMessage:String,val fontSize:Int, val fontColor:String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ReferralForm(
+    val referralCode:String? = null,
+    val shareableString:String? = null,
+    val promotionMessage:String? = null,
+    val readMoreMessage:String? = null,
+    val fontSize:Int = 0,
+    val fontColor:String? = null
+)

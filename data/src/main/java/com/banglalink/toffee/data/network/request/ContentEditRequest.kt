@@ -1,33 +1,35 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContentEditRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Int,
-    @SerializedName("programName")
+    @SerialName("programName")
     val programName: String? = null,
-    @SerializedName("bucketContentName")
+    @SerialName("bucketContentName")
     val bucketContentName: String,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int = 0,
-    @SerializedName("subCategoryId")
+    @SerialName("subCategoryId")
     val subCategoryId: Int = 0,
-    @SerializedName("description")
+    @SerialName("description")
     val description: String? = null,
-    @SerializedName("ageRestriction")
+    @SerialName("ageRestriction")
     val ageRestriction: String? = null,
-    @SerializedName("videoTags")
+    @SerialName("videoTags")
     val videoTags: String? = null,
-    @SerializedName("keywords")
+    @SerialName("keywords")
     val keywords: String? = null,
-    @SerializedName("oldContentBanner")
+    @SerialName("oldContentBanner")
     val oldContentBanner: String? = null,
-    @SerializedName("contentBanner")
+    @SerialName("contentBanner")
     val contentBanner: String? = null,
 ) : BaseRequest(ApiNames.EDIT_CONTENT_UPLOAD)

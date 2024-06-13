@@ -13,24 +13,27 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
 import com.banglalink.toffee.model.Resource
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelAddToPlaylistViewModel @Inject constructor(
+    private val json: Json,
     private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
     private val apiService: MyChannelAddToPlayListService,
 ) : ViewModel() {
     
-    private val _data = MutableLiveData<Resource<MyChannelAddToPlaylistBean>>()
+    private val _data = MutableLiveData<Resource<MyChannelAddToPlaylistBean?>>()
     val liveData = _data.toLiveData()
     
     fun addToPlaylist(playlistId: Int, contentId: Int, channelOwnerId: Int, isUserPlaylist:Int) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId,isUserPlaylist) })
+            val response = resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId, isUserPlaylist) }
+            _data.postValue(response)
         }
     }
     
@@ -41,7 +44,7 @@ class MyChannelAddToPlaylistViewModel @Inject constructor(
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",
-                Gson().toJson(channelInfo),
+                json.encodeToString(channelInfo),
                 PLAYLIST.value,
                 activitySubType
             )

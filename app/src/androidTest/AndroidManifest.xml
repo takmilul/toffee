@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Performing the heap growth analysis in process requires more heap. -->
+    <application
+        android:largeHeap="true"/>
+    
+</manifest>

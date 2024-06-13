@@ -12,25 +12,42 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.notification.KABBIK_CURRENT_VIEWER
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.VIEW_CONTENT_TOPIC
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SendViewContentEvent @Inject constructor(
-    private val preference: SessionPreference, private val toffeeApi: ToffeeApi, private val activityRepo: UserActivitiesRepository
+    private val json: Json,
+    private val toffeeApi: ToffeeApi,
+    private val preference: SessionPreference,
+    private val activityRepo: UserActivitiesRepository
 ) {
-    
-    private val gson = Gson()
     
     suspend fun execute(channelInfo: ChannelInfo, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            val contentId = channelInfo.getContentId()
-            sendToPubSub(contentId.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
+            if (channelInfo.isAudioBook) {
+                sendAudioBookViewContentToPusSub(channelInfo)
+            } else {
+                sendViewContentToPubSub(
+                    channelInfo.getContentId().toInt(),
+                    channelInfo.type ?: "0",
+                    channelInfo.dataSource ?: "iptv_programs",
+                    channelInfo.channel_owner_id.toString()
+                )
+            }
         } else {
-            sendToToffeeServer(channelInfo.id.toInt(), channelInfo.type ?: "0", channelInfo.dataSource ?: "iptv_programs", channelInfo.channel_owner_id.toString())
+            sendToToffeeServer(
+                channelInfo.id.toInt(),
+                channelInfo.type ?: "0",
+                channelInfo.dataSource ?: "iptv_programs",
+                channelInfo.channel_owner_id.toString()
+            )
         }
         saveToLocalDb(channelInfo)
     }
@@ -41,14 +58,14 @@ class SendViewContentEvent @Inject constructor(
             channel.id.toLong(),
             "history",
             channel.type ?: "",
-            gson.toJson(channel),
+            json.encodeToString(channel),
             ActivityType.WATCHED.value,
             Reaction.Watched.value
         )
         activityRepo.insert(channelDataModel)
     }
     
-    private fun sendToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
+    private fun sendViewContentToPubSub(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         val viewContentData = ViewContentData(
             customerId = preference.customerId,
             contentId = contentId,
@@ -61,53 +78,75 @@ class SendViewContentEvent @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken() ?: ""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEW_CONTENT_TOPIC)
+        PubSubMessageUtil.sendMessage(viewContentData, VIEW_CONTENT_TOPIC)
+    }
+    
+    private fun sendAudioBookViewContentToPusSub(channelInfo: ChannelInfo) {
+        val kabbikAudioBookLogData = KabbikAudioBookLogData(
+            contentId = channelInfo.getContentId(),
+            bookName = channelInfo.bookName,
+            bookCategory = channelInfo.category,
+            bookType = if(channelInfo.isPremium) "paid" else "free",
+            lat = preference.latitude,
+            lon = preference.longitude,
+        )
+        PubSubMessageUtil.sendMessage(kabbikAudioBookLogData, KABBIK_CURRENT_VIEWER)
     }
     
     private suspend fun sendToToffeeServer(contentId: Int, contentType: String, dataSource: String, ownerId: String) {
         tryIO {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
-                    contentType, contentId, dataSource, ownerId, preference.customerId, preference.password, preference.latitude, preference.longitude
+                    contentType,
+                    contentId,
+                    dataSource,
+                    ownerId,
+                    preference.customerId,
+                    preference.password,
+                    preference.latitude,
+                    preference.longitude
                 )
             )
         }
     }
     
+    @Serializable
     private data class ViewContentData(
-        @SerializedName("id")
+        @SerialName("id")
         val id: Long = System.nanoTime(),
-        @SerializedName("customer_id")
-        val customerId: Int,
-        @SerializedName("device_type")
+        @SerialName("customer_id")
+        val customerId: Int = 0,
+        @SerialName("msisdn")
+        val msisdn :String = SessionPreference.getInstance().phoneNumber.toString(),
+        @SerialName("device_type")
         val deviceType: Int = Constants.DEVICE_TYPE,
-        @SerializedName("content_id")
-        val contentId: Int,
-        @SerializedName("content_type")
-        val contentType: String,
-        @SerializedName("data_source")
+        @SerialName("content_id")
+        val contentId: Int = 0,
+        @SerialName("content_type")
+        val contentType: String? = null,
+        @SerialName("data_source")
         val dataSource: String? = "iptv_programs",
-        @SerializedName("channel_owner_id")
+        @SerialName("channel_owner_id")
         val ownerId: String? = "0",
-        @SerializedName("lat")
-        val latitude: String,
-        @SerializedName("lon")
-        val longitude: String,
-        @SerializedName("os_name")
+        @SerialName("lat")
+        val latitude: String? = null,
+        @SerialName("lon")
+        val longitude: String? = null,
+        @SerialName("os_name")
         val os: String = "android " + Build.VERSION.RELEASE,
-        @SerializedName("app_version")
+        @SerialName("app_version")
         val appVersion: String = CommonPreference.getInstance().appVersionName,
-        @SerializedName("is_bl_number")
-        val isBlNumber: Int,
-        @SerializedName("net_type")
-        val netType: String,
-        @SerializedName("session_token")
-        val sessionToken: String,
-        @SerializedName("device_id")
+        @SerialName("is_bl_number")
+        val isBlNumber: Int = 0,
+        @SerialName("net_type")
+        val netType: String? = null,
+        @SerialName("session_token")
+        val sessionToken: String? = null,
+        @SerialName("device_id")
         val deviceId: String = CommonPreference.getInstance().deviceId,
-        @SerializedName("date_time")
+        @SerialName("date_time")
         val dateTime: String = currentDateTime,
-        @SerializedName("reportingTime")
+        @SerialName("reportingTime")
         val reportingTime: String = currentDateTime
     )
 }

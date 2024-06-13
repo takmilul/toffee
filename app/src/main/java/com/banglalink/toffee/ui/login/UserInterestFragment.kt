@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnLayout
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
@@ -82,14 +83,16 @@ class UserInterestFragment : ChildDialogFragment() {
                 }
             })
         }
-        observeCategory()
+        binding.root.doOnLayout {
+            chipWidth = (binding.interestChipGroup.measuredWidth - 48.px) / 3
+            observeCategory()
+        }
     }
     
     private fun observeCategory() {
         progressDialog.show()
         observe(viewModel.categories){
-            chipWidth = (binding.root.measuredWidth - 48.px) / 3
-            if(it.isNotEmpty()){
+            if(it.isNotEmpty()) {
                 val categoryList = it.sortedBy { category -> category.id }
                 categoryList.let { list ->
                     list.forEachIndexed { _, category ->
@@ -148,7 +151,7 @@ class UserInterestFragment : ChildDialogFragment() {
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
         with(chip) {
             id = View.generateViewId()
-            layoutParams.width = chipWidth
+            layoutParams.width = (binding.root.width - 48.px) / 3
             text = name
             rippleColor = chipColor
             chipStrokeColor = strokeColor

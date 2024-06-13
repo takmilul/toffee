@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MediaCdnSignUrlRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: String? = null,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String? = null,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentID: String? = null,
-    @SerializedName("urlType")
+    @SerialName("urlType")
     var urlType: Int = 3,
-    @SerializedName("dbVersion")
+    @SerialName("dbVersion")
     var dbVersion: Int = 0,
 ) : BaseRequest(ApiNames.MEDIA_CDN_SIGN_URL)

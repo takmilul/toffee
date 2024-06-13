@@ -18,7 +18,13 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.BottomSheetBasicInfoBinding
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.isValid
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.validateInput
 import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource
@@ -77,6 +83,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeEditChannel()
+        if (_binding == null) return
         with(binding) {
             saveBtn.safeClick({ handleSubmitButton() })
             dateOfBirthTv.safeClick({ showDatePicker() })
@@ -188,23 +195,27 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         observe(profileViewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
-                    mPref.isChannelDetailChecked = true
-                    mPref.channelLogo = it.data.profileImage ?: oldChannelLogoUrl.orEmpty()
-                    mPref.channelName = channelName
-                    mPref.customerName = userName
-                    mPref.customerEmail = userEmail
-                    mPref.customerAddress = userAddress
-                    mPref.customerDOB = userDOB!!
-                    mPref.customerNID = userNID
-                    progressDialog.dismiss()
-                    requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
-                    myChannelHomeViewModel.getChannelDetail(mPref.customerId)
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
-                    parentFragment?.parentFragment?.let {
-                        if (it is BottomSheetDialogFragment) {
-                            it.findNavController().popBackStack().let { _ ->
-                                it.findNavController().navigate(R.id.newUploadMethodFragment)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        mPref.isChannelDetailChecked = true
+                        mPref.channelLogo = it.data?.profileImage ?: oldChannelLogoUrl.orEmpty()
+                        mPref.channelName = channelName
+                        mPref.customerName = userName
+                        mPref.customerEmail = userEmail
+                        mPref.customerAddress = userAddress
+                        mPref.customerDOB = userDOB!!
+                        mPref.customerNID = userNID
+                        progressDialog.dismiss()
+                        requireContext().showToast(it.data?.message)
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                        myChannelHomeViewModel.getChannelDetail(mPref.customerId)
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                        parentFragment?.parentFragment?.let {
+                            if (it is BottomSheetDialogFragment) {
+                                it.findNavController().popBackStack().let { _ ->
+                                    it.findNavController().navigate(R.id.newUploadMethodFragment)
+                                }
                             }
                         }
                     }

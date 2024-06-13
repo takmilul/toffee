@@ -1,8 +1,10 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class OffenseBean(
-    @SerializedName("inappropriateHeads")
+    @SerialName("inappropriateHeads")
     val offenseTypeList: List<OffenseType>? = null
 )

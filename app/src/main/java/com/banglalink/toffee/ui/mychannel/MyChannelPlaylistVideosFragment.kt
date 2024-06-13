@@ -19,8 +19,6 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
@@ -36,16 +34,29 @@ import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
 import com.banglalink.toffee.enums.NativeAdAreaType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.dp
+import com.banglalink.toffee.extension.handleAddToPlaylist
+import com.banglalink.toffee.extension.handleFavorite
+import com.banglalink.toffee.extension.handleReport
+import com.banglalink.toffee.extension.handleShare
+import com.banglalink.toffee.extension.handleUrlShare
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.nativead.NativeAdAdapter
@@ -70,11 +81,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private lateinit var playlistInfo: PlaylistPlaybackInfo
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
+    private val mViewModel by viewModels<PlaylistVideosViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
     private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
     private val binding get() = _binding!!
-    private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val mViewModel by viewModels<PlaylistVideosViewModel>()
     private val reloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
@@ -127,12 +138,19 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun initAdapter() {
-        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
+        val nativeAdSettings = mPref.nativeAdSettings.value?.find {
+            it.area== NativeAdAreaType.PLAYER_PLAYLIST.value
+        }
+        val adUnitId = nativeAdSettings?.adUnitId
+        val adInterval =  nativeAdSettings?.adInterval ?: 0
+        val isAdActive = nativeAdSettings?.isActive ?:false
+        val isNativeAdActive = mPref.isNativeAdActive && currentItem != null && isAdActive && adInterval > 0 && !adUnitId.isNullOrBlank()
+        
         detailsAdapter = ChannelHeaderAdapter(playlistInfo, object : ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
-    
+            
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
                 val iconLocation = IntArray(2)
@@ -161,8 +179,17 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     requireActivity().handleShare(item)
                 }
             }
-    
+            
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
+                if (!mPref.isVerifiedUser){
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.LOGIN_SOURCE,
+                        bundleOf(
+                            "source" to "channel",
+                            "method" to "mobile"
+                        )
+                    )
+                }
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
@@ -173,25 +200,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     }
                 }
             }
-    
+            
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
-        val nativeAdSettings = mPref.nativeAdSettings.value?.find {
-            it.area== NativeAdAreaType.PLAYER_PLAYLIST.value
-        }
-        val playlistAdUnitId = nativeAdSettings?.adUnitId
-        val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
-        val isRecommendedActive = nativeAdSettings?.isActive ?:false
-        if (mPref.isNativeAdActive && currentItem != null && isRecommendedActive && recommendedAdInterval > 0 && !playlistAdUnitId.isNullOrBlank()) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(playlistAdUnitId, playlistAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
-            mAdapter = ConcatAdapter(detailsAdapter, nativeAdAdapter)
-        } else {
-            mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter{playlistAdapter.retry()}))
-        }
+        
+        playlistAdapter = MyChannelPlaylistVideosAdapter(isNativeAdActive, adInterval, adUnitId, mPref, bindingUtil,this, currentItem)
+        mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter{playlistAdapter.retry()}))
     }
     
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
@@ -204,7 +221,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                localSync.syncData(it)
+//                localSync.syncData(it)
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -214,7 +231,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelPlaylistVideos(playlistInfo).collectLatest {
                 playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel->
-                    localSync.syncData(channel)
+//                    localSync.syncData(channel)
                     channel
                 })
             }
@@ -246,9 +263,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadViewModel.reloadVideos.value = true
-                    reloadViewModel.reloadPlaylist.value = true
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let {
+                        reloadViewModel.reloadVideos.value = true
+                        reloadViewModel.reloadPlaylist.value = true
+                    }
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -291,11 +310,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Success -> {
-                    currentItem?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        currentItem?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        detailsAdapter.notifyDataSetChanged()
                     }
-                    detailsAdapter.notifyDataSetChanged()
                 }
                 is Failure -> {
                     requireContext().showToast(response.error.msg)
@@ -352,7 +375,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         MyPopupWindow(requireContext(), anchor).apply {
             inflate(R.menu.menu_catchup_item)
-            if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+            if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
                 menu.findItem(R.id.menu_fav).title = "Add to Favorites"
             } else {
                 menu.findItem(R.id.menu_fav).title = "Remove from Favorites"

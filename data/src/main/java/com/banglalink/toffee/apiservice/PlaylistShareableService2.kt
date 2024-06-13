@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.network.request.PlaylistShareableRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.PlaylistType.User_Playlist
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.util.Utils
@@ -19,7 +20,7 @@ class PlaylistShareableService2 @AssistedInject constructor(
 ) : BaseApiService<ChannelInfo> {
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
-        val isUserPlaylist = if(requestParams.isUserPlaylist) 1 else 0
+        val isUserPlaylist = if(requestParams.playlistType == User_Playlist) 1 else 0
         val response = tryIO {
             toffeeApi.getPlaylistShareable(
                 isUserPlaylist,
@@ -35,16 +36,15 @@ class PlaylistShareableService2 @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.filter {
-                it.isExpired = try {
-                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
-                } catch (e: Exception) {
-                    false
-                }
-                localSync.syncData(it, isFromCache = response.isFromCache)
-                !it.isExpired
-            } ?: emptyList()
-        
+        return response.response?.channels?.filter {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
+            } catch (e: Exception) {
+                false
+            }
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
+        } ?: emptyList()
     }
     
     @dagger.assisted.AssistedFactory

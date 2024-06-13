@@ -1,12 +1,14 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LogoutBean(
-    @SerializedName("customerId")
-    val customerId:Int,
-    @SerializedName("password")
-    val password:String,
-    @SerializedName("verified_status")
-    val verifyStatus: Boolean
+    @SerialName("customerId")
+    val customerId: Int = 0,
+    @SerialName("password")
+    val password: String? = null,
+    @SerialName("verified_status")
+    val verifyStatus: Boolean = false
 )

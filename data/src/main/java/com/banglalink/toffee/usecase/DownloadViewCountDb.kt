@@ -1,12 +1,12 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import android.util.*
+import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ViewCount
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.repository.ViewCountRepository
-import com.banglalink.toffee.data.storage.*
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

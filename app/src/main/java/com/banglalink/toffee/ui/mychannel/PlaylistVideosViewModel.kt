@@ -3,7 +3,13 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
+import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
+import com.banglalink.toffee.apiservice.MyChannelPlaylistVideoDeleteService
+import com.banglalink.toffee.apiservice.MyChannelPlaylistVideosService
+import com.banglalink.toffee.apiservice.PlaylistShareableService2
+import com.banglalink.toffee.apiservice.UserPlaylistVideosService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -17,14 +23,16 @@ import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistVideosViewModel @Inject constructor(
+    private val json: Json,
     private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
@@ -33,7 +41,7 @@ class PlaylistVideosViewModel @Inject constructor(
     private val userPlaylistService: UserPlaylistVideosService.AssistedFactory,
 ) : ViewModel() {
     
-    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean?>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()
     
     fun getMyChannelPlaylistVideos(playlistInfo: PlaylistPlaybackInfo): Flow<PagingData<ChannelInfo>> {
@@ -84,7 +92,7 @@ class PlaylistVideosViewModel @Inject constructor(
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",
-                Gson().toJson(channelInfo),
+                json.encodeToString(channelInfo),
                 PLAYLIST.value,
                 activitySubType
             )

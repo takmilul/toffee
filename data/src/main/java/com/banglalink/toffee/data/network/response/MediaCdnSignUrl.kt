@@ -1,22 +1,24 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class MediaCdnSignUrl {
-    @SerializedName("balance")
+    @SerialName("balance")
     val balance:Int = 0
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String? = null
-    @SerializedName("serverTime")
+    @SerialName("serverTime")
     val serverTime: String? = null
-    @SerializedName("content_id")
+    @SerialName("content_id")
     val contentId:Int = 0
-    @SerializedName("sign_url")
+    @SerialName("sign_url")
     val signedUrl: String? = null
-    @SerializedName("sign_url_expire")
+    @SerialName("sign_url_expire")
     var signedUrlExpiryDate: String? = null
-    @SerializedName("sign_cookie")
+    @SerialName("sign_cookie")
     var signedCookie: String? = null
-    @SerializedName("sign_cookie_expire")
+    @SerialName("sign_cookie_expire")
     var signedCookieExpiryDate: String? = null
 }

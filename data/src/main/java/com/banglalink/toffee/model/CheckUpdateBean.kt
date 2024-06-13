@@ -1,40 +1,42 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CheckUpdateBean(
-    @SerializedName("updateAvailable")
-    val updateAvailable: Int,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("messageTitle")
-    var messageTitle: String,
-    @SerializedName("decorationConfig")
+    @SerialName("updateAvailable")
+    val updateAvailable: Int = 0,
+    @SerialName("message")
+    val message: String? = null,
+    @SerialName("messageTitle")
+    var messageTitle: String? = null,
+    @SerialName("decorationConfig")
     val decorationConfig : List<DecorationConfig>? = null
 )
-
+@Serializable
 data class DecorationConfig (
-    @SerializedName("splashScreen")
-    val splashScreen : List<DecorationData>?,
-    @SerializedName("topBar")
-    val topBar : List<DecorationData>?,
-    @SerializedName("isFromCache")
+    @SerialName("splashScreen")
+    val splashScreen : List<DecorationData>? = null,
+    @SerialName("topBar")
+    val topBar : List<DecorationData>? = null,
+    @SerialName("isFromCache")
     var isFromCache: Boolean = true
 )
-
+@Serializable
 data class DecorationData (
-    @SerializedName("type")
-    val type : String,
-    @SerializedName("is_active")
-    val isActive : Int,
-    @SerializedName("image_path")
+    @SerialName("type")
+    val type : String? = null,
+    @SerialName("is_active")
+    val isActive : Int = 0,
+    @SerialName("image_path")
     val imagePathLight : String? = null,
-    @SerializedName("image_path_dark_mode")
+    @SerialName("image_path_dark_mode")
     val imagePathDark : String? = null,
-    @SerializedName("start_date")
-    val startDate : String,
-    @SerializedName("end_date")
-    val endDate : String,
-    @SerializedName("duration")
-    val duration : Int
+    @SerialName("start_date")
+    val startDate : String? = null,
+    @SerialName("end_date")
+    val endDate : String? = null,
+    @SerialName("duration")
+    val duration : Int = 0
 )

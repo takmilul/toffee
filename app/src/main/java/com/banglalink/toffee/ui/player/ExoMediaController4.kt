@@ -88,7 +88,7 @@ class ExoMediaController4 @JvmOverloads constructor(
 //    }
 
     fun onPreviewTouch(ev: MotionEvent?): Boolean {
-        Log.i("DOUBLE_T", "onPreviewTouch -> ")
+//        Log.i("DOUBLE_T", "onPreviewTouch -> ")
         if(ev != null && isDoubleTapEnabled && !isMinimize) {
             gestureDetector.onTouchEvent(ev)
             return true

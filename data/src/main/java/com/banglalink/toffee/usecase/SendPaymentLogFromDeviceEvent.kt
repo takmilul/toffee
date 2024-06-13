@@ -3,49 +3,84 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.notification.PAYMENT_LOG_FROM_DEVICE
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendPaymentLogFromDeviceEvent @Inject constructor() {
-    private val gson = Gson()
-
+    
     fun execute(paymentLogFromDeviceData: PaymentLogFromDeviceData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(paymentLogFromDeviceData), PAYMENT_LOG_FROM_DEVICE)
+        PubSubMessageUtil.sendMessage(paymentLogFromDeviceData, PAYMENT_LOG_FROM_DEVICE)
     }
 }
 
+@Serializable
 data class PaymentLogFromDeviceData(
-    @SerializedName("id")
+    @SerialName("id")
     val id : Long = 0,
-    @SerializedName("callingApiName")
+    @SerialName("callingApiName")
     val callingApiName : String? = null,
-    @SerializedName("packId")
+    @SerialName("packId")
     val packId : Int = 0,
-    @SerializedName("packTitle")
+    @SerialName("packTitle")
     val packTitle : String? = null,
-    @SerializedName("dataPackId")
+    @SerialName("dataPackId")
     val dataPackId : Int = 0,
-    @SerializedName("dataPackDetails")
+    @SerialName("dataPackDetails")
     val dataPackDetails : String? = null,
-    @SerializedName("paymentMethodId")
+    @SerialName("paymentMethodId")
     val paymentMethodId : Int = 0,
-    @SerializedName("paymentMsisdn")
+    @SerialName("paymentMsisdn")
     val paymentMsisdn : String? = null,
-    @SerializedName("paymentId")
+    @SerialName("paymentId")
     val paymentId : String? = null,
-    @SerializedName("trxId")
+    @SerialName("trxId")
     val transactionId : String? = null,
-    @SerializedName("transactionStatus")
+    @SerialName("requestId")
+    val requestId : String? = null, //dcb only
+    @SerialName("transactionStatus")
     val transactionStatus : String? = null,
-    @SerializedName("amount")
+    @SerialName("amount")
     val amount : String? = null,
-    @SerializedName("merchantInvoiceNumber")
+    @SerialName("merchantInvoiceNumber")
     val merchantInvoiceNumber : String? = null,
-    @SerializedName("rawResponse")
+    @SerialName("rawResponse")
     val rawResponse : String? = null,
-    @SerializedName("statusCode")
+    @SerialName("payment_ref_id")
+    val paymentRefId : String? = null,
+    @SerialName("payment_purpose")
+    val paymentPurpose : String? = null,
+    @SerialName("cus_wallet_no")
+    val cusWalletNo : String? = null,
+    @SerialName("payment_cus_id")
+    val paymentCusId : String? = null,
+    @SerialName("statusCode")
     val statusCode : String? = null,
-    @SerializedName("statusMessage")
+    @SerialName("statusMessage")
     val statusMessage : String? = null,
+    @SerialName("voucher")
+    val voucher : String? = null,
+    @SerialName("campaignType")
+    val campaignType : String? = null,
+    @SerialName("partnerName")
+    val partnerName : String? = null,
+    @SerialName("partnerId")
+    val partnerId : Int? = 0,
+    @SerialName("campaignName")
+    val campaignName : String? = null,
+    @SerialName("campaignId")
+    val campaignId : Int? = 0,
+    @SerialName("campaignExpireDate")
+    val campaignExpireDate : String? = null,
+    @SerialName("discount")
+    val discount : String? = null,
+    @SerialName("originalPrice")
+    val originalPrice : String? = null,
+    //dcb only
+    @SerialName("dobPrice")
+    val dobPrice: String? = null,
+    @SerialName("dobCpId")
+    val dobCpId: String? = null,
+    @SerialName("dobSubsOfferId")
+    val dobSubsOfferId: String? = null,
 ) : PubSubBaseRequest()

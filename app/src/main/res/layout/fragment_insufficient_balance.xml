@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -14,7 +14,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
+            android:contentDescription="@null"
             android:padding="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -66,7 +66,7 @@
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buyWithRecharge"
+            android:id="@+id/buyWithRechargeButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
@@ -88,20 +88,29 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/goToHome"
-            style="@style/ButtonHomeStyleRing"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="GO TO HOME"
+            android:text="GO BACK"
+            android:elevation="2dp"
+            android:textColor="@android:color/white"
             android:visibility="visible"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="48dp"
             app:layout_goneMarginTop="48dp"
+            android:backgroundTint="#FF3988"
+            app:cornerRadius="100dp"
+            android:stateListAnimator="@null"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/buyWithRecharge"
-            app:layout_constraintStart_toStartOf="@+id/buyWithRecharge"
-            app:layout_constraintTop_toBottomOf="@+id/buyWithRecharge"
-            app:layout_constraintWidth_percent="0.7" />
+            app:layout_constraintEnd_toEndOf="@+id/buyWithRechargeButton"
+            app:layout_constraintStart_toStartOf="@+id/buyWithRechargeButton"
+            app:layout_constraintTop_toBottomOf="@+id/buyWithRechargeButton"
+            app:layout_constraintWidth_percent="0.7"
+
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

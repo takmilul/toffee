@@ -58,7 +58,10 @@ class ViewProfileFragment : BaseFragment() {
                 photoUrl = mPref.userImageUrl ?: ""
             }
             observe(mPref.profileImageUrlLiveData) {
-                bindingUtil.bindRoundImage(binding.profileIv, it)
+                when (it) {
+                    is String -> bindingUtil.bindRoundImage(binding.profileIv, it)
+                    is Int -> bindingUtil.loadImageFromResource(binding.profileIv, it)
+                }
             }
             loadProfile()
         }
@@ -76,8 +79,10 @@ class ViewProfileFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    viewModel.profileForm.value = it.data
-                    binding.data = it.data.apply { phoneNo = phoneNumber }
+                    it.data?.let {
+                        viewModel.profileForm.value = it
+                        binding.data = it.apply { phoneNo = phoneNumber }
+                    } ?: run { requireContext().showToast(getString(R.string.try_again_message)) }
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -97,9 +102,8 @@ class ViewProfileFragment : BaseFragment() {
 
     private fun onClickEditProfile() {
         if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.profileFragment) {
-            val action =
-                ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
-            findNavController().navigate(action)
+//            val action = ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
+            findNavController().navigate(R.id.editProfileFragment, bundleOf("data" to binding.data))
         }
     }
 

@@ -2,9 +2,11 @@ package com.banglalink.toffee.ui.search
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -59,13 +61,13 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
     fun getSearchString(): String? {
         return if (::searchKey.isInitialized) searchKey else null
     }
-    
+    @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         searchKey = arguments?.getString(SEARCH_KEYWORD, "") ?: ""
         (activity as HomeActivity).openSearchBarIfClose()
         super.onCreate(savedInstanceState)
     }
-    
+    @OptIn(UnstableApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -127,10 +129,14 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
         observe(homeViewModel.subscriptionLiveData) { response ->
             when (response) {
                 is Resource.Success -> {
-                    currentItem?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
-                        mAdapter.notifyDataSetChanged()
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        currentItem?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                            mAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
                 is Resource.Failure -> {
@@ -147,15 +153,15 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+        if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
         
-        popupMenu.menu.findItem(R.id.menu_fav).isVisible = !channelInfo.isChannel
+        popupMenu.menu.findItem(R.id.menu_fav).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         popupMenu.menu.findItem(R.id.menu_add_to_playlist).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
-        popupMenu.menu.findItem(R.id.menu_report).isVisible = !channelInfo.isChannel
+        popupMenu.menu.findItem(R.id.menu_report).isVisible = !(channelInfo.isChannel || channelInfo.isLive)
         
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {

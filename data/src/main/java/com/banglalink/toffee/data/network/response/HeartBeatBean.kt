@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.DBVersionV2
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class HeartBeatBean(
-    @SerializedName("mqttIsActive")
-    val mqttIsActive: Int,
-    @SerializedName("systemTime")
+    @SerialName("mqttIsActive")
+    val mqttIsActive: Int = 0,
+    @SerialName("systemTime")
     val systemTime: String? = null,
-    @SerializedName("sessionToken")
+    @SerialName("sessionToken")
     val sessionToken: String? = null,
-    @SerializedName("headerSessionToken")
+    @SerialName("headerSessionToken")
     val headerSessionToken: String? = null,
-    @SerializedName("dbVersion")
+    @SerialName("dbVersion")
     var dbVersionList: List<DBVersionV2>? = null
 ): BaseResponse()

@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 @SuppressLint("Registered")
 @AndroidEntryPoint
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 open class BaseAppCompatActivity : AppCompatActivity() {
 
     @Inject lateinit var cPref: CommonPreference
@@ -50,7 +51,10 @@ open class BaseAppCompatActivity : AppCompatActivity() {
                     if(!cPref.isAlreadyForceLoggedOut && this is HomeActivity) {
                         client.dispatcher.cancelAll()
                         cPref.isAlreadyForceLoggedOut = true
+                        onPlayerDestroy()
                         mPref.clear()
+                        cacheManager.clearAllCache()
+                        launchActivity<HomeActivity> { flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT }
                         launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                         finish()
                     }

@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,9 +18,17 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
-import com.banglalink.toffee.enums.ActivityType.*
+import com.banglalink.toffee.enums.ActivityType.REACTED
+import com.banglalink.toffee.enums.ActivityType.REACTION_CHANGED
+import com.banglalink.toffee.enums.ActivityType.REACTION_REMOVED
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.enums.Reaction.Angry
+import com.banglalink.toffee.enums.Reaction.HaHa
+import com.banglalink.toffee.enums.Reaction.Like
+import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.enums.Reaction.None
+import com.banglalink.toffee.enums.Reaction.Sad
+import com.banglalink.toffee.enums.Reaction.Wow
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
@@ -114,8 +123,17 @@ class ReactionPopup: Fragment() {
             return
         }
         ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
+        if (!preference.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "content_reaction",
+                    "method" to "mobile"
+                )
+            )
+        }
+        reactionPopupWindow?.dismiss()
         requireActivity().checkVerification(doActionBeforeReload = true) {
-            reactionPopupWindow?.dismiss()
             channelInfo?.let { info ->
                 lifecycleScope.launchWhenStarted {
                     runCatching {

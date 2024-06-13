@@ -1,25 +1,23 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class SubCategory(
-    @SerializedName(value="id", alternate = ["sub_category_Id"])
-    val id: Long,
-
-    @SerializedName("category_id")
+    @SerialName(value = "id")
+    val id: Long = 0,
+    @SerialName("category_id")
     var categoryId: Long = 0L,
-
-    @SerializedName("sub_category_name")
-    val name: String,
-
-    @SerializedName("updated_by")
+    @SerialName("sub_category_name")
+    val name: String = "",
+    @SerialName("updated_by")
     val updatedBy: Int = 0,
-
-    @SerializedName("is_active")
+    @SerialName("is_active")
     val isActive: Int = 0,
-): Parcelable {
+) : Parcelable {
     override fun toString() = name
 }

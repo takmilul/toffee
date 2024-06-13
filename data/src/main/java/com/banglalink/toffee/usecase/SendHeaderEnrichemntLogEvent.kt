@@ -5,32 +5,32 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.HE_REPORT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendHeaderEnrichmentLogEvent @Inject constructor() {
-    private val gson = Gson()
     
     fun execute(heLogData: HeaderEnrichmentLogData) {
-        PubSubMessageUtil.sendMessage(gson.toJson(heLogData), HE_REPORT_TOPIC)
+        PubSubMessageUtil.sendMessage(heLogData, HE_REPORT_TOPIC)
     }
 }
 
+@Serializable
 open class HeaderEnrichmentLogData(
-    @SerializedName("device")
+    @SerialName("device")
     val device: String = Build.MANUFACTURER,
-    @SerializedName("deviceModel")
+    @SerialName("deviceModel")
     val deviceModel: String = Build.MODEL,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
-    @SerializedName("user_ip")
+    @SerialName("user_ip")
     val userIp: String = SessionPreference.getInstance().userIp,
-    @SerializedName("geo_city")
+    @SerialName("geo_city")
     val geoCity: String = SessionPreference.getInstance().geoCity,
-    @SerializedName("geo_location")
+    @SerialName("geo_location")
     val geoLocation: String = SessionPreference.getInstance().geoLocation,
 ): PubSubBaseRequest(){
     override var phoneNumber: String

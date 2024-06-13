@@ -1,7 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import android.util.*
+import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ShareCount
 import com.banglalink.toffee.data.network.retrofit.DbApi

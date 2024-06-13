@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPremiumContentsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -78,6 +80,9 @@ class PremiumContentFragment : BaseFragment(), BaseListItemCallback<ChannelInfo>
                 } else {
                     homeViewModel.playContentLiveData.postValue(item)
                 }
+            }
+            else{
+                requireContext().showToast(getString(R.string.activate_pack_toast))
             }
         }
     }

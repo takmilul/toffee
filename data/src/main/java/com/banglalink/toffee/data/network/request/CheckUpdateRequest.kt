@@ -1,10 +1,12 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CheckUpdateRequest(
-    @SerializedName("versionCode")
+    @SerialName("versionCode")
     val versionCode: String,
-    @SerializedName("os")
+    @SerialName("os")
     val os: String = "Android"
 ) : BaseRequest("checkForUpdateV2")

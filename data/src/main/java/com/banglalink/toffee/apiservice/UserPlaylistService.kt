@@ -29,7 +29,7 @@ class UserPlaylistService @AssistedInject constructor(
             )
         }
         
-        return response.response.channelPlaylist ?: emptyList()
+        return response.response?.channelPlaylist ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory

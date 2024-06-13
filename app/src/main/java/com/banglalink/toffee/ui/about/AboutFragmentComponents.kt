@@ -2,7 +2,14 @@ package com.banglalink.toffee.ui.about
 
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -23,7 +30,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.*
+import com.banglalink.toffee.R.color
+import com.banglalink.toffee.R.drawable
+import com.banglalink.toffee.R.string
 
 @Composable
 fun AboutLogo() {

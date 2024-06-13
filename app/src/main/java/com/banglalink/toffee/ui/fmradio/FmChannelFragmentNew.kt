@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.banglalink.toffee.databinding.FragmentFmChannelsNewBinding
-import com.banglalink.toffee.databinding.FragmentStingrayChannelsBinding
 import com.banglalink.toffee.ui.channels.ChannelFragmentFactory
 import com.banglalink.toffee.ui.common.BaseFragment
 

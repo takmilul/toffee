@@ -94,4 +94,9 @@
         <attr name="multitext_layout_height" format="dimension" />
         <attr name="multitext_textSize" format="dimension" />
     </declare-styleable>
+    
+    <declare-styleable name="RatioImageView">
+        <attr name="aspectRatio" format="string" />
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
 </resources>

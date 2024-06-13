@@ -1,13 +1,14 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-
-    data class BubbleRequest(
-    @SerializedName("customerId")
+@Serializable
+data class BubbleRequest(
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    ) : BaseRequest(ApiNames.GET_RAMADAN_SCHEDULED_LIST)
+) : BaseRequest(ApiNames.GET_RAMADAN_SCHEDULED_LIST)
 

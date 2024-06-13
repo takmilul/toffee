@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RamadanScheduledResponse(
-    @SerializedName("ramadanScheduled")
+    @SerialName("ramadanScheduled")
     val ramadanSchedule: List<RamadanSchedule>? = null,
-    @SerializedName("serverDateTime")
+    @SerialName("serverDateTime")
     val serverDateTime: String? = null
 )

@@ -1,14 +1,19 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
-data class ComingSoonBean (
-    @SerializedName(value = "channels", alternate = ["channelInfo"])
-    val channels: List<ComingSoonContent>?,
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("totalCount")
+@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+data class ComingSoonBean(
+    @JsonNames("channelInfo")
+    val channels: List<ComingSoonContent>? = null,
+    @SerialName("count")
+    val count: Int = 0,
+    @SerialName("totalCount")
     val totalCount: Int = 0,
-    @SerializedName("systemTime")
+    @SerialName("systemTime")
     val systemTime: String?=null
 )

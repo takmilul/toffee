@@ -9,7 +9,9 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelVideosRequestParams(
     val type: String,
     val channelOwnerId: Int,
@@ -41,7 +43,7 @@ class MyChannelVideosService @AssistedInject constructor(
             )
         }
 
-        return response.response.channels?.filter {
+        return response.response?.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {

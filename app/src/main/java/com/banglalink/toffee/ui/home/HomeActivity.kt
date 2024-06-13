@@ -27,10 +27,19 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Xml
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -40,7 +49,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.*
+import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -69,7 +85,9 @@ import com.banglalink.toffee.Constants.PLAY_IN_WEB_VIEW
 import com.banglalink.toffee.Constants.PREMIUM
 import com.banglalink.toffee.Constants.STINGRAY_CONTENT
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.*
+import com.banglalink.toffee.R.drawable
+import com.banglalink.toffee.R.id
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -88,29 +106,65 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityHomeBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.FirebaseInAppMessage
-import com.banglalink.toffee.enums.*
-import com.banglalink.toffee.enums.BubbleType.*
+import com.banglalink.toffee.enums.BubbleType.CRICKET
+import com.banglalink.toffee.enums.BubbleType.FOOTBALL
+import com.banglalink.toffee.enums.BubbleType.RAMADAN
+import com.banglalink.toffee.enums.CategoryType
+import com.banglalink.toffee.enums.CdnType
 import com.banglalink.toffee.enums.PlayingPage.ALL_TV_CHANNEL
 import com.banglalink.toffee.enums.PlayingPage.FM_RADIO
 import com.banglalink.toffee.enums.PlayingPage.SPORTS_CATEGORY
 import com.banglalink.toffee.enums.PlayingPage.STINGRAY
-import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
+import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
+import com.banglalink.toffee.enums.PlaylistType.User_Playlist
+import com.banglalink.toffee.enums.SharingType
+import com.banglalink.toffee.enums.UploadStatus
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.appTheme
+import com.banglalink.toffee.extension.checkContentPurchase
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.currentNavigationFragment
+import com.banglalink.toffee.extension.dp
+import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.ifNotNullOrBlank
+import com.banglalink.toffee.extension.ifNotNullOrEmpty
+import com.banglalink.toffee.extension.isExpiredFrom
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.navigatePopUpTo
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.openUrlToExternalApp
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showDebugMessage
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.snack
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.FeaturedPartner
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.SeriesPlaybackInfo
+import com.banglalink.toffee.model.ShareableData
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PUBSUBMessageStatus.OPEN
-import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ACTION_NAME
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.CONTENT_VIEW
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.DISMISS
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.NOTIFICATION_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.PUB_SUB_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.ROW_ID
-import com.banglalink.toffee.notification.ToffeeMessagingService.Companion.WATCH_NOW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ACTION_NAME
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.CONTENT_VIEW
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.DISMISS
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.PUB_SUB_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.ROW_ID
+import com.banglalink.toffee.notification.ToffeeNotificationService.Companion.WATCH_NOW
+import com.banglalink.toffee.ui.audiobook.AudioBookEpisodeListFragment
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.bubble.BubbleServiceRamadan
 import com.banglalink.toffee.ui.bubble.BubbleServiceV2
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.category.music.stingray.StingrayChannelFragmentNew
 import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -128,10 +182,24 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
-import com.banglalink.toffee.ui.widget.*
-import com.banglalink.toffee.util.*
+import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
+import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilderTypeThree
+import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.util.AppLinks
+import com.banglalink.toffee.util.BindingUtil
+import com.banglalink.toffee.util.ConvivaHelper
+import com.banglalink.toffee.util.EncryptionUtil
+import com.banglalink.toffee.util.InAppMessageParser
+import com.banglalink.toffee.util.Log
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.getActionBarSize
 import com.banglalink.toffee.util.Utils.hasDefaultOverlayPermission
+import com.banglalink.toffee.util.currentDateTime
+import com.banglalink.toffee.util.unsafeLazy
+import com.conviva.apptracker.ConvivaAppAnalytics
+import com.conviva.apptracker.controller.TrackerController
 import com.conviva.sdk.ConvivaAnalytics
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -147,12 +215,16 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
@@ -162,6 +234,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlin.collections.set
 
 @UnstableApi
 @AndroidEntryPoint
@@ -171,20 +244,22 @@ class HomeActivity : PlayerPageActivity(),
     DraggerLayout.OnPositionChangedListener,
     OnBackStackChangedListener
 {
-    private val gson = Gson()
+    private var dInfo: Any? = null
     private var channelOwnerId: Int = 0
     private var visibleDestinationId = 0
-    private var bubbleFifaIntent: Intent? = null
-    private var bubbleRamadanIntent: Intent? = null
+    private var cInfo: ChannelInfo? = null
     lateinit var binding: ActivityHomeBinding
     private var searchView: SearchView? = null
     private var notificationBadge: View? = null
+    private var bubbleFifaIntent: Intent? = null
     @Inject lateinit var bindingUtil: BindingUtil
+    private var bubbleRamadanIntent: Intent? = null
     private lateinit var drawerHelper: DrawerHelper
     @Inject lateinit var cacheManager: CacheManager
     private var playlistShareableUrl: String? = null
     private var shareableData: ShareableData? = null
     private var webSeriesShareableUrl: String? = null
+    private var currentFragmentClassName: String? = null
     private lateinit var navController: NavController
     @Inject lateinit var favoriteDao: FavoriteItemDao
     @Inject lateinit var mqttService: ToffeeMqttService
@@ -196,17 +271,18 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var tvChannelsRepo: TVChannelRepository
     @Inject lateinit var inAppMessageParser: InAppMessageParser
+    private var shouldNavigateToPremiumPageAfterConfigChange = false
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
+    @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
-    @Inject lateinit var cdnChannelItemRepository: CdnChannelItemRepository
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
+    private val circuitBreakerDataList = mutableMapOf<String, CircuitBreakerData>()
     
     companion object {
         const val TAG = "HOME_TAG"
@@ -237,11 +313,24 @@ class HomeActivity : PlayerPageActivity(),
         ).not()
         
         //disable screen capture
-        if (isDisableScreenshot) {
+        if (isDisableScreenshot && !BuildConfig.DEBUG) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        
+        // Create an instance of ClarityConfig with configuration
+//        val config = ClarityConfig(
+//            projectId = "iinc7p89vm",
+//            userId = mPref.customerId.toString(), // Optional: Provide a user ID if needed
+//            logLevel = LogLevel.None, // Optional: Specify the desired log level
+//            allowMeteredNetworkUsage = false, // Optional: Set to true if you want to allow metered network usage
+//            enableWebViewCapture = true, // Optional: Set to false if you don't want to capture web views
+//            allowedDomains = listOf("*") // Optional: Specify allowed domains for tracking
+//        )
+        // Initialize Clarity with the ClarityConfig
+//        Clarity.initialize(applicationContext, config)
+        
         cPref.isAlreadyForceLoggedOut = false
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -280,6 +369,15 @@ class HomeActivity : PlayerPageActivity(),
         
         binding.uploadButton.setOnClickListener {
             ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+            if(!mPref.isVerifiedUser){
+                ToffeeAnalytics.toffeeLogEvent(
+                    ToffeeEvents.LOGIN_SOURCE,
+                    bundleOf(
+                        "source" to "upload",
+                        "method" to "mobile"
+                    )
+                )
+            }
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -306,9 +404,12 @@ class HomeActivity : PlayerPageActivity(),
         }
         observe(mPref.forceLogoutUserLiveData) {
             if (it) {
-                mPref.clear()
+                destroyPlayer()
                 UploadService.stopAllUploads()
-                launchActivity<SplashScreenActivity>()
+                mPref.clear()
+                cacheManager.clearAllCache()
+                launchActivity<HomeActivity> { flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT }
+                launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                 finish()
             }
         }
@@ -360,7 +461,7 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.startBubbleService) {
             if (it) {
                 startBubbleService()
-            } else if(mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+            } else if((mPref.bubbleType == FOOTBALL.value || mPref.bubbleType == CRICKET.value) && mPref.isFifaBubbleActive) {
                 bubbleFifaIntent?.let { stopService(it) }
             }
             else if(mPref.bubbleType == RAMADAN.value && mPref.isBubbleActive) {
@@ -389,9 +490,9 @@ class HomeActivity : PlayerPageActivity(),
         if (mPref.isFireworkActive) {
             viewModel.isFireworkActive.postValue(true)
         }
-        if (mPref.isMedalliaActive) {
-            MedalliaDigital.enableIntercept()
-        }
+//        if (mPref.isMedalliaActive) {
+//            MedalliaDigital.enableIntercept()
+//        }
         if (mPref.isConvivaActive) {
             initConvivaSdk()
         }
@@ -405,15 +506,12 @@ class HomeActivity : PlayerPageActivity(),
 //            val configuration =
 //                RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
 //            MobileAds.setRequestConfiguration(configuration)
-            MobileAds.initialize(this)
+            runCatching {
+                MobileAds.initialize(this)
+            }
         }
     
         startBubbleService()
-        
-        if (mPref.deleteDialogLiveData.value == true) {
-            getNavController().navigateTo(R.id.completeDeleteProfileDataBottomSheetFragment)
-            mPref.deleteDialogLiveData.value = false
-        }
         
         observeLogout()
         onLoginSuccess()
@@ -445,6 +543,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onResume() {
         super.onResume()
+        mPref.isDisablePip.value = false
         inAppMessaging.setMessagesSuppressed(false)
         
         if (mPref.customerId == 0 || mPref.password.isBlank()) {
@@ -482,6 +581,7 @@ class HomeActivity : PlayerPageActivity(),
         mqttService.destroy()
         viewModelStore.clear()
         playerEventHelper.release()
+        binding.playerView.clearListeners()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         ConvivaHelper.release()
@@ -526,6 +626,14 @@ class HomeActivity : PlayerPageActivity(),
             binding.playerView.moveController(-1.0f)
         }
         updateFullScreenState()
+        if (shouldNavigateToPremiumPageAfterConfigChange) {
+            shouldNavigateToPremiumPageAfterConfigChange = false
+            lifecycleScope.launch {
+                delay(800)
+                minimizePlayer()
+                navigateToPremiumPackList()
+            }
+        }
     }
     
     @Deprecated("Deprecated in Java")
@@ -645,8 +753,16 @@ class HomeActivity : PlayerPageActivity(),
         
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView?.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.END, true) }
-        
+        awesomeActionView?.setOnClickListener {
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.MENU_OPEN,
+                bundleOf(
+                    "screen" to this.title
+                )
+            )
+            binding.drawerLayout.openDrawer(GravityCompat.END, true)
+        }
+
         observeNotification()
         return true
     }
@@ -655,7 +771,10 @@ class HomeActivity : PlayerPageActivity(),
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
                 menu.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
-                    bindingUtil.bindRoundImage(profileImageView, it)
+                    when (it) {
+                        is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                        is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                    }
                 }
             }
         }
@@ -675,7 +794,8 @@ class HomeActivity : PlayerPageActivity(),
         }
         return super.onOptionsItemSelected(item)
     }
-    
+
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -709,7 +829,7 @@ class HomeActivity : PlayerPageActivity(),
             super.onBackPressed()
         }
     }
-    
+
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
@@ -756,8 +876,8 @@ class HomeActivity : PlayerPageActivity(),
 //        }
         // For firebase screenview logging
         if (controller.currentDestination is FragmentNavigator.Destination) {
-            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
-            
+            currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination).className.substringAfterLast(".")
+
             ToffeeAnalytics.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to currentFragmentClassName
@@ -767,9 +887,12 @@ class HomeActivity : PlayerPageActivity(),
         }
         
         bottomNavBarHideState = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment)
+        
+        val hasBackStack = currentFragmentDestinationId in listOf(id.premiumPackListFragment, id.packDetailsFragment, id.audioBookLandingFragment, id.audioBookCategoryDetails, id.menu_manage_payment_methods)
+        
         toggleBottomNavBar(bottomNavBarHideState)
 //        binding.tbar.toolbar.setBackgroundResource(R.drawable.demotopbar)
-        binding.tbar.toolbar.setNavigationIcon(if(bottomNavBarHideState) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
+        binding.tbar.toolbar.setNavigationIcon(if(hasBackStack) R.drawable.ic_arrow_back else R.drawable.ic_toffee)
     }
     
     private fun initializeDraggableView() {
@@ -792,6 +915,15 @@ class HomeActivity : PlayerPageActivity(),
                 val subMenu = findItem(R.id.ic_menu_internet_packs)
                 subMenu?.isVisible = false
             }
+
+            if (mPref.isQrCodeEnable) {
+                val subMenu = findItem(R.id.menu_active_tv)
+                subMenu?.isVisible = true
+            } else{
+                val subMenu = findItem(R.id.menu_active_tv)
+                subMenu?.isVisible = false
+            }
+
             binding.sideNavigation.getHeaderView(0).findViewById<LinearLayout>(R.id.menu_toffee_premium).isVisible = mPref.isSubscriptionActive
             findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
             findItem(R.id.menu_login).isVisible = !mPref.isVerifiedUser
@@ -845,7 +977,7 @@ class HomeActivity : PlayerPageActivity(),
     private fun setupNavController() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
-        
+
         appbarConfig = AppBarConfiguration(
             setOf(
                 R.id.menu_feed,
@@ -859,7 +991,8 @@ class HomeActivity : PlayerPageActivity(),
                 R.id.menu_invite,
                 R.id.menu_redeem,
                 R.id.menu_creators_policy,
-                R.id.premiumPackListFragment
+                R.id.premiumPackListFragment,
+                R.id.menu_active_tv
             ), binding.drawerLayout
         )
 //        setupActionBarWithNavController(navController, appbarConfig)
@@ -885,7 +1018,10 @@ class HomeActivity : PlayerPageActivity(),
                 R.id.menu_feed -> navController.navigatePopUpTo(R.id.menu_feed)
                 R.id.menu_tv -> navController.navigateTo(R.id.menu_tv)
                 R.id.menu_explore -> navController.navigateTo(R.id.menu_explore)
-                R.id.menu_channel -> navController.navigateTo(R.id.menu_channel)
+                R.id.menu_channel -> {
+                    channelOwnerId = if (mPref.isVerifiedUser) mPref.customerId else 0
+                    navController.navigateTo(R.id.menu_channel)
+                }
             }
             return@setOnItemSelectedListener true
         }
@@ -936,6 +1072,7 @@ class HomeActivity : PlayerPageActivity(),
             } else {
                 minimizePlayer()
             }
+            channelOwnerId = it.channelOwnerId
         }
     }
     
@@ -948,10 +1085,10 @@ class HomeActivity : PlayerPageActivity(),
                 binding.mainUiFrame.visibility = View.GONE
                 mPref.bubbleVisibilityLiveData.postValue(false)
             } else {
-                binding.mainUiFrame.visibility = View.VISIBLE
                 supportActionBar?.show()
                 binding.bottomAppBar.show()
                 binding.uploadButton.show()
+                binding.mainUiFrame.visibility = View.VISIBLE
                 mPref.bubbleVisibilityLiveData.postValue(true)
             }
         }
@@ -1030,10 +1167,7 @@ class HomeActivity : PlayerPageActivity(),
             viewModel.sendViewContentEvent(it)
         }
     }
-    
-    var dInfo: Any? = null
-    var cInfo: ChannelInfo? = null
-    
+
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
@@ -1047,27 +1181,48 @@ class HomeActivity : PlayerPageActivity(),
             }
             else -> null
         }
-        circuitBreakerDataList[channelInfo?.id]?.let {
-            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
-                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
-                return
-            }
-        }
-        MedalliaDigital.disableIntercept()
+//        circuitBreakerDataList[channelInfo?.id]?.let {
+//            if (it.isActive && mPref.getSystemTime().after(it.updatedAt) && mPref.getSystemTime().before(it.expiredAt)) {
+//                showDisplayMessageDialog(this, getString(string.circuit_breaker_alert_message))
+//                return
+//            }
+//        }
+//        MedalliaDigital.disableIntercept()
         
         channelInfo?.let {
             when {
                 it.urlTypeExt == PREMIUM -> {
                     observeGetPackStatus()
                     observeMnpStatus()
-                    checkVerification {
-                        checkPurchaseBeforePlay(it, detailsInfo) {
-                            cInfo = it
-                            dInfo = detailsInfo
-                            if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
-                                viewModel.getMnpStatus()
-                            } else {
-                                viewModel.getPackStatus(channelInfo.getContentId().toInt())
+                    if (!mPref.isVerifiedUser){
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.LOGIN_SOURCE,
+                            bundleOf(
+                                "source" to "content_click",
+                                "method" to "mobile"
+                            )
+                        )
+                    }
+                    lifecycleScope.launch {
+                        /**
+                         * if the user is not logged in and video is full screen: exit full screen, update player size and minimize the player. delay some time before minimizing the player otherwise the player will not be half minimized.
+                         */
+                        if (!mPref.isVerifiedUser && binding.playerView.isFullScreen) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            binding.playerView.toggleFullScreenStatus(false)
+                            updateFullScreenState()
+                            delay(800)
+                            minimizePlayer()
+                        }
+                        checkVerification {
+                            checkPurchaseBeforePlay(it, detailsInfo) {
+                                cInfo = it
+                                dInfo = detailsInfo
+                                if (!mPref.isMnpStatusChecked && mPref.isVerifiedUser && mPref.isMnpCallForSubscription) {
+                                    viewModel.getMnpStatus()
+                                } else {
+                                    viewModel.getPackStatus(channelInfo.getContentId().toInt())
+                                }
                             }
                         }
                     }
@@ -1087,6 +1242,7 @@ class HomeActivity : PlayerPageActivity(),
                 it.urlType == STINGRAY_CONTENT && it.urlTypeExt == NON_PREMIUM -> {
                     playInNativePlayer(detailsInfo, it)
                 }
+                else -> {}
             }
         }
     }
@@ -1100,40 +1256,49 @@ class HomeActivity : PlayerPageActivity(),
                             mPref.activePremiumPackList.value = response.data
                             cInfo?.let {
                                 checkPurchaseBeforePlay(it, dInfo) {
-                                    mPref.prePurchaseClickedContent.value = cInfo
-                                    navController.navigatePopUpTo(
-                                        resId = id.premiumPackListFragment,
-                                        args = bundleOf(
-                                            "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
-                                            "clickedFromChannelItem" to true
-                                        )
-                                    )
+                                    handleNavigateToPremiumPackList()
                                 }
                             } ?: showToast(getString(R.string.try_again_message))
                         } else {
-                            mPref.prePurchaseClickedContent.value = cInfo
-                            navController.navigatePopUpTo(
-                                resId = id.premiumPackListFragment,
-                                args = bundleOf(
-                                    "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
-                                    "clickedFromChannelItem" to true
-                                )
-                            )
+                            handleNavigateToPremiumPackList()
                         }
                     }
                     is Failure -> {
-                        mPref.prePurchaseClickedContent.value = cInfo
-                        navController.navigatePopUpTo(
-                            resId = id.premiumPackListFragment,
-                            args = bundleOf(
-                                "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
-                                "clickedFromChannelItem" to true
-                            )
-                        )
+                        handleNavigateToPremiumPackList()
                     }
                 }
             }.onFailure { showToast(getString(R.string.try_again_message)) }
         }
+    }
+
+    /**
+     * set a flag if the player is in full screen. if full screen then exit fullscreen, update fullscreen state. After that when
+     * configuration changes navigate to the premium page or if not in fullscreen then navigate immediately.
+     */
+    private fun handleNavigateToPremiumPackList() {
+        shouldNavigateToPremiumPageAfterConfigChange = if (binding.playerView.isFullScreen) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            binding.playerView.toggleFullScreenStatus(false)
+            updateFullScreenState()
+            true
+        } else {
+            navigateToPremiumPackList()
+            false
+        }
+    }
+
+    /**
+     * keep the content in a live data. navigate to the premium page. if the user purchase the pack then play the content from the live data.
+     */
+    private fun navigateToPremiumPackList() {
+        mPref.prePurchaseClickedContent.value = cInfo
+        navController.navigatePopUpTo(
+            resId = id.premiumPackListFragment,
+            args = bundleOf(
+                "contentId" to if (cInfo?.getContentId() is String) cInfo?.getContentId() else "0",
+                "clickedFromChannelItem" to true
+            )
+        )
     }
     
     private fun checkPurchaseBeforePlay(
@@ -1141,7 +1306,7 @@ class HomeActivity : PlayerPageActivity(),
         detailsInfo: Any?,
         onFailure: (() -> Unit)? = null
     ) {
-        mPref.activePremiumPackList.value.checkPackPurchased(
+        mPref.activePremiumPackList.value.checkContentPurchase(
             contentId = channelInfo.getContentId(),
             systemDate = mPref.getSystemTime(),
             onSuccess = {
@@ -1185,7 +1350,7 @@ class HomeActivity : PlayerPageActivity(),
                         channelInfo.getContentId().toLong(),
                         channelInfo.urlType,
                         channelInfo.signedUrlExpiryDate ?: channelInfo.signedCookieExpiryDate,
-                        gson.toJson(channelInfo)
+                        json.encodeToString(channelInfo)
                     )
                 )
                 loadMediaCdnConfig(channelInfo, onSuccess)
@@ -1208,7 +1373,7 @@ class HomeActivity : PlayerPageActivity(),
                                 } else {
                                     hlsLinks = cInfo?.hlsLinks?.mapIndexed { index, hlsLinks ->
                                         if (index == 0) {
-                                            hlsLinks.hls_url_mobile = mediaCdnData.signedUrl
+                                            hlsLinks.hlsUrlMobile = mediaCdnData.signedUrl
                                         }
                                         hlsLinks
                                     }
@@ -1223,7 +1388,7 @@ class HomeActivity : PlayerPageActivity(),
                         lifecycleScope.launch {
                             newChannelInfo?.getContentId()?.toLong()?.let {
                                 cdnChannelItemRepository.updateCdnChannelItemByChannelId(
-                                    it, expiryDate, gson.toJson(newChannelInfo)
+                                    it, expiryDate, json.encodeToString(newChannelInfo)
                                 )
                             }
                         }
@@ -1248,6 +1413,7 @@ class HomeActivity : PlayerPageActivity(),
         if (player is CastPlayer) {
             maximizePlayer()
         }
+        mPref.isDisablePip.value = false
         ConvivaHelper.endPlayerSession(true)
         playerEventHelper.startContentPlayingSession(it.id)
         if (!isPlayerVisible()) {
@@ -1274,11 +1440,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun openInExternalBrowser(it: ChannelInfo) {
         runCatching {
             it.getHlsLink()?.let { url ->
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse(url)
-                    )
-                )
+                mPref.isDisablePip.value = true
+                openUrlToExternalApp(url)
             } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
         }.onFailure {
             showToast(it.message)
@@ -1286,12 +1449,13 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun playInWebView(it: ChannelInfo) {
-        showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hls_url_mobile}")
+        showDebugMessage("URL: ${it.hlsLinks?.get(0)?.hlsUrlMobile}")
         it.getHlsLink()?.let { url ->
             viewModel.sendViewContentEvent(it.copy(id = "0"))
             val shareableUrl = it.video_share_url
+            val urlWithTheme = if (!url.contains("style=", ignoreCase = true)) url else url.plus(cPref.appTheme)
             launchActivity<Html5PlayerViewActivity> {
-                putExtra(Html5PlayerViewActivity.CONTENT_URL, url)
+                putExtra(Html5PlayerViewActivity.CONTENT_URL, urlWithTheme)
                 putExtra(Html5PlayerViewActivity.SHAREABLE_URL, shareableUrl)
                 putExtra(Html5PlayerViewActivity.TITLE, it.program_name)
             }
@@ -1342,21 +1506,31 @@ class HomeActivity : PlayerPageActivity(),
         } else if (info is PlaylistPlaybackInfo) {
             when {
                 /*(fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
-                !info.isUserPlaylist -> {
+                info.playlistType == My_Channel_Playlist -> {
                     loadFragmentById(
                         R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
                     )
                 }
-                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/ 
-                info.isUserPlaylist -> {
+                /*(fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) &&*/
+                info.playlistType == User_Playlist -> {
                     loadFragmentById(
                         R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
                     )
+                }
+                info.playlistType == Audio_Book_Playlist -> {
+                    if (fragment !is AudioBookEpisodeListFragment) {
+                        loadFragmentById(
+                            R.id.details_viewer, AudioBookEpisodeListFragment.newInstance(info)
+                        )
+                    }
                 }
                 fragment is MyChannelPlaylistVideosFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
                 fragment is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
+                fragment is AudioBookEpisodeListFragment -> {
                     fragment.setCurrentChannel(info.currentItem)
                 }
             }
@@ -1369,6 +1543,9 @@ class HomeActivity : PlayerPageActivity(),
                     fragment.setCurrentChannel(info.channelInfo)
                 }
                 is EpisodeListFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is AudioBookEpisodeListFragment -> {
                     fragment.setCurrentChannel(info.channelInfo)
                 }
             }
@@ -1483,7 +1660,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     override fun onPlayerMaximize() {
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         requestedOrientation =
             if (binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait) ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             else {
@@ -1509,9 +1686,9 @@ class HomeActivity : PlayerPageActivity(),
         playerEventHelper.endPlayerSession()
         ConvivaHelper.endPlayerSession()
 //        releasePlayer()
-        if (mPref.isMedalliaActive) {
-            MedalliaDigital.enableIntercept()
-        }
+//        if (mPref.isMedalliaActive) {
+//            MedalliaDigital.enableIntercept()
+//        }
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
         heartBeatManager.triggerEventViewingContentStop()
@@ -1560,8 +1737,8 @@ class HomeActivity : PlayerPageActivity(),
 //        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
     }
     
-    private fun setFullScreen(visible: Boolean) {
-        if (visible) {
+    private fun setFullScreen(isFullScreen: Boolean) {
+        if (isFullScreen) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(
@@ -1569,11 +1746,11 @@ class HomeActivity : PlayerPageActivity(),
                 )
                 controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                window.attributes = window.attributes.apply {
-//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+            }
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
@@ -1581,11 +1758,11 @@ class HomeActivity : PlayerPageActivity(),
                     WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
                 )
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                window.attributes = window.attributes.apply {
-//                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+                }
+            }
         }
     }
     
@@ -1692,7 +1869,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
         lifecycleScope.launch {
-            /*val playerOverlayData = Gson().fromJson("""
+            /*val playerOverlayData = Json{ encodeDefaults = true }.decodeFromString<>"""
                     {
                         "id": 234,
                         "content_id": "254896",
@@ -1720,7 +1897,7 @@ class HomeActivity : PlayerPageActivity(),
 //                    it.setBackgroundColor(Color.TRANSPARENT)
 //                }
 //            }
-            if (playerOverlayData.params.position == "floating") {
+            if (playerOverlayData.params?.position == "floating") {
                 debugOverlayView?.let {
                     val observer = object : ViewTreeObserver.OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
@@ -1731,8 +1908,8 @@ class HomeActivity : PlayerPageActivity(),
                                 val playerWidth = binding.playerView.measuredWidth.toFloat()
                                 val playerHeight = binding.playerView.measuredHeight.toFloat()
                                 
-                                val fromPosition = playerOverlayData.params.fromPosition ?: listOf(0.0F, 0.0F)
-                                val toPosition = playerOverlayData.params.toPosition ?: listOf(1.0F, 0.0F)
+                                val fromPosition = playerOverlayData.params?.fromPosition ?: listOf(0.0F, 0.0F)
+                                val toPosition = playerOverlayData.params?.toPosition ?: listOf(1.0F, 0.0F)
                                 
                                 val fromPositionX = fromPosition.first().coerceAtMost(1.0F)
                                 val fromPositionY = fromPosition.last().coerceAtMost(1.0F)
@@ -1751,7 +1928,7 @@ class HomeActivity : PlayerPageActivity(),
                                     lineTo(endX, endY)
                                 }
                                 ObjectAnimator.ofFloat(it, View.X, View.Y, path).apply {
-                                    duration = playerOverlayData.params.duration * 1_000
+                                    duration = (playerOverlayData.params?.duration ?: 0) * 1_000
                                     repeatMode = ValueAnimator.REVERSE
                                     repeatCount = 2
                                 }.start()
@@ -1776,7 +1953,7 @@ class HomeActivity : PlayerPageActivity(),
     
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (player?.isPlaying == true && Build.VERSION.SDK_INT >= 24 && hasPip()) {
+        if (player?.isPlaying == true && mPref.isDisablePip.value == false && Build.VERSION.SDK_INT >= 24 && hasPip()) {
             enterPipMode()
         }
     }
@@ -1806,6 +1983,7 @@ class HomeActivity : PlayerPageActivity(),
             if (Settings.canDrawOverlays(this)) {
                 startBubbleService()
             }
+            releasePlayer()
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
@@ -1835,6 +2013,8 @@ class HomeActivity : PlayerPageActivity(),
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        destroyPlayer()
+        mPref.isDisablePip.value = false
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
@@ -1854,7 +2034,7 @@ class HomeActivity : PlayerPageActivity(),
             }.cancel(notificationId)
             
             if (actionName == CONTENT_VIEW || actionName == WATCH_NOW) {
-                PubSubMessageUtil.sendNotificationStatus(pubSubId, OPEN)
+                viewModel.sendNotificationStatusLog(pubSubId, OPEN)
             }
         }
         observeAppVersionUpdate(intent)
@@ -1881,7 +2061,7 @@ class HomeActivity : PlayerPageActivity(),
             var appLinkUriStr: String? = null
             try {
                 val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
-                if (appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                if (appLinkUri != null && (appLinkUri.host != "toffeelive.com" || appLinkUri.host != "staging-web.toffeelive.com")) {
                     appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
                 }
             } catch (ex: Exception) {
@@ -1913,12 +2093,13 @@ class HomeActivity : PlayerPageActivity(),
             try {
                 if (!handleInAppDeepLink(url)) {
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                    val hash = url.substringAfter("#video/")
+                    val newDeepLinkHash = Uri.parse(url).getQueryParameter("share_url")
+                    val hash = newDeepLinkHash ?: url.substringAfter("#video/")
                     var pair: Pair<String?, String?>? = null
                     if (hash.contains("data=", true)) {
                         val newHash = hash.substringAfter("data=").trim()
                         val encryptedUrl = EncryptionUtil.decryptResponse(newHash).trimIndent()
-                        shareableData = gson.fromJson(encryptedUrl, ShareableData::class.java)
+                        shareableData = json.decodeFromString<ShareableData>(encryptedUrl)
                         when (shareableData?.type) {
                             SharingType.STINGRAY.value -> {
                                 if (!shareableData?.stingrayShareUrl.isNullOrBlank()) {
@@ -1976,6 +2157,7 @@ class HomeActivity : PlayerPageActivity(),
                                         "timestamp" to currentDateTime
                                     )
                                 )
+                                mPref.isDisablePip.value = true
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(forwardUrl))
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
@@ -2007,6 +2189,9 @@ class HomeActivity : PlayerPageActivity(),
                             navController.navigate(it.destId, it.args, it.options, it.navExtra)
                         }
                     } else {
+                        it.args?.getParcelable<Category>(CategoryDetailsFragment.ARG_CATEGORY_ITEM)?.let {
+                            landingPageViewModel.selectedCategory.value = it
+                        }
                         navController.navigate(it.destId, it.args, it.options, it.navExtra)
                     }
                 }
@@ -2041,9 +2226,6 @@ class HomeActivity : PlayerPageActivity(),
             url.contains("explore/") -> {
                 commonDeepLink.replace("pagelink", "explore")
             }
-            url.contains("/all-drama") -> {
-                categoryDeepLink.replace("categoryId", "18")
-            }
             url.contains("/activities") -> {
                 commonDeepLink.replace("pagelink", "activities")
             }
@@ -2073,7 +2255,7 @@ class HomeActivity : PlayerPageActivity(),
         val sharableData = ShareableData(
             "playlist", 0, null, null, 0, isOwner, ownerId, playlistId, playlistName
         )
-        val json = gson.toJson(sharableData, ShareableData::class.java)
+        val json = json.encodeToString(sharableData)
         val shareableJsonData = EncryptionUtil.encryptRequest(json).trimIndent()
         return newUrl + shareableJsonData
     }
@@ -2083,15 +2265,15 @@ class HomeActivity : PlayerPageActivity(),
             when (response) {
                 is Success -> {
                     if (shareableData != null) {
-                        response.data.channels?.let {
+                        response.data?.channels?.let {
                             val playlistInfo = PlaylistPlaybackInfo(
                                 shareableData?.playlistId ?: 0,
                                 shareableData?.channelOwnerId ?: 0,
-                                shareableData?.name ?: response.data.name ?: "",
-                                response.data.totalCount,
+                                shareableData?.name ?: response.data?.name ?: "",
+                                response.data?.totalCount ?: 0,
                                 playlistShareableUrl,
                                 1,
-                                shareableData?.isUserPlaylist == 1,
+                                if (shareableData?.isUserPlaylist == 1) User_Playlist else My_Channel_Playlist,
                                 0,
                                 it[0],
                                 shareableData?.isOwner ?: 1,
@@ -2108,7 +2290,7 @@ class HomeActivity : PlayerPageActivity(),
                             viewModel.playContentLiveData.postValue(playlistInfo)
                         } ?: showToast("This playlist does not have any video")
                     } else {
-                        showToast("Something went wrong")
+                        showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {
@@ -2131,7 +2313,7 @@ class HomeActivity : PlayerPageActivity(),
             when (response) {
                 is Success -> {
                     if (shareableData != null) {
-                        response.data.channels?.let {
+                        response.data?.channels?.let {
                             val seriesInfo = SeriesPlaybackInfo(
                                 shareableData?.serialSummaryId ?: 0,
                                 shareableData?.name ?: "",
@@ -2167,14 +2349,15 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun observeShareableContent(hash: String, type: String? = null) {
-        observe(viewModel.getShareableContent(hash, type)) { channelResource ->
+        observe(viewModel.shareableContentResponseLiveData) { channelResource ->
             if (channelResource is Success) {
                 channelResource.data?.let {
                     onDetailsFragmentLoad(it)
                 }
-                mPref.shareableHashLiveData.value = null
             }
+            mPref.shareableHashLiveData.value = null
         }
+        viewModel.getShareableContent(hash, type)
     }
     
     private fun handlePackageSubscribe() {
@@ -2257,7 +2440,7 @@ class HomeActivity : PlayerPageActivity(),
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
             observe(profileViewModel.loadCustomerProfile()) {
-                if (it is Success) {
+                if (it is Success && it.data != null) {
                     profileViewModel.profileForm.value = it.data
                 }
             }
@@ -2285,25 +2468,38 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun openFeaturePartner(featuredPartner: FeaturedPartner) {
-
-        if (featuredPartner.url_type == 1){
-            navController.navigateTo(R.id.FmRadioFrag)
-        } else{
+        if (featuredPartner.url_type == 1) {
+            navController.navigateTo(R.id.fmRadioFragment)
+        }
+        else if(featuredPartner.url_type == 2) {
+            navController.navigateTo(R.id.audioBookLandingFragment)
+        }
+        else{
             if (navController.currentDestination?.id != R.id.htmlPageViewDialog_Home) {
                 featuredPartner.webViewUrl?.let { url ->
                     landingPageViewModel.sendFeaturePartnerReportData(
                         partnerName = featuredPartner.featurePartnerName.toString(), partnerId = featuredPartner.id
                     )
-                    navController.navigateTo(
-                        resId = R.id.htmlPageViewDialog_Home,
-                        args = bundleOf(
-                            "myTitle" to getString(string.back_to_toffee_text), "url" to url, "isHideBackIcon" to false, "isHideCloseIcon" to true
+                    runCatching {
+                        navController.navigateTo(
+                            resId = R.id.htmlPageViewDialog_Home,
+                            args = bundleOf(
+                                "myTitle" to getString(string.back_to_toffee_text),
+                                "url" to url,
+                                "isHideBackIcon" to false,
+                                "isHideCloseIcon" to true
+                            )
                         )
-                    )
+                    }.onFailure {
+                        runCatching {
+                            openUrlToExternalApp(url)
+                        }.onFailure {
+                            showToast("No browser found")
+                        }
+                    }
                 } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
             }
         }
-
     }
     
     private fun isChannelComplete() =
@@ -2465,9 +2661,7 @@ class HomeActivity : PlayerPageActivity(),
             InstallStatus.INSTALLED -> {
                 showToast("Toffee updated successfully")
             }
-            else -> {
-                
-            }
+            else -> {}
         }
     }
     
@@ -2535,23 +2729,25 @@ class HomeActivity : PlayerPageActivity(),
                     when (it) {
                         is Success -> {
                             it.data?.let { data ->
-                                mPref.mqttIsActive = data.mqttIsActive == 1
-                                mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
-                                mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
-                                mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
-                                mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                                
-                                appScope.launch {
-                                    val mqttDir = withContext(Dispatchers.IO + Job()) {
-                                        val mqttTag = "MqttConnection"
-                                        var tempDir = getExternalFilesDir(mqttTag)
-                                        if (tempDir == null) {
-                                            tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                if (data.mqttUrl != null && data.mqttUserId != null && data.mqttPassword != null) {
+                                    mPref.mqttIsActive = data.mqttIsActive == 1
+                                    mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl!!)
+                                    mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId!!)
+                                    mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId!!)
+                                    mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword!!)
+                                    
+                                    appScope.launch {
+                                        val mqttDir = withContext(Dispatchers.IO + Job()) {
+                                            val mqttTag = "MqttConnection"
+                                            var tempDir = getExternalFilesDir(mqttTag)
+                                            if (tempDir == null) {
+                                                tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                            }
+                                            tempDir
                                         }
-                                        tempDir
-                                    }
-                                    if (mPref.mqttIsActive && mqttDir != null) {
-                                        mqttService.initialize()
+                                        if (mPref.mqttIsActive && mqttDir != null) {
+                                            mqttService.initialize()
+                                        }
                                     }
                                 }
                             }
@@ -2583,9 +2779,21 @@ class HomeActivity : PlayerPageActivity(),
 //                    ConvivaSdkConstants.GATEWAY_URL to BuildConfig.CONVIVA_GATEWAY_URL,
 //                    ConvivaSdkConstants.LOG_LEVEL to ConvivaSdkConstants.LogLevel.DEBUG
 //                )
-//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST), settings)
+//                ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_TEST, settings)
+//                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+//                    applicationContext,
+//                    BuildConfig.CONVIVA_CUSTOMER_KEY_TEST,
+//                    "Toffee Android"
+//                )
+//                tracker?.subject?.userId = mPref.customerId.toString()
             } else {
                 ConvivaAnalytics.init(applicationContext, BuildConfig.CONVIVA_CUSTOMER_KEY_PROD)
+                val tracker: TrackerController? = ConvivaAppAnalytics.createTracker(
+                    applicationContext,
+                    BuildConfig.CONVIVA_CUSTOMER_KEY_PROD,
+                    "Toffee Android"
+                )
+                tracker?.subject?.userId = mPref.customerId.toString()
             }
             ConvivaHelper.init(applicationContext, true)
         }
@@ -2593,7 +2801,7 @@ class HomeActivity : PlayerPageActivity(),
     
     private fun startBubbleService() {
         if (!BaseBubbleService.isForceClosed && mPref.isBubbleActive && mPref.isBubbleEnabled) {
-            if (mPref.bubbleType == FIFA.value && mPref.isFifaBubbleActive) {
+            if ((mPref.bubbleType == FOOTBALL.value || mPref.bubbleType == CRICKET.value) && mPref.isFifaBubbleActive) {
                 startFifaBubbleService()
             } else if (mPref.bubbleType == RAMADAN.value) {
                 startRamadanBubbleService()
@@ -2607,7 +2815,7 @@ class HomeActivity : PlayerPageActivity(),
             if (!hasDefaultOverlayPermission() && !Settings.canDrawOverlays(this) && mPref.bubbleDialogShowCount < 5) {
                 displayMissingOverlayPermissionDialog()
             } else {
-                bubbleFifaIntent?.let { stopService(it) }
+                bubbleFifaIntent?.let { startService(it) }
             }
         }
     }
@@ -2643,8 +2851,8 @@ class HomeActivity : PlayerPageActivity(),
     private fun displayMissingOverlayPermissionDialog() {
         mPref.bubbleDialogShowCount++
         ToffeeAlertDialogBuilder(this,
-            title = getString(R.string.missing_overlay_permission_dialog_title),
-            text = getString(R.string.missing_overlay_permission_dialog_message),
+            title = mPref.bubblePermissionDialogTitle,
+            text = mPref.bubblePermissionDialogBody,
             icon = R.drawable.ic_not_verified,
             positiveButtonTitle = "Allow",
             positiveButtonListener = {
@@ -2756,26 +2964,48 @@ class HomeActivity : PlayerPageActivity(),
             loadUserInfo()
             observe(mPref.profileImageUrlLiveData) {
                 binding.root.findViewById<View>(R.id.action_avatar)?.findViewById<ImageView>(R.id.view_avatar)?.let { profileImageView ->
-                    bindingUtil.bindRoundImage(profileImageView, it)
+                    when (it) {
+                        is String -> bindingUtil.bindRoundImage(profileImageView, it)
+                        is Int -> bindingUtil.loadImageFromResource(profileImageView, it)
+                    }
                 }
             }
             lifecycleScope.launch {
                 if (mPref.doActionBeforeReload.value == true) {
                     mPref.postLoginEventAction.value?.invoke()
                     delay(300)
-                    mPref.preLoginDestinationId.value?.let {
-                        navController.popBackStack(it, true)
-                        navController.navigateTo(it)
+                    if (mPref.shouldReloadAfterLogin.value == true) {
+                        handleRefreshPageOnLogin()
                     }
                 } else {
-                    mPref.preLoginDestinationId.value?.let {
-                        navController.popBackStack(it, true)
-                        navController.navigateTo(it)
+                    if (mPref.shouldReloadAfterLogin.value == true) {
+                        handleRefreshPageOnLogin()
                     }
                     mPref.postLoginEventAction.value?.invoke()
                 }
+                mPref.shouldReloadAfterLogin.value = false
             }
             initMqtt()
+        }
+    }
+    
+    @SuppressLint("RestrictedApi")
+    private fun handleRefreshPageOnLogin() {
+        mPref.preLoginDestinationId.value?.let {
+            if (it == id.menu_channel) {
+                navController.popBackStack(it, true)
+                val isMyChannel = channelOwnerId == mPref.customerId
+                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+            } else {
+                val bundle = if ((navController.currentBackStack.value.size - 2) >= 0 ) {
+                    navController.currentBackStack.value.get(navController.currentBackStack.value.size-2).arguments
+                } else {
+                    null
+                }
+                
+                navController.popBackStack(it, true)
+                navController.navigateTo(resId = it, args = bundle)
+            }
         }
     }
     
@@ -2797,34 +3027,24 @@ class HomeActivity : PlayerPageActivity(),
         observe(viewModel.logoutLiveData) {
             when (it) {
                 is Success -> {
-                    if (!it.data.verifyStatus) {
-                        mPref.mqttHost = ""
-                        mPref.phoneNumber = ""
-                        mPref.channelName = ""
-                        mPref.channelLogo = ""
-                        mPref.customerDOB = ""
-                        mPref.customerNID = ""
-                        mPref.mqttClientId = ""
-                        mPref.mqttUserName = ""
-                        mPref.mqttPassword = ""
-                        mPref.customerName = ""
-                        mPref.customerEmail = ""
-                        mPref.isPaidUser = false
-                        mPref.userImageUrl = null
-                        mPref.customerAddress = ""
-                        mPref.lastLoginDateTime = ""
-                        cacheManager.clearAllCache()
-                        mPref.isVerifiedUser = false
-                        mPref.isChannelDetailChecked = false
-                        mPref.isMnpStatusChecked = false
-                        lifecycleScope.launch {
-                            tvChannelsRepo.deleteAllRecentItems()
+                    if (it.data != null && it.data?.verifyStatus == false) {
+                        viewModel.sendLogOutLogData()
+                        clearDataOnLogOut()
+                        
+                        if (mPref.shouldIgnoreReloadAfterLogout.value != true) {
+                            handleReloadPageOnLogout()
                         }
-                        appScope.launch { favoriteDao.deleteAll() }
-                        mqttService.destroy()
-                        navController.popBackStack(R.id.menu_feed, false).let {
-                            recreate()
+                        mPref.shouldIgnoreReloadAfterLogout.value = false
+                        viewModel.isLogoutCompleted.value = true
+                        if (player?.currentMediaItem?.getChannelMetadata(player)?.urlTypeExt == PREMIUM) {
+                            destroyPlayer()
                         }
+                        
+//                        navController.popBackStack(R.id.menu_feed, false).let {
+//                            recreate()
+//                        }
+                    } else {
+                        showToast(getString(R.string.try_again_message))
                     }
                 }
                 is Failure -> {
@@ -2839,6 +3059,89 @@ class HomeActivity : PlayerPageActivity(),
                     showToast(it.error.msg)
                 }
             }
+        }
+    }
+
+    private fun clearDataOnLogOut() {
+        mPref.mqttHost = ""
+        mPref.phoneNumber = ""
+        mPref.channelName = ""
+        mPref.channelLogo = ""
+        mPref.customerDOB = ""
+        mPref.customerNID = ""
+        mPref.mqttClientId = ""
+        mPref.mqttUserName = ""
+        mPref.mqttPassword = ""
+        mPref.customerName = ""
+        mPref.customerEmail = ""
+        mPref.isPaidUser = false
+        mPref.userImageUrl = null
+        mPref.customerAddress = ""
+        mPref.lastLoginDateTime = ""
+        cacheManager.clearAllCache()
+        mPref.isVerifiedUser = false
+        mPref.isChannelDetailChecked = false
+        mPref.isMnpStatusChecked = false
+        mPref.isBanglalinkNumber = "false"
+        lifecycleScope.launch {
+            tvChannelsRepo.deleteAllRecentItems()
+        }
+        appScope.launch { favoriteDao.deleteAll() }
+        mqttService.destroy()
+        
+        UploadService.stopAllUploads()
+        initSideNav()
+        mPref.profileImageUrlLiveData.postValue(drawable.ic_menu_profile)
+    }
+    
+    @SuppressLint("RestrictedApi")
+    private fun handleReloadPageOnLogout() {
+        val bundle = navController.currentBackStack.value.last().arguments
+        when (navController.currentDestination?.id) {
+            id.menu_channel -> {
+                if (channelOwnerId == mPref.customerId || channelOwnerId == 0) {
+                    reloadCurrentPage(bundle)
+                } else {
+                    navController.popBackStack()
+                    val isMyChannel = channelOwnerId == mPref.customerId
+                    navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                }
+            }
+            
+            id.menu_playlist,
+            id.menu_favorites,
+            id.menu_activities,
+            id.profileFragment,
+            id.upload_minimize,
+            id.menu_subscriptions,
+            id.editUploadInfoFragment,
+            id.myChannelEditDetailFragment,
+            id.myChannelVideosEditFragment,
+            id.menu_manage_payment_methods,
+            id.menu_active_tv
+            -> {
+                navController.popBackStack()
+                reloadCurrentPage(bundle)
+            }
+            
+            id.editProfileFragment,
+            id.userPlaylistVideos,
+            -> {
+                navController.popBackStack()
+                navController.popBackStack()
+                reloadCurrentPage(bundle)
+            }
+            
+            else -> {
+                reloadCurrentPage(bundle)
+            }
+        }
+    }
+    
+    private fun reloadCurrentPage(bundle: Bundle?) {
+        navController.currentDestination?.let {
+            navController.navigateUp()
+            navController.navigateTo(resId = it.id, args = bundle)
         }
     }
 }

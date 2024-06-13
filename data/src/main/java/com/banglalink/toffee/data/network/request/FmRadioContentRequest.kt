@@ -1,13 +1,15 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FmRadioContentRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("telcoId")
+    @SerialName("telcoId")
     val telcoId: Int = 1
 ) : BaseRequest(ApiNames.GET_FM_RADIO_CONTENTS)

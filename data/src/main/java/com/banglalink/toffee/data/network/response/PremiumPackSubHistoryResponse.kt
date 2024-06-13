@@ -1,38 +1,42 @@
 package com.banglalink.toffee.data.network.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PremiumPackSubHistoryResponse(
-    @SerializedName("response")
+    @SerialName("response")
     var response: SubHistoryResponseBean? = SubHistoryResponseBean(),
 ) : BaseResponse()
 
+@Serializable
 data class SubHistoryResponseBean(
-    @SerializedName("subs_history_details")
+    @SerialName("subs_history_details")
     var subsHistoryDetails: List<SubsHistoryDetail> = listOf(),
-    @SerializedName("history_showing_text")
-    var historyShowingText: String? = null
+    @SerialName("history_showing_text")
+    var historyShowingText: String? = null,
 )
 
+@Serializable
 data class SubsHistoryDetail(
-    @SerializedName("pack_name")
+    @SerialName("pack_name")
     var packName: String? = null,
-    @SerializedName("payment_method")
+    @SerialName("payment_method")
     var paymentMethod: String? = null,
-    @SerializedName("payment_method_id")
+    @SerialName("payment_method_id")
     var paymentMethodId: Int? = null,
-    @SerializedName("payment_price")
+    @SerialName("payment_price")
     var paymentPrice: String? = null,
-    @SerializedName("plan")
+    @SerialName("plan")
     var plan: String? = null,
-    @SerializedName("auto_renewal")
+    @SerialName("auto_renewal")
     var autoRenewal: String? = null,
-    @SerializedName("expiry_time")
+    @SerialName("expiry_time")
     var expiryTime: String? = null,
-    @SerializedName("subscription_status")
+    @SerialName("subscription_status")
     var subscriptionStatus: String? = null,
-    @SerializedName("pack_start_date_for_order")
+    @SerialName("pack_start_date_for_order")
     var packStartDateForOrder: String? = null,
-    @SerializedName("tooltip_message")
+    @SerialName("tooltip_message")
     var tooltipMessage: String? = null,
 )

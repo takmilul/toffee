@@ -26,11 +26,11 @@
 
     <color name="screen_bg">#ECECEC</color>
     <color name="screen_bg_white">#FFFFFF</color>
-    <color name="colorAccent2">#FF3988</color>
+    <color name="colorAccent2">#FF3988</color>#FF3988
     <color name="colorAccent2Alpha">#80FF3988</color>
     <color name="nav_menu_text_color">@color/main_text_color</color>
     <color name="bottom_navbar_disabled_color">#29466B</color>
-
+    <color name="otp_text_clr">#F2F2F2</color>
     <color name="input_bg_color">#F2F2F2</color>
     <color name="dialog_input_bg_color">#F2F2F2</color>
     <color name="fab_icon_bg">#FFFFFF</color>
@@ -100,6 +100,9 @@
     <color name="switchUnCheckedColor">#829AB8</color>
     <color name="cardBgColor">#FFFFFF</color>
     <color name="cardTitleColor">#29466B</color>
+
+    <color name="cardsubTitleColor">#657b96</color>
+    <color name="inactiveColor">#aaa</color>
     <color name="list_divider_side_nav">#BED6F3</color>
     <color name="categoryNameColor">#29466B</color>
     <color name="tvChannelTitleColor">#111F31</color>

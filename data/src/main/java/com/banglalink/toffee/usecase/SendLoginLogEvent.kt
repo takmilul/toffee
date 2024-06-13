@@ -7,54 +7,59 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.LOGIN_LOG_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.currentDateTime
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class SendLoginLogEvent @Inject constructor() {
-
-    private val gson = Gson()
     
-    fun execute(sendToPubSub: Boolean = true) {
+    fun execute(apiName: String, sendToPubSub: Boolean = true) {
         if (sendToPubSub) {
-            PubSubMessageUtil.sendMessage(gson.toJson(LoginLogData()), LOGIN_LOG_TOPIC)
+            PubSubMessageUtil.sendMessage(LoginLogData(apiName), LOGIN_LOG_TOPIC)
         }
     }
 }
 
+@Serializable
 data class LoginLogData(
-    @SerializedName("id")
+    @SerialName("api_name")
+    val apiName: String,
+    @SerialName("is_request_from_backend")
+    val isRequestFromBackend: Int = 0,
+    @SerialName("id")
     val id: Long = System.nanoTime(),
-    @SerializedName("app_version")
+    @SerialName("app_version")
     val appVersion : String = CommonPreference.getInstance().appVersionName,
-    @SerializedName("device_type")
+    @SerialName("device_type")
     val deviceType :String = "${Constants.DEVICE_TYPE}",
-    @SerializedName("device_id")
+    @SerialName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
-    @SerializedName("is_bl_number")
+    @SerialName("is_bl_number")
     val isBlNumber: Int = if(SessionPreference.getInstance().isBanglalinkNumber == "false") 0 else 1,
-    @SerializedName("lat")
+    @SerialName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
-    @SerializedName("lon")
+    @SerialName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
-    @SerializedName("geo_city")
+    @SerialName("geo_city")
     val geoCity: String = SessionPreference.getInstance().geoCity,
-    @SerializedName("geo_location")
+    @SerialName("geo_location")
     val geoLocation: String = SessionPreference.getInstance().geoLocation,
-    @SerializedName("user_ip")
+    @SerialName("user_ip")
     val userIp: String = SessionPreference.getInstance().userIp,
-    @SerializedName("net_type")
+    @SerialName("net_type")
     val netType:String = SessionPreference.getInstance().netType,
-    @SerializedName("os_name")
+    @SerialName("os_name")
     val osVersion :String = "android "+ Build.VERSION.RELEASE,
-    @SerializedName("parent_id")
+    @SerialName("parent_id")
     val parentId: Int = 1,
-    @SerializedName("session_token")
+    @SerialName("session_token")
     val sessionToken: String = SessionPreference.getInstance().sessionToken,
-    @SerializedName("user_id")
+    @SerialName("user_id")
     val customerId:Long = SessionPreference.getInstance().customerId.toLong(),
-    @SerializedName("date_time")
+    @SerialName("msisdn")
+    val msisdn :String = SessionPreference.getInstance().phoneNumber.toString(),
+    @SerialName("date_time")
     val dateTime: String = currentDateTime,
-    @SerializedName("reportingTime")
+    @SerialName("reportingTime")
     val reportingTime: String = currentDateTime
 )

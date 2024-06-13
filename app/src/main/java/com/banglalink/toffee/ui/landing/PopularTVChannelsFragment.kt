@@ -9,10 +9,11 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.filter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
@@ -33,17 +34,17 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     private  var _binding: FragmentLandingTvChannelsBinding?=null
     private val binding get() = _binding!!
     val viewModel by activityViewModels<LandingPageViewModel>()
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
         mAdapter = ChannelAdapter(this)
-    
+        
         with(binding.placeholder) {
             val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 5)) / 4.5    // 16dp margin
             this.forEach { placeholderView ->
@@ -56,23 +57,25 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
                 }
             }
         }
-    
+        
         with(binding.channelList) {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.placeholder.isVisible = isEmpty
-                    binding.channelList.isVisible = ! isEmpty
-                    binding.placeholder.showLoadingAnimation(isLoading)
-                    isInitialized = true
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    mAdapter.loadStateFlow.collectLatest {
+                        val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                        val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                        binding.placeholder.isVisible = isEmpty
+                        binding.channelList.isVisible = ! isEmpty
+                        binding.placeholder.showLoadingAnimation(isLoading)
+                        isInitialized = true
+                    }
                 }
             }
             adapter = mAdapter
             itemAnimator = null
             setHasFixedSize(true)
         }
-
+        
         binding.viewAllButton.setOnClickListener {
             parentFragment?.findNavController()?.navigate(R.id.menu_tv)
         }
@@ -82,8 +85,10 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadChannels().collectLatest {
-                mAdapter.submitData(it.filter { !it.isExpired })
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadChannels().collectLatest {
+                    mAdapter.submitData(it)
+                }
             }
         }
     }

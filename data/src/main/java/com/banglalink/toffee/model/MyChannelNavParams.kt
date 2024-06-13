@@ -1,10 +1,12 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelNavParams(
-    @SerializedName("channelOwnerId")
-    val channelOwnerId: Int,
-    @SerializedName("pageTitle")
+    @SerialName("channelOwnerId")
+    val channelOwnerId: Int = 0,
+    @SerialName("pageTitle")
     val pageTitle: String = ""
 )

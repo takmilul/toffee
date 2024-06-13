@@ -61,7 +61,7 @@ class ToffeeMediaDrmCallback(
             0,  /* cause= */
             ToffeeMediaDrmException("Drm token request failed")
         )
-        
+
         httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)
         return httpMediaDrmCallback.executeKeyRequest(uuid, request)
     }

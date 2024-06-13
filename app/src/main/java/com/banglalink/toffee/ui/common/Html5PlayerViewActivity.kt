@@ -10,11 +10,16 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.enums.WebActionType.*
+import com.banglalink.toffee.enums.WebActionType.CLOSE_APP
+import com.banglalink.toffee.enums.WebActionType.DEEP_LINK
+import com.banglalink.toffee.enums.WebActionType.FORCE_LOGOUT
+import com.banglalink.toffee.enums.WebActionType.HOME_SCREEN
+import com.banglalink.toffee.enums.WebActionType.LOGIN_DIALOG
+import com.banglalink.toffee.enums.WebActionType.MESSAGE_DIALOG
+import com.banglalink.toffee.enums.WebActionType.PLAY_CONTENT
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
-import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -39,7 +44,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MedalliaDigital.disableIntercept()
+//        MedalliaDigital.disableIntercept()
         val extras = intent.extras
         if (extras != null) {
             title = extras.getString(TITLE)
@@ -123,6 +128,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         return resources.assets
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (mWebView.canGoBack()) {
             mWebView.goBack()
@@ -133,7 +139,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
     override fun onDestroy() {
         progressDialog.dismiss()
-        MedalliaDigital.enableIntercept()
+//        MedalliaDigital.enableIntercept()
         heartBeatManager.triggerEventViewingContentStop()
         super.onDestroy()
     }

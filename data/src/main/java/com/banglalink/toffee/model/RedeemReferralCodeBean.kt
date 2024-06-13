@@ -1,22 +1,24 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class RedeemReferralCodeBean(
-    @SerializedName("referralStatus")
-    val referralStatus: String,
-    @SerializedName("referralStatusMessage")
-    val referralStatusMessage: String,
-    @SerializedName("isRedeemSuccess")
-    val isRedeemSuccess:Boolean?=false,
-    @SerializedName("messageTitle")
-    val title:String?=null,
-    @SerializedName("messageBody")
-    val message:String?=null,
-    @SerializedName("isBulletPointMessage")
-    val isBullterPointMessage:Boolean? = false,
-    @SerializedName("bulletMessage")
-    val bulletMessage:List<String>?,
-    @SerializedName("messageType")
-    val messageType:String?
+@Serializable
+data class RedeemReferralCodeBean(
+    @SerialName("referralStatus")
+    val referralStatus: String? = null,
+    @SerialName("referralStatusMessage")
+    val referralStatusMessage: String? = null,
+    @SerialName("isRedeemSuccess")
+    val isRedeemSuccess: Boolean? = false,
+    @SerialName("messageTitle")
+    val title: String? = null,
+    @SerialName("messageBody")
+    val message: String? = null,
+    @SerialName("isBulletPointMessage")
+    val isBullterPointMessage: Boolean? = false,
+    @SerialName("bulletMessage")
+    val bulletMessage: List<String>? = null,
+    @SerialName("messageType")
+    val messageType: String? = null
 )

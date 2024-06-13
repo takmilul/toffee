@@ -1,26 +1,31 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 data class CdnChannelItem(
-    @SerializedName("channelId")
-    val channelId: Long,
-    @SerializedName("urlType")
-    val urlType: Int,
-    @SerializedName("expiryDate")
+    @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
+    val channelId: Long = 0,
+    @SerialName("urlType")
+    @ColumnInfo(defaultValue = "0")
+    val urlType: Int = 0,
+    @SerialName("expiryDate")
     var expiryDate: String? = null,
-    @SerializedName("payload")
-    var payload: String,
+    @SerialName("payload")
+    var payload: String? = null,
 ) : BaseEntity() {
     @Ignore
-    @SerializedName("channelInfo")
+    @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        Gson().fromJson(payload, ChannelInfo::class.java)
+        payload?.let { NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(it) }
     } catch (ex: Exception) {
         null
     }

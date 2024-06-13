@@ -54,7 +54,7 @@ class FireworkFragment : Fragment() {
                 is Resource.Success -> {
                     val data = response.data.response
                     binding.fireworkContainer.removeAllViews()
-                    data.fireworkModels?.forEach {
+                    data?.fireworkModels?.forEach {
                         if (!it.playlistName.isNullOrBlank() && !it.playlistId.isNullOrBlank() && !it.channelId.isNullOrBlank() && it.isActive) {
                             val viewOption = viewOptions {
                                 baseOptions {

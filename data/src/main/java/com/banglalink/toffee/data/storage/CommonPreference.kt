@@ -1,15 +1,19 @@
 package com.banglalink.toffee.data.storage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.*
 import androidx.core.content.edit
 import com.banglalink.toffee.util.Utils
+import java.util.Locale
 
 const val COMMON_PREF_NAME = "LIFETIME_DATA"
 
+@SuppressLint("HardwareIds")
 class CommonPreference(private val pref: SharedPreferences, private val context: Context) {
     
     companion object {
@@ -52,14 +56,22 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     val deviceId: String by lazy {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
     }
-    
+
+    val deviceName: String by lazy {
+        val manufacturer = Build.MANUFACTURER
+        val model = Build.MODEL
+        if (model.lowercase(Locale.ROOT).startsWith(manufacturer.lowercase(Locale.ROOT))) {
+            model.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        } else {
+            "${manufacturer.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} $model"
+        }
+    }
+
     var appThemeMode: Int
         get() = pref.getInt(PREF_APP_THEME, Configuration.UI_MODE_NIGHT_YES)
         set(themeMode) {
             pref.edit().putInt(PREF_APP_THEME, themeMode).apply()
         }
-    
-    var appTheme: String = if (appThemeMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
     
     var isAlreadyForceLoggedOut: Boolean
         get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT, false)

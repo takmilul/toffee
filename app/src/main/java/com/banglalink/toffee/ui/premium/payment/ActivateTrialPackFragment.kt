@@ -8,9 +8,17 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.network.request.DataPackPurchaseRequest
+import com.banglalink.toffee.data.network.response.PackPaymentMethod
 import com.banglalink.toffee.databinding.FragmentActivateTrialPackBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.navigateTo
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.toInt
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -37,10 +45,69 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
         else binding.trialValidity.text = String.format(getString(R.string.trial_validity_text), viewModel.selectedDataPackOption.value?.packDuration ?: 0)
 
         binding.enableNow.safeClick({
-            progressDialog.show()
-            activateTrialPack()
+            
+            /**
+             * Checking user verification and pack verification for deeplink user flow.
+             */
+            requireActivity().checkVerification {
+                viewModel.paymentMethod.value?.let { paymentTypes ->
+                    var blTrialPackMethod: PackPaymentMethod? = null
+                    var nonBlTrialPackMethod: PackPaymentMethod? = null
+
+                    paymentTypes.free?.data?.forEach {
+
+                        if (it.isNonBlFree == 1) {
+                            nonBlTrialPackMethod = it
+                        } else {
+                            blTrialPackMethod = it
+                        }
+                    }
+                    if (mPref.isBanglalinkNumber != "true" && nonBlTrialPackMethod == null) {
+                        requireContext().showToast(getString(R.string.only_for_bl_users))
+                    } else if (mPref.isBanglalinkNumber != "false" && blTrialPackMethod == null) {
+                        requireContext().showToast(getString(R.string.only_for_non_bl_users))
+                    } else {
+                       val MNO = when {
+                            (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                            (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                            (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                            else -> "N/A"
+                        }
+                        // Send Log to FirebaseAnalytics
+                        ToffeeAnalytics.toffeeLogEvent(
+                            ToffeeEvents.BEGIN_PURCHASE,
+                            bundleOf(
+                                "source" to if (mPref.clickedFromChannelItem.value == true) "content_click" else "premium_pack_menu",
+                                "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                "currency" to "BDT",
+                                "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                "provider" to "Trial",
+                                "type" to "trial",
+                                "subtype" to null,
+                                "MNO" to MNO,
+                                "discount" to null,
+                            )
+                        )
+                        progressDialog.show()
+                        activateTrialPack()
+                    }
+                }
+
+            }
+
+
+
         })
-        binding.backImg.safeClick({ findNavController().navigateTo(R.id.paymentMethodOptions) })
+        binding.backImg.safeClick({
+            viewModel.clickableAdInventories.value?.let {
+                this.closeDialog()
+                viewModel.clickableAdInventories.value = null
+            } ?: run {
+                findNavController().navigateTo(R.id.paymentMethodOptions)
+            }
+        })
         binding.termsAndConditionsTwo.safeClick({ showTermsAndConditionDialog() })
         
         observeActivateTrialPack()
@@ -75,23 +142,92 @@ class ActivateTrialPackFragment : ChildDialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Success -> {
-                    if (it.data.status == PaymentStatusDialog.SUCCESS) {
-                        mPref.activePremiumPackList.value = it.data.loginRelatedSubsHistory
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0)
-                        )
-                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
-                    }
-                    else if (it.data.status == PaymentStatusDialog.UN_SUCCESS){
-                        val args = bundleOf(
-                            PaymentStatusDialog.ARG_STATUS_CODE to (it.data.status ?: 0),
-                            PaymentStatusDialog.ARG_STATUS_TITLE to "Trial Plan Activation Failed!",
-                            PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the trial plan activation failed. Please retry."
-                        )
-                        findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        if (it.data?.status == PaymentStatusDialog.SUCCESS) {
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_SUCCESS,
+                                bundleOf(
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                    "currency" to "BDT",
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                    "provider" to "Trial",
+                                    "type" to "trial",
+                                    "reason" to "N/A",
+                                    "MNO" to MNO,
+                                )
+                            )
+                            mPref.activePremiumPackList.value = it.data?.loginRelatedSubsHistory
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data?.status ?: 0)
+                            )
+                            val selectedPremiumPac = viewModel.selectedPremiumPack.value!!
+                            val selectedDataPac = viewModel.selectedDataPackOption.value!!
+                            
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        } else if (it.data?.status == PaymentStatusDialog.UN_SUCCESS) {
+                            val MNO = when {
+                                (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                                (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                                (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                                else -> "N/A"
+                            }
+                            // Send Log to FirebaseAnalytics
+                            ToffeeAnalytics.toffeeLogEvent(
+                                ToffeeEvents.PACK_ERROR,
+                                bundleOf(
+                                    "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                                    "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                                    "currency" to "BDT",
+                                    "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                                    "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                                    "provider" to "Trial",
+                                    "type" to "trial",
+                                    "reason" to "Due to some technical error, the trial plan activation failed. Please retry.",
+                                    "MNO" to MNO,
+                                )
+                            )
+                            val args = bundleOf(
+                                PaymentStatusDialog.ARG_STATUS_CODE to (it.data?.status ?: 0),
+                                PaymentStatusDialog.ARG_STATUS_TITLE to "Trial Plan Activation Failed!",
+                                PaymentStatusDialog.ARG_STATUS_MESSAGE to "Due to some technical error, the trial plan activation failed. Please retry."
+                            )
+                            findNavController().navigateTo(R.id.paymentStatusDialog, args)
+                        }
                     }
                 }
                 is Failure -> {
+                    val MNO = when {
+                        (mPref.isBanglalinkNumber).toBoolean() && mPref.isPrepaid -> "BL-prepaid"
+                        (mPref.isBanglalinkNumber).toBoolean() && !mPref.isPrepaid -> "BL-postpaid"
+                        (!(mPref.isBanglalinkNumber).toBoolean()) -> "non-BL"
+                        else -> "N/A"
+                    }
+                    // Send Log to FirebaseAnalytics
+                    ToffeeAnalytics.toffeeLogEvent(
+                        ToffeeEvents.PACK_ERROR,
+                        bundleOf(
+                            "pack_ID" to viewModel.selectedPremiumPack.value?.id.toString(),
+                            "pack_name" to viewModel.selectedPremiumPack.value?.packTitle.toString(),
+                            "currency" to "BDT",
+                            "amount" to viewModel.selectedDataPackOption.value?.packPrice.toString(),
+                            "validity" to viewModel.selectedDataPackOption.value?.packDuration.toString(),
+                            "provider" to "Trial",
+                            "type" to "trial",
+                            "reason" to it.error.msg,
+                            "MNO" to MNO,
+                        )
+                    )
                     requireContext().showToast(it.error.msg)
                 }
             }

@@ -7,9 +7,9 @@ import kotlin.random.Random
 
 class DrmLicenseRepositoryImpl(private val dao: DrmLicenseDao): DrmLicenseRepository {
     override suspend fun insert(item: DrmLicenseEntity) {
-        val entry = ByteArray(item.license.size + 5)
+        val entry = ByteArray((item.license?.size ?: 0) + 5)
         Random.Default.nextBytes(entry)
-        item.license.reversedArray().copyInto(entry, 2)
+        item.license?.reversedArray()?.copyInto(entry, 2)
         dao.insert(item.copy(license = entry))
     }
 
@@ -27,7 +27,7 @@ class DrmLicenseRepositoryImpl(private val dao: DrmLicenseDao): DrmLicenseReposi
 
     override suspend fun getByChannelId(channelId: Long): DrmLicenseEntity? {
         return dao.getByChannelId(channelId)?.let {
-            it.copy(license = it.license.sliceArray(2..it.license.size - 4).reversedArray())
+            it.copy(license = it.license?.sliceArray(2..it.license.size - 4)?.reversedArray())
         }
     }
 }

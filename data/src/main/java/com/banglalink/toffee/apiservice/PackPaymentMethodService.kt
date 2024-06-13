@@ -12,7 +12,7 @@ class PackPaymentMethodService @Inject constructor (
     private val preference: SessionPreference
 ) {
     
-    suspend fun loadData(packId: Int) : PackPaymentMethodBean {
+    suspend fun loadData(packId: Int) : PackPaymentMethodBean? {
         
         val request =  PackPaymentMethodRequest(
             preference.customerId,
@@ -28,7 +28,7 @@ class PackPaymentMethodService @Inject constructor (
                 request
             )
         }
-        
+
         return response.response
     }
 }

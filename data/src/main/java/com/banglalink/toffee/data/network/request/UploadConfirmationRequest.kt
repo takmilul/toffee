@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UploadConfirmationRequest(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Long,
-    @SerializedName("isConfirm")
+    @SerialName("isConfirm")
     val isConfirm: String,
-    @SerializedName("isCopyrightUploaded")
+    @SerialName("isCopyrightUploaded")
     val isCopyrightUploaded: Int
 ) : BaseRequest(ApiNames.CONFIRM_CONTENT_UPLOAD)

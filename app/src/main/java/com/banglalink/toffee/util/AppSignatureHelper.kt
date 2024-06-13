@@ -9,7 +9,7 @@ import android.util.Log
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.util.Arrays
 
 /*
   This is a helper class to generate your message hash to be included in your SMS message.

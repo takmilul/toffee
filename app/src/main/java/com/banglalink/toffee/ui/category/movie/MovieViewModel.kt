@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetContentService
-import com.banglalink.toffee.apiservice.GetMostPopularContents
+import com.banglalink.toffee.apiservice.GetMostPopularContentsService
 import com.banglalink.toffee.apiservice.LandingUserChannelsRequestParam
 import com.banglalink.toffee.apiservice.MovieCategoryDetailService
 import com.banglalink.toffee.apiservice.MoviesComingSoonService
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MovieViewModel @Inject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
-    private val trendingNowService: GetMostPopularContents.AssistedFactory,
+    private val trendingNowService: GetMostPopularContentsService.AssistedFactory,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val continueWatchingRepo: ContinueWatchingRepository,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,
@@ -55,7 +55,8 @@ class MovieViewModel @Inject constructor(
     val comingSoonContents = comingSoonResponse.toLiveData()
     private var originalCards = MoviesContentVisibilityCards()
     private var continueWatchingFlag: Boolean = false
-    
+    private var isContinueWatchingSection: Boolean = false
+
     fun loadMovieCategoryDetail(categoryId: Int, type: String = "VOD", limit: Int = 0, offset: Int = 0) {
         viewModelScope.launch {
             val response = try {
@@ -63,7 +64,7 @@ class MovieViewModel @Inject constructor(
             } catch (ex: Exception) {
                 null
             }
-            
+
             originalCards = response?.cards ?: MoviesContentVisibilityCards()
             
             moviesContentCardsResponse.value = originalCards.copy(
@@ -141,7 +142,7 @@ class MovieViewModel @Inject constructor(
         }
     }
     
-    val loadMoviePreviews by lazy{
+    fun loadMoviePreviews() {
         viewModelScope.launch {
             moviePreviewsResponse.value = try {
                 moviePreviewsService.loadData("VOD", 0, 0, 10, 0).filter { !it.isExpired }.map {
@@ -163,7 +164,7 @@ class MovieViewModel @Inject constructor(
         }
     }
     
-    val loadTrendingNowMovies by lazy {
+    fun loadTrendingNowMovies() {
         viewModelScope.launch {
             trendingNowMoviesResponse.value = try {
                 val response = trendingNowService.create(LandingUserChannelsRequestParam("VOD", 1, 0, false)).loadData(0, 10)
@@ -187,7 +188,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    val loadTelefilms by lazy {
+    fun loadTelefilms() {
         viewModelScope.launch {
             telefilmsResponse.value =  try{
                 getContentAssistedFactory.create(
@@ -211,7 +212,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    val loadComingSoonContents by lazy{
+    fun loadComingSoonContents() {
         viewModelScope.launch {
             comingSoonResponse.value = try{
                 comingSoonApiService.loadData("VOD", 1, 0, 10, 0).run { 
@@ -235,7 +236,7 @@ class MovieViewModel @Inject constructor(
                 if(item.channelInfo?.isExpired == false) item.channelInfo else null
             }.apply {
                 continueWatchingFlag = isNotEmpty()
-                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
             }

@@ -1,15 +1,17 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FavoriteRequest(
-    @SerializedName("contentId")
+    @SerialName("contentId")
     val contentId: Int,
-    @SerializedName("isFavorite")
+    @SerialName("isFavorite")
     val isFavorite: Int,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String
 ) : BaseRequest(ApiNames.SET_FAVORITES)

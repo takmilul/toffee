@@ -1,22 +1,24 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CreatePaymentRequest(
-    @SerializedName("mode")
+    @SerialName("mode")
     var mode: String? = null,
-    @SerializedName("payerReference")
+    @SerialName("payerReference")
     var payerReference: String? = null,
-    @SerializedName("callbackURL")
+    @SerialName("callbackURL")
     var callbackURL: String? = null,
-    @SerializedName("merchantAssociationInfo")
+    @SerialName("merchantAssociationInfo")
     var merchantAssociationInfo: String? = null,
-    @SerializedName("amount")
+    @SerialName("amount")
     var amount: String? = null,
-    @SerializedName("currency")
+    @SerialName("currency")
     var currency: String? = null,
-    @SerializedName("intent")
+    @SerialName("intent")
     var intent: String? = null,
-    @SerializedName("merchantInvoiceNumber")
+    @SerialName("merchantInvoiceNumber")
     var merchantInvoiceNumber: String? = null,
 )

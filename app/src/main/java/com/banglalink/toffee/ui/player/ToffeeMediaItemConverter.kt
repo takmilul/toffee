@@ -8,13 +8,15 @@ import androidx.media3.common.MediaItem.DrmConfiguration
 import androidx.media3.common.util.Assertions
 import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Log
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.common.images.WebImage
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.json.JSONException
 import org.json.JSONObject
 import java.net.MalformedURLException
@@ -112,12 +114,12 @@ class ToffeeMediaItemConverter(
 
     private fun channelInfoToJson(info: ChannelInfo): JSONObject {
         return JSONObject().apply {
-            put("channel_info", Gson().toJson(info))
+            put("channel_info", Json.encodeToString(info))
         }
     }
 
-    private fun jsonToChannelInfo(json: JSONObject): ChannelInfo {
-        return Gson().fromJson(json.getString("channel_info"), ChannelInfo::class.java)
+    private fun jsonToChannelInfo(jsonObject: JSONObject): ChannelInfo {
+        return NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(jsonObject.getString("channel_info"))
     }
 
     private fun getCastUrl(uri: String): String {
@@ -193,7 +195,7 @@ class ToffeeMediaItemConverter(
             if (playerConfigJson != null) {
                 json.put(KEY_PLAYER_CONFIG, playerConfigJson)
             }
-            json.put(KEY_CHANNEL_INFO, Gson().toJson(channelInfo))
+            json.put(KEY_CHANNEL_INFO, Json.encodeToString(channelInfo))
         } catch (e: JSONException) {
             throw RuntimeException(e)
         }

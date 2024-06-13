@@ -1,33 +1,39 @@
 package com.banglalink.toffee.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
+import com.banglalink.toffee.di.NetworkModuleLib
 import com.banglalink.toffee.model.ChannelInfo
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(indices = [Index(value = ["customerId", "channelId", "activityType", "activitySubType"], unique = true)])
 data class UserActivities(
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int = 0,
-    @SerializedName("channelId")
-    val channelId: Long,
-    @SerializedName("category")
-    val category: String,
-    @SerializedName("type")
-    val type: String,
-    @SerializedName("payload")
-    val payload: String,
-    @SerializedName("activityType")
-    val activityType: Int,
-    @SerializedName("activitySubType")
-    val activitySubType: Int,
+    @SerialName("channelId")
+    @ColumnInfo(defaultValue = "0")
+    val channelId: Long = 0,
+    @SerialName("category")
+    val category: String? = null,
+    @SerialName("type")
+    val type: String? = null,
+    @SerialName("payload")
+    val payload: String? = null,
+    @SerialName("activityType")
+    @ColumnInfo(defaultValue = "0")
+    val activityType: Int = 0,
+    @SerialName("activitySubType")
+    @ColumnInfo(defaultValue = "0")
+    val activitySubType: Int = 0,
 ) : BaseEntity() {
     @Ignore
-    @SerializedName("channelInfo")
+    @SerialName("channelInfo")
     val channelInfo: ChannelInfo? = try {
-        Gson().fromJson(payload, ChannelInfo::class.java)
+        payload?.let { NetworkModuleLib.providesJsonWithConfig().decodeFromString<ChannelInfo>(it) }
     } catch (ex: Exception) {
         null
     }

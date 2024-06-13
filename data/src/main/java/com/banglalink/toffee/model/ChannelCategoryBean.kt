@@ -1,8 +1,10 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ChannelCategoryBean(
-    @SerializedName("categories")
+    @SerialName("categories")
     val channelCategoryList: List<ChannelCategory>
 )

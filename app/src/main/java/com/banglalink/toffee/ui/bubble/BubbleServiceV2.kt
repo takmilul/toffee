@@ -6,12 +6,14 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import coil.load
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.BubbleViewV2LayoutBinding
+import com.banglalink.toffee.enums.BubbleType.FOOTBALL
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.ifNotNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -66,8 +68,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
                         it.adIconUrl.ifNotNullOrBlank {
                             binding.homeTeamFlag.load(it)
                         }
-                        binding.fifaTitleOne.text = it.bubbleText
-                        binding.fifaTitleOne.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
+                        binding.bubbleTitle.text = it.bubbleText
+                        binding.bubbleTitle.text = it.bubbleText?.trim()?.replace("\n", "<br/>")?.let {
                             HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
                         
@@ -150,7 +152,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
     private fun matchRunningState() {
         binding.awayTeamFlag.show()
         binding.liveGif.show()
-        binding.liveGif.load(getDrawable(R.drawable.bubble_live_gif))
+        binding.liveGif.load(ContextCompat.getDrawable(this, R.drawable.bubble_live_gif))
         bubbleConfig?.match?.homeTeam?.homeCountryFlag.ifNotNullOrBlank {
             bindingUtil.bindRoundImage(binding.homeTeamFlag, it)
         }
@@ -159,8 +161,8 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
         }
         val homeTeamScore = bubbleConfig?.match?.homeTeam?.homeScore?.isNotNullOrBlank { it } ?: "0"
         val awayTeamScore = bubbleConfig?.match?.awayTeam?.awayScore?.isNotNullOrBlank { it } ?: "0"
-        binding.scoreCard.text = "$homeTeamScore - $awayTeamScore"
-        binding.fifaTitleOne.text = "LIVE"
+        binding.scoreCard.text = if (mPref.bubbleType == FOOTBALL.value) "$homeTeamScore - $awayTeamScore" else bubbleConfig?.bubbleTextAction.toString()
+        binding.bubbleTitle.text = "LIVE"
     }
     
     private fun matchUpcomingState() {
@@ -179,7 +181,7 @@ class BubbleServiceV2 : BaseBubbleService(), IBubbleDraggableWindowItemEventList
             
             val convertedDayFormat: DateFormat = SimpleDateFormat("d MMM")
             val finalDay: String? = dateTime?.let { convertedDayFormat.format(it).toString() }
-            binding.fifaTitleOne.text = finalDay?.uppercase(Locale.getDefault())
+            binding.bubbleTitle.text = finalDay?.uppercase(Locale.getDefault())
             
             val convertedTimeFormat: DateFormat = SimpleDateFormat("h:mm a")
             val finalTime: String? = dateTime?.let { convertedTimeFormat.format(it).toString() }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -16,10 +17,10 @@ import androidx.paging.LoadState.Loading
 import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -27,7 +28,6 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.NativeAdAreaType
-import com.banglalink.toffee.enums.NativeAdType.SMALL
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.checkIfFragmentAttached
 import com.banglalink.toffee.extension.checkVerification
@@ -62,7 +62,7 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     private var _binding: FragmentCatchupBinding? = null
     private val binding get() = _binding!!
     private var headerAdapter: ChannelHeaderAdapter? = null
-    private var detailsAdapter: CatchUpDetailsAdapter? = null
+    private var detailsAdapter: CatchUpDetailsAdapterNew? = null
     private var nativeAdBuilder: NativeAdAdapter.Builder? = null
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
@@ -78,12 +78,12 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             }
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentItem = arguments?.getParcelable(CHANNEL_INFO)!!
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
@@ -92,41 +92,15 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.progressBar.load(R.drawable.content_loader)
         lifecycleScope.launch {
-            currentItem?.let { localSync.syncData(it) }
-            detailsAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
-                override fun onItemClicked(item: ChannelInfo) {
-                    checkIfFragmentAttached {
-                        homeViewModel.playContentLiveData.postValue(item)
-                    }
-                }
-                
-                override fun onOpenMenu(view: View, item: ChannelInfo) {
-                    super.onOpenMenu(view, item)
-                    onOptionClicked(view, item)
-                }
-                
-                override fun onProviderIconClicked(item: ChannelInfo) {
-                    super.onProviderIconClicked(item)
-                    checkIfFragmentAttached {
-                        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-                    }
-                }
-            })
-            headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
+            currentItem?.let { localSync.syncData(it, false, LocalSync.SYNC_FLAG_ALL) }
             _binding?.listview?.addItemDecoration(MarginItemDecoration(12))
             
             checkIfFragmentAttached {
-                observe(homeViewModel.vastTagLiveData) {
-                    initAdapter()
-                    
-                    if (currentItem?.channel_owner_id == mPref.customerId) {
-                        observeMyChannelVideos()
-                    } else {
-                        observeList()
-                    }
-                    if (mPref.nativeAdSettings.value == null) {
-                        homeViewModel.getVastTagV3(false)
-                    }
+                initAdapter()
+                if (currentItem?.channel_owner_id == mPref.customerId) {
+                    observeMyChannelVideos()
+                } else {
+                    observeList()
                 }
                 observeListState()
                 observeSubscribeChannel()
@@ -140,6 +114,15 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
+        if (!mPref.isVerifiedUser){
+            ToffeeAnalytics.toffeeLogEvent(
+                ToffeeEvents.LOGIN_SOURCE,
+                bundleOf(
+                    "source" to "follow_channel",
+                    "method" to "mobile"
+                )
+            )
+        }
         requireActivity().checkVerification {
             checkIfFragmentAttached {
                 if (item.isSubscribed == 0) {
@@ -157,17 +140,35 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
         val nativeAdSettings = mPref.nativeAdSettings.value?.find {
             it.area== NativeAdAreaType.RECOMMEND_VIDEO.value
         }
-        val recommendedAdUnitId = nativeAdSettings?.adUnitId
-        val recommendedAdInterval =  nativeAdSettings?.adInterval ?: 0
-        val isRecommendedActive = nativeAdSettings?.isActive ?:false
-
-        if (mPref.isNativeAdActive && isRecommendedActive && recommendedAdInterval > 0 && !recommendedAdUnitId.isNullOrBlank()) {
-            nativeAdBuilder = NativeAdAdapter.Builder.with(recommendedAdUnitId, detailsAdapter as Adapter<ViewHolder>, SMALL)
-            val nativeAdAdapter = nativeAdBuilder!!.adItemInterval(recommendedAdInterval).build(bindingUtil)
-            mAdapter = ConcatAdapter(headerAdapter, nativeAdAdapter)
-        } else {
-            mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
-        }
+        val adUnitId = nativeAdSettings?.adUnitId
+        val adInterval =  nativeAdSettings?.adInterval ?: 0
+        val isAdActive = nativeAdSettings?.isActive ?:false
+        val isNativeAdActive = mPref.isNativeAdActive && isAdActive && adInterval > 0 && !adUnitId.isNullOrBlank()
+        
+        headerAdapter = ChannelHeaderAdapter(currentItem, this@CatchupDetailsFragment, mPref)
+        detailsAdapter = CatchUpDetailsAdapterNew(isNativeAdActive, adInterval, adUnitId, mPref, bindingUtil, 
+            object : 
+            ProviderIconCallback<ChannelInfo> {
+            override fun onItemClicked(item: ChannelInfo) {
+                checkIfFragmentAttached {
+                    homeViewModel.playContentLiveData.postValue(item)
+                }
+            }
+            
+            override fun onOpenMenu(view: View, item: ChannelInfo) {
+                super.onOpenMenu(view, item)
+                onOptionClicked(view, item)
+            }
+            
+            override fun onProviderIconClicked(item: ChannelInfo) {
+                super.onProviderIconClicked(item)
+                checkIfFragmentAttached {
+                    homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
+                }
+            }
+        })
+        
+        mAdapter = ConcatAdapter(headerAdapter, detailsAdapter?.withLoadStateFooter(ListLoadStateAdapter{detailsAdapter?.retry()}))
         with(binding.listview) {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
@@ -224,11 +225,15 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             observe(homeViewModel.subscriptionLiveData) { response ->
                 when (response) {
                     is Resource.Success -> {
-                        currentItem?.apply {
-                            isSubscribed = response.data.isSubscribed
-                            subscriberCount = response.data.subscriberCount
+                        if (response.data == null) {
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        } else {
+                            currentItem?.apply {
+                                isSubscribed = response.data?.isSubscribed ?: 0
+                                subscriberCount = response.data?.subscriberCount ?: 0
+                            }
+                            headerAdapter?.notifyDataSetChanged()
                         }
-                        headerAdapter?.notifyDataSetChanged()
                     }
                     
                     is Resource.Failure -> {

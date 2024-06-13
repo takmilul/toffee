@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.response.TokenizedAccountInfo
 import com.banglalink.toffee.extension.ifNotNullOrEmpty
 import com.banglalink.toffee.extension.ifNullOrBlank
 import com.banglalink.toffee.extension.isNotNullOrBlank
@@ -37,7 +38,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val shareCountDbUrlLiveData = SingleLiveEvent<String>()
     val isViewCountDbUpdatedLiveData = MutableLiveData<Boolean>()
     val sessionTokenLiveData = MutableLiveData<String>()
-    val profileImageUrlLiveData = MutableLiveData<String>()
+    val profileImageUrlLiveData = MutableLiveData<Any>()
     val splashConfigLiveData = MutableLiveData<List<DecorationData>?>()
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
@@ -52,7 +53,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val bubbleVisibilityLiveData = SingleLiveEvent<Boolean>()
     val bubbleConfigLiveData = MutableLiveData<BubbleConfig?>()
     val nativeAdSettings = MutableLiveData<List<NativeAdSettings>?>()
-    val shareableHashLiveData = MutableLiveData<Pair<String?, String?>>().apply { value = Pair(null, null) }
+    val shareableHashLiveData = SingleLiveEvent<Pair<String?, String?>>().apply { value = Pair(null, null) }
     val vastTagListV3LiveData = MutableLiveData<List<VastTagV3>?>()
     val categoryId = MutableLiveData<Int>()
     val categoryName = MutableLiveData<String>()
@@ -62,11 +63,27 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val postLoginEventAction = SingleLiveEvent<(()->Unit)?>()
     val preLoginDestinationId = SingleLiveEvent<Int?>()
     val doActionBeforeReload = MutableLiveData<Boolean>()
+    val isManagePaymentPageReloaded = MutableLiveData<Boolean>()
+    val shouldReloadAfterLogin = MutableLiveData<Boolean>()
+    val shouldIgnoreReloadAfterLogout = MutableLiveData<Boolean>()
     val ramadanScheduleLiveData = MutableLiveData<List<RamadanSchedule>>()
     val activePremiumPackList = MutableLiveData<List<ActivePack>?>()
+    val tokenizedAccountInfoList = MutableLiveData<List<TokenizedAccountInfo>?>()
     val packDetailsPageRefreshRequired = SingleLiveEvent<Boolean?>()
+    val refreshRequiredForClickableAd = SingleLiveEvent<Boolean?>()
+    val clickedFromChannelItem = SingleLiveEvent<Boolean?>()
     val prePurchaseClickedContent = SingleLiveEvent<ChannelInfo>()
     val radioBannerImgUrl = MutableLiveData<String>()
+    val signingFromPrem = SingleLiveEvent<Boolean?>()
+    val packSource = SingleLiveEvent<Boolean?>()   //describes pack journey from menu or clicking on prem content
+    var isDisablePip = MutableLiveData<Boolean>().apply { value = false } // when going outside of the app by using a toffee deeplink, disable pip to solve the player blackout issue
+    val newUser = SingleLiveEvent<String>()
+    var qrSignInStatus = MutableLiveData<String>()
+    var qrSignInResponseCode = MutableLiveData<String>()
+
+    var paymentDiscountPercentage= MutableLiveData<String>()
+
+    var selectedPaymentType= MutableLiveData<String>()
 
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
@@ -140,7 +157,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(isVerified) {
             pref.edit().putBoolean(PREF_VERIFICATION, isVerified).apply()
         }
-    
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
         set(balance) {
@@ -778,6 +794,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isPrepaid: Boolean
         get() = pref.getBoolean(PREF_IS_PREPAID, true)
         set(value) = pref.edit { putBoolean(PREF_IS_PREPAID, value) }
+
+    var isQrCodeEnable: Boolean
+        get() = pref.getBoolean(PREF_IS_QR_CODE_ENABLE, true)
+        set(value) = pref.edit { putBoolean(PREF_IS_QR_CODE_ENABLE, value) }
     
     var bkashExecuteUrl: String
         get() = pref.getString(PREF_BKASH_EXECUTE_URL, "") ?: ""
@@ -806,6 +826,42 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, false)
         set(value) = pref.edit { putBoolean(PREF_MNP_CALL_FOR_SUBSCRIPTION, value) }
 
+    var playerScreenBrightness: Float
+        get() = pref.getFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, 0.36f)
+        set(value) = pref.edit { putFloat(PREF_PLAYER_SCREEN_BRIGHTNESS, value) }
+
+    var kabbikAccessToken: String
+        get() = pref.getString(PREF_KABBIK_ACCESS_TOKEN, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KABBIK_ACCESS_TOKEN, value) }
+
+    var kabbikTokenExpiryTime: String
+        get() = pref.getString(PREF_KABBIK_TOKEN_EXPIRY_TIME, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KABBIK_TOKEN_EXPIRY_TIME, value) }
+
+    var bubblePermissionDialogTitle: String
+        get() = pref.getString( PREF_BUBBLE_PERMISSION_DIALOG_TITLE, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_PERMISSION_DIALOG_TITLE, value) }
+
+    var bubblePermissionDialogBody: String
+        get() = pref.getString(PREF_BUBBLE_PERMISSION_DIALOG_BODY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_PERMISSION_DIALOG_BODY, value) }
+
+    var bubbleMenuText: String
+        get() = pref.getString(PREF_BUBBLE_MENU_TEXT, "") ?: ""
+        set(value) = pref.edit { putString(PREF_BUBBLE_MENU_TEXT, value) }
+
+    var isKeepAliveApiActive: Boolean
+        get() = pref.getBoolean( PREF_IS_KEEP_ALIVE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_KEEP_ALIVE_ACTIVE, value) }
+    
+    var keepAliveApiCallingFrequency: Long
+        get() = pref.getLong(PREF_KEEP_ALIVE_API_CALLING_FREQUENCY, 0L) ?: 0L
+        set(value) = pref.edit { putLong(PREF_KEEP_ALIVE_API_CALLING_FREQUENCY, value) }
+    
+    var keepAliveApiEndPoint: String
+        get() = pref.getString(PREF_KEEP_ALIVE_API_END_POINT, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KEEP_ALIVE_API_END_POINT, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -842,7 +898,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             mqttIsActive = it.mqttIsActive == 1
             isMqttRealtimeSyncActive = it.isMqttRealtimeSyncActive == 1
             
-            isCastEnabled = it.isCastEnabled == 1
+            isCastEnabled = false //it.isCastEnabled == 1
             isCastUrlOverride = it.isCastUrlOverride == 1
             castReceiverId = it.castReceiverId ?: ""
             castOverrideUrl = it.castOverrideUrl ?: ""
@@ -922,10 +978,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bkashCallbackUrl = it.bkashCallbackUrl.toString()
             bkashApiRetryingCount = it.bkashApiRetryingCount ?: 0
             bkashApiRetryingDuration = it.bkashApiRetryingDuration ?: 0L
-            isPrepaid = it.isPrepaid ?: true
+//            isPrepaid = it.isPrepaid ?: true
+            isQrCodeEnable = it.isQrCodeEnable == 1
+
             isMnpCallForSubscription = it.isMnpCallForSubscription ?: false
             faqUrl = it.faqUrl ?: ""
-
+            bubblePermissionDialogTitle = it.bubblePermissionDialogTitle ?: ""
+            bubblePermissionDialogBody = it.bubblePermissionDialogBody ?: ""
+            bubbleMenuText = it.bubbleMenuText ?: ""
+            
+            isKeepAliveApiActive = it.isKeepAliveApiActive
+            keepAliveApiCallingFrequency = it.keepAliveApiCallingFrequency
+            keepAliveApiEndPoint = it.keepAliveApiEndPoint ?: ""
+            
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -1081,6 +1146,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BKASH_API_RETRYING_COUNT = "pref_bkash_api_retrying_count"
         private const val PREF_BKASH_API_RETRYING_DURATION = "pref_bkash_api_retrying_duration"
         private const val PREF_IS_PREPAID = "pref_is_prepaid"
+        private const val PREF_IS_QR_CODE_ENABLE = "pref_is_Qr_Code_Enable"
         private const val PREF_BKASH_EXECUTE_URL = "pref_bkash_execute_url"
         private const val PREF_BKASH_QUERY_PAYMENT_URL = "pref_bkash_query_payment_url"
         private const val PREF_FAQ_URL = "pref_faq_url"
@@ -1088,6 +1154,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_LOGGEDIN_FROM_SUB_HISTORY_STATUS = "pref_loggedin_from_subhistory_status"
         private const val PREF_MNP_CALL_FOR_SUBSCRIPTION = "pref_mnp_call_for_subscription"
         private const val RADIO_BANNER = "radio_banner"
+        private const val PREF_PLAYER_SCREEN_BRIGHTNESS = "player-screen-brightness"
+        private const val PREF_KABBIK_ACCESS_TOKEN = "pref_kabbik_access_token"
+        private const val PREF_KABBIK_TOKEN_EXPIRY_TIME = "pref_kabbik_token_expiry_time"
+        private const val PREF_BUBBLE_PERMISSION_DIALOG_TITLE = "pref_bubble_permission_dialog_title"
+        private const val PREF_BUBBLE_PERMISSION_DIALOG_BODY = "pref_bubble_permission_dialog_body"
+        private const val PREF_BUBBLE_MENU_TEXT = "pref_bubble_menu_text"
+        private const val PREF_IS_KEEP_ALIVE_ACTIVE = "pref_is_keep_alive_api_active"
+        private const val PREF_KEEP_ALIVE_API_CALLING_FREQUENCY = "pref_is_keep_alive_api_calling_frequency"
+        private const val PREF_KEEP_ALIVE_API_END_POINT = "pref_is_keep_alive_api_end_point"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetContentCategories
-import com.banglalink.toffee.apiservice.GetProfile
+import com.banglalink.toffee.apiservice.GetProfileService
 import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.apiservice.TermsConditionService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
@@ -23,14 +22,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewProfileViewModel @Inject constructor(
-    private val profileApi: GetProfile,
-    private val categoryApi: GetContentCategories,
+    private val profileApi: GetProfileService,
     private val termsConditionService: TermsConditionService,
     private val myChannelDetailApiService: MyChannelEditDetailService,
 ) : ViewModel() {
-
-    private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
-    val termsAndConditionResult = MutableLiveData<Resource<TermsAndCondition>>()
+    
+    private val _data = MutableLiveData<Resource<MyChannelEditBean?>>()
+    private val termsAndConditionResult = MutableLiveData<Resource<TermsAndCondition?>>()
     val editChannelResult = _data.toLiveData()
     val profileForm = MutableLiveData<EditProfileForm>()
     val categories = MutableLiveData<List<Category>>()
@@ -46,9 +44,9 @@ class ViewProfileViewModel @Inject constructor(
 //        }
 //    }
     
-    fun loadCustomerProfile(): LiveData<Resource<EditProfileForm>> {
+    fun loadCustomerProfile(): LiveData<Resource<EditProfileForm?>> {
         return resultLiveData {
-            profileApi().profile.toProfileForm()
+            profileApi()?.profile?.toProfileForm()
         }
     }
     
@@ -58,7 +56,7 @@ class ViewProfileViewModel @Inject constructor(
             _data.postValue(response)
         }
     }
-
+    
     fun terms() {
         viewModelScope.launch {
             val response = resultFromResponse { termsConditionService.execute() }

@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Rule
 import org.junit.rules.ExpectedException
-import org.junit.rules.TestRule
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito

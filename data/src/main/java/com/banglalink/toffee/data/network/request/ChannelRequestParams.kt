@@ -1,20 +1,22 @@
 package com.banglalink.toffee.data.network.request
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ChannelRequestParams(
-    @SerializedName("category")
+    @SerialName("category")
     val category: String,
-    @SerializedName("categoryId")
+    @SerialName("categoryId")
     val categoryId: Int,
-    @SerializedName("subcategory")
+    @SerialName("subcategory")
     val subcategory: String,
-    @SerializedName("subcategoryId")
+    @SerialName("subcategoryId")
     val subcategoryId: Int,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("isFilter")
+    @SerialName("isFilter")
     val isFilter: Int = 0,
-    @SerializedName("hashTag")
+    @SerialName("hashTag")
     val hashTag: String = "null"
 )

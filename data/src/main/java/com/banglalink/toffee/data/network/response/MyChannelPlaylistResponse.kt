@@ -1,13 +1,15 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.MyChannelPlaylistBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyChannelPlaylistResponse(
-    @SerializedName("response")
-    val response: MyChannelPlaylistBean,
-    @SerializedName("isOwner")
-    val isOwner: Int,
-    @SerializedName("channelId")
-    val channelId: String
+    @SerialName("response")
+    val response: MyChannelPlaylistBean? = null,
+    @SerialName("isOwner")
+    val isOwner: Int = 0,
+    @SerialName("channelId")
+    val channelId: String? = "0"
 ) : BaseResponse()

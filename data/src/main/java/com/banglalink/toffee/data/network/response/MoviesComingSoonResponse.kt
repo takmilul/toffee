@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.response
 
 import com.banglalink.toffee.model.ComingSoonBean
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MoviesComingSoonResponse(
-    @SerializedName("response")
-    val response: ComingSoonBean
+    @SerialName("response")
+    val response: ComingSoonBean? = null
 ) : BaseResponse()

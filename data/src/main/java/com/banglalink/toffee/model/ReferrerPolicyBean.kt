@@ -1,18 +1,20 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ReferrerPolicyBean(
-    @SerializedName("isPromotionMessageEnabled")
-    val isPromotionMessageEnabled: Boolean,
-    @SerializedName("promotionMessage")
-    val promotionMessage: String?,
-    @SerializedName("messageReadMoreEnabled")
-    val messageReadMoreEnabled: Boolean,
-    @SerializedName("readMoreDetails")
-    val readMoreDetails: String?,
-    @SerializedName("fontSize")
-    val fontSize: Int,
-    @SerializedName("fontColor")
-    val fontColor: String
+    @SerialName("isPromotionMessageEnabled")
+    val isPromotionMessageEnabled: Boolean = false,
+    @SerialName("promotionMessage")
+    val promotionMessage: String? = null,
+    @SerialName("messageReadMoreEnabled")
+    val messageReadMoreEnabled: Boolean = false,
+    @SerialName("readMoreDetails")
+    val readMoreDetails: String? = null,
+    @SerialName("fontSize")
+    val fontSize: Int = 0,
+    @SerialName("fontColor")
+    val fontColor: String? = null
 )

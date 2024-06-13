@@ -1,29 +1,31 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class VoucherPaymentBean (
 
-    @SerializedName("is_valid_voucher")
-    val isValidVoucher: Boolean,
-    @SerializedName("partner_type")
-    val partnerType: String?=null,
-    @SerializedName("partner_name")
-    val partnerName: String?=null,
-    @SerializedName("partner_id")
-    val partnerId: Int?=null,
-    @SerializedName("partner_campaigns_name")
-    val partnerCampaignsName: String?=null,
-    @SerializedName("partner_campaigns_id")
-    val partnerCampaignsId: Int?=null,
-    @SerializedName("campaigns_duration")
-    val campaignsDuration: Int,
-    @SerializedName("campaigns_expire_date")
-    val campaignsExpireDate: String,
-    @SerializedName("message")
-    val message: String
+    @SerialName("is_valid_voucher")
+    val isValidVoucher: Boolean = false,
+    @SerialName("partner_type")
+    val partnerType: String? = null,
+    @SerialName("partner_name")
+    val partnerName: String? = null,
+    @SerialName("partner_id")
+    val partnerId: Int? = null,
+    @SerialName("partner_campaigns_name")
+    val partnerCampaignsName: String? = null,
+    @SerialName("partner_campaigns_id")
+    val partnerCampaignsId: Int? = null,
+    @SerialName("campaigns_duration")
+    val campaignsDuration: Int = 0,
+    @SerialName("campaigns_expire_date")
+    val campaignsExpireDate: String? = null,
+    @SerialName("message")
+    val message: String? = null
 
 ): Parcelable

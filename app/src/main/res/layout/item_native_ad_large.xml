@@ -67,32 +67,21 @@
                     app:layout_constraintEnd_toEndOf="@id/adPoster"
                     tools:text="00:00" />
                 
-                <ImageView
-                    android:id="@+id/ad_app_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_profile_image"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/adPoster"
-                    tools:src="@drawable/ic_menu_profile" />
-                
                 <TextView
                     android:id="@+id/ad_headline"
                     style="@style/programNameTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:maxLines="2"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:ellipsize="end"
                     android:gravity="center_vertical"
-                    app:layout_goneMarginLeft="16dp"
+                    android:maxLines="2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/ad_app_icon"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/adPoster"
+                    app:layout_constraintBottom_toTopOf="@id/ad_body"
+                    app:layout_constraintVertical_chainStyle="packed"
                     tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need" />
                 
                 <TextView
@@ -101,11 +90,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:fontFamily="@font/roboto_regular"
+                    android:maxLines="1"
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="@dimen/default_text_size"
                     app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toTopOf="@id/ad_call_to_action"
                     app:layout_constraintEnd_toEndOf="@id/ad_headline"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintHorizontal_chainStyle="packed"
@@ -119,8 +109,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginVertical="10dp"
                     android:textColor="@color/white_transparency"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

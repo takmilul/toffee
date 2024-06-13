@@ -1,19 +1,13 @@
 package com.banglalink.toffee.db
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.DrmLicenseDao
-import com.banglalink.toffee.data.database.dao.FavoriteItemDao
-import com.banglalink.toffee.data.database.dao.TVChannelDao
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
-import com.banglalink.toffee.data.database.entities.FavoriteItem
-import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.impl.DrmLicenseRepositoryImpl
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert

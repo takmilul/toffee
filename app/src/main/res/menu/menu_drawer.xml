@@ -59,6 +59,11 @@
     <group
         android:id="@+id/group3"
         android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/menu_active_tv"
+            android:icon="@drawable/tv"
+            android:title="@string/menu_active_tv" />
         
         <item
             android:id="@+id/menu_settings"

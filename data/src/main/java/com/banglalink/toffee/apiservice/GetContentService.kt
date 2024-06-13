@@ -8,7 +8,6 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
-import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -18,8 +17,6 @@ class GetContentService @AssistedInject constructor(
     private val preference: SessionPreference,
     @Assisted private val requestParams: ChannelRequestParams,
 ) : BaseApiService<ChannelInfo> {
-    
-    val gson = Gson()
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO {
@@ -37,7 +34,7 @@ class GetContentService @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.filter {
+        return response.response?.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {

@@ -4,24 +4,21 @@ import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.FIREBASE_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
-class SendFirebaseConnectionErrorEvent @Inject constructor(
-    private val preference: SessionPreference,
-) {
-    
-    private val gson = Gson()
+class SendFirebaseConnectionErrorEvent @Inject constructor() {
     
     suspend fun execute(sendToPubSub: Boolean = true) {
-        PubSubMessageUtil.sendMessage(gson.toJson(FirebaseConnectionErrorData()), FIREBASE_ERROR_TRACK_TOPIC)
+        PubSubMessageUtil.sendMessage(FirebaseConnectionErrorData(), FIREBASE_ERROR_TRACK_TOPIC)
     }
 }
 
+@Serializable
 data class FirebaseConnectionErrorData(
-    @SerializedName("apiName")
+    @SerialName("apiName")
     val apiName: String = "",
-    @SerializedName("phoneNumber")
+    @SerialName("phoneNumber")
     val phoneNo: String = SessionPreference.getInstance().phoneNumber,
 ): PubSubBaseRequest()

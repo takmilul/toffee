@@ -3,6 +3,7 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.ToffeeAnalytics.facebookAnalytics
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
@@ -13,8 +14,8 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * Posts some events in [FirebaseAnalytics] and [facebookAnalytics]
@@ -23,7 +24,6 @@ import com.google.gson.annotations.SerializedName
  */
 object ToffeeAnalytics {
     
-    private val gson = Gson()
     private lateinit var facebookAnalytics: AppEventsLogger
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private var firebaseCrashlytics = FirebaseCrashlytics.getInstance()
@@ -46,8 +46,10 @@ object ToffeeAnalytics {
      * Set UserId in [FirebaseAnalytics] and [FirebaseCrashlytics]
      */
     fun updateCustomerId(customerId: Int) {
-        firebaseAnalytics.setUserId(customerId.toString())
-        firebaseCrashlytics.setUserId(customerId.toString())
+        if (this::firebaseAnalytics.isInitialized) {
+            firebaseAnalytics.setUserId(customerId.toString())
+            firebaseCrashlytics.setUserId(customerId.toString())
+        }
     }
     
     /**
@@ -57,8 +59,7 @@ object ToffeeAnalytics {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
         }
-        val logMsg = gson.toJson(ApiFailData(apiName, errorMsg))
-        PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
+        PubSubMessageUtil.sendMessage(ApiFailData(apiName, errorMsg), API_ERROR_TRACK_TOPIC)
     }
     
     /**
@@ -86,16 +87,20 @@ object ToffeeAnalytics {
             "error_value" to logValue.toString()
         )
         firebaseCrashlytics.log(logValue.toString())
-        firebaseAnalytics.logEvent("player_error", bundle)
+        if (this::firebaseAnalytics.isInitialized) {
+            firebaseAnalytics.logEvent("player_error", bundle)
+        }
     }
     
     /**
      * Log Force Play event in [FirebaseAnalytics]
      */
     fun logForcePlay() {
-        val params = Bundle()
-        params.putString("msg", "force play occurred")
-        firebaseAnalytics.logEvent("player_event", params)
+        if (this::firebaseAnalytics.isInitialized) {
+            val params = Bundle()
+            params.putString("msg", "force play occurred")
+            firebaseAnalytics.logEvent("player_event", params)
+        }
     }
     
     /**
@@ -116,11 +121,52 @@ object ToffeeAnalytics {
      * Log Events in [FirebaseAnalytics] and [facebookAnalytics]
      */
     fun logEvent(event: String, params: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
-        if (SessionPreference.getInstance().isFcmEventActive) {
+        if (SessionPreference.getInstance().isFcmEventActive && this::firebaseAnalytics.isInitialized) {
             firebaseAnalytics.logEvent(event, params)
         }
-        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent && this::facebookAnalytics.isInitialized) {
             facebookAnalytics.logEvent(event, params)
+        }
+    }
+
+    /**
+     * toffeeLog Events in [FirebaseAnalytics] and [facebookAnalytics]
+     */
+    fun toffeeLogEvent(event: String, customParams: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
+        val commonParams = Bundle().apply {
+            putString("app_version", CommonPreference.getInstance().appVersionName)
+            putString("country", SessionPreference.getInstance().geoLocation)
+            putString("device_model", CommonPreference.getInstance().deviceName )
+            putString("operating_system", "Android")
+            putString("OS_version", "Android " + Build.VERSION.RELEASE)
+            putString("platform", "Android")
+            putString("region", SessionPreference.getInstance().geoRegion)
+        }
+
+        val combinedParams = customParams?.let { params ->
+            val mergedParams = Bundle(commonParams).apply {
+                putAll(params)
+            }
+            mergedParams
+        } ?: commonParams
+
+        // Replacing blank or null values with N/A
+        combinedParams.keySet().forEach {
+            val value = combinedParams.getString(it)
+            if (value.isNullOrBlank() || value.equals("NULL", ignoreCase = true)) {
+                combinedParams.putString(it, "N/A")
+            } else if (value == "Toffee") {
+                combinedParams.putString(it, "Home")
+            }
+        }
+
+        if (SessionPreference.getInstance().isFcmEventActive && this::firebaseAnalytics.isInitialized) {
+            firebaseAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Firebase event logged: $event, params: $combinedParams")
+        }
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent && this::facebookAnalytics.isInitialized) {
+            facebookAnalytics.logEvent(event, combinedParams)
+            Log.d("toffeeLogEvent", "Facebook event logged: $event, params: $combinedParams")
         }
     }
     
@@ -129,17 +175,20 @@ object ToffeeAnalytics {
      */
     fun logUserProperty(propertyMap: Map<String, String>) {
         propertyMap.forEach {
-            firebaseAnalytics.setUserProperty(it.key, it.value)
+            if (this::firebaseAnalytics.isInitialized) {
+                firebaseAnalytics.setUserProperty(it.key, it.value)
+            }
         }
     }
     
     /**
      * API fail log in PUB/SUB
      */
-    class ApiFailData(
-        @SerializedName("apiName")
+    @Serializable
+    data class ApiFailData(
+        @SerialName("apiName")
         val apiName: String,
-        @SerializedName("errorMsg")
+        @SerialName("errorMsg")
         val apiError: String
     ) : PubSubBaseRequest()
 } 

@@ -1,17 +1,19 @@
 package com.banglalink.toffee.data.network.request
 
 import com.banglalink.toffee.apiservice.ApiNames
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContentShareableRequest(
-    @SerializedName("videoShareUrl")
+    @SerialName("videoShareUrl")
     val videoShareUrl: String,
-    @SerializedName("customerId")
+    @SerialName("customerId")
     val customerId: Int,
-    @SerializedName("password")
+    @SerialName("password")
     val password: String,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String? = null,
-    @SerializedName("telcoId")
+    @SerialName("telcoId")
     val telcoId: Int = 1,
 ) : BaseRequest(ApiNames.GET_CONTENT_FROM_SEARCHABLE_URL)

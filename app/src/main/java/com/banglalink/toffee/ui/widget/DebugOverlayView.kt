@@ -48,24 +48,24 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
     private fun resetState() {
         overlayData?.let { data ->
             resetViewState()
-            customTextView?.text = data.params.customText
-            customTextView?.isVisible = data.params.customText.isNotBlank()
-            debugTextView?.text = getFormattedDebugText(data.params.displayParams)
+            customTextView?.text = data.params?.customText
+            customTextView?.isVisible = data.params?.customText?.isNotBlank() == true
+            debugTextView?.text = data.params?.displayParams?.let { getFormattedDebugText(it) } ?: ""
         }
     }
 
     private fun resetViewState() {
         overlayData?.let { data->
-            if(data.params.bgColorCode.isNotBlank()) {
-                val bgColor = Color.parseColor(data.params.bgColorCode)
+            if(data.params?.bgColorCode?.isNotBlank() == true) {
+                val bgColor = Color.parseColor(data.params?.bgColorCode)
                 setBackgroundColor(bgColor)
             }
-            if(data.params.fontColorCode.isNotBlank()) {
-                val textColor = Color.parseColor(data.params.fontColorCode)
+            if(data.params?.fontColorCode?.isNotBlank() == true) {
+                val textColor = Color.parseColor(data.params?.fontColorCode)
                 customTextView?.setTextColor(textColor)
                 debugTextView?.setTextColor(textColor)
             }
-            val fontSize = data.params.fontSize.replace("[^\\d.]".toRegex(), "").toIntOrNull()
+            val fontSize = data.params?.fontSize?.replace("[^\\d.]".toRegex(), "")?.toIntOrNull()
             fontSize?.let {
                 customTextView?.textSize = it.toFloat()
                 debugTextView?.textSize = it.toFloat()

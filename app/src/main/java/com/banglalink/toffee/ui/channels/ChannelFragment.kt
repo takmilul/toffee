@@ -54,7 +54,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                 putInt("sub_category_id", subCategoryID)
                 putString("sub_category", subCategory)
                 putString("category", category)
-                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "TV Channels")
+                putString("title", if(isStingray) "Music Videos" else if (isFmRadio) "FM Radio" else "Live")
                 putBoolean("show_selected", showSelected)
                 putBoolean("is_stingray", isStingray)
                 putBoolean("is_fmRadio", isFmRadio)
@@ -123,8 +123,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         viewLifecycleOwner.lifecycleScope.launch {
             with(channelViewModel.getChannels(0, isStingray, isFmRadio)) {
                 collectLatest { tvList ->
-                    val res = tvList?.groupBy { it.categoryName.trimIndent() }?.map {
-                        val categoryName = it.key.trimIndent()
+                    val res = tvList?.groupBy { it.categoryName?.trimIndent() }?.map {
+                        val categoryName = it.key?.trimIndent()
                         val categoryList = it.value.map { ci -> ci.channelInfo }
                         StickyHeaderInfo(categoryName, categoryList)
                     }
