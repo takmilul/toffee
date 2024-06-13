@@ -6,8 +6,8 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "144"
-appVersionName = "7.2.1"
+appVersionCode = "145"
+appVersionName = "7.2.2"
 
 gradle-plugin-version = "8.4.1"
 
@@ -94,10 +94,10 @@ play-publisher-version = "3.9.0"
 # Firebase
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "24.0.0"
-firebase-analytics-version = "22.0.0"
+firebase-analytics-version = "22.0.1"
 firebase-firestore-version = "25.0.0"
 firebase-in-app-message-version = "21.0.0"
-firebase-crashlytics-version = "19.0.0"
+firebase-crashlytics-version = "19.0.1"
 firebase-crashlytics-plugin-version = "3.0.1"
 firebase-appdistribution-plugin-version = "5.0.0"
 
