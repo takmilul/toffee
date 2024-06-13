@@ -102,7 +102,9 @@ class HeartBeatManager @Inject constructor(
         isAppForeGround = false
         coroutineScope.cancel()
         coroutineScope3.cancel()
-        coroutineScope4.cancel()
+        if (this::coroutineScope4.isInitialized && coroutineScope4.isActive) {
+            coroutineScope4.cancel()
+        }
         
         try {
             val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
