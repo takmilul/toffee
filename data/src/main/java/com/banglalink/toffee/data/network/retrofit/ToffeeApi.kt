@@ -105,6 +105,7 @@ interface ToffeeApi {
     
     @POST("v1/keep-alive")
     suspend fun sendKeepAlive(
+        @Url url: String,
         @Body keepAliveRequest: KeepAliveRequest
     ):KeepAliveResponse
 

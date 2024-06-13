@@ -17,7 +17,8 @@ class KeepAliveService @Inject constructor(
     suspend fun execute(keepAliveRequest: KeepAliveRequest): KeepAliveBean? {
         val response = tryIO {
             toffeeApi.sendKeepAlive(
-                keepAliveRequest
+                url = preference.faqUrl,
+                keepAliveRequest = keepAliveRequest
             )
         }
         return response.response
