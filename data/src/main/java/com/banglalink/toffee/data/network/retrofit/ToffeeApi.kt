@@ -102,6 +102,11 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body heartBeatRequest: HeartBeatRequest
     ):HeartBeatResponse
+    
+    @POST("v1/keep-alive")
+    suspend fun sendKeepAlive(
+        @Body keepAliveRequest: KeepAliveRequest
+    ):KeepAliveResponse
 
     @POST("packages-with-subscription")
     suspend fun getPackageList(@Body packageListRequest: PackageListRequest):PackageListResponse
