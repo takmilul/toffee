@@ -634,6 +634,33 @@
         <item name="android:radius">12dp</item>
     </style>
     
+    <style name="fireworkFeedStyle">
+        <item name="fw_feedTitleTextNumberOfLines">2</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="fw_feedTitleTextColor">@android:color/white</item>
+        <item name="fw_feedTitleTextTypeface">@font/roboto_regular</item>
+        <item name="fw_feedTitleTextSize">@dimen/default_text_size</item>
+        <item name="fw_feedTitleBackgroundColor">@color/overlay_dark_color</item>
+        <item name="fw_feedTitlePosition">nested</item>
+        <item name="fw_feedTitleTextPadding">6dp</item>
+        <item name="fw_itemSpacing">5dp</item>
+        <item name="fw_playIconWidth">32dp</item>
+        <item name="fw_roundedCorner">true</item>
+        <item name="fw_roundedCornerRadius">12dp</item>
+        <item name="fw_showFeedTitle">true</item>
+        <item name="fw_showPlayIcon">true</item>
+        <item name="fw_showFireworkLogo">false</item>
+        <item name="fw_feedAutoplay">false</item>
+        <item name="fw_autoPlayOnComplete">true</item>
+        <item name="fw_adBadgeIsHidden">true</item>
+        <item name="fw_adBadgeShowOnThumbnails">false</item>
+        <item name="fw_enablePipMode">false</item>
+        <item name="fw_showShareButton">false</item>
+    </style>
+    
     <style name="ButtonStyleNativeAd" parent="ToffeeNativeAdButtonStyle">
         <item name="backgroundTint">@color/native_ad_button_color</item>
         <item name="android:textColor">@color/white_transparency</item>

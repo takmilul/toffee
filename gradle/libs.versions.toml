@@ -291,7 +291,7 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 
 # Firework
 firework-sdk = { group = "com.firework", name = "sdk", version.ref = "firework-sdk-version" }
-firework-ads = { group = "com.firework", name = "AndroidAdsService", version.ref = "firework-ads-version" }
+#firework-ads = { group = "com.firework", name = "AndroidAdsService", version.ref = "firework-ads-version" }
 firework-singlehost = { group = "com.firework.external.livestream", name = "singleHostPlayer", version.ref = "firework-sdk-version" }
 firework-multihost = { group = "com.firework.external.livestream", name = "multiHostPlayer", version.ref = "firework-sdk-version" }
 firework-imageloader = { group = "com.firework.external.imageloading", name = "glide", version.ref = "firework-sdk-version" }

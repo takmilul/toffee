@@ -43,12 +43,6 @@ import com.firework.sdk.FireworkSdkConfig
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.loopnow.fireworklibrary.FwSDK
-import com.loopnow.fireworklibrary.SdkStatus
-import com.loopnow.fireworklibrary.SdkStatus.InitializationFailed
-import com.loopnow.fireworklibrary.SdkStatus.Initialized
-import com.loopnow.fireworklibrary.SdkStatus.RefreshTokenFailed
-import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
