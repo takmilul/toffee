@@ -228,6 +228,12 @@ data class CustomerInfoLogin(
     val bubblePermissionDialogBody: String? = null,
     @SerialName("bubbleMenuText")
     val bubbleMenuText: String? = null,
+    @SerialName("isKeepAliveApiActive")
+    val isKeepAliveApiActive: Boolean = false,
+    @SerialName("keepAliveApiCallingFrequency")
+    val keepAliveApiCallingFrequency: Long = 0,
+    @SerialName("keepAliveApiEndPoint")
+    val keepAliveApiEndPoint: String? = null,
 ) : BodyResponse(), Parcelable
 
 @Entity

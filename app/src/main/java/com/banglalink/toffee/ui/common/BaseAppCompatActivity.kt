@@ -52,6 +52,7 @@ open class BaseAppCompatActivity : AppCompatActivity() {
                         client.dispatcher.cancelAll()
                         cPref.isAlreadyForceLoggedOut = true
                         mPref.clear()
+                        onPlayerDestroy()
                         launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                         finish()
                     }

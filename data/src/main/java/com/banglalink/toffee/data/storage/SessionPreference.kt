@@ -850,6 +850,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_BUBBLE_MENU_TEXT, "") ?: ""
         set(value) = pref.edit { putString(PREF_BUBBLE_MENU_TEXT, value) }
 
+    var isKeepAliveApiActive: Boolean
+        get() = pref.getBoolean( PREF_IS_KEEP_ALIVE_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_KEEP_ALIVE_ACTIVE, value) }
+    
+    var keepAliveApiCallingFrequency: Long
+        get() = pref.getLong(PREF_KEEP_ALIVE_API_CALLING_FREQUENCY, 0L) ?: 0L
+        set(value) = pref.edit { putLong(PREF_KEEP_ALIVE_API_CALLING_FREQUENCY, value) }
+    
+    var keepAliveApiEndPoint: String
+        get() = pref.getString(PREF_KEEP_ALIVE_API_END_POINT, "") ?: ""
+        set(value) = pref.edit { putString(PREF_KEEP_ALIVE_API_END_POINT, value) }
+    
     fun saveCustomerInfo(customerInfoLogin: CustomerInfoLogin) {
         customerInfoLogin.let {
             balance = it.balance
@@ -974,6 +986,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             bubblePermissionDialogTitle = it.bubblePermissionDialogTitle ?: ""
             bubblePermissionDialogBody = it.bubblePermissionDialogBody ?: ""
             bubbleMenuText = it.bubbleMenuText ?: ""
+            
+            isKeepAliveApiActive = it.isKeepAliveApiActive
+            keepAliveApiCallingFrequency = it.keepAliveApiCallingFrequency
+            keepAliveApiEndPoint = it.keepAliveApiEndPoint ?: ""
+            
             if (it.customerId == 0 || it.password.isNullOrBlank()) {
                 ToffeeAnalytics.logException(NullPointerException("customerId: ${it.customerId}, password: ${it.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
             }
@@ -1143,6 +1160,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BUBBLE_PERMISSION_DIALOG_TITLE = "pref_bubble_permission_dialog_title"
         private const val PREF_BUBBLE_PERMISSION_DIALOG_BODY = "pref_bubble_permission_dialog_body"
         private const val PREF_BUBBLE_MENU_TEXT = "pref_bubble_menu_text"
+        private const val PREF_IS_KEEP_ALIVE_ACTIVE = "pref_is_keep_alive_api_active"
+        private const val PREF_KEEP_ALIVE_API_CALLING_FREQUENCY = "pref_is_keep_alive_api_calling_frequency"
+        private const val PREF_KEEP_ALIVE_API_END_POINT = "pref_is_keep_alive_api_end_point"
         private var instance: SessionPreference? = null
         
         fun init(mContext: Context) {

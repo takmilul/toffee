@@ -405,6 +405,7 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.forceLogoutUserLiveData) {
             if (it) {
                 mPref.clear()
+                destroyPlayer()
                 UploadService.stopAllUploads()
                 launchActivity<SplashScreenActivity>()
                 finish()

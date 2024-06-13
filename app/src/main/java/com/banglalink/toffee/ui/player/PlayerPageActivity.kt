@@ -1515,10 +1515,11 @@ abstract class PlayerPageActivity :
                 heartBeatManager.triggerEventViewingKabbikStart(it)
             } else {
                 heartBeatManager.triggerEventViewingContentStart(
-                    it.id.toInt() ?: 0,
-                    it.type ?: "VOD",
-                    it.dataSource ?: "iptv_programs",
-                    it.channel_owner_id ?: 0
+                    playingContentId = it.id.toInt(),
+                    playingContentType = it.type ?: "VOD",
+                    contentDataSource = it.dataSource ?: "iptv_programs",
+                    channelOwnerId = it.channel_owner_id,
+                    isContentPremium = it.isPremium
                 )
             }
         }
