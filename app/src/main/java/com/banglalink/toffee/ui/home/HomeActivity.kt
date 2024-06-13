@@ -404,10 +404,12 @@ class HomeActivity : PlayerPageActivity(),
         }
         observe(mPref.forceLogoutUserLiveData) {
             if (it) {
-                mPref.clear()
                 destroyPlayer()
                 UploadService.stopAllUploads()
-                launchActivity<SplashScreenActivity>()
+                mPref.clear()
+                cacheManager.clearAllCache()
+                launchActivity<HomeActivity> { flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT }
+                launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
                 finish()
             }
         }

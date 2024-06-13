@@ -1032,7 +1032,7 @@ abstract class PlayerPageActivity :
                     }
                 }
             }
-            triggerHeartBeatEventStart(channelInfo)
+            
             it.playWhenReady = !isReload || it.playWhenReady
             
             if (isReload) { //We need to start where we left off for VODs

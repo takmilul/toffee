@@ -72,6 +72,7 @@ class HeartBeatManager @Inject constructor(
     private var channelInfo: ChannelInfo? = null
     private lateinit var coroutineScope: CoroutineScope
     private lateinit var coroutineScope3: CoroutineScope
+    private lateinit var coroutineScope4: CoroutineScope
     private val coroutineScope2 = CoroutineScope(Main)
     private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
     val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
@@ -101,6 +102,7 @@ class HeartBeatManager @Inject constructor(
         isAppForeGround = false
         coroutineScope.cancel()
         coroutineScope3.cancel()
+        coroutineScope4.cancel()
         
         try {
             val constraints = Constraints.Builder().setRequiredNetworkType(CONNECTED).build()
@@ -229,9 +231,11 @@ class HeartBeatManager @Inject constructor(
         contentType = playingContentType
         dataSource = contentDataSource
         ownerId = channelOwnerId
-        isContentPlaying = true
         if (isContentPremium) {
+            isContentPlaying = true
             startCheckingKeepAlive()
+        } else {
+            coroutineScope4.cancel()
         }
     }
     
@@ -254,16 +258,18 @@ class HeartBeatManager @Inject constructor(
     
     private fun startCheckingKeepAlive() {
         if (
-            coroutineScope3.isActive &&
             mPref.customerId != 0 &&
             mPref.password.isNotBlank() &&
             mPref.isKeepAliveApiActive &&
             mPref.keepAliveApiEndPoint.isNotBlank()
         ) {
-            coroutineScope3.launch {
+            if (this::coroutineScope4.isInitialized && coroutineScope4.isActive) {
+                coroutineScope4.cancel()
+            }
+            coroutineScope4 = CoroutineScope(IO + Job())
+            coroutineScope4.launch {
                 while (true) {
                     if (!isContentPlaying) {
-                        break
                         return@launch
                     }
                     
