@@ -6,7 +6,7 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "145"
+appVersionCode = "146"
 appVersionName = "7.2.2"
 
 gradle-plugin-version = "8.4.1"

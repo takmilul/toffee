@@ -58,9 +58,11 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.DrmLicenseService
 import com.banglalink.toffee.apiservice.DrmTokenService
+import com.banglalink.toffee.apiservice.KeepAliveService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
+import com.banglalink.toffee.data.network.request.KeepAliveRequest
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
@@ -109,9 +111,11 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
@@ -119,6 +123,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.net.URLEncoder
+import java.util.Timer
+import java.util.TimerTask
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
@@ -171,6 +177,10 @@ abstract class PlayerPageActivity :
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    private var timer: Timer? = null
+    private var shouldCheckKeepAlive = false
+    private var coroutineScope: CoroutineScope? = null
+    @Inject lateinit var keepAliveService: KeepAliveService
     
     companion object {
         private const val KEY_WINDOW = "window"
@@ -289,6 +299,10 @@ abstract class PlayerPageActivity :
     
     override fun onDestroy() {
         super.onDestroy()
+        coroutineScope?.cancel()
+        coroutineScope = null
+        timer?.cancel()
+        timer = null
         val channelInfo = getCurrentChannelInfo()
         if (channelInfo != null /*&& channelInfo.isFmRadio*/) {
             releasePlayer()
@@ -466,8 +480,8 @@ abstract class PlayerPageActivity :
                         val param = defaultTrackSelector?.buildUponParameters()
                             ?.setMaxVideoBitrate(maxBitRate)?.build()
                         param?.let { defaultTrackSelector?.parameters = it }
-                        player!!.prepare()
-                        player!!.playWhenReady = true
+                        player?.prepare()
+                        player?.playWhenReady = true
                     }
                 }
             }
@@ -1032,8 +1046,12 @@ abstract class PlayerPageActivity :
                     }
                 }
             }
+            triggerHeartBeatEventStart(channelInfo)
             
             it.playWhenReady = !isReload || it.playWhenReady
+            
+            shouldCheckKeepAlive = true
+            startCheckingKeepAlive(channelInfo)
             
             if (isReload) { //We need to start where we left off for VODs
                 if (channelInfo.viewProgress > 0L) {
@@ -1153,6 +1171,68 @@ abstract class PlayerPageActivity :
             httpDataSourceFactory?.setUserAgent(toffeeHeader)
             httpDataSourceFactory?.setDefaultRequestProperties(headerMap)
             url
+        }
+    }
+    
+    private fun startCheckingKeepAlive(channelInfo: ChannelInfo) {
+        if (coroutineScope != null) {
+            coroutineScope?.cancel()
+            coroutineScope = null
+        }
+        if (timer != null) {
+            timer?.cancel()
+            timer = null
+        }
+        
+        if (
+            channelInfo.isPremium &&
+            mPref.isVerifiedUser &&
+            mPref.customerId != 0 &&
+            mPref.password.isNotBlank() &&
+            mPref.isKeepAliveApiActive &&
+            mPref.keepAliveApiEndPoint.isNotBlank()
+        ) {
+            timer = Timer()
+            coroutineScope = CoroutineScope(Dispatchers.IO + Job())
+            
+            val timerTask = object : TimerTask() {
+                override fun run() {
+                    if (shouldCheckKeepAlive) {
+                        coroutineScope?.launch {
+                            try {
+                                keepAliveService.execute(
+                                    KeepAliveRequest(
+                                        customerId = mPref.customerId,
+                                        password = mPref.password,
+                                        contentId = channelInfo.id.toIntOrNull() ?: 0,
+                                        contentType = channelInfo.type ?: "VOD",
+                                        dataSource = channelInfo.dataSource ?: "iptv_programs",
+                                        ownerId = channelInfo.channel_owner_id,
+                                        lat = mPref.latitude,
+                                        lon = mPref.longitude,
+                                        isNetworkSwitch = false,
+                                        type = "FOREGROUND"
+                                    )
+                                )
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                val error = getError(e)
+                                
+                                ToffeeAnalytics.logEvent(
+                                    ToffeeEvents.EXCEPTION,
+                                    bundleOf(
+                                        "api_name" to ApiNames.SEND_HEART_BEAT,
+                                        FirebaseParams.BROWSER_SCREEN to "Splash Screen",
+                                        "error_code" to error.code,
+                                        "error_description" to error.msg
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            timer?.schedule(timerTask, 0, mPref.keepAliveApiCallingFrequency * 1000L)
         }
     }
     
@@ -1482,6 +1562,7 @@ abstract class PlayerPageActivity :
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
+            shouldCheckKeepAlive = isPlaying
             updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
             observeNetworkChange()
             val channelInfo = getCurrentChannelInfo()
@@ -1518,8 +1599,7 @@ abstract class PlayerPageActivity :
                     playingContentId = it.id.toInt(),
                     playingContentType = it.type ?: "VOD",
                     contentDataSource = it.dataSource ?: "iptv_programs",
-                    channelOwnerId = it.channel_owner_id,
-                    isContentPremium = it.isPremium
+                    channelOwnerId = it.channel_owner_id
                 )
             }
         }
