@@ -1,5 +1,5 @@
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 plugins {
     with(libs.plugins) {
@@ -287,8 +287,8 @@ dependencies {
         implementation(bundles.firebase)
         
         // Firework
-        implementation(firework.ads)
-        implementation(firework.sdk) {
+//        implementation(firework.ads)
+        implementation(bundles.firework) {
             exclude(module = "picasso-transformations")
         }
         

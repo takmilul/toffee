@@ -5,11 +5,9 @@ import android.content.res.Resources
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.px
-import com.loopnow.fireworklibrary.views.VideoFeedView
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -21,14 +19,10 @@ class FireworkCardView @JvmOverloads constructor(
     defAttrStyle: Int = 0
 ): ConstraintLayout(context, attrs, defAttrStyle) {
     
-    private var titleTextView: TextView? = null
-    private var feedView: VideoFeedView? = null
     private var feedFrameView: FrameLayout? = null
     
     init {
         View.inflate(context, R.layout.firework_card_view, this)
-        titleTextView = findViewById(R.id.fireworkHeader)
-        feedView = findViewById(R.id.feedView)
         feedFrameView = findViewById(R.id.feedFrameView)
         setFeedFrameDynamicHeight()
     }
@@ -40,11 +34,5 @@ class FireworkCardView @JvmOverloads constructor(
         val calculatedWidth = (screenWidth - paddingHorizontal - spaceBeforeItems) / VISIBLE_ITEM_COUNT
         val calculatedHeight = ((calculatedWidth / 9) * 16).roundToInt()  // video item ratio -> 9:16
         feedFrameView?.layoutParams?.height = calculatedHeight
-    }
-    
-    fun setConfiguration(cardTitle: String, channelId: String, playlistId: String) {
-        titleTextView?.text = cardTitle
-        feedView?.setChannel(channelId)
-        feedView?.setPlaylist(channelId, playlistId)
     }
 }
