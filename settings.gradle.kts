@@ -12,9 +12,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://www.jitpack.io")
+        maven("https://jitpack.io")
         maven("https://maven.google.com")
-        maven("https://repository.medallia.com/digital-maven/")
+//        maven("https://repository.medallia.com/digital-maven/")
         maven("https://repo.eclipse.org/content/repositories/paho-releases/")
     }
 }

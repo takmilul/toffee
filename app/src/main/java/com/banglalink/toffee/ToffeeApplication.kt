@@ -36,7 +36,6 @@ import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
-import com.firework.imageloading.glide.GlideImageLoaderFactory
 import com.firework.sdk.FireworkInitError
 import com.firework.sdk.FireworkSdk
 import com.firework.sdk.FireworkSdkConfig
@@ -273,7 +272,7 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
                 .checksumRequired(false)
                 .clientId(BuildConfig.FIREWORK_OAUTH_ID) // Client OAUTH Id
                 .userId(sessionPreference.getFireworkUserId()) // User Id in your eco-system
-                .imageLoader(GlideImageLoaderFactory.createInstance(this)) // glide, picasso, or your ImageLoader implementation
+//                .imageLoader(GlideImageLoaderFactory.createInstance(this)) // glide, picasso, or your ImageLoader implementation
 //                .enableCache(true) // Enable or disable video players cache, enabled by default
 //                .maxCacheSizeBytes(MAX_CACHE_SIZE_BYTES) // Max cache size used by video players, 25MB by default
 //                .muteOnLaunch(true) // Mute videos on lauch

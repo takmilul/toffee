@@ -9,7 +9,7 @@ targetSdkVersion = "34"
 appVersionCode = "146"
 appVersionName = "7.2.2"
 
-gradle-plugin-version = "8.4.1"
+gradle-plugin-version = "8.3.2"
 
 # View
 activity-version = "1.6.1"
@@ -292,9 +292,9 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 # Firework
 firework-sdk = { group = "com.firework", name = "sdk", version.ref = "firework-sdk-version" }
 #firework-ads = { group = "com.firework", name = "AndroidAdsService", version.ref = "firework-ads-version" }
-firework-singlehost = { group = "com.firework.external.livestream", name = "singleHostPlayer", version.ref = "firework-sdk-version" }
-firework-multihost = { group = "com.firework.external.livestream", name = "multiHostPlayer", version.ref = "firework-sdk-version" }
-firework-imageloader = { group = "com.firework.external.imageloading", name = "glide", version.ref = "firework-sdk-version" }
+#firework-singlehost = { group = "com.firework.external.livestream", name = "singleHostPlayer", version.ref = "firework-sdk-version" }
+#firework-multihost = { group = "com.firework.external.livestream", name = "multiHostPlayer", version.ref = "firework-sdk-version" }
+#firework-imageloader = { group = "com.firework.external.imageloading", name = "glide", version.ref = "firework-sdk-version" }
 
 # Reporting
 facebook-sdk = { group = "com.facebook.android", name = "facebook-android-sdk", version.ref = "facebook-sdk-version" }
@@ -414,4 +414,4 @@ mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
 logger = ["timber", "orhanobut"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
-firework = ["firework-sdk", "firework-singlehost", "firework-multihost", "firework-imageloader"]
+#firework = ["firework-sdk", "firework-singlehost", "firework-multihost", "firework-imageloader"]
