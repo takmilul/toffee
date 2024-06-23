@@ -9,6 +9,7 @@ plugins {
         alias(kotlin.android)
         alias(kotlin.parcelize)
         alias(kotlin.serialize)
+        alias(kotlin.compose.compiler)
         alias(google.services)
         alias(navigation.safeargs)
         alias(hilt.android)
@@ -38,11 +39,11 @@ android {
     val convivaCustomerKeyProd: String = properties.getProperty("convivaCustomerKey-prod")
     
     defaultConfig {
+        applicationId = "com.banglalink.toffee"
         minSdk = libs.versions.minSdkVersion.get().toInt()
         targetSdk = libs.versions.targetSdkVersion.get().toInt()
         versionCode = libs.versions.appVersionCode.get().toInt()
         versionName = libs.versions.appVersionName.get()
-        applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
 //        ndk {
@@ -195,10 +196,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.compose.version.get()
     }
     
     lint {

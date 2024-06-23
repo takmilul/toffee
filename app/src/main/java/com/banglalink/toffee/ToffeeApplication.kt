@@ -36,7 +36,8 @@ import com.banglalink.toffee.ui.bubble.BaseBubbleService
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
-import com.firework.sdk.FireworkInitError
+import com.firework.sdk.FireworkInitError.AlreadyInitializedError
+import com.firework.sdk.FireworkInitError.InitializationError
 import com.firework.sdk.FireworkSdk
 import com.firework.sdk.FireworkSdkConfig
 import com.google.android.gms.security.ProviderInstaller
@@ -291,10 +292,13 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
                 },
                 onError = { error ->
                     when (error) {
-                        is FireworkInitError.InitializationError -> {
+                        is InitializationError -> {
                             Log.e("FwSDK", "InitializationFailed")
                             ToffeeAnalytics.logException(Exception("FwSDK InitializationFailed"))
                             sessionPreference.isFireworkInitialized.postValue(false)
+                        }
+                        is AlreadyInitializedError -> {
+                            Log.e("FwSDK", "AlreadyInitializedError")
                         }
                     }
                 },

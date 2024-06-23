@@ -9,14 +9,14 @@ targetSdkVersion = "34"
 appVersionCode = "146"
 appVersionName = "7.2.2"
 
-gradle-plugin-version = "8.3.2"
+gradle-plugin-version = "8.4.2"
 
 # View
 activity-version = "1.6.1"
-fragment-ktx-version = "1.6.2"
+fragment-ktx-version = "1.8.0"
 splashscreen-version = "1.0.1"
-annotation = "1.7.1"
-material-version = "1.11.0"
+annotation = "1.8.0"
+material-version = "1.12.0"
 cardview-version = "1.0.0"
 desugar-jdk-version = "2.0.4"
 switch-button-version = "0.0.3"
@@ -26,11 +26,11 @@ constraint-layout-version = "2.1.4"
 circular-progressbar-version = "3.1.0"
 
 # Kotlin
-kotlin-version = "1.9.22"
-kotlin-ktx-version = "1.13.0"
+kotlin-version = "2.0.0"
+kotlin-ktx-version = "1.13.1"
 kotlin-coroutine-version = "1.7.3"
-ksp-plugin-version = "1.9.22-1.0.16"
-kotlin-serialization-json-version = "1.6.2"
+ksp-plugin-version = "2.0.0-1.0.21"
+kotlin-serialization-json-version = "1.6.3"
 kotlin-json-converter-factory-version = "1.0.0"
 
 # Hilt
@@ -39,10 +39,9 @@ hilt-android-version = "2.51.1"
 
 # Jetpack
 room-db-version = "2.6.1"
-paging-version = "3.2.1"
-compose-bom = "2024.04.01"
-kotlin-compose-version = "1.5.8"
-lifecycle-version = "2.7.0"
+paging-version = "3.3.0"
+compose-bom = "2024.06.00"
+lifecycle-version = "2.8.2"
 navigation-version = "2.7.7"
 work-manager-version = "2.9.0"
 pager-indicator-version = "0.30.1"
@@ -60,10 +59,10 @@ exo-player-version = "2.19.1"
 
 # Cast
 mediarouter-version = "1.7.0"
-cast-version = "21.4.0"
+cast-version = "21.5.0"
 
 # ADS
-play-services-ads-identifier-version = "18.0.1"
+play-services-ads-identifier-version = "18.1.0"
 play-services-ads-version = "23.1.0"
 ads-identifier-version = "1.0.0-alpha05"
 
@@ -80,13 +79,13 @@ pretty-logger-version = "3.1.0"
 upload-library-version = "4.9.2"
 
 # Google Services
-google-services-version = "4.4.1"
+google-services-version = "4.4.2"
 google-api-client-version = "2.2.0"
 google-http-client-gson-version = "1.43.3"
 
 # Play Services
 play-services-auth-version = "20.7.0"
-play-services-auth-api-phone-version = "18.0.2"
+play-services-auth-api-phone-version = "18.1.0"
 play-core-version = "1.10.3"
 in-app-update-version = "2.1.0"
 play-publisher-version = "3.9.0"
@@ -94,11 +93,11 @@ play-publisher-version = "3.9.0"
 # Firebase
 firebase-core-version = "21.1.1"
 firebase-messaging-version = "24.0.0"
-firebase-analytics-version = "22.0.1"
+firebase-analytics-version = "22.0.2"
 firebase-firestore-version = "25.0.0"
 firebase-in-app-message-version = "21.0.0"
-firebase-crashlytics-version = "19.0.1"
-firebase-crashlytics-plugin-version = "3.0.1"
+firebase-crashlytics-version = "19.0.2"
+firebase-crashlytics-plugin-version = "3.0.2"
 firebase-appdistribution-plugin-version = "5.0.0"
 
 # Reporting
@@ -117,7 +116,7 @@ orhanobut-version = "2.2.0"
 chucker-version = "4.0.0"
 
 # Firework
-firework-sdk-version = "6.3.4"
+firework-sdk-version = "6.10.2"
 firework-ads-version = "v20.0.0"
 
 # Miscellaneous
@@ -144,7 +143,7 @@ robolectric-version = "4.8.1"
 core-testing-version = "2.1.0"
 
 google-truth-version = "1.1.3"
-fragment-test-version = "1.6.2"
+fragment-test-version = "1.8.0"
 leakcanary-version = "3.0-alpha-6"
 
 
@@ -377,6 +376,7 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin-version"
 kotlin-gradle = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin-version" }
 kotlin-serialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
+kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin-version" }
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-version" }
 android-library = { id = "com.android.library", version.ref = "gradle-plugin-version" }
 org-jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "jlleitschuh-version" }
