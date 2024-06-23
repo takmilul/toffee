@@ -45,12 +45,12 @@ android {
         applicationId = "com.banglalink.toffee"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "com.banglalink.toffee.HiltTestRunner"
-        ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-        }
+//        ndk {
+////            debugSymbolLevel = "FULL"
+////            Specifies the ABI configurations of your native
+////            libraries Gradle should build and package with your app.
+//            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+//        }
         manifestPlaceholders.putAll(
             mapOf(
                 "fireworkOAuthId" to fireworkOAuthId,
@@ -101,12 +101,12 @@ android {
             isJniDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-            }
+//            ndk {
+////            debugSymbolLevel = "FULL"
+////            Specifies the ABI configurations of your native
+////            libraries Gradle should build and package with your app.
+//                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+//            }
             firebaseAppDistribution {
                 artifactType = "APK"
                 releaseNotesFile = "distribution/whatsnew/whatsnew-en-US"  // ignore this if releaseNotes is being used
@@ -118,12 +118,12 @@ android {
             isJniDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            ndk {
-//            debugSymbolLevel = "FULL"
-//            Specifies the ABI configurations of your native
-//            libraries Gradle should build and package with your app.
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-            }
+//            ndk {
+////            debugSymbolLevel = "FULL"
+////            Specifies the ABI configurations of your native
+////            libraries Gradle should build and package with your app.
+//                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+//            }
             firebaseAppDistribution {
                 artifactType = "APK"
                 groups = "ND-QA, BL-UAT"
@@ -175,11 +175,11 @@ android {
         }
     }
     
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDir("src/main/libs")
-        }
-    }
+//    sourceSets {
+//        getByName("main") {
+//            jniLibs.srcDir("src/main/libs")
+//        }
+//    }
     
     buildFeatures {
         compose = true
@@ -287,7 +287,7 @@ dependencies {
         implementation(bundles.firebase)
         
         // Firework
-        implementation(firework.ads)
+//        implementation(firework.ads)
         implementation(firework.sdk) {
             exclude(module = "picasso-transformations")
         }

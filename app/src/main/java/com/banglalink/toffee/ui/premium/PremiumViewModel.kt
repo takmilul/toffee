@@ -107,7 +107,7 @@ class PremiumViewModel @Inject constructor(
 //    private var _packContentListsMutableState = MutableStateFlow<List<ChannelInfo>?>(null)
 //    var packContentListsState = _packContentListsMutableState.asSharedFlow()
     
-    private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean>>()
+    private var _paymentMethodState = MutableSharedFlow<Resource<PackPaymentMethodBean?>>()
     val paymentMethodState = _paymentMethodState.asSharedFlow()
     
     val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
@@ -126,10 +126,10 @@ class PremiumViewModel @Inject constructor(
     var selectedDataPackOption = savedState.getLiveData<PackPaymentMethod>("selectedDataPackOption")
     var selectedPackSystemDiscount = savedState.getLiveData<SystemDiscount>("systemDiscount")
     
-    var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
-    var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean>>()
+    var packPurchaseResponseCodeTrialPack = SingleLiveEvent< Resource<PremiumPackStatusBean?>>()
+    var packPurchaseResponseCodeBlDataPackOptions = SingleLiveEvent< Resource<PremiumPackStatusBean?>>()
+    var packPurchaseResponseCodeBlDataPackOptionsWeb = SingleLiveEvent< Resource<PremiumPackStatusBean?>>()
+    var packPurchaseResponseVoucher = SingleLiveEvent< Resource<PremiumPackStatusBean?>>()
     
     val rechargeByBkashUrlLiveData = SingleLiveEvent<Resource<RechargeByBkashBean?>>()
     val subscriberPaymentInitLiveData = SingleLiveEvent<Resource<SubscriberPaymentInitBean?>>()

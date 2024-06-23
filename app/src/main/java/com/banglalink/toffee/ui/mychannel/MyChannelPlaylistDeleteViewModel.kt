@@ -17,7 +17,7 @@ class MyChannelPlaylistDeleteViewModel @Inject constructor(
     private val apiService: MyChannelPlaylistDeleteService,
 ) : ViewModel() {
     
-    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistBean?>>()
     val liveData = _data.toLiveData()
     
     fun deletePlaylistName(playlistId: Int, isUserPlaylist: Int = 0) {

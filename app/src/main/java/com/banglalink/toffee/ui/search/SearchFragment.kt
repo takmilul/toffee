@@ -2,9 +2,11 @@ package com.banglalink.toffee.ui.search
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.media3.common.util.UnstableApi
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -59,13 +61,13 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
     fun getSearchString(): String? {
         return if (::searchKey.isInitialized) searchKey else null
     }
-    
+    @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         searchKey = arguments?.getString(SEARCH_KEYWORD, "") ?: ""
         (activity as HomeActivity).openSearchBarIfClose()
         super.onCreate(savedInstanceState)
     }
-    
+    @OptIn(UnstableApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -127,10 +129,14 @@ class SearchFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<Cha
         observe(homeViewModel.subscriptionLiveData) { response ->
             when (response) {
                 is Resource.Success -> {
-                    currentItem?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
-                        mAdapter.notifyDataSetChanged()
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        currentItem?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                            mAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
                 is Resource.Failure -> {

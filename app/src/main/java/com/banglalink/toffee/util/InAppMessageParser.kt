@@ -8,7 +8,7 @@ import androidx.navigation.Navigator
 import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetCategoriesService
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.CategoryType
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class InAppMessageParser @Inject constructor(
-    private val categoryListApi: GetCategories,
+    private val categoryListApi: GetCategoriesService,
     private var mPref: SessionPreference
 ) {
 

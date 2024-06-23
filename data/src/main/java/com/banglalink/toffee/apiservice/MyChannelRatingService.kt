@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class MyChannelRatingService @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
     
-    suspend fun execute(channelOwnerId: Int, rating: Float): MyChannelRatingBean{
+    suspend fun execute(channelOwnerId: Int, rating: Float): MyChannelRatingBean? {
         val response = tryIO {
             toffeeApi.rateMyChannel(
                 MyChannelRatingRequest(channelOwnerId, rating, channelOwnerId, preference.customerId, preference.password)

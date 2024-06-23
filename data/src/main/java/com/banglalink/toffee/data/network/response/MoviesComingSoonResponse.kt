@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MoviesComingSoonResponse(
     @SerialName("response")
-    val response: ComingSoonBean
+    val response: ComingSoonBean? = null
 ) : BaseResponse()

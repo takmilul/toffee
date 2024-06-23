@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CheckUpdateResponse(
     @SerialName("response")
-    val response: CheckUpdateBean
+    val response: CheckUpdateBean? = null
 ) : BaseResponse()

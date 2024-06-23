@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MostPopularPlaylistsResponse(
     @SerialName("response")
-    val response: MyChannelPlaylistBean
+    val response: MyChannelPlaylistBean? = null
 ) : BaseResponse()

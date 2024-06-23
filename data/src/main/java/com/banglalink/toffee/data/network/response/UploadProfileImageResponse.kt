@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class UploadProfileImageResponse(
     @SerialName("response")
-    val response: SubscriberPhotoBean
+    val response: SubscriberPhotoBean? = null
 ) : BaseResponse()

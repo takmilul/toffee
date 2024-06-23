@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PackageChannelListResponse(
     @SerialName("response")
-    val response: PackageDetailsBean
+    val response: PackageDetailsBean? = null
 ) : BaseResponse()

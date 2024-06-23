@@ -18,14 +18,14 @@ class CheckForUpdateService @Inject constructor(private val preference: SessionP
             )
         }
         val checkUpdateBean = response.response
-        if (checkUpdateBean.updateAvailable != 0) {
+        if (checkUpdateBean != null && checkUpdateBean.updateAvailable != 0) {
             throw UpdateRequiredException(
                 checkUpdateBean.messageTitle ?: "Update Available",
                 checkUpdateBean.message ?: "An update is available. Please update to the latest version",
                 checkUpdateBean.updateAvailable == 2
             )
         }
-        return response.response.decorationConfig?.get(0)?.apply { 
+        return response.response?.decorationConfig?.get(0)?.apply { 
             isFromCache = response.isFromCache
         }
     }

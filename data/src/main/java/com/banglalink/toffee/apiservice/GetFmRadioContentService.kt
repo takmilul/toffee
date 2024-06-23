@@ -34,13 +34,13 @@ class GetFmRadioContentService @Inject constructor(
                 )
             )
         }
-
+        
         //Saving Radio Banner Img
-        preference.radioBannerImgUrl.value=response.response.radioBanner.toString()
-
+        preference.radioBannerImgUrl.value = response.response?.radioBanner.toString()
+        
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
-        response.response.channels?.filter {
+        response.response?.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
@@ -67,6 +67,6 @@ class GetFmRadioContentService @Inject constructor(
             !it.isExpired
         }
         tvChannelRepo.insertNewItems(*dbList.toTypedArray())
-        return response.response.channels ?: emptyList()
+        return response.response?.channels ?: emptyList()
     }
 }

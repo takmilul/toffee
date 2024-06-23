@@ -58,6 +58,7 @@ class HeartBeatManager @Inject constructor(
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
 ) : DefaultLifecycleObserver, ConnectivityManager.NetworkCallback() {
+    
     private var ownerId = 0
     private var contentId = 0
     private var dataSource = ""
@@ -217,7 +218,7 @@ class HeartBeatManager @Inject constructor(
         playingContentId: Int,
         playingContentType: String,
         contentDataSource: String,
-        channelOwnerId: Int
+        channelOwnerId: Int,
     ) {
         contentId = playingContentId
         contentType = playingContentType

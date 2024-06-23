@@ -13,7 +13,7 @@ data class PremiumPackStatusResponse(
     @SerialName("debugMsg")
     val debugMsg: String? = null,
     @SerialName("response")
-    val response: PremiumPackStatusBean,
+    val response: PremiumPackStatusBean? = null,
 ) : BaseResponse()
 
 @Serializable

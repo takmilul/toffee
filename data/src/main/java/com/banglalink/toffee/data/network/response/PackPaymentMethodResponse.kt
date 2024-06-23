@@ -16,7 +16,7 @@ data class PackPaymentMethodResponse(
     @SerialName("debugMsg")
     val debugMsg: String? = null,
     @SerialName("response")
-    val response: PackPaymentMethodBean,
+    val response: PackPaymentMethodBean? = null,
 ) : BaseResponse()
 
 @Parcelize

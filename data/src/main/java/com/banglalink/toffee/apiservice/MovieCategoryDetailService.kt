@@ -11,7 +11,7 @@ class MovieCategoryDetailService @Inject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
 ) {
-    suspend fun loadData(type: String, categoryId: Int, limit: Int = 0, offset: Int = 0): MovieCategoryDetailBean {
+    suspend fun loadData(type: String, categoryId: Int, limit: Int = 0, offset: Int = 0): MovieCategoryDetailBean? {
 
         val request =  MovieCategoryDetailRequest(
             preference.customerId,

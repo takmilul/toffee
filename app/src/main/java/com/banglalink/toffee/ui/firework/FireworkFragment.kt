@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -17,6 +19,12 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.FireworkCardView
+import com.firework.common.feed.FeedLayout
+import com.firework.common.feed.FeedResource
+import com.firework.videofeed.FwLifecycleAwareVideoFeedView
+import com.firework.viewoptions.baseOptions
+import com.firework.viewoptions.layoutOptions
+import com.firework.viewoptions.viewOptions
 
 class FireworkFragment : Fragment() {
     
@@ -41,16 +49,29 @@ class FireworkFragment : Fragment() {
     }
     
     private fun observeFirework() {
-        observe(viewModel.fireworkResults) {
-            when (it) {
+        observe(viewModel.fireworkResults) { response ->
+            when (response) {
                 is Resource.Success -> {
-                    val data = it.data.response
+                    val data = response.data.response
                     binding.fireworkContainer.removeAllViews()
-                    data.fireworkModels?.forEach {
+                    data?.fireworkModels?.forEach {
                         if (!it.playlistName.isNullOrBlank() && !it.playlistId.isNullOrBlank() && !it.channelId.isNullOrBlank() && it.isActive) {
-                            binding.fireworkContainer.addView(FireworkCardView(requireContext()).apply {
-                                setConfiguration(it.playlistName!!, it.channelId!!, it.playlistId!!)
-                            })
+                            val viewOption = viewOptions {
+                                baseOptions {
+                                    feedResource(FeedResource.Playlist(it.channelId!!, it.playlistId!!))
+                                }
+                                layoutOptions {
+                                    feedLayout(
+                                        FeedLayout.HORIZONTAL
+                                    )
+                                }
+                            }
+                            val view = FireworkCardView(requireContext())
+                            val titleView = view.findViewById(R.id.fireworkHeader) as TextView
+                            val feedView = view.findViewById(R.id.videoFeedView) as FwLifecycleAwareVideoFeedView
+                            titleView.text = it.playlistName
+                            feedView.init(viewOption, lifecycle)
+                            binding.fireworkContainer.addView(view)
                         }
                     }
                 }
@@ -60,11 +81,11 @@ class FireworkFragment : Fragment() {
                         bundleOf(
                             "api_name" to ApiNames.GET_FIREWORK_LIST,
                             FirebaseParams.BROWSER_SCREEN to "Firework Screen",
-                            "error_code" to it.error.code,
-                            "error_description" to it.error.msg
+                            "error_code" to response.error.code,
+                            "error_description" to response.error.msg
                         )
                     )
-                    Log.d("_fire", it.error.msg)
+                    Log.d("_fire", response.error.msg)
                 }
             }
         }

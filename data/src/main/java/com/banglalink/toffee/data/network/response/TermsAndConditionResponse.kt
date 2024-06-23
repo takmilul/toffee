@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TermsAndConditionResponse(
     @SerialName("response")
-    val response: TermsAndCondition
+    val response: TermsAndCondition? = null
 ) : BaseResponse()

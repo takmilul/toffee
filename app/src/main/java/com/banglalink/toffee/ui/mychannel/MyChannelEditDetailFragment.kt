@@ -30,7 +30,13 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.enums.InputType
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.isValid
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.validateInput
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Payment
@@ -151,6 +157,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     }
                     binding.viewModel = viewModel
                     viewModel.myChannelDetail = myChannelDetail
+                    bindingUtil.bindImageFromUrl(binding.bannerImageView, myChannelDetail?.bannerUrl)
+                    bindingUtil.bindRoundImage(binding.profileImageView, myChannelDetail?.profileUrl)
                     progressDialog.dismiss()
                 }
                 is Failure -> {
@@ -260,11 +268,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun loadImage() {
-        newBannerUrl?.let {
-            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
-        }
-        newProfileImageUrl?.let {
-            bindingUtil.bindRoundImage(binding.profileImageView, it)
+        runCatching {
+            newBannerUrl?.let {
+                bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
+            }
+            newProfileImageUrl?.let {
+                bindingUtil.bindRoundImage(binding.profileImageView, it)
+            }
         }
     }
     
@@ -277,25 +287,29 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
-                    if (myChannelDetail == null || myChannelDetail?.id == 0L){
-                        ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                    if (it.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        if (myChannelDetail == null || myChannelDetail?.id == 0L) {
+                            ToffeeAnalytics.logEvent(ToffeeEvents.CREATOR_ACCOUNT_OPEN)
+                        }
+                        mPref.isChannelDetailChecked = true
+                        mPref.channelLogo = it.data?.profileImage ?: myChannelDetail?.profileUrl.orEmpty()
+                        mPref.channelName = channelName
+                        mPref.customerName = userName
+                        mPref.customerEmail = userEmail
+                        mPref.customerAddress = userAddress
+                        mPref.customerDOB = userDOB!!
+                        mPref.customerNID = userNID
+                        
+                        binding.saveButton.isClickable = true
+                        progressDialog.dismiss()
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_ALL_USER_CHANNEL)
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_TRENDING_CHANNELS)
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                        requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                        findNavController().navigateUp()
                     }
-                    mPref.isChannelDetailChecked = true
-                    mPref.channelLogo = it.data.profileImage ?: myChannelDetail?.profileUrl.orEmpty()
-                    mPref.channelName = channelName
-                    mPref.customerName = userName
-                    mPref.customerEmail = userEmail
-                    mPref.customerAddress = userAddress
-                    mPref.customerDOB = userDOB!!
-                    mPref.customerNID = userNID
-                    
-                    binding.saveButton.isClickable = true
-                    progressDialog.dismiss()
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_ALL_USER_CHANNEL)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_TRENDING_CHANNELS)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
-                    requireContext().showToast(it.data.message)
-                    findNavController().navigateUp()
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -534,7 +548,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             { _, year, monthOfYear, dayOfMonth ->
                 val calendarTwo = Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-                binding.dateOfBirthTv.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                _binding?.dateOfBirthTv?.let { 
+                    it.text = Utils.dateToStr(calendarTwo.time, "dd/MM/yyyy")
+                }
                 validateDOB()
             },
             calendar[Calendar.YEAR],

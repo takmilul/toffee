@@ -12,12 +12,12 @@ import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.apiservice.FeatureContentService
 import com.banglalink.toffee.apiservice.FeaturedPartnerService
-import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetCategoriesService
 import com.banglalink.toffee.apiservice.GetContentService
-import com.banglalink.toffee.apiservice.GetEditorsChoiceContents
-import com.banglalink.toffee.apiservice.GetMostPopularContents
-import com.banglalink.toffee.apiservice.GetPopularUserChannels
-import com.banglalink.toffee.apiservice.GetRelativeContents
+import com.banglalink.toffee.apiservice.GetEditorsChoiceContentsService
+import com.banglalink.toffee.apiservice.GetMostPopularContentsService
+import com.banglalink.toffee.apiservice.GetPopularUserChannelsService
+import com.banglalink.toffee.apiservice.GetRelativeContentsService
 import com.banglalink.toffee.apiservice.LandingUserChannelsRequestParam
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -46,15 +46,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LandingPageViewModel @Inject constructor(
-    private val categoryListApi: GetCategories,
+    private val categoryListApi: GetCategoriesService,
     @ApplicationContext private val context: Context,
     private val featuredAssistedFactory: FeatureContentService,
     private val getContentAssistedFactory: GetContentService.AssistedFactory,
-    private val mostPopularApi: GetMostPopularContents.AssistedFactory,
-    private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
-    private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
+    private val mostPopularApi: GetMostPopularContentsService.AssistedFactory,
+    private val relativeContentsFactory: GetRelativeContentsService.AssistedFactory,
+    private val popularChannelAssistedFactory: GetPopularUserChannelsService.AssistedFactory,
     private val featuredPartnerAssistedFactory: FeaturedPartnerService.AssistedFactory,
-    private val editorsChoiceAssistedFactory: GetEditorsChoiceContents.AssistedFactory,
+    private val editorsChoiceAssistedFactory: GetEditorsChoiceContentsService.AssistedFactory,
     private val sendFeaturePartnerEvent: SendFeaturePartnerEvent,
 ) : ViewModel() {
     
@@ -88,10 +88,10 @@ class LandingPageViewModel @Inject constructor(
             val response = resultFromResponse { featuredAssistedFactory.loadData("VOD", pageType.value ?: Landing, categoryId.value ?: 0) }
             when (response) {
                 is Success -> {
-                    featuredContents.postValue(response.data.channels ?: emptyList())
-                    if (response.data.pageType != Landing) {
-                        subCategories.postValue(response.data.subcategories ?: emptyList())
-                        hashtagList.postValue(response.data.hashTags ?: emptyList())
+                    featuredContents.postValue(response.data?.channels ?: emptyList())
+                    if (response.data?.pageType != Landing) {
+                        subCategories.postValue(response.data?.subcategories ?: emptyList())
+                        hashtagList.postValue(response.data?.hashTags ?: emptyList())
                     }
                 }
                 is Failure -> {

@@ -63,22 +63,22 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
-
+    
     companion object {
         const val PLAYLIST_INFO = "playlistInfo"
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAdapter = MyChannelPlaylistAdapter(this)
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserPlaylistBinding.inflate(inflater, container, false)
         activity?.title = "Playlists"
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Playlists"
@@ -110,7 +110,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
         observeDeletePlaylist()
         observeReloadPlaylist()
     }
-
+    
     private fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
@@ -133,14 +133,16 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
         })
         playlistBinding.closeIv.safeClick({ alertDialog.dismiss() })
     }
-
+    
     private fun observeCreatePlaylist() {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Resource.Success -> {
-                    requireContext().showToast(it.data.message ?: "")
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
-                    playlistReloadViewModel.reloadPlaylist.value = true
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let {
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
+                        playlistReloadViewModel.reloadPlaylist.value = true
+                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -165,7 +167,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
         }
     }
-
+    
     private fun observeReloadPlaylist() {
         observe(playlistReloadViewModel.reloadPlaylist) {
             if (it) {
@@ -173,7 +175,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
         }
     }
-
+    
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
@@ -182,14 +184,16 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                 .isApproved, User_Playlist))
         })
     }
-
+    
     private fun observeEditPlaylist() {
         observe(createPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Resource.Success -> {
-                    requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let {
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
+                        reloadPlaylist()
+                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -205,7 +209,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
         }
     }
-
+    
     private fun showEditPlaylistDialog(playlistId: Int, playlistName: String) {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
@@ -229,7 +233,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             closeIv.setOnClickListener { alertDialog.dismiss() }
         }
     }
-
+    
     private fun showDeletePlaylistDialog(playlistId: Int) {
         ToffeeAlertDialogBuilder(
             requireContext(),
@@ -243,13 +247,13 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
         ).create().show()
     }
-
+    
     private fun observeDeletePlaylist() {
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Resource.Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let { reloadPlaylist() }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logEvent(
@@ -265,12 +269,12 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
         }
     }
-
+    
     private fun reloadPlaylist() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
         mAdapter.refresh()
     }
-
+    
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
@@ -293,7 +297,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             show()
         }
     }
-
+    
     override fun onDestroyView() {
         binding.myChannelPlaylists.adapter = null
         super.onDestroyView()

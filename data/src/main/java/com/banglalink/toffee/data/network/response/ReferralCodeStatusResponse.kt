@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ReferralCodeStatusResponse(
     @SerialName("response")
-    val response: ReferralCodeStatusBean
+    val response: ReferralCodeStatusBean? = null
 ) : BaseResponse()

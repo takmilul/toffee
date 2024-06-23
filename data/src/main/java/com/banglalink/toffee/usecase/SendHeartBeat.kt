@@ -95,18 +95,20 @@ class SendHeartBeat @Inject constructor(
                 )
             )
         }
-        preference.mqttIsActive = response.response.mqttIsActive == 1
-        response.response.dbVersionList?.ifNotNullOrEmpty {
-            preference.setDBVersion(it.toList())
-        }
-        response.response.sessionToken?.ifNotNullOrBlank {
-            preference.sessionToken = it
-        }
-        response.response.headerSessionToken?.ifNotNullOrBlank {
-            preference.setHeaderSessionToken(it)
-        }
-        response.response.systemTime?.ifNotNullOrBlank {
-            preference.setSystemTime(it)
+        response.response?.let { heartBeatBean ->
+            preference.mqttIsActive = heartBeatBean.mqttIsActive == 1
+            heartBeatBean.dbVersionList?.ifNotNullOrEmpty {
+                preference.setDBVersion(it.toList())
+            }
+            heartBeatBean.sessionToken?.ifNotNullOrBlank {
+                preference.sessionToken = it
+            }
+            heartBeatBean.headerSessionToken?.ifNotNullOrBlank {
+                preference.setHeaderSessionToken(it)
+            }
+            heartBeatBean.systemTime?.ifNotNullOrBlank {
+                preference.setSystemTime(it)
+            }
         }
     }
     

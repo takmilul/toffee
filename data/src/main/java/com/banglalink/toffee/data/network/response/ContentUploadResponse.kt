@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ContentUploadResponse(
     @SerialName("response")
-    val response: ContentUploadResponseBean
+    val response: ContentUploadResponseBean? = null
 ) : BaseResponse()

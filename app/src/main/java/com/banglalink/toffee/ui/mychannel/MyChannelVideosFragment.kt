@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.OptIn
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -13,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.filter
@@ -127,7 +129,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             }
         }
     }
-    
+    @OptIn(UnstableApi::class)
     private fun setEmptyView() {
         with(binding) {
             if (isOwner) {
@@ -266,9 +268,11 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         observe(mViewModel.deleteVideoLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadVideosList()
-                    videosReloadViewModel.reloadPlaylist.value = true
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let {
+                        reloadVideosList()
+                        videosReloadViewModel.reloadPlaylist.value = true
+                    }
                 }
                 is Failure -> {
                     ToffeeAnalytics.logEvent(

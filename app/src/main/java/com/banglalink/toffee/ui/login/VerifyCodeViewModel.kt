@@ -20,7 +20,7 @@ class VerifyCodeViewModel @Inject constructor(
     private val sendLoginLogEvent: SendLoginLogEvent,
 ) : ViewModel() {
     
-    val verifyResponse = SingleLiveEvent<Resource<CustomerInfoLogin>>()
+    val verifyResponse = SingleLiveEvent<Resource<CustomerInfoLogin?>>()
     val resendCodeResponse = SingleLiveEvent<Resource<String?>>()
 
     fun verifyCode(code: String, regSessionToken: String, referralCode: String){

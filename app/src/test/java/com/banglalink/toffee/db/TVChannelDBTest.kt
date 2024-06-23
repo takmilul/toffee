@@ -41,6 +41,6 @@ class TVChannelDBTest {
             1L, "LIVE", 1,"Movies", "Hello world", 1234L
         ))
 
-        Assert.assertEquals(1, tvChannelDao.getAllItems().first().size)
+        Assert.assertEquals(1, tvChannelDao.getAllItems().first()?.size)
     }
 }

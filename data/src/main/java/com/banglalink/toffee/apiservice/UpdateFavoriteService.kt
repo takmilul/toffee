@@ -8,9 +8,9 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.FavoriteBean
 import javax.inject.Inject
 
-class UpdateFavorite @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
+class UpdateFavoriteService @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
     
-    suspend fun execute(channelInfo: ChannelInfo, favorite: Boolean): FavoriteBean {
+    suspend fun execute(channelInfo: ChannelInfo, favorite: Boolean): FavoriteBean? {
         val response = tryIO {
             toffeeApi.updateFavorite(
                 FavoriteRequest(

@@ -214,8 +214,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let { reloadPlaylist() }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -272,8 +272,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message)
-                    reloadPlaylist()
+                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
+                    it.data?.let { reloadPlaylist() }
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)

@@ -1,56 +1,59 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.network.request.MostPopularContentRequest
+import com.banglalink.toffee.data.network.request.AllUserChannelsEditorsChoiceRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
 import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LandingUserChannelsRequestParam(
+data class ApiCategoryRequestParams(
     val type: String,
+    val isCategory: Int,
     val categoryId: Int,
-    val subCategoryId: Int,
-    val isDramaSeries: Boolean = false,
 )
 
-class GetMostPopularContents @AssistedInject constructor(
+class GetEditorsChoiceContentsService @AssistedInject constructor(
+    private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
-    private val preference: SessionPreference,
-    @Assisted private val requestParams: LandingUserChannelsRequestParam,
+    @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams,
 ) : BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
+        
+        val request = AllUserChannelsEditorsChoiceRequest(
+            preference.customerId,
+            preference.password
+        )
+
         val response = tryIO {
-            toffeeApi.getUgcMostPopularContents(
-                requestParams.type,
-                if (requestParams.isDramaSeries) 1 else 0,
+            toffeeApi.getUgcEditorsChoice(
+                requestParams.type ?: "",
+                requestParams.pageType?.value ?: PageType.Landing.value,
                 requestParams.categoryId,
-                requestParams.subCategoryId,
-                limit,
-                offset,
-                preference.getDBVersionByApiName(ApiNames.GET_MOST_POPULAR_CONTENTS),
-                MostPopularContentRequest(
-                    preference.customerId,
-                    preference.password
-                )
+                preference.getDBVersionByApiName(ApiNames.GET_EDITOR_CHOICE),
+                request
             )
         }
-        
-        return if (response.response.channels != null) {
+        return if (response.response?.channels != null) {
             response.response.channels.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
                     false
                 }
-                localSync.syncData(it, isFromCache = response.isFromCache)
+                if (!it.isExpired) {
+                    it.categoryId = requestParams.categoryId
+                    localSync.syncData(it, isFromCache = response.isFromCache)
+                }
                 !it.isExpired
             }
         } else emptyList()
@@ -58,6 +61,6 @@ class GetMostPopularContents @AssistedInject constructor(
 
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(requestParams: LandingUserChannelsRequestParam): GetMostPopularContents
+        fun create(requestParams: EditorsChoiceFeaturedRequestParams): GetEditorsChoiceContentsService
     }
 }

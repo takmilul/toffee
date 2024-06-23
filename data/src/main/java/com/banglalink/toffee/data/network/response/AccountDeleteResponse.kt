@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountDeleteResponse(
     @SerialName("response")
-    val response: AccountDeleteBean
+    val response: AccountDeleteBean? = null
 ) : BaseResponse()

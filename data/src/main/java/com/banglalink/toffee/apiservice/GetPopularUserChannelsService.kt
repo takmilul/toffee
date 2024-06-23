@@ -9,7 +9,7 @@ import com.banglalink.toffee.model.UserChannelInfo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-class GetPopularUserChannels @AssistedInject constructor(
+class GetPopularUserChannelsService @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
@@ -34,7 +34,7 @@ class GetPopularUserChannels @AssistedInject constructor(
             )
         }
         
-        return if (response.response.channels != null) {
+        return if (response.response?.channels != null) {
             response.response.channels.map {
                 localSync.syncUserChannel(it)
                 it
@@ -44,6 +44,6 @@ class GetPopularUserChannels @AssistedInject constructor(
     
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(requestParams: ApiCategoryRequestParams): GetPopularUserChannels
+        fun create(requestParams: ApiCategoryRequestParams): GetPopularUserChannelsService
     }
 }

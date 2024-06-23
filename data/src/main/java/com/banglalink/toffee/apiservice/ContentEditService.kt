@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
-class ContentEdit @Inject constructor(
+class ContentEditService @Inject constructor(
     private val mPref: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {
@@ -22,7 +22,7 @@ class ContentEdit @Inject constructor(
         subCategoryId: Int,
         oldContentBanner: String? = "NULL",
         base64Image: String? = "NULL"
-    ): ResponseBean {
+    ): ResponseBean? {
         val response = tryIO {
             toffeeApi.editContent(
                 ContentEditRequest(

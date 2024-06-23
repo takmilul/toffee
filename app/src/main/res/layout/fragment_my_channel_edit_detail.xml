@@ -35,7 +35,6 @@
                 
                 <ImageView
                     android:id="@+id/bannerImageView"
-                    loadImageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/channel_banner_height"
                     android:background="@android:color/black"
@@ -61,7 +60,6 @@
                 
                 <ImageView
                     android:id="@+id/profileImageView"
-                    loadImageFromUrlRounded="@{viewModel.myChannelDetail.profileUrl}"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:contentDescription="@string/txt_profile_image"

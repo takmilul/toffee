@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LogoutResponse(
     @SerialName("response")
-    val response: LogoutBean
+    val response: LogoutBean? = null
 ) : BaseResponse()

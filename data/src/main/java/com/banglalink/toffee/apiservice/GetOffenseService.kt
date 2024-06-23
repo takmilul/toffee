@@ -11,7 +11,7 @@ class GetOffenseService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val preference: SessionPreference,
 ): BaseApiService<OffenseType> {
-
+    
     override suspend fun loadData(offset: Int, limit: Int): List<OffenseType> {
         val response = tryIO {
             toffeeApi.getOffenseList(
@@ -23,7 +23,7 @@ class GetOffenseService @Inject constructor(
                 )
             )
         }
-
-        return response.response.offenseTypeList ?: emptyList()
+        
+        return response.response?.offenseTypeList ?: emptyList()
     }
 }

@@ -12,7 +12,7 @@ class SendShareLogApiService @Inject constructor(
     private val toffeeApi: ToffeeApi
 ) {
     
-    suspend fun execute(contentId: Int, videoUrl: String?): ContentShareLogBean {
+    suspend fun execute(contentId: Int, videoUrl: String?): ContentShareLogBean? {
         val response = tryIO {
             toffeeApi.sendShareLog(
                 ContentShareLogRequest(contentId, preference.customerId, preference.password, videoUrl)

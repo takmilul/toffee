@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MovieCategoryDetailResponse(
     @SerialName("response")
-    val response: MovieCategoryDetailBean
+    val response: MovieCategoryDetailBean? = null
 ) : BaseResponse()

@@ -92,11 +92,15 @@ class SubscribedChannelsFragment : HomeBaseFragment(), LandingPopularChannelCall
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
                 is Resource.Success -> {
-                    subscribedChannelInfo?.apply {
-                        isSubscribed = response.data.isSubscribed
-                        subscriberCount = response.data.subscriberCount
+                    if (response.data == null) {
+                        requireContext().showToast(getString(R.string.try_again_message))
+                    } else {
+                        subscribedChannelInfo?.apply {
+                            isSubscribed = response.data?.isSubscribed ?: 0
+                            subscriberCount = response.data?.subscriberCount ?: 0
+                        }
+                        observeList()
                     }
-                    observeList()
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

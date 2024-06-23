@@ -28,6 +28,6 @@ class GetBubbleService @Inject constructor(
             )
         }
         
-        return response.response.ramadanSchedule ?: emptyList()
+        return response.response?.ramadanSchedule ?: emptyList()
     }
 }

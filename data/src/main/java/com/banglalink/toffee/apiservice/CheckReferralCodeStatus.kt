@@ -11,11 +11,11 @@ class CheckReferralCodeStatus @Inject constructor(val toffeeApi: ToffeeApi) {
 
     suspend fun execute(phoneNumber: String, referralCode: String) {
         val response = tryIO { toffeeApi.checkReferralCode(ReferralCodeStatusRequest(phoneNumber, referralCode)) }
-        if (! response.response.referralStatus.equals("VALID", ignoreCase = true)) {
+        if (response.response == null || ! response.response.referralStatus.equals("VALID", ignoreCase = true)) {
             throw ReferralException(
                 Constants.INVALID_REFERRAL_ERROR_CODE,
-                response.response.referralStatusMessage ?: "Something went wrong",
-                response.response.referralStatus ?: "Failed"
+                response.response?.referralStatusMessage ?: "Something went wrong",
+                response.response?.referralStatus ?: "Failed"
             )
         }
     }

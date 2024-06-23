@@ -225,11 +225,15 @@ class CatchupDetailsFragment: HomeBaseFragment(), ContentReactionCallback<Channe
             observe(homeViewModel.subscriptionLiveData) { response ->
                 when (response) {
                     is Resource.Success -> {
-                        currentItem?.apply {
-                            isSubscribed = response.data.isSubscribed
-                            subscriberCount = response.data.subscriberCount
+                        if (response.data == null) {
+                            requireContext().showToast(getString(R.string.try_again_message))
+                        } else {
+                            currentItem?.apply {
+                                isSubscribed = response.data?.isSubscribed ?: 0
+                                subscriberCount = response.data?.subscriberCount ?: 0
+                            }
+                            headerAdapter?.notifyDataSetChanged()
                         }
-                        headerAdapter?.notifyDataSetChanged()
                     }
                     
                     is Resource.Failure -> {

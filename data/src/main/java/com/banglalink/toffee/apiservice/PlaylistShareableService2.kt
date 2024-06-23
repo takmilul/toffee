@@ -36,16 +36,15 @@ class PlaylistShareableService2 @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.filter {
-                it.isExpired = try {
-                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
-                } catch (e: Exception) {
-                    false
-                }
-                localSync.syncData(it, isFromCache = response.isFromCache)
-                !it.isExpired
-            } ?: emptyList()
-        
+        return response.response?.channels?.filter {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
+            } catch (e: Exception) {
+                false
+            }
+            localSync.syncData(it, isFromCache = response.isFromCache)
+            !it.isExpired
+        } ?: emptyList()
     }
     
     @dagger.assisted.AssistedFactory

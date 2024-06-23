@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.ContentEdit
-import com.banglalink.toffee.apiservice.GetContentCategories
+import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.ContentEditService
+import com.banglalink.toffee.apiservice.GetContentCategoriesService
 import com.banglalink.toffee.data.network.response.ResponseBean
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Category
@@ -24,8 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelVideosEditViewModel @Inject constructor(
-    private val categoryApi: GetContentCategories,
-    private val contentEditApi: ContentEdit,
+    private val categoryApi: GetContentCategoriesService,
+    private val contentEditServiceApi: ContentEditService,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
 
@@ -64,19 +65,21 @@ class MyChannelVideosEditViewModel @Inject constructor(
         viewModelScope.launch {
             val ageGroupId = ageGroupPosition.value?: -1
             responseLiveData.value = try {
-                Resource.Success(
-                    contentEditApi(
-                        contentId,
-                        fileName,
-                        title.value,
-                        description.value,
-                        tags,
-                        ageGroupId.toString(),
-                        categoryId,
-                        subCategoryId,
-                        thumbnailUrl.value,
-                        bannerBase64
-                    ))
+                val response = contentEditServiceApi(
+                    contentId,
+                    fileName,
+                    title.value,
+                    description.value,
+                    tags,
+                    ageGroupId.toString(),
+                    categoryId,
+                    subCategoryId,
+                    thumbnailUrl.value,
+                    bannerBase64
+                )
+                response?.let {
+                    Resource.Success(it)
+                } ?: Resource.Failure(getError(Exception(appContext.getString(R.string.try_again_message))))
             } catch (ex: Exception) {
                 Resource.Failure(getError(ex))
             }

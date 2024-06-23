@@ -1,6 +1,5 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
@@ -15,15 +14,13 @@ class VerifyCodeService @Inject constructor(
     private val bubbleConfigRepository: BubbleConfigRepository
 ) {
     
-    suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoLogin {
+    suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoLogin? {
         val response = tryIO { toffeeApi.verifyCode(getRequest(code, regSessionToken, referralCode)) }
         
-        response.customerInfoLogin.also {
-            try {
+        response.customerInfoLogin?.also {
+            runCatching {
                 it.activePackList = it.activePackList
                 it.bubbleConfig?.let { bubbleConfigRepository.insert(it) }
-            } catch (e: Exception) {
-                Log.i("bubble_", "execute: ${e.message}")
             }
             preference.saveCustomerInfo(it)
         }

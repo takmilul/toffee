@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NavCategoryResponse(
     @SerialName("response")
-    val response: NavCategoryBean
+    val response: NavCategoryBean? = null
 ) : BaseResponse()

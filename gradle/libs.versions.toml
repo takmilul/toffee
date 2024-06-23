@@ -6,8 +6,8 @@
 minSdkVersion = "21"
 compileSdkVersion = "34"
 targetSdkVersion = "34"
-appVersionCode = "138"
-appVersionName = "7.2.0"
+appVersionCode = "146"
+appVersionName = "7.2.2"
 
 gradle-plugin-version = "8.3.2"
 
@@ -64,7 +64,7 @@ cast-version = "21.4.0"
 
 # ADS
 play-services-ads-identifier-version = "18.0.1"
-play-services-ads-version = "23.0.0"
+play-services-ads-version = "23.1.0"
 ads-identifier-version = "1.0.0-alpha05"
 
 # Security
@@ -93,13 +93,13 @@ play-publisher-version = "3.9.0"
 
 # Firebase
 firebase-core-version = "21.1.1"
-firebase-messaging-version = "23.4.1"
-firebase-analytics-version = "21.6.2"
-firebase-firestore-version = "24.11.1"
-firebase-in-app-message-version = "20.4.2"
-firebase-crashlytics-version = "18.6.4"
-firebase-crashlytics-plugin-version = "2.9.9"
-firebase-appdistribution-plugin-version = "4.2.0"
+firebase-messaging-version = "24.0.0"
+firebase-analytics-version = "22.0.1"
+firebase-firestore-version = "25.0.0"
+firebase-in-app-message-version = "21.0.0"
+firebase-crashlytics-version = "19.0.1"
+firebase-crashlytics-plugin-version = "3.0.1"
+firebase-appdistribution-plugin-version = "5.0.0"
 
 # Reporting
 facebook-sdk-version = "16.0.1"
@@ -117,7 +117,7 @@ orhanobut-version = "2.2.0"
 chucker-version = "4.0.0"
 
 # Firework
-firework-sdk-version = "v5.10.0"
+firework-sdk-version = "6.3.4"
 firework-ads-version = "v20.0.0"
 
 # Miscellaneous
@@ -145,7 +145,7 @@ core-testing-version = "2.1.0"
 
 google-truth-version = "1.1.3"
 fragment-test-version = "1.6.2"
-leakcanary-version = "3.0-alpha-1"
+leakcanary-version = "3.0-alpha-6"
 
 
 #########################################################  LIBRARIES  ############################################################
@@ -290,8 +290,11 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebase-firestore-version" }
 
 # Firework
-firework-sdk = { group = "com.github.loopsocial", name = "firework_sdk", version.ref = "firework-sdk-version" }
-firework-ads = { group = "com.github.loopsocial", name = "AndroidAdsService", version.ref = "firework-ads-version" }
+firework-sdk = { group = "com.firework", name = "sdk", version.ref = "firework-sdk-version" }
+#firework-ads = { group = "com.firework", name = "AndroidAdsService", version.ref = "firework-ads-version" }
+#firework-singlehost = { group = "com.firework.external.livestream", name = "singleHostPlayer", version.ref = "firework-sdk-version" }
+#firework-multihost = { group = "com.firework.external.livestream", name = "multiHostPlayer", version.ref = "firework-sdk-version" }
+#firework-imageloader = { group = "com.firework.external.imageloading", name = "glide", version.ref = "firework-sdk-version" }
 
 # Reporting
 facebook-sdk = { group = "com.facebook.android", name = "facebook-android-sdk", version.ref = "facebook-sdk-version" }
@@ -411,3 +414,4 @@ mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
 logger = ["timber", "orhanobut"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
+#firework = ["firework-sdk", "firework-singlehost", "firework-multihost", "firework-imageloader"]

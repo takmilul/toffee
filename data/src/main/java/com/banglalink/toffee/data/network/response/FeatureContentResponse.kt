@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FeatureContentResponse(
     @SerialName("response")
-    val response: FeatureContentBean
+    val response: FeatureContentBean? = null
 ) : BaseResponse()

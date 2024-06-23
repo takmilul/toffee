@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DramaEpisodesBySeasonResponse(
     @SerialName("response")
-    val response: DramaSeriesContentBean
+    val response: DramaSeriesContentBean? = null
 ) : BaseResponse()

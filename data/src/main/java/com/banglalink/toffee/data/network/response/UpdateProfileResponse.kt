@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UpdateProfileResponse(
     @SerialName("response")
-    val response: ProfileResponseBean
+    val response: ProfileResponseBean? = null
 ):BaseResponse()

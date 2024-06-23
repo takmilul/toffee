@@ -15,7 +15,7 @@ class FeatureContentService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
 ) {
-    suspend fun loadData(type: String, pageType: PageType, categoryId: Int): FeatureContentBean {
+    suspend fun loadData(type: String, pageType: PageType, categoryId: Int): FeatureContentBean? {
         
         val request =  FeatureContentRequest(
             preference.customerId,
@@ -31,7 +31,7 @@ class FeatureContentService @Inject constructor(
                 request
             )
         }
-        return response.response.apply {
+        return response.response?.apply {
             channels?.filter {
                 it.isExpired = try {
                     Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())

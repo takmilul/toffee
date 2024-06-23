@@ -1,6 +1,6 @@
 package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.apiservice.GetFavoriteContents
+import com.banglalink.toffee.apiservice.GetFavoriteContentsService
 import com.banglalink.toffee.data.network.request.FavoriteContentRequest
 import com.banglalink.toffee.data.network.response.FavoriteContentResponse
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -16,7 +16,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import retrofit2.Response
 
-class GetFavoriteContentsTest :BaseUseCaseTest(){
+class GetFavoriteContentsServiceTest :BaseUseCaseTest(){
 
     @Test
     fun get_contents_success(){
@@ -33,7 +33,7 @@ class GetFavoriteContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             ))
 
-            val getContents = GetFavoriteContents(SessionPreference.getInstance(),mockToffeeApi, mock())
+            val getContents = GetFavoriteContentsService(SessionPreference.getInstance(),mockToffeeApi, mock())
             Mockito.`when`(mockToffeeApi.getFavoriteContents(any<FavoriteContentRequest>())).thenReturn(
                 Response.success(FavoriteContentResponse(
                     ContentBean(channelInfoList,1,1)

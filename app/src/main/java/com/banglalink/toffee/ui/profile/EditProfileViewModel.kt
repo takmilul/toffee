@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetContentCategories
+import com.banglalink.toffee.apiservice.GetContentCategoriesService
 import com.banglalink.toffee.apiservice.UpdateProfile
 import com.banglalink.toffee.apiservice.UploadProfileImage
 import com.banglalink.toffee.data.network.util.resultFromResponse
@@ -24,13 +24,13 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val updateProfile: UpdateProfile,
-    private val categoryApi: GetContentCategories,
+    private val categoryApi: GetContentCategoriesService,
     @ApplicationContext private val context: Context,
     private val uploadProfileImage: UploadProfileImage,
 ) : ViewModel() {
 
     val categories = MutableLiveData<List<Category>>()
-    val editProfileLiveData = MutableLiveData<Resource<ProfileResponseBean>>()
+    val editProfileLiveData = MutableLiveData<Resource<ProfileResponseBean?>>()
 
     init {
         viewModelScope.launch {
@@ -54,7 +54,7 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-    fun uploadProfileImage(photoData: Uri): LiveData<Resource<SubscriberPhotoBean>> {
+    fun uploadProfileImage(photoData: Uri): LiveData<Resource<SubscriberPhotoBean?>> {
         return resultLiveData {
             uploadProfileImage.execute(photoData, context)
         }

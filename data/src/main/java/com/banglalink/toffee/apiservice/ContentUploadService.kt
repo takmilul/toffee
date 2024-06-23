@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
-class ContentUpload @Inject constructor(
+class ContentUploadService @Inject constructor(
     private val mPref: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {
@@ -23,7 +23,7 @@ class ContentUpload @Inject constructor(
         duration: String? = null,
         isHorizontal: Int,
         copyrightFileName: String? = null
-    ): ContentUploadResponseBean {
+    ): ContentUploadResponseBean? {
         val response = tryIO {
             toffeeApi.uploadContent(
                 ContentUploadRequest(

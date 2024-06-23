@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FireworkResponse(
     @SerialName("response")
-    val response: FireworkBean
+    val response: FireworkBean? = null
 ):BaseResponse()

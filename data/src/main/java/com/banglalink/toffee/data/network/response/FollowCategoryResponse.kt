@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FollowCategoryResponse(
     @SerialName("response")
-    val response: FollowCategoryBean
+    val response: FollowCategoryBean? = null
 ) : BaseResponse()

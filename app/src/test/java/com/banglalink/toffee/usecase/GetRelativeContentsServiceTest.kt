@@ -1,7 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.apiservice.CatchupParams
-import com.banglalink.toffee.apiservice.GetRelativeContents
+import com.banglalink.toffee.apiservice.GetRelativeContentsService
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.RelativeContentRequest
 import com.banglalink.toffee.data.network.response.RelativeContentResponse
@@ -19,7 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import retrofit2.Response
 
-class GetRelativeContentsTest :BaseUseCaseTest(){
+class GetRelativeContentsServiceTest :BaseUseCaseTest(){
 
     @Mock
     val localSync: LocalSync = mock()
@@ -52,7 +52,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             ))
 
-            val getContents = GetRelativeContents(
+            val getContents = GetRelativeContentsService(
                 SessionPreference.getInstance(),
                 mockToffeeApi,
                 localSync,
@@ -102,7 +102,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 view_count = "1009"
             ))
 
-            val getContents = GetRelativeContents(SessionPreference.getInstance(),mockToffeeApi,localSync, param)
+            val getContents = GetRelativeContentsService(SessionPreference.getInstance(),mockToffeeApi,localSync, param)
             Mockito.`when`(mockToffeeApi.getRelativeContents(any<RelativeContentRequest>())).thenReturn(
                 Response.success(RelativeContentResponse(
                     ContentBean(channelInfoList,2,2)
@@ -135,7 +135,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 video_tags="tag"
             )
 
-            val getContents = GetRelativeContents(SessionPreference.getInstance(),mockToffeeApi, localSync, param)
+            val getContents = GetRelativeContentsService(SessionPreference.getInstance(),mockToffeeApi, localSync, param)
             Mockito.`when`(mockToffeeApi.getRelativeContents(any<RelativeContentRequest>())).thenReturn(
                 Response.success(RelativeContentResponse(
                     ContentBean(null,0,10)

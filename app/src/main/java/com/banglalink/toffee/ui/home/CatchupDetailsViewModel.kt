@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.CatchupParams
-import com.banglalink.toffee.apiservice.GetRelativeContents
+import com.banglalink.toffee.apiservice.GetRelativeContentsService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.ChannelInfo
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CatchupDetailsViewModel @Inject constructor(
-    private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
+    private val relativeContentsFactory: GetRelativeContentsService.AssistedFactory,
 ) : ViewModel() {
     
     fun loadRelativeContent(catchupParams: CatchupParams): Flow<PagingData<ChannelInfo>> {

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MyChannelSubscribeResponse(
     @SerialName("response")
-    val response: MyChannelSubscribeBean
+    val response: MyChannelSubscribeBean? = null
 ) : BaseResponse()

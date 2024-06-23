@@ -79,8 +79,10 @@ class ViewProfileFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    viewModel.profileForm.value = it.data
-                    binding.data = it.data.apply { phoneNo = phoneNumber }
+                    it.data?.let {
+                        viewModel.profileForm.value = it
+                        binding.data = it.apply { phoneNo = phoneNumber }
+                    } ?: run { requireContext().showToast(getString(R.string.try_again_message)) }
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)

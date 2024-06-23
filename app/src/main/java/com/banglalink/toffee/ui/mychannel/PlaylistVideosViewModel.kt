@@ -41,7 +41,7 @@ class PlaylistVideosViewModel @Inject constructor(
     private val userPlaylistService: UserPlaylistVideosService.AssistedFactory,
 ) : ViewModel() {
     
-    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean?>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()
     
     fun getMyChannelPlaylistVideos(playlistInfo: PlaylistPlaybackInfo): Flow<PagingData<ChannelInfo>> {

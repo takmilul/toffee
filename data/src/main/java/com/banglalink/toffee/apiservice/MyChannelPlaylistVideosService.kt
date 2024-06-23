@@ -35,7 +35,7 @@ class MyChannelPlaylistVideosService @AssistedInject constructor(
             )
         }
         
-        return response.response.channels?.filter {
+        return response.response?.channels?.filter {
             it.isExpired = try {
                 Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {

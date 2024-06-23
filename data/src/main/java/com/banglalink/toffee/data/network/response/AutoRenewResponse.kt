@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class AutoRenewResponse(
     @SerialName("response")
-    val response: BodyResponse
+    val response: BodyResponse? = null
 ) : BaseResponse()

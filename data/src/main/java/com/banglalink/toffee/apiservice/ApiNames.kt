@@ -20,6 +20,7 @@ object ApiNames {
     const val GET_CONTENT_FROM_SEARCHABLE_URL = "getContentsShareable"
     const val SEND_CONTENT_SHARE_LOG = "contentShareLog"
     const val SEND_HEART_BEAT = "heartBeatV2"
+    const val SEND_KEEP_ALIVE = "keep-alive"
     const val GET_PACKAGE_WITH_SUBSCRIPTION = "getPackagesWithSubscription"
     const val GET_PACKAGE_DETAILS_V2 = "getPackageDetailsV2"
     const val SUBSCRIBE_PACKAGE = "subscribeAPackage"

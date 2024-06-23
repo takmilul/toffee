@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VerifyCodeResponse(
     @SerialName("response")
-    val customerInfoLogin: CustomerInfoLogin
+    val customerInfoLogin: CustomerInfoLogin? = null
 ) : BaseResponse()

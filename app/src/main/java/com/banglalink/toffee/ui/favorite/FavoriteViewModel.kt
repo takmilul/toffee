@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.favorite
 
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.BrowsingScreens
-import com.banglalink.toffee.apiservice.GetFavoriteContents
+import com.banglalink.toffee.apiservice.GetFavoriteContentsService
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    private val apiService: GetFavoriteContents
+    private val apiService: GetFavoriteContentsService
 ): BasePagingViewModel<ChannelInfo>() {
     
     override fun repo(): BaseListRepository<ChannelInfo> {
