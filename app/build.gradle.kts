@@ -260,8 +260,6 @@ dependencies {
         
         // Network
         implementation(bundles.retrofit)
-        implementation(net.gotev.uploadservice)
-        implementation(net.gotev.uploadservice.okhttp)
         
         // Google Services
         implementation(google.api.client) {

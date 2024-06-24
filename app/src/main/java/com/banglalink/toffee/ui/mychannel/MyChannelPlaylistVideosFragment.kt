@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -21,12 +20,8 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import coil.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.FirebaseParams
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
-import com.banglalink.toffee.apiservice.ApiNames
-import com.banglalink.toffee.apiservice.ApiRoutes
-import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
@@ -118,7 +113,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         initAdapter()
         observeListState()
         observeVideoList()
-        observeListReload()
         setSubscriptionStatus()
         observeSubscribeChannel()
         
@@ -259,53 +253,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
     }
     
-    private fun observeDeletePlaylistVideo() {
-        observe(mViewModel.deletePlaylistVideoLiveData) {
-            when (it) {
-                is Success -> {
-                    requireContext().showToast(it.data?.message ?: getString(R.string.try_again_message))
-                    it.data?.let {
-                        reloadViewModel.reloadVideos.value = true
-                        reloadViewModel.reloadPlaylist.value = true
-                    }
-                }
-                is Failure -> {
-                    ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
-                            "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
-                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
-                            "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
-                    )
-                    requireContext().showToast(it.error.msg)
-                }
-            }
-        }
-    }
-    
-    private fun observeListReload() {
-        observe(reloadViewModel.reloadVideos) {
-            if (it) {
-                reloadPlaylistVideos()
-            }
-        }
-    }
-
-    private fun reloadPlaylistVideos() {
-        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
-        playlistAdapter.refresh().let {
-            lifecycleScope.launch {
-                playlistAdapter.loadStateFlow.collectLatest {
-                    if (playlistInfo.playlistItemCount != playlistAdapter.itemCount) {
-                        playlistInfo.playlistItemCount = playlistAdapter.itemCount
-                        detailsAdapter.notifyDataSetChanged()
-                    }
-                }
-            }
-        }
-    }
-
     private fun observeSubscribeChannel() {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
@@ -346,30 +293,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
-        if (playlistInfo.channelOwnerId == mPref.customerId && mPref.isVerifiedUser) {
-            PopupMenu(requireContext(), view).apply {
-                inflate(R.menu.menu_delete_playlist_video)
-                menu.findItem(R.id.menu_fav).isVisible = false
-                menu.findItem(R.id.menu_report).isVisible = false
-                menu.findItem(R.id.menu_share).isVisible = item.isApproved == 1
-                menu.findItem(R.id.menu_delete_playlist_video).isVisible = currentItem?.id != item.id
-                setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.menu_share -> {
-                            requireActivity().handleShare(item)
-                        }
-                        R.id.menu_delete_playlist_video -> {
-                            observeDeletePlaylistVideo()
-                            mViewModel.deletePlaylistVideo(playlistInfo.channelOwnerId, item.id.toInt(), playlistInfo.playlistId)
-                            mViewModel.insertActivity(item, Reaction.Delete.value)
-                        }
-                    }
-                    return@setOnMenuItemClickListener true
-                }
-            }.show()
-        } else {
-            openMenu(view, item)
-        }
+        openMenu(view, item)
     }
 
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {

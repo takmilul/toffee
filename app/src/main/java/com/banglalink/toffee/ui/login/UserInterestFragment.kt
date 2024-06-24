@@ -23,7 +23,7 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel
+import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.ToffeeProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
@@ -39,14 +39,14 @@ class UserInterestFragment : ChildDialogFragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val binding get() = _binding !!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
-    private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
+    private val viewModel: ViewProfileViewModel by activityViewModels()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogUserInterestBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userInterestList.clear()

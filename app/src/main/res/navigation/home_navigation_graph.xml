@@ -76,16 +76,6 @@
         android:label="Favorites" />
     
     <fragment
-        android:id="@+id/upload_minimize"
-        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
-        android:label="Upload Video" />
-    
-    <fragment
-        android:id="@+id/upload_bottom"
-        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
-        android:label="Upload Video" />
-    
-    <fragment
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
@@ -176,9 +166,6 @@
         <action
             android:id="@+id/action_landingCategoriesFragment_to_categoryDetailsFragment"
             app:destination="@id/categoryDetailsFragment" />
-        <action
-            android:id="@+id/action_menu_feed_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment" />
         <action
             android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
             app:destination="@id/catchupDetailsFragment" />
@@ -332,47 +319,10 @@
         android:id="@+id/bottomSheetDeleteFragment"
         android:name="com.banglalink.toffee.ui.profile.BottomSheetDeleteFragment"
         android:label="BottomDelete">
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
-            app:destination="@id/newUploadMethodFragment" />
+        
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
-    </dialog>
-    
-    <dialog
-        android:id="@+id/uploadMethodFragment"
-        android:name="com.banglalink.toffee.ui.upload.UploadMethodFragment"
-        android:label="Upload">
-        <action
-            android:id="@+id/action_uploadMethodFragment_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment"
-            app:popUpTo="@id/uploadMethodFragment"
-            app:popUpToInclusive="true" />
-    </dialog>
-    
-    <dialog
-        android:id="@+id/bottomSheetUploadFragment"
-        android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
-        android:label="BottomUpload">
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
-            app:destination="@id/newUploadMethodFragment" />
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
-            app:destination="@id/thumbnailSelectionMethodFragment" />
-    </dialog>
-    
-    <dialog
-        android:id="@+id/newUploadMethodFragment"
-        android:name="com.banglalink.toffee.ui.upload.NewUploadMethodFragment"
-        android:label="Update Logo Channel">
-        <action
-            android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment" />
-        <action
-            android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
-            app:destination="@id/menu_channel" />
     </dialog>
     
     <dialog
@@ -425,15 +375,6 @@
     </dialog>
     
     <fragment
-        android:id="@+id/editUploadInfoFragment"
-        android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
-        android:label="Edit Upload">
-        <action
-            android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
-            app:destination="@id/thumbnailSelectionMethodFragment" />
-    </fragment>
-    
-    <fragment
         android:id="@+id/categoryDetailsFragment"
         android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
         android:label="{title}">
@@ -455,18 +396,6 @@
         android:label="User Channels" />
     
     <fragment
-        android:id="@+id/myChannelEditDetailFragment"
-        android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
-        android:label="Edit Details">
-        <argument
-            android:name="channelOwnerId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment"
-            app:destination="@id/thumbnailSelectionMethodFragment" />
-    </fragment>
-    
-    <fragment
         android:id="@+id/menu_channel"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
         android:label="{title}">
@@ -478,24 +407,14 @@
             android:name="channelOwnerId"
             android:defaultValue="0"
             app:argType="integer" />
-        <argument
-            android:name="isMyChannel"
-            android:defaultValue="true"
-            app:argType="boolean" />
-        <action
-            android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
-            app:destination="@id/myChannelEditDetailFragment" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />
-        <action
-            android:id="@+id/action_myChannelHomeFragment_to_myChannelVideosEditFragment"
-            app:destination="@id/myChannelVideosEditFragment" />
         
         <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />
 <!--        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />-->
-        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{isMyChannel}" />
-        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{isMyChannel}/{title}" />
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />
     </fragment>
     
     <fragment
@@ -550,18 +469,6 @@
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="Favorites" />
-    
-    <fragment
-        android:id="@+id/myChannelVideosEditFragment"
-        android:name="com.banglalink.toffee.ui.mychannel.MyChannelVideosEditFragment"
-        android:label="Edit Video Details">
-        <argument
-            android:name="channelInfo"
-            app:argType="com.banglalink.toffee.model.ChannelInfo" />
-        <action
-            android:id="@+id/action_myChannelVideosEditFragment_to_thumbnailSelectionMethodFragment"
-            app:destination="@id/thumbnailSelectionMethodFragment" />
-    </fragment>
     
     <fragment
         android:id="@+id/catchupDetailsFragment"
@@ -658,8 +565,7 @@
         android:id="@+id/audioBookLandingFragment"
         android:name="com.banglalink.toffee.ui.audiobook.AudioBookLandingFragment"
         android:label="Kabbik - Audio Book" />
-
-
+    
     <fragment
         android:id="@+id/audioBookCategoryDetails"
         android:name="com.banglalink.toffee.ui.audiobook.AudioBookCategoryDetailsFragment"

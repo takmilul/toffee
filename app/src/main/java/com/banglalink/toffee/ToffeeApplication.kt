@@ -33,7 +33,6 @@ import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.bubble.BaseBubbleService
-import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.banglalink.toffee.util.Log
 import com.firework.sdk.FireworkInitError.AlreadyInitializedError
@@ -66,7 +65,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
     
     @Inject lateinit var cacheManager: CacheManager
     @Inject @CoilCache lateinit var coilCache: DiskCache
-    @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
@@ -193,7 +191,6 @@ class ToffeeApplication : Application(), ImageLoaderFactory, Configuration.Provi
         
         initFireworkSdk()
 //        initMedalliaSdk()
-        mUploadObserver.start()
         BaseBubbleService.isForceClosed = false
     }
     

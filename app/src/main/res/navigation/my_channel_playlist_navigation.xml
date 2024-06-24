@@ -9,10 +9,6 @@
         <argument
             android:name="channelOwnerId"
             app:argType="integer" />
-        <argument
-            android:name="isMyChannel"
-            android:defaultValue="true"
-            app:argType="boolean" />
         <action
             android:id="@+id/action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />

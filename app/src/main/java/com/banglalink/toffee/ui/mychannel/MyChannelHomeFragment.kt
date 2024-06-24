@@ -16,8 +16,6 @@ import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
@@ -29,7 +27,6 @@ import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.checkVerification
@@ -51,7 +48,7 @@ import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.util.regex.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -68,16 +65,13 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<MyChannelHomeViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
-    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     
     companion object {
-        const val IS_MY_CHANNEL = "isMyChannel"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelHomeFragment {
+        fun newInstance(channelOwnerId: Int): MyChannelHomeFragment {
             return MyChannelHomeFragment().apply {
-                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId, IS_MY_CHANNEL to isMyChannel)
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
             }
         }
     }
@@ -85,10 +79,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressDialog = ToffeeProgressDialog(requireContext())
-        viewModel.isMyChannel = arguments?.getBoolean(IS_MY_CHANNEL) ?: false
         viewModel.channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
-        if(viewModel.channelOwnerId == 0) viewModel.channelOwnerId = mPref.customerId
-        viewModel.isOwner = viewModel.channelOwnerId == mPref.customerId
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, viewModel.myRating > 0)
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -104,26 +100,19 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             requireContext().showToast(getString(R.string.try_again_message))
             return
         }
-        if (viewModel.isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         binding.contentBody.hide()
-        val showDetails = !(!mPref.isVerifiedUser && viewModel.isMyChannel && viewModel.isOwner)
-        if(showDetails) {
-            progressDialog.show()
-            observeChannelDetail()
-            observeSubscribeChannel()
-            viewModel.getChannelDetail(viewModel.channelOwnerId)
-        } else {
-            setBindingData()
-        }
+        
         binding.channelDetailView.subscriptionButton.isEnabled = true
-        binding.channelDetailView.addBioButton.safeClick(this)
-        binding.channelDetailView.editButton.safeClick(this)
-        binding.channelDetailView.analyticsButton.safeClick(this)
         binding.channelDetailView.ratingButton.safeClick(this)
         binding.channelDetailView.subscriptionButton.safeClick(this)
         binding.channelDetailView.channelShareButton.safeClick({
             myChannelDetail?.channelShareUrl?.let { requireActivity().handleUrlShare(it) }
         })
+        
+        progressDialog.show()
+        observeChannelDetail()
+        observeSubscribeChannel()
+        viewModel.getChannelDetail(viewModel.channelOwnerId)
     }
     
     override fun onClick(v: View?) {
@@ -132,30 +121,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     private fun handleClick(v: View?) {
         when (v) {
-            _binding?.channelDetailView?.addBioButton -> {
-                if (!mPref.isVerifiedUser){
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN_SOURCE,
-                        bundleOf(
-                            "source" to "add_channel_bio",
-                            "method" to "mobile"
-                        )
-                    )
-                }
-                requireActivity().checkVerification { navigateToEditChannel() }
-            }
-            _binding?.channelDetailView?.editButton -> {
-                if (!mPref.isVerifiedUser){
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN_SOURCE,
-                        bundleOf(
-                            "source" to "create_channel",
-                            "method" to "mobile"
-                        )
-                    )
-                }
-                requireActivity().checkVerification { navigateToEditChannel() }
-            }
             _binding?.channelDetailView?.ratingButton -> {
                 if (!mPref.isVerifiedUser){
                     ToffeeAnalytics.toffeeLogEvent(
@@ -167,24 +132,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     )
                 }
                 requireActivity().checkVerification { showRatingDialog() }
-            }
-            _binding?.channelDetailView?.analyticsButton -> {
-                if (!mPref.isVerifiedUser){
-                    ToffeeAnalytics.toffeeLogEvent(
-                        ToffeeEvents.LOGIN_SOURCE,
-                        bundleOf(
-                            "source" to "create_channel_playlist",
-                            "method" to "mobile"
-                        )
-                    )
-                }
-                requireActivity().checkVerification {
-                    if (viewModel.channelId > 0) {
-                        showCreatePlaylistDialog()
-                    } else {
-                        requireContext().showToast(getString(R.string.create_channel_msg))
-                    }
-                }
             }
             _binding?.channelDetailView?.subscriptionButton -> {
                 if (!mPref.isVerifiedUser){
@@ -207,10 +154,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
         }
-    }
-    
-    private fun navigateToEditChannel() {
-        findNavController().navigate(R.id.myChannelEditDetailFragment, bundleOf("channelOwnerId" to viewModel.channelOwnerId))
     }
     
     private fun showRatingDialog() {
@@ -236,34 +179,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, viewModel.myRating > 0)
-    }
-    
-    fun showCreatePlaylistDialog() {
-        val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-        createPlaylistViewModel.playlistName = ""
-        playlistBinding.playlistNameEditText.text.clear()
-        playlistBinding.viewModel = createPlaylistViewModel
-        playlistBinding.createButton.setOnClickListener {
-            if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
-                observeCreatePlaylist()
-                createPlaylistViewModel.createPlaylist(viewModel.channelOwnerId)
-                createPlaylistViewModel.playlistName = null
-                alertDialog.dismiss()
-            } else {
-                requireContext().showToast(getString(R.string.playlist_name_empty_msg))
-            }
-        }
-        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
-    }
-    
     private fun observeChannelDetail() {
         observe(viewModel.liveData) {
             when (it) {
@@ -292,8 +207,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             myChannelDetail = it.myChannelDetail
             viewModel.rating = it.ratingCount
             viewModel.myRating = it.myRating
-            Timber.tag("Rating_").i("setting myRating--: ${viewModel.myRating}")
-            viewModel.isOwner = it.isOwner == 1 && mPref.isVerifiedUser
             viewModel.isSubscribed = it.isSubscribed
             mPref.isChannelDetailChecked = true
             viewModel.subscriberCount = it.subscriberCount
@@ -301,33 +214,13 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             binding.channelDetailView.channelShareButton.isVisible = channelData.myChannelDetail?.isApproved ?: false
         }
         
-        if (viewModel.isOwner) {
-            myChannelDetail?.let {
-                mPref.channelLogo = it.profileUrl ?: ""
-                mPref.channelName = it.channelName ?: ""
-                mPref.customerName = it.name  ?: ""
-                mPref.customerEmail = it.email  ?: ""
-                mPref.customerAddress = it.address  ?: ""
-                mPref.customerDOB = it.dateOfBirth ?: ""
-                mPref.customerNID = it.nationalIdNo ?: ""
-            }
-        }
-        
         mPref.channelId = 0
         binding.data = channelData
         binding.isSubscribed = viewModel.isSubscribed
         binding.myRating = viewModel.myRating
-        binding.isOwner = viewModel.isOwner
         binding.subscriberCount = viewModel.subscriberCount
         
-        if (viewModel.isOwner && mPref.isVerifiedUser) {
-            mPref.channelId = viewModel.channelId
-        }
-        else if (viewModel.isOwner && ! mPref.isVerifiedUser) {
-            myChannelDetail = null
-            binding.data = null
-        }
-        else if (!viewModel.isOwner && ! mPref.isVerifiedUser) {
+        if (! mPref.isVerifiedUser) {
             binding.isSubscribed = 0
             binding.myRating = 0
         }
@@ -335,22 +228,18 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     private fun loadBody() {
-        if (viewModel.isOwner) {
-            activity?.title = "My Channel"
-        } else {
-            activity?.title = myChannelDetail?.channelName ?: "Channel"
-        }
+        activity?.title = myChannelDetail?.channelName ?: "Channel"
+        
         progressDialog.dismiss()
         binding.contentBody.visibility = View.VISIBLE
         
         observeRatingChannel()
-
         
         viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         if (viewPagerAdapter.itemCount == 0) {
             viewPagerAdapter.addFragments(listOf(
-                MyChannelVideosFragment.newInstance(viewModel.channelOwnerId, viewModel.isMyChannel),
-                MyChannelPlaylistsHostFragment.newInstance(viewModel.channelOwnerId, viewModel.isMyChannel)
+                MyChannelVideosFragment.newInstance(viewModel.channelOwnerId),
+                MyChannelPlaylistsHostFragment.newInstance(viewModel.channelOwnerId)
             ))
         }
         binding.viewPager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
@@ -420,32 +309,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                             "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
-                }
-            }
-        }
-    }
-    
-    private fun observeCreatePlaylist() {
-        observe(createPlaylistViewModel.createPlaylistLiveData) {
-            when (it) {
-                is Success -> {
-                    if (it.data == null) {
-                        requireContext().showToast(getString(R.string.try_again_message))
-                    } else {
-                        requireContext().showToast(it.data?.message)
-                        playlistReloadViewModel.reloadPlaylist.value = true
-                    }
-                }
-                is Failure -> {
-                    ToffeeAnalytics.logEvent(
-                        ToffeeEvents.EXCEPTION,
-                        bundleOf(
-                            "api_name" to ApiNames.CREATE_PLAYLIST,
-                            FirebaseParams.BROWSER_SCREEN to BrowsingScreens.ALL_USER_CHANNELS_PAGE,
-                            "error_code" to it.error.code,
-                            "error_description" to it.error.msg)
-                    )
-                    requireContext().showToast(it.error.msg)
                 }
             }
         }

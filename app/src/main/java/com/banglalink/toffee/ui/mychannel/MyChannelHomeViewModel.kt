@@ -31,8 +31,6 @@ class MyChannelHomeViewModel @Inject constructor(
     var isSubscribed: Int = 0
     var channelOwnerId: Int = 0
     var subscriberCount: Long = 0
-    var isOwner: Boolean = false
-    var isMyChannel: Boolean = false
     private val _data = MutableLiveData<Resource<MyChannelDetailBean?>>()
     val liveData = _data.toLiveData()
     private val _ratingData = MutableLiveData<Resource<MyChannelRatingBean?>>()

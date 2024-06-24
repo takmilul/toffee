@@ -54,7 +54,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
@@ -119,7 +118,6 @@ import com.banglalink.toffee.enums.PlaylistType.Audio_Book_Playlist
 import com.banglalink.toffee.enums.PlaylistType.My_Channel_Playlist
 import com.banglalink.toffee.enums.PlaylistType.User_Playlist
 import com.banglalink.toffee.enums.SharingType
-import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.appTheme
 import com.banglalink.toffee.extension.checkContentPurchase
@@ -144,7 +142,6 @@ import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.FeaturedPartner
-import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -179,8 +176,6 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.upload.UploadProgressViewModel
-import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.ToffeeAlertDialogBuilder
@@ -221,11 +216,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
-import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.io.IOException
 import java.io.InputStream
@@ -267,7 +260,6 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var navHostFragment: NavHostFragment
     @Inject lateinit var uploadRepo: UploadInfoRepository
     private lateinit var appbarConfig: AppBarConfiguration
-    @Inject lateinit var uploadManager: UploadStateManager
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var tvChannelsRepo: TVChannelRepository
     @Inject lateinit var inAppMessageParser: InAppMessageParser
@@ -278,7 +270,6 @@ class HomeActivity : PlayerPageActivity(),
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     @Inject @FirebaseInAppMessage lateinit var inAppMessaging: FirebaseInAppMessaging
     private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val landingPageViewModel by viewModels<LandingPageViewModel>()
     private val progressDialog by unsafeLazy { ToffeeProgressDialog(this) }
@@ -367,21 +358,6 @@ class HomeActivity : PlayerPageActivity(),
             launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
         }
         
-        binding.uploadButton.setOnClickListener {
-            ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
-            if(!mPref.isVerifiedUser){
-                ToffeeAnalytics.toffeeLogEvent(
-                    ToffeeEvents.LOGIN_SOURCE,
-                    bundleOf(
-                        "source" to "upload",
-                        "method" to "mobile"
-                    )
-                )
-            }
-            checkVerification {
-                checkChannelDetailAndUpload()
-            }
-        }
         runCatching {
             val mqttClientId = EncryptionUtil.decryptResponse(mPref.mqttClientId)
             if (mqttClientId.isBlank() || mqttClientId.substringBefore("_") != mPref.phoneNumber) {
@@ -405,7 +381,6 @@ class HomeActivity : PlayerPageActivity(),
         observe(mPref.forceLogoutUserLiveData) {
             if (it) {
                 destroyPlayer()
-                UploadService.stopAllUploads()
                 mPref.clear()
                 cacheManager.clearAllCache()
                 launchActivity<HomeActivity> { flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT }
@@ -478,8 +453,6 @@ class HomeActivity : PlayerPageActivity(),
         initMqtt()
         observeInAppMessage()
         configureBottomSheet()
-        observeUpload2()
-        watchConnectionChange()
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
@@ -863,7 +836,7 @@ class HomeActivity : PlayerPageActivity(),
     var bottomNavBarHideState = false
     
     private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
-        if (binding.draggableView.isMaximized() || controller.currentDestination?.id == R.id.editUploadInfoFragment) {
+        if (binding.draggableView.isMaximized()) {
             minimizePlayer()
         }
         if (visibleDestinationId == R.id.htmlPageViewDialogInApp && isPlayerVisible()) {
@@ -2437,8 +2410,7 @@ class HomeActivity : PlayerPageActivity(),
     }
     
     private fun loadUserInfo() {
-        if (!isChannelComplete() && mPref.isVerifiedUser) {
-            viewModel.getChannelDetail(mPref.customerId)
+        if (mPref.isVerifiedUser) {
             observe(profileViewModel.loadCustomerProfile()) {
                 if (it is Success && it.data != null) {
                     profileViewModel.profileForm.value = it.data
@@ -2502,76 +2474,6 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
     
-    private fun isChannelComplete() =
-        mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.channelName.isNotBlank() && mPref.channelLogo.isNotBlank() && mPref.isChannelDetailChecked
-    
-    fun checkChannelDetailAndUpload() {
-        if (!mPref.isChannelDetailChecked) {
-            observe(viewModel.myChannelDetailResponse) {
-                when (it) {
-                    is Success -> showUploadDialog()
-                    is Failure -> {
-                        ToffeeAnalytics.logEvent(
-                            ToffeeEvents.EXCEPTION, bundleOf(
-                                "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
-                                FirebaseParams.BROWSER_SCREEN to "My Channel page",
-                                "error_code" to it.error.code,
-                                "error_description" to it.error.msg
-                            )
-                        )
-                        showToast(getString(R.string.unable_to_load_data))
-                    }
-                }
-            }
-            viewModel.getChannelDetail(mPref.customerId)
-        } else {
-            showUploadDialog()
-        }
-    }
-    
-    private fun showUploadDialog(): Boolean {
-        if (isChannelComplete()) {
-            if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
-                navController.popBackStack()
-                return true
-            }
-            lifecycleScope.launch {
-                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
-                    return@launch
-                }
-                navController.navigateTo(R.id.uploadMethodFragment)
-            }
-        } else {
-            if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
-                navController.popBackStack()
-                return true
-            }
-            lifecycleScope.launch {
-                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
-                    return@launch
-                }
-                if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
-                    navController.popBackStack()
-                }
-                navController.navigateTo(R.id.bottomSheetUploadFragment)
-            }
-        }
-        return false
-    }
-    
-    private fun watchConnectionChange() {
-        lifecycleScope.launch {
-            uploadManager.checkUploadStatus(false)
-        }
-        lifecycleScope.launch {
-            connectionWatcher.watchNetwork().collect {
-                if (it) {
-                    uploadManager.checkUploadStatus(true)
-                }
-            }
-        }
-    }
-    
     private fun observeNotification() {
         lifecycleScope.launchWhenStarted {
             notificationRepo.getUnseenNotificationCount().collect {
@@ -2579,61 +2481,6 @@ class HomeActivity : PlayerPageActivity(),
                     notificationBadge?.visibility = View.VISIBLE
                 } else {
                     notificationBadge?.visibility = View.GONE
-                }
-            }
-        }
-    }
-    
-    private fun observeUpload2() {
-        binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
-            viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
-            binding.homeMiniProgressContainer.root.isVisible = false
-        }
-        
-        binding.homeMiniProgressContainer.closeButton.setOnClickListener {
-            lifecycleScope.launch {
-                uploadRepo.getActiveUploadsList().let {
-                    if (it.isNotEmpty()) {
-                        uploadRepo.updateUploadInfo(it[0].apply {
-                            this.status = UploadStatus.CLEARED.value
-                        })
-                    }
-                }
-            }
-        }
-        
-        lifecycleScope.launchWhenStarted {
-            uploadViewModel.getActiveUploadList().collectLatest {
-                Log.i("UPLOAD 2", "Collecting ->>> ${it.size}")
-                if (it.isNotEmpty()) {
-                    binding.homeMiniProgressContainer.root.isVisible = true
-                    val upInfo = it[0]
-                    when (upInfo.status) {
-                        UploadStatus.SUCCESS.value, UploadStatus.SUBMITTED.value -> {
-                            binding.homeMiniProgressContainer.miniUploadProgress.progress = 100
-                            binding.homeMiniProgressContainer.addUploadInfoButton.isVisible = true
-                            binding.homeMiniProgressContainer.closeButton.isVisible = true
-                            binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
-                            binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(
-                                R.drawable.ic_upload_done, 0, 0, 0
-                            )
-                            binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
-//                            if (navController.currentDestination?.id == R.id.myChannelHomeFragment) {
-//                                myChannelReloadViewModel.reloadVideos.postValue(true)
-//                            }
-                        }
-                        UploadStatus.ADDED.value, UploadStatus.STARTED.value -> {
-                            binding.homeMiniProgressContainer.addUploadInfoButton.isInvisible = true
-                            binding.homeMiniProgressContainer.uploadSizeText.isVisible = true
-                            binding.homeMiniProgressContainer.closeButton.isInvisible = true
-                            binding.homeMiniProgressContainer.miniUploadProgressText.text = "Uploading - ${upInfo.completedPercent}%"
-                            binding.homeMiniProgressContainer.miniUploadProgress.progress = upInfo.completedPercent
-                            binding.homeMiniProgressContainer.uploadSizeText.text = Utils.readableFileSize(upInfo.fileSize)
-                        }
-                    }
-                } else {
-                    binding.homeMiniProgressContainer.root.isVisible = false
                 }
             }
         }
@@ -2994,11 +2841,10 @@ class HomeActivity : PlayerPageActivity(),
         mPref.preLoginDestinationId.value?.let {
             if (it == id.menu_channel) {
                 navController.popBackStack(it, true)
-                val isMyChannel = channelOwnerId == mPref.customerId
-                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId/$isMyChannel"))
+                navController.navigateTo(Uri.parse("app.toffee://ugc_channel/$channelOwnerId"))
             } else {
                 val bundle = if ((navController.currentBackStack.value.size - 2) >= 0 ) {
-                    navController.currentBackStack.value.get(navController.currentBackStack.value.size-2).arguments
+                    navController.currentBackStack.value[navController.currentBackStack.value.size-2].arguments
                 } else {
                     null
                 }
@@ -3089,7 +2935,6 @@ class HomeActivity : PlayerPageActivity(),
         appScope.launch { favoriteDao.deleteAll() }
         mqttService.destroy()
         
-        UploadService.stopAllUploads()
         initSideNav()
         mPref.profileImageUrlLiveData.postValue(drawable.ic_menu_profile)
     }
@@ -3112,11 +2957,7 @@ class HomeActivity : PlayerPageActivity(),
             id.menu_favorites,
             id.menu_activities,
             id.profileFragment,
-            id.upload_minimize,
             id.menu_subscriptions,
-            id.editUploadInfoFragment,
-            id.myChannelEditDetailFragment,
-            id.myChannelVideosEditFragment,
             id.menu_manage_payment_methods,
             id.menu_active_tv
             -> {

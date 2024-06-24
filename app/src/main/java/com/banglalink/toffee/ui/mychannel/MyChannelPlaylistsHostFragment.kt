@@ -14,16 +14,14 @@ import com.banglalink.toffee.R
 class MyChannelPlaylistsHostFragment : Fragment() {
     
     private var channelOwnerId: Int = 0
-    private var isMyChannel: Boolean = false
     private var navController: NavController? = null
     
     companion object {
         @JvmStatic
-        fun newInstance(channelOwnerId: Int, isMyChannel: Boolean): MyChannelPlaylistsHostFragment {
+        fun newInstance(channelOwnerId: Int): MyChannelPlaylistsHostFragment {
             return MyChannelPlaylistsHostFragment().apply {
                 arguments = bundleOf(
-                    MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId,
-                    MyChannelPlaylistsFragment.IS_MY_CHANNEL to isMyChannel
+                    MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId
                 )
             }
         }
@@ -32,7 +30,6 @@ class MyChannelPlaylistsHostFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            isMyChannel = it.getBoolean(MyChannelPlaylistsFragment.IS_MY_CHANNEL)
             channelOwnerId = it.getInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID)
         }
     }
@@ -47,10 +44,7 @@ class MyChannelPlaylistsHostFragment : Fragment() {
         navController = navHostFragment?.navController
         navController?.setGraph(
             R.navigation.my_channel_playlist_navigation,
-            bundleOf(
-                MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId,
-                MyChannelPlaylistsFragment.IS_MY_CHANNEL to isMyChannel
-            )
+            bundleOf(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID to channelOwnerId)
         )
         listenBackStack()
     }

@@ -44,7 +44,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.SimpleHttpClient
 import com.banglalink.toffee.enums.PlayingPage
 import com.banglalink.toffee.extension.isTestEnvironment
-import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.AccountDeleteBean
 import com.banglalink.toffee.model.ActivePack
 import com.banglalink.toffee.model.ChannelInfo
@@ -148,7 +147,6 @@ class HomeViewModel @Inject constructor(
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean?>>()
     val subscriptionLiveData = MutableLiveData<Resource<MyChannelSubscribeBean?>>()
     val mediaCdnSignUrlData = SingleLiveEvent<Resource<MediaCdnSignUrl?>>()
-    val myChannelDetailLiveData = _channelDetail.toLiveData()
     val webSeriesShareableLiveData = SingleLiveEvent<Resource<DramaSeriesContentBean?>>()
     val activePackListLiveData = SingleLiveEvent<Resource<List<ActivePack>>>()
     val playlistShareableLiveData = SingleLiveEvent<Resource<MyChannelPlaylistVideosBean?>>()
@@ -282,29 +280,6 @@ class HomeViewModel @Inject constructor(
                     it.isFmRadio
                 )
             )
-        }
-    }
-    
-    fun getChannelDetail(channelOwnerId: Int) {
-        viewModelScope.launch {
-            val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
-            
-            if (result is Success) {
-                val myChannelDetail = result.data?.myChannelDetail
-                myChannelDetail?.let {
-                    _channelDetail.value = it
-                    mPref.isChannelDetailChecked = true
-                    mPref.channelId = it.id.toInt()
-                    mPref.customerName = it.name ?: ""
-                    mPref.customerEmail = it.email ?: ""
-                    mPref.customerAddress = it.address ?: ""
-                    mPref.customerDOB = it.dateOfBirth ?: ""
-                    mPref.customerNID = it.nationalIdNo ?: ""
-                    mPref.channelLogo = it.profileUrl ?: ""
-                    mPref.channelName = it.channelName ?: ""
-                }
-            }
-            myChannelDetailResponse.value = result
         }
     }
     
