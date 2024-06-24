@@ -213,7 +213,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_KEY }}
           packageName: "com.banglalink.toffee"
           releaseFiles: ${{ steps.sign_app_bundle.outputs.signedReleaseFile }}
-          track: internal  # beta, alpha, internal, production
+          track: beta  # beta, alpha, internal, production
           status: completed  # completed, draft, halted, inProgress
           inAppUpdatePriority: 0  # 0, 1, 2, 3, 4, 5
 #          userFraction: 0.20  # 0.01 - 0.99 (only for staged rollouts)
