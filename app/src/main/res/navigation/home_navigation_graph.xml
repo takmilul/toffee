@@ -170,9 +170,6 @@
             android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
             app:destination="@id/catchupDetailsFragment" />
         <action
-            android:id="@+id/action_menu_feed_to_trendingChannelsFragment"
-            app:destination="@id/allUserChannelsFragment" />
-        <action
             android:id="@+id/action_landingCategoriesFragment_to_movieFragment"
             app:destination="@id/movieFragment" />
         <action
@@ -389,11 +386,6 @@
             android:id="@+id/action_categoryDetailsFragment_to_myChannelHomeFragment"
             app:destination="@id/menu_channel" />
     </fragment>
-    
-    <fragment
-        android:id="@+id/allUserChannelsFragment"
-        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsListFragment"
-        android:label="User Channels" />
     
     <fragment
         android:id="@+id/menu_channel"

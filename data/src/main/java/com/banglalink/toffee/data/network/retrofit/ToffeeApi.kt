@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.network.request.AccountDeleteRequest
 import com.banglalink.toffee.data.network.request.AddTokenizedAccountInitRequest
 import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.request.AllUserChannelsEditorsChoiceRequest
-import com.banglalink.toffee.data.network.request.AllUserChannelsRequest
 import com.banglalink.toffee.data.network.request.AutoRenewRequest
 import com.banglalink.toffee.data.network.request.BubbleRequest
 import com.banglalink.toffee.data.network.request.CategoryRequest
@@ -96,7 +95,6 @@ import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.response.AccountDeleteResponse
 import com.banglalink.toffee.data.network.response.AllChannelResponse
 import com.banglalink.toffee.data.network.response.AllUserChannelsEditorsChoiceResponse
-import com.banglalink.toffee.data.network.response.AllUserChannelsResponse
 import com.banglalink.toffee.data.network.response.AutoRenewResponse
 import com.banglalink.toffee.data.network.response.BubbleResponse
 import com.banglalink.toffee.data.network.response.CategoryResponse
@@ -502,14 +500,6 @@ interface ToffeeApi {
     
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
-    
-    @POST("/ugc-all-user-channel/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
-    suspend fun getAllUserChannels(
-        @Path("limit") limit: Int,
-        @Path("offset") offset: Int,
-        @Path("dbVersion") dbVersion: Int,
-        @Body allUserChannelsRequest: AllUserChannelsRequest
-    ): AllUserChannelsResponse
     
     @POST("/ugc-channel-subscription-list/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getSubscribedUserChannels(

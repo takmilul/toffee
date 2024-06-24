@@ -128,9 +128,6 @@ class InAppMessageParser @Inject constructor(
                     "notification" -> {
                         return RouteV2(R.id.notificationDropdownFragment, "Notification", null, navOptions)
                     }
-                    "ugc_all_channel" -> {
-                        return RouteV2(R.id.allUserChannelsFragment, "All UGC Channels", null, navOptions)
-                    }
                     "login" -> {
                         return RouteV2(R.id.loginDialog, "Login", null, navOptions)
                     }
