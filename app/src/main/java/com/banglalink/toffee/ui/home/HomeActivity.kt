@@ -70,6 +70,7 @@ import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -144,6 +145,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.FeaturedPartner
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -989,11 +991,22 @@ class HomeActivity : PlayerPageActivity(),
             closeSearchBarIfOpen()
             when (it.itemId) {
                 R.id.menu_feed -> navController.navigatePopUpTo(R.id.menu_feed)
-                R.id.menu_tv -> navController.navigateTo(R.id.menu_tv)
-                R.id.menu_explore -> navController.navigateTo(R.id.menu_explore)
-                R.id.menu_channel -> {
-                    channelOwnerId = if (mPref.isVerifiedUser) mPref.customerId else 0
-                    navController.navigateTo(R.id.menu_channel)
+                R.id.menu_tv -> navController.navigatePopUpTo(
+                    R.id.menu_tv,
+                    popUpTo = R.id.menu_feed,
+                    inclusive = false
+                )
+                R.id.categoryDetailsFragment -> {
+                    progressDialog.show()
+                    navigateToCategories(CategoryType.SPORTS.value)
+                }
+                R.id.movieFragment -> {
+                    progressDialog.show()
+                    navigateToCategories(CategoryType.MOVIE.value)
+                }
+                R.id.dramaSeriesFragment -> {
+                    progressDialog.show()
+                    navigateToCategories(CategoryType.DRAMA_SERIES.value)
                 }
             }
             return@setOnItemSelectedListener true
@@ -1002,6 +1015,67 @@ class HomeActivity : PlayerPageActivity(),
 //            binding.drawerLayout.closeDrawers()
 //            return@setNavigationItemSelectedListener false
 //        }
+    }
+
+    private fun navigateToCategories(categoryId: Int){
+        observe(landingPageViewModel.categoryList) {
+            when (it) {
+                is Resource.Success -> {
+                    progressDialog.dismiss()
+                    run loop@{
+                        it.data.forEach { item ->
+                            if (item.id.toInt() == categoryId) {
+                                landingPageViewModel.selectedCategory.value = item
+                                val args = Bundle().apply {
+                                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+                                    putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
+                                }
+                                when(categoryId){
+                                    CategoryType.DRAMA_SERIES.value -> {
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.dramaSeriesFragment,
+                                            args = args,
+                                            popUpTo = R.id.menu_feed,
+                                            inclusive = false
+                                        )
+                                    }
+                                    CategoryType.MOVIE.value -> {
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.movieFragment,
+                                            args = args,
+                                            popUpTo = R.id.menu_feed,
+                                            inclusive = false
+                                        )
+                                    }
+                                    CategoryType.MUSIC.value -> {
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.musicDetailsFragmant, args = args,
+                                            popUpTo = R.id.menu_feed,
+                                            inclusive = false
+                                        )
+                                    }
+                                    else ->{
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.categoryDetailsFragment,
+                                            args = args,
+                                            popUpTo = R.id.menu_feed,
+                                            inclusive = false
+                                        )
+                                    }
+                                }
+                                return@loop
+                            }
+                        }
+                    }
+                }
+
+                is Resource.Failure -> {
+                    progressDialog.dismiss()
+                    this.showToast(it.error.msg)
+                }
+            }
+        }
+        landingPageViewModel.getCategories()
     }
     
     private fun observeTopBarBackground() {
@@ -1054,13 +1128,13 @@ class HomeActivity : PlayerPageActivity(),
             if (state) {
                 supportActionBar?.hide()
                 binding.bottomAppBar.hide()
-                binding.uploadButton.hide()
+//                binding.uploadButton.hide()
                 binding.mainUiFrame.visibility = View.GONE
                 mPref.bubbleVisibilityLiveData.postValue(false)
             } else {
                 supportActionBar?.show()
                 binding.bottomAppBar.show()
-                binding.uploadButton.show()
+//                binding.uploadButton.show()
                 binding.mainUiFrame.visibility = View.VISIBLE
                 mPref.bubbleVisibilityLiveData.postValue(true)
             }
@@ -1070,7 +1144,7 @@ class HomeActivity : PlayerPageActivity(),
     private fun toggleBottomNavBar(state: Boolean) {
         if (state) {
             binding.bottomAppBar.hide()
-            binding.uploadButton.hide()
+//            binding.uploadButton.hide()
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
                 bottomMargin = 0
             }
@@ -1079,7 +1153,7 @@ class HomeActivity : PlayerPageActivity(),
             }
         } else {
             binding.bottomAppBar.show()
-            binding.uploadButton.show()
+//            binding.uploadButton.show()
             binding.mainUiFrame.updateLayoutParams<RelativeLayout.LayoutParams> {
                 bottomMargin = getActionBarSize(this@HomeActivity) + 12.dp
             }
@@ -1826,19 +1900,19 @@ class HomeActivity : PlayerPageActivity(),
 //        }
     }
     
-    fun rotateFab(isRotate: Boolean) {
-        ViewCompat.animate(binding.uploadButton).rotation(if (isRotate) 135.0F else 0.0F).withEndAction {
-            if (isRotate) {
-                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.menuColorSecondaryDark))
-                binding.uploadButton.backgroundTintList = colorStateList
-                binding.uploadButton.imageTintList = colorStateList
-            } else {
-                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
-                binding.uploadButton.backgroundTintList = colorStateList
-                binding.uploadButton.imageTintList = colorStateList
-            }
-        }.withLayer().setDuration(300L).setInterpolator(AccelerateInterpolator()).start()
-    }
+//    fun rotateFab(isRotate: Boolean) {
+//        ViewCompat.animate(binding.uploadButton).rotation(if (isRotate) 135.0F else 0.0F).withEndAction {
+//            if (isRotate) {
+//                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.menuColorSecondaryDark))
+//                binding.uploadButton.backgroundTintList = colorStateList
+//                binding.uploadButton.imageTintList = colorStateList
+//            } else {
+//                val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
+//                binding.uploadButton.backgroundTintList = colorStateList
+//                binding.uploadButton.imageTintList = colorStateList
+//            }
+//        }.withLayer().setDuration(300L).setInterpolator(AccelerateInterpolator()).start()
+//    }
     
     private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
         lifecycleScope.launch {

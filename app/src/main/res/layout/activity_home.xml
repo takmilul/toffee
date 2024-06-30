@@ -124,20 +124,20 @@
             </com.google.android.material.bottomnavigation.BottomNavigationView>
         </com.google.android.material.bottomappbar.BottomAppBar>
         
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/upload_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="22dp"
-            android:backgroundTint="@color/fab_icon_bg"
-            android:contentDescription="@string/tab_upload_label"
-            app:srcCompat="@drawable/ic_upload_menu_plus"
-            app:backgroundTint="@color/colorAccent2"
-            app:borderWidth="2dp"
-            app:elevation="0dp"
-            app:fabCustomSize="32dp"
-            app:tint="@color/colorAccent2" />
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/upload_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal|bottom"-->
+<!--            android:layout_marginBottom="22dp"-->
+<!--            android:backgroundTint="@color/fab_icon_bg"-->
+<!--            android:contentDescription="@string/tab_upload_label"-->
+<!--            app:srcCompat="@drawable/ic_upload_menu_plus"-->
+<!--            app:backgroundTint="@color/colorAccent2"-->
+<!--            app:borderWidth="2dp"-->
+<!--            app:elevation="0dp"-->
+<!--            app:fabCustomSize="32dp"-->
+<!--            app:tint="@color/colorAccent2" />-->
         
         <include
             android:id="@+id/home_bottom_sheet"

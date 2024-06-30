@@ -120,6 +120,9 @@
     <string name="tab_live_label">Live</string>
     <string name="tab_upload_label">Upload</string>
     <string name="tab_explore_label">Explore</string>
+    <string name="tab_sports_label">Sports</string>
+    <string name="tab_movies_label">Movies</string>
+    <string name="tab_webseries_label">Web Series</string>
     <string name="tab_mychannel_label">My Channel</string>
     <string name="try_again_txt">Try again</string>
     <string name="continue_sign_in_txt">Continue signing in</string>

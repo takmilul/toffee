@@ -31,6 +31,7 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
 import com.banglalink.toffee.model.FeaturedPartner
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.SubCategory
@@ -72,7 +73,8 @@ class LandingPageViewModel @Inject constructor(
     val selectedCategory = MutableLiveData<Category>()
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
     val featuredPartnerDeeplinkLiveData = SingleLiveEvent<FeaturedPartner>()
-    
+    val categoryList = MutableLiveData<Resource<List<Category>>>()
+
     fun loadChannels(): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -114,6 +116,13 @@ class LandingPageViewModel @Inject constructor(
                 categoryListApi, ApiNames.GET_CATEGORIES, pageName.value ?: BrowsingScreens.HOME_PAGE
             )
         }).getList().cachedIn(viewModelScope)
+    }
+
+    fun getCategories(){
+        viewModelScope.launch {
+            val response = resultFromResponse { categoryListApi.loadData(0,0) }
+            categoryList.value = response
+        }
     }
     
     fun loadLandingEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
