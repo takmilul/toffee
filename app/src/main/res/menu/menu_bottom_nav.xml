@@ -7,7 +7,7 @@
         android:id="@id/menu_tv" android:icon="@drawable/ic_menu_tv"
         android:title="@string/tab_live_label" />
     <item
-        android:id="@id/categoryDetailsFragment"
+        android:id="@id/sportsFragment"
         android:icon="@drawable/ic_menu_sports"
         android:title="@string/tab_sports_label" />
     <item

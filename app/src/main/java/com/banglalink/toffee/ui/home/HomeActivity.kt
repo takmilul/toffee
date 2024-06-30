@@ -996,7 +996,7 @@ class HomeActivity : PlayerPageActivity(),
                     popUpTo = R.id.menu_feed,
                     inclusive = false
                 )
-                R.id.categoryDetailsFragment -> {
+                R.id.sportsFragment -> {
                     progressDialog.show()
                     navigateToCategories(CategoryType.SPORTS.value)
                 }
@@ -1050,6 +1050,13 @@ class HomeActivity : PlayerPageActivity(),
                                     CategoryType.MUSIC.value -> {
                                         navController.navigatePopUpTo(
                                             resId = R.id.musicDetailsFragmant, args = args,
+                                            popUpTo = R.id.menu_feed,
+                                            inclusive = false
+                                        )
+                                    }
+                                    CategoryType.SPORTS.value -> {
+                                        navController.navigatePopUpTo(
+                                            resId = R.id.sportsFragment,
                                             popUpTo = R.id.menu_feed,
                                             inclusive = false
                                         )

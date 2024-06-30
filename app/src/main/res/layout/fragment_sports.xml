@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.category.SportsFragment">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/categoryDetailsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
+        tools:layout="@layout/fragment_category_details"
+        />
+
+</FrameLayout>

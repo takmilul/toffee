@@ -480,6 +480,16 @@
             android:defaultValue="Movies"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/sportsFragment"
+        android:name="com.banglalink.toffee.ui.category.SportsFragment"
+        android:label="{title}">
+        <argument
+            android:name="title"
+            android:defaultValue="Sports"
+            app:argType="string" />
+    </fragment>
     
     <fragment
         android:id="@+id/dramaSeriesFragment"
