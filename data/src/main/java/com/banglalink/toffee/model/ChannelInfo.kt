@@ -213,6 +213,10 @@ data class ChannelInfo(
     val isLive: Boolean
         get() = "LIVE".equals(type, ignoreCase = true)
     
+    @SerialName("isWebSeries")
+    val isWebSeries: Boolean
+        get() = "VOD".equals(type, ignoreCase = true) && seasonNo>0 && seriesSummaryId >0
+    
     @SerialName("isLinear")
     val isLinear: Boolean
         get() = "LIVE".equals(type, ignoreCase = true) || "Stingray".equals(type, ignoreCase = true) || "RADIO".equals(type, ignoreCase = true)

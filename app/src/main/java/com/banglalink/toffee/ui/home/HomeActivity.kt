@@ -1168,7 +1168,28 @@ class HomeActivity : PlayerPageActivity(),
         }
     }
 
-    private fun onDetailsFragmentLoad(detailsInfo: Any?) {
+    private fun onDetailsFragmentLoad(conInfo: Any?) {
+        var detailsInfo =conInfo
+        if (detailsInfo is ChannelInfo && detailsInfo.isWebSeries) {
+            detailsInfo = SeriesPlaybackInfo(
+                detailsInfo.seriesSummaryId,
+                detailsInfo.seriesName ?: "",
+                detailsInfo.seasonNo,
+                detailsInfo.totalSeason,
+                listOf(1),
+                detailsInfo.video_share_url,
+                detailsInfo.id.toInt(),
+                detailsInfo
+            )
+
+            viewModel.addToPlayListMutableLiveData.postValue(
+              AddToPlaylistData(
+                detailsInfo.playlistId(),
+                listOf(detailsInfo.currentItem!!)
+              )
+          )
+        }
+        
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
                 detailsInfo
@@ -1245,6 +1266,7 @@ class HomeActivity : PlayerPageActivity(),
                 else -> {}
             }
         }
+        detailsInfo =null
     }
     
     private fun observeGetPackStatus() {

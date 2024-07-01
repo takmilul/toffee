@@ -147,24 +147,28 @@ class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Channe
     }
     
     override fun onItemClicked(item: ChannelInfo) {
-        val seriesData = SeriesPlaybackInfo(
-            item.seriesSummaryId,
-            item.seriesName ?: "",
-            item.seasonNo,
-            item.totalSeason,
-            listOf(1),
-            item.video_share_url,
-            item.id.toInt(),
-            item
-        )
-        homeViewModel.addToPlayListMutableLiveData.postValue(
-            AddToPlaylistData(
-                seriesData.playlistId(),
-                listOf(item)
-            )
-        )
+//        val seriesData = SeriesPlaybackInfo(
+//            item.seriesSummaryId,
+//            item.seriesName ?: "",
+//            item.seasonNo,
+//            item.totalSeason,
+//            listOf(1),
+//            item.video_share_url,
+//            item.id.toInt(),
+//            item
+//        )
+//        homeViewModel.addToPlayListMutableLiveData.postValue(
+//            AddToPlaylistData(
+//                seriesData.playlistId(),
+//                listOf(item)
+//            )
+//        )
+//        homeViewModel.playContentLiveData.postValue(
+//            seriesData
+//        )
+        
         homeViewModel.playContentLiveData.postValue(
-            seriesData
+            item
         )
     }
     
