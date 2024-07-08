@@ -50,9 +50,9 @@ class AuthInterceptor @Inject constructor(
         val builder = FormBody.Builder()
         val requestJsonString = bodyToString(request.body)
         val baseRequest = try { json.decodeFromString<BaseRequest>(requestJsonString) } catch (e: Exception) { null }
-//        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != BuildConfig.APP_VERSION_NAME || appId != "com.banglalink.toffee" || appVersionCode != BuildConfig.APP_VERSION_CODE || appVersionName != BuildConfig.APP_VERSION_NAME)) {
-//            throw IOException()
-//        }
+        if (baseRequest != null && (!baseRequest.osVersion.contains("android", true) || baseRequest.appVersion != BuildConfig.APP_VERSION_NAME || appId != "com.banglalink.toffee" || appVersionCode != BuildConfig.APP_VERSION_CODE || appVersionName != BuildConfig.APP_VERSION_NAME)) {
+            throw IOException()
+        }
         
         ToffeeAnalytics.logBreadCrumb("request: $requestJsonString")
         val string = EncryptionUtil.encryptRequest(requestJsonString)

@@ -9,11 +9,11 @@ targetSdkVersion = "34"
 appVersionCode = "148"
 appVersionName = "7.3.0"
 
-gradle-plugin-version = "8.4.2"
+gradle-plugin-version = "8.5.0"
 
 # View
 activity-version = "1.6.1"
-fragment-ktx-version = "1.8.0"
+fragment-ktx-version = "1.8.1"
 splashscreen-version = "1.0.1"
 annotation = "1.8.0"
 material-version = "1.12.0"
@@ -26,10 +26,10 @@ constraint-layout-version = "2.1.4"
 circular-progressbar-version = "3.1.0"
 
 # Kotlin
-kotlin-version = "2.0.0"
+kotlin-version = "1.9.22"
 kotlin-ktx-version = "1.13.1"
 kotlin-coroutine-version = "1.7.3"
-ksp-plugin-version = "2.0.0-1.0.21"
+ksp-plugin-version = "1.9.22-1.0.16"
 kotlin-serialization-json-version = "1.6.3"
 kotlin-json-converter-factory-version = "1.0.0"
 
@@ -41,7 +41,8 @@ hilt-android-version = "2.51.1"
 room-db-version = "2.6.1"
 paging-version = "3.3.0"
 compose-bom = "2024.06.00"
-lifecycle-version = "2.8.2"
+kotlin-compose-version = "1.5.8"
+lifecycle-version = "2.7.0"
 navigation-version = "2.7.7"
 work-manager-version = "2.9.0"
 pager-indicator-version = "0.30.1"
@@ -63,7 +64,7 @@ cast-version = "21.5.0"
 
 # ADS
 play-services-ads-identifier-version = "18.1.0"
-play-services-ads-version = "23.1.0"
+play-services-ads-version = "23.2.0"
 ads-identifier-version = "1.0.0-alpha05"
 
 # Security
@@ -130,20 +131,20 @@ guava-version = "33.1.0-android"
 
 # Testing
 junit-version = "4.13.2"
-junit-ktx-version = "1.1.5"
+junit-ktx-version = "1.2.1"
 test-core-version = "1.5.0"
-espresso-version = "3.5.1"
+espresso-version = "3.6.1"
 mockk-version = "1.12.4"
 
 okhttp-mock-web-server-version = "4.11.0"
 mockito-kotlin-version = "2.2.0"
 
-test-runner-version = "1.5.2"
+test-runner-version = "1.6.1"
 robolectric-version = "4.8.1"
 core-testing-version = "2.1.0"
 
 google-truth-version = "1.1.3"
-fragment-test-version = "1.8.0"
+fragment-test-version = "1.8.1"
 leakcanary-version = "3.0-alpha-6"
 
 

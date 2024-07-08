@@ -213,18 +213,18 @@ jobs:
 #          path: app/build/outputs/apk/blUat/release/*
 #          if-no-files-found: warn
       
-#      - name: Upload APK to Firebase App Distribution
-#        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
-#        with:
-#          appId: ${{ secrets.FIREBASE_APP_ID }}
-#          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-#          groups: "Testers"
-#          releaseNotesFile: "distribution/whatsnew/whatsnew-en-US"
-#          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
-      
       - name: Upload APK to Firebase App Distribution
-        run: ./gradlew appDistributionUploadMobileStagingRelease
-          --groups="BL-UAT"
-          --artifactPath="app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease-signed.apk"
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          groups: "BL-UAT"
+          releaseNotesFile: "distribution/whatsnew/whatsnew-en-US"
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+      
+#      - name: Upload APK to Firebase App Distribution
+#        run: ./gradlew appDistributionUploadMobileStagingRelease
+#          --groups="BL-UAT"
+#          --artifactPath="app/build/outputs/apk/mobile/stagingRelease/app-stagingRelease-signed.apk"
+#        env:
+#          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
