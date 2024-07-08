@@ -54,6 +54,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
                     binding.editorsChoiceList.isVisible = ! isEmpty
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
+                    binding.root.visibility = if (isEmpty) View.GONE else View.VISIBLE
                 }
             }
             binding.placeholder.isVisible = true
