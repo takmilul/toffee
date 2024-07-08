@@ -176,6 +176,9 @@
             android:id="@+id/action_landingCategoriesFragment_to_dramaSeriesFragment"
             app:destination="@id/dramaSeriesFragment" />
         <action
+            android:id="@+id/action_landingCategoriesFragment_to_sportsFragment"
+            app:destination="@id/sportsFragment" />
+        <action
             android:id="@+id/action_menu_feed_to_musicDetailsFragmant"
             app:destination="@id/musicDetailsFragmant" />
 
