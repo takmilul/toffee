@@ -9,7 +9,6 @@ plugins {
         alias(kotlin.android)
         alias(kotlin.parcelize)
         alias(kotlin.serialize)
-        alias(kotlin.compose.compiler)
         alias(google.services)
         alias(navigation.safeargs)
         alias(hilt.android)
@@ -196,6 +195,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compose.version.get()
     }
     
     lint {
