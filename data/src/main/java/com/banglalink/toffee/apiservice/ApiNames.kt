@@ -72,6 +72,7 @@ object ApiNames {
     const val GET_VAST_TAG_LIST_V2 = "vastTagsListV2"
     const val GET_VAST_TAG_LIST_V3 = "vastTagsListV3"
     const val GET_DRM_TOKEN = "drmToken"
+    const val GET_DRM_TOKEN_V1 = "drmToken"
     const val UPLOAD_SIGNED_URL = "uploadCloudStorageSigningUrl"
     const val GET_FEATURED_PARTNERS = "getUgcFeaturePartnerList"
     const val GET_STINGRAY_CONTENTS = "getStingrayContents"

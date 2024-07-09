@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.network.request.DobValidateOtpRequest
 import com.banglalink.toffee.data.network.request.DramaEpisodesBySeasonRequest
 import com.banglalink.toffee.data.network.request.DramaSeriesContentRequest
 import com.banglalink.toffee.data.network.request.DrmTokenRequest
+import com.banglalink.toffee.data.network.request.DrmTokenV1Request
 import com.banglalink.toffee.data.network.request.FavoriteContentRequest
 import com.banglalink.toffee.data.network.request.FavoriteRequest
 import com.banglalink.toffee.data.network.request.FcmTokenRequest
@@ -109,6 +110,7 @@ import com.banglalink.toffee.data.network.response.DobValidateOtpBaseResponse
 import com.banglalink.toffee.data.network.response.DramaEpisodesBySeasonResponse
 import com.banglalink.toffee.data.network.response.DramaSeriesContentResponse
 import com.banglalink.toffee.data.network.response.DrmTokenResponse
+import com.banglalink.toffee.data.network.response.DrmTokenV1Response
 import com.banglalink.toffee.data.network.response.FavoriteContentResponse
 import com.banglalink.toffee.data.network.response.FavoriteResponse
 import com.banglalink.toffee.data.network.response.FcmTokenResponse
@@ -616,6 +618,12 @@ interface ToffeeApi {
         @Header("DRM-API-HEADER") drmHeader: String,
         @Body drmTokenRequest: DrmTokenRequest
     ): DrmTokenResponse
+    
+    @POST("v1/drm-token/{contentId}")
+    suspend fun getDrmTokenV1(
+        @Path("contentId") contentId: String,
+        @Body drmTokenV1Request: DrmTokenV1Request
+    ): DrmTokenV1Response
 
     @POST("/media-cdn-sign-url")
     suspend fun getMediaCdnSignUrl(

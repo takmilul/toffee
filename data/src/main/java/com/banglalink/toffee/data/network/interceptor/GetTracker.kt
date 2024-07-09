@@ -50,7 +50,8 @@ class GetTracker @Inject constructor():IGetMethodTracker {
         "/premium-packages",
         "/package-details",
         "/package-wise-data-pack",
-        "/fm-radio-contents"
+        "/fm-radio-contents",
+        "/drm-token"
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {
