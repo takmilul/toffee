@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.home
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -56,6 +57,7 @@ class LandingPageViewModel @Inject constructor(
     private val featuredPartnerAssistedFactory: FeaturedPartnerService.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetEditorsChoiceContentsService.AssistedFactory,
     private val sendFeaturePartnerEvent: SendFeaturePartnerEvent,
+    private val savedState: SavedStateHandle,
 ) : ViewModel() {
     
     var featuredJob: Job? = null
@@ -69,7 +71,8 @@ class LandingPageViewModel @Inject constructor(
     val hashtagList = SingleLiveEvent<List<String>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val subCategories = SingleLiveEvent<List<SubCategory>>()
-    val selectedCategory = MutableLiveData<Category>()
+    val selectedCategory = savedState.getLiveData<Category>("selectedCategory")
+
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
     val featuredPartnerDeeplinkLiveData = SingleLiveEvent<FeaturedPartner>()
     
