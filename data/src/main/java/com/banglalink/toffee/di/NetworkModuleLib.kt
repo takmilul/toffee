@@ -22,6 +22,7 @@ import com.banglalink.toffee.util.Log
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -90,6 +91,7 @@ object NetworkModuleLib {
 //                    }
 //                )
                 addInterceptor(loggingInterceptor)
+                addInterceptor(OkHttpProfilerInterceptor())
             }
             addInterceptor(authInterceptor)
             dns(toffeeDns)
@@ -120,6 +122,7 @@ object NetworkModuleLib {
 //                    }
 //                )
                 addInterceptor(loggingInterceptor)
+                addInterceptor(OkHttpProfilerInterceptor())
             }
             addInterceptor(plainInterceptor)
             dns(toffeeDns)
