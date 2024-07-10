@@ -9,6 +9,6 @@ import kotlinx.serialization.Serializable
 class DrmTokenV1Request (
     @SerialName("customerId")
     val customerId: Int,
-    @SerialName("contentID")
+    @SerialName("password")
     val password: String
 ) : BaseRequest(ApiNames.GET_DRM_TOKEN_V1)
