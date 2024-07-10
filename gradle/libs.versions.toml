@@ -114,6 +114,7 @@ mqtt-android-service-version = "3.3.8"
 timber-version = "5.0.1"
 orhanobut-version = "2.2.0"
 chucker-version = "4.0.0"
+okhttp-profiler-version = "1.0.8"
 
 # Firework
 firework-sdk-version = "6.10.2"
@@ -311,6 +312,7 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 orhanobut = { group = "com.orhanobut", name = "logger", version.ref = "orhanobut-version" }
 chucker-dev = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker-version" }
 chucker-prod = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker-version" }
+okhttp-profiler = {group = "com.localebro", name = "okhttpprofiler", version.ref = "okhttp-profiler-version"}
 
 # Miscellaneous
 #guava = { group = "com.google.guava", name = "guava", version.ref = "guava-version" }
@@ -412,6 +414,6 @@ play-services = ["play-services-auth", "play-services-auth-api-phone", "inapp-up
 conviva = ["conviva-core", "conviva-player", "conviva-tracker"]
 mqtt = ["mqtt-client", "mqtt-android-service"]
 ads = ["play-services-ads-identifier", "play-services-ads", "ads-identifier"]
-logger = ["timber", "orhanobut"]
+logger = ["timber", "orhanobut", "okhttp-profiler"]
 espresso = ["espresso-core", "espresso-contrib", "espresso-intents", "espresso-accessibility", "espresso-web", "espresso-idling", "espresso-idling-resource"]
 #firework = ["firework-sdk", "firework-singlehost", "firework-multihost", "firework-imageloader"]
