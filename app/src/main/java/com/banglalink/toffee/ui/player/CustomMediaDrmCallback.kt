@@ -11,20 +11,24 @@ import androidx.media3.exoplayer.drm.MediaDrmCallback
 import androidx.media3.exoplayer.drm.MediaDrmCallbackException
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmLicenseService
+import com.banglalink.toffee.apiservice.DrmTokenV1Service
 import com.banglalink.toffee.util.Log
 import com.google.common.collect.ImmutableMap
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import javax.inject.Inject
 
 @UnstableApi
 class CustomMediaDrmCallback(
     private val licenseUri: String,
     dataSourceFactory: Factory,
     private val drmLicenseService: DrmLicenseService,
-    private val contentId: String? = "1",
-    private val packageId: String? = "1"
+    private val drmTokenV1Service: DrmTokenV1Service,
+    private val drmCid: String? = "1",
+    private val packageId: String? = "1",
+    private val contentId:String? = "",
 ) : MediaDrmCallback {
-    
+
     private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, true, dataSourceFactory)
     
     override fun executeProvisionRequest(uuid: UUID, request: ExoMediaDrm.ProvisionRequest): ByteArray {
@@ -52,11 +56,13 @@ class CustomMediaDrmCallback(
         Log.i("DRM_T", "executeKeyRequest: ${request.data}")
         val license = runBlocking {
             try {
+                val token = drmTokenV1Service.execute(contentId ?: "")
                 drmLicenseService.execute(
                     licenseServerUrl = licenseUri,
                     payload = Base64.encodeToString(request.data, Base64.NO_WRAP),
-                    contentId = contentId ?: "1",
-                    packageId = packageId ?: "1"
+                    contentId = drmCid ?: "1",
+                    packageId = packageId ?: "1",
+                    drmToken =  token ?: "dummy"
                 )
             } catch (ex: Exception) {
                 null

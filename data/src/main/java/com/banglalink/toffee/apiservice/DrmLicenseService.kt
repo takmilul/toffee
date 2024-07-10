@@ -13,7 +13,8 @@ class DrmLicenseService  @Inject constructor(
         licenseServerUrl: String,
         payload: String,
         contentId: String = "1",
-        packageId: String = "1"
+        packageId: String = "1",
+        drmToken: String = "dummy"
     ): ByteArray? {
         val response = tryIO {
             externalApi.getLicense(
@@ -22,6 +23,7 @@ class DrmLicenseService  @Inject constructor(
                     payload = payload,
                     contentId = contentId,
                     packageId = packageId,
+                    token = drmToken
                 )
             )
         }

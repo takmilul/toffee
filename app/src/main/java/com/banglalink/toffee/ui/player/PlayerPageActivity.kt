@@ -46,6 +46,7 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector.Parameters
 import androidx.media3.ui.PlayerView
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.Constants.NON_PREMIUM
 import com.banglalink.toffee.Constants.PLAYER_EVENT_TAG
 import com.banglalink.toffee.Constants.PLAY_CDN
@@ -58,6 +59,7 @@ import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.DrmLicenseService
 import com.banglalink.toffee.apiservice.DrmTokenService
+import com.banglalink.toffee.apiservice.DrmTokenV1Service
 import com.banglalink.toffee.apiservice.KeepAliveService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
@@ -162,6 +164,7 @@ abstract class PlayerPageActivity :
     private var currentlyPlayingVastUrl: String = ""
     @Inject lateinit var drmTokenApi: DrmTokenService
     @Inject lateinit var drmLicenseService: DrmLicenseService
+    @Inject lateinit var drmTokenV1Service: DrmTokenV1Service
     private var mediaSession: MediaSessionCompat? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
     private var trackSelectorParameters: Parameters? = null
@@ -840,11 +843,13 @@ abstract class PlayerPageActivity :
 //                            drmCid ?: ""
 //                        )
                         CustomMediaDrmCallback(
-                            licenseUri = mPref.drmWidevineLicenseUrl ?: "https://dev-services.toffeelive.com/widevine/v1/license",
+                            licenseUri = mPref.drmWidevineLicenseUrl ?: Constants.drmWidevineLicenseUrl,
                             dataSourceFactory = httpDataSourceFactory!!,
                             drmLicenseService = drmLicenseService,
-                            contentId = drmCid,
-                            packageId = channelInfo.drmPackageId
+                            drmTokenV1Service = drmTokenV1Service,
+                            drmCid = drmCid,
+                            packageId = channelInfo.drmPackageId,
+                            contentId = channelInfo.id
                         )
                     )
                     .apply {

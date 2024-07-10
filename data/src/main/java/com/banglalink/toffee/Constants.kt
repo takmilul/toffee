@@ -23,7 +23,7 @@ object Constants {
     const val UN_ETHICAL_ACTIVITIES_ERROR_CODE = 402
     const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
     const val HE_SESSION_TOKEN_HEADER = "ENRICHMENT-SESSION-TOKEN"
-    
+    const val drmWidevineLicenseUrl= "https://dev-services.toffeelive.com/widevine/v1/license"
     
     //    https://github.com/shamanland/simple-string-obfuscator
     val TOFFEE_KEY = object : Any() {
