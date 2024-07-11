@@ -333,15 +333,20 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
 
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
-        if (item == currentItem || item.id == currentItem?.id) {
-            return
+        if (item.isWebSeries){
+            homeViewModel.playContentLiveData.postValue(item)
+        }else{
+            if (item == currentItem || item.id == currentItem?.id) {
+                return
+            }
+            homeViewModel.addToPlayListMutableLiveData.postValue(
+                AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
+            )
+            homeViewModel.playContentLiveData.postValue(
+                playlistInfo.copy(playIndex = position, currentItem = item)
+            )
         }
-        homeViewModel.addToPlayListMutableLiveData.postValue(
-            AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
-        )
-        homeViewModel.playContentLiveData.postValue(
-            playlistInfo.copy(playIndex = position, currentItem = item)
-        )
+
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {

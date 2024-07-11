@@ -308,6 +308,8 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
         if (item == currentItem || item.id == currentItem?.id) {
             return
         }
+        mPref.isFromMyPlayList.value=true
+
         homeViewModel.addToPlayListMutableLiveData.postValue(
             AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
         )

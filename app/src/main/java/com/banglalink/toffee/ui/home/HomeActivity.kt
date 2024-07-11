@@ -1601,6 +1601,10 @@ class HomeActivity : PlayerPageActivity(),
         if (playlistManager.playlistId == -1L) {
             viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
             return false
+        }else if (playlistManager.getCurrentChannel()?.isWebSeries==true && mPref.isFromMyPlayList.value==false ){
+            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+            mPref.isFromMyPlayList.value = false
+            return false
         }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
@@ -1620,6 +1624,14 @@ class HomeActivity : PlayerPageActivity(),
         if (isPreviousChannelPremium) {
             viewModel.playContentLiveData.postValue(playlistManager.getPreviousChannel())
             return true
+        }
+        if (playlistManager.playlistId == -1L) {
+            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+            return false
+        }else if (playlistManager.getCurrentChannel()?.isWebSeries==true && mPref.isFromMyPlayList.value ==false){
+            viewModel.playContentLiveData.postValue(playlistManager.getCurrentChannel())
+            mPref.isFromMyPlayList.value = false
+            return false
         }
         ConvivaHelper.endPlayerSession()
 //        resetPlayer()
